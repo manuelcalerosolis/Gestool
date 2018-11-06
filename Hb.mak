@@ -379,6 +379,8 @@ ArticulosTarifasController.prg 											\
 MailController.prg 															\
 ContactosController.prg 													\
 FormaPagoController.prg 													\
+MediosPagoController.prg 													\
+MetodosPagoController.prg 													\
 ArticulosFamiliaController.prg 											\
 UnidadesMedicionController.prg 											\
 UnidadesMedicionGruposController.prg 									\
@@ -1097,6 +1099,8 @@ ArticulosTarifasController.obj       									\
 MailController.obj       													\
 ContactosController.obj       											\
 FormaPagoController.obj       											\
+MediosPagoController.obj       											\
+MetodosPagoController.obj       											\
 ArticulosFamiliaController.obj       									\
 UnidadesMedicionController.obj       									\
 UnidadesMedicionGruposController.obj       							\
@@ -1804,6 +1808,8 @@ $(OBJ)\ArticulosTarifasController.obj    								+
 $(OBJ)\MailController.obj    												+
 $(OBJ)\ContactosController.obj    										+
 $(OBJ)\FormaPagoController.obj 	   									+
+$(OBJ)\MediosPagoController.obj 	   									+
+$(OBJ)\MetodosPagoController.obj 	   								+
 $(OBJ)\ArticulosFamiliaController.obj    								+
 $(OBJ)\UnidadesMedicionController.obj    								+
 $(OBJ)\UnidadesMedicionGruposController.obj    						+

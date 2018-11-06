@@ -3096,7 +3096,7 @@ FUNCTION CreateMainSQLAcceso()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Formas de pago'
    oItem:cMessage       := 'Formas de pago'
-   oItem:bAction        := {|| FormasPagosController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| MetodosPagoController():New():ActivateNavigatorView() }
    oItem:cId            := "forma_pago"
    oItem:cBmp           := "gc_credit_cards_16"
    oItem:cBmpBig        := "gc_credit_cards_32"

@@ -66,6 +66,8 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
                                  "rutas" =>                                { "nombre" => "Rutas", "icono" => "gc_map_route_16"                                            } ,;
                                  "cajas_entradas_salidas" =>               { "nombre" => "Entradas y salidas de caja", "icono" => "gc_cash_register_refresh_16"           } ,;
                                  "lineas_propiedades" =>                   { "nombre" => "Líneas de propiedades",  "icono" => "gc_coathanger_16"                          } ,;
+                                 "medios_pago" =>                          { "nombre" => "Medios de pago",  "icono" => "gc_credit_cards_16"                          } ,;
+                                 "metodos_pago" =>                         { "nombre" => "Métodos de pago",  "icono" => "gc_credit_cards_16"                          } ,;
                                  "listin" =>                               { "nombre" => "Listín telefónico", "icono" => "gc_book_telephone_16"                           } }   
 
    METHOD New( oController ) CONSTRUCTOR

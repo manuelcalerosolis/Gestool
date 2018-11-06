@@ -35,6 +35,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oFormasPagosController
 
+   DATA oMediosPagoController
+
    DATA oCuentasRemesaController
 
    DATA oRutasController
@@ -201,6 +203,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getFormasPagosController();
                                     INLINE ( if( empty( ::oFormasPagosController ), ::oFormasPagosController := FormasPagosController():New( self ), ), ::oFormasPagosController )
+
+   METHOD getMediosPagoController();
+                                    INLINE ( if( empty( ::oMediosPagoController ), ::oMediosPagoController := MediosPagoController():New( self ), ), ::oMediosPagoController )
 
    METHOD getCuentasRemesaController();
                                     INLINE ( if( empty( ::oCuentasRemesaController ), ::oCuentasRemesaController := CuentasRemesaController():New( self ), ), ::oCuentasRemesaController )
@@ -446,6 +451,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oFormasPagosController )   
       ::oFormasPagosController:End()
+   end if
+
+   if !empty( ::oMediosPagoController )   
+      ::oMediosPagoController:End()
    end if
 
    if !empty( ::oCuentasRemesaController )   
