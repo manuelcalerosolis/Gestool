@@ -6,6 +6,8 @@
 //---------------------------------------------------------------------------//
 
 CLASS SQLBaseModel
+
+   DATA nSeconds
   
    DATA oController
 
@@ -142,7 +144,7 @@ CLASS SQLBaseModel
    METHOD isDeletedAtColumn()                         INLINE ( hhaskey( ::hColumns, "deleted_at" ) )
    METHOD isDeleted( nId )                            
 
-   METHOD setShowDeleted( lShow )                     /*INLINE ( ::lShowDeleted := lShow )*/
+   METHOD setShowDeleted( lShow )                     
    METHOD isShowDeleted()                             INLINE ( ::lShowDeleted )
 
    METHOD getDeleteOrUpdateSentenceByUuid( aUuid )
@@ -172,7 +174,7 @@ CLASS SQLBaseModel
    METHOD addDeletedAtWhere( cSQLSelect )
    
    METHOD getHavingOrAnd( cSQLSelect )                INLINE ( if( hb_at( "HAVING", cSQLSelect ) != 0, " AND ", " HAVING " ) )
-   METHOD setGeneralHaving( cHaving )                 INLINE ( ::cGeneralHaving := cHaving )
+   METHOD setGeneralHaving( cHaving )                 INLINE ( ::cGeneralHaving  := cHaving )
    METHOD addGeneralHaving( cSQLSelect )
    
    METHOD addParentUuidWhere()                           
@@ -340,6 +342,8 @@ METHOD New( oController )
    end if 
 
    ::cGeneralSelect              := "SELECT * FROM " + ::getTableName()    
+
+   ::nSeconds                    := seconds()
 
 RETURN ( self )
 

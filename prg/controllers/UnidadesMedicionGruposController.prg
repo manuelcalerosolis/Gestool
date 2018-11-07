@@ -75,6 +75,8 @@ RETURN ( ::Super:End() )
 
 METHOD insertLineaUnidadBase() CLASS UnidadesMedicionGruposController
 
+   msgalert( "insertLineaUnidadBase" )
+
    if empty( ::getUnidadesMedicionGruposLineasController():getModel():getField( 'uuid', 'parent_uuid', ::getUuid() ) )
 
       ::getUnidadesMedicionGruposLineasController():getModel():insertLineaUnidadBase( ::getModel():hBuffer[ "uuid" ], ::getModel():hBuffer[ "unidad_base_codigo" ] )

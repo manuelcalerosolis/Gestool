@@ -32,6 +32,8 @@ CLASS UnidadesMedicionOperacionesController FROM SQLNavigatorController
    
    METHOD getModel()                INLINE ( if( empty( ::oModel ), ::oModel := SQLUnidadesMedicionOperacionesModel():New( self ), ), ::oModel )
 
+   METHOD UnidadesMedicionHelping( cCodigoGrupo )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -51,6 +53,8 @@ METHOD New( oController ) CLASS UnidadesMedicionOperacionesController
                                           "48" => "gc_tape_measure2_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
+
+   ::getUnidadesMedicionController()
 
 RETURN ( Self )
 
@@ -85,34 +89,30 @@ RETURN ( ::Super:End() )
 METHOD deleteBuffer( aUuidEntidades ) CLASS UnidadesMedicionOperacionesController
 
    if empty( aUuidEntidades )
-      RETURN ( self )
+      RETURN ( nil )
    end if
 
    ::getModel():deleteWhereParentUuid( aUuidEntidades )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-/*
-METHOD Edit( cCodigoGrupo ) CLASS UnidadesMedicionOperacionesController
-   
-   if empty( cCodigoGrupo )
-      msgstop( "Debe seleccionar un grupo de unidades de medición" )
-      RETURN .f.
-   end if 
 
-   ::setCodigoGrupo( cCodigoGrupo )
+METHOD UnidadesMedicionHelping() CLASS UnidadesMedicionOperacionesController 
 
-   ::setEditMode()
+   local cCodigoGrupo 
+   local cCodigoUnidades   
 
-   ::getRowSet():buildPad( ::getModel():getInitialSelect() )
+   cCodigoGrupo   := ::oController:getModelBuffer( 'unidades_medicion_grupos_codigo' )
 
-   ::beginTransactionalMode()
+   ::oController:getModelBuffer( 'unidades_medicion_grupos_codigo' )
 
-   ::activateDialogView()
+   cCodigoUnidades         := SQLUnidadesMedicionOperacionesModel():getSerializeUnidadesWhereGrupo( cCodigoGrupo )
+
+   ::getUnidadesMedicionController():getModel():setGeneralWhere( "codigo IN ( " + cCodigoUnidades + " )" )
 
 RETURN ( nil )
-*/
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -209,6 +209,7 @@ METHOD Activate() CLASS UnidadesMedicionOperacionesView
       ::oController:getUnidadesMedicionController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "unidad_medicion_codigo" ] ) )
       ::oController:getUnidadesMedicionController():getSelector():Build( { "idGet" => 110, "idText" => 111, "idLink" => 112, "oDialog" => ::oDialog } )
       ::oController:getUnidadesMedicionController():getSelector():bValid  := {|| ::oController:validate( "unidad_medicion_codigo" ) }
+      ::oController:getUnidadesMedicionController():getSelector():setEvent( 'helping', {|| ::oController:UnidadesMedicionHelping() } )
 
       apoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
@@ -295,6 +296,9 @@ CLASS SQLUnidadesMedicionOperacionesModel FROM SQLCompanyModel
    METHOD getSentenceUnidadesWhereGrupo( cCodigoGrupo )
 
    METHOD getUnidadesWhereGrupo( cCodigoGrupo )
+
+   METHOD getSerializeUnidadesWhereGrupo( cCodigoGrupo ) ;
+                                 INLINE ( serializeQuotedArray( ::getUnidadesWhereGrupo( cCodigoGrupo ), "," ) )
 
    METHOD setUuidUnidadAttribute( value ) ;
                                  INLINE ( SQLUnidadesMedicionModel():getUuidWhereColumn( Value, "nombre" ) )
