@@ -186,9 +186,9 @@ METHOD Activate() CLASS UnidadesMedicionGruposLineasView
    local cUnidadBaseCodigo := ::oController:oController:getModelBuffer( 'unidad_base_codigo' )
    local cUnidadBaseNombre := SQLUnidadesMedicionModel():getField( 'nombre', 'codigo', cUnidadBaseCodigo )
 
-   DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "LINEA_GRUPO_UNIDAD_MEDICION" ;
-      TITLE       ::LblTitle() + " grupo de unidades de medición"
+   DEFINE DIALOG     ::oDialog ;
+      RESOURCE       "LINEA_GRUPO_UNIDAD_MEDICION" ;
+      TITLE          ::LblTitle() + " grupo de unidades de medición"
 
       REDEFINE BITMAP ::oBitmap ;
          ID          900 ;
@@ -361,20 +361,26 @@ RETURN ( cSelect )
 
 METHOD getSentenceInserLineaUnidadBase( uuidParent, cCodigoBaseUnidad ) CLASS SQLUnidadesMedicionGruposLineasModel
 
-   local cSentence   := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                         + " " + ;
-                           "( uuid, parent_uuid, unidad_alternativa_codigo, cantidad_alternativa, cantidad_base, sistema )"   + " " + ;
-                        "VALUES"                                                                                              + " " + ;
-                           "( UUID(), " + quoted( uuidParent ) + ", " + quoted( cCodigoBaseUnidad ) + ", 1, 1, 1 )"
+   local cSql
 
-RETURN ( cSentence )
+   TEXT INTO cSql
+
+      INSERT IGNORE INTO %1$s
+         ( uuid, parent_uuid, unidad_alternativa_codigo, cantidad_alternativa, cantidad_base, sistema )
+      VALUES
+         ( UUID(), %2$s, %3$s, 1, 1, 1 )
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ), quoted( cCodigoBaseUnidad ) )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
 METHOD insertLineaUnidadBase( uuidParent, cCodigoBaseUnidad ) CLASS SQLUnidadesMedicionGruposLineasModel
 
-   local cSql  := ::getSentenceInserLineaUnidadBase( uuidParent, cCodigoBaseUnidad )
-
-RETURN ( getSQLDatabase():Exec( cSql ) )
+RETURN ( getSQLDatabase():Exec( ::getSentenceInserLineaUnidadBase( uuidParent, cCodigoBaseUnidad ) ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -400,7 +406,7 @@ CLASS UnidadesMedicionGruposLineasRepository FROM SQLBaseRepository
 
    METHOD getCodigos( cCodigoArticulo )
 
-   METHOD getWhereGrupoSistemaDefault()
+   METHOD getWhereSistemaDefault()
 
    METHOD getWhereEmpresaDefault()
 
@@ -466,7 +472,7 @@ METHOD getSentenceWhereEmpresa( cField ) CLASS UnidadesMedicionGruposLineasRepos
          LEFT JOIN %3$s AS grupos 
             ON lineas.parent_uuid = grupos.uuid 
 
-         LEFT JOIN %4$s AS ajustables  // SQLAjustableModel():getTableName()
+         LEFT JOIN %4$s AS ajustables  
             ON ajustables.ajuste_valor = grupos.codigo
 
          LEFT JOIN %5$s AS ajustes
@@ -479,6 +485,7 @@ METHOD getSentenceWhereEmpresa( cField ) CLASS UnidadesMedicionGruposLineasRepos
    cSql  := hb_strformat( cSql, cField, ::getTableName(), SQLUnidadesMedicionGruposModel():getTableName(), SQLAjustableModel():getTableName(), SQLAjustesModel():getTableName()  ) 
 
    logwrite( cSql )
+   msgalert( cSql )
 
 RETURN ( cSql )
 
@@ -567,7 +574,7 @@ RETURN ( aResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD getWhereGrupoSistemaDefault() CLASS UnidadesMedicionGruposLineasRepository
+METHOD getWhereSistemaDefault() CLASS UnidadesMedicionGruposLineasRepository
 
 RETURN ( ::getDatabase():getValue( ::getSentenceWhereGrupoSistema() + " AND lineas.sistema = 1", "" ) )
 
@@ -604,8 +611,8 @@ METHOD getCodigoDefault( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRep
    end if
 
    if empty( cCodigo )
-      cCodigo        := ::getWhereGrupoSistemaDefault()
-      msgalert( hb_valtoexp( cCodigo ), "getWhereGrupoSistemaDefault")
+      cCodigo        := ::getWhereSistemaDefault()
+      msgalert( hb_valtoexp( cCodigo ), "getWhereSistemaDefault")
    end if
 
 RETURN ( cCodigo )

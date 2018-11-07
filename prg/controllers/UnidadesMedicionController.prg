@@ -77,9 +77,7 @@ METHOD getUnidadesInGroup()
 
    local aUnidades 
 
-   msgalert( ::oController:ClassName(), "ClassName" )
-
-   aUnidades   :=  SQLUnidadesMedicionOperacionesModel():getUnidadesWhereGrupo( ::oController:getModelBuffer( 'unidades_medicion_grupos_codigo' ) )
+   aUnidades      := SQLUnidadesMedicionOperacionesModel():getUnidadesWhereGrupo( ::oController:getModelBuffer( 'unidades_medicion_grupos_codigo' ) )
 
    if empty( aUnidades )
       RETURN ( "" )
@@ -207,7 +205,6 @@ METHOD Activate() CLASS UnidadesMedicionView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
@@ -250,7 +247,7 @@ CLASS SQLUnidadesMedicionModel FROM SQLCompanyModel
 
    METHOD getInsertUnidadesMedicionSentence()
 
-   METHOD addGeneralWhere( cSQLSelect, cGeneralWhere )
+   METHOD setUnidadesWhere( cSQLSelect, cGeneralWhere )
 
 END CLASS
 
@@ -322,20 +319,13 @@ RETURN ( getSQLDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD addGeneralWhere( cSQLSelect, cGeneralWhere ) CLASS SQLUnidadesMedicionModel
+METHOD setUnidadesWhere( cCodigoGrupo ) CLASS SQLUnidadesMedicionModel
 
-   DEFAULT cGeneralWhere   := ::oController:getUnidadesInGroup()
+   local cCodigoUnidades   := SQLUnidadesMedicionOperacionesModel():getSerializeUnidadesWhereGrupo( cCodigoGrupo )
 
-   if empty( cGeneralWhere )
-      RETURN ( cSQLSelect )
-   end if 
-   
-   cSQLSelect              += ::getWhereOrAnd( cSQLSelect )
-   cSQLSelect              += ::getTableName()+ ".codigo IN ( " 
-   cSQLSelect              += cGeneralWhere  
-   cSQLSelect              += " ) " 
+   ::setGeneralWhere( "codigo IN ( " + cCodigoUnidades + " )" )
      
-RETURN ( cSQLSelect )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
