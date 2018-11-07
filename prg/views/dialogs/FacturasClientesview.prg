@@ -102,9 +102,9 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Formas de pago------------------------------------------------------------
 
-   ::oController:getFormasPagosController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "forma_pago_codigo" ] ) )
-   ::oController:getFormasPagosController():getSelector():Build( { "idGet" => 230, "idText" => 231, "idLink" => 232, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::oController:getFormasPagosController():getSelector():setValid( {|| ::oController:validate( "forma_pago_codigo" ) } )
+   ::oController:getMetodosPagosController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "metodo_pago_codigo" ] ) )
+   ::oController:getMetodosPagosController():getSelector():Build( { "idGet" => 230, "idText" => 231, "idLink" => 232, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getMetodosPagosController():getSelector():setValid( {|| ::oController:validate( "metodo_pago_codigo" ) } )
 
    // Almacenes----------------------------------------------------------------
 
@@ -119,7 +119,7 @@ METHOD Activate() CLASS FacturasClientesView
    ::oController:getArticulosTarifasController():getSelector():setWhen( {|| ::oController:isNotLines() } )
    ::oController:getArticulosTarifasController():getSelector():setValid( {|| ::oController:validate( "tarifa_codigo" ) } )
 
-    // Rutas--------------------------------------------------------------------
+   // Rutas--------------------------------------------------------------------
 
    ::oController:getRutasController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "ruta_codigo" ] ) )
    ::oController:getRutasController():getSelector():Build( { "idGet" => 260, "idText" => 261, "idLink" => 262, "oDialog" => ::oFolder:aDialogs[1] } )
@@ -129,7 +129,7 @@ METHOD Activate() CLASS FacturasClientesView
    ::oController:getAgentesController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "agente_codigo" ] ) )
    ::oController:getAgentesController():getSelector():Build( { "idGet" => 270, "idText" => 271, "idLink" => 272, "oDialog" => ::oFolder:aDialogs[1] } )
 
-   //Totales------------------------------------------------------------------
+   // Totales------------------------------------------------------------------
 
    REDEFINE SAY   ::oTotalBruto ;
       VAR         ::nTotalBruto ;

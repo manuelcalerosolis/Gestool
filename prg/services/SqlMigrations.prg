@@ -346,7 +346,7 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLMediosPagoModel():New() )
 
-   aadd( ::aModels, SQLMetodosPagoModel():New() )
+   aadd( ::aModels, SQLMetodoPagoModel():New() )
 
    aadd( ::aModels, SQLTiposIvaModel():New() )
    

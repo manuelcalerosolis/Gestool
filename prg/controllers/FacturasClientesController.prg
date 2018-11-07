@@ -29,7 +29,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD clientesSettedHelpText()
 
-   METHOD clientSetFormaPago()   
+   METHOD clientSetMetodpPago()   
 
    METHOD clientSetTarifa()
 
@@ -209,7 +209,7 @@ METHOD clientesSettedHelpText() CLASS FacturasClientesController
       RETURN ( nil )
    end if         
 
-   ::clientSetFormaPago()
+   ::clientSetMetodpPago()
 
    ::clientSetTarifa()
    
@@ -227,7 +227,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetFormaPago() CLASS FacturasClientesController
+METHOD clientSetMetodpPago() CLASS FacturasClientesController
 
    local cCodigoMetodoPago
 
@@ -243,9 +243,9 @@ METHOD clientSetFormaPago() CLASS FacturasClientesController
       cCodigoMetodoPago := Company():getDefaultMetodoPago()
    end if
 
-   ::getFormasPagosController():getSelector():cText( cCodigoMetodoPago )
+   ::getMetodosPagosController():getSelector():cText( cCodigoMetodoPago )
    
-   ::getFormasPagosController():getSelector():lValid()
+   ::getMetodosPagosController():getSelector():lValid()
 
 RETURN ( nil )
 

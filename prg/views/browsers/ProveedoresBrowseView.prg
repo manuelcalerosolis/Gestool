@@ -63,10 +63,10 @@ METHOD addColumns() CLASS ProveedoresBrowseView
    end with
 
    /*with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'clientes.forma_pago_codigo'
+      :cSortOrder          := 'clientes.metodo_pago_codigo'
       :cHeader             := 'Código pago'
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'forma_pago_codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'metodo_pago_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
       

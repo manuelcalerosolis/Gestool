@@ -56,7 +56,7 @@ METHOD getColumns() CLASS SQLFacturasClientesModel
    hset( ::hColumns, "direccion_principal_uuid",      {  "create"    => "VARCHAR( 40 )"                        ,;
                                                          "default"   => {|| space( 40 ) } }                    )
 
-   hset( ::hColumns, "forma_pago_codigo",             {  "create"    => "VARCHAR( 20 )"                        ,;
+   hset( ::hColumns, "metodo_pago_codigo",             {  "create"    => "VARCHAR( 20 )"                        ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "almacen_codigo",                {  "create"    => "VARCHAR( 20 )"                        ,;

@@ -19,7 +19,7 @@ CLASS MetodosPagosController FROM SQLNavigatorController
 
    METHOD getRepository()     INLINE ( if( empty( ::oRepository ), ::oRepository := MetodosPagoRepository():New( self ), ), ::oRepository )
    
-   METHOD getModel()          INLINE ( if( empty( ::oModel ), ::oModel := SQLMetodosPagoModel():New( self ), ), ::oModel )
+   METHOD getModel()          INLINE ( if( empty( ::oModel ), ::oModel := SQLMetodoPagoModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -373,7 +373,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLMetodosPagoModel FROM SQLCompanyModel
+CLASS SQLMetodoPagoModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "metodos_pago"
 
@@ -387,7 +387,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLMetodosPagoModel
+METHOD getColumns() CLASS SQLMetodoPagoModel
 
    hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
                                                 "default"   => {|| 0 } }                                    )
@@ -433,7 +433,7 @@ RETURN ( ::hColumns )
 
 CLASS MetodosPagoRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLMetodosPagoModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLMetodoPagoModel():getTableName() ) 
 
 END CLASS
 

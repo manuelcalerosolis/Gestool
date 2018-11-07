@@ -147,7 +147,7 @@ METHOD getInitialSelect() CLASS SQLTercerosModel
       %2$s.fecha_ultima_llamada AS fecha_ultima_llamada,
       %2$s.metodo_pago_codigo AS metodo_pago_codigo,
       %2$s.recargo_equivalencia AS recargo_equivalencia,
-      forma_pago.nombre AS nombre_forma_pago,                                                         
+      metodos_pago.nombre AS nombre_forma_pago,                                                         
       %2$s.agente_codigo AS agente_codigo,                                                       
       agentes.nombre AS nombre_agente,
       %2$s.cliente_grupo_codigo AS cliente_grupo_codigo,
@@ -168,8 +168,8 @@ METHOD getInitialSelect() CLASS SQLTercerosModel
    FROM %1$s AS %2$s
       LEFT JOIN %3$s AS direcciones 
          ON %2$s.uuid = direcciones.parent_uuid AND direcciones.codigo = 0  
-      LEFT JOIN %4$s AS forma_pago  
-         ON %2$s.metodo_pago_codigo = forma_pago.codigo
+      LEFT JOIN %4$s AS metodos_pago  
+         ON %2$s.metodo_pago_codigo = metodos_pago.codigo
       LEFT JOIN %5$s AS agentes   
          ON %2$s.agente_codigo = agentes.codigo
       LEFT JOIN %6$s AS rutas
@@ -183,7 +183,7 @@ METHOD getInitialSelect() CLASS SQLTercerosModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), ::cTableName, SQLDireccionesModel():getTableName(), SQLFormaPagoModel():getTableName(), SQLAgentesModel():getTableName(), SQLRutasModel():getTableName(), SQLClientesGruposModel():getTableName(), SQLCuentasRemesaModel():getTableName(), SQLArticulosTarifasModel():getTableName() )
+   cSql  := hb_strformat( cSql, ::getTableName(), ::cTableName, SQLDireccionesModel():getTableName(), SQLMetodoPagoModel():getTableName(), SQLAgentesModel():getTableName(), SQLRutasModel():getTableName(), SQLClientesGruposModel():getTableName(), SQLCuentasRemesaModel():getTableName(), SQLArticulosTarifasModel():getTableName() )
 
 RETURN ( cSql )
 
