@@ -178,6 +178,8 @@ CLASS MetodosPagoView FROM SQLBaseView
 
    DATA oGetCodigo
 
+   DATA hObjectPlazos         INIT {=>}
+
    METHOD New()
 
    METHOD Activate()
@@ -188,6 +190,10 @@ CLASS MetodosPagoView FROM SQLBaseView
 
    METHOD showMedioPago()
 
+   METHOD showPlazos()
+
+   METHOD hidePlazos()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -196,11 +202,13 @@ METHOD New( oController ) CLASS MetodosPagoView
 
    ::Super:New( oController )
 
-   ::hIcono := {  "Dinero"                => "gc_money2_16",;
-                  "Tarjeta de credito"    => "gc_credit_cards_16",;
-                  "Bolsa de dinero"       => "gc_moneybag_euro_16",;
-                  "Porcentaje"            => "gc_symbol_percent_16",;
-                  "Cesta de compra"       => "gc_shopping_cart_16" }
+   ::hObjectPlazos   := {=>}
+
+   ::hIcono          := {  "Dinero"                => "gc_money2_16",;
+                           "Tarjeta de credito"    => "gc_credit_cards_16",;
+                           "Bolsa de dinero"       => "gc_moneybag_euro_16",;
+                           "Porcentaje"            => "gc_symbol_percent_16",;
+                           "Cesta de compra"       => "gc_shopping_cart_16" }
 
 RETURN ( self )
 
@@ -246,30 +254,43 @@ METHOD Activate() CLASS MetodosPagoView
       OF          ::oDialog ;
 
    ::oController:getMediosPagoController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "codigo_medio_pago" ] ) )
-   ::oController:getMediosPagoController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oDialog } )
+   ::oController:getMediosPagoController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oDialog } ) 
   
-   REDEFINE GET   ::oController:getModel():hBuffer[ "numero_plazos" ] ;
+   ::hObjectPlazos[ "say_numero_plazos" ]   := TSay():ReDefine( 141, , ::oDialog )
+   msgalert( valtype( ::hObjectPlazos[ "say_numero_plazos" ] ) )
+
+   REDEFINE GET   ::hObjectPlazos[ "get_numero_plazos" ] ;
+      VAR         ::oController:getModel():hBuffer[ "numero_plazos" ] ;
       ID          140 ;
       SPINNER  ;
       MIN         0;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
+   
+   ::hObjectPlazos[ "say_primer_plazos" ]   := TSay():ReDefine( 151, , ::oDialog )
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "primer_plazo" ] ;
+   REDEFINE GET   ::hObjectPlazos[ "get_primer_plazo" ] ;
+      VAR         ::oController:getModel():hBuffer[ "primer_plazo" ] ;
       ID          150 ;
       SPINNER  ;
       MIN         0;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
+   
+   ::hObjectPlazos[ "say_entre_plazos" ]   := TSay():ReDefine( 161, , ::oDialog )
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "entre_plazo" ] ;
+   REDEFINE GET   ::hObjectPlazos[ "get_entre_plazos" ] ;
+      VAR         ::oController:getModel():hBuffer[ "entre_plazo" ] ;
       ID          160 ;
       SPINNER  ;
       MIN         0;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "ultimo_plazo" ] ;
+   ::hObjectPlazos[ "say_ultimo_plazos" ]   := TSay():ReDefine( 171, , ::oDialog )
+
+   REDEFINE GET   ::hObjectPlazos[ "get_ultimo_plazo" ] ;
+      VAR         ::oController:getModel():hBuffer[ "ultimo_plazo" ] ;
       ID          170 ;
       SPINNER  ;
       MIN         0;
@@ -302,11 +323,53 @@ METHOD showMedioPago() CLASS MetodosPagoView
 
    if ::oController:getModel():isCobrado()
       ::oController:getMediosPagoController():getSelector():hide()
+      ::oController:getMediosPagoController():getSelector():setBlank()
+      heval( ::hObjectPlazos, {|h| h:Show() } )
    else
-      ::oController:getMediosPagoController():getSelector():show() 
+      ::oController:getMediosPagoController():getSelector():show()
+      // heval( ::hObjectPlazos, {|k,v| msgalert( h, valtype( h ) ) } )
+      heval( ::hObjectPlazos, {|k,v | v:Hide() } )
    end if
  
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+METHOD showPlazos() CLASS MetodosPagoView
+
+   /*heval( ::hObjectPlazos, {|h| h:Show() } )
+
+   ::getNumeroplazos:Show()
+
+   ::oPrimerPlazo:Show()
+
+   ::oEntrePlazos:Show()
+   
+   ::oUltimoPlazo:Show()*/
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD hidePlazos() CLASS MetodosPagoView
+
+   /*heval( ::hObjectPlazos, {|h| h:Hide() } )
+   ::getNumeroplazos:Hide()
+   ::getNumeroplazos:varput( 0 )
+   ::getNumeroplazos:refresh()
+
+   ::oPrimerPlazo:Hide()
+   ::oPrimerPlazo:varput( 0 )
+   ::oPrimerPlazo:refresh()
+
+   ::oEntrePlazos:Hide()
+   ::oEntrePlazos:varput( 0 )
+   ::oEntrePlazos:refresh()
+
+   ::oUltimoPlazo:Hide()
+   ::oUltimoPlazo:varput( 0 )
+   ::oUltimoPlazo:refresh()*/
+
+RETURN( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -383,6 +446,8 @@ CLASS SQLMetodoPagoModel FROM SQLCompanyModel
 
    METHOD isCobrado()            INLINE ( ::getBuffer( 'cobrado' ) == 2 )
 
+   METHOD setBlankMedioPago()    
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -425,6 +490,13 @@ METHOD getColumns() CLASS SQLMetodoPagoModel
 
 RETURN ( ::hColumns )
 
+//---------------------------------------------------------------------------//
+
+METHOD setBlankMedioPago() CLASS SQLMetodoPagoModel
+
+   hset( ::hbuffer, "codigo_medio_pago", "")
+
+RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
