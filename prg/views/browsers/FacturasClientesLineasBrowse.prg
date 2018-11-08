@@ -10,8 +10,6 @@ CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
 
    DATA lFooter            INIT .t.
 
-   // DATA nFreeze            INIT 3
-
    DATA nMarqueeStyle      INIT 3
 
    DATA nColSel            INIT 2
@@ -297,7 +295,6 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nWidth              := 180
       :bEditValue          := {|| ::getRowSet():fieldGet( 'almacen_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   
    end with
 
    with object ( ::oColumnCodigoAgente := ::oBrowse:AddCol() )
@@ -320,7 +317,6 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nWidth              := 180
       :bEditValue          := {|| ::getRowSet():fieldGet( 'agente_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   
    end with
 
    with object ( ::oBrowse:AddCol() )

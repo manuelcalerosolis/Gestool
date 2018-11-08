@@ -29,7 +29,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD clientesSettedHelpText()
 
-   METHOD clientSetMetodpPago()   
+   METHOD clientSetMetodoPago()   
 
    METHOD clientSetTarifa()
 
@@ -116,8 +116,9 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::oSerieDocumentoComponent          := SerieDocumentoComponent():New( self )
 
-   ::getModel():setEvent( 'loadedBuffer',        {|| ::loadedBuffer() } )
-   ::getModel():setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } )
+   ::getModel():setEvent( 'loadedBuffer',       {|| ::loadedBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',  {|| ::loadedBlankBuffer() } )
+   ::getModel():setEvent( 'insertedBuffer',     {|| msgalert( 'insertedBuffer') } )
 
    ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',              {|| ::isClientFilled() } ) 
    ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence',  {|| ::getClientUuid() } )
@@ -209,7 +210,7 @@ METHOD clientesSettedHelpText() CLASS FacturasClientesController
       RETURN ( nil )
    end if         
 
-   ::clientSetMetodpPago()
+   ::clientSetMetodoPago()
 
    ::clientSetTarifa()
    
@@ -227,7 +228,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetMetodpPago() CLASS FacturasClientesController
+METHOD clientSetMetodoPago() CLASS FacturasClientesController
 
    local cCodigoMetodoPago
 
@@ -379,9 +380,7 @@ RETURN ( nil )
 
 METHOD isLines() CLASS FacturasClientesController
 
-   local nLineas  := ::getFacturasClientesLineasController():getModel():countLinesWhereUuidParent( ::getModelBuffer( 'uuid' ) )
-
-RETURN ( nLineas > 0 )
+RETURN ( ::getFacturasClientesLineasController():getModel():countLinesWhereUuidParent( ::getModelBuffer( 'uuid' ) ) > 0 )
 
 //---------------------------------------------------------------------------//
 
