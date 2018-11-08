@@ -16,9 +16,14 @@ CLASS SQLBaseValidator
 
    DATA lDebugMode                        INIT .f.
 
+   DATa cParsedMethod
+
    DATA uValue
+
+   DATA uOthers
   
    METHOD New() CONSTRUCTOR
+
    METHOD End()                           
 
    METHOD setValue( uValue )              INLINE   ( ::uValue := uValue )
@@ -27,16 +32,27 @@ CLASS SQLBaseValidator
                                                       ::setValue( ::oController:getModelBuffer( cColumn ) ),;
                                                       ::setValue( uValue ) ) )
 
+   METHOD setOthers( uOthers )            INLINE   (  ::uOthers := uOthers )
+   METHOD getOthers( uOthers )            INLINE   (  ::uOthers ) 
+
    METHOD getValidators()                 VIRTUAL
    METHOD getAsserts()                    VIRTUAL
 
    METHOD getController()                 INLINE   ( ::oController )
 
-   METHOD Validate( cColumn, uValue )     INLINE   ( ::assignValue( cColumn, uValue ), ::ProcessAll( cColumn, ::getValidators() ) )
-   METHOD Assert( cColumn, uValue )       INLINE   ( ::assignValue( cColumn, uValue ), ::ProcessAll( cColumn, ::getAsserts() ) )
+   METHOD Validate( cColumn, uValue, uOthers ) ;
+                                          INLINE   (  ::assignValue( cColumn, uValue ),;
+                                                      ::setOthers( uOthers ),;
+                                                      ::ProcessAll( cColumn, ::getValidators() ) )
+   METHOD Assert( cColumn, uValue, uOthers ) ;
+                                          INLINE   (  ::assignValue( cColumn, uValue ),;
+                                                      ::setOthers( uOthers ),;
+                                                      ::ProcessAll( cColumn, ::getAsserts() ) )
 
    METHOD ProcessAll()
       METHOD Process()
+      
+   METHOD parsedMethod( cMethod )
 
    METHOD sayMessage( cMessage )
 
@@ -59,6 +75,8 @@ CLASS SQLBaseValidator
    METHOD existTipoArticulo( uValue )
 
    METHOD Positive( uValue )
+
+   METHOD Min( uValue, nMimValue )
 
    METHOD getSenderControllerUuid()
 
@@ -131,11 +149,15 @@ RETURN ( .t. )
 METHOD Process( cMethod, cMessage )
 
    local oError
-   local lValidate   := .f.
+   local lValidate   
+
+   lValidate         := .f.
+
+   ::parsedMethod( cMethod )
 
    try 
 
-      lValidate      := Self:&( cMethod )( ::uValue ) 
+      lValidate      := Self:&( ::cParsedMethod )( ::uValue, ::uOthers ) 
 
       if !lValidate .and. !empty( cMessage )
          ::sayMessage( cMessage )         
@@ -148,6 +170,23 @@ METHOD Process( cMethod, cMessage )
    end 
 
 RETURN ( lValidate )
+
+//---------------------------------------------------------------------------//
+
+METHOD parsedMethod( cMethod )
+
+   local nAt
+   
+   ::cParsedMethod      := cMethod
+
+   nAt                  := at( ":", cMethod )
+
+   if nAt != 0
+      ::cParsedMethod   := substr( cMethod, 1, nAt - 1 )  
+      ::uOthers         := substr( cMethod, nAt + 1 )     
+   end if
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -316,6 +355,20 @@ RETURN ( .f. )
 METHOD Positive( uValue )
 
 RETURN ( hb_isnumeric( uValue ) .and. ( uValue >= 0 ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD Min( uValue, nMinValue )
+
+   if hb_isnil( nMinValue )
+      nMinValue   := 0
+   end if 
+
+   if hb_ischar( nMinValue )
+      nMinValue   := val( nMinValue )
+   end if 
+
+RETURN ( hb_isnumeric( uValue ) .and. ( uValue >= nMinValue ) )
 
 //---------------------------------------------------------------------------//
 

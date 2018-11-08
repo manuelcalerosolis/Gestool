@@ -9,6 +9,8 @@ CLASS FacturasClientesView FROM SQLBaseView
 
    DATA oGetNumero
 
+   DATA oBtnDescuentosDeleted
+
    DATA oTotalBruto
    DATA nTotalBruto                    INIT 0
    DATA oTotalIva
@@ -31,6 +33,10 @@ CLASS FacturasClientesView FROM SQLBaseView
    METHOD addLinksToExplorerBar()
 
    METHOD lineaAppend()
+
+   METHOD setDescuentoShowDeleted()    INLINE ( ::oController:getFacturasClientesDescuentosController():setShowDeleted(),;
+                                                ::oBtnDescuentosDeleted:Toggle(),;
+                                                ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Mostrar", "Ocultar" ) ) 
 
 END CLASS
 
@@ -202,7 +208,7 @@ METHOD Activate() CLASS FacturasClientesView
 
    TBtnBmp():ReDefine( 603, "refresh16",,,,, {|| ::oController:getFacturasClientesDescuentosController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
    
-   TBtnBmp():ReDefine( 604, "gc_deleted_16",,,,, {|| ::oController:getFacturasClientesDescuentosController():setShowDeleted() }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
+   ::oBtnDescuentosDeleted := TBtnBmp():ReDefine( 604, "gc_deleted_16",,,,, {|| ::setDescuentoShowDeleted() }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
 
    ::oController:getFacturasClientesDescuentosController():Activate( 600, ::oFolder:aDialogs[1] )   
 

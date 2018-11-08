@@ -88,7 +88,7 @@ METHOD addColumns() CLASS MetodosPagoBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
-      :nWidth              := 50
+      :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -190,7 +190,19 @@ CLASS MetodosPagoView FROM SQLBaseView
 
    METHOD addLinksToExplorerBar()
 
-   METHOD showMedioPago()
+   METHOD changeCobrado()
+
+   METHOD showPlazos()     INLINE   (  heval( ::hSayObjectPlazos, {| k, v | v:Show() } ),;
+                                       heval( ::hGetObjectPlazos, {| k, v | v:Show() } ) )
+
+   METHOD hidePlazos()     INLINE   (  heval( ::hSayObjectPlazos, {| k, v | v:Hide() } ),;
+                                       heval( ::hGetObjectPlazos, {| k, v | v:Hide() } ),;
+                                       heval( ::hGetObjectPlazos, {| k, v | if( k == 'get_numero_plazos', v:cText( 1 ), v:cText( 0 ) ) } ) )
+
+   METHOD showMedioPago()  INLINE   (  ::oController:getMediosPagoController():getSelector():show() )
+
+   METHOD hideMedioPago()  INLINE   (  ::oController:getMediosPagoController():getSelector():hide(),;
+                                       ::oController:getMediosPagoController():getSelector():setBlank() )
 
 END CLASS
 
@@ -201,13 +213,14 @@ METHOD New( oController ) CLASS MetodosPagoView
    ::Super:New( oController )
 
    ::hSayObjectPlazos   := {=>}
+
    ::hGetObjectPlazos   := {=>}
 
-   ::hIcono          := {  "Dinero"                => "gc_money2_16",;
-                           "Tarjeta de credito"    => "gc_credit_cards_16",;
-                           "Bolsa de dinero"       => "gc_moneybag_euro_16",;
-                           "Porcentaje"            => "gc_symbol_percent_16",;
-                           "Cesta de compra"       => "gc_shopping_cart_16" }
+   ::hIcono             := {  "Dinero"                => "gc_money2_16",;
+                              "Tarjeta de credito"    => "gc_credit_cards_16",;
+                              "Bolsa de dinero"       => "gc_moneybag_euro_16",;
+                              "Porcentaje"            => "gc_symbol_percent_16",;
+                              "Cesta de compra"       => "gc_shopping_cart_16" }
 
 RETURN ( self )
 
@@ -249,7 +262,7 @@ METHOD Activate() CLASS MetodosPagoView
       VAR         ::oController:getModel():hBuffer[ "cobrado" ] ;
       ID          120, 121;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ON CHANGE   ( ::showMedioPago() ) ;
+      ON CHANGE   ( ::changeCobrado() ) ;
       OF          ::oDialog ;
 
    ::oController:getMediosPagoController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "codigo_medio_pago" ] ) )
@@ -261,7 +274,8 @@ METHOD Activate() CLASS MetodosPagoView
       VAR         ::oController:getModel():hBuffer[ "numero_plazos" ] ;
       ID          140 ;
       SPINNER  ;
-      MIN         0;
+      MIN         1;
+      VALID       ( ::oController:validate( "numero_plazos" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
    
@@ -311,25 +325,18 @@ METHOD Activate() CLASS MetodosPagoView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-  ::oBitmap:end()
-
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD showMedioPago() CLASS MetodosPagoView
+METHOD changeCobrado() CLASS MetodosPagoView
 
    if ::oController:getModel():isCobrado()
-      ::oController:getMediosPagoController():getSelector():hide()
-      ::oController:getMediosPagoController():getSelector():setBlank()
-      heval( ::hSayObjectPlazos, {|k,v | v:Show() } )
-      heval( ::hGetObjectPlazos, {|k,v | v:Show() } )
+      ::showMedioPago()
+      ::hidePlazos()
    else
-      ::oController:getMediosPagoController():getSelector():show()
-      heval( ::hSayObjectPlazos, {|k,v | v:Hide() } )
-      heval( ::hGetObjectPlazos, {|k,v | v:Hide() } )
-      heval( ::hGetObjectPlazos, {|k,v | v:varput( 0 ) } )
-      heval( ::hGetObjectPlazos, {|k,v | v:Refresh } )
+      ::hideMedioPago()
+      ::showPlazos()
    end if
  
 RETURN ( nil )
@@ -342,7 +349,7 @@ METHOD startActivate() CLASS MetodosPagoView
    
    ::addLinksToExplorerBar()
 
-   ::showMedioPago()
+   ::changeCobrado()
 
 RETURN ( nil )
 
@@ -387,10 +394,12 @@ END CLASS
 
 METHOD getValidators() CLASS MetodosPagoValidator
 
-   ::hValidators  := {  "nombre" =>    {  "required"  => "El nombre es un dato requerido",;
-                                          "unique"    => "El nombre introducido ya existe" },;
-                        "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
-                                          "unique"    => "EL código introducido ya existe" } }
+   ::hValidators  := {  "nombre" =>          {  "required"  => "El nombre es un dato requerido",;
+                                                "unique"    => "El nombre introducido ya existe" },;
+                        "codigo" =>          {  "required"  => "El código es un dato requerido",;
+                                                "unique"    => "El código introducido ya existe" },;
+                        "numero_plazos" =>   {  "min:1"     => "El número de plazos debe ser mayor que cero" } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -407,7 +416,7 @@ CLASS SQLMetodoPagoModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD isCobrado()            INLINE ( ::getBuffer( 'cobrado' ) == 2 )
+   METHOD isCobrado()            INLINE ( ::getBuffer( 'cobrado' ) < 2 )
 
    METHOD setBlankMedioPago()    
 
@@ -430,22 +439,22 @@ METHOD getColumns() CLASS SQLMetodoPagoModel
                                                 "default"   => {|| space( 200 ) } }                         )
 
    hset( ::hColumns, "cobrado",              {  "create"    => "INTEGER( 1 )"                               ,;
-                                                "default"   => {|| ( 0 ) } }                                )
+                                                "default"   => {|| 0 } }                                    )
 
    hset( ::hColumns, "codigo_medio_pago",    {  "create"    => "VARCHAR( 20 )"                              ,;
                                                 "default"   => {|| space( 20 ) } }                          )
 
    hset( ::hColumns, "numero_plazos",        {  "create"    => "INTEGER( 5 )"                               ,;
-                                                "default"   => {|| ( 0 ) } }                                )
+                                                "default"   => {|| 1 } }                                    )
 
    hset( ::hColumns, "primer_plazo",         {  "create"    => "INTEGER( 5 )"                               ,;
-                                                "default"   => {|| ( 0 ) } }                                )
+                                                "default"   => {|| 0 } }                                    )
 
    hset( ::hColumns, "entre_plazo",          {  "create"    => "INTEGER( 5 )"                               ,;
-                                                "default"   => {|| ( 0 ) } }                                )
+                                                "default"   => {|| 0 } }                                    )
 
    hset( ::hColumns, "ultimo_plazo",         {  "create"    => "INTEGER( 5 )"                               ,;
-                                                "default"   => {|| ( 0 ) } }                                )
+                                                "default"   => {|| 0  } }                                   )
 
    ::getTimeStampColumns()
 

@@ -144,7 +144,7 @@ CLASS SQLBaseModel
    METHOD isDeletedAtColumn()                         INLINE ( hhaskey( ::hColumns, "deleted_at" ) )
    METHOD isDeleted( nId )                            
 
-   METHOD setShowDeleted( lShow )                     
+   METHOD changeShowDeleted()                         INLINE ( ::lShowDeleted := !::lShowDeleted, ::lShowDeleted )
    METHOD isShowDeleted()                             INLINE ( ::lShowDeleted )
 
    METHOD getDeleteOrUpdateSentenceByUuid( aUuid )
@@ -969,18 +969,6 @@ METHOD getInsertOnDuplicateSentence( hBuffer )
    cSQLUpdate        := chgAtEnd( cSQLUpdate, '', 2 )
 
 RETURN ( cSQLUpdate )
-
-//---------------------------------------------------------------------------//
-METHOD setShowDeleted( lShow )
-
-   if !::isShowDeleted
-   ::lShowDeleted := .t.
-   RETURN ( nil )
-   end if
-   
-   ::lShowDeleted := .f.
-
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

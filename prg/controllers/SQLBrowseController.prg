@@ -310,10 +310,11 @@ METHOD AppendLineal() CLASS SQLBrowseController
 RETURN ( lAppend )
 
 //----------------------------------------------------------------------------//
+
 METHOD setShowDeleted()
 
-   ::getModel():setShowDeleted( ::getModel():isShowDeleted() )
-   
+   ::getModel():changeShowDeleted()
+
 RETURN ( ::reBuildRowSet() )
 
 //----------------------------------------------------------------------------//

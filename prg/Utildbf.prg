@@ -1267,7 +1267,7 @@ FUNCTION cNoPathLeft( cFileName )
       nAt        := At( "/", cFileName )
    end if
 
-   RETURN Alltrim( SubStr( cFileName, nAt + 1 ) )
+RETURN Alltrim( SubStr( cFileName, nAt + 1 ) )
 
 //----------------------------------------------------------------------------//
 
