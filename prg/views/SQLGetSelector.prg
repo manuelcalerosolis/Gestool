@@ -98,6 +98,8 @@ CLASS GetSelector
    METHOD setOriginal( cOriginal )              INLINE ( ::cOriginal := cOriginal )
    METHOD getOriginal()                         INLINE ( ::cOriginal )
 
+   METHOD setBlank()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -410,6 +412,20 @@ METHOD Show() CLASS GetSelector
 RETURN ( nil )                                
 
 //---------------------------------------------------------------------------//
+
+METHOD setBlank()
+
+   ::oGet:varPut( space( 20 ) )
+
+   ::cleanHelpText()
+
+   ::Refresh()
+
+RETURN ( nil )
+
+
+
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
