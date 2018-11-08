@@ -11,6 +11,8 @@ CLASS FacturasClientesView FROM SQLBaseView
 
    DATA oBtnDescuentosDeleted
 
+   DATA oBtnLineasDeleted
+
    DATA oTotalBruto
    DATA nTotalBruto                    INIT 0
    DATA oTotalIva
@@ -34,10 +36,13 @@ CLASS FacturasClientesView FROM SQLBaseView
 
    METHOD lineaAppend()
 
+   METHOD setLineasShowDeleted()       INLINE ( ::oController:getFacturasClientesDescuentosController():setShowDeleted(),;
+                                                ::oBtnLineasDeleted:Toggle(),;
+                                                ::oBtnLineasDeleted:cTooltip := if( ::oBtnLineasDeleted:lPressed, "Ocultar", "Mostrar" ) ) 
+
    METHOD setDescuentoShowDeleted()    INLINE ( ::oController:getFacturasClientesDescuentosController():setShowDeleted(),;
                                                 ::oBtnDescuentosDeleted:Toggle(),;
-                                                ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Mostrar", "Ocultar" ) ) 
-
+                                                ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Ocultar", "Mostrar" ) ) 
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -196,7 +201,9 @@ METHOD Activate() CLASS FacturasClientesView
 
    TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| ::oController:getFacturasClientesLineasController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
    
-   TBtnBmp():ReDefine( 504, "gc_deleted_16",,,,, {||::oController:getFacturasClientesLineasController():setShowDeleted() }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
+   ::oBtnLineasDeleted := TBtnBmp():ReDefine( 504, "gc_deleted_16",,,,, {|| ::setLineasShowDeleted()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
+   
+   TBtnBmp():ReDefine( 505, "gc_object_cube_16",,,,, {|| ::oController:getArticulosController():Edit()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
 
    ::oController:getFacturasClientesLineasController():Activate( 500, ::oFolder:aDialogs[1] )
 
