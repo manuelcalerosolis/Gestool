@@ -178,7 +178,9 @@ CLASS MetodosPagoView FROM SQLBaseView
 
    DATA oGetCodigo
 
-   DATA hObjectPlazos         INIT {=>}
+   DATA hGetObjectPlazos
+
+   DATA hSayObjectPlazos
 
    METHOD New()
 
@@ -190,10 +192,6 @@ CLASS MetodosPagoView FROM SQLBaseView
 
    METHOD showMedioPago()
 
-   METHOD showPlazos()
-
-   METHOD hidePlazos()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -202,7 +200,8 @@ METHOD New( oController ) CLASS MetodosPagoView
 
    ::Super:New( oController )
 
-   ::hObjectPlazos   := {=>}
+   ::hSayObjectPlazos   := {=>}
+   ::hGetObjectPlazos   := {=>}
 
    ::hIcono          := {  "Dinero"                => "gc_money2_16",;
                            "Tarjeta de credito"    => "gc_credit_cards_16",;
@@ -256,10 +255,9 @@ METHOD Activate() CLASS MetodosPagoView
    ::oController:getMediosPagoController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "codigo_medio_pago" ] ) )
    ::oController:getMediosPagoController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oDialog } ) 
   
-   ::hObjectPlazos[ "say_numero_plazos" ]   := TSay():ReDefine( 141, , ::oDialog )
-   msgalert( valtype( ::hObjectPlazos[ "say_numero_plazos" ] ) )
+   ::hSayObjectPlazos[ "say_numero_plazos" ]   := TSay():ReDefine( 141, , ::oDialog )
 
-   REDEFINE GET   ::hObjectPlazos[ "get_numero_plazos" ] ;
+   REDEFINE GET   ::hGetObjectPlazos[ "get_numero_plazos" ] ;
       VAR         ::oController:getModel():hBuffer[ "numero_plazos" ] ;
       ID          140 ;
       SPINNER  ;
@@ -267,9 +265,9 @@ METHOD Activate() CLASS MetodosPagoView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
    
-   ::hObjectPlazos[ "say_primer_plazos" ]   := TSay():ReDefine( 151, , ::oDialog )
+   ::hSayObjectPlazos[ "say_primer_plazos" ]   := TSay():ReDefine( 151, , ::oDialog )
 
-   REDEFINE GET   ::hObjectPlazos[ "get_primer_plazo" ] ;
+   REDEFINE GET   ::hGetObjectPlazos[ "get_primer_plazo" ] ;
       VAR         ::oController:getModel():hBuffer[ "primer_plazo" ] ;
       ID          150 ;
       SPINNER  ;
@@ -277,9 +275,9 @@ METHOD Activate() CLASS MetodosPagoView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
    
-   ::hObjectPlazos[ "say_entre_plazos" ]   := TSay():ReDefine( 161, , ::oDialog )
+   ::hSayObjectPlazos[ "say_entre_plazos" ]   := TSay():ReDefine( 161, , ::oDialog )
 
-   REDEFINE GET   ::hObjectPlazos[ "get_entre_plazos" ] ;
+   REDEFINE GET   ::hGetObjectPlazos[ "get_entre_plazos" ] ;
       VAR         ::oController:getModel():hBuffer[ "entre_plazo" ] ;
       ID          160 ;
       SPINNER  ;
@@ -287,9 +285,9 @@ METHOD Activate() CLASS MetodosPagoView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   ::hObjectPlazos[ "say_ultimo_plazos" ]   := TSay():ReDefine( 171, , ::oDialog )
+   ::hSayObjectPlazos[ "say_ultimo_plazos" ]   := TSay():ReDefine( 171, , ::oDialog )
 
-   REDEFINE GET   ::hObjectPlazos[ "get_ultimo_plazo" ] ;
+   REDEFINE GET   ::hGetObjectPlazos[ "get_ultimo_plazo" ] ;
       VAR         ::oController:getModel():hBuffer[ "ultimo_plazo" ] ;
       ID          170 ;
       SPINNER  ;
@@ -324,52 +322,17 @@ METHOD showMedioPago() CLASS MetodosPagoView
    if ::oController:getModel():isCobrado()
       ::oController:getMediosPagoController():getSelector():hide()
       ::oController:getMediosPagoController():getSelector():setBlank()
-      heval( ::hObjectPlazos, {|h| h:Show() } )
+      heval( ::hSayObjectPlazos, {|k,v | v:Show() } )
+      heval( ::hGetObjectPlazos, {|k,v | v:Show() } )
    else
       ::oController:getMediosPagoController():getSelector():show()
-      // heval( ::hObjectPlazos, {|k,v| msgalert( h, valtype( h ) ) } )
-      heval( ::hObjectPlazos, {|k,v | v:Hide() } )
+      heval( ::hSayObjectPlazos, {|k,v | v:Hide() } )
+      heval( ::hGetObjectPlazos, {|k,v | v:Hide() } )
+      heval( ::hGetObjectPlazos, {|k,v | v:varput( 0 ) } )
+      heval( ::hGetObjectPlazos, {|k,v | v:Refresh } )
    end if
  
 RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-METHOD showPlazos() CLASS MetodosPagoView
-
-   /*heval( ::hObjectPlazos, {|h| h:Show() } )
-
-   ::getNumeroplazos:Show()
-
-   ::oPrimerPlazo:Show()
-
-   ::oEntrePlazos:Show()
-   
-   ::oUltimoPlazo:Show()*/
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD hidePlazos() CLASS MetodosPagoView
-
-   /*heval( ::hObjectPlazos, {|h| h:Hide() } )
-   ::getNumeroplazos:Hide()
-   ::getNumeroplazos:varput( 0 )
-   ::getNumeroplazos:refresh()
-
-   ::oPrimerPlazo:Hide()
-   ::oPrimerPlazo:varput( 0 )
-   ::oPrimerPlazo:refresh()
-
-   ::oEntrePlazos:Hide()
-   ::oEntrePlazos:varput( 0 )
-   ::oEntrePlazos:refresh()
-
-   ::oUltimoPlazo:Hide()
-   ::oUltimoPlazo:varput( 0 )
-   ::oUltimoPlazo:refresh()*/
-
-RETURN( nil )
 
 //---------------------------------------------------------------------------//
 
