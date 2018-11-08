@@ -150,9 +150,13 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_medicion_factor' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :cEditPicture        := masUnd()
+      :cEditPicture        := "@E 999,999.999999"
       :cDataType           := "N"
       :lHide               := .t.
+      :cDataType           := "N"
+      :nEditType           := EDIT_GET
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:stampArticuloFactor( oCol, uNewValue ) }
+
    end with
 
    with object ( ::oBrowse:AddCol() )

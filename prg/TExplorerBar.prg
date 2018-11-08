@@ -513,16 +513,15 @@ METHOD AddGetSelector( cPrompt, cGet ) CLASS TTaskPanel
    local cHelp
    local oHelp
    local oPrompt
-   local nTop        := ::getTopControl()
+   local nTop           := ::getTopControl()
 
    @ nTop + 3, 10 SAY oPrompt PROMPT cPrompt OF Self PIXEL COLOR Rgb( 10, 152, 234 ), Rgb( 255, 255, 255 )
 
    oPrompt:lWantClick   := .t.
-   //oPrompt:OnClick      := {|| ::oController:Edit( ::oController:oModel:getIdWhereCodigo( ::cGet ) ) }
 
    @ nTop, 120 GET oGet VAR cGet SIZE 100, 20 ACTION msgalert( "helpAction()" ) BITMAP "Lupa" OF Self PIXEL
 
-   @ nTop, 222 GET oHelp VAR cHelp SIZE 360, 20 OF Self PIXEL
+   @ nTop, 222 GET oHelp VAR cHelp SIZE 360, 20 WHEN ( .f. ) OF Self PIXEL
 
    ::setHeight( oGet:nTop, oGet:nHeight )
 

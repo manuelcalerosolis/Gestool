@@ -181,8 +181,6 @@ METHOD buildRowSetSentence( cType )
 
    ::getRowSet():Build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
 
-   msgalert( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ), "buildRowSetSentence" )
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

@@ -446,19 +446,6 @@ RETURN ( cSelect )
 
 METHOD getSentenceWhereEmpresa( cField ) CLASS UnidadesMedicionGruposLineasRepository
 
-/*
-   cSelect        := "SELECT lineas." + cField                                                                 + " " + ;
-                        "FROM "+ ::getTableName() + " AS lineas"                                               + " " + ;
-                        "LEFT JOIN " + SQLUnidadesMedicionGruposModel():getTableName() + " AS grupos"          + " " + ;         
-                           "ON lineas.parent_uuid = grupos.uuid"                                               + " " + ;         
-                        "LEFT JOIN " + SQLAjustableModel():getTableName() + " AS ajustables"                   + " " + ;
-                           "ON ajustables.ajuste_valor = grupos.codigo"                                        + " " + ;
-                        "LEFT JOIN " + SQLAjustesModel():getTableName() + " AS ajustes"                        + " " + ;
-                           "ON ajustes.uuid = ajustables.ajuste_uuid"                                          + " " + ;
-                        "WHERE ajustes.ajuste = 'unidades_grupo_defecto'"                                      + " " + ;
-                           "AND ajustables.ajustable_uuid = " + quoted( Company():uuid() )
-*/
-
    local cSql
 
    DEFAULT cField := "unidad_alternativa_codigo"
@@ -525,8 +512,6 @@ METHOD getSentenceWhereCodigoArticulo( cCodigoArticulo, cField ) CLASS UnidadesM
    ENDTEXT
 
    cSql  := hb_strformat( cSql, cField, ::getTableName(), SQLUnidadesMedicionGruposModel():getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ) ) 
-
-   logwrite( cSql )
 
 RETURN ( cSql )
 
@@ -645,16 +630,36 @@ RETURN ( nFactory )
 
 METHOD getFactorWhereUnidadArticulo( cCodigoArticulo, cCodigoUnidad ) CLASS UnidadesMedicionGruposLineasRepository
 
-   local cSentence 
+   local cSQL
 
    if empty( cCodigoArticulo )
       RETURN ( nil )
    end if
 
-   cSentence      := ::getSentenceWhereCodigoArticulo( cCodigoArticulo, "cantidad_base" ) + " " + ;
-                     "AND lineas.unidad_alternativa_codigo = " + quoted( cCodigoUnidad )
+   TEXT INTO cSql
 
-RETURN ( ::getDatabase():getValue( cSentence ) )
+      SELECT 
+         lineas.cantidad_base 
+         
+         FROM %1$s AS lineas 
+            
+            LEFT JOIN %2$s AS grupos 
+               ON lineas.parent_uuid = grupos.uuid 
+               
+            LEFT JOIN %3$s AS articulos 
+               ON articulos.unidades_medicion_grupos_codigo = grupos.codigo 
+               
+         WHERE articulos.codigo = %4$s 
+            AND lineas.unidad_alternativa_codigo = %5$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLUnidadesMedicionGruposModel():getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ), quoted( cCodigoUnidad ) ) 
+
+   msgalert( cSql, "getFactorWhereUnidadArticulo" )
+   logwrite( cSql )
+
+RETURN ( ::getDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
 
@@ -662,8 +667,8 @@ METHOD getFactorWhereUnidadEmpresa( cCodigoUnidad ) CLASS UnidadesMedicionGrupos
 
    local cSentence   
 
-   cSentence      := ::getSentenceWhereEmpresa( "cantidad_base" )            + " " + ;
-                        "AND lineas.unidad_alternativa_codigo = " + quoted( cCodigoUnidad )
+   cSentence   := ::getSentenceWhereEmpresa( "cantidad_base" ) + space( 1 )
+   cSentence   +=    "AND lineas.unidad_alternativa_codigo = " + quoted( cCodigoUnidad )
 
 RETURN ( ::getDatabase():getValue( cSentence ) )
 
@@ -673,8 +678,8 @@ METHOD getFactorWhereUnidadGrupoSistema( cCodigoUnidad ) CLASS UnidadesMedicionG
 
    local cSentence 
 
-   cSentence      := ::getSentenceWhereGrupoSistema( "cantidad_base" )       + " " + ;
-                        "AND lineas.unidad_alternativa_codigo = " + quoted( cCodigoUnidad )   
+   cSentence   := ::getSentenceWhereGrupoSistema( "cantidad_base" ) + space( 1 )
+   cSentence   +=    "AND lineas.unidad_alternativa_codigo = " + quoted( cCodigoUnidad )   
 
 RETURN ( ::getDatabase():getValue( cSentence ) )
 

@@ -424,15 +424,11 @@ METHOD getInsertUnidadesMedicionGruposSentence() CLASS SQLUnidadesMedicionGrupos
                            "VALUES"                                                       + " " + ;
                               "( " + quoted( uuid ) + ", " + cCodigoDefecto + ", 'Unidades', " + cCodigoDefecto + ", 1 )"
 
-   aadd( aSentence, cSentence )
-
    cSentence            := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                         + " " + ;
                               "( uuid, parent_uuid, unidad_alternativa_codigo, cantidad_alternativa, cantidad_base, sistema )"   + " " + ;
                            "VALUES"                                                                                              + " " + ;
                               "( UUID(), " + quoted( uuid ) + ", " + cCodigoDefecto + ", 1, 1, 1 )"
 
-   aadd( aSentence, cSentence )
-   
 RETURN ( aSentence )
 
 //---------------------------------------------------------------------------//
