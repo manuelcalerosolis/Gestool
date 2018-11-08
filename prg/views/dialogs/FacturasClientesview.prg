@@ -222,7 +222,7 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Botones generales--------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs, ::oController:getRecibosGeneratorController():getMetodoPago() ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
@@ -258,7 +258,7 @@ METHOD startDialog() CLASS FacturasClientesView
 
    ::oController:getClientesController():getSelector():Start()
 
-   ::oController:getFormasPagosController():getSelector():Start()
+   ::oController:getMetodosPagosController():getSelector():Start()
 
    ::oController:getRutasController():getSelector():Start()
 

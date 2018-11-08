@@ -438,8 +438,8 @@ METHOD getValidators() CLASS FacturasClientesValidator
 
    ::hValidators  := {  "cliente_codigo"     => {  "required"        => "El código del cliente es un dato requerido",;
                                                    "clienteExist"    => "El código del cliente no existe" } ,;  
-                        "metodo_pago_codigo" => {  "required"        => "El código de la forma de pago es un dato requerido",;
-                                                   "formaPagoExist"  => "El código de la forma de pago no existe" } ,;  
+                        "metodo_pago_codigo" => {  "required"        => "El código del método de pago es un dato requerido",;
+                                                   "formaPagoExist"  => "El código del método de pago no existe" } ,;  
                         "almacen_codigo"     => {  "required"        => "El código del almacén es un dato requerido",;
                                                    "almacenExist"    => "El código del almacén no existe" } ,;  
                         "tarifa_codigo"      => {  "required"        => "El código de la tarifa es un dato requerido",; 
