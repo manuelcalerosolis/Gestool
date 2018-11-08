@@ -129,7 +129,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:stampArticuloUnidades( oCol, uNewValue ) }
    end with
 
-   with object ( ::oColumnUnidadMedicion    := ::oBrowse:AddCol() )
+   with object ( ::oColumnUnidadMedicion := ::oBrowse:AddCol() )
       :cSortOrder          := 'unidad_medicion_codigo'
       :cHeader             := 'Unidad'
       :nWidth              := 100
@@ -137,9 +137,9 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nEditType           := EDIT_GET_LISTBOX
       :aEditListTxt        := {}
       :bEditWhen           := {|| ::oController:loadUnidadesMedicion() }
-      :bOnPostEdit         := {|o,x| ::oController:stampArticuloUnidadMedicion( x ) }
       :cEditPicture        := "@! NNNNNNNNNNNNNNNNNNNN"
       :bEditValid          := {|uNewValue| ::oController:lValidUnidadMedicion( uNewValue ) }
+      :bOnPostEdit         := {|oCol, uNewValue| ::oController:postValidateUnidadMedicion( oCol, uNewValue ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -154,7 +154,6 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :cDataType           := "N"
       :nEditType           := EDIT_GET
       :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:stampArticuloFactor( oCol, uNewValue ) }
-
    end with
 
    with object ( ::oBrowse:AddCol() )

@@ -471,9 +471,6 @@ METHOD getSentenceWhereEmpresa( cField ) CLASS UnidadesMedicionGruposLineasRepos
 
    cSql  := hb_strformat( cSql, cField, ::getTableName(), SQLUnidadesMedicionGruposModel():getTableName(), SQLAjustableModel():getTableName(), SQLAjustesModel():getTableName()  ) 
 
-   logwrite( cSql )
-   msgalert( cSql )
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
@@ -587,17 +584,14 @@ METHOD getCodigoDefault( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRep
 
    if !empty( cCodigoArticulo )
       cCodigo        := ::getWhereCodigoArticuloDefault( cCodigoArticulo )
-      msgalert( hb_valtoexp( cCodigo ), "getWhereCodigoArticuloDefault")
    end if      
 
    if empty( cCodigo )
       cCodigo        := ::getWhereEmpresaDefault()
-      msgalert( hb_valtoexp( cCodigo ), "getWhereEmpresaDefault")
    end if
 
    if empty( cCodigo )
       cCodigo        := ::getWhereSistemaDefault()
-      msgalert( hb_valtoexp( cCodigo ), "getWhereSistemaDefault")
    end if
 
 RETURN ( cCodigo )
@@ -655,9 +649,6 @@ METHOD getFactorWhereUnidadArticulo( cCodigoArticulo, cCodigoUnidad ) CLASS Unid
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLUnidadesMedicionGruposModel():getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ), quoted( cCodigoUnidad ) ) 
-
-   msgalert( cSql, "getFactorWhereUnidadArticulo" )
-   logwrite( cSql )
 
 RETURN ( ::getDatabase():getValue( cSql ) )
 

@@ -35,6 +35,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD postValidateCombinacionesUuid( oCol, uValue, nKey )
 
+   METHOD postValidateUnidadMedicion( oCol, uValue, nKey )
+
    METHOD validateLote()               
 
    METHOD validateUnidadMedicion( uValue )
@@ -228,9 +230,13 @@ METHOD validAlmacenCodigo( oGet, oCol )
    local uValue   := oGet:varGet()
 
    if SQLAlmacenesModel():CountAlmacenWhereCodigo( uValue ) <= 0 
+   
       msgStop( "El almacén introducido no existe" )
+   
       RETURN( .f. )
+   
    end if
+
    ::updateField ( 'almacen_codigo', uValue)
 
 RETURN ( .t. ) 
@@ -246,7 +252,7 @@ METHOD validAgenteCodigo( oGet, oCol )
       RETURN( .f. )
    end if
 
-   ::updateField ( 'agente_codigo', uValue)
+   ::updateField( 'agente_codigo', uValue)
    
    ::stampAgenteComision()
 
@@ -402,6 +408,22 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD postValidateUnidadMedicion( oCol, uValue, nKey )
+
+   if !hb_ischar( uValue )
+      RETURN ( .f. )
+   end if 
+
+   if ::getHistoryManager():isEqual( "unidad_medicion_codigo", uValue )
+      RETURN ( .t. )
+   end if          
+   
+   ::stampArticuloUnidadMedicion( uValue )
+
+RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
+
 METHOD getHashArticuloWhereCodigo( cCodigo )
    
 RETURN ( SQLArticulosModel():getHashWhere( "codigo", cCodigo ) )
@@ -534,8 +556,6 @@ METHOD stampArticuloUnidadMedicionVentas()
 
    local cUnidadMedicion   := ::getArticuloUnidadMedicionVentas()
 
-   msgalert( cUnidadMedicion, "unidad de medición obtenida" )
-
    if !empty( cUnidadMedicion )
       RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
    end if 
@@ -594,8 +614,6 @@ RETURN ( .t. )
 
 METHOD stampArticuloUnidadMedicion( uValue )
 
-   msgalert( hb_valtoexp( uValue ), "uValue" )
-      
    ::updateField( 'unidad_medicion_codigo', uValue )
 
    ::stampArticuloUnidadMedicionFactor()
