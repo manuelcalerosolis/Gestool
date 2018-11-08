@@ -164,7 +164,7 @@ METHOD New( oController )
    ::setEvent( 'closedDialog',               {|| ::closedDialog() } )
 
    ::setEvent( 'appended',                   {|| ::getBrowseView():Refresh() } )
-   ::setEvent( 'edited',                     {|| ::getBrowseView():Refresh() } )
+   ::setEvent( 'edited',                     {|| ::getBrowseView():Refresh() } ) 
    ::setEvent( 'deletedSelection',           {|| ::getBrowseView():Refresh() } )
 
    ::setEvent( 'deletingLines',              {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )

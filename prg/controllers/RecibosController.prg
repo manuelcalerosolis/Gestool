@@ -87,49 +87,8 @@ END CLASS
 
 METHOD addColumns() CLASS RecibosBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'cobrado'
-      :cHeader             := ''
-      :nWidth              := 50
-      :nHeadBmpNo          := 3
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'cobrado' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :SetCheck( { "sel16", "nil16" } )
-      :AddResource( "gc_money2_16" )
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'sesion'
-      :cHeader             := 'Sesión'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'sesion' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-     with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'cliente'
-      :cHeader             := 'Nombre Cliente'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_cliente' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'expedicion'
@@ -144,14 +103,6 @@ METHOD addColumns() CLASS RecibosBrowseView
       :cHeader             := 'Vencimiento'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'vencimiento' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'fecha_cobro'
-      :cHeader             := 'Fecha de cobro'
-      :nWidth              := 120
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_cobro' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -171,21 +122,7 @@ METHOD addColumns() CLASS RecibosBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'cobro'
-      :cHeader             := 'Cobrado'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'cobro' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'gastos'
-      :cHeader             := 'Gastos'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'gastos' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
+   ::getColumnDeletedAt()
 
 RETURN ( nil )
 
@@ -423,39 +360,10 @@ CLASS SQLRecibosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "factura_recibos"
 
-   METHOD getGeneralSelect()
-
    METHOD getColumns()
 
 
 END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD getGeneralSelect() CLASS SQLRecibosModel
-
-   local cSelect  := "SELECT factura_recibos.id,"                                                                                         + " " + ;
-                        "factura_recibos.uuid,"                                                                                           + " " + ;
-                        "factura_recibos.parent_uuid,"                                                                                    + " " + ;
-                        "factura_recibos.expedicion,"                                                                                     + " " + ;
-                        "factura_recibos.vencimiento,"                                                                                    + " " + ;
-                        "factura_recibos.no_incluir_en_arqueo,"                                                                           + " " + ;
-                        "factura_recibos.sesion,"                                                                                         + " " + ;
-                        "factura_recibos.importe,"                                                                                        + " " + ;
-                        "factura_recibos.cobro,"                                                                                          + " " + ;
-                        "factura_recibos.gastos,"                                                                                         + " " + ;
-                        "factura_recibos.cobrado,"                                                                                        + " " + ;
-                        "factura_recibos.fecha_cobro,"                                                                                    + " " + ;
-                        "factura_recibos.codigo_caja,"                                                                                    + " " + ;
-                        "factura_recibos.cliente,"                                                                                        + " " + ;
-                        "factura_recibos.agente,"                                                                                         + " " + ;
-                        "factura_recibos.concepto,"                                                                                       + " " + ;
-                        "factura_recibos.pagado_por,"                                                                                     + " " + ;
-                        "clientes.nombre AS nombre_cliente "                                                                              + " " + ;  
-                     "FROM " + ::getTableName() + " AS factura_recibos"                                                                   + " " + ;
-                        "INNER JOIN " + SQLClientesModel():getTableName() + " AS clientes ON factura_recibos.cliente = clientes.id"  
-
-RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 
@@ -476,45 +384,13 @@ METHOD getColumns() CLASS SQLRecibosModel
    hset( ::hColumns, "vencimiento",                {  "create"   => "DATE"                                        ,;
                                                       "default"   => {|| hb_date() } }                            )
 
-   hset( ::hColumns, "no_incluir_en_arqueo",       {  "create"    => "BIT"                                        ,;
-                                                      "default"   => {|| .f. } }                                  )
-
-   hset( ::hColumns, "sesion",                     {  "create"    => "VARCHAR( 200 )"                             ,;
-                                                      "default"   => {||  space( 200 )  } }                       )
-
-   hset( ::hColumns, "importe",                    {  "create"    => "FLOAT( 15,3 )"                              ,;
-                                                      "default"   => {||  0.000  } }                               )
-
-   hset( ::hColumns, "cobro",                      {  "create"    => "FLOAT( 15,3 )"                              ,;
-                                                      "default"   => {||  0.000  } }                               )
-
-   hset( ::hColumns, "gastos",                     {  "create"    => "FLOAT( 15,3 )"                              ,;
-                                                      "default"   => {||  0.000  } }                               )
-
-   hset( ::hColumns, "cobrado",                    {  "create"    => "TINYINT( 1 )"                                ,;
-                                                      "default"   => {|| 0 } }                                  )
-
-   hset( ::hColumns, "fecha_cobro",                {  "create"    => "DATE"                                       ,;
-                                                      "default"   => {|| ctod( "" ) } }                            )
-
-   hset( ::hColumns, "codigo_caja",                {  "create"    => "VARCHAR( 20 )"                              ,;
-                                                      "default"   => {|| space( 20 ) } }                          )
-
-   hset( ::hColumns, "cliente",                    {  "create"    => "VARCHAR( 20 )"                               ,;
-                                                      "default"   => {|| space( 20 ) } }                           )
-
-   hset( ::hColumns, "forma_pago",                 {  "create"    => "VARCHAR( 40 )"                               ,;
-                                                      "default"   => {|| space( 40 ) } }                           )
-
-   hset( ::hColumns, "agente",                     {  "create"    => "VARCHAR( 20 )"                               ,;
-                                                      "default"   => {|| space( 20 ) } }                           )
+   hset( ::hColumns, "importe",                    {  "create"    => "FLOAT( 16,6 )"                              ,;
+                                                      "default"   => {||  0  } }                               )
 
    hset( ::hColumns, "concepto",                   {  "create"    => "VARCHAR( 200 )"                              ,;
                                                       "default"   => {|| space( 200 ) } }                          )
 
-   hset( ::hColumns, "pagado_por",                 {  "create"    => "VARCHAR( 200 )"                              ,;
-                                                      "default"   => {|| space( 200 ) } }                          )
-
+   ::getDeletedStampColumn()
 
 
 RETURN ( ::hColumns )

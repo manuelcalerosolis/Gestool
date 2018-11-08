@@ -90,7 +90,7 @@ CLASS SQLBaseValidator
 
    METHOD clienteExist( cCodigo )         INLINE ( SQLClientesModel():isWhereCodigo( cCodigo ) )
 
-   METHOD formaPagoExist( cCodigo )       INLINE ( SQLFormaPagoModel():isWhereCodigo( cCodigo ) )
+   METHOD formaPagoExist( cCodigo )       INLINE ( SQLMetodoPagoModel():isWhereCodigo( cCodigo ) )
 
    METHOD almacenExist( cCodigo )         INLINE ( SQLAlmacenesModel():isWhereCodigo( cCodigo ) )
 
