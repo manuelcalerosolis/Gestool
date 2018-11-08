@@ -38,11 +38,12 @@ CLASS FacturasClientesView FROM SQLBaseView
 
    METHOD setLineasShowDeleted()       INLINE ( ::oController:getFacturasClientesDescuentosController():setShowDeleted(),;
                                                 ::oBtnLineasDeleted:Toggle(),;
-                                                ::oBtnLineasDeleted:cTooltip := if( ::oBtnLineasDeleted:lPressed, "Ocultar", "Mostrar" ) ) 
+                                                ::oBtnLineasDeleted:cTooltip := if( ::oBtnLineasDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
    METHOD setDescuentoShowDeleted()    INLINE ( ::oController:getFacturasClientesDescuentosController():setShowDeleted(),;
                                                 ::oBtnDescuentosDeleted:Toggle(),;
-                                                ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Ocultar", "Mostrar" ) ) 
+                                                ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -203,7 +204,7 @@ METHOD Activate() CLASS FacturasClientesView
    
    ::oBtnLineasDeleted := TBtnBmp():ReDefine( 504, "gc_deleted_16",,,,, {|| ::setLineasShowDeleted()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
    
-   TBtnBmp():ReDefine( 505, "gc_object_cube_16",,,,, {|| ::oController:getArticulosController():Edit()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
+   TBtnBmp():ReDefine( 505, "gc_object_cube_16",,,,, {|| ::oController:getFacturasClientesLineasController():Edit()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
 
    ::oController:getFacturasClientesLineasController():Activate( 500, ::oFolder:aDialogs[1] )
 

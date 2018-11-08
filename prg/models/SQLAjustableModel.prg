@@ -85,11 +85,6 @@ CLASS SQLAjustableGestoolModel FROM SQLAjustableModel
 
    METHOD getValueWhereMac( cTipoAjuste, cMacAddress, uDefault )
 
-   METHOD setEmpresaTarifaDefecto( uAjusteValue, cAjustableUuid );
-                                 INLINE ( ::setValue( 'tarifas_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
-   METHOD getEmpresaTarifaDefecto( cCodigo );
-                                 INLINE ( padr( ::getValue( cCodigo, 'empresas', 'tarifas_defecto', __tarifa_base__ ), 20 ) )   
-
    METHOD setUsuarioCajaExclusiva( uAjusteValue, cAjustableUuid ) ;      
                                  INLINE ( ::setValue( 'caja_exclusiva', uAjusteValue, 'usuarios', cAjustableUuid ) )
    METHOD setUsuarioPcEnUso( uAjusteValue, cAjustableUuid ) ;            
@@ -213,6 +208,11 @@ CLASS SQLAjustableModel FROM SQLCompanyModel
                                  INLINE ( ::setValue( 'unidades_grupo_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
    METHOD getUnidadesGrupo( uuidEmpresa );
                                  INLINE ( padr( ::getValue( uuidEmpresa, 'empresas', 'unidades_grupo_defecto', space( 20 ) ), 20 ) )   
+
+   METHOD setEmpresaTarifaDefecto( uAjusteValue, cAjustableUuid );
+                                 INLINE ( ::setValue( 'tarifas_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
+   METHOD getEmpresaTarifaDefecto( cCodigo );
+                                 INLINE ( padr( ::getValue( cCodigo, 'empresas', 'tarifas_defecto', __tarifa_base__ ), 20 ) )   
 
 END CLASS
 
