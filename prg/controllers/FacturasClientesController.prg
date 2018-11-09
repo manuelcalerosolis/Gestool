@@ -15,6 +15,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oTotalConDescuento             INIT 0
 
+   DATA nImporteTotal
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -216,7 +218,7 @@ RETURN ( nil )
 
 METHOD updatedBuffer() CLASS FacturasClientesController 
 
-   ::getRecibosGeneratorController():getMetodoPago()
+   ::getRecibosGeneratorController():generate()
 
 RETURN ( nil )
 
