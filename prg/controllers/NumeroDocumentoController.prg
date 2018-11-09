@@ -11,9 +11,7 @@ CLASS SerieDocumentoComponent
 
    DATA oGet
 
-   DATA cGet
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()                     
 
@@ -23,15 +21,13 @@ CLASS SerieDocumentoComponent
 
    METHOD bindValue( bValue )       INLINE ( ::bValue := bValue )
 
-   METHOD evalValue( value )        INLINE ( eval( ::bValue, value ) ) 
-
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New( oController ) CLASS SerieDocumentoComponent
 
-   ::oController                    := oController 
+   ::oController  := oController 
 
 RETURN ( Self )
 
@@ -45,16 +41,7 @@ RETURN ( nil )
 
 METHOD Activate( idGet, oDlg ) CLASS SerieDocumentoComponent
 
-   ::cGet         := eval( ::bValue )
-
-   REDEFINE GET   ::oGet ;
-      VAR         ::cGet ;
-      ID          idGet ;
-      PICTURE     "@! XXXXXXXXXXXXXXXXXXXX" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          oDlg
-
-   ::oGet:bValid  := {|| ::Validate() }
+   ::oGet   := TGet():ReDefine( idGet, ::bValue, oDlg, , "@! XXXXXXXXXXXXXXXXXXXX", {|| ::Validate() }, , , , , , .f., {|| ::oController:isNotZoomMode() }, , .f., .f. )
 
 RETURN ( Self )
 
@@ -90,8 +77,6 @@ CLASS NumeroDocumentoComponent
 
    DATA oGet
 
-   DATA cGet
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -102,15 +87,13 @@ CLASS NumeroDocumentoComponent
 
    METHOD bindValue( bValue )       INLINE ( ::bValue := bValue )
 
-   METHOD evalValue( value )        INLINE ( eval( ::bValue, value ) ) 
-
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New( oController ) CLASS NumeroDocumentoComponent
 
-   ::oController                    := oController 
+   ::oController  := oController 
 
 RETURN ( Self )
 
@@ -124,16 +107,7 @@ RETURN ( nil )
 
 METHOD Activate( idGet, oDlg ) CLASS NumeroDocumentoComponent
 
-   ::cGet         := eval( ::bValue )
-
-   REDEFINE GET   ::oGet ;
-      VAR         ::cGet ;
-      ID          idGet ;
-      PICTURE     "999999" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          oDlg
-
-   ::oGet:bValid  := {|| ::Validate() }
+   ::oGet   := TGet():ReDefine( idGet, ::bValue, oDlg, , "999999", {|| ::Validate() }, , , , , , .f., {|| ::oController:isNotZoomMode() }, , .f., .f. )
 
 RETURN ( nil )
 

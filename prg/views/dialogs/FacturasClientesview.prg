@@ -28,15 +28,13 @@ CLASS FacturasClientesView FROM SQLBaseView
    DATA oRecargoEquivalencia
    
    METHOD Activate()
-      METHOD Activating()
-
-   METHOD startDialog()
+      METHOD startActivate()
 
    METHOD addLinksToExplorerBar()
 
    METHOD lineaAppend()
 
-   METHOD setLineasShowDeleted()       INLINE ( ::oController:getFacturasClientesDescuentosController():setShowDeleted(),;
+   METHOD setLineasShowDeleted()       INLINE ( ::oController:getFacturasClientesLineasController():setShowDeleted(),;
                                                 ::oBtnLineasDeleted:Toggle(),;
                                                 ::oBtnLineasDeleted:cTooltip := if( ::oBtnLineasDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
@@ -45,16 +43,6 @@ CLASS FacturasClientesView FROM SQLBaseView
                                                 ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
 END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD Activating() CLASS FacturasClientesView
-
-   // if ::oController:isAppendOrDuplicateMode()
-   //    ::getController():getModel():hBuffer()
-   // end if 
-
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -96,7 +84,7 @@ METHOD Activate() CLASS FacturasClientesView
    // Serie-------------------------------------------------------------------
 
    ::oController:oSerieDocumentoComponent:BindValue( bSETGET( ::getController():getModel():hBuffer[ "serie" ] ) )
-   ::oController:oSerieDocumentoComponent:Activate( 4005, ::oFolder:aDialogs[1] )
+   ::oController:oSerieDocumentoComponent:Activate( 100, ::oFolder:aDialogs[1] )
 
    // Numero-------------------------------------------------------------------
 
@@ -222,7 +210,7 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Botones generales--------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs, ::oController:getRecibosGeneratorController():getMetodoPago() ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
@@ -244,7 +232,7 @@ METHOD Activate() CLASS FacturasClientesView
 
    end if
 
-   ::oDialog:bStart := {|| ::startDialog() }
+   ::oDialog:bStart := {|| ::startActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -252,7 +240,7 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD startDialog() CLASS FacturasClientesView
+METHOD startActivate() CLASS FacturasClientesView
 
    ::addLinksToExplorerBar()
 
@@ -317,7 +305,7 @@ METHOD lineaAppend() CLASS FacturasClientesView
       RETURN( nil )
    end if
 
-RETURN( ::oController:getFacturasClientesLineasController():AppendLineal() ) 
+RETURN ( ::oController:getFacturasClientesLineasController():AppendLineal() ) 
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

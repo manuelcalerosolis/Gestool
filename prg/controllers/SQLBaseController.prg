@@ -298,7 +298,7 @@ METHOD Append()
 
       ::fireEvent( 'openingDialog' )     
 
-      if ::DialogViewActivate()
+      if ::dialogViewActivate()
 
          ::fireEvent( 'closedDialog' )    
 
@@ -371,7 +371,7 @@ METHOD Insert()
 
       ::fireEvent( 'openingDialog' )     
 
-      if ::DialogViewActivate()
+      if ::dialogViewActivate()
 
          ::fireEvent( 'closedDialog' )    
 
@@ -641,8 +641,6 @@ METHOD DialogViewActivate( oDialogView )
    ::uDialogResult         := oDialogView:Activate()
    
    oDialogView:Activated()
-
-   // oDialogView:End()
 
    if hb_islogical( ::uDialogResult )
       RETURN ( ::uDialogResult )

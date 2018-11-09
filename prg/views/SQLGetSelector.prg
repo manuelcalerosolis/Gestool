@@ -66,7 +66,7 @@ CLASS GetSelector
    
    METHOD start()                               INLINE ( ::loadHelpText( .t. ) )
 
-   METHOD evalValue( value )                    INLINE ( eval( ::bValue, value ) )
+   // METHOD evalValue( value )                    INLINE ( eval( ::bValue, value ) )
 
    METHOD showMessage()
 
@@ -144,10 +144,10 @@ METHOD Activate( idGet, idText, oDlg, idSay, idLink ) CLASS GetSelector
       RETURN ( nil )
    end if
 
-   ::cGet               := eval( ::bValue )
+   ::setOriginal( eval( ::bValue ) )
 
-   ::setOriginal( ::cGet )
-
+   ::oGet               := TGetHlp():ReDefine( idGet, ::bValue, oDlg, , ::cPicture, {|| ::validAction() }, , , , , , .t., ::bWhen, , .f., .f., , , , , {|| ::helpAction() }, , "Lupa", idSay, idText )
+/*
    REDEFINE GET         ::oGet ;
       VAR               ::cGet ;
       ID                idGet ;
@@ -158,10 +158,10 @@ METHOD Activate( idGet, idText, oDlg, idSay, idLink ) CLASS GetSelector
       BITMAP            "Lupa" ;
       OF                oDlg
 
-   ::oGet:bHelp         := {|| ::helpAction() }
-   ::oGet:bValid        := {|| ::validAction() }
-   ::oGet:bWhen         := ::bWhen
-
+   ::oGet:bHelp         := 
+   ::oGet:bValid        := 
+   ::oGet:bWhen         := 
+*/
    if !empty( idLink )   
 
    REDEFINE SAY         ::oLink ;
@@ -201,6 +201,8 @@ METHOD addGetSelector( cLink, oTaskPanel ) CLASS GetSelector
    
    ::oLink:lWantClick   := .t.
    ::oLink:OnClick      := {|| ::oController:Edit( ::oController:getModel():getIdWhereCodigo( ::cGet ) ) }
+
+   // ::oGet := TGet():New( nTop, 120, ::bValue, oTaskPanel, 100, 22,,,,,, .F.,, .T.,, .F.,, .F., .F.,, .F., .F.,,,,,,,, {|self| ( msgInfo( "Action not redefined" ) ) }, "Lupa", "::oGet",,,, )
 
    @ nTop, 120 GET      ::oGet ;
       VAR               ::cGet ;
@@ -259,7 +261,7 @@ METHOD assignResults( hResult ) CLASS GetSelector
 
       ::cText( hGet( hResult, ::getKey() ) )
 
-      ::evalValue( hGet( hResult, ::getKey() ) )
+      // ::evalValue( hGet( hResult, ::getKey() ) )
 
    end if
 
@@ -273,7 +275,7 @@ METHOD validAction() CLASS GetSelector
       RETURN ( .f. )
    end if
 
-   ::evalValue( ::varGet() )
+   // ::evalValue( ::varGet() )
 
    if !empty( ::bValid ) .and. !eval( ::bValid, ::oGet ) 
       RETURN ( .f. )

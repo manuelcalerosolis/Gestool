@@ -538,7 +538,7 @@ RETURN ( nil )
 
 METHOD setShowDeleted()
 
-   ::getModel():setShowDeleted( ::getModel():isShowDeleted() )
+   ::getModel():changeShowDeleted()
 
    ::getNavigatorView();
       :getMenuTreeView();

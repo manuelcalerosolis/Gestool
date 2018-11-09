@@ -21,7 +21,9 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD loadedBlankBuffer() 
 
-   METHOD loadedBuffer()               INLINE ( ::getHistoryManager():Set( ::oModel:hBuffer ) )
+   METHOD loadedBuffer()               INLINE ( ::getHistoryManager():Set( ::getModel():hBuffer ) )
+
+   METHOD updatingBuffer()
 
    METHOD getClientUuid() 
 
@@ -118,7 +120,7 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::getModel():setEvent( 'loadedBuffer',       {|| ::loadedBuffer() } )
    ::getModel():setEvent( 'loadedBlankBuffer',  {|| ::loadedBlankBuffer() } )
-   ::getModel():setEvent( 'insertedBuffer',     {|| msgalert( 'insertedBuffer') } )
+   ::getModel():setEvent( 'updatingBuffer',     {|| ::updatingBuffer() } )
 
    ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',              {|| ::isClientFilled() } ) 
    ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence',  {|| ::getClientUuid() } )
@@ -180,19 +182,30 @@ METHOD End() CLASS FacturasClientesController
       ::oSerieDocumentoComponent:End()
    end if 
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
 METHOD loadedBlankBuffer() CLASS FacturasClientesController 
 
-   hset( ::oModel:hBuffer, "serie",    SQLContadoresModel():getDocumentSerie( ::cName ) )
-   
-   hset( ::oModel:hBuffer, "numero",   SQLContadoresModel():getDocumentCounter( ::cName ) )
+   ::setModelBuffer( "serie", SQLContadoresModel():getDocumentSerie( ::cName ) )
 
-   hset( ::oModel:hBuffer, "almacen_codigo", Store():getCodigo() )
+   ::setModelBuffer( "numero", SQLContadoresModel():getPosibleNext( ::cName, ::getModelBuffer( "serie" ) ) )
+
+   ::setModelBuffer( "almacen_codigo", Store():getCodigo() )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD updatingBuffer() CLASS FacturasClientesController 
+
+   msgalert( ::getModelBuffer( "serie" ), "serie" )
+   msgalert( ::getModel():hBuffer[ "serie" ], "con get" )
+
+   if ::isAppendMode()
+      ::setModelBuffer( "numero", SQLContadoresModel():getNext( ::cName, ::getModelBuffer( "serie" ) ) )
+   end if 
 
 RETURN ( nil )
 
