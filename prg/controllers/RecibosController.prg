@@ -362,7 +362,6 @@ CLASS SQLRecibosModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -376,7 +375,7 @@ METHOD getColumns() CLASS SQLRecibosModel
                                                       "default"   => {|| win_uuidcreatestring() } }               )
 
    hset( ::hColumns, "parent_uuid",                {  "create"    => "VARCHAR( 40 )"                              ,;
-                                                      "default"   => {||::getControllerParentUuid() } }     )
+                                                      "default"   => {|| ::getControllerParentUuid() } }           )
 
    hset( ::hColumns, "expedicion",                 {  "create"    => "DATE"                                       ,;
                                                       "default"   => {|| hb_date() } }                            )
@@ -385,7 +384,7 @@ METHOD getColumns() CLASS SQLRecibosModel
                                                       "default"   => {|| hb_date() } }                            )
 
    hset( ::hColumns, "importe",                    {  "create"    => "FLOAT( 16,6 )"                              ,;
-                                                      "default"   => {||  0  } }                               )
+                                                      "default"   => {||  0  } }                                  )
 
    hset( ::hColumns, "concepto",                   {  "create"    => "VARCHAR( 200 )"                              ,;
                                                       "default"   => {|| space( 200 ) } }                          )
@@ -394,6 +393,24 @@ METHOD getColumns() CLASS SQLRecibosModel
 
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+/*METHOD insertRecibosSentence()
+
+   local cSql
+
+   TEXT INTO cSql
+   INSERT [LOW_PRIORITY | DELAYED | HIGH_PRIORITY] [IGNORE]
+      [INTO] tbl_name [(col_name,...)]
+      VALUES (\,...),(...),...
+      [ ON DUPLICATE KEY UPDATE col_name=expression, ... ]
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( cCodigoMedioPago ) )
+
+RETURN ( cSql )*/
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
