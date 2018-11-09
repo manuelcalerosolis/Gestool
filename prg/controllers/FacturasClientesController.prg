@@ -88,6 +88,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
    
    METHOD getReport()                  INLINE ( if( empty( ::oReport ), ::oReport := FacturasClientesReport():New( self ), ), ::oReport )
 
+   METHOD getSerieDocumentoComponent() INLINE ( if( empty( ::oSerieDocumentoComponent ), ::oSerieDocumentoComponent := SerieDocumentoComponent():New( self ), ), ::oSerieDocumentoComponent )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -116,8 +118,6 @@ METHOD New( oController ) CLASS FacturasClientesController
                                              "32" => "gc_document_text_user_32",;
                                              "48" => "gc_document_text_user_48" }
 
-   ::oSerieDocumentoComponent          := SerieDocumentoComponent():New( self )
-
    ::oNumeroDocumentoComponent         := NumeroDocumentoComponent():New( self )
 
    ::getModel():setEvent( 'loadedBuffer',       {|| ::loadedBuffer() } )
@@ -134,6 +134,8 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::getClientesController():getSelector():setEvent( 'settedHelpText',    {|| ::clientesSettedHelpText() } )
 
    ::getFacturasClientesDescuentosController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
+
+   ::getSerieDocumentoComponent():setEvent( 'insertedOnDuplicateSentence', {|| msgalert( 'insertedOnDuplicateSentence' ) } )
 
 RETURN ( Self )
 

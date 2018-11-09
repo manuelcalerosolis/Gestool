@@ -76,7 +76,7 @@ CLASS SQLDatabase
 
    METHOD beginTransaction()              INLINE ( if( !empty( ::oConexion ), ::oConexion:beginTransaction(),  msgstop( "No ha conexiones disponibles" ) ) )
    METHOD Commit()                        INLINE ( if( !empty( ::oConexion ), ::oConexion:commit(), msgstop( "No ha conexiones disponibles" ) ) )
-   METHOD rollBack()                      INLINE ( if( !empty( ::oConexion ), ::oConexion:rollback(),  msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD rollBack()                      INLINE ( if( !empty( ::oConexion ), ::oConexion:rollBack(),  msgstop( "No ha conexiones disponibles" ) ) )
 
    METHOD errorInfo()                     INLINE ( if( !empty( ::oConexion ), ::oConexion:errorInfo(), ) )
 

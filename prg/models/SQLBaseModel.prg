@@ -946,6 +946,8 @@ METHOD getInsertOnDuplicateSentence( hBuffer )
       RETURN ( nil )
    end if 
 
+   ::fireEvent( 'insertingOnDuplicateSentence' )   
+
    hBuffer           := ::setUpdatedTimeStamp( hBuffer )
    
    cSQLUpdate        := ::getInsertSentence( hBuffer ) + " "
@@ -961,6 +963,8 @@ METHOD getInsertOnDuplicateSentence( hBuffer )
    next
 
    cSQLUpdate        := chgAtEnd( cSQLUpdate, '', 2 )
+
+   ::fireEvent( 'insertedOnDuplicateSentence' )   
 
 RETURN ( cSQLUpdate )
 

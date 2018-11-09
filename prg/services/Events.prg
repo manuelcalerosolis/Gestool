@@ -7,13 +7,15 @@ CLASS Events
 
    DATA hEvents                                       
  
-   METHOD New()
+   METHOD   New() CONSTRUCTOR
 
-   METHOD End()
+   METHOD   End()
 
-   METHOD Set( cEvent, bEvent )
+   METHOD   Set( cEvent, bEvent )
+   METHOD   SetEvent( cEvent, bEvent )    INLINE ( ::Set( cEvent, bEvent ) )
 
-   METHOD Fire( cEvent )
+   METHOD   Fire( cEvent )
+   METHOD   FireEvent( cEvent )           INLINE ( ::Fire( cEvent ) )
 
 END CLASS
 

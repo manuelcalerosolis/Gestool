@@ -3,13 +3,15 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SerieDocumentoComponent
+CLASS SerieDocumentoComponent FROM Events
 
    DATA oController
 
    DATA bValue
 
    DATA oGet
+
+   DATA uOriginal
 
    METHOD New() CONSTRUCTOR
 
@@ -21,6 +23,10 @@ CLASS SerieDocumentoComponent
 
    METHOD bindValue( bValue )       INLINE ( ::bValue := bValue )
 
+   METHOD storeOriginal()           INLINE ( ::uOriginal := eval( ::bValue ) )
+   METHOD setOriginal( uOriginal )  INLINE ( ::uOriginal := uOriginal )
+   METHOD getOriginal()             INLINE ( ::uOriginal )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -29,17 +35,21 @@ METHOD New( oController ) CLASS SerieDocumentoComponent
 
    ::oController  := oController 
 
+   ::Super():New()
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS SerieDocumentoComponent
 
-RETURN ( nil )
+RETURN ( ::Super():End() )
 
 //---------------------------------------------------------------------------//
 
 METHOD Activate( idGet, oDlg ) CLASS SerieDocumentoComponent
+
+   ::storeOriginal()
 
    ::oGet   := TGet():ReDefine( idGet, ::bValue, oDlg, , "@! XXXXXXXXXXXXXXXXXXXX", {|| ::Validate() }, , , , , , .f., {|| ::oController:isNotZoomMode() }, , .f., .f. )
 
@@ -56,13 +66,13 @@ METHOD Validate() CLASS SerieDocumentoComponent
    end if
 
    if !( msgYesNo( "La serie " + cSerie + ", no existe.", "¿ Desea crear una nueva serie ?" ) )
-
-      msgalert( ::oGet:Original, "ogetOriginal" )
-
+      ::oGet:cText( ::getOriginal() )
       RETURN ( .f. )
    end if 
 
    ::oController:getContadoresModel():insertSerie( ::oController:cName, cSerie ) 
+
+   ::fireEvent( 'insertedOnDuplicateSentence' )   
 
 RETURN ( .t. )
 
