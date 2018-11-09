@@ -7,6 +7,8 @@ CLASS RecibosGeneratorController
 
    DATA oModel
 
+   DATA oMetodoPagoModel
+
    DATA hMetodoPago
 
    DATA oController
@@ -22,6 +24,8 @@ CLASS RecibosGeneratorController
    //Construcciones tardias----------------------------------------------------
 
    METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLRecibosModel():New( self ), ), ::oModel ) 
+   
+   METHOD getMetodoPagoModel()   INLINE( if( empty( ::oMetodoPagoModel ), ::oMetodoPagoModel := SQLMetodoPagoModel():New( self ), ), ::oMetodoPagoModel ) 
 
 END CLASS
 
@@ -39,6 +43,10 @@ METHOD End() CLASS RecibosGeneratorController
 
    if !empty( ::oModel )
       ::oModel:End()
+   end if
+
+   if !empty( ::oMetodoPagoModel )
+      ::oMetodoPagoModel:End()
    end if
 
 RETURN ( nil )
@@ -61,9 +69,9 @@ METHOD getMetodoPago() CLASS RecibosGeneratorController
       RETURN ( nil )
    end if 
 
-   ::hMetodoPago   := SQLMetodoPagoModel():getBufferByCodigo( cMetodoPago )
+   ::hMetodoPago   := ::getMetodoPagoModel():getBufferByCodigo( cMetodoPago )
 
-   msgalert( ::hMetodoPago, "Hashlist")
+   msgalert( hb_valtoexp( ::hMetodoPago ), "Hashlist")
 
 RETURN ( ::hMetodoPago )
 

@@ -25,6 +25,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD updatingBuffer()
 
+   METHOD updatedBuffer()
+
    METHOD getClientUuid() 
 
    METHOD isClientFilled()             INLINE ( !empty( ::getModelBuffer( "cliente_codigo" ) ) )
@@ -121,6 +123,7 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::getModel():setEvent( 'loadedBuffer',       {|| ::loadedBuffer() } )
    ::getModel():setEvent( 'loadedBlankBuffer',  {|| ::loadedBlankBuffer() } )
    ::getModel():setEvent( 'updatingBuffer',     {|| ::updatingBuffer() } )
+   ::getModel():setEvent( 'updatedBuffer',      {|| ::updatedBuffer() } )
 
    ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',              {|| ::isClientFilled() } ) 
    ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence',  {|| ::getClientUuid() } )
@@ -206,6 +209,14 @@ METHOD updatingBuffer() CLASS FacturasClientesController
    if ::isAppendMode()
       ::setModelBuffer( "numero", SQLContadoresModel():getNext( ::cName, ::getModelBuffer( "serie" ) ) )
    end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD updatedBuffer() CLASS FacturasClientesController 
+
+   ::getRecibosGeneratorController():getMetodoPago()
 
 RETURN ( nil )
 

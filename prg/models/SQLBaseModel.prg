@@ -7,8 +7,6 @@
 
 CLASS SQLBaseModel
 
-   DATA nSeconds
-  
    DATA oController
 
    DATA oEvents
@@ -340,8 +338,6 @@ METHOD New( oController )
    end if 
 
    ::cGeneralSelect              := "SELECT * FROM " + ::getTableName()    
-
-   ::nSeconds                    := seconds()
 
 RETURN ( self )
 
