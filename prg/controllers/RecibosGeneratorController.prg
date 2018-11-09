@@ -7,6 +7,8 @@ CLASS RecibosGeneratorController
 
    DATA oModel
 
+   DATA hMetodoPago
+
    DATA oController
 
    METHOD New() CONSTRUCTOR
@@ -17,13 +19,8 @@ CLASS RecibosGeneratorController
 
    METHOD generateRecibo()
 
-   METHOD getPlazos( cCodigoMedioPago )
-
-   METHOD getPlazosSentence( cCodigoMedioPago )
-
    //Construcciones tardias----------------------------------------------------
 
-   
    METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLRecibosModel():New( self ), ), ::oModel ) 
 
 END CLASS
@@ -53,43 +50,24 @@ RETURN ( nil )
  RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
 METHOD getMetodoPago() CLASS RecibosGeneratorController
 
    local cMetodoPago
 
-   cMetodoPago := ::oController:getModelBuffer( 'metodo_pago_codigo' )
-   ::getPlazosSentence( cMetodoPago )
+   cMetodoPago    := ::oController:getModelBuffer( 'metodo_pago_codigo' )
 
-RETURN ( nil )
+   if empty( cMetodoPago )
+      RETURN ( nil )
+   end if 
+
+   ::hMetodoPago   := SQLMetodoPagoModel():getBufferByCodigo( cMetodoPago )
+
+   msgalert( ::hMetodoPago, "Hashlist")
+
+RETURN ( ::hMetodoPago )
 
 //---------------------------------------------------------------------------//
-
-METHOD getPlazos( cCodigoMedioPago ) CLASS RecibosGeneratorController
-
-   
-
-RETURN ( nil )
-//---------------------------------------------------------------------------//
-
-METHOD getPlazosSentence( cCodigoMedioPago ) CLASS RecibosGeneratorController
-local cSql
-
-   TEXT INTO cSql
-
-   SELECT *
-
-   FROM %1$s AS metodos_pago
-
-   WHERE metodos_pago.codigo = %2$s
-   
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getModel():getTableName(), quoted( cCodigoMedioPago ) )
-  msgalert(cSql)
-RETURN ( cSql )
-
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

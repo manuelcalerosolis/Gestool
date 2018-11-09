@@ -418,7 +418,12 @@ CLASS SQLMetodoPagoModel FROM SQLCompanyModel
 
    METHOD isCobrado()            INLINE ( ::getBuffer( 'cobrado' ) < 2 )
 
-   METHOD setBlankMedioPago()    
+   METHOD setBlankMedioPago() 
+
+   METHOD getMetodoPagoSentence( cCodigoMedioPago ) 
+
+   METHOD getMetodoPago( cCodigoMedioPago ) ;
+                                 INLINE ( getSQLDatabase():getValue( ::getMetodoPagoSentence( cCodigoMedioPago ) ) )
 
 END CLASS
 
@@ -469,6 +474,38 @@ METHOD setBlankMedioPago() CLASS SQLMetodoPagoModel
    hset( ::hbuffer, "codigo_medio_pago", "")
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getMetodoPagoSentence( cCodigoMedioPago ) CLASS SQLMetodoPagoModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT id AS id,
+      uuid AS uuid,
+      nombre AS nombre,
+      cobrado AS cobrado,
+      codigo_medio_pago AS codigo_medio_pago,
+      numero_plazos AS numero_plazos,
+      primer_plazo AS primer_plazo,
+      entre_plazos AS entre_plazos,
+      ultimo_plazo AS ultimo_plazo,
+      created_at AS created_at,
+      updated_at AS updated_at,
+      deleted_at AS deleted_at
+
+   FROM %1$s AS metodos_pago
+
+   WHERE metodos_pago.codigo = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( cCodigoMedioPago ) )
+  
+RETURN ( cSql )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
