@@ -66,8 +66,6 @@ CLASS GetSelector
    
    METHOD start()                               INLINE ( ::loadHelpText( .t. ) )
 
-   // METHOD evalValue( value )                    INLINE ( eval( ::bValue, value ) )
-
    METHOD showMessage()
 
    METHOD varGet()                              INLINE ( if( !empty( ::oGet ), ::oGet:varGet(), ) )
@@ -89,8 +87,7 @@ CLASS GetSelector
    METHOD setEvent( cEvent, bEvent )            INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent, uValue )           INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent, uValue ), ) )
 
-   METHOD setWhen( bWhen )                      INLINE ( if( !empty( bWhen ),    ::bWhen        := bWhen, ),;
-                                                         if( !empty( ::oGet ),   ::oGet:bWhen   := ::bWhen, ) )
+   METHOD setWhen( bWhen )                      INLINE ( ::bWhen := bWhen, if( !empty( ::oGet ), ::oGet:bWhen := ::bWhen, ) )
 
    METHOD isChangeGet()                         INLINE ( ::varGet() != ::getOriginal() )
    METHOD isNotChangeGet()                      INLINE ( ::varGet() == ::getOriginal() )
@@ -147,28 +144,10 @@ METHOD Activate( idGet, idText, oDlg, idSay, idLink ) CLASS GetSelector
    ::setOriginal( eval( ::bValue ) )
 
    ::oGet               := TGetHlp():ReDefine( idGet, ::bValue, oDlg, , ::cPicture, {|| ::validAction() }, , , , , , .t., ::bWhen, , .f., .f., , , , , {|| ::helpAction() }, , "Lupa", idSay, idText )
-/*
-   REDEFINE GET         ::oGet ;
-      VAR               ::cGet ;
-      ID                idGet ;
-      PICTURE           ::cPicture ;
-      UPDATE ;
-      IDTEXT            idText ;
-      IDSAY             idSay ;
-      BITMAP            "Lupa" ;
-      OF                oDlg
 
-   ::oGet:bHelp         := 
-   ::oGet:bValid        := 
-   ::oGet:bWhen         := 
-*/
    if !empty( idLink )   
 
-   REDEFINE SAY         ::oLink ;
-      FONT              oFontBold() ; 
-      COLOR             rgb( 10, 152, 234 ) ;
-      ID                idLink ;
-      OF                oDlg ;
+   ::oLink              := TSay():ReDefine( idLink, , oDlg, , rgb( 10, 152, 234 ), , .f., oFontBold(), .f., .f. )
 
    ::oLink:lWantClick   := .t.
    ::oLink:OnClick      := {|| ::oController:Edit( ::oController:getModel():getIdWhereCodigo( ::cGet ) ) }
@@ -189,39 +168,16 @@ METHOD addGetSelector( cLink, oTaskPanel ) CLASS GetSelector
       RETURN ( nil )
    end if
 
-   ::cGet               := eval( ::bValue )
+   ::setOriginal( eval( ::bValue ) )
 
-   ::setOriginal( ::cGet )
+   ::oLink              := TSay():New( nTop + 3, 10, {|| cLink }, oTaskPanel, , , .f., .f., .f., .t., Rgb( 10, 152, 234 ), Rgb( 255, 255, 255 ), , , .f., .f., .f., .f., .f., .f., .f., "oLink", , .f. )
 
-   @ nTop + 3, 10 SAY   ::oLink ; 
-      PROMPT            cLink ;
-      OF                oTaskPanel ;
-      PIXEL             ;
-      COLOR             Rgb( 10, 152, 234 ), Rgb( 255, 255, 255 )
-   
    ::oLink:lWantClick   := .t.
    ::oLink:OnClick      := {|| ::oController:Edit( ::oController:getModel():getIdWhereCodigo( ::cGet ) ) }
 
-   // ::oGet := TGet():New( nTop, 120, ::bValue, oTaskPanel, 100, 22,,,,,, .F.,, .T.,, .F.,, .F., .F.,, .F., .F.,,,,,,,, {|self| ( msgInfo( "Action not redefined" ) ) }, "Lupa", "::oGet",,,, )
+   ::oGet               := TGet():New( nTop, 120, ::bValue, oTaskPanel, 100, 22, , {|| ::validAction() }, , , , .f., , .t., , .f., ::bWhen, .f., .f., , .f., .f., , , , , , , , {|| ::helpAction() }, "Lupa", "oGet" )
 
-   @ nTop, 120 GET      ::oGet ;
-      VAR               ::cGet ;
-      SIZE              100, 22 ;
-      ACTION            ( msgInfo( "Action not redefined" ) ) ;
-      BITMAP            "Lupa" ;
-      OF                oTaskPanel ;
-      PIXEL
-
-   ::oGet:bAction       := {|| ::helpAction() }
-   ::oGet:bValid        := {|| ::validAction() }
-   ::oGet:bWhen         := ::bWhen
-
-   @ nTop, 222 GET      ::oHelp ;
-      VAR               ::cHelp ;
-      SIZE              360, 22 ;
-      WHEN              .f. ;
-      OF                oTaskPanel ;
-      PIXEL
+   ::oHelp              := TGetHlp():New( nTop, 222, bSETGET( ::cHelp ), oTaskPanel, 360, 22, , , , , , .f., , .t., , .f., {|| .f. }, .f., .f., , .f., .f., , , .f. )
 
    ::loadHelpText( .t. )
 
@@ -258,11 +214,7 @@ RETURN ( .t. )
 METHOD assignResults( hResult ) CLASS GetSelector
 
    if hhaskey( hResult, ::getKey() )
-
       ::cText( hGet( hResult, ::getKey() ) )
-
-      // ::evalValue( hGet( hResult, ::getKey() ) )
-
    end if
 
 RETURN ( nil )
@@ -274,8 +226,6 @@ METHOD validAction() CLASS GetSelector
    if isFalse( ::fireEvent( 'validating' ) )
       RETURN ( .f. )
    end if
-
-   // ::evalValue( ::varGet() )
 
    if !empty( ::bValid ) .and. !eval( ::bValid, ::oGet ) 
       RETURN ( .f. )
@@ -425,9 +375,7 @@ METHOD setBlank()
 
 RETURN ( nil )
 
-
-
-
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

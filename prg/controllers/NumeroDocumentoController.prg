@@ -56,6 +56,9 @@ METHOD Validate() CLASS SerieDocumentoComponent
    end if
 
    if !( msgYesNo( "La serie " + cSerie + ", no existe.", "¿ Desea crear una nueva serie ?" ) )
+
+      msgalert( ::oGet:Original, "ogetOriginal" )
+
       RETURN ( .f. )
    end if 
 

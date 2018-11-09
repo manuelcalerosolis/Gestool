@@ -114,9 +114,9 @@ METHOD New( oController ) CLASS FacturasClientesController
                                              "32" => "gc_document_text_user_32",;
                                              "48" => "gc_document_text_user_48" }
 
-   ::oNumeroDocumentoComponent         := NumeroDocumentoComponent():New( self )
-
    ::oSerieDocumentoComponent          := SerieDocumentoComponent():New( self )
+
+   ::oNumeroDocumentoComponent         := NumeroDocumentoComponent():New( self )
 
    ::getModel():setEvent( 'loadedBuffer',       {|| ::loadedBuffer() } )
    ::getModel():setEvent( 'loadedBlankBuffer',  {|| ::loadedBlankBuffer() } )

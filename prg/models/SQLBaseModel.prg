@@ -1457,9 +1457,9 @@ RETURN ( nId )
 
 METHOD updateBuffer( hBuffer )
 
-   ::getUpdateSentence( hBuffer )
-
    ::fireEvent( 'updatingBuffer' )
+
+   ::getUpdateSentence( hBuffer )
 
    if !empty( ::cSQLUpdate )
       ::getDatabase():Execs( ::cSQLUpdate )
