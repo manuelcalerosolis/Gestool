@@ -37,7 +37,7 @@ CLASS RecibosGeneratorController
 
    METHOD getController()              INLINE ( ::oController ) 
    
-   METHOD isPaid()                  INLINE ( hget( ::hPaymentMethod, "cobrado" ) < 2 )
+   METHOD isPaid()                     INLINE ( hget( ::hPaymentMethod, "cobrado" ) < 2 )
 
    METHOD getTerms()                   INLINE ( hget( ::hPaymentMethod, "numero_plazos" ) )
 
@@ -90,7 +90,7 @@ RETURN ( nil )
    ::nTotalTermAmount   := 0
 
    ::dExpirationDate    := ::oController:getModelBuffer( 'fecha' )
-
+   
    ::getTotalDocumento()
 
    if empty( ::getMetodoPago() )
@@ -154,7 +154,40 @@ RETURN ( hget( ::hPaymentMethod, "entre_plazo" ) )
 
 METHOD getExpirationDate( nTerm ) CLASS RecibosGeneratorController
 
-   ::dExpirationDate    += ::getTermDays( nTerm )
+local hPaymentDays
+local dPayDay
+local nPrimerDia
+local nSegundoDia
+local nTercerDia
+
+   hPaymentDays := SQLClientesModel():getPaymentDays( ::oController:getModelBuffer( 'cliente_codigo' ) )
+   msgalert(hb_valtoexp( hPaymentDays ), "hPaymentDays" ) 
+
+   nPrimerDia  :=  hget( hPaymentDays, "primer_dia_pago" )   
+
+   if nPrimerDia == 0 
+      ::dExpirationDate    += ::getTermDays( nTerm )
+   end if
+
+    dPayDay       :=    Day( hb_date() + ::getTermDays( nTerm ) )
+    nSegundoDia   :=    hget( hPaymentDays, "segundo_dia_pago" )
+    nTercerDia    :=    hget( hPaymentDays, "tercer_dia_pago" )
+
+   DO CASE
+
+       CASE nPrimerDia > dPayDay
+            msgalert(nPrimerDia - dPayDay)
+            ::dExpirationDate += ::getTermDays( nTerm )+( nPrimerDia + dPayDay )
+            msgalert( ::dExpirationDate, "primer" )
+
+   
+      CASE  nSegundoDia < dPayDay
+            msgalert("segundo_dia_pago")
+   
+      CASE  nTercerDia < dPayDay
+            msgalert("tercer_dia_pago")
+   
+   END CASE
 
 RETURN ( ::dExpirationDate )
 
@@ -184,7 +217,7 @@ RETURN ( ::nTermAmount )
 
 METHOD Insert( nTermAmount ) CLASS RecibosGeneratorController
 
-   DEFAULT nTermAmount      := hget( ::hTotalDocument, "totalDocumento" )
+   DEFAULT nTermAmount      := Round( hget( ::hTotalDocument, "totalDocumento" ),2 )
 
    ::getModel():loadBlankBuffer()
 

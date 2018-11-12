@@ -16,6 +16,10 @@ CLASS SQLTercerosModel FROM SQLCompanyModel
    METHOD getClienteDireccionPrincipal( cBy, cId ) ;
                                  INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentenceClienteDireccionPrincipal( cBy, cId ) ) ) )
 
+   METHOD getSentencePaymentDays( cId )
+
+   METHOD getPaymentDays( cId )  INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentencePaymentDays( cId ) ) ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -235,4 +239,25 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLTercerosModel
 
 RETURN ( cSql )
 
+//---------------------------------------------------------------------------//
+METHOD getSentencePaymentDays( cId ) CLASS SQLTercerosModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+      SELECT %2$s.primer_dia_pago AS primer_dia_pago,
+         %2$s.segundo_dia_pago AS segundo_dia_pago,
+         %2$s.tercer_dia_pago AS tercer_dia_pago,
+         %2$s.mes_vacaciones AS mes_vacaciones 
+
+      FROM %1$s AS %2$s
+
+      WHERE %2$s.codigo = %3$s  
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), ::cTableName, quoted( cId ) )
+
+RETURN ( cSql )
 //---------------------------------------------------------------------------//
