@@ -83,13 +83,13 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Serie-------------------------------------------------------------------
 
-   ::oController:oSerieDocumentoComponent:BindValue( bSETGET( ::getController():getModel():hBuffer[ "serie" ] ) )
-   ::oController:oSerieDocumentoComponent:Activate( 100, ::oFolder:aDialogs[1] )
+   ::oController:getSerieDocumentoComponent():BindValue( bSETGET( ::getController():getModel():hBuffer[ "serie" ] ) )
+   ::oController:getSerieDocumentoComponent():Activate( 100, ::oFolder:aDialogs[1] )
 
    // Numero-------------------------------------------------------------------
 
-   ::oController:oNumeroDocumentoComponent:BindValue( bSETGET( ::getController():getModel():hBuffer[ "numero" ] ) )
-   ::oController:oNumeroDocumentoComponent:Activate( 110, ::oFolder:aDialogs[1] )
+   ::oController:getNumeroDocumentoComponent():BindValue( bSETGET( ::getController():getModel():hBuffer[ "numero" ] ) )
+   ::oController:getNumeroDocumentoComponent():Activate( 110, ::oFolder:aDialogs[1] )
 
    // Fecha--------------------------------------------------------------------
 

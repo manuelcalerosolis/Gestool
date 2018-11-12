@@ -21,11 +21,15 @@ CLASS SerieDocumentoComponent FROM Events
 
    METHOD Validate()
 
+
+   METHOD getValue()                INLINE ( eval( ::bValue ) )
    METHOD bindValue( bValue )       INLINE ( ::bValue := bValue )
 
-   METHOD storeOriginal()           INLINE ( ::uOriginal := eval( ::bValue ) )
+   METHOD storeOriginal()           INLINE ( ::uOriginal := ::getValue() )
    METHOD setOriginal( uOriginal )  INLINE ( ::uOriginal := uOriginal )
    METHOD getOriginal()             INLINE ( ::uOriginal )
+   METHOD isOriginalChanged()       INLINE ( alltrim( ::getOriginal() ) != alltrim( ::getValue() ) )
+   METHOD isNotOriginalChanged()    INLINE ( alltrim( ::getOriginal() ) == alltrim( ::getValue() ) )
 
 END CLASS
 
@@ -61,7 +65,12 @@ METHOD Validate() CLASS SerieDocumentoComponent
 
    local cSerie   := alltrim( ::oGet:varGet() )
 
+   if ::isNotOriginalChanged()
+      RETURN ( .t. )
+   end if 
+
    if ::oController:getContadoresModel():isSerie( ::oController:cName, cSerie )
+      ::fireEvent( 'changedAndExist' )
       RETURN ( .t. )
    end if
 
@@ -72,7 +81,7 @@ METHOD Validate() CLASS SerieDocumentoComponent
 
    ::oController:getContadoresModel():insertSerie( ::oController:cName, cSerie ) 
 
-   ::fireEvent( 'insertedOnDuplicateSentence' )   
+   ::fireEvent( 'inserted' )   
 
 RETURN ( .t. )
 

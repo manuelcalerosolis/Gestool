@@ -12,10 +12,11 @@ CLASS Events
    METHOD   End()
 
    METHOD   Set( cEvent, bEvent )
-   METHOD   SetEvent( cEvent, bEvent )    INLINE ( ::Set( cEvent, bEvent ) )
+   METHOD   setEvent( cEvent, bEvent )    INLINE ( ::Set( cEvent, bEvent ) )
+   METHOD   setEvents( aEvents, bEvent )
 
    METHOD   Fire( cEvent )
-   METHOD   FireEvent( cEvent )           INLINE ( ::Fire( cEvent ) )
+   METHOD   fireEvent( cEvent )           INLINE ( ::Fire( cEvent ) )
 
 END CLASS
 
@@ -50,6 +51,12 @@ METHOD Set( cEvent, bEvent )
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD setEvents( aEvents, bEvent )
+
+RETURN ( aeval( aEvents, {|cEvent| ::setEvent( cEvent, bEvent ) } ) )
+
+//----------------------------------------------------------------------------//
 
 METHOD Fire( cEvent, uOther )
 

@@ -5,17 +5,13 @@
 
 CLASS FacturasClientesController FROM SQLNavigatorController
 
-   DATA oSerieDocumentoComponent
-
    DATA oHistoryManager
 
-   DATA oNumeroDocumentoComponent
-
    DATA oContadoresModel
+   
+   DATA oSerieDocumentoComponent
 
-   DATA oTotalConDescuento             INIT 0
-
-   DATA nImporteTotal
+   DATA oNumeroDocumentoComponent
 
    METHOD New() CONSTRUCTOR
 
@@ -46,6 +42,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
    METHOD clientSetRecargo()
 
    METHOD clientChangeRecargo( lRecargo )
+
+   METHOD changedSerie()  
 
    METHOD clientSetDescuentos()
 
@@ -92,6 +90,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD getSerieDocumentoComponent() INLINE ( if( empty( ::oSerieDocumentoComponent ), ::oSerieDocumentoComponent := SerieDocumentoComponent():New( self ), ), ::oSerieDocumentoComponent )
 
+   METHOD getNumeroDocumentoComponent()   INLINE ( if( empty( ::oNumeroDocumentoComponent ), ::oNumeroDocumentoComponent := NumeroDocumentoComponent():New( self ), ), ::oNumeroDocumentoComponent )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -137,7 +137,7 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::getFacturasClientesDescuentosController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
 
-   ::getSerieDocumentoComponent():setEvent( 'insertedOnDuplicateSentence', {|| msgalert( 'insertedOnDuplicateSentence' ) } )
+   ::getSerieDocumentoComponent():setEvents( { 'inserted', 'changedAndExist' }, {|| ::changedSerie() } )
 
 RETURN ( Self )
 
@@ -206,9 +206,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD updatingBuffer() CLASS FacturasClientesController 
-
-   msgalert( ::getModelBuffer( "serie" ), "serie" )
-   msgalert( ::getModel():hBuffer[ "serie" ], "con get" )
 
    if ::isAppendMode()
       ::setModelBuffer( "numero", SQLContadoresModel():getNext( ::cName, ::getModelBuffer( "serie" ) ) )
@@ -373,6 +370,14 @@ METHOD clientChangeRecargo() CLASS FacturasClientesController
    ::getModel():updateFieldWhereId( ::getModel():getBufferColumnKey(), "recargo_equivalencia", ::getModel():hBuffer[ "recargo_equivalencia" ] )
 
    ::calculateTotals()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD changedSerie() CLASS FacturasClientesController 
+
+   msgalert( ::getSerieDocumentoComponent():getValue() )
 
 RETURN ( nil )
 
