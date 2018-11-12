@@ -17,7 +17,15 @@ CLASS RecibosGeneratorController
 
    DATA nTotalDocumento
 
+   DATA nPlazos
+   
+   DATA nDias
+
+   DATA nImportePlazo 
+
    DATA nNumeroRecibo
+
+   DATA dExpirationDate       INIT hb_date()
 
    METHOD New() CONSTRUCTOR
 
@@ -40,6 +48,10 @@ CLASS RecibosGeneratorController
    METHOD getConcepto()
 
    METHOD getExpirationDate()
+
+   METHOD getDias( nPlazo )
+
+   METHOD getImportePlazo()
 
    //Construcciones tardias----------------------------------------------------
 
@@ -73,19 +85,18 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
- METHOD generate( nTotalDocumento ) CLASS RecibosGeneratorController
+ METHOD generate() CLASS RecibosGeneratorController
    
    ::getTotalDocumento()
-
-   DEFAULT nTotalDocumento    := hget( ::hTotalesDocumento, "totalDocumento" )
    
    ::nNumeroRecibo   := 1
 
    ::getMetodoPago()
 
+   ::nPlazos         := hget( ::hMetodoPago, "numero_plazos" )   
 
    if ::isCobrado() 
-      ::Insert( nTotalDocumento )
+      ::Insert()
       //generar el pago
       RETURN ( nil )
    end if
@@ -132,53 +143,88 @@ RETURN ( cConcepto )
 
 //---------------------------------------------------------------------------//
 
-METHOD getExpirationDate( dExpirationDate ) CLASS RecibosGeneratorController
+METHOD getDias( nPlazo ) CLASS RecibosGeneratorController
 
+   if nplazo == 1
+      ::nDias :=  hget(::hMetodoPago, "primer_plazo")
+      RETURN ( ::nDias )
+   end if 
 
-RETURN( dExpirationDate )
+   if nplazo == ::nPlazos
+      ::nDias :=  hget(::hMetodoPago, "ultimo_plazo")
+      RETURN ( ::nDias )
+   end if
+
+   ::nDIas :=  hget(::hMetodoPago, "entre_plazo")
+
+RETURN ( ::nDias )
+//---------------------------------------------------------------------------//
+METHOD getExpirationDate() CLASS RecibosGeneratorController
+
+   ::dExpirationDate += ::nDias
+
+RETURN( ::dExpirationDate )
 
 //---------------------------------------------------------------------------//
 
-METHOD Insert( nTotalDocumento, dExpirationDate ) CLASS RecibosGeneratorController
+METHOD getImportePlazo( nPlazo ) CLASS RecibosGeneratorController
+   
+   local nImporteTotal
+
+   nImporteTotal := hget( ::hTotalesDocumento, "totalDocumento" )
+
+   if nPlazo != ::nPlazos
+
+      ::nImportePlazo :=  Round( nImporteTotal / ::nPlazos , 2 )
+   
+      msgalert( ::nImportePlazo,"importe" )
+   
+      RETURN( ::nImportePlazo )
+
+   end if
+
+   
+   ::nImportePlazo :=  Round( nImporteTotal - ( ::nImportePlazo * ( ::nPlazos - 1 ) ), 2 )
+      
+   msgalert( ::nImportePlazo,"ultimo importe" )
+
+RETURN( ::nImportePlazo )
+
+//---------------------------------------------------------------------------//
+
+METHOD Insert( nImportePlazo, dExpirationDate ) CLASS RecibosGeneratorController
 
    DEFAULT dExpirationDate := hb_date()
 
+   DEFAULT nImportePlazo := hget( ::hTotalesDocumento, "totalDocumento" )
+
    ::getModel():loadBlankBuffer()
 
-   ::getModel():setBuffer( "importe", nTotalDocumento )
+   ::getModel():setBuffer( "importe", nImportePlazo )
 
    ::getModel:setBuffer( "concepto", ::getConcepto() )
 
-   ::getModel:setBuffer( "vencimiento", ::getExpirationDate( dExpirationDate ) )
+   ::getModel:setBuffer( "vencimiento", dExpirationDate )
 
    ::getModel:insertBuffer( ::getModel():hBuffer )
    
 RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 
 METHOD processNoCobrado() CLASS RecibosGeneratorController
 
    local n
-   local nPlazos
-   local nPlazo
+
    msgalert( "no cobrado" )
 
-   nPlazos  :=    hget( ::hMetodoPago, "numero_plazos" )
+   for n := 1 to ::nPlazos
 
-   for n := 1 to nPlazos
+   ::nDias    := ::getDias( n )
 
-      if ( n = 1 )
-         ::Insert( 25 )
-      end if
-
-      ::Insert( 100 )
-
-      if ( n = nPlazos)
-         ::Insert( 150 )
-      end if
-      msgalert( ::nNumeroRecibo,"nPlazos" )
-      ::nNumeroRecibo++
-
+            ::Insert( ::getImportePlazo( n ), ::getExpirationDate() )
+            msgalert( ::nNumeroRecibo,"nPlazos" )
+            ::nNumeroRecibo++
    next
 
 RETURN ( nil )
