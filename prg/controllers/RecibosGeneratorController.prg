@@ -9,23 +9,19 @@ CLASS RecibosGeneratorController
 
    DATA oMetodoPagoModel
 
-   DATA hMetodoPago
+   DATA hPaymentMethod
 
    DATA oController
 
-   DATA hTotalesDocumento
+   DATA hTotalDocument
 
-   DATA nTotalDocumento
+   DATA nTermAmount 
 
-   DATA nPlazos
-   
-   DATA nDias
+   DATA nTotalTermAmount
 
-   DATA nImportePlazo 
+   DATA nReceiptNumber
 
-   DATA nNumeroRecibo
-
-   DATA dExpirationDate       INIT hb_date()
+   DATA dExpirationDate                
 
    METHOD New() CONSTRUCTOR
 
@@ -35,29 +31,31 @@ CLASS RecibosGeneratorController
 
    METHOD generate()
 
-   METHOD Insert()
+   METHOD Insert( nTermAmount, dExpirationDate )
 
-   METHOD PROCESSNoCobrado()
+   METHOD processNoPaid()
 
    METHOD getController()              INLINE ( ::oController ) 
    
-   METHOD isCobrado()                  INLINE ( hget( ::hMetodoPago, "cobrado" ) < 2 )
+   METHOD isPaid()                  INLINE ( hget( ::hPaymentMethod, "cobrado" ) < 2 )
+
+   METHOD getTerms()                   INLINE ( hget( ::hPaymentMethod, "numero_plazos" ) )
 
    METHOD getTotalDocumento()
 
-   METHOD getConcepto()
+   METHOD getConcept()
 
    METHOD getExpirationDate()
 
-   METHOD getDias( nPlazo )
+   METHOD getTermDays( nTerm )
 
-   METHOD getImportePlazo()
+   METHOD getTermAmount()
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getModel()                   INLINE( if( empty( ::oModel ), ::oModel := SQLRecibosModel():New( self ), ), ::oModel ) 
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLRecibosModel():New( self ), ), ::oModel ) 
    
-   METHOD getMetodoPagoModel()         INLINE( if( empty( ::oMetodoPagoModel ), ::oMetodoPagoModel := SQLMetodoPagoModel():New( self ), ), ::oMetodoPagoModel ) 
+   METHOD getMetodoPagoModel()         INLINE ( if( empty( ::oMetodoPagoModel ), ::oMetodoPagoModel := SQLMetodoPagoModel():New( self ), ), ::oMetodoPagoModel ) 
 
 END CLASS
 
@@ -87,21 +85,24 @@ RETURN ( nil )
 
  METHOD generate() CLASS RecibosGeneratorController
    
+   ::nReceiptNumber     := 1
+
+   ::nTotalTermAmount   := 0
+
+   ::dExpirationDate    := ::oController:getModelBuffer( 'fecha' )
+
    ::getTotalDocumento()
-   
-   ::nNumeroRecibo   := 1
 
-   ::getMetodoPago()
+   if empty( ::getMetodoPago() )
+      RETURN ( nil )
+   end if 
 
-   ::nPlazos         := hget( ::hMetodoPago, "numero_plazos" )   
-
-   if ::isCobrado() 
+   if ::isPaid() 
       ::Insert()
-      //generar el pago
       RETURN ( nil )
    end if
    
-   ::processNoCobrado()
+   ::processNoPaid()
    
 RETURN ( nil )
 
@@ -109,122 +110,106 @@ RETURN ( nil )
 
 METHOD getTotalDocumento() CLASS RecibosGeneratorController
 
-   ::hTotalesDocumento := FacturasClientesRepository():getTotal( ::getController():getuuid() )
-
-RETURN ( nil )
+RETURN ( ::hTotalDocument  := FacturasClientesRepository():getTotal( ::getController():getuuid() ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getMetodoPago() CLASS RecibosGeneratorController
 
-   local cMetodoPago
-
-   cMetodoPago    := ::oController:getModelBuffer( 'metodo_pago_codigo' )
-
-   if empty( cMetodoPago )
+   if empty( ::oController:getModelBuffer( 'metodo_pago_codigo' ) )
       RETURN ( nil )
    end if 
 
-   ::hMetodoPago   := ::getMetodoPagoModel():getBufferByCodigo( cMetodoPago )
+   ::hPaymentMethod     := ::getMetodoPagoModel():getBufferByCodigo( ::oController:getModelBuffer( 'metodo_pago_codigo' ) )
 
-RETURN ( ::hMetodoPago )
+RETURN ( ::hPaymentMethod )
 
 //---------------------------------------------------------------------------//
 
-METHOD getConcepto() CLASS RecibosGeneratorController
+METHOD getConcept() CLASS RecibosGeneratorController
 
-   local cConcepto
+   local cConcept
 
-   cConcepto := "Recibo " + toSQLString( ::nNumeroRecibo ) + " de la factura " 
-   cConcepto +=  alltrim( ::oController:getModelBuffer( 'serie' ) ) + " - "
-   cConcepto +=  toSQLString( ::oController:getModelBuffer('numero') ) 
+   cConcept    := "Recibo " + toSQLString( ::nReceiptNumber ) + " de la factura " 
+   cConcept    +=  alltrim( ::oController:getModelBuffer( 'serie' ) ) + "/"
+   cConcept    +=  toSQLString( ::oController:getModelBuffer( 'numero' ) ) 
    
-RETURN ( cConcepto )
+RETURN ( cConcept )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDias( nPlazo ) CLASS RecibosGeneratorController
+METHOD getTermDays( nTerm ) CLASS RecibosGeneratorController
 
-   if nplazo == 1
-      ::nDias :=  hget(::hMetodoPago, "primer_plazo")
-      RETURN ( ::nDias )
+   if nTerm == 1
+      RETURN ( hget( ::hPaymentMethod, "primer_plazo" ) )
    end if 
 
-   if nplazo == ::nPlazos
-      ::nDias :=  hget(::hMetodoPago, "ultimo_plazo")
-      RETURN ( ::nDias )
+   if nTerm == ::getTerms() .and. hget( ::hPaymentMethod, "ultimo_plazo" ) != 0
+      RETURN ( hget( ::hPaymentMethod, "ultimo_plazo" ) )
    end if
 
-   ::nDIas :=  hget(::hMetodoPago, "entre_plazo")
-
-RETURN ( ::nDias )
-//---------------------------------------------------------------------------//
-METHOD getExpirationDate() CLASS RecibosGeneratorController
-
-   ::dExpirationDate += ::nDias
-
-RETURN( ::dExpirationDate )
+RETURN ( hget( ::hPaymentMethod, "entre_plazo" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getImportePlazo( nPlazo ) CLASS RecibosGeneratorController
-   
-   local nImporteTotal
+METHOD getExpirationDate( nTerm ) CLASS RecibosGeneratorController
 
-   nImporteTotal := hget( ::hTotalesDocumento, "totalDocumento" )
+   ::dExpirationDate    += ::getTermDays( nTerm )
 
-   if nPlazo != ::nPlazos
+RETURN ( ::dExpirationDate )
 
-      ::nImportePlazo :=  Round( nImporteTotal / ::nPlazos , 2 )
+//---------------------------------------------------------------------------//
+
+METHOD getTermAmount( nTerm ) CLASS RecibosGeneratorController
    
-      msgalert( ::nImportePlazo,"importe" )
+   local nTotalDocument
+
+   nTotalDocument          := hget( ::hTotalDocument, "totalDocumento" )
+
+   if nTerm != ::getTerms()
+
+      ::nTermAmount        := Round( nTotalDocument / ::getTerms(), 2 )
    
-      RETURN( ::nImportePlazo )
+      ::nTotalTermAmount   += ::nTermAmount
+
+      RETURN ( ::nTermAmount )
 
    end if
 
-   
-   ::nImportePlazo :=  Round( nImporteTotal - ( ::nImportePlazo * ( ::nPlazos - 1 ) ), 2 )
+   ::nTermAmount           := Round( nTotalDocument - ::nTotalTermAmount, 2 )
       
-   msgalert( ::nImportePlazo,"ultimo importe" )
-
-RETURN( ::nImportePlazo )
+RETURN ( ::nTermAmount )
 
 //---------------------------------------------------------------------------//
 
-METHOD Insert( nImportePlazo, dExpirationDate ) CLASS RecibosGeneratorController
+METHOD Insert( nTermAmount ) CLASS RecibosGeneratorController
 
-   DEFAULT dExpirationDate := hb_date()
-
-   DEFAULT nImportePlazo := hget( ::hTotalesDocumento, "totalDocumento" )
+   DEFAULT nTermAmount      := hget( ::hTotalDocument, "totalDocumento" )
 
    ::getModel():loadBlankBuffer()
 
-   ::getModel():setBuffer( "importe", nImportePlazo )
+   ::getModel():setBuffer( "importe", nTermAmount )
 
-   ::getModel:setBuffer( "concepto", ::getConcepto() )
+   ::getModel():setBuffer( "concepto", ::getConcept() )
 
-   ::getModel:setBuffer( "vencimiento", dExpirationDate )
+   ::getModel():setBuffer( "vencimiento", ::getExpirationDate( nTermAmount ) )
 
-   ::getModel:insertBuffer( ::getModel():hBuffer )
+   ::getModel():insertBuffer()
    
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD processNoCobrado() CLASS RecibosGeneratorController
+METHOD processNoPaid() CLASS RecibosGeneratorController
 
    local n
 
-   msgalert( "no cobrado" )
+   for n := 1 to ::getTerms()
 
-   for n := 1 to ::nPlazos
+      ::Insert( ::getTermAmount( n ) )
 
-   ::nDias    := ::getDias( n )
+      ::nReceiptNumber++
 
-            ::Insert( ::getImportePlazo( n ), ::getExpirationDate() )
-            msgalert( ::nNumeroRecibo,"nPlazos" )
-            ::nNumeroRecibo++
    next
 
 RETURN ( nil )
