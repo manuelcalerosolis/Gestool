@@ -23,8 +23,6 @@ CLASS SQLBrowseController FROM SQLApplicationController
 
    DATA oConfiguracionVistasController
 
-   //DATA uuidOlderParent
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -46,6 +44,8 @@ CLASS SQLBrowseController FROM SQLApplicationController
    // Vistas manege -----------------------------------------------------------
 
    METHOD restoreState()
+
+   METHOD restoreId()
 
    METHOD saveState()
 
@@ -189,6 +189,18 @@ METHOD restoreState()
    if !empty( cState )
       ::getBrowseView():setState( cState )
    end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD restoreId()
+
+   msgalert( ::getBrowseViewType(), "getType" )
+
+   msgalert( ::getBrowseViewName(), "getName" )
+
+   msgalert( ::getId( ::getBrowseViewType(), ::getBrowseViewName() ), "getId" )
 
 RETURN ( nil )
 

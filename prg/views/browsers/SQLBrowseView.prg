@@ -181,6 +181,8 @@ CLASS SQLBrowseView
 
    METHOD restoreState()
 
+   METHOD restoreId()
+
    METHOD saveStateView()           
 
    METHOD setIdView( cType, cName, nId )              
@@ -416,6 +418,8 @@ METHOD ActivateMDI( oWindow, nTop, nLeft, nRight, nBottom )
 
    ::restoreState()
 
+   ::restoreId()
+
    ::fireEvent( 'activatedMDI' )
 
 RETURN ( Self )
@@ -504,6 +508,16 @@ METHOD restoreState()
 
    if !empty( ::oController )
       ::oController:restoreState()
+   end if 
+
+RETURN ( nil )
+
+//------------------------------------------------------------------------//
+
+METHOD restoreId()
+
+   if !empty( ::oController )
+      ::oController:restoreId()
    end if 
 
 RETURN ( nil )

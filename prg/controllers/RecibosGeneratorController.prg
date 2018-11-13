@@ -96,7 +96,9 @@ RETURN ( nil )
 
    ::dExpirationDate    := ::oController:getModelBuffer( 'fecha' )
    
-   ::getTotalDocumento()
+   if empty( ::getTotalDocumento() )
+      RETURN ( nil )
+   end if 
 
    if empty( ::getMetodoPago() )
       RETURN ( nil )

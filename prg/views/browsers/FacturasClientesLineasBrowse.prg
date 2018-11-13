@@ -73,10 +73,10 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := EDIT_GET_BUTTON
       :bEditValid          := {|oGet, oCol| ::oController:validArticuloCodigo( oGet, oCol ) }
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:postValidateArticuloCodigo( oCol, uNewValue, nKey ) }
       :bEditBlock          := {|| ::oController:oController:getArticulosController():ActivateSelectorView() }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:postValidateArticuloCodigo( oCol, uNewValue, nKey ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -126,7 +126,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :oFooterFont         := oFontBold()
       :cDataType           := "N"
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:stampArticuloUnidades( oCol, uNewValue ) }
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateArticuloUnidades( oCol, uNewValue ) }
    end with
 
    with object ( ::oColumnUnidadMedicion := ::oBrowse:AddCol() )
@@ -153,7 +153,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :lHide               := .t.
       :cDataType           := "N"
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:stampArticuloFactor( oCol, uNewValue ) }
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateArticuloFactor( oCol, uNewValue ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -180,7 +180,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nFootStyle          := :nDataStrAlign               
       :cDataType           := "N"
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateField( 'articulo_precio', uNewValue ), ::oController:oController:calculateTotals() }
+      :bOnPostEdit         := {|oCol, uNewValue| ::oController:updateArticuloPrecio( uNewValue ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -195,7 +195,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :oFooterFont         := oFontBold()
       :cDataType           := "N"
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'incremento_precio', uNewValue ) }
+      :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateArticuloIncrementoPrecio( uNewValue ) }
       :lHide               := .t.
    end with
 
@@ -282,10 +282,10 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := EDIT_GET_BUTTON
       :bEditValid          := {|oGet, oCol| ::oController:validAlmacenCodigo( oGet, oCol ) }
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:postValidateAlmacenCodigo( oCol, uNewValue, nKey ) }
       :bEditBlock          := {|| ::oController:oController:getAlmacenesController():ActivateSelectorView() }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:postValidateAlmacenCodigo( oCol, uNewValue, nKey ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -304,10 +304,10 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := EDIT_GET_BUTTON
       :bEditValid          := {|oGet, oCol| ::oController:validAgenteCodigo( oGet, oCol ) }
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:postValidateAgenteCodigo( oCol, uNewValue, nKey ) }
       :bEditBlock          := {|| ::oController:oController:getAgentesController():ActivateSelectorView() }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:postValidateAgenteCodigo( oCol, uNewValue, nKey ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -326,7 +326,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :cEditPicture        := "@E 999.99"
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'agente_comision', uNewValue ) }
+      :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateAgenteComision( uNewValue ) }
    end with
 
    ::getColumnDeletedAt()

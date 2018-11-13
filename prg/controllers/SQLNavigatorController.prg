@@ -372,9 +372,7 @@ METHOD setFilter( cFilterName )
 
    end if  
 
-   ::reBuildRowSet()
-
-RETURN ( nil )
+RETURN ( ::reBuildRowSet() )
 
 //---------------------------------------------------------------------------//
 
@@ -385,10 +383,8 @@ METHOD buildFilter( cFilter )
    ::getFilterController():setComboFilterItem( ::getModel():getFilterWhere() )   
 
    ::getFilterController():showCleanButtonFilter()   
-
-   ::reBuildRowSet()
    
-RETURN ( nil )
+RETURN ( ::reBuildRowSet() )
 
 //----------------------------------------------------------------------------//
 
@@ -413,10 +409,8 @@ METHOD clearFilter()
    ::getModel():clearFilterWhere()
 
    ::getFilterController():setComboFilterItem( ::getModel():getFilterWhere() )   
-
-   ::reBuildRowSet()
    
-RETURN ( nil )
+RETURN ( ::reBuildRowSet() )
 
 //---------------------------------------------------------------------------//
 

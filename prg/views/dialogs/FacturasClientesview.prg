@@ -282,7 +282,6 @@ METHOD validActivate() CLASS FacturasClientesView
    if !::getController():getFacturasClientesLineasController():validLine()
       RETURN( nil )
    end if
-   
 
 RETURN ( ::oDialog:end( IDOK ) )
 

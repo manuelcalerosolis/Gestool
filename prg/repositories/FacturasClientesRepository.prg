@@ -44,9 +44,10 @@ METHOD getSentenceTotals( uuidFactura ) CLASS FacturasClientesRepository
       ( @descuento   := (  SELECT 
                            SUM( facturas_clientes_descuentos.descuento ) 
                            FROM %3$s AS facturas_clientes_descuentos 
-                           WHERE facturas_clientes_descuentos.parent_uuid = %4$s ) ) AS totalDescuentosPie,
+                           WHERE facturas_clientes_descuentos.parent_uuid = %4$s 
+                              AND facturas_clientes_descuentos.deleted_at = 0 ) ) AS totalDescuentosPie,
 
-      ( @totalDescuento := IF( @descuento IS NULL, 0, ROUND( ( ( lineas.importeBruto - lineas.descuentoTotalLinea ) * @descuento / 100 ) ) ) + lineas.descuentoTotalLinea ) as totalDescuento,
+      ( @totalDescuento := IF( @descuento IS NULL, 0, ROUND( ( ( lineas.importeBruto - lineas.descuentoTotalLinea ) * @descuento / 100 ) ) ) + lineas.descuentoTotalLinea ) AS totalDescuento,
 
       ( @aplicarRecargo := (  SELECT recargo_equivalencia
                               FROM %1$s AS facturas_clientes 
@@ -68,15 +69,17 @@ METHOD getSentenceTotals( uuidFactura ) CLASS FacturasClientesRepository
       (
       SELECT 
         ROUND( SUM(  
-            ( @importeLinea := ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * ( facturas_clientes_lineas.articulo_precio + IFNULL( facturas_clientes_lineas.incremento_precio, 0 ) ) ) ) ), 2 ) AS importeBruto,
+            ( @importeLinea := ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * ( facturas_clientes_lineas.articulo_precio + IFNULL( facturas_clientes_lineas.incremento_precio, 0 ) ) ) ) ), 2 ) 
+                        AS importeBruto,
         ROUND( SUM( 
-            @descuentoLinea := IF( facturas_clientes_lineas.descuento IS NULL, 0, ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * facturas_clientes_lineas.articulo_precio ) ) *  IFNULL(facturas_clientes_lineas.descuento,0) / 100 ) ,2 ) AS descuentoTotalLinea ,
+            @descuentoLinea := IF( facturas_clientes_lineas.descuento IS NULL, 0, ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * facturas_clientes_lineas.articulo_precio ) ) *  IFNULL(facturas_clientes_lineas.descuento,0) / 100 ) ,2 ) AS descuentoTotalLinea,
             facturas_clientes_lineas.iva,
             facturas_clientes_lineas.recargo_equivalencia,
             facturas_clientes_lineas.descuento,
             facturas_clientes_lineas.parent_uuid
          FROM %2$s AS facturas_clientes_lineas 
-            WHERE facturas_clientes_lineas.parent_uuid = %4$s 
+            WHERE facturas_clientes_lineas.parent_uuid = %4$s
+               AND facturas_clientes_lineas.deleted_at = 0 
             GROUP BY facturas_clientes_lineas.iva
       ) lineas
 

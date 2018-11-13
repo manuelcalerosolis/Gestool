@@ -80,8 +80,7 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD stampCombinacionesUuid( UuidCombinacion ) ;
                                           INLINE ( ::updateField( "combinaciones_uuid", UuidCombinacion ) )
 
-   METHOD stampIncrement( nIncrementoPrecio ) ;
-                                          INLINE ( ::updateField( "incremento_precio", nIncrementoPrecio ) )
+   METHOD stampIncrement( nIncrementoPrecio ) 
 
    METHOD getArticuloUnidadMedicionVentas()
 
@@ -89,9 +88,19 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD stampArticuloPrecio()
 
-   METHOD stampArticuloUnidades( uValue )
+   METHOD updateArticuloUnidades( uValue )
 
-   METHOD stampArticuloFactor( uValue )
+   METHOD updateArticuloFactor( uValue )
+
+   METHOD updateArticuloPrecio( uValue )  INLINE ( ::updateField( 'articulo_precio', uValue ),;
+                                                   ::oController:calculateTotals() )
+
+   METHOD updateArticuloIncrementoPrecio( uValue ) ;
+                                          INLINE ( ::updateField( 'incremento_precio', uValue ),;
+                                                   ::oController:calculateTotals() )
+
+   METHOD updateAgenteComision( uValue )  INLINE ( ::updateField( 'agente_comision', uValue ),;
+                                                   ::oController:calculateTotals() )
 
    METHOD stampArticuloDescuento()
 
@@ -564,7 +573,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampArticuloUnidades( oCol, uValue )
+METHOD updateArticuloUnidades( oCol, uValue )
 
    ::updateField( 'articulo_unidades', uValue )
 
@@ -572,21 +581,17 @@ METHOD stampArticuloUnidades( oCol, uValue )
 
    ::getBrowseView():makeTotals( oCol )
 
-   ::oController:calculateTotals()
-
-RETURN ( .t. )
+RETURN ( ::oController:calculateTotals() )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampArticuloFactor( oCol, uValue )
+METHOD updateArticuloFactor( oCol, uValue )
 
    ::updateField( 'unidad_medicion_factor', uValue )
 
    ::getBrowseView():makeTotals( oCol )
 
-   ::oController:calculateTotals()
-
-RETURN ( .t. )
+RETURN ( ::oController:calculateTotals() )
 
 //---------------------------------------------------------------------------//
 
@@ -596,9 +601,7 @@ METHOD stampArticuloDescuento()
 
    ::updateField( 'descuento', nDescuento )
 
-   ::oController:calculateTotals()
-
-RETURN ( .t. )
+RETURN ( ::oController:calculateTotals() )
 
 //---------------------------------------------------------------------------//
 
@@ -612,23 +615,27 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD stampIncrement( nIncrementoPrecio ) 
+   
+   ::updateField( "incremento_precio", nIncrementoPrecio )
+                                                   
+RETURN ( ::oController:calculateTotals() )
+
+//---------------------------------------------------------------------------//
+
 METHOD stampArticuloUnidadMedicion( uValue )
 
    ::updateField( 'unidad_medicion_codigo', uValue )
 
    ::stampArticuloUnidadMedicionFactor()
 
-   ::oController:calculateTotals() 
-
-RETURN ( nil )
+RETURN ( ::oController:calculateTotals() )
 
 //----------------------------------------------------------------------------//
 
 METHOD stampArticuloUnidadMedicionFactor()
       
    local nFactor  := UnidadesMedicionGruposLineasRepository():getFactorWhereUnidadMedicion( ::getRowSet():fieldGet( 'articulo_codigo' ), ::getRowSet():fieldGet( 'unidad_medicion_codigo' ) ) 
-
-   msgalert( nFactor, 'stampArticuloUnidadMedicionFactor' )
 
    if nFactor > 0
       
@@ -670,7 +677,7 @@ RETURN ( nil )
 
    ::stampCombinacionesUuid( hget( hCombination, "uuid" ) )
 
-   ::stampIncrement(  hget( hCombination, "incremento_precio" ) )
+   ::stampIncrement( hget( hCombination, "incremento_precio" ) )
 
 RETURN ( nil )
 
