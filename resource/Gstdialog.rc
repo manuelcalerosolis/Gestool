@@ -23824,12 +23824,34 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Método de pago", 800, "Static", WS_GROUP, 43, 3, 453, 24
   CONTROL "Nombre *", -1, "Static", WS_GROUP, 51, 56, 32, 8
   CONTROL "Identificación", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 30, 452, 41
-  CONTROL "Generar como...", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 45, 74, 452, 96
+  CONTROL "Generar como...", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 74, 452, 96
   CONTROL "Código *", -1, "Static", WS_GROUP, 51, 43, 32, 8
   CONTROL "Nº de plazos", 141, "Static", WS_GROUP, 51, 124, 60, 8
   CONTROL "Días primer plazo", 151, "Static", WS_GROUP, 278, 124, 60, 8
   CONTROL "Días entre plazos", 161, "Static", WS_GROUP, 278, 138, 60, 8
   CONTROL "Días útimo plazo", 171, "Static", WS_GROUP, 278, 151, 60, 8
   CONTROL "Medio de pago", 132, "Static", WS_GROUP, 51, 98, 63, 8
+}
+
+RECIBOS_SQL DIALOG DISCARDABLE 138, 96, 666, 145
+STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX
+CAPTION "Container medium"
+FONT 8, "Ms Sans Serif"
+{
+  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 392, 126, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 448, 126, 50, 14
+  CONTROL "", 500, "TEXPLORERBAR", 0x02000000, 502, 31, 160, 85
+  CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
+  CONTROL "Recibo", 800, "Static", WS_GROUP, 43, 3, 453, 24
+  CONTROL "", 100, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 120, 40, 98, 12
+  CONTROL "", 110, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 120, 53, 98, 12
+  CONTROL "", 120, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 120, 97, 98, 11
+  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 120, 84, 360, 11
+  CONTROL "Fechas", -1, "Button", BS_GROUPBOX, 44, 30, 444, 41
+  CONTROL "Expedición", -1, "Static", WS_GROUP, 51, 43, 41, 8
+  CONTROL "Vencimiento", -1, "Static", WS_GROUP, 51, 56, 41, 8
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 74, 444, 45
+  CONTROL "Importe", -1, "Static", WS_GROUP, 51, 100, 41, 8
+  CONTROL "Concepto", -1, "Static", WS_GROUP, 51, 87, 41, 8
 }
 

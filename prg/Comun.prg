@@ -378,42 +378,46 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 PROCEDURE Test()
-/*
-   local cInsert  
-   local oConexion
-   local oStatement
 
-   oConexion   := getSQLDatabase():Conexion()
+   /*local dExpirationDate   := ctod( '01/01/2018' )
+   local aPaymentDays      := { 5, 15, 25 }
+   local dDayToAdjust 
 
-   oConexion:beginTransaction()
+   dDayToAdjust            := RecibosGeneratorController():getDayToAdjust( dExpirationDate, aPaymentDays )  
 
-   cInsert     := "INSERT INTO gestool_00VG.direcciones ( uuid, parent_uuid, codigo, direccion, poblacion, codigo_provincia, provincia, codigo_postal, codigo_pais, telefono, movil, email ) VALUES ( 'd09e1fe5-42de-46f2-9878-8117efba1b5b', '831c29cf-eade-47f8-9bdf-5a09f2a875f7', '1', 'Lepanto', '', '', '', '', '', '', '', '' )"
+   ? "Ajuste para 01/01/2018 => " + dtoc( dDayToAdjust )
 
-   oConexion:Exec( cInsert )
+   dExpirationDate         := ctod( '06/01/2018' )
 
-   cInsert     := "INSERT INTO gestool_00VG.direcciones ( uuid, parent_uuid, codigo, direccion, poblacion, codigo_provincia, provincia, codigo_postal, codigo_pais, telefono, movil, email ) VALUES ( '945028ab-78c5-4303-b693-6215041d2a0f', '831c29cf-eade-47f8-9bdf-5a09f2a875f7', '2', 'Vendimiadores', '', '', '', '', '', '', '', '' )"
+   dDayToAdjust            := RecibosGeneratorController():getDayToAdjust( dExpirationDate, aPaymentDays )
 
-   oConexion:Exec( cInsert )
- 
-   oStatement  := oConexion:Query( "SELECT nombre FROM gestool_00VG.agentes WHERE codigo = '007' LIMIT 1" )
+   ? "Ajuste para 06/01/2018 => " + dtoc( dDayToAdjust )
 
-   oStatement:setAttribute( STMT_ATTR_STR_PAD, .t. )
+   dExpirationDate         := ctod( '26/01/2018' )
 
-   oStatement:setAttribute( STMT_ATTR_CURSOR_TYPE, CURSOR_TYPE_READ_ONLY )   
-      
-   if oStatement:fetchDirect()
-      msgAlert( oStatement:getValue( 1 ) )
-   end if
-      
-   if !empty( oStatement )
-      oStatement:Free()
-   end if 
+   dDayToAdjust            := RecibosGeneratorController():getDayToAdjust( dExpirationDate, aPaymentDays )
 
-   oStatement     := nil
+   ? "Ajuste para 26/01/2018 => " + dtoc( dDayToAdjust )
 
-   oConexion:Commit()
-*/
-//   logwrite( SQLUnidadesMedicionGruposModel():getSentenceUnidadesWhereGrupo( 'CAJAS', 'PALETS' ) )   // ? hb_MD5( "12345678" )
+   dExpirationDate         := ctod( '31/12/2018' )
+
+   dDayToAdjust            := RecibosGeneratorController():getDayToAdjust( dExpirationDate, aPaymentDays )
+
+   ? "Ajuste para 31/12/2018 => " + dtoc( dDayToAdjust )
+
+   dExpirationDate         := ctod( '16/12/2018' )
+   aPaymentDays            := { 5, 15, 0 }
+
+   dDayToAdjust            := RecibosGeneratorController():getDayToAdjust( dExpirationDate, aPaymentDays )
+
+   ? "Ajuste para 16/12/2018 => " + dtoc( dDayToAdjust )
+
+   dExpirationDate         := ctod( '01/12/2018' )
+   aPaymentDays            := { 1, 0, 0 }
+
+   dDayToAdjust            := RecibosGeneratorController():getDayToAdjust( dExpirationDate, aPaymentDays )
+
+   ? "Ajuste para 01/12/2018 => " + dtoc( dDayToAdjust )*/
 
 RETURN 
 

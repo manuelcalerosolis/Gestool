@@ -118,6 +118,7 @@ METHOD addColumns() CLASS RecibosBrowseView
       :cSortOrder          := 'importe'
       :cHeader             := 'importe'
       :nWidth              := 80
+      :cEditPicture        := "999999999999.99"
       :bEditValue          := {|| ::getRowSet():fieldGet( 'importe' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -135,14 +136,10 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 CLASS RecibosView FROM SQLBaseView
-
-   DATA oFechaCobro
   
    METHOD Activate()
 
    METHOD startActivate()
-
-   METHOD getFechaCobro()
 
    METHOD addLinksToExplorerBar()
 
@@ -150,24 +147,10 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getFechaCobro() CLASS RecibosView
-
-   if ::oController:getModel():hBuffer[ "cobrado" ] 
-      ::oController:getModel():hBuffer[ "fecha_cobro" ] := hb_date()
-   else
-      ::oController:getModel():hBuffer[ "fecha_cobro" ] := ctod( "" )
-   end if
-
-   ::oFechaCobro:Refresh()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
 METHOD Activate() CLASS RecibosView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "CONTAINER_MEDIUM_EXTENDED" ;
+      RESOURCE    "RECIBOS_SQL" ;
       TITLE       ::LblTitle() + "recibo"
 
    REDEFINE BITMAP ::oBitmap ;
@@ -179,100 +162,33 @@ METHOD Activate() CLASS RecibosView
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
       FONT        oFontBold() ;
-      PROMPT      "Recibos";
       OF          ::oDialog ;
-
-   REDEFINE FOLDER ::oFolder ;
-      ID          500 ;
-      OF          ::oDialog ;
-      PROMPT      "&General";
-      DIALOGS     "RECIBO_GENERAL";
-
-      ::redefineExplorerBar()
 
    REDEFINE GET   ::oController:getModel():hBuffer[ "expedicion" ] ;
       ID          100 ;
       SPINNER ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[1]
+      OF          ::oDialog ;
 
    REDEFINE GET   ::oController:getModel():hBuffer[ "vencimiento" ] ;
       ID          110 ;
       SPINNER ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[1]
-
-   REDEFINE SAYCHECKBOX ::oController:getModel():hBuffer[ "no_incluir_en_arqueo" ] ;
-      ID          120 ;
-      IDSAY       122 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[1]
-
-   REDEFINE GET   ::oController:getModel():hBuffer[ "sesion" ] ;
-      ID          130 ;
-      WHEN         ( .f. );
-      OF          ::oFolder:aDialogs[1]
+      OF          ::oDialog ;
 
   REDEFINE GET   ::oController:getModel():hBuffer[ "importe" ] ;
-      ID          140 ;
+      ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      PICTURE     "@E 999999999999.999";
-      OF          ::oFolder:aDialogs[1]
+      PICTURE     "@E 999999999999.99";
+      OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "cobro" ] ;
-      ID          150 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      PICTURE     "@E 999999999999.999";
-      OF          ::oFolder:aDialogs[1]
-
-  REDEFINE GET   ::oController:getModel():hBuffer[ "gastos" ] ;
-      ID          160 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      PICTURE     "@E 999999999999.999";
-      OF          ::oFolder:aDialogs[1]
-
-   REDEFINE SAYCHECKBOX ::oController:getModel():hBuffer[ "cobrado" ] ;
-      ID          170 ;
-      IDSAY       172 ;
-      ON CHANGE      (::getFechaCobro() );
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[1]
-
-   REDEFINE GET   ::oFechacobro ; 
-      VAR         ::oController:getModel():hBuffer[ "fecha_cobro" ];
-      ID          180 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[1]
-
-   // codigo caja-------------------------------------------------------------------------------------------------------//
-
-   ::oController:getCajasController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "codigo_caja" ] ) )
-   ::oController:getCajasController():getSelector():Build( { "idGet" => 190, "idText" => 191, "idLink" => 192, "oDialog" => ::oFolder:aDialogs[1] } )
-
-   // cliente------------------------------------------------------------------------------------------------------------//
-
-   ::oController:getClientesController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "cliente" ] ) )
-   ::oController:getClientesController():getSelector():Build( { "idGet" => 200, "idText" => 201, "idLink" => 202, "oDialog" => ::oFolder:aDialogs[1] } )
-
-   // Forma de pago-----------------------------------------------------------------------------------------------------//
-
-   ::oController:getFormasPagosController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "forma_pago" ] ) )
-   ::oController:getFormasPagosController():getSelector():Build( { "idGet" => 210, "idText" => 211, "idLink" => 212, "oDialog" => ::oFolder:aDialogs[1] } )
-
-   //Agentes---------------------------------------------------------------------------------------------------------//
-
-   ::oController:getAgentesController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "agente" ] ) )
-   ::oController:getAgentesController():getSelector():Build( { "idGet" => 220, "idText" => 221, "idLink" => 222, "oDialog" => ::oFolder:aDialogs[1] } )
 
    REDEFINE GET   ::oController:getModel():hBuffer[ "concepto" ] ;
-      ID          230 ;
+      ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[1]
+      OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "pagado_por" ] ;
-      ID          240 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[1]
+   ::redefineExplorerBar(500)
 
    ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
@@ -321,8 +237,14 @@ METHOD addLinksToExplorerBar() CLASS RecibosView
                            ::oController:getIncidenciasController():getImage( "16" ) )
    
    oPanel:AddLink(   "Documentos...",;
-                        {||::oController:getDocumentosController():activateDialogView() },;
+                        {||::oController:getDocumentosController():activateDialogView( ::oController:getUuid() ) },;
                            ::oController:getDocumentosController():getImage( "16" ) )
+
+   oPanel:AddLink(   "Factura...",;
+                        {||msgalert(::oController:getModelBuffer( "parent_uuid" ) ),;
+                           ::oController:getFacturasClientesController():activateDialogView( ::oController:getModelBuffer( "parent_uuid" ) ) },;
+                           ::oController:getFacturasClientesController():getImage( "16" ) )
+
 
 RETURN ( nil )
 
@@ -383,7 +305,7 @@ METHOD getColumns() CLASS SQLRecibosModel
    hset( ::hColumns, "vencimiento",                {  "create"   => "DATE"                                        ,;
                                                       "default"   => {|| hb_date() } }                            )
 
-   hset( ::hColumns, "importe",                    {  "create"    => "FLOAT( 16,6 )"                              ,;
+   hset( ::hColumns, "importe",                    {  "create"    => "FLOAT( 16,2 )"                              ,;
                                                       "default"   => {||  0  } }                                  )
 
    hset( ::hColumns, "concepto",                   {  "create"    => "VARCHAR( 200 )"                              ,;

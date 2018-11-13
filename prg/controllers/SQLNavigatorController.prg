@@ -276,12 +276,12 @@ METHOD activateDialogView()
       RETURN ( .f. )
    end if
 
-   ::buildRowSetSentence()   
+   ::buildRowSetSentence() 
 
    if empty( ::getRowSet():get() )
       RETURN ( .f. )
    end if
-
+   
 RETURN ( ::getDialogModalView():Activate() )
 
 //---------------------------------------------------------------------------//

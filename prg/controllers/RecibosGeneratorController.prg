@@ -37,7 +37,7 @@ CLASS RecibosGeneratorController
 
    METHOD getController()              INLINE ( ::oController ) 
    
-   METHOD isPaid()                  INLINE ( hget( ::hPaymentMethod, "cobrado" ) < 2 )
+   METHOD isPaid()                     INLINE ( hget( ::hPaymentMethod, "cobrado" ) < 2 )
 
    METHOD getTerms()                   INLINE ( hget( ::hPaymentMethod, "numero_plazos" ) )
 
@@ -50,6 +50,11 @@ CLASS RecibosGeneratorController
    METHOD getTermDays( nTerm )
 
    METHOD getTermAmount()
+
+   METHOD adjustExpirationDate( dExpirationDate, aPaymentDays )
+
+   METHOD adjustFreeMonth( hPaymentDays )
+
 
    //Construcciones tardias----------------------------------------------------
 
@@ -90,7 +95,7 @@ RETURN ( nil )
    ::nTotalTermAmount   := 0
 
    ::dExpirationDate    := ::oController:getModelBuffer( 'fecha' )
-
+   
    ::getTotalDocumento()
 
    if empty( ::getMetodoPago() )
@@ -154,9 +159,50 @@ RETURN ( hget( ::hPaymentMethod, "entre_plazo" ) )
 
 METHOD getExpirationDate( nTerm ) CLASS RecibosGeneratorController
 
-   ::dExpirationDate    += ::getTermDays( nTerm )
+   local hPaymentDays
+   local aPaymentDays := {}
+
+   hPaymentDays         := SQLClientesModel():getPaymentDays( ::oController:getModelBuffer( 'cliente_codigo' ) )
+
+   aPaymentDays         := { hget( hPaymentDays, "primer_dia_pago" ), hget( hPaymentDays, "segundo_dia_pago" ), hget( hPaymentDays, "tercer_dia_pago" ) }
+
+   ::dExpirationDate    += ::getTermDays( nTerm ) 
+
+   ::dExpirationDate    := ::adjustExpirationDate( ::dExpirationDate, aPaymentDays )
+
+   ::adjustFreeMonth( hPaymentDays )
 
 RETURN ( ::dExpirationDate )
+
+//---------------------------------------------------------------------------//
+
+METHOD adjustExpirationDate( dExpirationDate, aPaymentDays ) CLASS RecibosGeneratorController
+
+   local nPaymentDay
+
+   if afirst(aPaymentDays) == 0
+      RETURN ( dExpirationDate )
+   end if 
+
+   for each nPaymentDay in aPaymentDays
+      if nPaymentDay >= day( dExpirationDate )  
+         RETURN ( dExpirationDate + ( nPaymentDay - day( dExpirationDate ) ) )
+      end if 
+   next 
+
+RETURN ( ::adjustExpirationDate( bom( addMonth( dExpirationDate, 1 ) ), aPaymentDays ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD adjustFreeMonth( hPaymentDays ) CLASS RecibosGeneratorController
+
+   if cMonth( ::dExpirationDate ) == hget( hPaymentDays, "mes_vacaciones" )
+
+      ::dExpirationDate := addMonth( ::dExpirationDate, 1 )
+
+   end if
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -184,7 +230,7 @@ RETURN ( ::nTermAmount )
 
 METHOD Insert( nTermAmount ) CLASS RecibosGeneratorController
 
-   DEFAULT nTermAmount      := hget( ::hTotalDocument, "totalDocumento" )
+   DEFAULT nTermAmount      := Round( hget( ::hTotalDocument, "totalDocumento" ),2 )
 
    ::getModel():loadBlankBuffer()
 
