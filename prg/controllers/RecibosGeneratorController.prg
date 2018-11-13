@@ -51,6 +51,11 @@ CLASS RecibosGeneratorController
 
    METHOD getTermAmount()
 
+   METHOD adjustExpirationDate( dExpirationDate, aPaymentDays )
+
+   METHOD adjustFreeMonth( hPaymentDays )
+
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLRecibosModel():New( self ), ), ::oModel ) 
@@ -154,42 +159,50 @@ RETURN ( hget( ::hPaymentMethod, "entre_plazo" ) )
 
 METHOD getExpirationDate( nTerm ) CLASS RecibosGeneratorController
 
-local hPaymentDays
-local dPayDay
-local nPrimerDia
-local nSegundoDia
-local nTercerDia
+   local hPaymentDays
+   local aPaymentDays := {}
 
-   hPaymentDays := SQLClientesModel():getPaymentDays( ::oController:getModelBuffer( 'cliente_codigo' ) )
-   msgalert(hb_valtoexp( hPaymentDays ), "hPaymentDays" ) 
+   hPaymentDays         := SQLClientesModel():getPaymentDays( ::oController:getModelBuffer( 'cliente_codigo' ) )
 
-   nPrimerDia  :=  hget( hPaymentDays, "primer_dia_pago" )   
+   aPaymentDays         := { hget( hPaymentDays, "primer_dia_pago" ), hget( hPaymentDays, "segundo_dia_pago" ), hget( hPaymentDays, "tercer_dia_pago" ) }
 
-   if nPrimerDia == 0 
-      ::dExpirationDate    += ::getTermDays( nTerm )
-   end if
+   ::dExpirationDate    += ::getTermDays( nTerm ) 
 
-    dPayDay       :=    Day( hb_date() + ::getTermDays( nTerm ) )
-    nSegundoDia   :=    hget( hPaymentDays, "segundo_dia_pago" )
-    nTercerDia    :=    hget( hPaymentDays, "tercer_dia_pago" )
+   ::dExpirationDate    := ::adjustExpirationDate( ::dExpirationDate, aPaymentDays )
 
-   DO CASE
-
-       CASE nPrimerDia > dPayDay
-            msgalert(nPrimerDia - dPayDay)
-            ::dExpirationDate += ::getTermDays( nTerm )+( nPrimerDia + dPayDay )
-            msgalert( ::dExpirationDate, "primer" )
-
-   
-      CASE  nSegundoDia < dPayDay
-            msgalert("segundo_dia_pago")
-   
-      CASE  nTercerDia < dPayDay
-            msgalert("tercer_dia_pago")
-   
-   END CASE
+   ::adjustFreeMonth( hPaymentDays )
 
 RETURN ( ::dExpirationDate )
+
+//---------------------------------------------------------------------------//
+
+METHOD adjustExpirationDate( dExpirationDate, aPaymentDays ) CLASS RecibosGeneratorController
+
+   local nPaymentDay
+
+   if afirst(aPaymentDays) == 0
+      RETURN ( dExpirationDate )
+   end if 
+
+   for each nPaymentDay in aPaymentDays
+      if nPaymentDay >= day( dExpirationDate )  
+         RETURN ( dExpirationDate + ( nPaymentDay - day( dExpirationDate ) ) )
+      end if 
+   next 
+
+RETURN ( ::adjustExpirationDate( bom( addMonth( dExpirationDate, 1 ) ), aPaymentDays ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD adjustFreeMonth( hPaymentDays ) CLASS RecibosGeneratorController
+
+   if cMonth( ::dExpirationDate ) == hget( hPaymentDays, "mes_vacaciones" )
+
+      ::dExpirationDate := addMonth( ::dExpirationDate, 1 )
+
+   end if
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
