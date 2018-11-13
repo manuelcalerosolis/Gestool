@@ -47,9 +47,9 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD validAgenteCodigo( oGet, oCol )
 
-   METHOD validLinea()
+   METHOD validLine()
 
-   METHOD validLineaCombinacion( cCodigoArticulo )
+   METHOD validLineCombinacion( cCodigoArticulo )
 
    // Escritura de campos------------------------------------------------------
 
@@ -260,13 +260,13 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validLinea()
+METHOD validLine()
 
    if empty( ::oRowSet:fieldget( 'articulo_codigo' ) )
       RETURN ( .t. )
    end if 
 
-   if !( ::validLineaCombinacion() )
+   if !( ::validLineCombinacion() )
       RETURN ( .f. )
    end if
 
@@ -274,14 +274,14 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validLineaCombinacion()
+METHOD validLineCombinacion()
 
    if !empty( ::oRowSet:fieldget( 'articulos_propiedades_nombre' ) )
       RETURN ( .t. )
    end if
 
    if !empty( ::getCombinacionesController():getModel():CountCombinacionesWhereArticulo( ::oRowSet:fieldget( 'articulo_codigo' ) ) )
-      msgstop( "Debes seleccionar propiedades" )
+      ::getController():getDialogView():showMessage( "Debe seleccionar propiedades" )      
       RETURN ( .f. )
    end if
 

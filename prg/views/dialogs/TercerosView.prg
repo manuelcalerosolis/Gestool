@@ -214,7 +214,7 @@ METHOD redefineComercial() CLASS TercerosView
       OF       ::oFolder:aDialogs[2]
 
    REDEFINE COMBOBOX ::getController():oModel:hBuffer[ "mes_vacaciones" ];
-      ITEMS    AMESES ;
+      ITEMS    aMonths() ;
       ID       180 ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]

@@ -118,6 +118,8 @@ CLASS SQLBaseController
    METHOD getValidator()                              INLINE ( ::oValidator )
 
    METHOD Validate( cColumn, uValue )                 INLINE ( ::getValidator():Validate( cColumn, uValue ) )
+   METHOD notValidate( cColumn, uValue )              INLINE ( !( ::getValidator():Validate( cColumn, uValue ) ) )
+   
    METHOD Assert( cColumn, uValue )                   INLINE ( ::getValidator():Assert( cColumn, uValue ) )
 
    // Access -----------------------------------------------------------------

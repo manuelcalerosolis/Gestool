@@ -477,6 +477,12 @@ RETURN oSheet
 
 //----------------------------------------------------------------------------//
 
+FUNCTION notValidateDialog( uDialogs ) 
+
+RETURN ( !validateDialog( uDialogs ) ) 
+
+//----------------------------------------------------------------------------//
+
 FUNCTION validateDialog( uDialogs ) 
 
    local oDialog

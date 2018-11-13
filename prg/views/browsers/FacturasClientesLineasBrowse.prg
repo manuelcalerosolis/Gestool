@@ -38,7 +38,7 @@ METHOD Create( oWindow ) CLASS FacturasClientesLineasBrowseView
 
    ::oBrowse:setChange( {|| ::oController:getHistoryManager():Set( ::getRowSet():getValuesAsHash() ) } )
 
-   ::oBrowse:bOnSkip       := {|| ::oController:validLinea() }
+   ::oBrowse:bOnSkip       := {|| ::oController:validLine() }
 
    ::oBrowse:setGotFocus( {|| ::oController:getHistoryManager():Set( ::getRowSet():getValuesAsHash() ) } )
 
@@ -48,7 +48,7 @@ RETURN ( ::oBrowse )
 
 METHOD setOnCancelEdit()
 
-RETURN ( ::oController:validLinea() )   
+RETURN ( ::oController:validLine() )   
 
 //---------------------------------------------------------------------------//
 

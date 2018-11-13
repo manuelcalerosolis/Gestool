@@ -718,7 +718,7 @@ TercerosValidator.prg 														\
 SqlGetSelector.prg 															\
 SqlClientGetSelector.prg													\
 SqlDireccionGetSelector.prg												\
-NumeroDocumentoController.prg 											\
+DocumentComponent.prg 														\
 SQLDialogView.prg 															\
 CalculaPrecioCommand.prg 													\
 DescuentosController.prg 													\
@@ -1433,7 +1433,7 @@ TercerosValidator.obj 														\
 SqlGetSelector.obj 															\
 SqlClientGetSelector.obj 													\
 SqlDireccionGetSelector.obj 												\
-NumeroDocumentoController.obj 											\
+DocumentComponent.obj 														\
 SQLDialogView.obj 															\
 CalculaPrecioCommand.obj 													\
 DescuentosController.obj 													\
@@ -2137,7 +2137,7 @@ $(OBJ)\TercerosValidator.obj 												+
 $(OBJ)\SqlGetSelector.obj 													+
 $(OBJ)\SqlClientGetSelector.obj											+
 $(OBJ)\SqlDireccionGetSelector.obj										+
-$(OBJ)\NumeroDocumentoController.obj									+
+$(OBJ)\DocumentComponent.obj												+
 $(OBJ)\SQLDialogView.obj 													+
 $(OBJ)\CalculaPrecioCommand.obj 											+
 $(OBJ)\DescuentosController.obj 											+
@@ -2201,6 +2201,7 @@ $(HBLIB)\hbziparc.lib            										+
 $(HBLIB)\hbmzip.lib              										+
 $(HBLIB)\hbzlib.lib              										+
 $(HBLIB)\minizip.lib             										+
+$(HBLIB)\hbmisc.lib             											+
 $(HBLIB)\png.lib                 										+ 
 $(HBLIB)\hbcurl.lib              										+
 $(HBLIB)\hbusrrdd.lib            										+

@@ -19,6 +19,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD loadedBlankBuffer() 
 
+   METHOD loadedDuplicateBuffer() 
+
    METHOD loadedBuffer()               INLINE ( ::getHistoryManager():Set( ::getModel():hBuffer ) )
 
    METHOD updatingBuffer()
@@ -47,8 +49,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD clientSetDescuentos()
 
-   METHOD isLines()
-   METHOD isNotLines()                 INLINE ( !::isLines() )
+   METHOD hasLines()
+   METHOD hasNotLines()                INLINE ( !::hasLines() )
 
    METHOD getConfigItems()
 
@@ -88,7 +90,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
    
    METHOD getReport()                  INLINE ( if( empty( ::oReport ), ::oReport := FacturasClientesReport():New( self ), ), ::oReport )
 
-   METHOD getSerieDocumentoComponent() INLINE ( if( empty( ::oSerieDocumentoComponent ), ::oSerieDocumentoComponent := SerieDocumentoComponent():New( self ), ), ::oSerieDocumentoComponent )
+   METHOD getSerieDocumentoComponent()    INLINE ( if( empty( ::oSerieDocumentoComponent ), ::oSerieDocumentoComponent := SerieDocumentoComponent():New( self ), ), ::oSerieDocumentoComponent )
 
    METHOD getNumeroDocumentoComponent()   INLINE ( if( empty( ::oNumeroDocumentoComponent ), ::oNumeroDocumentoComponent := NumeroDocumentoComponent():New( self ), ), ::oNumeroDocumentoComponent )
 
@@ -122,20 +124,22 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::oNumeroDocumentoComponent         := NumeroDocumentoComponent():New( self )
 
-   ::getModel():setEvent( 'loadedBuffer',       {|| ::loadedBuffer() } )
-   ::getModel():setEvent( 'loadedBlankBuffer',  {|| ::loadedBlankBuffer() } )
-   ::getModel():setEvent( 'updatingBuffer',     {|| ::updatingBuffer() } )
-   ::getModel():setEvent( 'updatedBuffer',      {|| ::updatedBuffer() } )
+   ::getModel():setEvent( 'loadedBuffer',          {|| ::loadedBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )
+   ::getModel():setEvent( 'loadedDuplicateBuffer', {|| ::loadedDuplicateBuffer() } )
+
+   ::getModel():setEvent( 'updatedBuffer',   {|| ::updatedBuffer() } )
+   ::getModel():setEvents( { 'updatingBuffer', 'insertingBuffer' },  {|| ::updatingBuffer() } )
 
    ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',              {|| ::isClientFilled() } ) 
    ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence',  {|| ::getClientUuid() } )
 
-   ::getFacturasClientesLineasController():setEvent( 'appending',        {|| ::isClientFilled() }  )
-   ::getFacturasClientesLineasController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
+   ::getFacturasClientesLineasController():setEvent( 'appending',          {|| ::isClientFilled() }  )
+   ::getFacturasClientesLineasController():setEvent( 'deletedSelection',   {|| ::calculateTotals() } ) 
 
-   ::getClientesController():getSelector():setEvent( 'settedHelpText',    {|| ::clientesSettedHelpText() } )
+   ::getClientesController():getSelector():setEvent( 'settedHelpText',     {|| ::clientesSettedHelpText() } )
 
-   ::getFacturasClientesDescuentosController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
+   ::getFacturasClientesDescuentosController():setEvent( 'deletedSelection',     {|| ::calculateTotals() } ) 
 
    ::getSerieDocumentoComponent():setEvents( { 'inserted', 'changedAndExist' }, {|| ::changedSerie() } )
 
@@ -205,9 +209,15 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD loadedDuplicateBuffer() CLASS FacturasClientesController 
+
+RETURN ( ::setModelBuffer( "numero", SQLContadoresModel():getPosibleNext( ::cName, ::getModelBuffer( "serie" ) ) ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD updatingBuffer() CLASS FacturasClientesController 
 
-   if ::isAppendMode()
+   if ::isAppendOrDuplicateMode()
       ::setModelBuffer( "numero", SQLContadoresModel():getNext( ::cName, ::getModelBuffer( "serie" ) ) )
    end if 
 
@@ -217,9 +227,7 @@ RETURN ( nil )
 
 METHOD updatedBuffer() CLASS FacturasClientesController 
 
-   ::getRecibosGeneratorController():generate()
-
-RETURN ( nil )
+RETURN ( ::getRecibosGeneratorController():generate() )
 
 //---------------------------------------------------------------------------//
 
@@ -377,7 +385,9 @@ RETURN ( nil )
 
 METHOD changedSerie() CLASS FacturasClientesController 
 
-   msgalert( ::getSerieDocumentoComponent():getValue() )
+   msgalert( SQLContadoresModel():getPosibleNext( ::cName, ::getModelBuffer( "serie" ) ), "changedSerie" )
+
+   ::getNumeroDocumentoComponent():setValue( SQLContadoresModel():getPosibleNext( ::cName, ::getModelBuffer( "serie" ) ) )
 
 RETURN ( nil )
 
@@ -411,7 +421,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD isLines() CLASS FacturasClientesController
+METHOD hasLines() CLASS FacturasClientesController
 
 RETURN ( ::getFacturasClientesLineasController():getModel():countLinesWhereUuidParent( ::getModelBuffer( 'uuid' ) ) > 0 )
 
@@ -462,6 +472,10 @@ RETURN ( aItems )
 CLASS FacturasClientesValidator FROM SQLBaseValidator 
 
    METHOD getValidators()
+
+   METHOD emptyLines()     
+
+   METHOD validLine()
  
 END CLASS
 
@@ -476,9 +490,23 @@ METHOD getValidators() CLASS FacturasClientesValidator
                         "almacen_codigo"     => {  "required"        => "El código del almacén es un dato requerido",;
                                                    "almacenExist"    => "El código del almacén no existe" } ,;  
                         "tarifa_codigo"      => {  "required"        => "El código de la tarifa es un dato requerido",; 
-                                                   "tarifaExist"     => "El código de la tarifa no existe" } }  
+                                                   "tarifaExist"     => "El código de la tarifa no existe" },;
+                        "formulario"         => {  "emptyLines"      => "Las líneas no pueden estar vacias",;
+                                                   "validLine"       => "" } }  
 
 RETURN ( ::hValidators )
+
+//---------------------------------------------------------------------------//
+
+METHOD emptyLines() CLASS FacturasClientesValidator     
+
+RETURN ( ::getController():hasLines() )
+
+//---------------------------------------------------------------------------//
+
+METHOD validLine() CLASS FacturasClientesValidator     
+
+RETURN ( ::getController():getFacturasClientesLineasController():validLine() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

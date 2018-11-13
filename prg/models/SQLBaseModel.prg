@@ -257,6 +257,10 @@ CLASS SQLBaseModel
    METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent, uValue )                 INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent, uValue ), ) )
 
+   // Updates------------------------------------------------------------------
+
+   METHOD updateFieldsWhere( id, hFields, hWhere )
+
    METHOD updateFieldWhereId( id, cField, uValue )
    METHOD updateBufferWhereId( id, hBuffer )
 
@@ -1411,19 +1415,14 @@ RETURN ( uValue )
 METHOD insertBuffer( hBuffer )
 
    local nId
-   local cSQLInsert
 
    DEFAULT hBuffer   := ::hBuffer
 
-   cSQLInsert        := ::getInsertSentence( hBuffer )
-
-   if empty( cSQLInsert )
-      RETURN ( nil )
-   end if 
-
    ::fireEvent( 'insertingBuffer' )
 
-   ::getDatabase():Execs( cSQLInsert )
+   ::getInsertSentence( hBuffer )
+
+   ::getDatabase():Execs( ::cSQLInsert )
 
    nId               := ::getDatabase():LastInsertId()
 
@@ -1438,10 +1437,12 @@ RETURN ( nId )
 METHOD insertIgnoreBuffer( hBuffer )
 
    local nId
-
-   ::getInsertIgnoreSentence( hBuffer )
+   
+   DEFAULT hBuffer   := ::hBuffer
 
    ::fireEvent( 'insertingBuffer' )
+
+   ::getInsertIgnoreSentence( hBuffer )
 
    if !empty( ::cSQLInsert )
       ::getDatabase():Execs( ::cSQLInsert )
@@ -1610,6 +1611,25 @@ RETURN ( ::getDatabase():Exec( cSql ) )
 
 //----------------------------------------------------------------------------//
 
+METHOD updateFieldsWhere( hFields, hWhere )
+
+   local cSql  
+
+   cSql           := "UPDATE " + ::getTableName() + " "
+   cSql           +=    "SET " 
+
+   hEval( hFields,; 
+      {|k,v| cSql += k + " = " + v + ", " } )
+   
+   cSql           := chgAtEnd( cSql, '', 2 ) + " "
+
+   hEval( hWhere,; 
+      {|k,v| cSql += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v ) + " " } )
+
+RETURN ( ::getDatabase():Exec( cSql ) )
+
+//----------------------------------------------------------------------------//
+
 METHOD updateBufferWhereId( id, hBuffer )
 
    local cSql 
@@ -1677,17 +1697,25 @@ RETURN ( ::getDatabase():getValue( cSql ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD getFieldWhere( cField, hWhere )
+METHOD getFieldWhere( cField, hWhere, hOrderBy, uDefault )
 
-   local cSql        := "SELECT " + cField                                       + " "                              
-   cSql              +=    "FROM " + ::getTableName()                            + " "
+   local cSql        := "SELECT " + cField                              + " "                              
+   cSql              +=    "FROM " + ::getTableName()                   + " "
 
    hEval( hWhere,; 
-      {|k,v| cSql    += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v )   + " " } )
+      {|k,v| cSql    += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v ) + " " } )
+
+   if !empty( hOrderBy )
+
+      cSql           +=    "ORDER BY "
+      hEval( hOrderBy,; 
+         {|k,v| cSql +=    k + " " + v + " " } )
+
+   end if 
 
    cSql              +=    "LIMIT 1"
 
-RETURN ( ::getDatabase():getValue( cSql ) )
+RETURN ( ::getDatabase():getValue( cSql, uDefault ) )
 
 //----------------------------------------------------------------------------//
 

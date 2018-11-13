@@ -72,28 +72,26 @@ RETURN ( ::insertOnDuplicateTransactional( hBuffer ) )
 
 METHOD isSerie( cDocument, cSerial )
 
-   local cSql  := "SELECT id"                                              + " "
-   cSql        +=    "FROM " + ::getTableName()                            + " "
-   cSql        +=    "WHERE documento = " + quoted( cDocument )           + " "
-   cSql        +=    "AND serie = " + quoted( cSerial )
-
-RETURN ( !empty( ::getDatabase():getValue( cSql ) ) )
+RETURN ( !empty( ::getFieldWhere( 'id', { 'documento' => ( cDocument ), 'serie' => ( cSerial ) } ) ) ) 
 
 //---------------------------------------------------------------------------//
 
 METHOD getLastSerie( cDocument )
 
-   local cSql  := "SELECT serie"                                           + " "
-   cSql        +=    "FROM " + ::getTableName()                            + " "
-   cSql        +=    "WHERE documento = " + quoted( cDocument )           + " "
-   cSql        +=    "AND usuario_codigo = " + quoted( Auth():Codigo() )   + " "
-   cSql        +=    "ORDER BY updated_at DESC"                            + " " 
-   cSql        +=    "LIMIT 1"
-
-RETURN ( ::getDatabase():getValue( cSql ) ) 
+RETURN ( ::getFieldWhere( 'serie',;
+            {  'documento' => cDocument, 'usuario_codigo' => Auth():Codigo() },;
+            {  'updated_at' => 'DESC' } ) ) 
 
 //---------------------------------------------------------------------------//
-   
+
+METHOD getLastCounter( cDocument )
+
+RETURN ( ::getFieldWhere( 'contador',;
+            {  'documento' => cDocument, 'usuario_codigo' => Auth():Codigo() },;
+            {  'updated_at' => 'DESC' } ) ) 
+
+//---------------------------------------------------------------------------//
+
 METHOD getDocumentSerie( cDocument )                          
 
    local cSerial     := ::getLastSerie( cDocument )
@@ -103,19 +101,6 @@ METHOD getDocumentSerie( cDocument )
    end if
 
 RETURN ( padr( cSerial, 20 ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD getLastCounter( cDocument )
-
-   local cSql  := "SELECT contador"                                        + " "
-   cSql        +=    "FROM " + ::getTableName()                            + " "
-   cSql        +=    "WHERE documento = " + quoted( cDocument )           + " "
-   cSql        +=    "AND usuario_codigo = " + quoted( Auth():Codigo() )   + " "
-   cSql        +=    "ORDER BY updated_at DESC"                            + " " 
-   cSql        +=    "LIMIT 1"
-
-RETURN ( ::getDatabase():getValue( cSql ) ) 
 
 //---------------------------------------------------------------------------//
    
@@ -133,43 +118,15 @@ RETURN ( nCounter + 1 )
 
 METHOD getCounter( cDocument, cSerial )
 
-   local cSql
-
-   TEXT INTO cSql
-
-   SELECT contador
-
-      FROM %1$s
-
-      WHERE documento = %2$s
-         AND serie = %3$s
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( cDocument ), quoted( cSerial ) )
-
-RETURN ( ::getDatabase():getValue( cSql, 1 ) ) 
+RETURN ( ::getFieldWhere(  'contador',;
+                           { 'documento' => cDocument, 'serie' => cSerial }, , 1 ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD incrementalDocument( cDocument, cSerial )
 
-   local cSql
-
-   TEXT INTO cSql
-
-   UPDATE %1$s
-      
-      SET contador = contador + 1
-
-      WHERE documento = %2$s
-         AND serie = %3$s
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( cDocument ), quoted( cSerial ) )
-
-RETURN ( ::getDatabase():Exec( cSql ) ) 
+RETURN ( ::updateFieldsWhere( { 'contador' => 'contador + 1', 'updated_at' => 'NOW()' },;
+                              { 'documento' => cDocument, 'serie' => cSerial } ) )
 
 //---------------------------------------------------------------------------//
 
