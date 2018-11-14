@@ -43,6 +43,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD validateUnidadMedicion( uValue )
 
    METHOD validateIva( uValue )
+
+   METHOD validateDescuento( uValue )
    
    METHOD validAlmacenCodigo( oGet, oCol )
 
@@ -100,6 +102,10 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
                                                    ::oController:calculateTotals() )
 
    METHOD updateDescuento( nDescuento )
+
+   METHOD stampArticuloCodigoNombre( hArticulo ) ;
+                                          INLINE ( ::updateField( "articulo_codigo", hget( hArticulo, "codigo" ) ),;
+                                                   ::updateField( "articulo_nombre", hget( hArticulo, "nombre" ) ) )
 
    METHOD stampArticuloDescuento()
 
@@ -257,7 +263,7 @@ METHOD validAgenteCodigo( oGet, oCol )
    local uValue   := oGet:varGet()
 
    if SQLAgentesModel():CountAgenteWhereCodigo( uValue ) <= 0 
-      ::getController():getDialogView():showMessage(  "El agente introducido no existe" )      
+      ::getController():getDialogView():showMessage( "El agente introducido no existe" )      
       RETURN( .f. )
    end if
 
@@ -486,9 +492,7 @@ METHOD stampArticulo( hArticulo )
 
    cursorWait()
 
-   ::updateField( "articulo_codigo", hget( hArticulo, "codigo" ) ) 
-   
-   ::updateField( "articulo_nombre", hget( hArticulo, "nombre" ) ) 
+   ::stampArticuloCodigoNombre( hArticulo )
 
    ::stampArticuloUnidadMedicionVentas()
 
@@ -655,11 +659,8 @@ METHOD stampArticuloUnidadMedicionFactor()
    local nFactor  := UnidadesMedicionGruposLineasRepository():getFactorWhereUnidadMedicion( ::getRowSet():fieldGet( 'articulo_codigo' ), ::getRowSet():fieldGet( 'unidad_medicion_codigo' ) ) 
 
    if nFactor > 0
-      
       ::updateField( 'unidad_medicion_factor', nFactor )
-
       ::stampArticuloDescuento()
-      
    end if 
 
 RETURN ( nil )
@@ -747,8 +748,8 @@ RETURN ( .t. )
 
 METHOD runDialogSeries()
 
-   if Empty( ::getDialogView():nTotalUnidadesArticulo() )
-      msgStop( "El número de unidades no puede ser 0 para editar números de serie" )
+   if empty( ::getDialogView():nTotalUnidadesArticulo() )
+      ::getController():getDialogView():showMessage( "El número de unidades no puede ser 0 para editar números de serie" )      
       RETURN ( .f. )
    end if
 
@@ -762,9 +763,7 @@ RETURN ( .t. )
 
 METHOD Search()
 
-   ::getSearchView():Activate()
-
-RETURN ( nil )
+RETURN ( ::getSearchView():Activate() )
 
 //---------------------------------------------------------------------------//
 
@@ -828,6 +827,21 @@ RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
+METHOD validateDescuento( uValue )
+
+   local nDescuento                  
+
+   nDescuento             := uValue:VarGet()
+
+   if nDescuento < 0
+      ::getController():getDialogView():showMessage( "El porcentaje de descuento no puede ser un número negativo" )      
+      RETURN ( .f. )
+   end if
+
+RETURN ( .t. )
+
+//----------------------------------------------------------------------------//
+
 METHOD validateIva( uValue )
 
    local nPorcentajeIVA                  
@@ -840,7 +854,7 @@ METHOD validateIva( uValue )
    end if
 
    if SQLTiposIvaModel():CountIvaWherePorcentaje( nPorcentajeIVA ) <= 0
-      msgstop( "No existe el IVA introducido" )
+      ::getController():getDialogView():showMessage( "No existe el IVA introducido" )      
       RETURN ( .f. )
    end if
 

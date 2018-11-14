@@ -127,7 +127,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'lote' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := ::getEditGet()
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::getController():updateFieldWhereId( 'lote', uNewValue ) }
+      :bOnPostEdit         := {| oCol, uNewValue, nKey | ::getController():updateFieldWhereId( 'lote', uNewValue ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -143,7 +143,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :oFooterFont         := oFontBold()
       :cDataType           := "N"
       :nEditType           := ::getEditGet()
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::getController():updateArticuloUnidades( oCol, uNewValue ) }
+      :bOnPostEdit         := {| oCol, uNewValue, nKey | ::getController():updateArticuloUnidades( oCol, uNewValue ) }
    end with
 
    with object ( ::oColumnUnidadMedicion := ::oBrowse:AddCol() )
@@ -168,7 +168,6 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :cEditPicture        := "@E 999,999.999999"
       :cDataType           := "N"
       :lHide               := .t.
-      :cDataType           := "N"
       :nEditType           := ::getEditGet()
       :bOnPostEdit         := {|oCol, uNewValue, nKey| ::getController():updateArticuloFactor( oCol, uNewValue ) }
    end with
@@ -240,7 +239,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :cDataType           := "N"
       :nEditType           := ::getEditGet()
-      :bEditValid          := {|uNewValue| uNewValue > 0 }
+      :bEditValid          := {| oGet | ::getController():validateDescuento( oGet ) }
       :bOnPostEdit         := {| oCol, uNewValue | ::getController():updateDescuento( uNewValue ) }
    end with
 
@@ -253,7 +252,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :cEditPicture        := "@E 999.9999"
       :cDataType           := "N"
       :nEditType           := ::getEditGet()
-      :bEditValid          := {|uNewValue| ::getController():validateIva( uNewValue ) }
+      :bEditValid          := {| oGet | ::getController():validateIva( oGet ) }
       :bOnPostEdit         := {| oCol, uNewValue | ::getController():updateImpuestos( uNewValue ) }
    end with
 
