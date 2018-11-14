@@ -49,6 +49,8 @@ CLASS MenuTreeView
    METHOD Default()
    METHOD setImageList()                  INLINE ( ::oTreeView:SetImagelist( ::oImageList ) )
  
+   METHOD isCreatorControllerZoomMode()
+
    METHOD getSuperController()            INLINE ( ::oController:getController() )
    METHOD getBrowse()                     INLINE ( ::oController:getBrowse() )
 
@@ -89,16 +91,7 @@ CLASS MenuTreeView
 
    METHOD addAppendOrInsertButton()       INLINE ( if( ::getSuperController():lInsertable, ::addInsertButton(), ::addAppendButton() ) )
 
-   METHOD addGeneralButton()              INLINE ( ::fireEvent( 'addingGeneralButton' ),;
-                                                   ::addSearchButton(),;
-                                                   ::addRefreshButton(),;
-                                                   ::addAppendOrInsertButton(),;
-                                                   ::addDuplicateButton(),;
-                                                   ::addEditButton(),;
-                                                   ::addZoomButton(),;
-                                                   ::addDeleteButton(),;
-                                                   ::addShowDeleteButton(),;
-                                                   ::fireEvent( 'addedGeneralButton' ) )
+   METHOD addGeneralButton()              
 
    METHOD addAutoButtons()                INLINE ( ::fireEvent( 'addingAutoButton' ),;
                                                    ::addGeneralButton(),;
@@ -110,12 +103,7 @@ CLASS MenuTreeView
                                                    ::oButtonMain:Expand(),;
                                                    ::fireEvent( 'addedAutoButton' ) )
 
-   METHOD addSelectorButtons()            INLINE ( ::fireEvent( 'addingSelectorButton' ),;
-                                                   ::addGeneralButton(),;
-                                                   ::addSelectButton(),;
-                                                   ::addCloseButton(),;
-                                                   ::oButtonMain:Expand(),;
-                                                   ::fireEvent( 'addedSelectorButton' ) )
+   METHOD addSelectorButtons()  
 
    METHOD addDialogButtons()              INLINE ( ::fireEvent( 'addingSelectorButton' ),;
                                                    ::addGeneralButton(),;
@@ -187,6 +175,58 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
+METHOD addGeneralButton()
+
+   ::fireEvent( 'addingGeneralButton' )
+
+   ::addSearchButton()
+
+   ::addRefreshButton()
+
+   if !::isCreatorControllerZoomMode() 
+
+      ::addAppendOrInsertButton()
+
+      ::addDuplicateButton()
+
+      ::addEditButton()
+
+   end if 
+
+   ::addZoomButton()
+
+   if !::isCreatorControllerZoomMode()
+
+      ::addDeleteButton()
+
+      ::addShowDeleteButton()
+
+   end if
+
+   ::oButtonMain:Expand()
+
+   ::fireEvent( 'addedGeneralButton' ) 
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD addSelectorButtons()    
+
+   ::fireEvent( 'addingSelectorButton' )
+
+   ::addGeneralButton()
+   if !::isCreatorControllerZoomMode()
+      ::addSelectButton()
+   end if
+   ::addCloseButton()
+   ::oButtonMain:Expand()
+   ::fireEvent( 'addedSelectorButton' ) 
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
 METHOD ActivateMDI( nWidth, nHeight )
 
    if isFalse( ::fireEvent( 'activatingMDI' ) )
@@ -242,6 +282,16 @@ METHOD Exit()
    ::oController:getWindow():End()
    
 RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD isCreatorControllerZoomMode()
+
+   if empty( ::getSuperController():getController() )  
+      RETURN ( .f. )
+   end if 
+
+RETURN ( ::getSuperController():getController():isZoomMode() )   
 
 //----------------------------------------------------------------------------//
 
@@ -323,7 +373,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddAppendButton()    
+METHOD AddAppendButton()     
 
    if isFalse( ::fireEvent( 'addingAppendButton' ) )
       RETURN ( nil )
@@ -352,6 +402,10 @@ RETURN ( nil )
 //----------------------------------------------------------------------------//
 
 METHOD AddDuplicateButton() 
+
+   if ::isCreatorControllerZoomMode() 
+      RETURN ( nil )
+   end if 
 
    if isFalse( ::fireEvent( 'addingDuplicateButton' ) )
       RETURN ( nil )

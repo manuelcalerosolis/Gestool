@@ -273,9 +273,11 @@ CLASS SQLBaseModel
    METHOD getUuidWhereNombre( uValue )                INLINE ( ::getUuidWhereColumn( uValue, 'nombre', '' ) )
    METHOD getUuidWhereCodigo( uValue )                INLINE ( ::getUuidWhereColumn( uValue, 'codigo', '' ) )
 
+
    METHOD getIdWhereColumn( uValue, cColumn, uDefault ) 
    METHOD getIdWhereNombre( uValue )                  INLINE ( ::getIdWhereColumn( uValue, 'nombre', '' ) )
    METHOD getIdWhereCodigo( uValue )                  INLINE ( ::getIdWhereColumn( uValue, 'codigo', '' ) )
+   METHOD getIdWhereUuid( uValue )                    INLINE ( ::getIdWhereColumn( uValue, 'uuid', '' ) ) 
 
    METHOD getWhereUuid( Uuid )
    METHOD getWhereCodigo( cCodigo )

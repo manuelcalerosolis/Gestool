@@ -22,6 +22,7 @@ CLASS IncidenciasController FROM SQLNavigatorController
    METHOD deleteBuffer( aUuidEntidades )
 
    //Construcciones tardias----------------------------------------------------
+
    METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := IncidenciasBrowseView():New( self ), ), ::oBrowseView ) 
 
    METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := IncidenciasView():New( self ), ), ::oDialogView )
@@ -262,14 +263,13 @@ CLASS IncidenciasView FROM SQLBaseView
 
    METHOD changeFechaResolucion()
 
+   METHOD defaultTitle()               
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS IncidenciasView
-
-   local oDialog
-   local oBmpGeneral
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "INCIDENCIA_SQL" ;
@@ -365,6 +365,20 @@ METHOD changeFechaResolucion() CLASS IncidenciasView
 Return ( nil )
 
 //---------------------------------------------------------------------------//
+
+ METHOD defaultTitle() CLASS IncidenciasView
+
+ local cTitle   
+
+   cTitle         := ::oController:defaultTitle() + " : "  
+
+   //cTitle   +=       ::oController:oController:getDialogView():defaultTitle()
+
+msgalert(cTitle, "incidencia")
+
+RETURN ( cTitle )    
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -447,5 +461,4 @@ CLASS IncidenciasRepository FROM SQLBaseRepository
 
 END CLASS
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

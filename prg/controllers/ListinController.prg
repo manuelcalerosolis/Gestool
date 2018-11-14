@@ -133,6 +133,8 @@ CLASS ListinView FROM SQLBaseView
 
    METHOD addLinksToExplorerBar()
 
+   METHOD defaultTitle()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -229,6 +231,23 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD defaultTitle() CLASS ListinView   
+
+   local cTitle  := ::oController:getTitle() + " : " 
+
+   if empty( ::oController:oModel )
+      RETURN ( cTitle )
+   end if 
+
+   if empty( ::oController:oModel:hBuffer )
+      RETURN ( cTitle )
+   end if 
+
+   if hhaskey( ::oController:oModel:hBuffer, "nombre" )
+      cTitle      +=  alltrim( ::oController:oModel:hBuffer[ "nombre" ] )
+   end if
+
+RETURN ( cTitle )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

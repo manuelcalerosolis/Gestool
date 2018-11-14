@@ -143,6 +143,8 @@ CLASS RecibosView FROM SQLBaseView
 
    METHOD addLinksToExplorerBar()
 
+   METHOD defaultTitle()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -228,10 +230,6 @@ METHOD addLinksToExplorerBar() CLASS RecibosView
 
    oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-   if ::oController:isZoomMode()
-      RETURN ( nil )
-   end if
-
    oPanel:AddLink(   "Incidencias...",;
                         {||::oController:getIncidenciasController():activateDialogView( ::oController:getUuid() ) },;
                            ::oController:getIncidenciasController():getImage( "16" ) )
@@ -240,13 +238,39 @@ METHOD addLinksToExplorerBar() CLASS RecibosView
                         {||::oController:getDocumentosController():activateDialogView( ::oController:getUuid() ) },;
                            ::oController:getDocumentosController():getImage( "16" ) )
 
-   oPanel:AddLink(   "Factura...",;
-                        {||msgalert(::oController:getModelBuffer( "parent_uuid" ) ),;
-                           ::oController:getFacturasClientesController():activateDialogView( ::oController:getModelBuffer( "parent_uuid" ) ) },;
+   if ::oController:isNotAppendOrDuplicateMode()
+
+      oPanel:AddLink(   "Factura...",;
+                        {||::oController:getFacturasClientesController():ZoomUuid( ::oController:getModelBuffer( "parent_uuid" ) ) },;
                            ::oController:getFacturasClientesController():getImage( "16" ) )
 
+      oPanel:AddLink(   "Pagos...",;
+                        {|| msgalert( "to-do" ) },;
+                           ::oController:getFacturasClientesController():getImage( "16" ) )
+
+   end if 
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD defaultTitle() CLASS RecibosView
+
+   local cTitle   
+
+   if empty( ::oController:oModel )
+      RETURN ( cTitle )
+   end if 
+
+   if empty( ::oController:oModel:hBuffer )
+      RETURN ( cTitle )
+   end if 
+
+   if hhaskey( ::oController:oModel:hBuffer, "concepto" )
+      cTitle      :=  alltrim( ::oController:oModel:hBuffer[ "concepto" ] )
+   end if
+
+RETURN ( cTitle )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
