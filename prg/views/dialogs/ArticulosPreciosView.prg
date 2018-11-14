@@ -16,10 +16,6 @@ CLASS ArticulosPreciosView FROM SQLDialogView
 END CLASS
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS ArticulosPreciosView
 
@@ -48,13 +44,6 @@ METHOD Activate() CLASS ArticulosPreciosView
 
    ::oGetSearch:bChange          := {|| ::onChangeSearch() }
 
-   REDEFINE COMBOBOX ::oComboBoxOrder ;
-      VAR            ::cComboBoxOrder ;
-      ID             110 ;
-      OF             ::oDialog
-
-   ::oComboBoxOrder:bChange      := {|| ::onChangeCombo() } 
-
    ::oController:Activate( 120, ::oDialog )
 
    // Botones Articulos -------------------------------------------------------
@@ -67,11 +56,9 @@ METHOD Activate() CLASS ArticulosPreciosView
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
    end if
 
-   ::oDialog:bStart  := {|| ::startActivate() }
+   ::oDialog:bStart              := {|| ::startActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-   ::oDialog:Destroy()
 
 RETURN ( ::oDialog:nResult )
 
@@ -79,17 +66,11 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startActivate() CLASS ArticulosPreciosView
 
-   ::oComboBoxOrder:SetItems( ::getBrowseView():getColumnsHeaders() )
-
-   ::setComboColumn( ::getBrowseView():getFirstVisibleColumn() )
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD setComboColumn( oColumn )
-
-   ::oComboBoxOrder:Set( oColumn:cHeader )
 
 RETURN ( nil )
 

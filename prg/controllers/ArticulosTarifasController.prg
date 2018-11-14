@@ -5,11 +5,17 @@
 
 CLASS ArticulosTarifasController FROM SQLNavigatorController
 
+   DATA uuidToDelete
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
-   METHOD Delete( aSelectedRecno )
+   // METHOD Delete( aSelectedRecno )
+
+   METHOD Deleting()
+   
+   METHOD deletingSelection()
 
    METHOD endAppendedTarifa()
 
@@ -41,6 +47,8 @@ METHOD New( oController ) CLASS ArticulosTarifasController
 
    ::cName                          := "tarifas"
 
+   ::lMultiDelete                   := .f.
+
    ::hImage                         := {  "16" => "gc_money_interest_16",;
                                           "32" => "gc_money_interest_32",;
                                           "48" => "gc_money_interest_48" }
@@ -51,7 +59,9 @@ METHOD New( oController ) CLASS ArticulosTarifasController
 
    ::setEvent( 'edited',            {|| ::endEditedTarifa() } )
 
-   ::setEvent( 'deleting',          {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
+   ::setEvent( 'deleting',          {|| ::Deleting() } )
+   
+   ::setEvent( 'deletingSelection', {|| ::deletingSelection() } )
 
 RETURN ( Self )
 
@@ -83,20 +93,45 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
+METHOD deleting()
+
+   if ::isRowSetSystemRegister()
+      msgStop( "Este registro pertenece al sistema, no se puede alterar." )
+      RETURN ( .f. )
+   end if 
+
+   ::uuidToDelete    := ::getRowSet():fieldGet( 'uuid' )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD deletingSelection()
+
+   msgalert( ::uuidToDelete, "uuidToDelete" )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+/*
 METHOD Delete( aSelectedRecno ) CLASS ArticulosTarifasController
+
 
    if len( aSelectedRecno ) > 1
       msgStop( "No se pueden realizar eliminaciones multiples en tarifas." )
       RETURN .f.
    end if 
 
-   if ( ::getRowSet():fieldGet( 'uuid' ) == Company():Uuid() ) 
+   if ( uuidToDelete == Company():Uuid() ) 
       msgStop( "No se puede eliminar la tarifa General." )
       RETURN .f.
    end if 
 
-RETURN ( ::Super:Delete( aSelectedRecno ) )
+   ::Super:Delete( aSelectedRecno )
 
+RETURN ( ::getRowSet():fieldGet( 'uuid' ) )
+*/
 //---------------------------------------------------------------------------//
 
 METHOD endAppendedTarifa() CLASS ArticulosTarifasController
@@ -134,8 +169,6 @@ METHOD endEditedTarifa() CLASS ArticulosTarifasController
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
-// quitar
 
 METHOD updatedTarifa( uuidTarifaActualizar, lCosto ) CLASS ArticulosTarifasController
 
@@ -346,7 +379,8 @@ METHOD Activate() CLASS ArticulosTarifasView
       WHEN        ( ::oController:getModel():isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-//Botones----------------------------------------------------------------------
+   // Botones------------------------------------------------------------------
+
    ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
@@ -360,8 +394,6 @@ METHOD Activate() CLASS ArticulosTarifasView
    ::oDialog:bStart  := {|| ::startActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-  ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 
@@ -425,7 +457,7 @@ RETURN ( aItems )
 METHOD setItemsComboTarifaPadre() CLASS ArticulosTarifasView
 
    local aItems
-   local cNombreTarifa  := ::oController:getModel():hBuffer[ "nombre" ]
+   local cNombreTarifa  := ::oController:getModelBuffer( "nombre" )
 
    if ::oController:isAppendOrDuplicateMode()
 
@@ -445,7 +477,7 @@ RETURN ( .t. )
 
 METHOD whenTarifaBase() CLASS ArticulosTarifasView
 
-RETURN ( alltrim( ::oController:getModel():hBuffer[ "nombre" ] ) != alltrim( ::oController:getModel():hBuffer[ "parent_uuid" ] ) .and. ::oController:isNotZoomMode() )
+RETURN ( alltrim( ::oController:getModelBuffer( "nombre" ) ) != alltrim( ::oController:getModelBuffer( "parent_uuid" ) ) .and. ::oController:isNotZoomMode() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -509,28 +541,36 @@ END CLASS
 
 METHOD getInitialSelect() CLASS SQLArticulosTarifasModel
 
-   local cSelect  := "SELECT articulos_tarifas.id, "                                                                
-   cSelect        +=    "articulos_tarifas.uuid, "                                                                  
-   cSelect        +=    "articulos_tarifas.parent_uuid, "                                                           
-   cSelect        +=    "articulos_tarifas.codigo, "                                                         
-   cSelect        +=    "articulos_tarifas.nombre, "                                                         
-   cSelect        +=    "articulos_tarifas.margen, "                                                         
-   cSelect        +=    "articulos_tarifas.activa, "                                                         
-   cSelect        +=    "articulos_tarifas.valido_desde, "                                                         
-   cSelect        +=    "articulos_tarifas.valido_hasta, "                                                         
-   cSelect        +=    "articulos_tarifas.sistema, "                            
-   cSelect        +=    "articulos_tarifas.created_at, "                            
-   cSelect        +=    "articulos_tarifas.updated_at, "                            
-   cSelect        +=    "articulos_tarifas.deleted_at, "                            
+   local cSql
 
-   cSelect        +=    "IFNULL( articulos_tarifas_base.nombre, " + quoted( __tarifa_costo__ ) + " ) AS nombre_tarifa_base " 
+   TEXT INTO cSql
 
-   cSelect        += "FROM " + ::getTableName() + " AS articulos_tarifas "
+      SELECT articulos_tarifas.id,
+         articulos_tarifas.uuid,
+         articulos_tarifas.parent_uuid,
+         articulos_tarifas.codigo,
+         articulos_tarifas.nombre,
+         articulos_tarifas.margen,
+         articulos_tarifas.activa,
+         articulos_tarifas.valido_desde,
+         articulos_tarifas.valido_hasta, 
+         articulos_tarifas.sistema,
+         articulos_tarifas.created_at,
+         articulos_tarifas.updated_at,
+         articulos_tarifas.deleted_at,
 
-   cSelect        +=    "LEFT JOIN " + ::getTableName() + " AS articulos_tarifas_base "        
-   cSelect        +=       "ON articulos_tarifas_base.uuid = articulos_tarifas.parent_uuid"
+      IFNULL( articulos_tarifas_base.nombre, %2$s ) AS nombre_tarifa_base  
 
-RETURN ( cSelect )
+      FROM %1$s AS articulos_tarifas 
+
+      LEFT JOIN %1$s AS articulos_tarifas_base
+         ON articulos_tarifas_base.uuid = articulos_tarifas.parent_uuid
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( __tarifa_costo__ ) )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 

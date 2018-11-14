@@ -27,6 +27,8 @@ CLASS SQLBaseController
 
    DATA lInsertable                                   INIT .f.
 
+   DATA lMultiDelete                                  INIT .t.
+
    DATA nLevel                                        INIT __permission_full__ 
 
    DATA nMode                                         AS NUMERIC
@@ -698,6 +700,11 @@ METHOD Delete( aSelectedRecno )
    end if 
 
    if len( aSelectedRecno ) == 1 .and. atail( aSelectedRecno ) == 0
+      RETURN ( .f. )
+   end if 
+
+   if ( !::lMultiDelete .and. len( aSelectedRecno ) > 1 )
+      msgStop( "Borrado multiple no permitido" )
       RETURN ( .f. )
    end if 
 
