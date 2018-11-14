@@ -196,11 +196,11 @@ RETURN ( nil )
 
 METHOD restoreId()
 
-   msgalert( ::getBrowseViewType(), "getType" )
+   local nId                  := ::getId( ::getBrowseViewType(), ::getBrowseViewName() )
 
-   msgalert( ::getBrowseViewName(), "getName" )
-
-   msgalert( ::getId( ::getBrowseViewType(), ::getBrowseViewName() ), "getId" )
+   if !empty( nId )
+      ::getRowSet():findId( nId )
+   end if 
 
 RETURN ( nil )
 

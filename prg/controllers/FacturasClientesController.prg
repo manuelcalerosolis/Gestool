@@ -122,8 +122,6 @@ METHOD New( oController ) CLASS FacturasClientesController
                                              "32" => "gc_document_text_user_32",;
                                              "48" => "gc_document_text_user_48" }
 
-   ::oNumeroDocumentoComponent         := NumeroDocumentoComponent():New( self )
-
    ::getModel():setEvent( 'loadedBuffer',          {|| ::loadedBuffer() } )
    ::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )
    ::getModel():setEvent( 'loadedDuplicateBuffer', {|| ::loadedDuplicateBuffer() } )
@@ -134,12 +132,12 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',              {|| ::isClientFilled() } ) 
    ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence',  {|| ::getClientUuid() } )
 
-   ::getFacturasClientesLineasController():setEvent( 'appending',          {|| ::isClientFilled() }  )
-   ::getFacturasClientesLineasController():setEvent( 'deletedSelection',   {|| ::calculateTotals() } ) 
+   ::getFacturasClientesLineasController():setEvent( 'appending', {|| ::isClientFilled() } )
+   ::getFacturasClientesLineasController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
 
-   ::getClientesController():getSelector():setEvent( 'settedHelpText',     {|| ::clientesSettedHelpText() } )
+   ::getFacturasClientesDescuentosController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
 
-   ::getFacturasClientesDescuentosController():setEvent( 'deletedSelection',     {|| ::calculateTotals() } ) 
+   ::getClientesController():getSelector():setEvent( 'settedHelpText', {|| ::clientesSettedHelpText() } )
 
    ::getSerieDocumentoComponent():setEvents( { 'inserted', 'changedAndExist' }, {|| ::changedSerie() } )
 
@@ -476,7 +474,7 @@ CLASS FacturasClientesValidator FROM SQLBaseValidator
    METHOD emptyLines()     
 
    METHOD validLine()
- 
+
 END CLASS
 
 //---------------------------------------------------------------------------//

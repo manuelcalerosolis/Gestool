@@ -247,7 +247,7 @@ METHOD saveState()
 
    CursorWait()
 
-   ::setId( ::getBrowseViewType(), ::getName(), ::getRowSet:fieldget( "id" ) )
+   ::setId( ::getBrowseViewType(), ::getName(), ::getRowSet():fieldget( "id" ) )
 
    ::setColumnOrder( ::getBrowseViewType(), ::getName(), ::getBrowseView():getColumnSortOrder() )
 

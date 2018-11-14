@@ -37,6 +37,7 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD postValidateUnidadMedicion( oCol, uValue, nKey )
 
+
    METHOD validateLote()               
 
    METHOD validateUnidadMedicion( uValue )
@@ -50,6 +51,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD validLine()
 
    METHOD validLineCombinacion( cCodigoArticulo )
+
+   METHOD validLineAlmacen()
 
    // Escritura de campos------------------------------------------------------
 
@@ -70,12 +73,6 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD stampArticuloNombre( cNombreArticulo ) ;
                                           INLINE ( ::updateField( "articulo_nombre", cNombreArticulo ) )
-
-   METHOD stampAlmacenCodigo( cCodigoAlmacen ) ;
-                                          INLINE ( ::updateField( "almacen_codigo", cCodigoAlmacen ) )
-
-   METHOD stampAgenteCodigo( cCodigoAgente ) ;
-                                          INLINE ( ::updateField( "agente_codigo", cCodigoAgente ) )
 
    METHOD stampCombinacionesUuid( UuidCombinacion ) ;
                                           INLINE ( ::updateField( "combinaciones_uuid", UuidCombinacion ) )
@@ -102,6 +99,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD updateAgenteComision( uValue )  INLINE ( ::updateField( 'agente_comision', uValue ),;
                                                    ::oController:calculateTotals() )
 
+   METHOD updateDescuento( nDescuento )
+
    METHOD stampArticuloDescuento()
 
    METHOD getHashArticuloWhereCodigo( cCodigo )
@@ -124,10 +123,6 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD runDialogSeries()
 
-   METHOD onActivateDialog()
-
-   METHOD closedDialog() 
-
    METHOD Search()
 
    METHOD deleteLines( uuid )
@@ -139,6 +134,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD refreshBrowse()                 INLINE ( iif(  !empty( ::getBrowseView() ), ::getBrowseView():Refresh(), ) )
 
    METHOD loadUnidadesMedicion()
+
+   METHOD loadedBlankBuffer()
 
    //Construcciones tardias----------------------------------------------------
 
@@ -166,23 +163,17 @@ METHOD New( oController )
 
    ::lTransactional                          := .t.
 
-   ::cTitle                                  := "Facturas clientes l铆neas"
+   ::cTitle                                  := "Facturas clientes l韓eas"
 
    ::cName                                   := "lineas_facturas_clientes" 
 
    ::setEvent( 'activating',                 {|| ::getModel():setOrderBy( "id" ), ::getModel():setOrientation( "D" ) } )
 
-   ::setEvent( 'closedDialog',               {|| ::closedDialog() } )
-
-   ::setEvent( 'appended',                   {|| ::getBrowseView():Refresh() } )
-   ::setEvent( 'edited',                     {|| ::getBrowseView():Refresh() } ) 
-   ::setEvent( 'deletedSelection',           {|| ::getBrowseView():Refresh() } )
-
    ::setEvent( 'deletingLines',              {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )
 
-   ::setEvent( 'exitAppended',               {|| ::getBrowseView():selectCol( ::getBrowseView():oColumnCodigo:nPos ) } )
+   ::setEvent( 'exitAppended',               {|| ::getBrowseView():setFocusColumnCodigoArticulo() } )
 
-   ::getModel():setEvent( 'loadedBlankBuffer',  {|| hSet( ::getModel():hBuffer, "unidad_medicion_codigo", UnidadesMedicionGruposLineasRepository():getCodigoDefault() ) } )
+   ::getModel():setEvent( 'loadedBlankBuffer',  {|| ::loadedBlankBuffer() } )
 
 RETURN ( Self )
 
@@ -222,6 +213,18 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
+METHOD loadedBlankBuffer()
+
+   ::setModelBuffer( 'unidad_medicion_codigo', UnidadesMedicionGruposLineasRepository():getCodigoDefault() )
+
+   ::setModelBuffer( 'almacen_codigo', ::oController:getModelBuffer( 'almacen_codigo' ) )
+
+   ::setModelBuffer( 'agente_codigo', ::oController:getModelBuffer( 'agente_codigo' ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD validArticuloCodigo( oGet, oCol )
 
    local uValue   := oGet:varGet()
@@ -230,7 +233,7 @@ METHOD validArticuloCodigo( oGet, oCol )
       RETURN ( .t. )
    end if 
 
-RETURN ( ::validate( "articulo_codigo", uValue ) )
+RETURN ( ::validate( 'articulo_codigo', uValue ) )
 
 //---------------------------------------------------------------------------//
 
@@ -239,14 +242,11 @@ METHOD validAlmacenCodigo( oGet, oCol )
    local uValue   := oGet:varGet()
 
    if SQLAlmacenesModel():CountAlmacenWhereCodigo( uValue ) <= 0 
-   
-      msgStop( "El almac茅n introducido no existe" )
-   
+      ::getController():getDialogView():showMessage( "El almac閚 introducido no existe" )      
       RETURN( .f. )
-   
    end if
 
-   ::updateField ( 'almacen_codigo', uValue)
+   ::updateField( 'almacen_codigo', uValue)
 
 RETURN ( .t. ) 
 
@@ -257,7 +257,7 @@ METHOD validAgenteCodigo( oGet, oCol )
    local uValue   := oGet:varGet()
 
    if SQLAgentesModel():CountAgenteWhereCodigo( uValue ) <= 0 
-      msgStop( "El agente introducido no existe" )
+      ::getController():getDialogView():showMessage(  "El agente introducido no existe" )      
       RETURN( .f. )
    end if
 
@@ -271,11 +271,15 @@ RETURN ( .t. )
 
 METHOD validLine()
 
-   if empty( ::oRowSet:fieldget( 'articulo_codigo' ) )
+   if empty( ::getRowSet():fieldget( 'articulo_codigo' ) )
       RETURN ( .t. )
    end if 
 
    if !( ::validLineCombinacion() )
+      RETURN ( .f. )
+   end if
+
+   if !( ::validLineAlmacen() )
       RETURN ( .f. )
    end if
 
@@ -285,12 +289,25 @@ RETURN ( .t. )
 
 METHOD validLineCombinacion()
 
-   if !empty( ::oRowSet:fieldget( 'articulos_propiedades_nombre' ) )
+   if !empty( ::getRowSet():fieldget( 'articulos_propiedades_nombre' ) )
       RETURN ( .t. )
    end if
 
-   if !empty( ::getCombinacionesController():getModel():CountCombinacionesWhereArticulo( ::oRowSet:fieldget( 'articulo_codigo' ) ) )
+   if !empty( ::getCombinacionesController():getModel():CountCombinacionesWhereArticulo( ::getRowSet():fieldget( 'articulo_codigo' ) ) )
       ::getController():getDialogView():showMessage( "Debe seleccionar propiedades" )      
+      ::getBrowseView():setFocusColumnPropiedades()
+      RETURN ( .f. )
+   end if
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD validLineAlmacen()
+
+   if empty( ::getRowSet():fieldget( 'almacen_codigo' ) )
+      ::getController():getDialogView():showMessage( "Almac閚 no puede estar vacio en la l韓ea" )   
+      ::getBrowseView():setFocusColumnCodigoAlmacen()
       RETURN ( .f. )
    end if
 
@@ -307,7 +324,7 @@ METHOD postValidateArticuloCodigo( oCol, uValue, nKey )
    end if
 
    if hb_ishash( uValue )
-      if ::getHistoryManager():isEqual( "articulo_codigo", hget( uValue, "codigo" ) )
+      if ::getHistoryManager():isEqual( 'articulo_codigo', hget( uValue, 'codigo' ) )
          RETURN ( .f. )
       end if          
       RETURN ( ::stampArticulo( uValue ) )
@@ -317,7 +334,7 @@ METHOD postValidateArticuloCodigo( oCol, uValue, nKey )
       RETURN ( .f. )
    end if 
 
-   if ::getHistoryManager():isEqual( "articulo_codigo", uValue )
+   if ::getHistoryManager():isEqual( 'articulo_codigo', uValue )
       RETURN ( .f. )
    end if          
 
@@ -469,9 +486,9 @@ METHOD stampArticulo( hArticulo )
 
    cursorWait()
 
-   ::stampArticuloCodigo( hget( hArticulo, "codigo" ) )
-
-   ::stampArticuloNombre( hget( hArticulo, "nombre" ) )
+   ::updateField( "articulo_codigo", hget( hArticulo, "codigo" ) ) 
+   
+   ::updateField( "articulo_nombre", hget( hArticulo, "nombre" ) ) 
 
    ::stampArticuloUnidadMedicionVentas()
 
@@ -491,7 +508,7 @@ RETURN ( .t. )
 
 METHOD stampAlmacen( hAlmacen )
 
-   ::stampAlmacenCodigo( hget( hAlmacen, "codigo" ) )
+   ::updateField( "almacen_codigo", hget( hAlmacen, "codigo" ) )
 
 RETURN ( .t. )
 
@@ -499,7 +516,7 @@ RETURN ( .t. )
 
 METHOD stampAgente( hAgente )
 
-   ::stampAgenteCodigo( hget( hAgente, "codigo" ) )
+   ::updateField( "agente_codigo", hget( hAgente, "codigo" ) )
 
    ::stampAgenteComision()
 
@@ -525,7 +542,7 @@ METHOD getArticuloUnidadMedicionVentas()
 
    local cUnidadMedicion   
 
-   // Unidad de medici贸n para ventas de este articulo--------------------------
+   // Unidad de medici髇 para ventas de este articulo--------------------------
 
    cUnidadMedicion         := SQLUnidadesMedicionOperacionesModel():getUnidadVentaWhereArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) ) 
 
@@ -533,7 +550,7 @@ METHOD getArticuloUnidadMedicionVentas()
       RETURN ( cUnidadMedicion ) 
    end if 
 
-   // Unidad de medici贸n menor para este articulo de su grupo de unidades------
+   // Unidad de medici髇 menor para este articulo de su grupo de unidades------
 
    cUnidadMedicion         := UnidadesMedicionGruposLineasRepository():getUnidadDefectoWhereArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) ) 
 
@@ -541,7 +558,7 @@ METHOD getArticuloUnidadMedicionVentas()
       RETURN ( cUnidadMedicion )
    end if 
 
-   // Unidad de medici贸n menor en el grupo de la empresa-----------------------
+   // Unidad de medici髇 menor en el grupo de la empresa-----------------------
 
    cUnidadMedicion         := afirst( UnidadesMedicionGruposLineasRepository():getWhereEmpresa() )
 
@@ -549,7 +566,7 @@ METHOD getArticuloUnidadMedicionVentas()
       RETURN ( cUnidadMedicion )  
    end if 
 
-   // Unidad de medici贸n del sistema-------------------------------------------
+   // Unidad de medici髇 del sistema-------------------------------------------
 
    cUnidadMedicion         := SQLUnidadesMedicionModel():getUnidadMedicionSistema()
    
@@ -689,15 +706,23 @@ METHOD updateImpuestos( nPorcentajeIva )
 
    ::updateField( 'iva', nPorcentajeIva )
 
-   nPorcentajeRecargo         := SQLTiposIvaModel():getField( "recargo", "porcentaje", nPorcentajeIVA )
+   nPorcentajeRecargo         := SQLTiposIvaModel():getField( 'recargo', 'porcentaje', nPorcentajeIVA )
 
    if hb_isnumeric( nPorcentajeRecargo )
-      ::updateField( "recargo_equivalencia", nPorcentajeRecargo )
+      ::updateField( 'recargo_equivalencia', nPorcentajeRecargo )
    end if 
 
-   ::oController:calculateTotals() 
+RETURN ( ::oController:calculateTotals() )
 
-RETURN ( nil )
+//----------------------------------------------------------------------------//
+
+METHOD updateDescuento( nDescuento )
+
+   if hb_isnumeric( nDescuento )
+      ::updateField( 'descuento', nDescuento )
+   end if 
+
+RETURN ( ::oController:calculateTotals() )
 
 //----------------------------------------------------------------------------//
 
@@ -705,7 +730,7 @@ METHOD validateLote()
 
    local cLote
 
-   cLote       := ::getModelBuffer( "lote" )
+   cLote       := ::getModelBuffer( 'lote' )
    if empty( cLote )
       RETURN ( .t. )
    end if  
@@ -720,22 +745,10 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD onActivateDialog()
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD closedDialog()
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
 METHOD runDialogSeries()
 
    if Empty( ::getDialogView():nTotalUnidadesArticulo() )
-      msgStop( "El n煤mero de unidades no puede ser 0 para editar n煤meros de serie" )
+      msgStop( "El n鷐ero de unidades no puede ser 0 para editar n鷐eros de serie" )
       RETURN ( .f. )
    end if
 

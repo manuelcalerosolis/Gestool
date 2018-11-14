@@ -62,8 +62,6 @@ CLASS SQLBrowseView
 
    // Facades------------------------------------------------------------------
 
-   METHOD getController()                    INLINE ( ::oController:getController() )
-
    METHOD getBrowse()                        INLINE ( ::oBrowse )
 
    METHOD getState()                         INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:saveState(), ) )
@@ -132,6 +130,8 @@ CLASS SQLBrowseView
 
    METHOD setController( oController )       INLINE ( ::oController := oController )
    METHOD getController()                    INLINE ( ::oController )
+
+   METHOD getSuperController()               INLINE ( ::oController:getController() )
 
    METHOD isNotSenderControllerZoomMode()    INLINE ( empty( ::getController() ) .or. ::getController():isNotZoomMode() )
    

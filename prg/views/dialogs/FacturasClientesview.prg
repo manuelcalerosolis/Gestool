@@ -185,9 +185,9 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Lineas ------------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 501, "new16",,,,, {|| ::lineaAppend() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::lineaAppend() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
 
-   TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::getController():getFacturasClientesLineasController():Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
+   TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::getController():getFacturasClientesLineasController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
 
    TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| ::getController():getFacturasClientesLineasController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
    
@@ -199,9 +199,9 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Descuentos---------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 601, "new16",,,,, {|| ::getController():getFacturasClientesDescuentosController():AppendLineal() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 601, "new16",,,,, {|| ::getController():getFacturasClientesDescuentosController():AppendLineal() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
 
-   TBtnBmp():ReDefine( 602, "del16",,,,, {|| ::getController():getFacturasClientesDescuentosController():Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
+   TBtnBmp():ReDefine( 602, "del16",,,,, {|| ::getController():getFacturasClientesDescuentosController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
 
    TBtnBmp():ReDefine( 603, "refresh16",,,,, {|| ::getController():getFacturasClientesDescuentosController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
    
