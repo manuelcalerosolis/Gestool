@@ -37,6 +37,8 @@ CLASS SQLBaseView
 
    DATA oExplorerBar
 
+   DATA cTitle
+
    METHOD New() CONSTRUCTOR
    METHOD End()      
 
@@ -81,7 +83,12 @@ CLASS SQLBaseView
    METHOD setEvent( cEvent, bEvent )                  INLINE ( ::getEvents():set( cEvent, bEvent ) )
    METHOD fireEvent( cEvent, uValue )                 INLINE ( ::getEvents():fire( cEvent, uValue ) )
 
-   METHOD getTimer()            
+   METHOD getTimer()  
+
+   METHOD defaultTitle()                                           
+
+   METHOD setTitle( cTitle )                          INLINE ( ::cTitle := cTitle )
+   METHOD getTitle()                                  INLINE ( iif( empty( ::cTitle ), ::defaultTitle(), ::cTitle ) )          
 
 END CLASS
 
@@ -225,5 +232,31 @@ METHOD getSelectedRecords()
    end if 
 
 RETURN ( hb_ntos( nLen ) + " registro seleccionado" )
+
+//---------------------------------------------------------------------------//
+
+METHOD defaultTitle()
+
+   local cTitle   
+
+   cTitle         := ::oController:getTitle() + " : "  
+
+   if empty( ::oController:oModel )
+      RETURN ( cTitle )
+   end if 
+
+   if empty( ::oController:oModel:hBuffer )
+      RETURN ( cTitle )
+   end if 
+
+   if hhaskey( ::oController:oModel:hBuffer, "codigo" ) 
+      cTitle      += alltrim( ::oController:oModel:hBuffer[ "codigo" ] ) + " - "
+   end if 
+
+   if hhaskey( ::oController:oModel:hBuffer, "nombre" ) 
+      cTitle      += alltrim( ::oController:oModel:hBuffer[ "nombre" ] ) 
+   end if 
+msgalert(cTitle, "base")
+RETURN ( cTitle )
 
 //---------------------------------------------------------------------------//

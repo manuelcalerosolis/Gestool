@@ -43,6 +43,8 @@ CLASS FacturasClientesView FROM SQLBaseView
                                                 ::oBtnDescuentosDeleted:Toggle(),;
                                                 ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
+METHOD defaultTitle()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -293,9 +295,6 @@ METHOD addLinksToExplorerBar() CLASS FacturasClientesView
 
    oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-   if ::getController():isZoomMode()
-      RETURN ( nil )
-   end if
 
    oPanel:AddLink(   "Incidencias...",;
                      {|| ::getController():getIncidenciasController():activateDialogView() },;
@@ -304,6 +303,10 @@ METHOD addLinksToExplorerBar() CLASS FacturasClientesView
    oPanel:AddLink(   "Tipo de direcciones...",;
                      {|| ::getController():getDireccionTipoDocumentoController():activateDialogView() },;
                          ::getController():getDireccionTipoDocumentoController():getImage( "16" ) )
+
+   oPanel:AddLink(   "Recibos...",;
+                     {|| ::getController():getRecibosController():activateDialogView() },;
+                         ::getController():getRecibosController():getImage( "16" ) )
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
 
@@ -325,6 +328,30 @@ METHOD lineaAppend() CLASS FacturasClientesView
    end if
 
 RETURN ( ::getController():getFacturasClientesLineasController():AppendLineal() ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD defaultTitle()
+
+   local cTitle  := ::oController:getTitle() + " : " 
+
+   if empty( ::oController:oModel )
+      RETURN ( cTitle )
+   end if 
+
+   if empty( ::oController:oModel:hBuffer )
+      RETURN ( cTitle )
+   end if 
+
+   if hhaskey( ::oController:oModel:hBuffer, "serie" )
+      cTitle      +=  alltrim( ::oController:oModel:hBuffer[ "serie" ] ) + "/"
+   end if
+   
+   if hhaskey( ::oController:oModel:hBuffer, "numero" )
+      cTitle      += alltrim( toSQLString( ::oController:oModel:hBuffer[ "numero" ] ) )
+   end if
+
+RETURN ( cTitle )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

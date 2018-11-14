@@ -165,6 +165,7 @@ CLASS SQLBaseController
       METHOD isDuplicateMode()                        INLINE ( ::nMode == __duplicate_mode__ )
 
    METHOD isAppendOrDuplicateMode()                   INLINE ( ::isAppendMode() .or. ::isDuplicateMode() )
+   METHOD isNotAppendOrDuplicateMode()                INLINE ( !( ::isAppendOrDuplicateMode() ) )
 
    METHOD Edit()
    METHOD EditReturn()
@@ -172,7 +173,9 @@ CLASS SQLBaseController
       METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
       METHOD isNotEditMode()                          INLINE ( ::nMode != __edit_mode__ )
 
-   METHOD Zoom()
+   METHOD Zoom( nId )
+   METHOD ZoomUuid( uuid )                            INLINE ( ::Zoom( ::getModel():getIdWhereUuid( uuid ) ) )
+
       METHOD setZoomMode()                            INLINE ( ::setMode( __zoom_mode__ ) )
       METHOD isZoomMode()                             INLINE ( ::nMode == __zoom_mode__ )
       METHOD isNotZoomMode()                          INLINE ( ::nMode != __zoom_mode__ )
