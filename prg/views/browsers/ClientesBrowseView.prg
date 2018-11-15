@@ -145,7 +145,6 @@ METHOD addColumns() CLASS ClientesBrowseView
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if
-
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -172,7 +171,6 @@ METHOD addColumns() CLASS ClientesBrowseView
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if
-
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -199,7 +197,6 @@ METHOD addColumns() CLASS ClientesBrowseView
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if
-
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -226,7 +223,6 @@ METHOD addColumns() CLASS ClientesBrowseView
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if
-
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -253,7 +249,6 @@ METHOD addColumns() CLASS ClientesBrowseView
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if
-
    end with
 
    with object ( ::oBrowse:AddCol() )
