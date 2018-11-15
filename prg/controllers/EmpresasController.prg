@@ -427,7 +427,13 @@ METHOD addLinksToExplorerBar() CLASS EmpresasView
       RETURN ( nil )
    end if
       
-   oPanel:AddLink( "Delegaciones...", {|| ::oController:getDelegacionesController():activateDialogView() }, ::oController:getDelegacionesController():getImage( "16" ) )
+   oPanel:AddLink( "Delegaciones...",;
+                           {|| ::oController:getDelegacionesController():activateDialogView() },;
+                               ::oController:getDelegacionesController():getImage( "16" ) )
+
+   oPanel:AddLink(   "Cuentas bancadias...",;
+                           {||::oController:getCuentasBancariasController():activateDialogView( ::oController:getUuid() ) },;
+                              ::oController:getCuentasBancariasController():getImage( "16" ) )
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
 
