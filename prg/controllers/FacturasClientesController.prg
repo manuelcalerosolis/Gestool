@@ -383,8 +383,6 @@ RETURN ( nil )
 
 METHOD changedSerie() CLASS FacturasClientesController 
 
-   msgalert( SQLContadoresModel():getPosibleNext( ::cName, ::getModelBuffer( "serie" ) ), "changedSerie" )
-
    ::getNumeroDocumentoComponent():setValue( SQLContadoresModel():getPosibleNext( ::cName, ::getModelBuffer( "serie" ) ) )
 
 RETURN ( nil )

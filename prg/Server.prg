@@ -40,9 +40,6 @@ FUNCTION StopServer()
    hb_memowrit( ".uhttpd.stop", "" )
 
    if !empty( oServer )
-
-      msgalert( "oServer stop")
-
       oServer:Stop()
       oServer        := nil
    end if 

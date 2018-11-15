@@ -63,8 +63,6 @@ RETURN ( ::Super:End() )
 
 METHOD Edit() CLASS ConfiguracionesController 
 
-   msgalert( ::oController:className(), "className" )
-
    ::setItems( ::oController:getConfigItems() )
 
    if ::getDialogView():Activate()

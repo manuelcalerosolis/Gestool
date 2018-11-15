@@ -82,8 +82,6 @@ RETURN NIL
 
 METHOD Synchronize() 
 
-   msgalert( ::oMovimientosAlmacenRowSet:fieldget( "uuid" ), "uuid" )
-
 RETURN NIL
 
 //---------------------------------------------------------------------------//

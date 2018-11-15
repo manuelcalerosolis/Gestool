@@ -79,8 +79,6 @@ METHOD Start()
 
    local oColumn  
 
-   // msgalert( hb_valtoexp( ::getBrowse():getColumnsHeaders() ), "Start" )
-
    ::oComboBoxOrder:setItems( ::getBrowse():getVisibleColumnsHeaders() )
 
    oColumn        := ::getBrowse():getColumnOrder()

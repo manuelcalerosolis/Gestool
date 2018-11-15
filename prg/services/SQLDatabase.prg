@@ -247,36 +247,7 @@ RETURN ( ::Exec( cSentence, lParse ) )
 //----------------------------------------------------------------------------//
 
 METHOD genStatement( cSentence )
-/*
-   local cExpr, cContain, uContain
 
-   while "{{" $ cSentence
-      
-      cExpr          := substr( cSentence, at( "{{", cSentence ) + 2, at( "}}", cSentence ) - at( "{{", cSentence ) - 2 )
-
-      msgalert( cExpr, "cExpr" )
-
-      if "|" $ cExpr
-         
-         msgalert( valtype( &( "{" + cExpr + " }" ) ), "valtype" )
-         
-         uContain    := eval( &( "{" + cExpr + " }" ) )
-      else
-         uContain    := eval( &( "{||" + cExpr + " }" ) )
-      end if 
-
-      msgalert( uContain, "uContain" )
-
-      cContain    := transform( uContain, "@" )
-
-      msgalert( cContain, "cContain" )
-
-      cSentence   := strtran( cSentence, "{{" + cExpr + "}}", cContain, 1 )
-
-      msgalert( cSentence, "cSentence" )
-
-    end
-*/
 RETURN ( cSentence )
 
 //----------------------------------------------------------------------------//
@@ -317,8 +288,6 @@ METHOD selectFetch( cSentence, fetchType, attributePad )
       oStatement        := nil
 
    end
-
-   // msgalert( hb_valtoexp( aFetch ), "selectFetch" )
 
    if !empty( aFetch ) .and. hb_isarray( aFetch )
       RETURN ( aFetch )

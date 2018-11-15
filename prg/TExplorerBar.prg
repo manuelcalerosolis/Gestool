@@ -519,7 +519,7 @@ METHOD AddGetSelector( cPrompt, cGet ) CLASS TTaskPanel
 
    oPrompt:lWantClick   := .t.
 
-   @ nTop, 120 GET oGet VAR cGet SIZE 100, 20 ACTION msgalert( "helpAction()" ) BITMAP "Lupa" OF Self PIXEL
+   @ nTop, 120 GET oGet VAR cGet SIZE 100, 20 ACTION msgInfo( "helpAction()" ) BITMAP "Lupa" OF Self PIXEL
 
    @ nTop, 222 GET oHelp VAR cHelp SIZE 360, 20 WHEN ( .f. ) OF Self PIXEL
 

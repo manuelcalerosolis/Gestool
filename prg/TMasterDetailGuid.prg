@@ -105,8 +105,6 @@ METHOD LoadDetails() CLASS TMasterDetailGuid
       RETURN ( Self )
    end if 
 
-   msgalert( "LoadDetails" ) 
-
    aSend( ::oDbfDet, "Load()" )
 
 RETURN ( Self )

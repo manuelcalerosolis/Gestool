@@ -143,9 +143,9 @@ RETURN ( ::hValidators )
 
 CLASS ArticulosPreciosTarifasController FROM ArticulosPreciosController
 
-   METHOD getModel()          INLINE ( if( empty( ::oModel ),        ::oModel := SQLArticulosPreciosTarifasModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ),        ::oModel := SQLArticulosPreciosTarifasModel():New( self ), ), ::oModel )
 
-   METHOD getBrowseView()     INLINE ( if( empty( ::oBrowseView ),   ::oBrowseView := ArticulosPreciosTarifasBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ),   ::oBrowseView := ArticulosPreciosTarifasBrowseView():New( self ), ), ::oBrowseView )
  
 END CLASS
 

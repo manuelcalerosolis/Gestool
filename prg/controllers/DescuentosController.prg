@@ -12,14 +12,14 @@ CLASS DescuentosController FROM SQLNavigatorController
 
    METHOD gettingSelectSentence()
 
-   METHOD loadBlankBuffer()                     INLINE ( ::oModel:loadBlankBuffer() )
-   METHOD insertBuffer()                        INLINE ( ::oModel:insertBuffer() )
+   METHOD loadBlankBuffer()               INLINE ( ::oModel:loadBlankBuffer() )
+   METHOD insertBuffer()                  INLINE ( ::oModel:insertBuffer() )
 
    METHOD loadedCurrentBuffer( uuidEntidad ) 
    METHOD updateBuffer( uuidEntidad )
 
    METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) ;
-                                                INLINE ( ::setUuidOlderParent( uuidEntidad ) )
+                                          INLINE ( ::setUuidOlderParent( uuidEntidad ) )
 
    METHOD deleteBuffer( aUuidEntidades )
 
@@ -181,6 +181,7 @@ METHOD addColumns() CLASS DescuentosBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'descuento'
       :cHeader             := 'Descuento'
+      :cEditPicture        := '@E 999.9999'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'descuento' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }

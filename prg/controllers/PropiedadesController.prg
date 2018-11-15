@@ -9,19 +9,19 @@ CLASS PropiedadesController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD isColorProperty()         INLINE ( iif( !empty(::getModel()) .and. !empty(::getModel():hBuffer), ::getModel():hBuffer[ "color" ], .f. ) )
+   METHOD isColorProperty()            INLINE ( iif( !empty(::getModel()) .and. !empty(::getModel():hBuffer), ::getModel():hBuffer[ "color" ], .f. ) )
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := PropiedadesBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := PropiedadesBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := PropiedadesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := PropiedadesView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := PropiedadesValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := PropiedadesValidator():New( self ), ), ::oValidator )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := PropiedadesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := PropiedadesRepository():New( self ), ), ::oRepository )
    
-   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLPropiedadesModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLPropiedadesModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -31,15 +31,15 @@ METHOD New( oController ) CLASS PropiedadesController
 
    ::Super:New( oController )
 
-   ::cTitle                         := "Propiedades"
+   ::cTitle                            := "Propiedades"
 
-   ::cName                          := "articulos_propiedades"
+   ::cName                             := "articulos_propiedades"
 
-   ::hImage                         := {  "16" => "gc_coathanger_16",;
-                                          "32" => "gc_coathanger_32",;
-                                          "48" => "gc_coathanger_48" }
+   ::hImage                            := {  "16" => "gc_coathanger_16",;
+                                             "32" => "gc_coathanger_32",;
+                                             "48" => "gc_coathanger_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                            := Auth():Level( ::cName )
 
 RETURN ( Self )
 
@@ -67,9 +67,7 @@ METHOD End() CLASS PropiedadesController
       ::oRepository:End()
    end if 
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -93,7 +91,7 @@ METHOD addColumns() CLASS PropiedadesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
-      :nWidth              := 50
+      :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 

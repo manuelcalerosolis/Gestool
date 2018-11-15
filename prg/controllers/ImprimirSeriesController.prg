@@ -83,7 +83,7 @@ RETURN ( nil )
 METHOD createReport( hGenerate ) CLASS ImprimirSeriesController
 
    if !( hhaskey( hGenerate, "device" ) )
-      msgAlert( "Falta del device" )
+      msgStop( "Falta del device" )
       RETURN ( nil )
    end if 
 

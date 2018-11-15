@@ -27,6 +27,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oArticulosPreciosController
 
+   DATA oArticulosPreciosTarifasController
+
    DATA oArticulosPreciosDescuentosController
 
    DATA oCuentasBancariasController
@@ -198,6 +200,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getArticulosPreciosController();
                                     INLINE ( if( empty( ::oArticulosPreciosController ), ::oArticulosPreciosController := ArticulosPreciosController():New( self ), ), ::oArticulosPreciosController )
+
+   METHOD getArticulosPreciosTarifasController();
+                                    INLINE ( if( empty( ::oArticulosPreciosTarifasController ), ::oArticulosPreciosTarifasController := ArticulosPreciosTarifasController():New( self ), ), ::oArticulosPreciosTarifasController )
 
    METHOD getCuentasBancariasController();
                                     INLINE ( if( empty( ::oCuentasBancariasController ), ::oCuentasBancariasController := CuentasBancariasController():New( self ), ), ::oCuentasBancariasController )
@@ -449,6 +454,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oArticulosPreciosController )   
       ::oArticulosPreciosController:End()
+   end if 
+
+   if !empty( ::oArticulosPreciosTarifasController )   
+      ::oArticulosPreciosTarifasController:End()
    end if 
 
    if !empty( ::oCuentasBancariasController )   

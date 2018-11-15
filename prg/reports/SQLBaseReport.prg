@@ -125,7 +125,7 @@ RETURN ( nil )
 METHOD createReport( hReport ) 
 
    if !( hhaskey( hReport, "device" ) )
-      msgAlert( "Falta del device" )
+      msgStop( "Falta del device" )
       RETURN ( nil )
    end if 
 

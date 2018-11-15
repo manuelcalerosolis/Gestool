@@ -4580,7 +4580,7 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
    DEFAULT hStatement      := ADS_CDX
 
    if hStatement == ADS_ADT
-      msgalert( cSql, "ADS_ADT" )
+      msgInfo( cSql, "ADS_ADT" )
    end if 
 
    CursorWait()

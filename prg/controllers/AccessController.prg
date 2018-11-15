@@ -350,10 +350,6 @@ METHOD startActivate() CLASS AccessView
    
    ::oComboEmpresa:Hide()
 
-   // ::oDialog:bKeyDown     := {| nKey | msgalert( nKey ) } //  if( nKey == VK_F5, ::Validate(), ) }    
-
-//   setKey( VK_F5, {|| ::Validate() } )
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

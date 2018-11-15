@@ -61,9 +61,9 @@ CLASS SQLBrowseController FROM SQLApplicationController
 
    METHOD setFocusBrowseView()                        INLINE ( ::getBrowseView():setFocus() )
 
-   METHOD setId( cType, cName, nId )                  INLINE ( ::getConfiguracionVistasController():setId( cType, cName, nId ) )
+   METHOD setIdView( cType, cName, nId )              INLINE ( ::getConfiguracionVistasController():setId( cType, cName, nId ) )
    
-   METHOD getId( cType, cName )                       INLINE ( ::getConfiguracionVistasController():getId( cType, cName ) )
+   METHOD getIdView( cType, cName )                   INLINE ( ::getConfiguracionVistasController():getId( cType, cName ) )
 
    METHOD setColumnOrder( cType, cName, cColumnOrder ) ;
                                                       INLINE ( ::getConfiguracionVistasController():setColumnOrder( cType, cName, cColumnOrder ) )
@@ -87,10 +87,6 @@ CLASS SQLBrowseController FROM SQLApplicationController
    METHOD getView()                                   INLINE ( if( empty( ::oView ), ::oDialogView, ::oView ) )
 
    METHOD setShowDeleted()
-
-   /*METHOD setUuidOlderParent( uuidParent )            INLINE ( msgalert(uuidParent,"uuidparent" ),::uuidOlderParent := uuidParent )
-
-   METHOD getUuidOlderParent()                        INLINE ( msgalert( ::uuidOlderParent," olderparent" ), ::uuidOlderParent )*/
 
 END CLASS
 
@@ -196,7 +192,7 @@ RETURN ( nil )
 
 METHOD restoreId()
 
-   local nId                  := ::getId( ::getBrowseViewType(), ::getBrowseViewName() )
+   local nId                  := ::getIdView( ::getBrowseViewType(), ::getBrowseViewName() )
 
    if !empty( nId )
       ::getRowSet():findId( nId )

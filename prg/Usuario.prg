@@ -56,7 +56,7 @@
 
 FUNCTION BrwBigUser()
 
-Return ( msgalert( "Funcion en desuso" ) )
+Return ( msgInfo( "Funcion en desuso" ) )
 
 //---------------------------------------------------------------------------//
 

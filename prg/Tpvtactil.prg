@@ -2775,20 +2775,6 @@ METHOD ResizedResource() CLASS TpvTactil
    ::oBtnArticulosPageUp:Move( ::oBtnArticulosPageUp:nTop + nDialogHeight, , , , .f. )
    ::oBtnArticulosPageDown:Move( ::oBtnArticulosPageDown:nTop + nDialogHeight, , , , .f. )
 
-
-/*
-   if ::l1280()
-      ::oBtnOrdenComandaActual:Move( ::oBtnOrdenComandaActual:nTop + nDialogHeight, ::oBtnOrdenComandaActual:nLeft + nDialogWidth -100, 262, , .f. )
-   else     
-      ::oBtnOrdenComandaActual:Move( ::oBtnOrdenComandaActual:nTop + nDialogHeight, ::oBtnOrdenComandaActual:nLeft + nDialogWidth, , , .f. )
-   end if 
-
-   msgalert( ::l1280(), "::l1280()" )
-   msgalert( ::oBtnOrdenComandaActual:nTop + nDialogHeight, "::oBtnOrdenComandaActual:nTop + nDialogHeight" )
-   msgalert( ::oBtnOrdenComandaActual:nLeft + nDialogWidth -100, "::oBtnOrdenComandaActual:nLeft + nDialogWidth -100" )
-*/
-   // ::oGetCambiarOrden:Move( ::oGetCambiarOrden:nTop + nDialogHeight, ::oGetCambiarOrden:nLeft + nDialogWidth - 100, 200, , .f. )
-
    ::oGetCambiarOrden:Hide() 
 
    ::oBtnOrdenComandaActual:Move( ::oBtnOrdenComandaActual:nTop + nDialogHeight, ::oBtnOrdenComandaActual:nLeft + nDialogWidth, , , .f. )

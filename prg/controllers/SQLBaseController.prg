@@ -71,10 +71,7 @@ CLASS SQLBaseController
    METHOD changeModelOrderAndOrientation()            
    METHOD getModelHeaderFromColumnOrder()             INLINE ( ::getModel():getHeaderFromColumnOrder() )
 
-   METHOD getId()                                     INLINE ( iif(  !empty( ::getModel() ) .and. !empty( ::getModel():hBuffer ),;
-                                                                     hget( ::getModel():hBuffer, "id" ),;
-                                                                     nil ) )
-                  
+   METHOD getId()                                     INLINE ( iif(  !empty( ::getModel() ), ::getModel():getId(), nil ) )
    METHOD getUuid()                                   INLINE ( iif(  !empty( ::getModel() ), ::getModel():getUuid(), nil ) )
    
    // Rowset-------------------------------------------------------------------
@@ -96,6 +93,9 @@ CLASS SQLBaseController
 
    METHOD isRowSetSystemRegister()                          
    METHOD isNotRowSetSystemRegister()                 INLINE ( !( ::isRowSetSystemRegister() ) )
+
+   METHOD setMultiDelete( lMultiDelete )              INLINE ( ::lMultiDelete := lMultiDelete )                          
+   METHOD isMultiDelete()                             INLINE ( ::lMultiDelete )
 
    METHOD findInRowSet( uValue, cColumn )             
    METHOD findByIdInRowSet( uValue )                  INLINE ( ::getRowSet():find( uValue, "id", .t. ) )
@@ -703,7 +703,7 @@ METHOD Delete( aSelectedRecno )
       RETURN ( .f. )
    end if 
 
-   if ( !::lMultiDelete .and. len( aSelectedRecno ) > 1 )
+   if ( !::isMultiDelete() .and. len( aSelectedRecno ) > 1 )
       msgStop( "Borrado multiple no permitido" )
       RETURN ( .f. )
    end if 

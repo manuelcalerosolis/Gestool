@@ -372,10 +372,6 @@ Return ( nil )
 
    cTitle         := ::oController:defaultTitle() + " : "  
 
-   //cTitle   +=       ::oController:oController:getDialogView():defaultTitle()
-
-msgalert(cTitle, "incidencia")
-
 RETURN ( cTitle )    
 
 //---------------------------------------------------------------------------//

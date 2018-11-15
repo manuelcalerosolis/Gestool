@@ -113,8 +113,6 @@ RETURN ( DivisasModel():exist( value ) )
 
 METHOD existNumber( value )
 
-   msgalert( value, "existNumber" )
-
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//

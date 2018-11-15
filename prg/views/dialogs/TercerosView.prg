@@ -340,14 +340,14 @@ METHOD redefineContabilidad() CLASS TercerosView
       OF       ::oFolder:aDialogs[3]
 
    ::oInfoSubCuenta:lWantClick  := .t.
-   ::oInfoSubCuenta:OnClick     := {|| if( ::getController():isNotZoomMode(),  msgalert( "Informe subcuenta del cliente" ), ) }
+   ::oInfoSubCuenta:OnClick     := {|| if( ::getController():isNotZoomMode(), msgInfo( "Informe subcuenta del cliente" ), ) }
 
    REDEFINE GET ::oGetSubcuenta ; 
       VAR      ::getController():oModel:hBuffer[ "subcuenta" ] ;
       ID       330 ;
       IDTEXT   331 ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
-      ON HELP  ( MsgInfo( "Conectar con Contaplus" ) ) ;
+      ON HELP  ( msgInfo( "Conectar con Contaplus" ) ) ;
       BITMAP   "LUPA" ;
       OF       ::oFolder:aDialogs[3]
 
@@ -365,7 +365,7 @@ METHOD redefineContabilidad() CLASS TercerosView
       OF       ::oFolder:aDialogs[3]
 
    ::oInfoSubCuenta:lWantClick  := .t.
-   ::oInfoSubCuenta:OnClick     := {|| if( ::getController():isNotZoomMode(),  msgalert( "Informe cuenta venta del cliente" ), ) }
+   ::oInfoSubCuenta:OnClick     := {|| if( ::getController():isNotZoomMode(), msgInfo( "Informe cuenta venta del cliente" ), ) }
 
    REDEFINE GET ::oGetCuentaVenta ; 
       VAR      ::getController():oModel:hBuffer[ "cuenta_venta" ] ;
@@ -384,7 +384,7 @@ METHOD redefineContabilidad() CLASS TercerosView
       OF       ::oFolder:aDialogs[3]
 
    ::oInfoSubCuentaDescuento:lWantClick  := .t.
-   ::oInfoSubCuentaDescuento:OnClick     := {|| if( ::getController():isNotZoomMode(), msgalert( "Informe subcuenta dedescuento" ), ) }
+   ::oInfoSubCuentaDescuento:OnClick     := {|| if( ::getController():isNotZoomMode(), msgInfo( "Informe subcuenta dedescuento" ), ) }
 
    REDEFINE GET ::oGetSubcuentaDescuento ; 
       VAR      ::getController():oModel:hBuffer[ "cuenta_venta" ] ;

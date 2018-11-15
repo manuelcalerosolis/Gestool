@@ -271,7 +271,7 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
                      ::oController:getCombinacionesController():getImage( "16" ) )
 
    oPanel:AddLink(   "Codificación de proveedores...",;
-                     {||   msgalert( "to-do" ) },;
+                     {||   msgInfo( "to-do" ) },;
                      ::oController:getArticulosUnidadesMedicionController():getImage( "16" ) )
  
    oPanel:AddLink(   "Imagenes...",;
@@ -302,7 +302,7 @@ RETURN ( nil )
 
 METHOD editUnidadesMedicionOperaciones() CLASS ArticulosView
 
-   msgalert( ::oController:getModelBuffer( 'unidades_medicion_grupos_codigo' ), 'unidades_medicion_grupos_codigo' )
+   msgInfo( ::oController:getModelBuffer( 'unidades_medicion_grupos_codigo' ), 'unidades_medicion_grupos_codigo' )
 
    if empty( ::oController:getModelBuffer( 'unidades_medicion_grupos_codigo' ) )
       

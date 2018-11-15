@@ -245,7 +245,7 @@ METHOD addLinksToExplorerBar() CLASS RecibosView
                            ::oController:getFacturasClientesController():getImage( "16" ) )
 
       oPanel:AddLink(   "Pagos...",;
-                        {|| msgalert( "to-do" ) },;
+                        {|| msgInfo( "to-do" ) },;
                            ::oController:getFacturasClientesController():getImage( "16" ) )
 
    end if 

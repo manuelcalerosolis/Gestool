@@ -45,8 +45,6 @@ METHOD New( oController )
 
    // ::oShell                := SQLTShell():New( 2, 10, 18, 70, ::oController:cTitle, , oWnd(), , , .f., , , ::oController:oModel, , , , , {}, {|| ::oController:Edit() },, {|| ::oController:Delete() },, nil, ::oController:nLevel, ::cImageName, ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
-   msgalert( ::oShell:oBrw:classname(), "TShell New" )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -54,10 +52,6 @@ RETURN ( Self )
 METHOD Activate()
 
    disableAcceso()
-
-   msgalert( ::oShell:oBrw:classname(), "SQLShellView Activate" )
-
-   msgalert( hb_valtoexp( ::oShell:classname() ), "SQLShellView Activate" )
 
    ::oController:generateBrowseColumns( ::oShell:getXBrowse(), ::oShell:getCombobox() )
 

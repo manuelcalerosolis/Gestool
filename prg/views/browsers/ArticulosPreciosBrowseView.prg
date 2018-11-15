@@ -145,7 +145,7 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :cSortOrder          := 'manual'
       :cHeader             := "Manual"
       :bStrData            := {|| "" }
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'manual' ) == 1 }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'manual' ) }
       :nWidth              := 60
       :SetCheck( { "Sel16", "Nil16" }, {|oCol, lManual| ::oController:setManual( oCol, lManual ) } )
    end with

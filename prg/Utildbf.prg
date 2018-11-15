@@ -4129,7 +4129,7 @@ RETURN ( isUserActive( uuidUsuario, .f. ) )
 
 FUNCTION debug( uValue, cTitle )
 
-RETURN ( msgAlert( hb_valtoexp( uValue ), cTitle ) )
+RETURN ( msgInfo( hb_valtoexp( uValue ), cTitle ) )
 
 //----------------------------------------------------------------------------//
 

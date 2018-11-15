@@ -374,7 +374,7 @@ RETURN ( nil )
 
 METHOD onKeyChar( nKey )
 
-RETURN ( heval( ::oController:oMenuTreeView:hFastKey, {|k,v| msgalert( nKey, "nKey" ), if( k == nKey, eval( v ), ) } ) ) 
+RETURN ( heval( ::oController:oMenuTreeView:hFastKey, {|k,v| if( k == nKey, eval( v ), ) } ) ) 
    
 //----------------------------------------------------------------------------//
 
@@ -652,7 +652,7 @@ METHOD setIdView( cType, cName, nId )
       RETURN ( nil )
    end if 
 
-RETURN ( ::getController():setId( cType, cName, nId ) )
+RETURN ( ::getController():setIdView( cType, cName, nId ) )
 
 //----------------------------------------------------------------------------//
 
@@ -665,7 +665,7 @@ METHOD getIdView( cType, cName )
       RETURN ( nil )
    end if 
 
-RETURN ( ::getController():getId( cType, cName ) )
+RETURN ( ::getController():getIdView( cType, cName ) )
 
 //---------------------------------------------------------------------------//
 

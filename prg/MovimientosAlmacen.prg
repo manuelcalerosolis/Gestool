@@ -72,7 +72,7 @@ METHOD Dialog()
       REDEFINE BUTTON ;
          ID          3 ;
          OF          oDlg ;
-         ACTION      ( msgalert( "RecalculaPrecio" ) )
+         ACTION      ( msgInfo( "RecalculaPrecio" ) )
 
    ACTIVATE DIALOG oDlg CENTER
 

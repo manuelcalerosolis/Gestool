@@ -256,7 +256,7 @@ METHOD defaultTitle()
    if hhaskey( ::oController:oModel:hBuffer, "nombre" ) 
       cTitle      += alltrim( ::oController:oModel:hBuffer[ "nombre" ] ) 
    end if 
-msgalert(cTitle, "base")
+
 RETURN ( cTitle )
 
 //---------------------------------------------------------------------------//

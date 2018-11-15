@@ -7745,9 +7745,6 @@ RETURN ( oDlgDet:nResult == IDOK )
 
 STATIC FUNCTION clickDlgDet( nRow, nCol, oDlg )
    
-   msgalert( nRow )
-   msgalert( nCol )
-
    if nRow < 0 .or. nCol < 0 .or. nRow > oDlg:nHeight - 0 .or. nCol > oDlg:nWidth
       msgStop( "clicked outside" )
    else 

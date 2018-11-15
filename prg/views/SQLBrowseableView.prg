@@ -88,7 +88,7 @@ RETURN ( nil )
 METHOD onChangeCombo( oColumn )
 
    if empty( oColumn )
-      msgalert( "La columna esta vacia" )
+      msgInfo( "La columna esta vacia" )
       RETURN ( nil )
    end if 
 

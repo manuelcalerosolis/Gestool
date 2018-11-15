@@ -104,6 +104,7 @@ CLASS SQLBaseModel
    METHOD getHeaderFromColumnOrder()                  INLINE ( ::getValueFromColumn( ::cColumnOrder, "header" ) )
    METHOD getLenFromColumn( cColumn )                 INLINE ( ::getValueFromColumn( cColumn, "len" ) )
 
+   METHOD getId()                                     INLINE ( iif( !empty( ::hBuffer ), hget( ::hBuffer, "id" ), nil ) )
    METHOD getUuid()                                   INLINE ( iif( !empty( ::hBuffer ), hget( ::hBuffer, "uuid" ), nil ) )
 
    // Sentences----------------------------------------------------------------
@@ -709,6 +710,8 @@ METHOD getCreateTableSentence( cDatabaseMySQL )
    else
       cSQLCreateTable      := chgAtEnd( cSQLCreateTable, ' )', 2 )
    end if
+
+   logwrite( cSQLCreateTable )
 
 RETURN ( cSQLCreateTable )
 

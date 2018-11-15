@@ -38,9 +38,6 @@ CLASS SQLDialogView FROM SQLBrowseableView
 
    METHOD defaultTitle()                        INLINE ( ::oController:oController:getDialogView():defaultTitle() )
 
-   /*METHOD setTitle( cTitle )                    INLINE ( ::cTitle := cTitle )
-   METHOD getTitle()                            INLINE ( iif( empty( ::cTitle ), ::defaultTitle(), ::cTitle ) )*/                
-
    METHOD Select()                              INLINE ( nil )
 
    METHOD Append()  
@@ -49,7 +46,7 @@ CLASS SQLDialogView FROM SQLBrowseableView
    METHOD setEvent( cEvent, bEvent )            INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent, uValue )           INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent, uValue ), ) )                            
 
-//Construcciones tardias--------------------------------------------------------
+   // Construcciones tardias---------------------------------------------------
 
    METHOD getMenutreeView()                     INLINE ( if( empty( ::oMenuTreeView ), ::oMenuTreeView := MenuTreeView():New( Self ), ), ::oMenuTreeView )
 
@@ -90,8 +87,6 @@ METHOD Activate()
    if isFalse( ::fireEvent( 'activating' ) )
       RETURN ( .f. )
    end if
-
-   msgalert( ::oController:className(), "oController className")
 
    DEFINE DIALOG     ::oDialog ;
       RESOURCE       "SELECTOR_DIALOG_SQL" ;
@@ -167,36 +162,6 @@ METHOD Start()
    ::oMenuTreeView:addGeneralButton()
    
 RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-/*METHOD defaultTitle()
-
-   local cTitle   
-
-   cTitle         := ::oController:getTitle() + " : "  
-
-   if empty( ::oController:oController:oModel )
-      RETURN ( cTitle )
-   end if 
-
-   if empty( ::oController:oController:oModel:hBuffer )
-      RETURN ( cTitle )
-   end if 
-
-   if hhaskey( ::oController:oController:oModel:hBuffer, "codigo" ) 
-      cTitle      += alltrim( ::oController:oController:oModel:hBuffer[ "codigo" ] ) + " - "
-   end if 
-
-   if hhaskey( ::oController:oController:oModel:hBuffer, "nombre" ) 
-      cTitle      += alltrim( ::oController:oController:oModel:hBuffer[ "nombre" ] ) 
-   end if 
-
-   if hhaskey( ::oController:oController:oModel:hBuffer, "concepto" )
-      cTitle      += alltrim( ::oController:oController:oModel:hBuffer[ "concepto" ] ) 
-   end if
-msgalert(cTitle, "base")
-RETURN ( cTitle )*/
 
 //----------------------------------------------------------------------------//
 

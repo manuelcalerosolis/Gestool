@@ -279,7 +279,7 @@ CLASS SQLArticulosPreciosDescuentosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos_precios_descuentos"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( porcentaje, unidades, fecha_inicio )"
+   DATA cConstraints             INIT "PRIMARY KEY ( porcentaje, unidades, fecha_inicio ), FOREIGN KEY ( parent_uuid ) REFERENCES " + SQLArticulosPreciosModel():getTableName() + " ( uuid ) ON DELETE CASCADE"
 
    METHOD getColumns()
 

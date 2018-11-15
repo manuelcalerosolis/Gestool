@@ -160,7 +160,7 @@ CLASS TShell FROM TMdiChild
    METHOD CreateXBrowse()
    METHOD CreateXFromCode()
 
-   METHOD getBrowse()            INLINE ( msgalert(hb_valtoexp(::oBrw)), ::oBrw )
+   METHOD getBrowse()            INLINE ( ::oBrw )
 
    METHOD AddXCol()              INLINE ( ::oBrw:AddCol() )
    METHOD AddCol()               INLINE ( ::oBrw:AddCol() )

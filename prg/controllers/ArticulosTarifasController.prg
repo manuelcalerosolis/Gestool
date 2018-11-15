@@ -11,8 +11,6 @@ CLASS ArticulosTarifasController FROM SQLNavigatorController
 
    METHOD End()
 
-   // METHOD Delete( aSelectedRecno )
-
    METHOD Deleting()
    
    METHOD deletingSelection()
@@ -108,30 +106,8 @@ RETURN ( .t. )
 
 METHOD deletingSelection()
 
-   msgalert( ::uuidToDelete, "uuidToDelete" )
+RETURN ( SQLArticulosPreciosModel():deletePrecioWhereUuidTarifa( ::uuidToDelete ) )
 
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-/*
-METHOD Delete( aSelectedRecno ) CLASS ArticulosTarifasController
-
-
-   if len( aSelectedRecno ) > 1
-      msgStop( "No se pueden realizar eliminaciones multiples en tarifas." )
-      RETURN .f.
-   end if 
-
-   if ( uuidToDelete == Company():Uuid() ) 
-      msgStop( "No se puede eliminar la tarifa General." )
-      RETURN .f.
-   end if 
-
-   ::Super:Delete( aSelectedRecno )
-
-RETURN ( ::getRowSet():fieldGet( 'uuid' ) )
-*/
 //---------------------------------------------------------------------------//
 
 METHOD endAppendedTarifa() CLASS ArticulosTarifasController
@@ -408,18 +384,18 @@ METHOD startActivate() CLASS ArticulosTarifasView
    oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
    if ::oController:isZoomMode()
-      RETURN ( self )
+      RETURN ( nil )
    end if
 
    oPanel:AddLink(   "Precios...",;
-                     {|| ::oController:getArticulosPreciosController():Edit( ::oController:getUuid() ) },;
-                     ::oController:getArticulosPreciosController():getImage( "16" ) )
+                     {||   ::oController:getArticulosPreciosTarifasController():Edit( ::oController:getUuid() ) },;
+                           ::oController:getArticulosPreciosTarifasController():getImage( "16" ) )
 
    oPanel           := ::oExplorerBar:AddPanel( "Otros", nil, 1 )
 
    oPanel:AddLink(   "Campos extra...",;
-                     {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) },;
-                     ::oController:getCamposExtraValoresController():getImage( "16" ) )
+                     {||   ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) },;
+                           ::oController:getCamposExtraValoresController():getImage( "16" ) )
 
 RETURN ( nil )
 
