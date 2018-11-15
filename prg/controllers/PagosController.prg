@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS RecibosController FROM SQLNavigatorController
+CLASS PagosController FROM SQLNavigatorController
 
    METHOD New() CONSTRUCTOR
 
@@ -11,39 +11,41 @@ CLASS RecibosController FROM SQLNavigatorController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := RecibosBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := PagosBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := RecibosView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := pagosView():New( self ), ), ::oDialogView )
 
-   METHOD getRepository()        INLINE( if(empty( ::oRepository ), ::oRepository := RecibosRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()        INLINE( if(empty( ::oRepository ), ::oRepository := pagosRepository():New( self ), ), ::oRepository )
 
-   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := RecibosValidator():New( self  ), ), ::oValidator ) 
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := PagosValidator():New( self  ), ), ::oValidator ) 
    
-   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLRecibosModel():New( self ), ), ::oModel ) 
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLPagosModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS RecibosController
+METHOD New( oController ) CLASS PagosController
 
    ::Super:New( oController )
 
-   ::cTitle                      := "Recibos"
+   ::cTitle                      := "Cobros"
 
-   ::cName                       := "recibos"
+   ::cName                       := "cobros"
 
-   ::hImage                      := {  "16" => "gc_briefcase2_user_16",;
-                                       "32" => "gc_briefcase2_user_32",;
-                                       "48" => "gc_briefcase2_user_48" }
+   ::hImage                      := {  "16" => "gc_hand_money_16",;
+                                       "32" => "gc_hand_money_32",;
+                                       "48" => "gc_hand_money_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
+
+   ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getCuentasBancariasController():loadedCurrentBuffer( "d8499d5b-8bf1-4be2-8a0e-509221332f25" ) } )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS RecibosController
+METHOD End() CLASS PagosController
 
    if !empty( ::oModel )
       ::oModel:End()
@@ -77,7 +79,7 @@ RETURN ( ::Super:End() )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS RecibosBrowseView FROM SQLBrowseView
+CLASS PagosBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -85,41 +87,64 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS RecibosBrowseView
+METHOD addColumns() CLASS PagosBrowseView
 
    ::getColumnIdAndUuid()
 
-
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'expedicion'
-      :cHeader             := 'Expedición'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'expedicion' ) }
+      :cSortOrder          := 'cliente_codigo'
+      :cHeader             := 'Código cliente'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'cliente_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'vencimiento'
-      :cHeader             := 'Vencimiento'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'vencimiento' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'concepto'
-      :cHeader             := 'Concepto'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'concepto' ) }
+      :cSortOrder          := 'cliente_nombre'
+      :cHeader             := 'Cliente'
+      :nWidth              := 250
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'cliente_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'importe'
-      :cHeader             := 'importe'
-      :nWidth              := 80
-      :cEditPicture        := "999999999999.99"
+      :cHeader             := 'Importe'
+      :nWidth              := 100
+      :cEditPicture        := "@E 999999999999.99" 
       :bEditValue          := {|| ::getRowSet():fieldGet( 'importe' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'fecha'
+      :cHeader             := 'Expedicion'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'medio_pago_nombre'
+      :cHeader             := 'Medio de Pago'
+      :nWidth              := 150
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'medio_pago_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre_banco'
+      :cHeader             := 'Cuenta bancaria'
+      :nWidth              := 150
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_banco' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'estado'
+      :cHeader             := 'Estado'
+      :nWidth              := 90
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'estado' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -135,7 +160,11 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS RecibosView FROM SQLBaseView
+CLASS PagosView FROM SQLBaseView
+
+   DATA oEstado
+
+   DATA aEstado INIT { "Presentado", "Rechazado" }
   
    METHOD Activate()
 
@@ -149,11 +178,11 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS RecibosView
+METHOD Activate() CLASS PagosView
 
-    DEFINE DIALOG  ::oDialog ;
+   DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_MEDIUM_EXTENDED" ;
-      TITLE       ::LblTitle() + "recibo"
+      TITLE       ::LblTitle() + "cobro"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -162,7 +191,7 @@ METHOD Activate() CLASS RecibosView
       OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
-      PROMPT      "Recibo" ;
+      PROMPT      "Cobro" ;
       ID          800 ;
       FONT        oFontBold() ;
       OF          ::oDialog
@@ -173,32 +202,42 @@ METHOD Activate() CLASS RecibosView
       ID          500 ;
       OF          ::oDialog ;
       PROMPT      "&General" ;
-      DIALOGS     "RECIBOS_SQL" 
+      DIALOGS     "PAGO_LIBRE_SQL" 
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "expedicion" ] ;
-      ID          100 ;
-      SPINNER ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[1]
-
-   REDEFINE GET   ::oController:getModel():hBuffer[ "vencimiento" ] ;
-      ID          110 ;
-      SPINNER ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[1]
+   ::oController:getClientesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_codigo" ] ) )
+   ::oController:getClientesController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oFolder:aDialogs[1] } )
 
   REDEFINE GET   ::oController:getModel():hBuffer[ "importe" ] ;
-      ID          120 ;
+      ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "importe" ) ) ;
       PICTURE     "@E 999999999999.99";
       OF          ::oFolder:aDialogs[1]
 
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "concepto" ] ;
-      ID          130 ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "fecha" ] ;
+      ID          120 ;
+      VALID       ( ::oController:validate( "fecha" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
+   ::oController:getMediosPagoController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "medio_pago_codigo" ] ) )
+   ::oController:getMediosPagoController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[1] } )
+
+   ::oController:getCuentasBancariasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cuenta_bancaria_codigo" ] ) )
+   ::oController:getCuentasBancariasController():getSelector():Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[1] } )
+
+   REDEFINE GET   ::oController:getModel():hBuffer[ "comentario" ] ;
+      ID          150 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oFolder:aDialogs[1]
+
+   REDEFINE COMBOBOX ::oEstado ;
+      VAR         ::oController:getModel():hBuffer[ "estado" ] ;
+      ID          160 ;
+      ITEMS       ::aEstado;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oFolder:aDialogs[1]
 
    // Botones------------------------------------------------------------------
 
@@ -216,19 +255,26 @@ METHOD Activate() CLASS RecibosView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
+
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD StartActivate() CLASS RecibosView
+METHOD StartActivate() CLASS PagosView
 
    ::addLinksToExplorerBar()
+
+   ::oController:getClientesController():getSelector():Start()
+
+   ::oController:getMediosPagoController():getSelector():Start()
+
+   ::oController:getCuentasBancariasController():getSelector():Start()
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD addLinksToExplorerBar() CLASS RecibosView
+METHOD addLinksToExplorerBar() CLASS PagosView
 
    local oPanel            
 
@@ -242,7 +288,7 @@ METHOD addLinksToExplorerBar() CLASS RecibosView
                         {||::oController:getDocumentosController():activateDialogView( ::oController:getUuid() ) },;
                            ::oController:getDocumentosController():getImage( "16" ) )
 
-   if ::oController:isNotAppendOrDuplicateMode()
+   /*if ::oController:isNotAppendOrDuplicateMode()
 
       oPanel:AddLink(   "Factura...",;
                         {||::oController:getFacturasClientesController():ZoomUuid( ::oController:getModelBuffer( "parent_uuid" ) ) },;
@@ -252,13 +298,13 @@ METHOD addLinksToExplorerBar() CLASS RecibosView
                         {|| msgalert( "to-do" ) },;
                            ::oController:getFacturasClientesController():getImage( "16" ) )
 
-   end if 
+   end if*/ 
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD defaultTitle() CLASS RecibosView
+METHOD defaultTitle() CLASS PagosView
 
    local cTitle   
 
@@ -281,7 +327,7 @@ RETURN ( cTitle )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS RecibosValidator FROM SQLBaseValidator
+CLASS PagosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -289,12 +335,12 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS RecibosValidator
+METHOD getValidators() CLASS PagosValidator
 
-   ::hValidators  := {  "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
-                                          "unique"             => "EL código introducido ya existe" },;
-                        "nombre" =>    {  "required"           => "El nombre es un dato requerido"    ,;
-                                          "unique"             => "El nombre introducido ya existe"   }  }
+   ::hValidators  := {  "cliente" =>   {  "required"           => "El código del cliente es un dato requerido" ,;
+                                          "unique"             => "EL código del cliente introducido ya existe" },;
+                        "importe" =>   {  "required"           => "El importe es un dato requerido" },;
+                        "fecha"   =>   {  "required"           => "La fecha es un dato requerido" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -306,17 +352,19 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLRecibosModel FROM SQLCompanyModel
+CLASS SQLPagosModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "factura_recibos"
+   DATA cTableName               INIT "pagos"
 
    METHOD getColumns()
+
+   METHOD getInitialSelect()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLRecibosModel
+METHOD getColumns() CLASS SQLPagosModel
 
    hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
                                                       "default"   => {|| 0 } }                                    )
@@ -324,19 +372,25 @@ METHOD getColumns() CLASS SQLRecibosModel
    hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"                ,;                                  
                                                       "default"   => {|| win_uuidcreatestring() } }               )
 
-   hset( ::hColumns, "parent_uuid",                {  "create"    => "VARCHAR( 40 )"                              ,;
-                                                      "default"   => {|| ::getControllerParentUuid() } }           )
+   hset( ::hColumns, "cliente_codigo",             {  "create"    => "VARCHAR( 20 )"                              ,;
+                                                      "default"   => {|| space( 20 ) } }                          )
 
-   hset( ::hColumns, "expedicion",                 {  "create"    => "DATE"                                       ,;
-                                                      "default"   => {|| hb_date() } }                            )
+   hset( ::hColumns, "medio_pago_codigo",          {  "create"    => "VARCHAR( 20 )"                              ,;
+                                                      "default"   => {|| space( 20 ) } }                          )
 
-   hset( ::hColumns, "vencimiento",                {  "create"   => "DATE"                                        ,;
+    hset( ::hColumns, "cuenta_bancaria_codigo",    {  "create"    => "VARCHAR( 20 )"                              ,;
+                                                      "default"   => {|| space( 20 ) } }                          )
+
+   hset( ::hColumns, "fecha",                      {  "create"    => "DATE"                                       ,;
                                                       "default"   => {|| hb_date() } }                            )
 
    hset( ::hColumns, "importe",                    {  "create"    => "FLOAT( 16,2 )"                              ,;
-                                                      "default"   => {||  0  } }                                  )
+                                                      "default"   => {||  0  } }                                   )
 
-   hset( ::hColumns, "concepto",                   {  "create"    => "VARCHAR( 200 )"                              ,;
+   hset( ::hColumns, "estado",                     {  "create"     => "ENUM( 'Presentado', 'Rechazado' )"          ,;
+                                                      "default"    => {|| 'Presentado' }  }                        )
+
+   hset( ::hColumns, "comentario",                 {  "create"    => "VARCHAR( 200 )"                              ,;
                                                       "default"   => {|| space( 200 ) } }                          )
 
    ::getDeletedStampColumn()
@@ -346,35 +400,52 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-/*METHOD insertRecibosSentence()
+METHOD getInitialSelect() CLASS SQLPagosModel
 
    local cSql
 
    TEXT INTO cSql
-   INSERT [LOW_PRIORITY | DELAYED | HIGH_PRIORITY] [IGNORE]
-      [INTO] tbl_name [(col_name,...)]
-      VALUES (\,...),(...),...
-      [ ON DUPLICATE KEY UPDATE col_name=expression, ... ]
+
+   SELECT pagos.id AS id,
+      pagos.uuid AS uuid,
+      pagos.cliente_codigo AS cliente_codigo,
+      pagos.fecha AS fecha,
+      pagos.importe AS importe,
+      pagos.medio_pago_codigo AS medio_pago_codigo,
+      pagos.cuenta_bancaria_codigo AS cuenta_bancaria_codigo,
+      pagos.comentario AS comentario,
+      pagos.estado AS estado,
+      pagos.deleted_at AS deleted_at,
+      clientes.nombre AS cliente_nombre,
+      medio_pago.nombre AS medio_pago_nombre,
+      cuentas_bancarias.nombre AS nombre_banco
+
+   FROM %1$s AS pagos
+
+   INNER JOIN %2$s AS clientes
+      ON pagos.cliente_codigo = clientes.codigo
+
+   INNER JOIN %3$s AS medio_pago
+      ON pagos.medio_pago_codigo = medio_pago.codigo
+
+   INNER JOIN %4$s AS cuentas_bancarias
+      ON pagos.cuenta_bancaria_codigo = cuentas_bancarias.codigo
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( cCodigoMedioPago ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLMediosPagoModel():getTableName(), SQLCuentasBancariasModel():getTableName() )
 
-RETURN ( cSql )*/
+RETURN ( cSql )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS RecibosRepository FROM SQLBaseRepository
+CLASS PagosRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLRecibosModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLPagosModel():getTableName() ) 
 
 END CLASS
 

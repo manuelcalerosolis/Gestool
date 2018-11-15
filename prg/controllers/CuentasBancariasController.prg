@@ -509,7 +509,7 @@ METHOD getParentUuidAttribute( value ) CLASS SQLCuentasBancariasModel
       RETURN ( value )
    end if
 
-RETURN ( ::oController:oController:getUuid() )
+RETURN ( ::oController:oController:getUuid()  )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

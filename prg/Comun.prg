@@ -3368,7 +3368,7 @@ FUNCTION CreateMainSQLAcceso()
    oItem:lShow          := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 1
+   oGrupo:nBigItems     := 3
    oGrupo:cPrompt       := 'Cobros'
    oGrupo:cLittleBitmap := "gc_briefcase2_user_16"
    oGrupo:cBigBitmap    := "gc_briefcase2_user_32"
@@ -3382,6 +3382,17 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cBmp           := "gc_briefcase2_user_16"
    oItem:cBmpBig        := "gc_briefcase2_user_32"
    oItem:lShow          := .t.
+
+   oItem                := oItemVentas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Cobros'
+   oItem:cMessage       := 'Cobros'
+   oItem:bAction        := {||PagosController():New():ActivateNavigatorView() }
+   oItem:cId            := "cobros"
+   oItem:cBmp           := "gc_hand_money_16"
+   oItem:cBmpBig        := "gc_hand_money_32"
+   oItem:lShow          := .t.
+
 
    // TPV----------------------------------------------------------------------
 
