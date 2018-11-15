@@ -733,7 +733,7 @@ METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLDireccionesModel
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
-logwrite( cSql )
+
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//

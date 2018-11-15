@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ClientesBrowseView FROM TercerosBrowseView
+CLASS ClientesBrowseView FROM TercerosBrowseView 
 
    METHOD addColumns()                       
 
@@ -32,7 +32,7 @@ METHOD addColumns() CLASS ClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'clientes.codigo'
-      :cHeader             := 'C贸digo'
+      :cHeader             := 'C骴igo'
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -56,7 +56,7 @@ METHOD addColumns() CLASS ClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'direcciones.direccion'
-      :cHeader             := 'Direcci贸n'
+      :cHeader             := 'Direcci髇'
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -64,7 +64,7 @@ METHOD addColumns() CLASS ClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'direcciones.poblacion'
-      :cHeader             := 'Poblaci贸n'
+      :cHeader             := 'Poblaci髇'
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'poblacion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -80,7 +80,7 @@ METHOD addColumns() CLASS ClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'direcciones.codigo_postal'
-      :cHeader             := 'C贸digo postal'
+      :cHeader             := 'C骴igo postal'
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_postal' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -88,7 +88,7 @@ METHOD addColumns() CLASS ClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'direcciones.telefono'
-      :cHeader             := 'Tel茅fono'
+      :cHeader             := 'Tel閒ono'
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'telefono' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -96,7 +96,7 @@ METHOD addColumns() CLASS ClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'direcciones.movil'
-      :cHeader             := 'M贸vil'
+      :cHeader             := 'M髒il'
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'movil' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -123,7 +123,7 @@ METHOD addColumns() CLASS ClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'clientes.fecha_ultima_llamada'
-      :cHeader             := '脷ltima llamada'
+      :cHeader             := '趌tima llamada'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_ultima_llamada' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -132,7 +132,7 @@ METHOD addColumns() CLASS ClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'clientes.agente_codigo'
-      :cHeader             := 'C贸digo agente'
+      :cHeader             := 'C骴igo agente'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'agente_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -159,7 +159,7 @@ METHOD addColumns() CLASS ClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'clientes.metodo_pago_codigo'
-      :cHeader             := 'C贸digo pago'
+      :cHeader             := 'C骴igo pago'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'metodo_pago_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -186,7 +186,7 @@ METHOD addColumns() CLASS ClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'clientes.ruta_codigo'
-      :cHeader             := 'C贸digo ruta'
+      :cHeader             := 'C骴igo ruta'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'ruta_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -213,7 +213,7 @@ METHOD addColumns() CLASS ClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'clientes.cliente_grupo_codigo'
-      :cHeader             := 'C贸digo grupo'
+      :cHeader             := 'C骴igo grupo'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'cliente_grupo_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -240,7 +240,7 @@ METHOD addColumns() CLASS ClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'clientes.cuenta_remesa_codigo'
-      :cHeader             := 'C贸digo remesa'
+      :cHeader             := 'C骴igo remesa'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_grupo_cliente' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -267,7 +267,7 @@ METHOD addColumns() CLASS ClientesBrowseView
 
     with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'tarifas.codigo'
-      :cHeader             := 'C贸digo tarifa'
+      :cHeader             := 'C骴igo tarifa'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'tarifa_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }

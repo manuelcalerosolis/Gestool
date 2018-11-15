@@ -650,7 +650,9 @@ METHOD addFindWhere( cSQLSelect )
    end if 
 
    cSQLSelect     += space( 1 )
+
    cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) 
+   
    cSQLSelect     += ::getExpresionToFind()
 
 RETURN ( cSQLSelect )
@@ -662,13 +664,19 @@ METHOD getExpresionToFind()
    local cExpresionToFind  := ""
 
    if !empty( ::aColumns )
+
       aeval( ::aColumns, {|cColumn| cExpresionToFind += "UPPER(" + cColumn + ") LIKE '%" + upper( ::cFind ) + "%' OR " } )
+   
       cExpresionToFind     := chgAtEnd( cExpresionToFind, '', 4 )
+
+      MSGALERT( cExpresionToFind, "cExpresionToFind" )
+
       RETURN ( cExpresionToFind )
+
    end if 
 
    cExpresionToFind        += "UPPER(" + ::cOrderBy + ") LIKE '%" + upper( ::cFind ) + "%'" 
-
+   
 RETURN ( cExpresionToFind )
 
 //---------------------------------------------------------------------------//
@@ -710,8 +718,6 @@ METHOD getCreateTableSentence( cDatabaseMySQL )
    else
       cSQLCreateTable      := chgAtEnd( cSQLCreateTable, ' )', 2 )
    end if
-
-   logwrite( cSQLCreateTable )
 
 RETURN ( cSQLCreateTable )
 

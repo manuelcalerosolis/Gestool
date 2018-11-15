@@ -288,17 +288,6 @@ METHOD addLinksToExplorerBar() CLASS PagosView
                         {||::oController:getDocumentosController():activateDialogView( ::oController:getUuid() ) },;
                            ::oController:getDocumentosController():getImage( "16" ) )
 
-   /*if ::oController:isNotAppendOrDuplicateMode()
-
-      oPanel:AddLink(   "Factura...",;
-                        {||::oController:getFacturasClientesController():ZoomUuid( ::oController:getModelBuffer( "parent_uuid" ) ) },;
-                           ::oController:getFacturasClientesController():getImage( "16" ) )
-
-      oPanel:AddLink(   "Pagos...",;
-                        {|| msgalert( "to-do" ) },;
-                           ::oController:getFacturasClientesController():getImage( "16" ) )
-
-   end if*/ 
 
 RETURN ( nil )
 

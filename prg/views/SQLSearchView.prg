@@ -98,7 +98,7 @@ METHOD onChangeCombo( oColumn )
    end if 
 
    if empty( oColumn )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    ::oController:changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
@@ -107,7 +107,7 @@ METHOD onChangeCombo( oColumn )
 
    ::getBrowse():refreshCurrent()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -118,13 +118,13 @@ METHOD onChangeSearch( oColumn )
    end if 
 
    if empty( oColumn )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    ::oController:findInRowSet( alltrim( ::cGetSearch ), oColumn:cSortOrder )                  
 
    ::getBrowse():refreshCurrent()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//

@@ -304,10 +304,6 @@ METHOD VScrollSetPos( nPos ) CLASS TExplorerBar
       oPanel:Move( nTop )
    next
 
-   logwrite(  "nHeight VScrollSetPos : " + str( nHeight ) )
-   logwrite(  "nAdvance VScrollSetPos" + str( nAdvance ) )
-   logwrite(  "nVirtualTop VScrollSetPos" + str( ::nVirtualTop ) )
-
    ::Refresh()
 
 RETURN nil
@@ -336,8 +332,6 @@ METHOD VScrollSkip( nSkip ) CLASS TExplorerBar
    for each oPanel in ::aPanels
       oPanel:Move( oPanel:nTop - nSkip )
    next
-
-   logwrite( "VScrollSkip " + str( nSkip ) )
 
    ::Refresh()
 

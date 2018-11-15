@@ -10,9 +10,11 @@ CLASS ClientesController FROM TercerosController
    METHOD End()
 
    METHOD validColumnAgentesBrowse( uValue, nKey ) ;
-                                    INLINE ( ::validColumnBrowse( uValue, nKey, ::getAgentesController():oModel, "agente_uuid" ) )
+                                       INLINE ( ::validColumnBrowse( uValue, nKey, ::getAgentesController():oModel, "agente_uuid" ) )
 
-   METHOD getModel()                INLINE ( iif( empty( ::oModel ), ::oModel := SQLClientesModel():New( self ), ), ::oModel )
+   METHOD getBrowseView()              INLINE ( iIf( empty( ::oBrowseView ), ::oBrowseView := ClientesBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLClientesModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -20,17 +22,17 @@ END CLASS
 
 METHOD New( oController ) CLASS ClientesController
 
-   ::cTitle                         := "Clientes"
+   ::cTitle                            := "Clientes"
 
-   ::cMessage                       := "Cliente"
+   ::cMessage                          := "Cliente"
 
-   ::cName                          := "clientes_sql"
+   ::cName                             := "clientes_sql"
 
-   ::isClient                       := .t.
+   ::isClient                          := .t.
 
-   ::hImage                         := {  "16" => "gc_user_16",;
-                                          "32" => "gc_user_32",;
-                                          "48" => "gc_user2_48" }
+   ::hImage                            := {  "16" => "gc_user_16",;
+                                             "32" => "gc_user_32",;
+                                             "48" => "gc_user2_48" }
 
    ::Super:New( oController )
 

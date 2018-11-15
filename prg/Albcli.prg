@@ -42,8 +42,7 @@ Definición de la base de datos de albaranes a CLIENTES-------------------------
 #define _CCODSUALB                19
 #define _CCONDENT                 20
 #define _MCOMENT                  21
-
- #define _MOBSERV                  22
+#define _MOBSERV                  22
 #define _CCODPAGO                 23
 #define _NBULTOS                  24
 #define _NPORTES                  25

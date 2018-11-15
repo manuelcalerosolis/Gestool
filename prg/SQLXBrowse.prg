@@ -69,7 +69,7 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD setName( cName )                      INLINE ( ::cName := cName )
    METHOD getName()                             INLINE ( ::cName )
 
-   METHOD getOriginalState()                    INLINE ( ::cOriginal := ::saveState(), logwrite( ::cOriginal ) )
+   METHOD getOriginalState()                    INLINE ( ::cOriginal := ::saveState() )
    METHOD setOriginalState()                    INLINE ( if( !empty( ::cOriginal ), ::restoreState( ::cOriginal ), ) )
 
    METHOD setViewType( cViewType )              INLINE ( ::cViewType := cViewType )

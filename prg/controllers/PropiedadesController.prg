@@ -122,9 +122,15 @@ CLASS PropiedadesView FROM SQLBaseView
 
    DATA oGetTipo
 
+   DATA oBtnLinesDeleted
+
    METHOD Activate()
 
    METHOD startActivate()
+
+   METHOD setLinesShowDeleted()       INLINE ( ::getController():getPropiedadesLineasController():setShowDeleted(),;
+                                                ::oBtnLinesDeleted:Toggle(),;
+                                                ::oBtnLinesDeleted:cTooltip := if( ::oBtnLinesDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
 END CLASS
 
@@ -176,28 +182,17 @@ METHOD Activate() CLASS PropiedadesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   // Lineas de propiedades -------------------------------------------------------
+   // Lineas de propiedades ---------------------------------------------------
 
-   REDEFINE BUTTON oBtnAppend ;
-      ID          130 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+   TBtnBmp():ReDefine( 601, "new16",,,,, {|| ::getController():getPropiedadesLineasController():Append() }, ::oDialog, .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
 
-   oBtnAppend:bAction   := {|| ::oController:getPropiedadesLineasController():Append() }
+   TBtnBmp():ReDefine( 602, "edit16",,,,, {|| ::getController():getPropiedadesLineasController():Edit() }, ::oDialog, .f., {|| ::getController():isNotZoomMode() }, .f., "Modificar línea" )
 
-   REDEFINE BUTTON oBtnEdit ;
-      ID          140 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+   TBtnBmp():ReDefine( 603, "del16",,,,, {|| ::getController():getPropiedadesLineasController():Delete() }, ::oDialog, .f., , .f., "Eliminar línea" )
+   
+   ::oBtnLinesDeleted   := TBtnBmp():ReDefine( 604, "gc_deleted_16",,,,, {|| ::setLinesShowDeleted() }, ::oDialog, .f., , .f., "Mostrar/Ocultar borrados" )
 
-   oBtnEdit:bAction   := {|| ::oController:getPropiedadesLineasController():Edit() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          150 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnDelete:bAction   := {|| ::oController:getPropiedadesLineasController():Delete() }
+   // Browse de lineas --------------------------------------------------------
 
    ::oController:getPropiedadesLineasController():Activate( 160, ::oDialog )
 
@@ -217,7 +212,7 @@ METHOD Activate() CLASS PropiedadesView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
+   ::oDialog:bKeyDown            := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
    
    if ::oController:isNotZoomMode() 
    

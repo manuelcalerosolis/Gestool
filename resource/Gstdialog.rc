@@ -22541,12 +22541,13 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 30, 456, 36
   CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 70, 456, 28
   CONTROL "Líneas", -1, "Button", BS_GROUPBOX, 43, 102, 456, 219
-  CONTROL "Aña&dir [F2]", 130, "Button", WS_TABSTOP, 50, 113, 50, 14
-  CONTROL "&Modificar [F3]", 140, "Button", WS_TABSTOP, 106, 113, 50, 14
-  CONTROL "&Eliminar [F4]", 150, "Button", WS_TABSTOP, 162, 113, 50, 14
   CONTROL "", 160, "SQLXBrowse", WS_TABSTOP|0x00300000, 50, 129, 445, 187
   CONTROL "De tipo color", 122, "Static", WS_GROUP, 50, 83, 63, 8
   CONTROL "<a>Campos extra...</a>", 170, "SysLink", WS_TABSTOP, 44, 325, 88, 10
+  CONTROL "", 601, "TBtnBmp", 0x00000000, 50, 113, 14, 14
+  CONTROL "", 602, "TBtnBmp", 0x00000000, 64, 113, 14, 14
+  CONTROL "", 603, "TBtnBmp", 0x00000000, 78, 113, 14, 14
+  CONTROL "", 604, "TBtnBmp", 0x00000000, 92, 113, 14, 14
 }
 
 PROPIEDADES_LINEAS DIALOG DISCARDABLE 138, 96, 504, 141

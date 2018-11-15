@@ -124,9 +124,8 @@ METHOD onChangeSearch()
    uValue               := alltrim( upper( cvaltochar( uValue ) ) )
    uValue               := strtran( uValue, chr( 8 ), "" )
    
-   /*
-   nRecCount            := ::getController():findInRowSet( uValue, aColumns )
-   */
+   logwrite( "uValue" )
+   logwrite( uValue )
 
    nRecCount            := ::getController():findInModel( uValue, aColumns )
 
