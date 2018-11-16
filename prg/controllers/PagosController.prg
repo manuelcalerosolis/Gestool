@@ -9,6 +9,8 @@ CLASS PagosController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD gettingSelectSentence()
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := PagosBrowseView():New( self ), ), ::oBrowseView ) 
@@ -39,7 +41,8 @@ METHOD New( oController ) CLASS PagosController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getCuentasBancariasController():loadedCurrentBuffer( "d8499d5b-8bf1-4be2-8a0e-509221332f25" ) } )
+   ::getCuentasBancariasController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
+   ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentence() } )
 
 RETURN ( Self )
 
@@ -70,6 +73,13 @@ METHOD End() CLASS PagosController
 RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
+
+METHOD gettingSelectSentence()
+
+   ::getCuentasBancariasController():getModel():setGeneralWhere( "parent_uuid = " + quoted( Company():Uuid() ) )
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -418,11 +428,12 @@ METHOD getInitialSelect() CLASS SQLPagosModel
       ON pagos.medio_pago_codigo = medio_pago.codigo
 
    INNER JOIN %4$s AS cuentas_bancarias
-      ON pagos.cuenta_bancaria_codigo = cuentas_bancarias.codigo
+      ON pagos.cuenta_bancaria_codigo = cuentas_bancarias.codigo 
+      AND cuentas_bancarias.parent_uuid = %5$s
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLMediosPagoModel():getTableName(), SQLCuentasBancariasModel():getTableName() )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLMediosPagoModel():getTableName(), SQLCuentasBancariasModel():getTableName(), quoted( Company():Uuid() ) )
 
 RETURN ( cSql )
 

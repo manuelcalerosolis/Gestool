@@ -1,0 +1,56 @@
+10:55:06- 39306.3130>
+   SELECT pagos.id AS id,
+      pagos.uuid AS uuid,
+      pagos.cliente_codigo AS cliente_codigo,
+      pagos.fecha AS fecha,
+      pagos.importe AS importe,
+      pagos.medio_pago_codigo AS medio_pago_codigo,
+      pagos.cuenta_bancaria_codigo AS cuenta_bancaria_codigo,
+      pagos.comentario AS comentario,
+      pagos.estado AS estado,
+      pagos.deleted_at AS deleted_at,
+      clientes.nombre AS cliente_nombre,
+      medio_pago.nombre AS medio_pago_nombre,
+      cuentas_bancarias.nombre AS nombre_banco
+
+   FROM gestool_00VG.pagos AS pagos
+
+   INNER JOIN gestool_00VG.clientes AS clientes
+      ON pagos.cliente_codigo = clientes.codigo
+
+   INNER JOIN gestool_00VG.medios_pago AS medio_pago
+      ON pagos.medio_pago_codigo = medio_pago.codigo
+
+   INNER JOIN gestool_00VG.cuentas_bancarias AS cuentas_bancarias
+      ON pagos.cuenta_bancaria_codigo = cuentas_bancarias.codigo
+
+ WHERE gestool_00VG.pagos.deleted_at = 0
+10:55:10- 39310.1950>SELECT * FROM gestool_00VG.cuentas_bancarias WHERE parent_uuid = 'd8499d5b-8bf1-4be2-8a0e-509221332f25' AND gestool_00VG.cuentas_bancarias.deleted_at = 0 AND gestool_00VG.cuentas_bancarias.parent_uuid = '0c156e75-c709-4fcf-8677-89338ff0c9b0'
+10:55:26- 39326.7640>
+   SELECT pagos.id AS id,
+      pagos.uuid AS uuid,
+      pagos.cliente_codigo AS cliente_codigo,
+      pagos.fecha AS fecha,
+      pagos.importe AS importe,
+      pagos.medio_pago_codigo AS medio_pago_codigo,
+      pagos.cuenta_bancaria_codigo AS cuenta_bancaria_codigo,
+      pagos.comentario AS comentario,
+      pagos.estado AS estado,
+      pagos.deleted_at AS deleted_at,
+      clientes.nombre AS cliente_nombre,
+      medio_pago.nombre AS medio_pago_nombre,
+      cuentas_bancarias.nombre AS nombre_banco
+
+   FROM gestool_00VG.pagos AS pagos
+
+   INNER JOIN gestool_00VG.clientes AS clientes
+      ON pagos.cliente_codigo = clientes.codigo
+
+   INNER JOIN gestool_00VG.medios_pago AS medio_pago
+      ON pagos.medio_pago_codigo = medio_pago.codigo
+
+   INNER JOIN gestool_00VG.cuentas_bancarias AS cuentas_bancarias
+      ON pagos.cuenta_bancaria_codigo = cuentas_bancarias.codigo
+
+ WHERE gestool_00VG.pagos.deleted_at = 0
+10:55:32- 39332.0640>SELECT * FROM gestool_00VG.cuentas_bancarias WHERE parent_uuid = 'd8499d5b-8bf1-4be2-8a0e-509221332f25' AND gestool_00VG.cuentas_bancarias.deleted_at = 0 AND gestool_00VG.cuentas_bancarias.parent_uuid = '0c156e75-c709-4fcf-8677-89338ff0c9b0'
