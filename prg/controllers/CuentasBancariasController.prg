@@ -12,8 +12,6 @@ CLASS CuentasBancariasController FROM SQLNavigatorController
 
    METHOD CalculaDigitoControl()
 
-   METHOD gettingSelectSentence()
-
    METHOD loadBlankBuffer()            INLINE ( ::getModel():loadBlankBuffer() )
    METHOD insertBuffer()               INLINE ( ::getModel():insertBuffer() )
 
@@ -109,18 +107,6 @@ METHOD CalculaDigitoControl() CLASS CuentasBancariasController
    ::getDialogView():oIBAN:lValid() 
 
 RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD gettingSelectSentence() CLASS CuentasBancariasController
-
-   local uuid        := ::getController():getUuid() 
-
-   if !empty( uuid )
-      ::getModel():setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
-   end if 
-
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

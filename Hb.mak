@@ -366,6 +366,7 @@ CombinacionesPropiedadesController.prg 								\
 SesionesController.prg 														\
 RecibosController.prg 														\
 PagosController.prg 															\
+RecibosPagosController.prg 												\
 RecibosGeneratorController.prg 							    			\
 BalanzasController.prg 														\
 ImpresorasController.prg 													\
@@ -1088,6 +1089,7 @@ CombinacionesPropiedadesController.obj       						\
 SesionesController.obj       												\
 RecibosController.obj    		   										\
 PagosController.obj    		   											\
+RecibosPagosController.obj    		   								\
 RecibosGeneratorController.obj    		   							\
 BalanzasController.obj       												\
 ImpresorasController.obj       											\
@@ -1799,6 +1801,7 @@ $(OBJ)\CombinacionesPropiedadesController.obj    					+
 $(OBJ)\SesionesController.obj    										+
 $(OBJ)\RecibosController.obj    											+
 $(OBJ)\PagosController.obj    											+
+$(OBJ)\RecibosPagosController.obj    									+
 $(OBJ)\RecibosGeneratorController.obj    								+
 $(OBJ)\BalanzasController.obj    										+	
 $(OBJ)\ImpresorasController.obj    										+

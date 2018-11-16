@@ -440,7 +440,7 @@ METHOD getGeneralSelect()
    cSQLSelect              := ::addGeneralHaving( cSQLSelect )
 
    cSQLSelect              := ::addLimit( cSQLSelect )
-
+   
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
@@ -575,6 +575,10 @@ METHOD addParentUuidWhere( cSQLSelect )
 
    local uuid        
 
+   if isFalse( ::fireEvent( 'addingParentUuidWhere', cSQLSelect ) )
+      RETURN ( cSQLSelect )
+   end if
+
    if !::isParentUuidColumn()
       RETURN ( cSQLSelect )
    end if 
@@ -592,6 +596,8 @@ METHOD addParentUuidWhere( cSQLSelect )
    if !empty( uuid )
       cSQLSelect  += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".parent_uuid = " + quoted( uuid )
    end if 
+   
+   ::fireEvent( 'addedParentUuidWhere', cSQLSelect ) 
 
 RETURN ( cSQLSelect )
 

@@ -418,7 +418,9 @@ CLASS SQLMetodoPagoModel FROM SQLCompanyModel
 
    METHOD isCobrado()            INLINE ( ::getBuffer( 'cobrado' ) < 2 )
 
-   METHOD setBlankMedioPago() 
+   METHOD setBlankMedioPago()
+
+   METHOD getMedioPagoCodigo( CodigoMetodoPago )   INLINE ( ::getField( "codigo_medio_pago", "codigo", CodigoMetodoPago ) )
 
 
 END CLASS

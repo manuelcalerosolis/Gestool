@@ -302,6 +302,8 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLPagosModel():New() )
 
+   aadd( ::aModels, SQLRecibosPagosModel():New() )
+
    aadd( ::aModels, SQLBalanzasModel():New() )
 
    aadd( ::aModels, SQLImpresorasModel():New() )
