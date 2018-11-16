@@ -270,8 +270,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD insertPago() CLASS RecibosGeneratorController
-   
-   msgalert("insertando pago")
 
    ::getPagosModel():loadBlankBuffer()
 
@@ -290,8 +288,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD insertReciboPago() CLASS RecibosGeneratorController
-
-   msgalert("insertando recibo-pago")
 
    ::getRecibosPagosModel():loadBlankBuffer()
 
