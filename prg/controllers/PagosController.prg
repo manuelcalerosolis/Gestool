@@ -15,9 +15,9 @@ CLASS PagosController FROM SQLNavigatorController
 
    METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := PagosBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := pagosView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := PagosView():New( self ), ), ::oDialogView )
 
-   METHOD getRepository()        INLINE( if(empty( ::oRepository ), ::oRepository := pagosRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()        INLINE( if(empty( ::oRepository ), ::oRepository := PagosRepository():New( self ), ), ::oRepository )
 
    METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := PagosValidator():New( self  ), ), ::oValidator ) 
    
@@ -377,7 +377,7 @@ METHOD getColumns() CLASS SQLPagosModel
    hset( ::hColumns, "medio_pago_codigo",          {  "create"    => "VARCHAR( 20 )"                              ,;
                                                       "default"   => {|| space( 20 ) } }                          )
 
-    hset( ::hColumns, "cuenta_bancaria_codigo",    {  "create"    => "VARCHAR( 20 )"                              ,;
+   hset( ::hColumns, "cuenta_bancaria_codigo",     {  "create"    => "VARCHAR( 20 )"                              ,;
                                                       "default"   => {|| space( 20 ) } }                          )
 
    hset( ::hColumns, "fecha",                      {  "create"    => "DATE"                                       ,;
@@ -421,13 +421,13 @@ METHOD getInitialSelect() CLASS SQLPagosModel
 
    FROM %1$s AS pagos
 
-   INNER JOIN %2$s AS clientes
+   LEFT JOIN %2$s AS clientes
       ON pagos.cliente_codigo = clientes.codigo
 
-   INNER JOIN %3$s AS medio_pago
+   LEFT JOIN %3$s AS medio_pago
       ON pagos.medio_pago_codigo = medio_pago.codigo
 
-   INNER JOIN %4$s AS cuentas_bancarias
+   LEFT JOIN %4$s AS cuentas_bancarias
       ON pagos.cuenta_bancaria_codigo = cuentas_bancarias.codigo 
       AND cuentas_bancarias.parent_uuid = %5$s
 

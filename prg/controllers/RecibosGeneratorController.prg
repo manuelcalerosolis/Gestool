@@ -9,6 +9,10 @@ CLASS RecibosGeneratorController
 
    DATA oMetodoPagoModel
 
+   DATA oPagosModel
+
+   DATA oRecibosPagosModel
+
    DATA hPaymentMethod
 
    DATA oController
@@ -21,7 +25,11 @@ CLASS RecibosGeneratorController
 
    DATA nReceiptNumber
 
-   DATA dExpirationDate                
+   DATA dExpirationDate 
+
+   DATA uuidRecibo
+
+   DATA uuidPago               
 
    METHOD New() CONSTRUCTOR
 
@@ -32,6 +40,10 @@ CLASS RecibosGeneratorController
    METHOD generate()
 
    METHOD Insert( nTermAmount, dExpirationDate )
+
+   METHOD insertPago()
+
+   METHOD insertReciboPago()
 
    METHOD processNoPaid()
 
@@ -61,6 +73,10 @@ CLASS RecibosGeneratorController
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLRecibosModel():New( self ), ), ::oModel ) 
    
    METHOD getMetodoPagoModel()         INLINE ( if( empty( ::oMetodoPagoModel ), ::oMetodoPagoModel := SQLMetodoPagoModel():New( self ), ), ::oMetodoPagoModel ) 
+   
+   METHOD getPagosModel()              INLINE ( if( empty( ::oPagosModel ), ::oPagosModel := SQLPagosModel():New( self ), ), ::oPagosModel ) 
+
+   METHOD getRecibosPagosModel()       INLINE ( if( empty( ::oRecibosPagosModel ), ::oRecibosPagosModel := SQLRecibosPagosModel():New( self ), ), ::oRecibosPagosModel ) 
 
 END CLASS
 
@@ -106,6 +122,9 @@ RETURN ( nil )
 
    if ::isPaid() 
       ::Insert()
+      ::insertPago()
+      ::insertReciboPago()
+
       RETURN ( nil )
    end if
    
@@ -242,10 +261,49 @@ METHOD Insert( nTermAmount ) CLASS RecibosGeneratorController
 
    ::getModel():setBuffer( "vencimiento", ::getExpirationDate( nTermAmount ) )
 
+   ::uuidRecibo             := ::getModel():hBuffer[ "uuid" ]
+
    ::getModel():insertBuffer()
    
 RETURN ( nil )
 
+//---------------------------------------------------------------------------//
+
+METHOD insertPago() CLASS RecibosGeneratorController
+   
+   msgalert("insertando pago")
+
+   ::getPagosModel():loadBlankBuffer()
+
+   ::getPagosModel():setBuffer( "cliente_codigo", ::oController:getModelBuffer( 'cliente_codigo' ) )
+
+   ::getPagosModel():setBuffer( "medio_pago_codigo", ::getMetodoPagoModel():getMedioPagoCodigo( ::oController:getModelBuffer( 'metodo_pago_codigo' ) ) )
+
+   ::getPagosModel():setBuffer( "importe", Round( hget( ::hTotalDocument, "totalDocumento" ),2 ) )
+
+   ::uuidPago               := ::getPagosModel():hBuffer[ "uuid" ]
+
+   ::getPagosModel():insertBuffer()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertReciboPago() CLASS RecibosGeneratorController
+
+   msgalert("insertando recibo-pago")
+
+   ::getRecibosPagosModel():loadBlankBuffer()
+
+   ::getRecibosPagosModel():setBuffer( "recibo_uuid", ::uuidRecibo )
+
+   ::getRecibosPagosModel():setBuffer( "pago_uuid", ::uuidPago )
+
+   ::getRecibosPagosModel():setBuffer( "importe", Round( hget( ::hTotalDocument, "totalDocumento" ),2 ) ) 
+
+   ::getRecibosPagosModel():insertBuffer()
+
+RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD processNoPaid() CLASS RecibosGeneratorController
