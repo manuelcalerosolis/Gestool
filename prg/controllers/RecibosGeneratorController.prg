@@ -266,12 +266,15 @@ METHOD Insert( nTermAmount ) CLASS RecibosGeneratorController
    DEFAULT nTermAmount      := Round( hget( ::hTotalDocument, "totalDocumento" ), 2 )
 
    ::getModel():loadBlankBuffer()
+   msgalert( ::oController:cName )
 
    ::getModel():setBuffer( "importe", nTermAmount )
 
    ::getModel():setBuffer( "concepto", ::getConcept() )
 
    ::getModel():setBuffer( "vencimiento", ::getExpirationDate( nTermAmount ) )
+
+   ::getModel():setBuffer( "parent_table", ::oController:cName )
 
    ::getModel():insertBuffer()
 
@@ -293,6 +296,8 @@ METHOD insertPago() CLASS RecibosGeneratorController
 
       :setBuffer( "importe", Round( hget( ::hTotalDocument, "totalDocumento" ), 2 ) )
 
+      :setBuffer( "comentario", ::getConcept() )
+
       :insertBuffer()
 
       ::uuidPago               := :getBuffer( "uuid" )
@@ -305,15 +310,19 @@ RETURN ( nil )
 
 METHOD insertReciboPago() CLASS RecibosGeneratorController
 
-   ::getRecibosPagosModel():loadBlankBuffer()
+   with object ( ::getRecibosPagosModel() )
 
-   ::getRecibosPagosModel():setBuffer( "recibo_uuid", ::uuidRecibo )
+      :loadBlankBuffer()
 
-   ::getRecibosPagosModel():setBuffer( "pago_uuid", ::uuidPago )
+      :setBuffer( "recibo_uuid", ::uuidRecibo )
 
-   ::getRecibosPagosModel():setBuffer( "importe", Round( hget( ::hTotalDocument, "totalDocumento" ), 2 ) ) 
+      :setBuffer( "pago_uuid", ::uuidPago )
 
-   ::getRecibosPagosModel():insertBuffer()
+      :setBuffer( "importe", Round( hget( ::hTotalDocument, "totalDocumento" ), 2 ) ) 
+
+      :insertBuffer()
+
+   end with
 
 RETURN ( nil )
 
