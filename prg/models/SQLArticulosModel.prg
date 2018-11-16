@@ -151,7 +151,7 @@ METHOD getInitialSelect() CLASS SQLArticulosModel
                            SQLArticulosFamiliaModel():getTableName(),;
                            SQLArticulosTipoModel():getTableName(),;
                            SQLArticulosTipoModel():getTableName(),;
-                           SQLArticulosCategoriasModel():getTableName(),;
+                           SQLTiposIvaModel():getTableName(),;
                            SQLArticulosCategoriasModel():getTableName(),;
                            SQLArticulosTemporadasModel():getTableName(),;
                            SQLImpuestosEspecialesModel():getTableName(),;

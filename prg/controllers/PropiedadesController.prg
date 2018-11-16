@@ -142,9 +142,6 @@ END CLASS
 
 METHOD Activate() CLASS PropiedadesView
 
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
    local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
@@ -190,8 +187,6 @@ METHOD Activate() CLASS PropiedadesView
 
    TBtnBmp():ReDefine( 603, "del16",,,,, {|| ::getController():getPropiedadesLineasController():Delete() }, ::oDialog, .f., , .f., "Eliminar línea" )
    
-   ::oBtnLinesDeleted   := TBtnBmp():ReDefine( 604, "gc_deleted_16",,,,, {|| ::setLinesShowDeleted() }, ::oDialog, .f., , .f., "Mostrar/Ocultar borrados" )
-
    // Browse de lineas --------------------------------------------------------
 
    ::oController:getPropiedadesLineasController():Activate( 160, ::oDialog )
@@ -212,31 +207,26 @@ METHOD Activate() CLASS PropiedadesView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown            := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-   
-   if ::oController:isNotZoomMode() 
-   
-      ::oDialog:bKeyDown   := <| nKey |  
-         do case         
-            case nKey == VK_F5
-               if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), )
-            case nKey == VK_F2
-               ::oController:getPropiedadesLineasController():Append()
-            case nKey == VK_F3
-               ::oController:getPropiedadesLineasController():Edit()
-            case nKey == VK_F4
-               ::oController:getPropiedadesLineasController():Delete()
-         end 
-         RETURN ( 0 )
-         >
+   ::oDialog:bKeyDown            := <| nKey |  
+      do case         
+         case nKey == VK_F2 .and. ::oController:isNotZoomMode() 
+            ::oController:getPropiedadesLineasController():Append()
 
-   end if
+         case nKey == VK_F3 .and. ::oController:isNotZoomMode() 
+            ::oController:getPropiedadesLineasController():Edit()
+
+         case nKey == VK_F4 .and. ::oController:isNotZoomMode() 
+            ::oController:getPropiedadesLineasController():Delete()
+
+         case nKey == VK_F5
+            if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), )
+      end 
+      RETURN ( 0 )
+      >
 
    ::oDialog:bStart  := {|| ::startActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-   ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 
@@ -306,7 +296,6 @@ METHOD getColumns() CLASS SQLPropiedadesModel
                                     "default"   => {|| 0 } }                                 )
 
    ::getDeletedStampColumn()
-
 
 RETURN ( ::hColumns )
 

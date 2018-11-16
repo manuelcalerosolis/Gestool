@@ -124,9 +124,6 @@ METHOD onChangeSearch()
    uValue               := alltrim( upper( cvaltochar( uValue ) ) )
    uValue               := strtran( uValue, chr( 8 ), "" )
    
-   logwrite( "uValue" )
-   logwrite( uValue )
-
    nRecCount            := ::getController():findInModel( uValue, aColumns )
 
    if hb_isnumeric( nRecCount )

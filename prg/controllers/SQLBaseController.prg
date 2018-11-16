@@ -59,6 +59,8 @@ CLASS SQLBaseController
    METHOD getModelColumns()                           INLINE ( iif( !empty( ::getModel() ) .and. !empty( ::getModel():hColumns ), ( ::getModel():hColumns ), ) )
    METHOD getModelExtraColumns()                      INLINE ( iif( !empty( ::getModel() ) .and. !empty( ::getModel():hExtraColumns ), ( ::getModel():hExtraColumns ), ) )
    
+   METHOD isEmptyModelBuffer()                        INLINE ( empty( ::getModel() ) .or. empty( ::getModel():hBuffer ) )
+   
    METHOD getModelBuffer( cColumn )                   INLINE ( iif( !empty( ::getModel() ), ::getModel():getBuffer( cColumn ), ) )
    METHOD setModelBuffer( cColumn, uValue )           INLINE ( iif( !empty( ::getModel() ), ::getModel():setBuffer( cColumn, uValue ), ) )
    METHOD setModelBufferPadr( cColumn, uValue )       INLINE ( iif( !empty( ::getModel() ), ::getModel():setBufferPadr( cColumn, uValue ), ) )

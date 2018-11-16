@@ -376,26 +376,40 @@ METHOD sqlDescuentoWhereArticuloCodigo( cCodigoArticulo, cCodigoTarifa, nUnidade
    
    local cSql
 
-   cSql  := "SELECT articulos_precios_descuentos.porcentaje as porcentaje "                                                                                                                                
-   cSql  +=    "FROM "+ ::getTableName() + " AS articulos_precios_descuentos " 
+   TEXT INTO cSql
 
-   cSql  +=    "INNER JOIN " + SQLArticulosModel():getTableName() + " as articulos "                                                                  
-   cSql  +=       "ON articulos.codigo = " + quoted( cCodigoArticulo ) + " " 
+   SELECT articulos_precios_descuentos.porcentaje AS porcentaje
+      FROM %1$s AS articulos_precios_descuentos 
 
-   cSql  +=    "INNER JOIN "+ SQLArticulosPreciosModel():getTableName() +" as articulos_precios "                                                                  
-   cSql  +=       "ON articulos_precios_descuentos.parent_uuid = articulos_precios.uuid "
+      INNER JOIN %2$s AS articulos
+         ON articulos.codigo = %5$s 
 
-   cSql  +=    "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " as articulos_tarifas "                                                                  
-   cSql  +=       "ON articulos_tarifas.codigo = " + quoted( cCodigoTarifa ) + " "
+      INNER JOIN %3$s AS articulos_precios
+         ON articulos_precios_descuentos.parent_uuid = articulos_precios.uuid
 
-   cSql  +=    "WHERE articulos_precios_descuentos.fecha_inicio <= " + toSqlString( dFechaVenta ) + " "                                                                  
-   cSql  +=       "AND ( articulos_precios_descuentos.fecha_fin IS NULL OR articulos_precios_descuentos.fecha_fin >= " + toSqlString( dFechaVenta ) + " ) "                                                                  
-   cSql  +=       "AND articulos_precios_descuentos.unidades <= " + quoted( nUnidades ) + " "                                                                  
-   cSql  +=       "AND articulos_precios.uuid = articulos_precios_descuentos.parent_uuid "                                                                  
+      INNER JOIN %4$s AS articulos_tarifas 
+         ON articulos_tarifas.codigo = %6$s
 
-   cSql  +=    "ORDER BY articulos_precios_descuentos.porcentaje DESC " 
+      WHERE articulos_precios_descuentos.fecha_inicio <= %8$s
+         AND ( articulos_precios_descuentos.fecha_fin IS NULL OR articulos_precios_descuentos.fecha_fin >= %8$s )
+         AND articulos_precios_descuentos.unidades <= %7$s
+         AND articulos_precios.uuid = articulos_precios_descuentos.parent_uuid 
+         AND articulos_precios.tarifa_uuid = articulos_tarifas.uuid
 
-   cSql  +=    "LIMIT 1 "
+      ORDER BY articulos_precios_descuentos.porcentaje DESC
+         LIMIT 1 
+
+   ENDTEXT 
+
+   cSql  := hb_strformat(  cSql,;
+                           ::getTableName(),;
+                           SQLArticulosModel():getTableName(),;
+                           SQLArticulosPreciosModel():getTableName(),;
+                           SQLArticulosTarifasModel():getTableName(),;
+                           quoted( cCodigoArticulo ),;
+                           quoted( cCodigoTarifa ),;
+                           quoted( nUnidades ),;
+                           toSqlString( dFechaVenta ) )
 
 RETURN ( cSql )
 

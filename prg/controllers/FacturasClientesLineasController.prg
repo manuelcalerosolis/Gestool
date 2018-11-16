@@ -71,13 +71,13 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD stampAgente( hAgente )
 
    METHOD stampArticuloCodigo( cCodigoArticulo ) ;
-                                          INLINE ( ::updateField( "articulo_codigo", cCodigoArticulo ) ) 
+                                       INLINE ( ::updateField( "articulo_codigo", cCodigoArticulo ) ) 
 
    METHOD stampArticuloNombre( cNombreArticulo ) ;
-                                          INLINE ( ::updateField( "articulo_nombre", cNombreArticulo ) )
+                                       INLINE ( ::updateField( "articulo_nombre", cNombreArticulo ) )
 
    METHOD stampCombinacionesUuid( UuidCombinacion ) ;
-                                          INLINE ( ::updateField( "combinaciones_uuid", UuidCombinacion ) )
+                                       INLINE ( ::updateField( "combinaciones_uuid", UuidCombinacion ) )
 
    METHOD stampIncrement( nIncrementoPrecio ) 
 
@@ -91,12 +91,13 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD updateArticuloFactor( uValue )
 
-   METHOD updateArticuloPrecio( uValue )  INLINE ( ::updateField( 'articulo_precio', uValue ),;
-                                                   ::oController:calculateTotals() )
+   METHOD updateArticuloPrecio( uValue ) ;
+                                       INLINE ( ::updateField( 'articulo_precio', uValue ),;
+                                                ::oController:calculateTotals() )
 
    METHOD updateArticuloIncrementoPrecio( uValue ) ;
-                                          INLINE ( ::updateField( 'incremento_precio', uValue ),;
-                                                   ::oController:calculateTotals() )
+                                       INLINE ( ::updateField( 'incremento_precio', uValue ),;
+                                                ::oController:calculateTotals() )
 
    METHOD updateAgenteComision( uValue )  INLINE ( ::updateField( 'agente_comision', uValue ),;
                                                    ::oController:calculateTotals() )

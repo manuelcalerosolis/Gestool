@@ -669,8 +669,6 @@ METHOD getExpresionToFind()
    
       cExpresionToFind     := chgAtEnd( cExpresionToFind, '', 4 )
 
-      MSGALERT( cExpresionToFind, "cExpresionToFind" )
-
       RETURN ( cExpresionToFind )
 
    end if 
@@ -687,12 +685,12 @@ METHOD getSelectByOrder( cSQLSelect )
       RETURN ( cSQLSelect )
    end if 
    
-   cSQLSelect     += " ORDER BY " + ::getOrderBy() 
+   cSQLSelect     += " ORDER BY " + ::getOrderBy() + " " 
 
    if !empty( ::getOrientation() ) .and. ::getOrientation() == "A"
-      cSQLSelect  += " DESC"
+      cSQLSelect  += "DESC"
    else
-      cSQLSelect  += " ASC"
+      cSQLSelect  += "ASC"
    end if
 
 RETURN ( cSQLSelect )

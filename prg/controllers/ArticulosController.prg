@@ -115,18 +115,14 @@ METHOD End() CLASS ArticulosController
    if !empty( ::oRepository )
       ::oRepository:End()
    end if 
-  
-   ::Super:End()
 
-RETURN ( hb_gcall( .t. ) )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
 METHOD setUuidOldersParents() CLASS ArticulosController
 
    ::getCombinacionesController():getModel():setUuidOlderParent( ::getUuid() )
-
-   //Codificacion de proveedores
 
    ::getImagenesController():getModel():setUuidOlderParent( ::getUuid() )
 
@@ -144,8 +140,6 @@ METHOD getDuplicateOthers() CLASS ArticulosController
 
    ::getCombinacionesController():getModel():duplicateOthers( ::getUuid() )
 
-   //Codificacion de proveedores
-   
    ::getImagenesController():getModel():duplicateOthers( ::getUuid() )
    
    ::getTraduccionesController():getModel():duplicateOthers( ::getUuid() )
@@ -162,8 +156,6 @@ METHOD deletedOthersSelection() CLASS ArticulosController
 
    ::getCombinacionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
    
-   //Codificacion de proveedores
-
    ::getImagenesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
    
    ::getTraduccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
@@ -178,29 +170,21 @@ RETURN ( nil )
 
 METHOD getPrecioCosto() CLASS ArticulosController
 
-   if empty( ::oModel )
+   if ::isEmptyModelBuffer()
       RETURN ( 0 )
    end if 
 
-   if empty( ::oModel:hBuffer )
-      RETURN ( 0 )
-   end if 
-
-RETURN ( ::oModel:hBuffer[ "precio_costo" ] )
+RETURN ( ::getModel():hBuffer[ "precio_costo" ] )
 
 //---------------------------------------------------------------------------//
 
 METHOD getPorcentajeIVA() CLASS ArticulosController
 
-   if empty(::oModel)
+   if ::isEmptyModelBuffer()
       RETURN ( 0 )
    end if 
 
-   if empty(::oModel:hBuffer)
-      RETURN ( 0 )
-   end if 
-
-RETURN ( ::getTipoIvaController():oModel:getPorcentajeWhereCodigo( ::oModel:hBuffer[ "tipo_iva_codigo" ] ) )
+RETURN ( ::getTipoIvaController():oModel:getPorcentajeWhereCodigo( ::getModel():hBuffer[ "tipo_iva_codigo" ] ) )
 
 //---------------------------------------------------------------------------//
 
@@ -208,15 +192,11 @@ METHOD insertPreciosWhereArticulo() CLASS ArticulosController
 
    local uuidArticulo   
 
-   if empty( ::getModel() )
-      RETURN ( nil )
+   if ::isEmptyModelBuffer()
+      RETURN ( 0 )
    end if 
 
-   if empty( ::getModel():hBuffer )
-      RETURN ( nil )
-   end if 
-
-   uuidArticulo      := hget( ::getModel():hBuffer, "uuid" )
+   uuidArticulo      := ::getModelBuffer( "uuid" )
 
    if empty( uuidArticulo )
       RETURN ( nil )
@@ -230,10 +210,17 @@ RETURN ( nil )
 
 METHOD validatePrecioCosto() CLASS ArticulosController
 
-   local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
-   local nPrecioCosto   := hget( ::oModel:hBuffer, "precio_costo" )
+   local uuidArticulo   
+   local nPrecioCosto   
 
-   ::oModel:updateFieldWhereUuid( uuidArticulo, "precio_costo", nPrecioCosto )
+   if ::isEmptyModelBuffer()
+      RETURN ( 0 )
+   end if 
+
+   uuidArticulo      := ::getModelBuffer( "uuid" )
+   nPrecioCosto      := ::getModelBuffer( "precio_costo" )
+
+   ::getModel():updateFieldWhereUuid( uuidArticulo, "precio_costo", nPrecioCosto )
 
    ::getArticulosPreciosController():getRepository():callUpdatePreciosWhereUuidArticulo( uuidArticulo )
    
@@ -245,10 +232,17 @@ RETURN ( .t. )
 
 METHOD validateTipoIVA() CLASS ArticulosController
 
-   local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
-   local cCodigoTipoIVA := hget( ::oModel:hBuffer, "tipo_iva_codigo" )
+   local uuidArticulo   
+   local cCodigoTipoIVA 
 
-   ::oModel:updateFieldWhereUuid( uuidArticulo, "tipo_iva_codigo", cCodigoTipoIVA )
+   if ::isEmptyModelBuffer()
+      RETURN ( 0 )
+   end if 
+
+   uuidArticulo      := ::getModelBuffer( "uuid" )
+   cCodigoTipoIVA    := ::getModelBuffer( "tipo_iva_codigo" )
+
+   ::getModel():updateFieldWhereUuid( uuidArticulo, "tipo_iva_codigo", cCodigoTipoIVA )
 
    ::getArticulosPreciosController():getRepository():callUpdatePreciosWhereUuidArticulo( uuidArticulo )
    
