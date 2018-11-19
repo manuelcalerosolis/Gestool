@@ -38,28 +38,28 @@ RETURN ( nil )
 METHOD addColumns() CLASS ArticulosPreciosBrowseView
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
+      :cSortOrder          := 'articulos_precios.id'
       :cHeader             := 'Id'
       :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_precios_id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'uuid'
+      :cSortOrder          := 'articulos_precios.uuid'
       :cHeader             := 'Uuid'
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_precios_uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'articulo_uuid'
+      :cSortOrder          := 'articulos_precios.articulo_uuid'
       :cHeader             := 'Articulo Uuid'
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_uuid' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_precios_articulo_uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
@@ -77,14 +77,14 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'margen'
+      :cSortOrder          := 'articulos_precios.margen'
       :cHeader             := 'Margen %'
       :nWidth              := 75
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'margen' ) }
-      :bEditBlock          := {|| ::getRowSet():fieldGet( 'margen' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_precios_margen' ) }
+      :bEditBlock          := {|| ::getRowSet():fieldGet( 'articulos_precios_margen' ) }
       :cEditPicture        := "@E 9999.9999"
    end with
 
@@ -101,15 +101,14 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'articulos_tarifas_base_nombre'
       :cHeader             := 'Sobre tarifa'
-      :nWidth              := 120
+      :nWidth              := 100
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_tarifas_base_nombre' ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'precio_base'
+      :cSortOrder          := 'articulos_precios.precio_base'
       :cHeader             := 'Precio'
       :nWidth              := 100
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -118,14 +117,14 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :nHeadStrAlign       := 1
       :addResource( "gc_pencil_16" )
       :nEditType           := 1
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'precio_base' ) }
-      :bEditBlock          := {|| ::getRowSet():fieldGet( 'precio_base' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_precios_precio_base' ) }
+      :bEditBlock          := {|| ::getRowSet():fieldGet( 'articulos_precios_precio_base' ) }
       :cEditPicture        := "@E 9999.9999"
-      :bOnPostEdit         := {|oCol, nPrecioBase| ::oController:setPrecioBase( oCol, nPrecioBase ) }
+      :bOnPostEdit         := {|oCol, nPrecioBase| ::oController:setPrecioBase( ::getRowSet():fieldGet( 'articulos_precios_articulo_uuid' ), ::getRowSet():fieldGet( 'articulos_precios_uuid' ), nPrecioBase ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'precio_iva_incluido'
+      :cSortOrder          := 'articulos_precios.precio_iva_incluido'
       :cHeader             := 'Precio IVA inc.'
       :nWidth              := 100
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -135,26 +134,26 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :AddResource( "gc_pencil_16" )
 
       :nEditType           := 1
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'precio_iva_incluido' ) }
-      :bEditBlock          := {|| ::getRowSet():fieldGet( 'precio_iva_incluido' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_precios_precio_iva_incluido' ) }
+      :bEditBlock          := {|| ::getRowSet():fieldGet( 'articulos_precios_precio_iva_incluido' ) }
       :cEditPicture        := "@E 9999.9999"
-      :bOnPostEdit         := {|oCol, nPrecioIVAIncluido| ::oController:setPrecioIVAIncluido( oCol, nPrecioIVAIncluido ) }
+      :bOnPostEdit         := {|oCol, nPrecioIVAIncluido| ::oController:setPrecioIVAIncluido( ::getRowSet():fieldGet( 'articulos_precios_articulo_uuid' ), ::getRowSet():fieldGet( 'articulos_precios_uuid' ), nPrecioIVAIncluido ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'manual'
+      :cSortOrder          := 'articulos_precios.manual'
       :cHeader             := "Manual"
       :bStrData            := {|| "" }
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'manual' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_precios_manual' ) }
       :nWidth              := 60
-      :SetCheck( { "Sel16", "Nil16" }, {|oCol, lManual| ::oController:setManual( oCol, lManual ) } )
+      :SetCheck( { "Sel16", "Nil16" }, {|oCol, lManual| ::oController:setManual( ::getRowSet():fieldGet( 'articulos_precios_articulo_uuid' ), ::getRowSet():fieldGet( 'articulos_precios_uuid' ), lManual ) } )
    end with
 
    with object ( ::oBrowse:AddCol() )
       :nEditType           := 1
       :cHeader             := "% Dto."
       :bStrData            := {|| "" }
-      :nWidth              := 20
+      :nWidth              := 30
       :AddResource( "gc_more2_16" )
       :bBmpData            := {|| 1 }
       :bLDClickData        := {|| ::oController:getArticulosPreciosDescuentosController():activateDialogView() }
@@ -181,7 +180,7 @@ ENDCLASS
 METHOD addSpecialColumns() CLASS ArticulosPreciosTarifasBrowseView
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'articulos_codigo'
+      :cSortOrder          := 'articulos.codigo'
       :cHeader             := 'Código'
       :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_codigo' ) }
@@ -189,7 +188,7 @@ METHOD addSpecialColumns() CLASS ArticulosPreciosTarifasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'articulos_nombre'
+      :cSortOrder          := 'articulos.nombre'
       :cHeader             := 'Artículo'
       :nWidth              := 280
       :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_nombre' ) }

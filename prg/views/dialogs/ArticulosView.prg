@@ -31,9 +31,9 @@ CLASS ArticulosView FROM SQLBaseView
 
    METHOD addLinksToExplorerBar()
 
-   METHOD changeLote()           INLINE ( iif( ::oController:oModel:hBuffer[ "lote" ], ::oGetLoteActual:Show(), ::oGetLoteActual:Hide() ) )
+   METHOD changeLote()                    INLINE ( iif( ::oController:oModel:hBuffer[ "lote" ], ::oGetLoteActual:Show(), ::oGetLoteActual:Hide() ) )
 
-   METHOD changeNombre()         INLINE ( ::oMessage:setText( "Artículo : " + alltrim( ::oController:oModel:hBuffer[ "nombre" ] ) ) ) 
+   METHOD changeNombre()                  INLINE ( ::oMessage:setText( "Artículo : " + alltrim( ::oController:oModel:hBuffer[ "nombre" ] ) ) ) 
 
    METHOD editUnidadesMedicionOperaciones()
 

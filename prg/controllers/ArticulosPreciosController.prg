@@ -9,13 +9,11 @@ CLASS ArticulosPreciosController FROM SQLBrowseController
 
    METHOD End()
 
-   METHOD setPrecioBase( oCol, nPrecioBase )
+   METHOD setPrecioBase( uuidArticulo, uuidPrecio, nPrecioBase )
    
-   METHOD setPrecioIVAIncluido( oCol, nPrecioIVAIncluido )
+   METHOD setPrecioIVAIncluido( uuidArticulo, uuidPrecio, nPrecioBase )
 
    METHOD setManual( oCol, lManual )
-
-   METHOD UpdatePreciosAndRefresh() 
 
    METHOD getUuid()                    INLINE ( if( !empty( ::getRowSet() ),  ::getRowSet():fieldGet( 'uuid' ), nil ) )
 
@@ -81,9 +79,11 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD UpdatePreciosAndRefresh() 
+METHOD setPrecioBase( uuidArticulo, uuidPrecio, nPrecioBase ) CLASS ArticulosPreciosController
 
-   ::getRepository():callUpdatePreciosWhereUuidArticulo( ::getRowSet():fieldGet( 'articulo_uuid' ) )
+   ::getRepository():callUpdatePrecioBaseWhereUuid( uuidPrecio, nPrecioBase )
+
+   ::getRepository():callUpdatePreciosWhereUuidArticulo( uuidArticulo )
 
    ::getRowSet():Refresh()
 
@@ -93,27 +93,31 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD setPrecioBase( oCol, nPrecioBase ) CLASS ArticulosPreciosController
+METHOD setPrecioIVAIncluido( uuidArticulo, uuidPrecio, nPrecioIVAIncluido ) CLASS ArticulosPreciosController
 
-   ::getRepository():callUpdatePrecioBaseWhereUuid( ::getRowSet():fieldGet( 'uuid' ), nPrecioBase )
+   ::getRepository():callUpdatePrecioIvaIncluidoWhereUuid( uuidPrecio, nPrecioIVAIncluido )
 
-RETURN ( ::UpdatePreciosAndRefresh() )
+   ::getRepository():callUpdatePreciosWhereUuidArticulo( uuidArticulo )
 
-//---------------------------------------------------------------------------//
+   ::getRowSet():Refresh()
 
-METHOD setPrecioIVAIncluido( oCol, nPrecioIVAIncluido ) CLASS ArticulosPreciosController
+   ::getBrowseView():Refresh() 
 
-   ::getRepository():callUpdatePrecioIvaIncluidoWhereUuid( ::getRowSet():fieldGet( 'uuid' ), nPrecioIVAIncluido )
-
-RETURN ( ::UpdatePreciosAndRefresh() )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD setManual( oCol, lManual ) CLASS ArticulosPreciosController
+METHOD setManual( uuidArticulo, uuidPrecio, lManual ) CLASS ArticulosPreciosController
 
-   ::getModel():updateFieldWhereUuid( ::getRowSet():fieldGet( 'uuid' ), "manual", lManual )
+   ::getModel():updateFieldWhereUuid( uuidPrecio, "manual", lManual )
 
-RETURN ( ::UpdatePreciosAndRefresh() )
+   ::getRepository():callUpdatePreciosWhereUuidArticulo( uuidArticulo )
+
+   ::getRowSet():Refresh()
+
+   ::getBrowseView():Refresh() 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -17,28 +17,11 @@ FUNCTION testWebService()
    oWebService:setParams( "ws_key", "449K7Y8PZTPPVBIFCSMCPDVYLZNK9J9B" )
    oWebService:setMethod( "POST" )
    oWebService:Open()
-   oWebService:SetRequestHeader( "Content-Type", "application/x-www-form-urlencoded")
+   oWebService:SetRequestHeader( "Content-Type", "application/x-www-form-urlencoded" )
    oWebService:SetRequestHeader( "Content-Length", len( cXml ) )
-   oWebService:Send( cXml )
+   oWebService:Send( cXml ) 
 
-   if oWebService:getStatus() == 201
-      logwrite( oWebService:getResponseText() )
-      oXml        := oWebService:getResponseTextAsXml()
-      logwrite( hb_valtoexp( oXml ) )
-      oXmlId      := oXml:FindFirst( 'id' ) 
-      if oXmlId == nil
-         msgalert( "no books found" )
-      else
-         oXmlIdData :=  oXmlId:NextInTree()
-         if oXmlIdData == nil
-            msgalert( "no data found" )
-         else
-            logwrite( hb_valtoexp( oXmlIdData:ToString() ) )
-            logwrite( hb_valtoexp( oXmlIdData:cData ) )
-         end if 
-
-      end if 
-   end if 
+   ? oWebService:getResponseId()
 
    oWebService:End()
 
@@ -56,7 +39,7 @@ TEXT INTO cXml
 <product_feature>
 <name>
 <language id="1">
-<![CDATA[Test feature value SQL]]>
+%1%s <![CDATA[Test feature value SQL]]>
 </language>
 <language id="2">
 <![CDATA[Test feature value SQL]]>
@@ -132,6 +115,7 @@ CLASS WebService
 
    METHOD getResponseText()            INLINE ( ::oService:ResponseText )
    METHOD getResponseTextAsXml()       INLINE ( TXmlDocument():new( ::oService:ResponseText ) )
+   METHOD getResponseId()
 
    METHOD setParams( cKey, uValue )
 
@@ -208,5 +192,29 @@ RETURN ( ::oService:Send( uBody ) )
 METHOD setParams( cKey, uValue )
 
 RETURN ( hset( ::hParams, cKey, uValue ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getResponseId()
+
+   local oXml
+   local oNodeId
+   local oNodeData
+
+   if ::getStatus() != 201
+      RETURN ( nil )
+   end if 
+
+   oNodeId     := ::getResponseTextAsXml():findFirst( 'id' ) 
+   if empty( oNodeId )
+      RETURN ( nil )
+   end if 
+
+   oNodeData   :=  oNodeId:NextInTree()
+   if !empty( oNodeData )
+      RETURN ( oNodeData:cData ) 
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//

@@ -79,9 +79,8 @@ METHOD createFunctionUpdatePrecioBaseWhereUuid() CLASS ArticulosPreciosRepositor
          ON tipos_iva.codigo = articulos.tipo_iva_codigo 
 
       SET 
-
          articulos_precios.precio_base = precio_base, 
-         articulos_precios.precio_iva_incluido = ( precio_base * tipos_iva.porcentaje / 100 ) + ( precio_base ), 
+         articulos_precios.precio_iva_incluido = ( precio_base * tipos_iva.porcentaje / 100 ) + precio_base, 
          margen = ( articulos_precios.precio_base - articulos.precio_costo ) / precio_costo * 100, 
          margen_real = ( articulos_precios.precio_base - articulos.precio_costo ) / precio_base * 100, 
          manual = 1 

@@ -440,7 +440,7 @@ METHOD getGeneralSelect()
    cSQLSelect              := ::addGeneralHaving( cSQLSelect )
 
    cSQLSelect              := ::addLimit( cSQLSelect )
-   
+
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
@@ -513,7 +513,7 @@ METHOD addGeneralWhere( cSQLSelect, cGeneralWhere )
       RETURN ( cSQLSelect )
    end if 
    
-   cSQLSelect              += ::getWhereOrAnd( cSQLSelect ) + cGeneralWhere 
+   cSQLSelect        += ::getWhereOrAnd( cSQLSelect ) + cGeneralWhere 
 
 RETURN ( cSQLSelect )
 
@@ -526,7 +526,7 @@ METHOD addDeletedAtWhere( cSQLSelect )
    end if
 
    if ::isDeletedAtColumn()
-      cSQLSelect           += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".deleted_at = 0" 
+      cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".deleted_at = 0" 
    end if 
 
 RETURN ( cSQLSelect )
@@ -535,13 +535,13 @@ RETURN ( cSQLSelect )
 
 METHOD addLimit( cSQLSelect, nLimit )
 
-   DEFAULT nLimit   := ::nLimit
+   DEFAULT nLimit    := ::nLimit
 
    if empty( nLimit )
       RETURN ( cSQLSelect )
    end if 
    
-   cSQLSelect              += " LIMIT " + hb_ntos( nLimit )
+   cSQLSelect        += " LIMIT " + hb_ntos( nLimit )
 
 RETURN ( cSQLSelect )
 
@@ -667,7 +667,7 @@ RETURN ( cSQLSelect )
 
 METHOD getExpresionToFind()
 
-   local cExpresionToFind  := ""
+   local cExpresionToFind  := "( "
 
    if !empty( ::aColumns )
 
@@ -675,11 +675,13 @@ METHOD getExpresionToFind()
    
       cExpresionToFind     := chgAtEnd( cExpresionToFind, '', 4 )
 
+      cExpresionToFind     += " )" 
+
       RETURN ( cExpresionToFind )
 
    end if 
 
-   cExpresionToFind        += "UPPER(" + ::cOrderBy + ") LIKE '%" + upper( ::cFind ) + "%'" 
+   cExpresionToFind        += "( UPPER(" + ::cOrderBy + ") LIKE '%" + upper( ::cFind ) + "%' )" 
    
 RETURN ( cExpresionToFind )
 

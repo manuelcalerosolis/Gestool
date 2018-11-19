@@ -7,8 +7,6 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "articulos_precios"
 
-   DATA cAs                            INIT "articulos_precios"
-
    DATA cConstraints                   INIT "PRIMARY KEY ( id ), UNIQUE KEY ( articulo_uuid, tarifa_uuid )"
 
    DATA cOrderBy                       INIT "id"
@@ -130,17 +128,17 @@ METHOD getInitialSelect() CLASS SQLArticulosPreciosModel
    TEXT INTO cSql
 
    SELECT 
-      articulos_precios.id,     
-      articulos_precios.uuid,       
-      articulos_precios.articulo_uuid, 
-      articulos_precios.tarifa_uuid,
-      articulos_precios.margen, 
-      articulos_precios.margen_real,                                                            
-      articulos_precios.precio_base, 
-      articulos_precios.precio_iva_incluido,                                                    
-      articulos_precios.manual,                                                                 
+      articulos_precios.id AS articulos_precios_id,     
+      articulos_precios.uuid AS articulos_precios_uuid,       
+      articulos_precios.articulo_uuid AS articulos_precios_articulo_uuid, 
+      articulos_precios.tarifa_uuid AS articulos_precios_tarifa_uuid,
+      articulos_precios.margen AS articulos_precios_margen, 
+      articulos_precios.margen_real AS articulos_precios_margen_real,                                                            
+      articulos_precios.precio_base AS articulos_precios_precio_base, 
+      articulos_precios.precio_iva_incluido AS articulos_precios_precio_iva_incluido,                                                    
+      articulos_precios.manual AS articulos_precios_manual,                                                                 
       articulos_tarifas.nombre AS articulos_tarifas_nombre,                                                                 
-      articulos_tarifas.parent_uuid,                                                            
+      articulos_tarifas.parent_uuid AS articulos_tarifas_parent_uuid,                                                            
       IF( articulos_tarifas_base.nombre IS NULL OR articulos_precios.manual = 1, 'Costo', articulos_tarifas_base.nombre ) AS articulos_tarifas_base_nombre   
 
    FROM %1$s AS articulos_precios                 
@@ -362,33 +360,6 @@ METHOD getSQLUpdatePrecioWhereTarifaAndArticulo( idPrecio, nPrecioCosto ) CLASS 
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLArticulosTarifasModel():getTableName(), SQLArticulosModel():getTableName(), SQLTiposIvaModel():getTableName(), ::getPrecioBase( nPrecioCosto ), quoted( idPrecio ) )
 
-   /*
-   cSQL  := "UPDATE " + ::getTableName() + " AS articulos_precios " + CRLF  
-
-   cSQL  += "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas " + CRLF + ;
-               "ON articulos_tarifas.uuid = articulos_precios.tarifa_uuid " + CRLF
-
-   cSQL  += "LEFT JOIN " + SQLArticulosModel():getTableName() + " AS articulos " + CRLF 
-   cSQL  +=    "ON articulos.uuid = articulos_precios.articulo_uuid " + CRLF
-
-   cSQL  += "LEFT JOIN " + SQLTiposIvaModel():getTableName() + " AS tipos_iva " + CRLF 
-   cSQL  +=    "ON tipos_iva.codigo = articulos.tipo_iva_codigo " + CRLF 
-
-   cSQL  += "LEFT JOIN " + ::getTableName() + " AS articulos_precios_parent " + CRLF    
-   cSQL  +=    "ON articulos_precios_parent.tarifa_uuid = articulos_tarifas.parent_uuid " + CRLF
-   cSQL  +=    "AND articulos_precios_parent.articulo_uuid = articulos_precios.articulo_uuid " + CRLF
-
-   cSQL  += "SET " + CRLF
-
-   cSQL  +=    "articulos_precios.margen = articulos_tarifas.margen, " + CRLF
-   cSQL  +=    "articulos_precios.precio_base = " + ::getPrecioBase( nPrecioCosto ) + ", " + CRLF 
-   cSQL  +=    "articulos_precios.precio_iva_incluido = ( articulos_precios.precio_base * IFNULL( tipos_iva.porcentaje, 0 ) / 100 ) + articulos_precios.precio_base " + CRLF   
-
-   cSQL  += "WHERE " + CRLF
-   cSQL  +=    "( articulos_precios.manual IS NULL OR articulos_precios.manual != 1 ) " + CRLF
-   cSQL  +=    "AND articulos_precios.id = " + quoted( idPrecio ) + " " + CRLF
-   */
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
@@ -508,19 +479,19 @@ METHOD getInitialSelect() CLASS SQLArticulosPreciosTarifasModel
    TEXT INTO cSql
 
    SELECT 
-      articulos_precios.id,     
-      articulos_precios.uuid,       
-      articulos_precios.articulo_uuid, 
-      articulos_precios.tarifa_uuid,
+      articulos_precios.id AS articulos_precios_id,     
+      articulos_precios.uuid AS articulos_precios_uuid,       
+      articulos_precios.articulo_uuid AS articulos_precios_articulo_uuid, 
+      articulos_precios.tarifa_uuid AS articulos_precios_tarifa_uuid,
+      articulos_precios.margen AS articulos_precios_margen, 
+      articulos_precios.margen_real AS articulos_precios_margen_real,                                                            
+      articulos_precios.precio_base AS articulos_precios_precio_base, 
+      articulos_precios.precio_iva_incluido AS articulos_precios_precio_iva_incluido,                                                    
+      articulos_precios.manual AS articulos_precios_manual,                                                                 
       articulos.codigo AS articulos_codigo,                                                           
       articulos.nombre AS articulos_nombre,                                                           
-      articulos_precios.margen, 
-      articulos_precios.margen_real,                                                            
-      articulos_precios.precio_base, 
-      articulos_precios.precio_iva_incluido,                                                    
-      articulos_precios.manual,                                                                 
       articulos_tarifas.nombre AS articulos_tarifas_nombre,                                                                 
-      articulos_tarifas.parent_uuid,                                                            
+      articulos_tarifas.parent_uuid AS articulos_tarifas_parent_uuid,                                                            
       IF( articulos_tarifas_base.nombre IS NULL OR articulos_precios.manual = 1, 'Costo', articulos_tarifas_base.nombre ) AS articulos_tarifas_base_nombre   
 
    FROM %1$s AS articulos_precios                 
@@ -551,15 +522,15 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD addParentUuidWhere( cSQLSelect ) CLASS SQLArticulosPreciosTarifasModel    
+METHOD addParentUuidWhere( cSql ) CLASS SQLArticulosPreciosTarifasModel    
 
    local uuid     := ::oController:getController():getUuid() 
 
    if !empty( uuid )
-      cSQLSelect  += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".tarifa_uuid = " + quoted( uuid )
+      cSql        += ::getWhereOrAnd( cSql ) + ::getTableName() + ".tarifa_uuid = " + quoted( uuid )
    end if 
 
-RETURN ( cSQLSelect )
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
