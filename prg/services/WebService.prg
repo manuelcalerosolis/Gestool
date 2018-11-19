@@ -4,7 +4,7 @@
 
 FUNCTION testWebService()
 
-   local oXml
+   /*local oXml
    local cXml  
    local oXmlId
    local oXmlIdData
@@ -23,7 +23,7 @@ FUNCTION testWebService()
 
    ? oWebService:getResponseId()
 
-   oWebService:End()
+   oWebService:End()*/
 
 RETURN ( nil )
 
@@ -55,7 +55,7 @@ TEXT INTO cXml
 </prestashop>
 ENDTEXT
 
-RETURN ( cXml )
+RETURN ( /*cXml*/nil )
 
 //--------------------------------------------------------------------------//
 

@@ -57,8 +57,6 @@ CLASS SQLRecibosPagosModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD countWhereUuidRecibo( uuidRecibo )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -84,26 +82,6 @@ METHOD getColumns() CLASS SQLRecibosPagosModel
 
 
 RETURN ( ::hColumns )
-
-//---------------------------------------------------------------------------//
-
-METHOD countWhereUuidRecibo( hUuidRecibo ) CLASS SQLRecibosPagosModel
-
-   local cSql
-
-   TEXT INTO cSql
-
-   SELECT COUNT(*)
-
-   FROM %1$s AS pagos_recibos
-    
-   WHERE pagos_recibos.recibo_uuid = %2$s
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( hUuidRecibo ) )
-
-RETURN ( getSQLDatabase():getValue ( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

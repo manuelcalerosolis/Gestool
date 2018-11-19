@@ -298,7 +298,7 @@ CLASS SQLDireccionTipoDocumentoModel FROM SQLCompanyModel
 
    DATA cTableName                        INIT "direccion_tipo_documento"
 
-   DATA cConstraints                      INIT "PRIMARY KEY (parent_uuid, tipo_uuid)"
+   DATA cConstraints                      INIT "PRIMARY KEY (parent_uuid, tipo_uuid, deleted_at)"
 
    METHOD getColumns()
 
@@ -328,11 +328,13 @@ METHOD getColumns() CLASS SQLDireccionTipoDocumentoModel
    hset( ::hColumns, "parent_uuid",                   {  "create"    => "VARCHAR( 40 )"                           ,;
                                                          "default"   => {|| ::getControllerParentUuid() } }  )
 
-   hset( ::hColumns, "tipo_uuid",                     {  "create"    => "VARCHAR( 40 ) NOT NULL"                           ,;
+   hset( ::hColumns, "tipo_uuid",                     {  "create"    => "VARCHAR( 40 ) NOT NULL"                   ,;
                                                          "default"   => {|| space( 40 ) } }                        )
 
    hset( ::hColumns, "direccion_uuid",                {  "create"    => "VARCHAR( 40 )"                           ,;
                                                          "default"   => {|| space( 40 ) } }                        )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 
