@@ -16,13 +16,17 @@ CLASS FacturasClientesRepository FROM SQLBaseRepository
    METHOD getTotal( uuidFactura )         
 
    METHOD getSQLFunctions()               INLINE ( {  ::dropProcedureTotales(),;
-                                                      ::createProcedureTotales() } )
+                                                      ::createProcedureTotales(),;
+                                                      ::createTriggerFacturaDeleted() } )
 
    METHOD dropProcedureTotales()  
 
    METHOD createProcedureTotales()
 
    METHOD callTotals( uuidFactura )
+
+   METHOD createTriggerSentenceFacturaDeleted()
+   METHOD createTriggerFacturaDeleted()    INLINE ( getSQLDatabase():Exec( ::createTriggerSentenceFacturaDeleted() ) )
 
     //Envio de emails-----------------------------------------------------------
 
@@ -310,6 +314,46 @@ METHOD getClientMailWhereFacturaUuid( uuidFactura ) CLASS FacturasClientesReposi
 RETURN ( getSQLDatabase():getValue( cSql, "" ) ) 
 
 //---------------------------------------------------------------------------//
+
+METHOD createTriggerSentenceFacturaDeleted() CLASS FacturasClientesRepository
+
+   local cSQL
+
+   TEXT INTO cSql
+      CREATE OR REPLACE TRIGGER %1$s
+      AFTER UPDATE ON %2$s
+      FOR EACH ROW 
+      BEGIN
+         UPDATE %3$s SET deleted_at = new.deleted_at
+         WHERE %3$s.parent_uuid = new.uuid;
+         
+         UPDATE %4$s SET deleted_at = new.deleted_at
+         WHERE %4$s.parent_uuid = new.uuid;
+
+         UPDATE %5$s SET deleted_at = new.deleted_at
+         WHERE %5$s.parent_uuid = new.uuid;
+
+         UPDATE %6$s SET deleted_at = new.deleted_at
+         WHERE %6$s.parent_uuid = new.uuid;
+
+         UPDATE %7$s SET deleted_at = new.deleted_at
+         WHERE %7$s.parent_uuid = new.uuid;
+
+
+
+      END;
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql,  Company():getTableName( 'factura_cliente_deleted' ),;
+                                 ::getTableName(),;
+                                 SQLRecibosModel():getTableName(),;
+                                 SQLFacturasClientesLineasModel():getTableName(),;
+                                 SQLIncidenciasModel():getTableName(),;
+                                 SQLFacturasClientesDescuentosModel():getTableName(),;
+                                 SQLDireccionTipoDocumentoModel():getTableName() ) 
+
+RETURN ( cSql )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

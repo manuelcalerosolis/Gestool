@@ -72,7 +72,7 @@ TEXT INTO cXml
 </prestashop>
 ENDTEXT
 
-RETURN ( cXml )
+RETURN ( /*cXml*/nil )
 
 //--------------------------------------------------------------------------//
 

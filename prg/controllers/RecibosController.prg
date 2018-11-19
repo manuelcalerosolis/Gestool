@@ -314,6 +314,8 @@ CLASS SQLRecibosModel FROM SQLCompanyModel
 
    METHOD getHashRecibosWhereUuidFactura( uuidFactura )
 
+   METHOD deleteSelection( uuidFactura )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -371,6 +373,26 @@ METHOD getHashRecibosWhereUuidFactura( uuidFactura )
 RETURN ( getSQLDatabase():selectTrimedFetchHash( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD deleteSelection( uuidFactura ) CLASS SQLRecibosModel
+
+   local cSql
+   msgalert( uuidFactura, "uuidFactura")
+
+      TEXT INTO cSql
+
+      UPDATE %1$s
+
+      SET deleted_at = NOW()
+
+       WHERE parent_uuid = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidFactura ) )
+
+RETURN ( getSQLDataBase():Exec( cSql ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

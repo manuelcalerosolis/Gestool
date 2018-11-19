@@ -88,7 +88,7 @@ METHOD New( oController) CLASS TercerosController
    ::getModel():setEvent( 'loadedDuplicateCurrentBuffer',   {|| ::setUuidOldersParents() } )
    ::getModel():setEvent( 'loadedDuplicateBuffer',          {|| ::getDuplicateOthers() } )
    
-   ::getModel():setEvent( 'deletedSelection',               {|| ::deletedOthersSelection()  } )
+   ::getModel():setEvent( 'deletedSelection',               {|| ::deletedOthersSelection() } )
 
 RETURN ( self )
 
