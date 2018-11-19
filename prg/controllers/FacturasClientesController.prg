@@ -56,6 +56,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD calculateTotals( uuidFactura )  
 
+   METHOD isSomePayment( uuidFactura )
+
    // Impresiones--------------------------------------------------------------
 
    METHOD getDocumentPrint()           INLINE ( ::getConfiguracionesController():getModelValue( ::cName, 'documento_impresion', '' ) )
@@ -118,6 +120,8 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::lOthers                           := .t.
 
+   ::lMultiDelete                      := .f.
+
    ::hImage                            := {  "16" => "gc_document_text_user_16",;
                                              "32" => "gc_document_text_user_32",;
                                              "48" => "gc_document_text_user_48" }
@@ -140,6 +144,8 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::getClientesController():getSelector():setEvent( 'settedHelpText', {|| ::clientesSettedHelpText() } )
 
    ::getSerieDocumentoComponent():setEvents( { 'inserted', 'changedAndExist' }, {|| ::changedSerie() } )
+
+   ::setEvents( { 'deleting' }, {|| ::isSomePayment( ::getRowSet():fieldGet( 'uuid' ) ) } )
 
 RETURN ( Self )
 
@@ -421,6 +427,17 @@ METHOD hasLines() CLASS FacturasClientesController
 
 RETURN ( ::getFacturasClientesLineasController():getModel():countLinesWhereUuidParent( ::getModelBuffer( 'uuid' ) ) > 0 )
 
+//---------------------------------------------------------------------------//
+
+METHOD isSomePayment( uuidFactura ) CLASS FacturasClientesController 
+msgalert( "borrando" )
+
+if ::getModel():totalPaid( uuidFactura )
+   msgalert( ".t." )
+   RETURN ( .t. )
+end if
+msgalert( ".f." )
+RETURN ( .f. )
 //---------------------------------------------------------------------------//
 
 METHOD getConfigItems() CLASS FacturasClientesController

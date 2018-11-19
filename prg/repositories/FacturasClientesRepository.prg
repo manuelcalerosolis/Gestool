@@ -325,22 +325,19 @@ METHOD createTriggerSentenceFacturaDeleted() CLASS FacturasClientesRepository
       FOR EACH ROW 
       BEGIN
          UPDATE %3$s SET deleted_at = new.deleted_at
-         WHERE %3$s.parent_uuid = new.uuid;
+            WHERE %3$s.parent_uuid = new.uuid;
          
          UPDATE %4$s SET deleted_at = new.deleted_at
-         WHERE %4$s.parent_uuid = new.uuid;
+            WHERE %4$s.parent_uuid = new.uuid;
 
          UPDATE %5$s SET deleted_at = new.deleted_at
-         WHERE %5$s.parent_uuid = new.uuid;
+            WHERE %5$s.parent_uuid = new.uuid;
 
          UPDATE %6$s SET deleted_at = new.deleted_at
-         WHERE %6$s.parent_uuid = new.uuid;
+            WHERE %6$s.parent_uuid = new.uuid;
 
          UPDATE %7$s SET deleted_at = new.deleted_at
-         WHERE %7$s.parent_uuid = new.uuid;
-
-
-
+            WHERE %7$s.parent_uuid = new.uuid;
       END;
    ENDTEXT
 

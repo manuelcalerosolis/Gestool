@@ -4,7 +4,7 @@
 
 FUNCTION testWebService()
 
-   local oXml
+   /*local oXml
    local cXml  
    local oXmlId
    local oXmlIdData
@@ -40,7 +40,7 @@ FUNCTION testWebService()
       end if 
    end if 
 
-   oWebService:End()
+   oWebService:End()*/
 
 RETURN ( nil )
 
