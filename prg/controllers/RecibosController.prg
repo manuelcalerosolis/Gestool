@@ -308,9 +308,11 @@ RETURN ( ::hValidators )
 
 CLASS SQLRecibosModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "factura_recibos"
+   DATA cTableName               INIT "recibos"
 
    METHOD getColumns()
+
+   METHOD getHashRecibosWhereUuidFactura( uuidFactura )
 
 END CLASS
 
@@ -326,6 +328,9 @@ METHOD getColumns() CLASS SQLRecibosModel
 
    hset( ::hColumns, "parent_uuid",                {  "create"    => "VARCHAR( 40 )"                              ,;
                                                       "default"   => {|| ::getControllerParentUuid() } }           )
+
+   hset( ::hColumns, "parent_table",               {  "create"    => "VARCHAR( 200 )"                             ,;
+                                                      "default"   => {|| space( 200 ) } }                         )
 
    hset( ::hColumns, "expedicion",                 {  "create"    => "DATE"                                       ,;
                                                       "default"   => {|| hb_date() } }                            )
@@ -346,21 +351,24 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-/*METHOD insertRecibosSentence()
 
-   local cSql
+METHOD getHashRecibosWhereUuidFactura( uuidFactura )
+
+ local cSql
 
    TEXT INTO cSql
-   INSERT [LOW_PRIORITY | DELAYED | HIGH_PRIORITY] [IGNORE]
-      [INTO] tbl_name [(col_name,...)]
-      VALUES (\,...),(...),...
-      [ ON DUPLICATE KEY UPDATE col_name=expression, ... ]
+
+   SELECT uuid
+
+   FROM %1$s AS recibos
+
+   WHERE recibos.parent_uuid= %2$s
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( cCodigoMedioPago ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidFactura ) )
 
-RETURN ( cSql )*/
+RETURN ( getSQLDatabase():selectTrimedFetchHash( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
