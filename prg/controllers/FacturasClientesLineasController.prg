@@ -382,7 +382,7 @@ METHOD postValidateAlmacenCodigo( oCol, uValue, nKey )
       RETURN ( .f. )
    end if 
 
-RETURN ( nil )
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 

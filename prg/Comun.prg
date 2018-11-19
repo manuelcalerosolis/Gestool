@@ -379,49 +379,81 @@ RETURN ( .t. )
 
 PROCEDURE Test()
 
-   /*local dExpirationDate   := ctod( '01/01/2018' )
-   local aPaymentDays      := { 5, 15, 25 }
-   local dDayToAdjust 
+   testWebService()
+/*
+   local oOle
+   local cRet
+   local cXml  := getXML()
 
-   dDayToAdjust            := RecibosGeneratorController():getDayToAdjust( dExpirationDate, aPaymentDays )  
+   oOle := CreateObject( "MSXML2.ServerXMLHTTP.6.0" )
+   oOle:Open( "POST", "http://ps.local/api/product_feature_values?ws_key=449K7Y8PZTPPVBIFCSMCPDVYLZNK9J9B", .f. )
+   oOle:SetRequestHeader( "Content-Type", "application/x-www-form-urlencoded")
+   oOle:SetRequestHeader( "Content-Length", len( cXml ) )
+   oOle:Send( cXml )
 
-   ? "Ajuste para 01/01/2018 => " + dtoc( dDayToAdjust )
+   msgalert( oOle:Status, "status" )
 
-   dExpirationDate         := ctod( '06/01/2018' )
+   cRet := oOle:ResponseText
 
-   dDayToAdjust            := RecibosGeneratorController():getDayToAdjust( dExpirationDate, aPaymentDays )
-
-   ? "Ajuste para 06/01/2018 => " + dtoc( dDayToAdjust )
-
-   dExpirationDate         := ctod( '26/01/2018' )
-
-   dDayToAdjust            := RecibosGeneratorController():getDayToAdjust( dExpirationDate, aPaymentDays )
-
-   ? "Ajuste para 26/01/2018 => " + dtoc( dDayToAdjust )
-
-   dExpirationDate         := ctod( '31/12/2018' )
-
-   dDayToAdjust            := RecibosGeneratorController():getDayToAdjust( dExpirationDate, aPaymentDays )
-
-   ? "Ajuste para 31/12/2018 => " + dtoc( dDayToAdjust )
-
-   dExpirationDate         := ctod( '16/12/2018' )
-   aPaymentDays            := { 5, 15, 0 }
-
-   dDayToAdjust            := RecibosGeneratorController():getDayToAdjust( dExpirationDate, aPaymentDays )
-
-   ? "Ajuste para 16/12/2018 => " + dtoc( dDayToAdjust )
-
-   dExpirationDate         := ctod( '01/12/2018' )
-   aPaymentDays            := { 1, 0, 0 }
-
-   dDayToAdjust            := RecibosGeneratorController():getDayToAdjust( dExpirationDate, aPaymentDays )
-
-   ? "Ajuste para 01/12/2018 => " + dtoc( dDayToAdjust )*/
+   msgalert( ( cRet ), "cRet")
+*/
 
 RETURN 
 
 //----------------------------------------------------------------------------//
+
+STATIC FUNCTION getXML()
+
+local cXml
+
+TEXT INTO cXml
+<?xml version="1.0" encoding="UTF-8"?>
+<prestashop xmlns:xlink="http://www.w3.org/1999/xlink">
+<product_feature_value>
+<id_feature>8</id_feature>
+<custom>0</custom>
+<value>
+<language id="1">
+<![CDATA[Test feature value XXX]]>
+</language>
+<language id="2">
+<![CDATA[Test feature value XXX]]>
+</language>
+<language id="3">
+<![CDATA[Test feature value XXX]]>
+</language>
+<language id="4">
+<![CDATA[Test feature value XXX]]>
+</language>
+</value>
+</product_feature_value>
+</prestashop>
+ENDTEXT
+
+/*
+<?xml version="1.0" encoding="UTF-8"?>
+<prestashop xmlns:xlink="http://www.w3.org/1999/xlink">
+    <product_feature>
+        <name>
+            <language id="1" xlink:href="http://ps.local/api/languages/1">
+                <![CDATA[Test feature idioma 1]]>
+            </language>
+            <language id="2" xlink:href="http://ps.local/api/languages/2">
+                <![CDATA[Test feature idioma 2]]>
+            </language>
+            <language id="3" xlink:href="http://ps.local/api/languages/3">
+                <![CDATA[Test feature idioma 3]]>
+            </language>
+            <language id="4" xlink:href="http://ps.local/api/languages/4">
+                <![CDATA[Test feature idioma 4]]>
+            </language>
+        </name>
+    </product_feature>
+</prestashop>
+*/
+
+
+RETURN ( cXml )
 
 FUNCTION WndResize( oWnd )
 

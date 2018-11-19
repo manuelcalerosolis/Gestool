@@ -904,8 +904,6 @@ METHOD getInsertSentence( hBuffer, lIgnore )
       ::cSQLInsert   += "IGNORE "
    end if 
 
-   logwrite( hb_valtoexp( hBuffer ) )
-
    ::cSQLInsert      += "INTO " + ::getTableName() + " ( "
 
    hEval( hBuffer, {| k, v | if( k != ::cColumnKey, ::cSQLInsert += k + ", ", ) } )

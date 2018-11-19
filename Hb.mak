@@ -274,7 +274,7 @@ Ean.prg                 													\
 TInfseanum.prg          													\
 TInftrazarlote.prg      													\
 Tseanum.prg             													\
-Siges.prg               													\
+WebService.prg               												\
 Trazalote.prg           													\
 Trazadocumento.prg      													\
 Pdreport.prg            													\
@@ -1016,7 +1016,7 @@ C5Lib.obj               													\
 TInfseanum.obj          													\
 TInftrazarlote.obj      													\
 Tseanum.obj             													\
-Siges.obj               													\
+WebService.obj               												\
 Trazalote.obj           													\
 Trazadocumento.obj      													\
 TInfAlm.obj             													\
@@ -1728,7 +1728,7 @@ $(OBJ)\ReportC3.obj             											+
 $(OBJ)\RcolumnC3.obj            											+
 $(OBJ)\Metafi32.obj             											+
 $(OBJ)\Tseanum.obj              											+
-$(OBJ)\Siges.obj                											+
+$(OBJ)\WebService.obj                									+
 $(OBJ)\Trazalote.obj            											+
 $(OBJ)\Trazadocumento.obj       											+
 $(OBJ)\TInfseanum.obj           											+
