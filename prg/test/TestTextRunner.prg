@@ -17,13 +17,9 @@
 
 CLASS TTextRunner FROM TTestRunner
 
-   DATA cClassName
-
    DATA cResults
 
    METHOD new() CONSTRUCTOR
-
-   METHOD ClassName()
 
    METHOD showResults( oResult )
 
@@ -39,15 +35,7 @@ METHOD new() CLASS TTextRunner
 
    ::cResults     := ""
 
-   ::cClassName   := "TTextRunner"
-   
 RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ClassName() CLASS TTextRunner
-
-RETURN ( ::cClassName )
 
 //---------------------------------------------------------------------------//
 
@@ -75,15 +63,12 @@ METHOD showResults( oResult ) CLASS TTextRunner
    local nErrors     
    local nFailures   
 
-   msgalert( oResult:ClassName(), "oResult ClassName" )
-
    aErrors           := oResult:oData:getErrors()
    aFailures         := oResult:oData:getFailures()
    nTestCases        := oResult:oData:getTestCasesCount()
    nAsserts          := oResult:oData:getAssertCount()
    nErrors           := len( aErrors )
    nFailures         := len( aFailures )
-
 
    ::addResults( "Testcases: " + ltrim( str( nTestCases ) ) )
    ::addResults( "Asserts:   " + ltrim( str( nAsserts   ) ) )

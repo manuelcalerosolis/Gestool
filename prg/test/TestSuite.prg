@@ -57,10 +57,6 @@ RETURN ( ::oResult )
 
 METHOD addTest( oTest ) CLASS TTestSuite
 
-  msgalert( valtype( oTEst ) )
-
-  msgalert( oTest:className(), "addTest" )
-
 RETURN ( aadd( ::aTests, oTest ) )
 
 //---------------------------------------------------------------------------//

@@ -311,8 +311,6 @@ METHOD Append()
 
          ::fireEvent( 'closedDialog' )  
 
-         msgalert( "before insertBuffer")  
-
          nId         := ::getModel():insertBuffer()    
          
          ::commitTransactionalMode()

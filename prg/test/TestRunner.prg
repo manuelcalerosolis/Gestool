@@ -30,8 +30,6 @@ RETURN ( self )
 
 METHOD Run( oTest ) CLASS TTestRunner
 
-   msgalert( oTest:ClassName(), "oTestClassName" )
-
    ::showResults( oTest:run() )
 
 RETURN ( nil )

@@ -189,11 +189,7 @@ METHOD totalPaid( uuidFactura ) CLASS SQLFacturasClientesModel
       GROUP BY facturas_clientes.uuid
    ENDTEXT
 
-<<<<<<< HEAD
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLRecibosModel():getTableName(), SQLRecibosPagosModel():getTableName(), SQLPagosModel():getTableName() )
-=======
    cSql  := hb_strformat( cSql, ::getTableName(), SQLRecibosModel():getTableName(), SQLRecibosPagosModel():getTableName(), SQLPagosModel():getTableName(), quoted( uuidFactura ) )
->>>>>>> c59cb41276829a5170714da8806fd8df797a2c60
 
 RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 

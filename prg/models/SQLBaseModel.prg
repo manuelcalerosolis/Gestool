@@ -1441,8 +1441,6 @@ METHOD insertBuffer( hBuffer )
 
    ::getDatabase():Execs( ::cSQLInsert )
 
-   msgalert( ::cSQLInsert, "cSQLInsert" )
-
    nId               := ::getDatabase():LastInsertId()
 
    hset( hBuffer, ::cColumnKey, nId )

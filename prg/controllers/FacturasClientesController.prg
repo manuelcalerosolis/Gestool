@@ -429,11 +429,6 @@ RETURN ( ::getFacturasClientesLineasController():getModel():countLinesWhereUuidP
 
 //---------------------------------------------------------------------------//
 
-<<<<<<< HEAD
-METHOD isSomePayment( uuidFactura ) CLASS FacturasClientesController 
-
-RETURN ( ::getModel():totalPaid( uuidFactura ) > 0 )
-=======
 METHOD hasNotPaid( uuidFactura ) CLASS FacturasClientesController 
 
    if ::getModel():totalPaid( uuidFactura ) > 0
@@ -442,7 +437,6 @@ METHOD hasNotPaid( uuidFactura ) CLASS FacturasClientesController
    end if
 
 RETURN ( .t. )
->>>>>>> c59cb41276829a5170714da8806fd8df797a2c60
 
 //---------------------------------------------------------------------------//
 
