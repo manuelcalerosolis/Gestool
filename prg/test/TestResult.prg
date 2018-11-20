@@ -28,8 +28,8 @@ CLASS TTestResult
    METHOD run()
 
    HIDDEN:
-   METHOD invokeTestMethod()
-   METHOD getTestMethods()
+      METHOD invokeTestMethod()
+      METHOD getTestMethods()
 
 ENDCLASS
 
@@ -38,9 +38,10 @@ ENDCLASS
 METHOD new() CLASS TTestResult
 
   ::oData      := TTestResultData():new()
+
   ::cClassName := "TTestResult"
 
-RETURN( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 

@@ -309,7 +309,9 @@ METHOD Append()
 
       if ::dialogViewActivate()
 
-         ::fireEvent( 'closedDialog' )    
+         ::fireEvent( 'closedDialog' )  
+
+         msgalert( "before insertBuffer")  
 
          nId         := ::getModel():insertBuffer()    
          

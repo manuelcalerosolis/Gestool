@@ -13,12 +13,9 @@
 
 #include "hbunit.ch"
 
+//---------------------------------------------------------------------------//
+
 CLASS TTestCase FROM TTest
-
-  DATA cClassName
-
-  METHOD new() CONSTRUCTOR
-  METHOD ClassName()
 
   METHOD run()
   METHOD setUp()          VIRTUAL
@@ -29,15 +26,15 @@ CLASS TTestCase FROM TTest
 
 ENDCLASS
 
-METHOD new() CLASS TTestCase
-	_Super:new()
-  ::cClassName := "TTestCase"
-	RETURN ( SELF )
-
-METHOD ClassName() CLASS TTestCase
-  RETURN( ::cClassName )
+//---------------------------------------------------------------------------//
 
 METHOD run() CLASS TTestCase
-  ::assert := TAssert():new( @::oResult )
-  ::oResult:run ( SELF )
-  RETURN ( ::oResult )
+  
+  ::assert  := TAssert():new( ::oResult )
+  
+  ::oResult():run( self )
+
+RETURN ( ::oResult() )
+
+//---------------------------------------------------------------------------//
+

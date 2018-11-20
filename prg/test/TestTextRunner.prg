@@ -13,56 +13,111 @@
 
 #include "hbunit.ch"
 
-CLASS TTextRunner FROM TTestRunner
-  METHOD new() CONSTRUCTOR
-  METHOD ClassName()
-  DATA cClassName
+//---------------------------------------------------------------------------//
 
-  METHOD showResults( oResult )
+CLASS TTextRunner FROM TTestRunner
+
+   DATA cClassName
+
+   DATA cResults
+
+   METHOD new() CONSTRUCTOR
+
+   METHOD ClassName()
+
+   METHOD showResults( oResult )
+
+   METHOD addResults( cResults, cResult )
+
 ENDCLASS
 
+//---------------------------------------------------------------------------//
+
 METHOD new() CLASS TTextRunner
-  _Super:new()
-  ::cClassName := "TTextRunner"
-  RETURN ( SELF )
+
+   ::Super:new()
+
+   ::cResults     := ""
+
+   ::cClassName   := "TTextRunner"
+   
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
 
 METHOD ClassName() CLASS TTextRunner
-  RETURN ( ::cClassName )
+
+RETURN ( ::cClassName )
+
+//---------------------------------------------------------------------------//
+
+METHOD addResults( ... ) CLASS TTextRunner
+
+   local i
+
+   for i := 1 to pcount()
+      ::cResults     += hb_pvalue( i ) + CRLF
+   next
+
+RETURN ( ::cResults )
+
+//---------------------------------------------------------------------------//
 
 METHOD showResults( oResult ) CLASS TTextRunner
-  LOCAL aErrors := oResult:oData:getErrors(),;
-        aFailures := oResult:oData:getFailures(),;
-        nTestCases := oResult:oData:getTestCasesCount(),;
-        nAsserts := oResult:oData:getAssertCount(),;
-        nErrors := LEN( aErrors ),;
-        nFailures := LEN( aFailures ),;
-        oError, oFailure,;
-        i
 
-  ? "Testcases: ", LTRIM( STR( nTestCases ) )
-  ? "Asserts:   ", LTRIM( STR( nAsserts   ) )
-  ? "Errors:    ", LTRIM( STR( nErrors    ) )
-  ? "Failures:  ", LTRIM( STR( nFailures  ) )
+   local i
+   local oError
+   local oFailure
+   local aErrors     
+   local aFailures   
+   local nTestCases  
+   local nAsserts    
+   local nErrors     
+   local nFailures   
 
-  IF( nErrors + nFailures == 0 )
-    ? CRLF, "Ok."
-  ELSE
-    IF( nErrors > 0 )
-      ? CRLF, "Errors:", CRLF
+   msgalert( oResult:ClassName(), "oResult ClassName" )
 
-      FOR i := 1 to nErrors
-        oError := aErrors[i]
-        ? PADL( i, 4 ), oError:description, oError:operation, IF( !( Empty( oError:args )), ::toStr( oError:args ), "" )
-      NEXT
-    ENDIF
+   aErrors           := oResult:oData:getErrors()
+   aFailures         := oResult:oData:getFailures()
+   nTestCases        := oResult:oData:getTestCasesCount()
+   nAsserts          := oResult:oData:getAssertCount()
+   nErrors           := len( aErrors )
+   nFailures         := len( aFailures )
 
-    IF( nFailures > 0 )
-      ? CRLF, "Failures:", CRLF
 
-      FOR i := 1 to nFailures
-        oFailure := aFailures[i]
-        ? PADL( i, 4 ), oFailure:description, oFailure:operation, IF( !( Empty( oFailure:args )), ::toStr( oFailure:args ), "" )
-      NEXT
-    ENDIF
-  ENDIF
+   ::addResults( "Testcases: " + ltrim( str( nTestCases ) ) )
+   ::addResults( "Asserts:   " + ltrim( str( nAsserts   ) ) )
+   ::addResults( "Errors:    " + ltrim( str( nErrors    ) ) )
+   ::addResults( "Failures:  " + ltrim( str( nFailures  ) ) )
+
+   if ( nErrors + nFailures == 0 )
+      ::addResults( "Ok." )
+   end if 
+
+   if ( nErrors > 0 )
+   
+      ::addResults( "Errors:" )
+
+      for i := 1 to nErrors
+         oError := aErrors[i]
+         ::addResults( padl( i, 4 ), oError:description, oError:operation, if( !( empty( oError:args ) ), ::toStr( oError:args ), "" ) )
+      next
+   
+   endif
+
+   if ( nFailures > 0 )
+
+      ::addResults( "Failures:" )
+
+      for i := 1 to nFailures
+         oFailure := aFailures[i]
+         ::addResults( padl( i, 4 ), oFailure:description, oFailure:operation, if( !( empty( oFailure:args ) ), ::toStr( oFailure:args ), "" ) )
+      next
+
+   endif
+
+   msgInfo( ::cResults, "Test information" )
+
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//

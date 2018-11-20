@@ -309,6 +309,8 @@ CLASS SQLBaseModel
    METHOD getNombres()                                INLINE ( ::getColumn( 'nombre' ) )
    METHOD getNombresWithBlank()                       INLINE ( ::getColumnsWithBlank( 'nombre' ) )
 
+   METHOD getController()                             INLINE ( ::oController )
+
    METHOD getControllerParentUuid()
 
    METHOD Count( oController )
@@ -1438,6 +1440,8 @@ METHOD insertBuffer( hBuffer )
    ::getInsertSentence( hBuffer )
 
    ::getDatabase():Execs( ::cSQLInsert )
+
+   msgalert( ::cSQLInsert, "cSQLInsert" )
 
    nId               := ::getDatabase():LastInsertId()
 

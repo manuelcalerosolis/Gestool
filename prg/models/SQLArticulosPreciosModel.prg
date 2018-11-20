@@ -9,8 +9,6 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
 
    DATA cConstraints                   INIT "PRIMARY KEY ( id ), UNIQUE KEY ( articulo_uuid, tarifa_uuid )"
 
-   DATA cOrderBy                       INIT "id"
-
    METHOD getColumns()
 
    METHOD addParentUuidWhere( cSQLSelect )    

@@ -15,12 +15,9 @@
 
 CLASS TAssert
 
-  DATA cClassName
-
   DATA oResult
 
   METHOD new( oResult ) CONSTRUCTOR
-  METHOD ClassName()
 
   METHOD equals( xExp, xAct, cMsg )
   METHOD notEquals( xExp, xAct, cMsg )
@@ -33,25 +30,19 @@ PROTECTED:
   METHOD isEqual( xExp, xAct )
   METHOD assert( xExp, xAct, cMsg, lInvert )
   METHOD fail( cMsg )
-  METHOD arrToStr( aArr )
   METHOD toStr (xVal, lUseQuote )
 
 ENDCLASS
 
 METHOD new( oResult ) CLASS TAssert
 
-   ::oResult := oResult
-   ::cClassName := "TAssert"
+   ::oResult      := oResult
 
-   RETURN ( SELF )
-
-METHOD ClassName() CLASS TAssert
-
-   RETURN ( ::cClassName )
+RETURN ( self )
 
 METHOD fail( cMsg ) CLASS TAssert
 
-   RETURN ( ::assert( .f.,, "Failure: " + cMsg ) )
+RETURN ( ::assert( .f.,, "Failure: " + cMsg ) )
 
 METHOD equals( xExp, xAct, cMsg ) CLASS TAssert
 
@@ -61,7 +52,7 @@ METHOD equals( xExp, xAct, cMsg ) CLASS TAssert
    cErrMsg += ", Act: " + ::toStr( xAct, .t. )
    cErrMsg += "( " + cMsg + " )"
 
-  RETURN ( ::assert( xExp, xAct, cErrMsg ) )
+RETURN ( ::assert( xExp, xAct, cErrMsg ) )
 
 METHOD notEquals( xExp, xAct, cMsg ) CLASS TAssert
 
@@ -71,7 +62,7 @@ METHOD notEquals( xExp, xAct, cMsg ) CLASS TAssert
    cErrMsg += ", Act: " + ::toStr( xAct )
    cErrMsg += "( " + cMsg + " )"
 
-  RETURN ( ::assert( xExp, xAct, cErrMsg, .t. ) )
+RETURN ( ::assert( xExp, xAct, cErrMsg, .t. ) )
 
 METHOD true( xAct, cMsg ) CLASS TAssert
 
@@ -81,7 +72,7 @@ METHOD true( xAct, cMsg ) CLASS TAssert
    cErrMsg += ::toStr( xAct, .t. )
    cErrMsg += "( " + cMsg + " )"
 
-  RETURN ( ::assert( .t., xAct , cErrMsg ) )
+RETURN ( ::assert( .t., xAct , cErrMsg ) )
 
 METHOD false( xAct, cMsg ) CLASS TAssert
 
@@ -91,7 +82,7 @@ METHOD false( xAct, cMsg ) CLASS TAssert
    cErrMsg += ::toStr( xAct, .t. )
    cErrMsg += "( " + cMsg + " )"
 
-  RETURN ( ::assert( .f., xAct , cErrMsg ) )
+RETURN ( ::assert( .f., xAct , cErrMsg ) )
 
 METHOD null( xAct, cMsg ) CLASS TAssert
 
@@ -101,7 +92,7 @@ METHOD null( xAct, cMsg ) CLASS TAssert
    cErrMsg += ::toStr( xAct, .t. )
    cErrMsg += "( " + cMsg + " )"
 
-  RETURN ( ::assert( nil, xAct , cErrMsg ) )
+RETURN ( ::assert( nil, xAct , cErrMsg ) )
 
 METHOD notNull( xAct, cMsg ) CLASS TAssert
 
@@ -111,7 +102,7 @@ METHOD notNull( xAct, cMsg ) CLASS TAssert
    cErrMsg += ::toStr( xAct, .t. )
    cErrMsg += "( " + cMsg + " )"
 
-  RETURN ( ::assert( nil, xAct , cErrMsg, .t. ) )
+RETURN ( ::assert( nil, xAct , cErrMsg, .t. ) )
 
 METHOD assert( xExp, xAct, cMsg, lInvert ) CLASS TAssert
 
@@ -146,12 +137,12 @@ METHOD isEqual( xExp, xAct ) CLASS TAssert
 
    local lResult := .F.
 
-   DO CASE
-      CASE ValType( xExp ) != ValType( xAct )
-      CASE ( !( xExp == xAct ))
-      OTHERWISE
+   do case
+      case ValType( xExp ) != ValType( xAct )
+      case ( !( xExp == xAct ))
+      otherwise
       lResult := .T.
-   ENDCASE
+   endcase
 
 RETURN ( lResult )
 
@@ -163,26 +154,26 @@ METHOD toStr (xVal, lUseQuote ) CLASS TAssert
 
    if( lUseQuote == nil, lUseQuote := .f., )
 
-   DO CASE
-   CASE ( ValType( xVal ) == "C" )
+   do case
+   case ( valtype( xVal ) == "C" )
       cStr := xVal
-   CASE ( ValType( xVal ) == "M" )
+   case ( valtype( xVal ) == "M" )
       cStr := xVal
-   CASE ( ValType( xVal ) == "L" )
+   case ( valtype( xVal ) == "L" )
       cStr := if( xVal, ".t.", ".f." )
-   CASE ( ValType( xVal ) ==  "D" )
+   case ( valtype( xVal ) ==  "D" )
       cStr := DToC( xVal )
-   CASE ( ValType( xVal ) == "N" )
-      cStr := LTrim( Str( xVal ) )
-   CASE ( ValType( xVal ) == "A" )
-      cStr := ::arrToStr( xVal )
-   CASE ( ValType( xVal ) == "O" )
+   case ( valtype( xVal ) == "N" )
+      cStr := ltrim( str( xVal ) )
+   case ( valtype( xVal ) == "A" )
+      cStr := hb_valtoexp( xVal )
+   case ( valtype( xVal ) == "O" )
       cStr := "obj"
-   CASE ( ValType( xVal ) == "B" )
+   case ( valtype( xVal ) == "B" )
       cStr := "blk"
-   OTHERWISE
+   otherwise
       cStr := "nil"
-   END
+   end
 
    if ( lUseQuote .and. ValType( xVal ) == "C" )
       cStr := "'" + cStr+ "'"
@@ -190,19 +181,3 @@ METHOD toStr (xVal, lUseQuote ) CLASS TAssert
 
 RETURN ( cStr )
 
-METHOD arrToStr( aArr ) CLASS TAssert
-
-   local cStr := "", nArrLen := 0, i
-
-   nArrLen = LEN( aArr )
-
-   cStr += " ARRAY => { "
-
-   FOR i := 1 TO nArrLen
-      cStr += ::toStr( aArr[i] )
-      IIF( i < nArrLen , cStr += "," , )
-   NEXT
-
-   cStr += " }"
-
-RETURN ( cStr )

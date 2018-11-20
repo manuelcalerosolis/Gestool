@@ -15,10 +15,9 @@
 
 CLASS TTestSuite FROM TTest
 
-   DATA cClassName
+   DATA aTests
 
-   PROTECTED:
-      DATA aTests
+   DATA cClassName
 
    METHOD New() CONSTRUCTOR
    METHOD className()
@@ -57,6 +56,10 @@ RETURN ( ::oResult )
 //---------------------------------------------------------------------------//
 
 METHOD addTest( oTest ) CLASS TTestSuite
+
+  msgalert( valtype( oTEst ) )
+
+  msgalert( oTest:className(), "addTest" )
 
 RETURN ( aadd( ::aTests, oTest ) )
 

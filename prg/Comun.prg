@@ -379,8 +379,10 @@ RETURN ( .t. )
 
 PROCEDURE Test()
 
-   testWebService()
-/*
+/*   
+   hbunit_test()
+
+
    local oOle
    local cRet
    local cXml  := getXML()
@@ -391,11 +393,7 @@ PROCEDURE Test()
    oOle:SetRequestHeader( "Content-Length", len( cXml ) )
    oOle:Send( cXml )
 
-   msgalert( oOle:Status, "status" )
-
    cRet := oOle:ResponseText
-
-   msgalert( ( cRet ), "cRet")
 */
 
 RETURN 

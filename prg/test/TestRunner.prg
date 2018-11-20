@@ -14,25 +14,24 @@
 #include "hbunit.ch"
 
 CLASS TTestRunner
+   
+   METHOD new() CONSTRUCTOR
 
-  METHOD new() CONSTRUCTOR
-  METHOD ClassName()
-  DATA cClassName
+   METHOD run( oTest )
 
-  METHOD run( oTest )
-
-  PROTECTED:
-    METHOD  showResults() VIRTUAL
+   PROTECTED:
+      METHOD  showResults() VIRTUAL
 
 ENDCLASS
 
-METHOD new() CLASS TTestRunner
-  ::cClassName := "TTestRunner"
-  RETURN ( SELF )
+METHOD New() CLASS TTestRunner
 
-METHOD ClassName() CLASS TTestRunner
-  RETURN ( ::cClassName )
+RETURN ( self )
 
-METHOD run ( oTest ) CLASS TTestRunner
-  ::showResults( oTest:run() )
-  RETURN ( NIL )
+METHOD Run( oTest ) CLASS TTestRunner
+
+   msgalert( oTest:ClassName(), "oTestClassName" )
+
+   ::showResults( oTest:run() )
+
+RETURN ( nil )

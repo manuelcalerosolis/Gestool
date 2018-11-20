@@ -430,14 +430,9 @@ RETURN ( ::getFacturasClientesLineasController():getModel():countLinesWhereUuidP
 //---------------------------------------------------------------------------//
 
 METHOD isSomePayment( uuidFactura ) CLASS FacturasClientesController 
-msgalert( "borrando" )
 
-if ::getModel():totalPaid( uuidFactura )
-   msgalert( ".t." )
-   RETURN ( .t. )
-end if
-msgalert( ".f." )
-RETURN ( .f. )
+RETURN ( ::getModel():totalPaid( uuidFactura ) > 0 )
+
 //---------------------------------------------------------------------------//
 
 METHOD getConfigItems() CLASS FacturasClientesController

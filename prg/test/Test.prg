@@ -15,14 +15,10 @@
 
 CLASS TTest
 
-   DATA cClassName
-
    METHOD new() CONSTRUCTOR
 
-   METHOD ClassName()
-
-   METHOD countTestCases()   VIRTUAL
-   METHOD run()              VIRTUAL
+   METHOD countTestCases()    VIRTUAL
+   METHOD run()               VIRTUAL
 
    PROTECTED:
       DATA oResult
@@ -31,12 +27,7 @@ ENDCLASS
 
 METHOD new() CLASS TTest
 
-   ::cClassName   := "TTest"
+   ::oResult   := TTestResult():new()
    
-   ::oResult      := TTestResult():new()
-
 RETURN ( self )
 
-METHOD ClassName() CLASS TTest
-
-RETURN( ::cClassName )

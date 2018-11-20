@@ -749,6 +749,7 @@ TestRunner.prg 															   \
 TestCase.prg                                                   \
 TestTextRunner.prg                                             \
 TestAssert.prg                                                 \
+TestAllSuite.prg                                               \
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1475,6 +1476,7 @@ TestRunner.obj 															   \
 TestCase.obj                                                   \
 TestTextRunner.obj                                             \
 TestAssert.obj                                                 \
+TestAllSuite.obj                                               \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /d /w /es2 /gc0 /i$(FWINCLUDE) /i$(HBINCLUDE) /o$(OBJ)\$&.c
@@ -2190,6 +2192,7 @@ $(OBJ)\TestRunner.obj                                          +
 $(OBJ)\TestCase.obj                                            +
 $(OBJ)\TestTextRunner.obj                                      +
 $(OBJ)\TestAssert.obj                                          +
+$(OBJ)\TestAllSuite.obj                                        +
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

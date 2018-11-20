@@ -13,15 +13,15 @@ CLASS ArticulosPreciosDescuentosController FROM SQLNavigatorController
 
    METHOD activatingDialogModalView()
 
-   METHOD getBrowseView()           INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosPreciosDescuentosBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosPreciosDescuentosBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getDialogView()           INLINE ( if( empty( ::oDialogView ), ::oDialogView := ArticulosPreciosDescuentosView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ArticulosPreciosDescuentosView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator ()           INLINE ( if( empty( ::oValidator ), ::oValidator := ArticulosPreciosDescuentosValidator():New( self ), ), ::oValidator )
+   METHOD getValidator ()              INLINE ( if( empty( ::oValidator ), ::oValidator := ArticulosPreciosDescuentosValidator():New( self ), ), ::oValidator )
 
-   METHOD getRepository()           INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosPreciosDescuentosRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosPreciosDescuentosRepository():New( self ), ), ::oRepository )
    
-   METHOD getModel()                INLINE ( if( empty( ::oModel ), ::oModel := SQLArticulosPreciosDescuentosModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLArticulosPreciosDescuentosModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -31,15 +31,15 @@ METHOD New( oController ) CLASS ArticulosPreciosDescuentosController
 
    ::Super:New( oController )
 
-   ::cTitle                         := "Descuentos artículos" 
+   ::cTitle                            := "Descuentos artículos" 
 
-   ::cName                          := "descuentos_articulos"
+   ::cName                             := "descuentos_articulos"
 
-   ::hImage                         := {  "16" => "gc_symbol_percent_16",;
-                                          "32" => "gc_symbol_percent_32",;
-                                          "48" => "gc_symbol_percent_48" }
+   ::hImage                            := {  "16" => "gc_symbol_percent_16",;
+                                             "32" => "gc_symbol_percent_32",;
+                                             "48" => "gc_symbol_percent_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                            := Auth():Level( ::cName )
 
    ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
@@ -71,9 +71,7 @@ METHOD End() CLASS ArticulosPreciosDescuentosController
       ::oRepository:End()
    end if 
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
@@ -81,25 +79,19 @@ METHOD activatingDialogModalView()
 
    local cTitle 
 
-   cTitle   := "Descuentos artículo : " + alltrim( ::oController:oController:getModelBuffer( "codigo" ) )
-   
-   cTitle   += " - "
+   cTitle   := "Descuentos artículo : " + alltrim( ::oController:oController:getModelBuffer( "codigo" ) ) + " - "
 
-   cTitle   += alltrim( ::oController:oController:getModelBuffer( "nombre" ) )
+   cTitle   += alltrim( ::oController:oController:getModelBuffer( "nombre" ) ) + ", " 
 
-   cTitle   += ", "
+   cTitle   += "sobre tarifa : " + ::getController():getRowSet():fieldGet( 'articulos_tarifas_nombre' )
 
-   cTitle   += "sobre tarifa : " + ::oController:getRowSet():fieldGet( 'articulos_tarifas_nombre' )
-
-   ::oDialogModalView:setTitle( cTitle )
-
-RETURN ( nil )
+RETURN ( ::oDialogModalView:setTitle( cTitle ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD gettingSelectSentence() CLASS ArticulosPreciosDescuentosController
 
-   local uuid        := ::getController():getUuid() 
+   local uuid  := ::getController():getRowSet():fieldGet( 'articulos_precios_uuid' )
 
    if !empty( uuid )
       ::getModel():setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
@@ -244,8 +236,6 @@ METHOD Activate() CLASS ArticulosPreciosDescuentosView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-  ::oBitmap:end()
-
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
@@ -265,7 +255,7 @@ END CLASS
 
 METHOD getValidators() CLASS ArticulosPreciosDescuentosValidator
 
-   ::hValidators  := {  "porcentaje" =>           {  "required"              => "El porcentaje de descuento es un dato requerido" } }
+   ::hValidators  := {  "porcentaje" =>   {  "required"  => "El porcentaje de descuento es un dato requerido" } }
 
 RETURN ( ::hValidators )
 
@@ -277,26 +267,25 @@ RETURN ( ::hValidators )
 
 CLASS SQLArticulosPreciosDescuentosModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "articulos_precios_descuentos"
+   DATA cTableName                     INIT "articulos_precios_descuentos"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( porcentaje, unidades, fecha_inicio ), FOREIGN KEY ( parent_uuid ) REFERENCES " + SQLArticulosPreciosModel():getTableName() + " ( uuid ) ON DELETE CASCADE"
+   DATA cConstraints                   INIT "PRIMARY KEY ( porcentaje, unidades, fecha_inicio ), FOREIGN KEY ( parent_uuid ) REFERENCES " + SQLArticulosPreciosModel():getTableName() + " ( uuid ) ON DELETE CASCADE"
 
    METHOD getColumns()
 
-   METHOD getIdWhereParentUuid( uuid ) ;
-                                 INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
+   METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
    METHOD getParentUuidAttribute( value )
 
    METHOD sqlDescuentoWhereArticuloUuid( uuidArticulo, cCodigoTarifa, nUnidades, dFechaVenta )
 
    METHOD getDescuentoWhereArticuloUuid( uuidArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) ;
-                                 INLINE ( getSQLDatabase():getValue( ::sqlDescuentoWhereArticuloUuid( uuidArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) ) )
+                                       INLINE ( getSQLDatabase():getValue( ::sqlDescuentoWhereArticuloUuid( uuidArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) ) )
 
    METHOD sqlDescuentoWhereArticuloCodigo( cCodigoArticulo, cCodigoTarifa, nUnidades, dFechaVenta )
 
    METHOD getDescuentoWhereArticuloCodigo( cCodigoArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) ;
-                                 INLINE ( getSQLDatabase():getValue( ::sqlDescuentoWhereArticuloCodigo( cCodigoArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) ) )
+                                       INLINE ( getSQLDatabase():getValue( ::sqlDescuentoWhereArticuloCodigo( cCodigoArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) ) )
 
 END CLASS
 
@@ -304,26 +293,26 @@ END CLASS
 
 METHOD getColumns() CLASS SQLArticulosPreciosDescuentosModel
 
-   hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                                   "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                          "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
-                                                   "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
+                                          "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
-                                                   "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+                                          "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "fecha_inicio",            {  "create"    => "DATE"                                    ,;
-                                                   "default"   => {|| getSysDate() } }                      )
+   hset( ::hColumns, "fecha_inicio",   {  "create"    => "DATE"                                    ,;
+                                          "default"   => {|| getSysDate() } }                      )
 
-   hset( ::hColumns, "fecha_fin",               {  "create"    => "DATE"                                    ,;
-                                                   "default"   => {|| ctod( "" ) } }                        )
+   hset( ::hColumns, "fecha_fin",      {  "create"    => "DATE"                                    ,;
+                                          "default"   => {|| ctod( "" ) } }                        )
 
-   hset( ::hColumns, "porcentaje",              {  "create"    => "FLOAT( 7, 4 )"                           ,;
-                                                   "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "porcentaje",     {  "create"    => "FLOAT( 7, 4 )"                           ,;
+                                          "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "unidades",                {  "create"    => "FLOAT( 16, 6 )"                          ,;
-                                                   "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "unidades",       {  "create"    => "FLOAT( 16, 6 )"                          ,;
+                                          "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
 
@@ -331,22 +320,57 @@ RETURN ( ::hColumns )
 
 METHOD getParentUuidAttribute( value ) CLASS SQLArticulosPreciosDescuentosModel
 
-   if empty( ::oController )
+   if empty( ::getController() )
       RETURN ( value )
    end if
 
-   if empty( ::oController:oController )
+   if empty( ::getController():getController() )
       RETURN ( value )
    end if
 
-RETURN ( ::oController:oController:getUuid() )
+RETURN ( ::getController():getController():getRowSet():fieldGet( 'articulos_precios_uuid' ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD sqlDescuentoWhereArticuloUuid( uuidArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) CLASS SQLArticulosPreciosDescuentosModel
    
    local cSql
+   
+   TEXT INTO cSql
+   
+   SELECT articulos_precios_descuentos.porcentaje as porcentaje                                                                                                                                 
+      FROM %1$s AS articulos_precios_descuentos  
 
+      INNER JOIN %3$s as articulos_precios "                                                                  
+         ON articulos_precios_descuentos.parent_uuid = articulos_precios.uuid 
+
+      INNER JOIN %2$s as articulos
+         ON articulos_precios.articulo_uuid = %5$s
+
+      INNER JOIN %4$s as articulos_tarifas "                                                                  
+         ON articulos_tarifas.codigo = %6$s
+
+      WHERE articulos_precios_descuentos.fecha_inicio <= %8$s                                                                  
+         AND ( articulos_precios_descuentos.fecha_fin IS NULL OR articulos_precios_descuentos.fecha_fin >= %8$s )                                                                   
+         AND articulos_precios_descuentos.unidades <= %7$s                                                                   
+         AND articulos_precios.uuid = articulos_precios_descuentos.parent_uuid                                                                   
+
+      ORDER BY articulos_precios_descuentos.porcentaje DESC  
+         LIMIT 1 
+
+   ENDTEXT 
+
+   cSql  := hb_strformat(  cSql,;
+                           ::getTableName(),;
+                           SQLArticulosModel():getTableName(),;
+                           SQLArticulosPreciosModel():getTableName(),;
+                           SQLArticulosTarifasModel():getTableName(),;
+                           quoted( uuidArticulo ),;
+                           quoted( cCodigoTarifa ),;
+                           quoted( nUnidades ),;
+                           toSqlString( dFechaVenta ) )
+
+/*
    cSql  := "SELECT articulos_precios_descuentos.porcentaje as porcentaje "                                                                                                                                
    cSql  +=    "FROM "+ ::getTableName() + " AS articulos_precios_descuentos " 
 
@@ -367,6 +391,7 @@ METHOD sqlDescuentoWhereArticuloUuid( uuidArticulo, cCodigoTarifa, nUnidades, dF
    cSql  +=    "ORDER BY articulos_precios_descuentos.porcentaje DESC " 
 
    cSql  +=    "LIMIT 1 "
+*/
 
 RETURN ( cSql )
 
@@ -421,7 +446,7 @@ RETURN ( cSql )
 
 CLASS ArticulosPreciosDescuentosRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLArticulosPreciosDescuentosModel():getTableName() ) 
+   METHOD getTableName()               INLINE ( SQLArticulosPreciosDescuentosModel():getTableName() ) 
 
 END CLASS
 

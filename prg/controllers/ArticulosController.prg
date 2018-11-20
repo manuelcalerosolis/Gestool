@@ -256,6 +256,25 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
+CLASS TestArticulosController FROM TTestCase
+
+   METHOD testAppend()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD testAppend() CLASS TestArticulosController
+
+   local oController
+
+   oController    := ArticulosController():New()
+   oController:Append()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 CLASS ArticulosRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLArticulosModel():getTableName() ) 

@@ -187,7 +187,7 @@ local cSql
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLRecibosModel():getTableName(), SQLRecibosPagosModel():getTableName(), SQLPagosModel():getTableName() )
-logwrite( cSql )
+
 RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
