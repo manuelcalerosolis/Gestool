@@ -15,7 +15,7 @@ IMG2PDFLIB           = 	\img2Pdf
 
 OBJ                  = 	obj1801
 
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Commands;.\Prg\Services;.\Prg\Http;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Commands;.\Prg\Services;.\Prg\Http;.\Prg\Reports;.\Prg\Test;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	.\C
 
 PPO 					   = 	ppo1801
@@ -741,6 +741,14 @@ ClientesTarifasController.prg 											\
 Server.prg 																		\
 BaseHttpService.prg 															\
 BaseHttpController.prg														\
+Test.prg 																		\
+TestSuite.prg 																	\
+TestResult.prg 																\
+TestResultData.prg                                             \
+TestRunner.prg 															   \
+TestCase.prg                                                   \
+TestTextRunner.prg                                             \
+TestAssert.prg                                                 \
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1459,6 +1467,14 @@ ClientesTarifasController.obj 											\
 Server.obj 																		\
 BaseHttpService.obj 															\
 BaseHttpController.obj														\
+Test.obj																			\
+TestSuite.obj																	\
+TestResult.obj 																\
+TestResultData.obj                                             \
+TestRunner.obj 															   \
+TestCase.obj                                                   \
+TestTextRunner.obj                                             \
+TestAssert.obj                                                 \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /d /w /es2 /gc0 /i$(FWINCLUDE) /i$(HBINCLUDE) /o$(OBJ)\$&.c
@@ -2166,6 +2182,14 @@ $(OBJ)\ClientesTarifasController.obj 									+
 $(OBJ)\Server.obj 															+
 $(OBJ)\BaseHttpService.obj													+
 $(OBJ)\BaseHttpController.obj												+
+$(OBJ)\Test.obj																+
+$(OBJ)\TestSuite.obj															+
+$(OBJ)\TestResult.obj														+
+$(OBJ)\TestResultData.obj                                      +
+$(OBJ)\TestRunner.obj                                          +
+$(OBJ)\TestCase.obj                                            +
+$(OBJ)\TestTextRunner.obj                                      +
+$(OBJ)\TestAssert.obj                                          +
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+
