@@ -9,6 +9,11 @@ CLASS RecibosController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD addExtraButtons()
+
+   METHOD pagosModelLoadedBlankBuffer()
+   METHOD pagosModelAppend()
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := RecibosBrowseView():New( self ), ), ::oBrowseView ) 
@@ -37,7 +42,12 @@ METHOD New( oController ) CLASS RecibosController
                                        "32" => "gc_briefcase2_user_32",;
                                        "48" => "gc_briefcase2_user_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                      := Auth():Level( ::cName )
+
+   ::getNavigatorView():getMenuTreeView():setEvent( 'addingExitButton', {|| ::addExtraButtons() } )
+
+   ::getPagosController():getModel():setEvent( 'loadedBlankBuffer', {|| ::pagosModelLoadedBlankBuffer() } )
+   ::getPagosController():setEvent( 'appended', {|| ::pagosModelAppend() } )
 
 RETURN ( Self )
 
@@ -68,9 +78,73 @@ METHOD End() CLASS RecibosController
 RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
+
+METHOD addExtraButtons() CLASS RecibosController
+
+   ::oNavigatorView:getMenuTreeView():AddButton( "Generar pago", "gc_hand_money_16", {|| ::getPagosController():Append() } ) 
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
+
+METHOD pagosModelLoadedBlankBuffer() CLASS RecibosController
+
+   local nImporte
+   local cComentario
+   local parentUuid
+   local cClienteCodigo
+   local cMedioPagoCodigo
+   local cMetodoPagoCodigo
+    
+   
+   parentUuid        := ::getRowSet():fieldGet( 'parent_uuid' )
+   nImporte          := ::getRowSet():fieldGet( 'importe' )
+   ::getPagosController():setModelBuffer( 'importe', nImporte )
+
+   cClienteCodigo    := SQLFacturasClientesModel():getField( "cliente_codigo", "uuid", parentUuid )
+   ::getPagosController():setModelBuffer( 'cliente_codigo', cClienteCodigo )
+
+   cMetodoPagoCodigo := SQLFacturasClientesModel():getField( "metodo_pago_codigo", "uuid", parentUuid )
+   cMedioPagoCodigo  := SQLMetodoPagoModel():getFIeld("codigo_medio_pago", "codigo", cMetodoPagoCodigo )
+   ::getPagosController():setModelBuffer( 'medio_pago_codigo', cMedioPagoCodigo )
+
+   cComentario       := ::getRowSet():fieldGet( 'concepto' )
+   ::getPagosController():setModelBuffer( 'comentario', cComentario )
+
+   
+  
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+
+METHOD pagosModelAppend() CLASS RecibosController
+   
+   local uuidRecibo
+   local uuidPago
+   Local nImporte
+
+   uuidRecibo        := ::getRowSet():fieldGet( 'uuid' )
+
+   uuidPago          := ::getPagosController():getModelBuffer('uuid')
+
+   nImporte          := ::getPagosController():getModelBuffer('importe')
+
+  with object ( ::getRecibosPagosController():getModel() )
+
+      :loadBlankBuffer()
+
+      :setBuffer( "recibo_uuid", uuidRecibo )
+
+      :setBuffer( "pago_uuid", uuidPago )
+
+      :setBuffer( "importe", nImporte ) 
+
+      :insertBuffer()
+
+   end with
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -79,7 +153,11 @@ RETURN ( ::Super:End() )
 
 CLASS RecibosBrowseView FROM SQLBrowseView
 
-   METHOD addColumns()                       
+   METHOD addColumns() 
+
+   METHOD Paid()  
+
+   METHOD PaidIcon()                    
 
 END CLASS
 
@@ -87,11 +165,36 @@ END CLASS
 
 METHOD addColumns() CLASS RecibosBrowseView
 
-   ::getColumnIdAndUuid()
-
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Id'
+      :cSortOrder          := 'recibos.id'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'expedicion'
+      :cHeader             := 'Uuid'
+      :cSortOrder          := 'recibos.uuid'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol()  )
+      :cHeader          := "Estado"
+      :bStrData         := {|| ::Paid() }
+      :bBmpData         := {|| ::PaidIcon() }
+      :nWidth           := 120
+      :AddResource( "bullet_square_green_16" )
+      :AddResource( "bullet_square_yellow_16" )
+      :AddResource( "bullet_square_red_16" )
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'recibos.expedicion'
       :cHeader             := 'Expedición'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'expedicion' ) }
@@ -99,7 +202,7 @@ METHOD addColumns() CLASS RecibosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'vencimiento'
+      :cSortOrder          := 'recibos.vencimiento'
       :cHeader             := 'Vencimiento'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'vencimiento' ) }
@@ -107,7 +210,7 @@ METHOD addColumns() CLASS RecibosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'concepto'
+      :cSortOrder          := 'recibos.concepto'
       :cHeader             := 'Concepto'
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'concepto' ) }
@@ -115,12 +218,29 @@ METHOD addColumns() CLASS RecibosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'importe'
-      :cHeader             := 'importe'
+      :cSortOrder          := 'recibos.importe'
+      :cHeader             := 'Importe'
       :nWidth              := 80
       :cEditPicture        := "999999999999.99"
       :bEditValue          := {|| ::getRowSet():fieldGet( 'importe' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Total pagado'
+      :nWidth              := 80
+      :cEditPicture        := "999999999999.99"
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'total_pagado' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Importe restante'
+      :nWidth              := 100
+      :cEditPicture        := "999999999999.99"
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'diferencia' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    ::getColumnDeletedAt()
@@ -128,7 +248,33 @@ METHOD addColumns() CLASS RecibosBrowseView
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD Paid() CLASS RecibosBrowseView
+
+   if ::getRowSet():fieldGet( 'diferencia' ) = 0
+      RETURN ( "Cobrado" )
+   end if 
+
+   if ::getRowSet():fieldGet( 'diferencia' ) < ::getRowSet():fieldGet( 'importe' )
+      RETURN ( "Parcialmente" )
+   end if 
+
+RETURN ( "No cobrado" )
+
 //---------------------------------------------------------------------------//
+
+METHOD PaidIcon() CLASS RecibosBrowseView
+
+   if ::getRowSet():fieldGet( 'diferencia' ) = 0
+      RETURN ( 1 )
+   end if 
+
+   if ::getRowSet():fieldGet( 'diferencia' ) < ::getRowSet():fieldGet( 'importe' )
+      RETURN ( 2 )
+   end if 
+
+RETURN ( 3 )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -310,7 +456,11 @@ CLASS SQLRecibosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "recibos"
 
+   DATA cGroupBy                 INIT "recibos.uuid"
+
    METHOD getColumns()
+
+   METHOD getInitialSelect()
 
 END CLASS
 
@@ -348,8 +498,39 @@ METHOD getColumns() CLASS SQLRecibosModel
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLRecibosModel
+
+ local cSql
+
+   TEXT INTO cSql
+
+   SELECT 
+      recibos.id AS id,
+      recibos.uuid AS uuid,
+      recibos.parent_uuid AS parent_uuid,
+      recibos.parent_table AS parent_table,
+      recibos.expedicion AS expedicion,
+      recibos.vencimiento AS vencimiento,
+      recibos.importe AS importe,
+      recibos.concepto AS concepto,
+      recibos.deleted_at AS deleted_at,
+      IF( pagos.importe IS NULL, 0, SUM(pagos.importe) ) AS total_pagado,
+      ( recibos.importe - IF( pagos.importe IS NULL, 0, pagos.importe ) ) AS diferencia
+   FROM %1$s AS recibos
+
+   LEFT JOIN %2$s AS pagos_recibos
+      ON pagos_recibos.recibo_uuid = recibos.uuid
+
+   LEFT JOIN %3$s AS pagos
+      ON pagos.uuid = pagos_recibos.pago_uuid AND pagos.estado = "Presentado" AND pagos.deleted_at = 0
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLRecibosPagosModel():getTableName(), SQLPagosModel():getTableName() )
+
+RETURN ( cSql )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
