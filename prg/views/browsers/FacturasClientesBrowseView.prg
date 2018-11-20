@@ -16,23 +16,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS FacturasClientesBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
+   ::getColumnIdAndUuid()
    
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := "numero"
@@ -58,6 +42,18 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( "sesion_uuid" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'fecha'
+      :cHeader             := 'Fecha'
+      :cEditPicture        := '@DT'
+      :nWidth              := 100
+      :cDataType           := 'D'
+      :nHeadStrAlign       := AL_LEFT
+      :nDataStrAlign       := AL_LEFT
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )

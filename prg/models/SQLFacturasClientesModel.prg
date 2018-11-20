@@ -11,8 +11,6 @@ CLASS SQLFacturasClientesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getColumnsSelect()
-
    METHOD getInitialSelect() 
 
    METHOD getNumeroWhereUuid( uuid )
@@ -86,18 +84,24 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumnsSelect() CLASS SQLFacturasClientesModel
+METHOD getInitialSelect() CLASS SQLFacturasClientesModel
 
-   local cColumns
+   local cSql
 
-   TEXT INTO cColumns
+   TEXT INTO cSql
+
+   SELECT
       facturas_clientes.id AS id,
       facturas_clientes.uuid AS uuid,
       CONCAT( facturas_clientes.serie, '-', facturas_clientes.numero ) AS numero,
+      facturas_clientes.fecha AS fecha,
       facturas_clientes.delegacion_uuid AS delegacion_uuid,
       facturas_clientes.sesion_uuid AS sesion_uuid,
       facturas_clientes.recargo_equivalencia AS recargo_equivalencia,
       facturas_clientes.cliente_codigo AS cliente_codigo,
+      facturas_clientes.created_at AS created_at,
+      facturas_clientes.updated_at AS updated_at,
+      facturas_clientes.deleted_at AS deleted_at,
       clientes.nombre AS cliente_nombre,
       direcciones.direccion AS direccion_direccion,
       direcciones.poblacion AS direccion_poblacion,
@@ -108,24 +112,7 @@ METHOD getColumnsSelect() CLASS SQLFacturasClientesModel
       direcciones.movil AS direccion_movil,
       direcciones.email AS direccion_email,
       tarifas.codigo AS tarifa_codigo,
-      tarifas.nombre AS tarifa_nombre,
-      facturas_clientes.created_at AS created_at,
-      facturas_clientes.updated_at AS updated_at,
-      facturas_clientes.deleted_at AS deleted_at
-   ENDTEXT
-
-RETURN ( cColumns )
-
-//---------------------------------------------------------------------------//
-
-METHOD getInitialSelect() CLASS SQLFacturasClientesModel
-
-   local cSql
-
-   TEXT INTO cSql
-
-   SELECT
-      %5$s 
+      tarifas.nombre AS tarifa_nombre
 
    FROM %1$s AS facturas_clientes
    
@@ -138,7 +125,7 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLDireccionesModel():getTableName(), SQLArticulosTarifasModel():getTableName(), ::getColumnsSelect() )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLDireccionesModel():getTableName(), SQLArticulosTarifasModel():getTableName() )
 
 RETURN ( cSql )
 

@@ -336,7 +336,7 @@ METHOD getVisibleColumnsSortOrder()
 
    local aSortOrders := {}
 
-   aeval( ::oBrowse:aCols, {|oCol| if( oCol:lHide .or. empty( oCol:cSortOrder ), , aadd( aSortOrders, oCol:cSortOrder ) ) } )
+   aeval( ::oBrowse:aCols, {|oCol| if( oCol:lHide .or. empty( oCol:cSortOrder ), , aadd( aSortOrders, oCol ) ) } )
 
 RETURN ( aSortOrders )
 
@@ -741,6 +741,7 @@ METHOD getColumnsCreatedUpdatedAt()
       :cHeader             := 'Creado'
       :cEditPicture        := '@DT'
       :nWidth              := 140
+      :cDataType           := 'D'
       :nHeadStrAlign       := AL_LEFT
       :nDataStrAlign       := AL_LEFT
       :lHide               := .t.
@@ -753,6 +754,7 @@ METHOD getColumnsCreatedUpdatedAt()
       :cHeader             := 'Modificado'
       :cEditPicture        := '@DT'
       :nWidth              := 140
+      :cDataType           := 'D'
       :nHeadStrAlign       := AL_LEFT
       :nDataStrAlign       := AL_LEFT
       :lHide               := .t.

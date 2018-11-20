@@ -188,7 +188,10 @@ CLASS SQLBaseModel
    METHOD addFilterWhere( cSQLSelect )
 
    METHOD addFindWhere( cSQLSelect )
+   METHOD addFindHaving( cSQLSelect )
+
    METHOD getExpresionToFind()
+   METHOD getFindExpresionColumn( oColumn )
 
    METHOD setOrderBy( cOrderBy )                      INLINE ( ::cOrderBy        := cOrderBy )
    METHOD getOrderBy()                                INLINE ( if( !empty( ::cAs ) .and. !empty( ::cOrderBy ), ::cAs + "." + ::cOrderBy, ::cOrderBy ) )
@@ -497,7 +500,7 @@ METHOD getSelectSentence( cOrderBy, cOrientation )
 
    cSQL              := ::getGeneralSelect()
 
-   cSQL              := ::addFindWhere( cSQL )
+   cSQL              := ::addFindHaving( cSQL )
 
    cSQL              := ::getSelectByOrder( cSQL )
 
@@ -667,13 +670,33 @@ RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
+METHOD addFindHaving( cSQLSelect )
+
+   if empty( ::cFind )
+      RETURN ( cSQLSelect )
+   end if 
+
+   if empty( ::cOrderBy ) .and. empty( ::aColumns )
+      RETURN ( cSQLSelect )
+   end if 
+
+   cSQLSelect     += space( 1 )
+
+   cSQLSelect     += ::getHavingOrAnd( cSQLSelect ) 
+   
+   cSQLSelect     += ::getExpresionToFind()
+
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
 METHOD getExpresionToFind()
 
    local cExpresionToFind  := "( "
 
    if !empty( ::aColumns )
 
-      aeval( ::aColumns, {|cColumn| cExpresionToFind += "UPPER(" + cColumn + ") LIKE '%" + upper( ::cFind ) + "%' OR " } )
+      aeval( ::aColumns, {|oColumn| cExpresionToFind += ::getFindExpresionColumn( oColumn ) } )
    
       cExpresionToFind     := chgAtEnd( cExpresionToFind, '', 4 )
 
@@ -686,6 +709,16 @@ METHOD getExpresionToFind()
    cExpresionToFind        += "( UPPER(" + ::cOrderBy + ") LIKE '%" + upper( ::cFind ) + "%' )" 
    
 RETURN ( cExpresionToFind )
+
+//---------------------------------------------------------------------------//
+
+METHOD getFindExpresionColumn( oColumn )
+
+   if oColumn:cDataType == 'D' .and. len( ::cFind ) == 10
+      RETURN ( oColumn:cSortOrder + " = STR_TO_DATE( '" + upper( ::cFind ) + "', '%d/%m/%Y' ) OR " )
+   end if
+
+RETURN ( "UPPER(" + oColumn:cSortOrder + ") LIKE '%" + upper( ::cFind ) + "%' OR " )
 
 //---------------------------------------------------------------------------//
 
