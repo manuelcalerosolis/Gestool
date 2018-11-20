@@ -167,27 +167,30 @@ RETURN ( alltrim( ::getDatabase():getValue( cSql ) ) )
 
 METHOD totalPaid( uuidFactura ) CLASS SQLFacturasClientesModel
 
-local cSql
+   local cSql
 
    TEXT INTO cSql
 
-      SELECT SUM(pagos.importe) AS total_pagado
+   SELECT SUM( pagos.importe ) AS total_pagado
       
       FROM %1$s AS facturas_clientes
       
       INNER JOIN %2$s AS recibos
          ON facturas_clientes.uuid = recibos.parent_uuid
+
       INNER JOIN %3$s AS pagos_recibos
          ON pagos_recibos.recibo_uuid = recibos.uuid
+
       INNER JOIN %4$s AS pagos
          ON pagos_recibos.pago_uuid = pagos.uuid
 
-      GROUP BY facturas_clientes.uuid
+      WHERE facturas_clientes.uuid = %5$s
 
+      GROUP BY facturas_clientes.uuid
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLRecibosModel():getTableName(), SQLRecibosPagosModel():getTableName(), SQLPagosModel():getTableName() )
-logwrite( cSql )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLRecibosModel():getTableName(), SQLRecibosPagosModel():getTableName(), SQLPagosModel():getTableName(), quoted( uuidFactura ) )
+
 RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//

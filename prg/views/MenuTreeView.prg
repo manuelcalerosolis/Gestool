@@ -80,7 +80,7 @@ CLASS MenuTreeView
    METHOD addDeleteButton() 
 
    METHOD addShowDeleteButton() 
-   
+
    METHOD addRefreshButton()
    
    METHOD addSelectButton()
@@ -219,8 +219,11 @@ METHOD addSelectorButtons()
    if !::isCreatorControllerZoomMode()
       ::addSelectButton()
    end if
+
    ::addCloseButton()
+
    ::oButtonMain:Expand()
+   
    ::fireEvent( 'addedSelectorButton' ) 
 
 RETURN ( nil )

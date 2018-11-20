@@ -5,16 +5,19 @@
 
 CLASS RecibosPagosController 
 
+   DATA oRepository
+   
+   DATA oModel
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    //Construcciones tardias----------------------------------------------------
 
-
    METHOD getRepository()        INLINE( if(empty( ::oRepository ), ::oRepository := RecibosPagosRepository():New( self ), ), ::oRepository )
    
-   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLRecibosPagosModel():New( self ), ), ::oModel ) 
+   METHOD getModel()             INLINE ( if( empty( ::oModel ), ::oModel := SQLRecibosPagosModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -23,8 +26,6 @@ END CLASS
 METHOD New( oController ) CLASS RecibosPagosController
 
    ::Super:New( oController )
-
-   ::nLevel                         := Auth():Level( ::cName )
 
 RETURN ( Self )
 

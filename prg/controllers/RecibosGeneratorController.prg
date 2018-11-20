@@ -266,7 +266,6 @@ METHOD Insert( nTermAmount ) CLASS RecibosGeneratorController
    DEFAULT nTermAmount      := Round( hget( ::hTotalDocument, "totalDocumento" ), 2 )
 
    ::getModel():loadBlankBuffer()
-   msgalert( ::oController:cName )
 
    ::getModel():setBuffer( "importe", nTermAmount )
 

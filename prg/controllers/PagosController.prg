@@ -158,6 +158,14 @@ METHOD addColumns() CLASS PagosBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'comentario'
+      :cHeader             := 'Comentario'
+      :nWidth              := 90
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'comentario' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
    ::getColumnDeletedAt()
 
 RETURN ( nil )

@@ -56,7 +56,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD calculateTotals( uuidFactura )  
 
-   METHOD isSomePayment( uuidFactura )
+   METHOD hasNotPaid( uuidFactura )
 
    // Impresiones--------------------------------------------------------------
 
@@ -145,7 +145,7 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::getSerieDocumentoComponent():setEvents( { 'inserted', 'changedAndExist' }, {|| ::changedSerie() } )
 
-   ::setEvents( { 'deleting' }, {|| ::isSomePayment( ::getRowSet():fieldGet( 'uuid' ) ) } )
+   ::setEvent( 'deleting', {|| ::hasNotPaid( ::getRowSet():fieldGet( 'uuid' ) ) } )
 
 RETURN ( Self )
 
@@ -429,15 +429,15 @@ RETURN ( ::getFacturasClientesLineasController():getModel():countLinesWhereUuidP
 
 //---------------------------------------------------------------------------//
 
-METHOD isSomePayment( uuidFactura ) CLASS FacturasClientesController 
-msgalert( "borrando" )
+METHOD hasNotPaid( uuidFactura ) CLASS FacturasClientesController 
 
-if ::getModel():totalPaid( uuidFactura )
-   msgalert( ".t." )
-   RETURN ( .t. )
-end if
-msgalert( ".f." )
-RETURN ( .f. )
+   if ::getModel():totalPaid( uuidFactura ) > 0
+      msgstop( "No puede eliminar facturas con pagos efectuados" )
+      RETURN ( .f. )
+   end if
+
+RETURN ( .t. )
+
 //---------------------------------------------------------------------------//
 
 METHOD getConfigItems() CLASS FacturasClientesController
