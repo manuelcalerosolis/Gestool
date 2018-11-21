@@ -14,4 +14,5 @@
 
 #define IDBACK          10
 
-#define TARIFA          65535
+
+#define Recibos  65535

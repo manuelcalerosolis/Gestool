@@ -11,6 +11,8 @@ CLASS PagosController FROM SQLNavigatorController
 
    METHOD gettingSelectSentence()
 
+   METHOD addExtraButtons()
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := PagosBrowseView():New( self ), ), ::oBrowseView ) 
@@ -41,6 +43,7 @@ METHOD New( oController ) CLASS PagosController
 
    ::nLevel                         := Auth():Level( ::cName )
 
+   ::getNavigatorView():getMenuTreeView():setEvent( 'addingExitButton', {|| ::addExtraButtons() } )
    ::getCuentasBancariasController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
    ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentence() } )
 
@@ -74,13 +77,20 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD gettingSelectSentence()
+METHOD gettingSelectSentence() CLASS PagosController
 
    ::getCuentasBancariasController():getModel():setGeneralWhere( "parent_uuid = " + quoted( Company():Uuid() ) )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD addExtraButtons() CLASS PagosController
+
+   ::oNavigatorView:getMenuTreeView():AddButton( "Asistente de  pagos", "gc_hand_money_16", {|| ::getPagosAssistantController():Append() } ) 
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -129,6 +139,7 @@ METHOD addColumns() CLASS PagosBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'fecha'
       :cHeader             := 'Expedicion'
+      :cDataType           := 'D'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -224,6 +235,8 @@ METHOD Activate() CLASS PagosView
 
    ::oController:getClientesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_codigo" ] ) )
    ::oController:getClientesController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getClientesController():getSelector():setValid( {|| ::oController:validate( "cliente_codigo" ) } )
+
 
   REDEFINE GET   ::oController:getModel():hBuffer[ "importe" ] ;
       ID          110 ;
@@ -241,6 +254,7 @@ METHOD Activate() CLASS PagosView
 
    ::oController:getMediosPagoController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "medio_pago_codigo" ] ) )
    ::oController:getMediosPagoController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getMediosPagoController():getSelector():setValid( {|| ::oController:validate( "medio_pago_codigo" ) } )
 
    ::oController:getCuentasBancariasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cuenta_bancaria_codigo" ] ) )
    ::oController:getCuentasBancariasController():getSelector():Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[1] } )
@@ -344,10 +358,10 @@ END CLASS
 
 METHOD getValidators() CLASS PagosValidator
 
-   ::hValidators  := {  "cliente" =>   {  "required"           => "El código del cliente es un dato requerido" ,;
-                                          "unique"             => "EL código del cliente introducido ya existe" },;
-                        "importe" =>   {  "required"           => "El importe es un dato requerido" },;
-                        "fecha"   =>   {  "required"           => "La fecha es un dato requerido" } }
+   ::hValidators  := {  "cliente_codigo"     =>   {  "required"   => "El código del cliente es un dato requerido" },;
+                        "importe"            =>   {  "required"   => "El importe es un dato requerido" },;
+                        "fecha"              =>   {  "required"   => "La fecha es un dato requerido" },;
+                        "medio_pago_codigo"  =>   {  "required"   => "El medio de pago es un dato requerido" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -445,7 +459,6 @@ METHOD getInitialSelect() CLASS SQLPagosModel
 
 RETURN ( cSql )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

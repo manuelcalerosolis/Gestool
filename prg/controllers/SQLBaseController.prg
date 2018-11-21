@@ -53,6 +53,7 @@ CLASS SQLBaseController
    // Modelo -----------------------------------------------------------------
 
    METHOD getModel()                                  VIRTUAL
+   METHOD setModel( oModel )                          INLINE ( ::oModel := oModel )
 
    METHOD getModelColumnKey()                         INLINE ( iif( !empty( ::getModel() ), ::getModel():cColumnKey, ) )
    METHOD getModelTableName()                         INLINE ( iif( !empty( ::getModel() ), ::getModel():getTableName(), ) )

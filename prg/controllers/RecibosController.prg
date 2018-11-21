@@ -98,7 +98,7 @@ METHOD pagosModelLoadedBlankBuffer() CLASS RecibosController
     
    
    parentUuid        := ::getRowSet():fieldGet( 'parent_uuid' )
-   nImporte          := ::getRowSet():fieldGet( 'importe' )
+   nImporte          := ::getRowSet():fieldGet( 'diferencia' )
    ::getPagosController():setModelBuffer( 'importe', nImporte )
 
    cClienteCodigo    := SQLFacturasClientesModel():getField( "cliente_codigo", "uuid", parentUuid )
@@ -143,6 +143,8 @@ METHOD pagosModelAppend() CLASS RecibosController
 
    end with
 
+   ::getRowset():refresh()
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -167,7 +169,7 @@ METHOD addColumns() CLASS RecibosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Id'
-      :cSortOrder          := 'recibos.id'
+      :cSortOrder          := 'id'
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -176,7 +178,7 @@ METHOD addColumns() CLASS RecibosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Uuid'
-      :cSortOrder          := 'recibos.uuid'
+      :cSortOrder          := 'uuid'
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -194,23 +196,25 @@ METHOD addColumns() CLASS RecibosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'recibos.expedicion'
+      :cSortOrder          := 'expedicion'
       :cHeader             := 'Expedición'
+      :cDataType           := 'D'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'expedicion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'recibos.vencimiento'
+      :cSortOrder          := 'vencimiento'
       :cHeader             := 'Vencimiento'
+      :cDataType           := 'D'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'vencimiento' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'recibos.concepto'
+      :cSortOrder          := 'concepto'
       :cHeader             := 'Concepto'
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'concepto' ) }
@@ -218,7 +222,7 @@ METHOD addColumns() CLASS RecibosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'recibos.importe'
+      :cSortOrder          := 'importe'
       :cHeader             := 'Importe'
       :nWidth              := 80
       :cEditPicture        := "999999999999.99"
@@ -516,7 +520,7 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
       recibos.concepto AS concepto,
       recibos.deleted_at AS deleted_at,
       IF( pagos.importe IS NULL, 0, SUM(pagos.importe) ) AS total_pagado,
-      ( recibos.importe - IF( pagos.importe IS NULL, 0, pagos.importe ) ) AS diferencia
+      ( recibos.importe - IF( pagos.importe IS NULL, 0, SUM( pagos.importe ) ) ) AS diferencia
    FROM %1$s AS recibos
 
    LEFT JOIN %2$s AS pagos_recibos
@@ -530,6 +534,62 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
    cSql  := hb_strformat( cSql, ::getTableName(), SQLRecibosPagosModel():getTableName(), SQLPagosModel():getTableName() )
 
 RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+CLASS SQLRecibosAssistantModel FROM SQLRecibosModel
+
+   METHOD getInitialSelect()
+
+   METHOD isParentUuidColumn()   INLINE ( .f. )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLRecibosAssistantModel
+
+   local cSql
+
+   local cliente_codigo := ::oController:oController:getModelBuffer("cliente_codigo")
+   msgalert(cliente_codigo, "cliente_codigo")
+
+   TEXT INTO cSql
+
+   SELECT 
+      recibos.id AS id,
+      recibos.uuid AS uuid,
+      recibos.parent_uuid AS parent_uuid,
+      recibos.parent_table AS parent_table,
+      recibos.expedicion AS expedicion,
+      recibos.vencimiento AS vencimiento,
+      recibos.importe AS importe,
+      recibos.concepto AS concepto,
+      recibos.deleted_at AS deleted_at,
+      IF( pagos.importe IS NULL, 0, SUM(pagos.importe) ) AS total_pagado,
+      ( recibos.importe - IF( pagos.importe IS NULL, 0, SUM( pagos.importe ) ) ) AS diferencia
+   FROM %1$s AS recibos
+
+   INNER JOIN %2$s AS facturas_clientes
+      ON recibos.parent_uuid = facturas_clientes.uuid AND facturas_clientes.cliente_codigo = %5$s AND facturas_clientes.deleted_at = 0
+
+   LEFT JOIN %3$s AS pagos_recibos
+      ON pagos_recibos.recibo_uuid = recibos.uuid
+
+   LEFT JOIN %4$s AS pagos
+      ON pagos.uuid = pagos_recibos.pago_uuid AND pagos.estado = "Presentado" AND pagos.deleted_at = 0
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(),;
+                                SQLFacturasClientesModel():getTableName(),;
+                                SQLRecibosPagosModel():getTableName(),;
+                                SQLPagosModel():getTableName(),;
+                                quoted( cliente_codigo ) )
+   msgalert( cSql, "cSql")
+
+RETURN ( cSql )
+
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

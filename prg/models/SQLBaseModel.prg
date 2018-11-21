@@ -445,7 +445,7 @@ METHOD getGeneralSelect()
    cSQLSelect              := ::addGeneralHaving( cSQLSelect )
 
    cSQLSelect              := ::addLimit( cSQLSelect )
-
+logwrite(cSQLSelect)
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
