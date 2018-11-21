@@ -184,6 +184,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :cFooterPicture      := :cEditPicture
       :oFooterFont         := oFontBold()
       :cDataType           := "N"
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )

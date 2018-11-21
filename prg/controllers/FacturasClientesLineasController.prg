@@ -19,7 +19,7 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD End()
 
-   METHOD Edit()                       
+   METHOD Edit()    
 
    // Validaciones ------------------------------------------------------------
 
@@ -36,7 +36,6 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD postValidateCombinacionesUuid( oCol, uValue, nKey )
 
    METHOD postValidateUnidadMedicion( oCol, uValue, nKey )
-
 
    METHOD validateLote()               
 
@@ -99,14 +98,15 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
                                        INLINE ( ::updateField( 'incremento_precio', uValue ),;
                                                 ::oController:calculateTotals() )
 
-   METHOD updateAgenteComision( uValue )  INLINE ( ::updateField( 'agente_comision', uValue ),;
-                                                   ::oController:calculateTotals() )
+   METHOD updateAgenteComision( uValue ) ;
+                                       INLINE ( ::updateField( 'agente_comision', uValue ),;
+                                                ::oController:calculateTotals() )
 
    METHOD updateDescuento( nDescuento )
 
    METHOD stampArticuloCodigoNombre( hArticulo ) ;
-                                          INLINE ( ::updateField( "articulo_codigo", hget( hArticulo, "codigo" ) ),;
-                                                   ::updateField( "articulo_nombre", hget( hArticulo, "nombre" ) ) )
+                                       INLINE ( ::updateField( "articulo_codigo", hget( hArticulo, "codigo" ) ),;
+                                                ::updateField( "articulo_nombre", hget( hArticulo, "nombre" ) ) )
 
    METHOD stampArticuloDescuento()
 

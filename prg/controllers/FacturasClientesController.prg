@@ -17,6 +17,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD editConfig()
+
    METHOD loadedBlankBuffer() 
 
    METHOD loadedDuplicateBuffer() 
@@ -198,6 +200,12 @@ METHOD End() CLASS FacturasClientesController
    end if 
 
 RETURN ( ::Super:End() )
+
+//---------------------------------------------------------------------------//
+
+METHOD editConfig()
+
+RETURN ( ::getConfiguracionesController():Edit() )
 
 //---------------------------------------------------------------------------//
 

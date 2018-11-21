@@ -165,7 +165,7 @@ METHOD showDocument( nDevice, cFileName, nCopies, cPrinter ) CLASS ImprimirSerie
    local uuidIdentifier
 
    DEFAULT cFileName    := ::getController():getDocumentPrint()
-   DEFAULT nCopies      := ::getController():getPrintCopy()
+   DEFAULT nCopies      := ::getController():getCopyPrint()
 
    ::createReport(   {  "uuid"     => ::getUuidIdentifiers(),;
                         "device"   => nDevice,;

@@ -1394,8 +1394,16 @@ METHOD getSerializeColumnsSelect()
 
    local nPos
    local cColumn        
+   local aColumns       
    local cColumns       := ""
-   local aColumns       := hb_atokens( ::getColumnsSelect(), chr( 10 ) )
+   
+   if empty( ::getColumnsSelect() )
+      RETURN ( cColumns )
+   end if 
+
+   msgalert( hb_valtoexp( ::getColumnsSelect() ), "getColumnsSelect" )
+
+   aColumns             := hb_atokens( ::getColumnsSelect(), chr( 10 ) )
 
    if !hb_isarray( aColumns )
       RETURN ( cColumns )
