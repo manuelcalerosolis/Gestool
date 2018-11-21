@@ -744,19 +744,20 @@ METHOD CountCombinacionesWhereArticulo( cCodigoArticulo ) CLASS SQLCombinaciones
 
    TEXT INTO cSql
 
-      SELECT COUNT( combinaciones.uuid )
-         FROM %1$s as combinaciones
-        
-         INNER JOIN %2$s as articulos
-            ON articulos.codigo = %3$s
-   
-      WHERE combinaciones.parent_uuid = articulos.uuid
+   SELECT COUNT( combinaciones.uuid )
+      FROM %1$s as combinaciones
+     
+      INNER JOIN %2$s as articulos
+         ON articulos.codigo = %3$s
+
+   WHERE combinaciones.parent_uuid = articulos.uuid 
+      AND combinaciones.deleted_at = 0
 
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ) )
 
-RETURN ( getSQLDatabase():getValue( cSql ) )
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 

@@ -259,6 +259,8 @@ RETURN ( .t. )
 CLASS TestArticulosController FROM TTestCase
 
    METHOD testAppend()
+   
+   METHOD testEmptyNombre()
 
 END CLASS
 
@@ -269,11 +271,39 @@ METHOD testAppend() CLASS TestArticulosController
    local oController
 
    oController    := ArticulosController():New()
-   oController:Append()
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         self:oGetCodigo:cText( '000' ),;
+         sysrefresh(), waitSeconds( 1 ),;
+         self:oGetNombre:cText( 'Test' ),;
+         sysrefresh(), waitSeconds( 1 ),;
+         self:oBtnAceptar:Click() } )
+
+   ::assert:true( oController:Append(), "test ::assert:true with .t." )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD testEmptyNombre() CLASS TestArticulosController
+
+   local oController
+
+   oController    := ArticulosController():New()
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         self:oGetCodigo:cText( '000' ),;
+         sysrefresh(), waitSeconds( 1 ),;
+         self:oBtnAceptar:Click() } )
+
+   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 
 CLASS ArticulosRepository FROM SQLBaseRepository
 

@@ -7,6 +7,8 @@ CLASS ArticulosView FROM SQLBaseView
 
    DATA oGetCodigo
 
+   DATA oGetNombre
+
    DATA oGetTipo
 
    DATA oGetMarcador
@@ -14,6 +16,8 @@ CLASS ArticulosView FROM SQLBaseView
    DATA cGetMarcador
 
    DATA oBtnTags
+
+   DATA oBtnAceptar
 
    DATA oTagsEver      
 
@@ -28,6 +32,8 @@ CLASS ArticulosView FROM SQLBaseView
    METHOD Activate()
 
    METHOD startActivate()
+
+   METHOD paintedActivate()
 
    METHOD addLinksToExplorerBar()
 
@@ -46,8 +52,6 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS ArticulosView
-
-   local oGetNombre
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_MEDIUM_EXTENDED" ;
@@ -83,14 +87,14 @@ METHOD Activate() CLASS ArticulosView
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   oGetNombre ;
+   REDEFINE GET   ::oGetNombre ;
       VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oFolder:aDialogs[1]
       
-   oGetNombre:bChange   := {|| ::changeNombre() }
+   ::oGetNombre:bChange   := {|| ::changeNombre() }
 
    // Familias de articulos ---------------------------------------------------
 
@@ -200,19 +204,17 @@ METHOD Activate() CLASS ArticulosView
 
    // Botones generales--------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ::oBtnAceptar           := ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-   
    if ::oController:isNotZoomMode() 
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }
    end if
 
-   ::oDialog:bStart  := {|| ::startActivate() }
+   ::oDialog:bStart        := {|| ::startActivate() }
 
-   ACTIVATE DIALOG ::oDialog CENTER
+   ::oDialog:Activate( , , {|hDC,cPS| ::paintedActivate( hDC,cPS ) }, .t. )
 
    ::oController:getArticulosPreciosController():saveState()
 
@@ -238,21 +240,27 @@ METHOD startActivate() CLASS ArticulosView
 
    ::oController:getImpuestosEspecialesController():getSelector():Start()
 
-   ::oController:oUnidadesMedicionGruposController:oGetSelector:Start()
+   ::oController:getUnidadesMedicionGruposController():GetSelector():Start()
    
    ::oController:getArticulosTemporadasController():getSelector():Start()
 
    ::oController:getTagsController():getDialogView():Start()
 
+   ::oController:getCombinacionesController():getSelector():Start()
+
    ::changeNombre()
 
    ::changeLote()
 
-   ::oController:getCombinacionesController():getSelector():Start()
-
    ::oGetCodigo:SetFocus()
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD paintedActivate() CLASS ArticulosView
+
+RETURN ( ::fireEvent( 'painted', self ) )
 
 //---------------------------------------------------------------------------//
 
@@ -301,8 +309,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD editUnidadesMedicionOperaciones() CLASS ArticulosView
-
-   msgInfo( ::oController:getModelBuffer( 'unidades_medicion_grupos_codigo' ), 'unidades_medicion_grupos_codigo' )
 
    if empty( ::oController:getModelBuffer( 'unidades_medicion_grupos_codigo' ) )
       

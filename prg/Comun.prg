@@ -379,79 +379,33 @@ RETURN ( .t. )
 
 PROCEDURE Test()
 
-/*   
-   hbunit_test()
-
-
+   // hbunit_test()
+/*
    local oOle
    local cRet
    local cXml  := getXML()
 
-   oOle := CreateObject( "MSXML2.ServerXMLHTTP.6.0" )
-   oOle:Open( "POST", "http://ps.local/api/product_feature_values?ws_key=449K7Y8PZTPPVBIFCSMCPDVYLZNK9J9B", .f. )
-   oOle:SetRequestHeader( "Content-Type", "application/x-www-form-urlencoded")
-   oOle:SetRequestHeader( "Content-Length", len( cXml ) )
-   oOle:Send( cXml )
+   oOle := CreateObject( "Microsoft.XMLDOM" )
 
-   cRet := oOle:ResponseText
+
+   oOle:Open( "GET", "http://ps.local/api/languages?ws_key=449K7Y8PZTPPVBIFCSMCPDVYLZNK9J9B", .f. )
+   // oOle:SetRequestHeader( "Content-Type", "application/x-www-form-urlencoded")
+   // oOle:SetRequestHeader( "Content-Length", len( cXml ) )
+   oOle:SetRequestHeader( "Output-Format", "JSON" )
+   oOle:Send()
+
+   ? oOle:Status
+
+   ? oOle:ResponseText
+
+   hb_jsonDecode( oOle:ResponseText, @hJson )   
+
+   ? valtype( hJson )
+   ? hb_valtoexp( hJson )
 */
-
 RETURN 
 
 //----------------------------------------------------------------------------//
-
-STATIC FUNCTION getXML()
-
-local cXml
-
-TEXT INTO cXml
-<?xml version="1.0" encoding="UTF-8"?>
-<prestashop xmlns:xlink="http://www.w3.org/1999/xlink">
-<product_feature_value>
-<id_feature>8</id_feature>
-<custom>0</custom>
-<value>
-<language id="1">
-<![CDATA[Test feature value XXX]]>
-</language>
-<language id="2">
-<![CDATA[Test feature value XXX]]>
-</language>
-<language id="3">
-<![CDATA[Test feature value XXX]]>
-</language>
-<language id="4">
-<![CDATA[Test feature value XXX]]>
-</language>
-</value>
-</product_feature_value>
-</prestashop>
-ENDTEXT
-
-/*
-<?xml version="1.0" encoding="UTF-8"?>
-<prestashop xmlns:xlink="http://www.w3.org/1999/xlink">
-    <product_feature>
-        <name>
-            <language id="1" xlink:href="http://ps.local/api/languages/1">
-                <![CDATA[Test feature idioma 1]]>
-            </language>
-            <language id="2" xlink:href="http://ps.local/api/languages/2">
-                <![CDATA[Test feature idioma 2]]>
-            </language>
-            <language id="3" xlink:href="http://ps.local/api/languages/3">
-                <![CDATA[Test feature idioma 3]]>
-            </language>
-            <language id="4" xlink:href="http://ps.local/api/languages/4">
-                <![CDATA[Test feature idioma 4]]>
-            </language>
-        </name>
-    </product_feature>
-</prestashop>
-*/
-
-
-RETURN ( cXml )
 
 FUNCTION WndResize( oWnd )
 

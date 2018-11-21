@@ -12,11 +12,13 @@ CLASS Events
    METHOD   End()
 
    METHOD   Set( cEvent, bEvent )
-   METHOD   setEvent( cEvent, bEvent )    INLINE ( ::Set( cEvent, bEvent ) )
+   METHOD   setEvent( cEvent, bEvent ) INLINE ( ::Set( cEvent, bEvent ) )
    METHOD   setEvents( aEvents, bEvent )
 
    METHOD   Fire( cEvent )
-   METHOD   fireEvent( cEvent )           INLINE ( ::Fire( cEvent ) )
+   METHOD   fireEvent( cEvent )        INLINE ( ::Fire( cEvent ) )
+
+   METHOD   eventsToString()           INLINE ( hb_valtoexp( ::hEvents ) )
 
 END CLASS
 
