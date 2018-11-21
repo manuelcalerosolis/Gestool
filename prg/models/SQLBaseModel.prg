@@ -718,7 +718,19 @@ METHOD getFindExpresionColumn( oColumn )
       RETURN ( oColumn:cSortOrder + " = STR_TO_DATE( '" + upper( ::cFind ) + "', '%d/%m/%Y' ) OR " )
    end if
 
-RETURN ( "UPPER(" + oColumn:cSortOrder + ") LIKE '%" + upper( ::cFind ) + "%' OR " )
+RETURN ( "UPPER(" + oColumn:cSortOrder + ") LIKE '%" + upper( toSlash( ::cFind ) ) + "%' OR " )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION toSlash( cFind )
+
+   local nAt   := at( '/', cFind ) 
+
+   if nAt == 0
+      RETURN ( cFind )
+   end if 
+
+RETURN ( left( cFind, ( nAt - 1 ) ) )
 
 //---------------------------------------------------------------------------//
 
