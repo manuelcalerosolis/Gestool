@@ -499,20 +499,20 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
       recibos.importe AS importe,
       recibos.concepto AS concepto,
       recibos.deleted_at AS deleted_at,
-      IF( pagos.importe IS NULL, 0, SUM(pagos.importe) ) AS total_pagado,
-      ( recibos.importe - IF( pagos.importe IS NULL, 0, SUM( pagos.importe ) ) ) AS diferencia
+      IF( pagos.estado IS NULL, 0, SUM(pagos_recibos.importe) ) AS total_pagado,
+      ( recibos.importe - IF( pagos.estado IS NULL, 0, SUM( pagos_recibos.importe ) ) ) AS diferencia
    FROM %1$s AS recibos
 
    LEFT JOIN %2$s AS pagos_recibos
       ON pagos_recibos.recibo_uuid = recibos.uuid
 
    LEFT JOIN %3$s AS pagos
-      ON pagos.uuid = pagos_recibos.pago_uuid AND pagos.estado = "Presentado" AND pagos.deleted_at = 0
+      ON pagos.uuid = pagos_recibos.pago_uuid AND pagos.estado = "Presentado"
 
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLRecibosPagosModel():getTableName(), SQLPagosModel():getTableName() )
-msgalert("model original")
+
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
@@ -532,32 +532,33 @@ METHOD getInitialSelect() CLASS SQLRecibosAssistantModel
    local cSql
 
    local cliente_codigo := ::oController:oController:getModelBuffer("cliente_codigo")
-   msgalert(cliente_codigo, "cliente_codigo")
 
    TEXT INTO cSql
 
    SELECT 
-      recibos.id AS id,
-      recibos.uuid AS uuid,
-      recibos.parent_uuid AS parent_uuid,
-      recibos.parent_table AS parent_table,
-      recibos.expedicion AS expedicion,
-      recibos.vencimiento AS vencimiento,
-      recibos.importe AS importe,
-      recibos.concepto AS concepto,
-      recibos.deleted_at AS deleted_at,
-      IF( pagos.importe IS NULL, 0, SUM(pagos.importe) ) AS total_pagado,
-      ( recibos.importe - IF( pagos.importe IS NULL, 0, SUM( pagos.importe ) ) ) AS diferencia
+         recibos.id AS id,
+         recibos.uuid AS uuid,
+         recibos.parent_uuid AS parent_uuid,
+         recibos.parent_table AS parent_table,
+         recibos.expedicion AS expedicion,
+         recibos.vencimiento AS vencimiento,
+         recibos.importe AS importe,
+         recibos.concepto AS concepto,
+         recibos.deleted_at AS deleted_at,
+         pagos.estado AS estado,
+         IF( pagos.estado IS NOT NULL , 0, SUM(pagos_recibos.importe) ) AS total_pagado,
+         ( recibos.importe - IF( pagos.estado IS NOT NULL, 0, SUM( pagos_recibos.importe ) ) ) AS diferencia
+   
    FROM %1$s AS recibos
-
+   
    INNER JOIN %2$s AS facturas_clientes
       ON recibos.parent_uuid = facturas_clientes.uuid AND facturas_clientes.cliente_codigo = %5$s AND facturas_clientes.deleted_at = 0
-
-   LEFT JOIN %3$s AS pagos_recibos
-      ON pagos_recibos.recibo_uuid = recibos.uuid
-
-   LEFT JOIN %4$s AS pagos
-      ON pagos.uuid = pagos_recibos.pago_uuid AND pagos.estado = "Presentado" AND pagos.deleted_at = 0
+   
+   INNER JOIN %3$s AS pagos_recibos
+      ON recibos.uuid = pagos_recibos.recibo_uuid
+      
+   INNER JOIN %4$s AS pagos
+      ON pagos.uuid = pagos_recibos.pago_uuid AND pagos.estado = "Rechazado"
 
    ENDTEXT
 
@@ -566,7 +567,6 @@ METHOD getInitialSelect() CLASS SQLRecibosAssistantModel
                                 SQLRecibosPagosModel():getTableName(),;
                                 SQLPagosModel():getTableName(),;
                                 quoted( cliente_codigo ) )
-   msgalert( cSql, "cSql")
 
 RETURN ( cSql )
 

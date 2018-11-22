@@ -13,6 +13,8 @@ CLASS PagosAssistantController FROM SQLNavigatorController
 
    METHOD getRecibos()
 
+   METHOD insertRecibosPago()
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := PagosAssistantView():New( self ), ), ::oDialogView )
@@ -72,13 +74,25 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getRecibos()
-
-   msgalert("getRecibos")
+METHOD getRecibos() CLASS PagosAssistantController
 
    ::getRecibosController():getRowset():buildPad( ::getRecibosController:getModel():getGeneralSelect() )
 
-   ::getRecibosController():getBrowseView():Refresh()   
+   ::getRecibosController():getBrowseView():Refresh()
+
+   ::insertRecibosPago()   
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertRecibosPago() CLASS PagosAssistantController
+
+::getRecibosPagosController():getModel():insertPagoRecibo( ::getModelBuffer( "uuid" ) )
+
+msgalert("insertando en la tabla pivot")
+msgalert(::getModelBuffer('uuid'), "uuidRecibo")
+msgalert( hb_valtoexp( ::getRecibosController():getBrowseView():aSelected ) , "recibos")
 
 RETURN ( nil )
 
@@ -89,6 +103,10 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 CLASS PagosAssistantView FROM SQLBaseView
+
+   DATA oImporte
+
+   DATA nImporte                       INIT 0
   
    METHOD Activate()
 
@@ -134,7 +152,8 @@ METHOD Activate() CLASS PagosAssistantView
 
    ::getController():getRecibosController():Activate( 500, ::oFolder:aDialogs[1] )
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "importe" ] ;
+   REDEFINE GET   ::oImporte ;
+      VAR         ::nImporte ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "importe" ) ) ;

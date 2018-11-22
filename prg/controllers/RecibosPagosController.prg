@@ -58,6 +58,12 @@ CLASS SQLRecibosPagosModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD InsertPagoRecibo( uuidPago, nImporte )
+
+   METHOD getImporte( uuidPago )    INLINE( ::getDatabase():getValue( ::getImporteSentence( uuidPago ), 0 ) )
+
+   METHOD getImporteSentence( uuidPago )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -83,6 +89,42 @@ METHOD getColumns() CLASS SQLRecibosPagosModel
 
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertPagoRecibo( uuidPago,uuidRecibo, nImporte ) CLASS SQLRecibosPagosModel
+
+   DEFAULT nImporte := 0
+   DEFAULT uuidRecibo := ""
+
+   ::loadBlankBuffer()
+   hset( ::hBuffer,"pago_uuid", uuidPago ) 
+   hset( ::hBuffer,"recibo_uuid", uuidRecibo ) 
+   hset( ::hBuffer, "importe", nImporte  )
+   ::insertBuffer()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getImporteSentence( uuidPago ) CLASS SQLRecibosPagosModel
+
+local cSql
+
+   TEXT INTO cSql
+
+   SELECT 
+      SUM( pagos_recibos.importe ) AS importe
+
+   FROM %1$s AS pagos_recibos
+
+   WHERE pagos_recibos.pago_uuid = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(),quoted( uuidPago ) )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
