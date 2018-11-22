@@ -11,6 +11,8 @@ CLASS FacturasClientesRepository FROM SQLBaseRepository
 
    METHOD getSentenceTotal( uuidFactura )
 
+   METHOD getSentenceTotalDocument( uuidFactura )
+
    METHOD getTotals( uuidFactura )        INLINE ( ::getDatabase():selectFetchHash( ::getSentenceTotals( uuidFactura ) ) )
 
    METHOD getTotal( uuidFactura )         
@@ -107,6 +109,25 @@ METHOD getSentenceTotal( uuidFactura ) CLASS FacturasClientesRepository
       SUM( totales.importeIVA ) AS totalIVA,
       SUM( totales.importeRecargo ) AS totalRecargo,
       SUM( totales.totalDescuento ) AS totalDescuento,
+      SUM( totales.importeTotal ) AS totalDocumento
+
+      FROM ( %1$s ) totales
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getSentenceTotals( uuidFactura ) )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceTotalDocument( uuidFactura ) CLASS FacturasClientesRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT
       SUM( totales.importeTotal ) AS totalDocumento
 
       FROM ( %1$s ) totales
