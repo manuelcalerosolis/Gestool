@@ -11,6 +11,8 @@ CLASS PagosAssistantController FROM SQLNavigatorController
 
    METHOD gettingSelectSentence()
 
+   METHOD getRecibos()
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := PagosAssistantView():New( self ), ), ::oDialogView )
@@ -18,6 +20,7 @@ CLASS PagosAssistantController FROM SQLNavigatorController
    METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLPagosModel():New( self ), ), ::oModel )
    
    METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := PagosValidator():New( self  ), ), ::oValidator ) 
+
 
 END CLASS
 
@@ -42,7 +45,7 @@ METHOD New( oController ) CLASS PagosAssistantController
 
    ::getRecibosController():setModel( SQLRecibosAssistantModel():New( ::getRecibosController() ) ) 
 
-   ::getClientesController():getSelector():setEvent( 'validated', {|| ::getRecibosController():getRowSet():refresh() } )
+   ::getClientesController():getSelector():setEvent( 'validated', {|| ::getRecibos() } )
 
 RETURN ( Self )
 
@@ -65,6 +68,18 @@ RETURN ( ::Super:End() )
 METHOD gettingSelectSentence() CLASS PagosAssistantController
 
    ::getCuentasBancariasController():getModel():setGeneralWhere( "parent_uuid = " + quoted( Company():Uuid() ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getRecibos()
+
+msgalert("getRecibos")
+
+   ::getRecibosController():getRowset():Refresh()
+
+   ::getRecibosController():getBrowseView():Refresh()   
 
 RETURN ( nil )
 
