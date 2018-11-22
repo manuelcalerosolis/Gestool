@@ -11,6 +11,8 @@ CLASS SQLFacturasClientesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD getColumnsSelect()
+
    METHOD getInitialSelect() 
 
    METHOD getNumeroWhereUuid( uuid )
@@ -84,13 +86,11 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInitialSelect() CLASS SQLFacturasClientesModel
+METHOD getColumnsSelect()
 
-   local cSql
+   local cColumns
 
-   TEXT INTO cSql
-
-   SELECT
+   TEXT INTO cColumns
       facturas_clientes.id AS id,
       facturas_clientes.uuid AS uuid,
       CONCAT( facturas_clientes.serie, '-', facturas_clientes.numero ) AS numero,
@@ -113,6 +113,21 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesModel
       direcciones.email AS direccion_email,
       tarifas.codigo AS tarifa_codigo,
       tarifas.nombre AS tarifa_nombre
+   ENDTEXT
+      
+RETURN ( cColumns )
+
+//---------------------------------------------------------------------------//
+
+
+METHOD getInitialSelect() CLASS SQLFacturasClientesModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT
+      %5$s
 
    FROM %1$s AS facturas_clientes
    
@@ -125,7 +140,12 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLDireccionesModel():getTableName(), SQLArticulosTarifasModel():getTableName() )
+   cSql  := hb_strformat(  cSql,;
+                           ::getTableName(),;
+                           SQLClientesModel():getTableName(),;
+                           SQLDireccionesModel():getTableName(),;
+                           SQLArticulosTarifasModel():getTableName(),;
+                           ::getColumnsSelect() )
 
 RETURN ( cSql )
 

@@ -1398,10 +1398,10 @@ METHOD getSerializeColumnsSelect()
    local cColumns       := ""
    
    if empty( ::getColumnsSelect() )
+      msgalert( hb_valtoexp( ::getColumnsSelect() ), "getColumnsSelect" / 0 )
       RETURN ( cColumns )
    end if 
 
-   msgalert( hb_valtoexp( ::getColumnsSelect() ), "getColumnsSelect" )
 
    aColumns             := hb_atokens( ::getColumnsSelect(), chr( 10 ) )
 

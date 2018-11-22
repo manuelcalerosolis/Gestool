@@ -174,8 +174,6 @@ METHOD getColumnsSelect()
       facturas_clientes_lineas.deleted_at AS deleted_at
    ENDTEXT
       
-      // 'P_CONCAT' AS articulos_propiedades_nombre 
-
 RETURN ( cColumns )
 
 //---------------------------------------------------------------------------//
@@ -205,7 +203,13 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesLineasModel
        
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName(), SQLAgentesModel():getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), ::getColumnsSelect() )
+   cSql  := hb_strformat(  cSql,;
+                           ::getTableName(),;
+                           SQLAlmacenesModel():getTableName(),;
+                           SQLAgentesModel():getTableName(),;
+                           SQLCombinacionesPropiedadesModel():getTableName(),;
+                           SQLPropiedadesLineasModel():getTableName(),;
+                           ::getColumnsSelect() )
 
 RETURN ( cSql )
 
