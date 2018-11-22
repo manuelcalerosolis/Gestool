@@ -532,7 +532,7 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLRecibosPagosModel():getTableName(), SQLPagosModel():getTableName() )
-
+msgalert("model original")
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
