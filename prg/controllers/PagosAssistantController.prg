@@ -21,7 +21,6 @@ CLASS PagosAssistantController FROM SQLNavigatorController
    
    METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := PagosValidator():New( self  ), ), ::oValidator ) 
 
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -30,13 +29,13 @@ METHOD New( oController ) CLASS PagosAssistantController
 
    ::Super:New( oController )
 
-   ::cTitle                      := "Cobros"
+   ::cTitle                         := "Cobros"
 
-   ::cName                       := "cobros"
+   ::cName                          := "cobros"
 
-   ::hImage                      := {  "16" => "gc_hand_money_16",;
-                                       "32" => "gc_hand_money_32",;
-                                       "48" => "gc_hand_money_48" }
+   ::hImage                         := {  "16" => "gc_hand_money_16",;
+                                          "32" => "gc_hand_money_32",;
+                                          "48" => "gc_hand_money_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -75,9 +74,9 @@ RETURN ( nil )
 
 METHOD getRecibos()
 
-msgalert("getRecibos")
+   msgalert("getRecibos")
 
-   ::getRecibosController():getRowset():Refresh()
+   ::getRecibosController():getRowset():buildPad( ::getRecibosController:getModel():getGeneralSelect() )
 
    ::getRecibosController():getBrowseView():Refresh()   
 
@@ -134,7 +133,6 @@ METHOD Activate() CLASS PagosAssistantView
    ::oController:getClientesController():getSelector():setValid( {|| ::oController:validate( "cliente_codigo" ) } )
 
    ::getController():getRecibosController():Activate( 500, ::oFolder:aDialogs[1] )
-
 
    REDEFINE GET   ::oController:getModel():hBuffer[ "importe" ] ;
       ID          110 ;

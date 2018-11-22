@@ -46,8 +46,9 @@ METHOD New( oController ) CLASS RecibosController
 
    ::getNavigatorView():getMenuTreeView():setEvent( 'addingExitButton', {|| ::addExtraButtons() } )
 
-   ::getPagosController():getModel():setEvent( 'loadedBlankBuffer', {|| ::pagosModelLoadedBlankBuffer() } )
    ::getPagosController():setEvent( 'appended', {|| ::pagosModelAppend() } )
+   
+   ::getPagosController():getModel():setEvent( 'loadedBlankBuffer', {|| ::pagosModelLoadedBlankBuffer() } )
 
 RETURN ( Self )
 
@@ -89,29 +90,20 @@ RETURN ( nil )
 
 METHOD pagosModelLoadedBlankBuffer() CLASS RecibosController
 
-   local nImporte
-   local cComentario
-   local parentUuid
-   local cClienteCodigo
    local cMedioPagoCodigo
    local cMetodoPagoCodigo
-    
    
-   parentUuid        := ::getRowSet():fieldGet( 'parent_uuid' )
-   nImporte          := ::getRowSet():fieldGet( 'diferencia' )
-   ::getPagosController():setModelBuffer( 'importe', nImporte )
+   cMetodoPagoCodigo := SQLFacturasClientesModel():getField( "metodo_pago_codigo", "uuid", ::getRowSet():fieldGet( 'parent_uuid' ) )
 
-   cClienteCodigo    := SQLFacturasClientesModel():getField( "cliente_codigo", "uuid", parentUuid )
-   ::getPagosController():setModelBuffer( 'cliente_codigo', cClienteCodigo )
+   cMedioPagoCodigo  := SQLMetodoPagoModel():getField( "codigo_medio_pago", "codigo", cMetodoPagoCodigo )
+   
+   ::getPagosController():setModelBuffer( 'importe', ::getRowSet():fieldGet( 'diferencia' ) )
+   
+   ::getPagosController():setModelBuffer( 'cliente_codigo', SQLFacturasClientesModel():getField( "cliente_codigo", "uuid", ::getRowSet():fieldGet( 'parent_uuid' ) ) )
 
-   cMetodoPagoCodigo := SQLFacturasClientesModel():getField( "metodo_pago_codigo", "uuid", parentUuid )
-   cMedioPagoCodigo  := SQLMetodoPagoModel():getFIeld("codigo_medio_pago", "codigo", cMetodoPagoCodigo )
    ::getPagosController():setModelBuffer( 'medio_pago_codigo', cMedioPagoCodigo )
 
-   cComentario       := ::getRowSet():fieldGet( 'concepto' )
-   ::getPagosController():setModelBuffer( 'comentario', cComentario )
-
-   
+   ::getPagosController():setModelBuffer( 'comentario', ::getRowSet():fieldGet( 'concepto' ) )
   
 RETURN ( nil )
 
@@ -119,25 +111,15 @@ RETURN ( nil )
 
 METHOD pagosModelAppend() CLASS RecibosController
    
-   local uuidRecibo
-   local uuidPago
-   Local nImporte
-
-   uuidRecibo        := ::getRowSet():fieldGet( 'uuid' )
-
-   uuidPago          := ::getPagosController():getModelBuffer('uuid')
-
-   nImporte          := ::getPagosController():getModelBuffer('importe')
-
-  with object ( ::getRecibosPagosController():getModel() )
+   with object ( ::getRecibosPagosController():getModel() )
 
       :loadBlankBuffer()
 
-      :setBuffer( "recibo_uuid", uuidRecibo )
+      :setBuffer( "recibo_uuid", ::getRowSet():fieldGet( 'uuid' ) )
 
-      :setBuffer( "pago_uuid", uuidPago )
+      :setBuffer( "pago_uuid", ::getPagosController():getModelBuffer('uuid') )
 
-      :setBuffer( "importe", nImporte ) 
+      :setBuffer( "importe", ::getPagosController():getModelBuffer('importe') ) 
 
       :insertBuffer()
 
@@ -343,12 +325,10 @@ METHOD Activate() CLASS RecibosView
       PICTURE     "@E 999999999999.99";
       OF          ::oFolder:aDialogs[1]
 
-
    REDEFINE GET   ::oController:getModel():hBuffer[ "concepto" ] ;
       ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
-
 
    // Botones------------------------------------------------------------------
 
