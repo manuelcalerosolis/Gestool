@@ -11,7 +11,11 @@ CLASS PagosController FROM SQLNavigatorController
 
    METHOD gettingSelectSentence()
 
-   METHOD addExtraButtons()
+   METHOD insertPagoRecibo()
+
+   METHOD getImporte()           INLINE( ::getDialogView():nImporte )
+
+   METHOD Append()
 
    //Construcciones tardias----------------------------------------------------
 
@@ -43,9 +47,12 @@ METHOD New( oController ) CLASS PagosController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::getNavigatorView():getMenuTreeView():setEvent( 'addingExitButton', {|| ::addExtraButtons() } )
+   ::getNavigatorView():getMenuTreeView():setEvent( 'addingDeleteButton', { || .f. } )
+   ::getNavigatorView():getMenuTreeView():setEvent( 'addingDuplicateButton', { || .f. } )
+
    ::getCuentasBancariasController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
    ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentence() } )
+   ::setEvents( {'appended', 'duplicated' }, {|| ::insertPagoRecibo() } )
 
 RETURN ( Self )
 
@@ -85,12 +92,23 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD addExtraButtons() CLASS PagosController
-
-   ::oNavigatorView:getMenuTreeView():AddButton( "Asistente de  pagos", "gc_hand_money_16", {|| ::getPagosAssistantController():Append() } ) 
+METHOD Append() CLASS PagosController
+   
+   ::getPagosAssistantController():Append()
 
 RETURN ( nil )
 
+//---------------------------------------------------------------------------//
+
+METHOD insertPagoRecibo()
+
+   ::getRecibosPagosController():getModel():insertPagoRecibo( ::getModelBuffer( "uuid" ), ::getImporte()  )
+
+   ::getRowSet:Refresh()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -177,8 +195,6 @@ METHOD addColumns() CLASS PagosBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-   ::getColumnDeletedAt()
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -191,13 +207,20 @@ RETURN ( nil )
 
 CLASS PagosView FROM SQLBaseView
 
+   DATA oImporte
+
+   DATA nImporte                            
+
    DATA oEstado
 
-   DATA aEstado INIT { "Presentado", "Rechazado" }
+   DATA aEstado                        INIT { "Presentado", "Rechazado" }
   
-   METHOD Activate()
+   METHOD getImporte()                 INLINE ( ::nImporte )
+   METHOD setImporte( nImporte )       INLINE ( ::nImporte := nImporte )
 
-   METHOD startActivate()
+   METHOD Activate()
+      METHOD Activating() 
+      METHOD startActivate()
 
    METHOD addLinksToExplorerBar()
 
@@ -208,6 +231,8 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS PagosView
+
+msgalert(hb_valtoexp( ::oController:getModel():hBuffer ) )
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_MEDIUM_EXTENDED" ;
@@ -237,14 +262,12 @@ METHOD Activate() CLASS PagosView
    ::oController:getClientesController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oFolder:aDialogs[1] } )
    ::oController:getClientesController():getSelector():setValid( {|| ::oController:validate( "cliente_codigo" ) } )
 
-
-  REDEFINE GET   ::oController:getModel():hBuffer[ "importe" ] ;
+  REDEFINE GET    ::oImporte ;
+      VAR         ::nImporte ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "importe" ) ) ;
       PICTURE     "@E 999999999999.99";
       OF          ::oFolder:aDialogs[1]
-
 
    REDEFINE GET   ::oController:getModel():hBuffer[ "fecha" ] ;
       ID          120 ;
@@ -287,8 +310,15 @@ METHOD Activate() CLASS PagosView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD Activating() CLASS PagosView  
+
+   ::setImporte( SQLRecibosPagosModel():getImporte( ::getController():getModelBuffer( 'uuid' ) ) )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -377,6 +407,8 @@ CLASS SQLPagosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "pagos"
 
+   DATA cGroupBy                 INIT "pagos.uuid"
+
    METHOD getColumns()
 
    METHOD getInitialSelect()
@@ -405,17 +437,11 @@ METHOD getColumns() CLASS SQLPagosModel
    hset( ::hColumns, "fecha",                      {  "create"    => "DATE"                                       ,;
                                                       "default"   => {|| hb_date() } }                            )
 
-   hset( ::hColumns, "importe",                    {  "create"    => "FLOAT( 16,2 )"                              ,;
-                                                      "default"   => {||  0  } }                                   )
-
    hset( ::hColumns, "estado",                     {  "create"     => "ENUM( 'Presentado', 'Rechazado' )"          ,;
                                                       "default"    => {|| 'Presentado' }  }                        )
 
    hset( ::hColumns, "comentario",                 {  "create"    => "VARCHAR( 200 )"                              ,;
                                                       "default"   => {|| space( 200 ) } }                          )
-
-   ::getDeletedStampColumn()
-
 
 RETURN ( ::hColumns )
 
@@ -431,15 +457,14 @@ METHOD getInitialSelect() CLASS SQLPagosModel
       pagos.uuid AS uuid,
       pagos.cliente_codigo AS cliente_codigo,
       pagos.fecha AS fecha,
-      pagos.importe AS importe,
       pagos.medio_pago_codigo AS medio_pago_codigo,
       pagos.cuenta_bancaria_codigo AS cuenta_bancaria_codigo,
       pagos.comentario AS comentario,
       pagos.estado AS estado,
-      pagos.deleted_at AS deleted_at,
       clientes.nombre AS cliente_nombre,
       medio_pago.nombre AS medio_pago_nombre,
-      cuentas_bancarias.nombre AS nombre_banco
+      cuentas_bancarias.nombre AS nombre_banco,
+      SUM( pagos_recibos.importe ) AS importe
 
    FROM %1$s AS pagos
 
@@ -451,11 +476,14 @@ METHOD getInitialSelect() CLASS SQLPagosModel
 
    LEFT JOIN %4$s AS cuentas_bancarias
       ON pagos.cuenta_bancaria_codigo = cuentas_bancarias.codigo 
-      AND cuentas_bancarias.parent_uuid = %5$s
+      AND cuentas_bancarias.parent_uuid = %6$s
+
+   LEFT JOIN %5$s AS pagos_recibos
+      ON pagos_recibos.pago_uuid = pagos.uuid
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLMediosPagoModel():getTableName(), SQLCuentasBancariasModel():getTableName(), quoted( Company():Uuid() ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLMediosPagoModel():getTableName(), SQLCuentasBancariasModel():getTableName(), SQLRecibosPagosModel():getTableName(), quoted( Company():Uuid() ) )
 
 RETURN ( cSql )
 
