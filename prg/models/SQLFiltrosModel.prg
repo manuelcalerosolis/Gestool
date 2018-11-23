@@ -4,14 +4,14 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLFiltrosModel FROM SQLBaseModel
+CLASS SQLFiltrosModel FROM SQLCompanyModel
 
-   DATA cTableToFilter                                INIT space( 50 )
+   DATA cTableToFilter                                
 
    DATA cTableName                                    INIT "filtros"
 
-   METHOD setTableToFilter( cTableToFilter )          INLINE ( ::cTableToFilter := cTableToFilter )
-   METHOD getTableToFilter()                          INLINE ( ::cTableToFilter )
+   METHOD setTableToFilter( cTableToFilter )          INLINE ( msgalert( cTableToFilter, "cTableToFilter" ), ::cTableToFilter := cTableToFilter )
+   METHOD getTableToFilter()                          INLINE ( if( empty( ::cTableToFilter ), ::getController():getController():getName(), ::cTableToFilter ) )
 
    METHOD getColumns()
 
@@ -23,7 +23,7 @@ CLASS SQLFiltrosModel FROM SQLBaseModel
 
    METHOD getId( cNombre, cTabla )                    INLINE ( ::getFilterField( 'id', cNombre, cTabla ) )
 
-   METHOD getTablaAttribute( value )                  INLINE ( if( empty( value ), ::cTableToFilter, value ) )
+   METHOD setTablaAttribute()                         INLINE ( ::getTableToFilter() )
 
 END CLASS
 
@@ -48,33 +48,29 @@ RETURN ( ::hColumns )
 
 METHOD getFilters( cTabla )
 
-   local aFilters    := {}
    local cSentence   
 
    DEFAULT cTabla    := ::getTableToFilter()
 
    if empty( cTabla )
-      RETURN ( aFilters )   
+      RETURN ( {} )   
    end if 
 
    cSentence         := "SELECT nombre FROM " + ::getTableName() + " " + ;
                            "WHERE tabla = " + quoted( cTabla ) 
 
-   aFilters          := ::getDatabase():selectFetchArrayOneColumn( cSentence )
-
-RETURN ( aFilters )   
+RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSentence ) )   
 
 //---------------------------------------------------------------------------//
 
 METHOD getFilterField( cField, cNombre, cTabla )
 
-   local uValue      
    local cSentence   
 
    DEFAULT cTabla    := ::getTableToFilter()
 
    if empty( cTabla )
-      RETURN ( uValue )   
+      RETURN ( nil )   
    end if 
 
    cSentence         := "SELECT " + cField + " FROM " + ::getTableName()   + space( 1 ) + ;
@@ -82,9 +78,7 @@ METHOD getFilterField( cField, cNombre, cTabla )
                               "AND nombre = " + quoted( cNombre )          + space( 1 ) + ;
                            "LIMIT 1"
 
-   uValue           := ::getDatabase():getValue( cSentence )
-
-RETURN ( uValue )
+RETURN ( ::getDatabase():getValue( cSentence ) )
 
 //---------------------------------------------------------------------------//
 

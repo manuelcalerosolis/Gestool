@@ -5,7 +5,8 @@
 
 CLASS SQLNavigatorGestoolController FROM SQLNavigatorController
 
-   METHOD getConfiguracionVistasController()          INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
+   METHOD getConfiguracionVistasController();
+                                       INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
 
 END CLASS
 
@@ -29,19 +30,19 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    DATA oConfiguracionesModel
 
-   DATA lOthers                                       INIT .f.
+   DATA lOthers                        INIT .f.
 
-   DATA lLabels                                       INIT .f.
+   DATA lLabels                        INIT .f.
 
-   DATA lConfig                                       INIT .f.
+   DATA lConfig                        INIT .f.
 
-   DATA lDocuments                                    INIT .f.
+   DATA lDocuments                     INIT .f.
 
-   DATA lMail                                         INIT .f.
+   DATA lMail                          INIT .f.
 
-   DATA lEnableWindowsBar                             INIT .f.
+   DATA lEnableWindowsBar              INIT .f.
 
-   DATA hFastKey                                      INIT {=>}
+   DATA hFastKey                       INIT {=>}
 
    DATA oWindowsBar
 
@@ -98,7 +99,7 @@ CLASS SQLNavigatorController FROM SQLBrowseController
    METHOD deleteFilter()                                
 
    METHOD getFilters()                                INLINE ( ::getFilterController():getFilters() ) 
-   METHOD setFilter()                                                                                                       
+   METHOD changeFilter()                                                                                                       
    METHOD clearFilter() 
 
    METHOD buildFilter()
@@ -341,16 +342,20 @@ METHOD deleteFilter()
    end if 
       
    if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. msgNoYes( "¿Desea eliminar el registro en curso?", "Confirme eliminación" )
+
       ::oWindowsBar:setComboFilterItem( "" )
+
       ::oWindowsBar:evalComboFilterChange()
+
       ::getFilterController():oModel:deleteById( { nId } )
+
    end if 
 
 RETURN ( nil )    
     
 //---------------------------------------------------------------------------//
 
-METHOD setFilter( cFilterName )         
+METHOD changeFilter( cFilterName )         
 
    local cFilterSentence
 
@@ -436,7 +441,7 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:showAddButtonFilter()
 
-   ::oWindowsBar:setComboFilterChange( {|| ::setFilter() } )
+   ::oWindowsBar:setComboFilterChange( {|| ::changeFilter() } )
 
    ::oWindowsBar:setActionAddButtonFilter( {|| ::appendFilter() } )
 
@@ -463,6 +468,8 @@ METHOD DisableWindowsBar()
    ::oWindowsBar:disableComboFilter()
 
    ::oWindowsBar:hideAddButtonFilter()
+
+   ::hideEditAndDeleteButtonFilter()
 
 RETURN ( nil )
 

@@ -520,7 +520,7 @@ METHOD CreateSearchBar( oWnd )
    ::oButtonAddFilter:lTransparent 	:= .t.
    ::oButtonAddFilter:lBoxSelect 	:= .f.
 
-   @ 125, 658 BTNBMP ::oButtonCleanFilter ;
+   @ 125, 458 BTNBMP ::oButtonCleanFilter ;
             RESOURCE "gc_funnel_broom_16" ;
             SIZE     18, 18 ;
             OF       ::oRebar ;
@@ -531,7 +531,7 @@ METHOD CreateSearchBar( oWnd )
    ::oButtonCleanFilter:lTransparent   := .t.
    ::oButtonCleanFilter:lBoxSelect 	   := .f.
 
-   @ 125, 684 BTNBMP ::oButtonEditFilter ;
+   @ 125, 484 BTNBMP ::oButtonEditFilter ;
             RESOURCE "gc_funnel_edit_16" ;
             SIZE     18, 18 ;
             OF       ::oRebar ;
@@ -542,7 +542,7 @@ METHOD CreateSearchBar( oWnd )
    ::oButtonEditFilter:lTransparent    := .t.
    ::oButtonEditFilter:lBoxSelect      := .f.
 
-   @ 125, 710 BTNBMP ::oButtonDeleteFilter ;
+   @ 125, 510 BTNBMP ::oButtonDeleteFilter ;
             RESOURCE "gc_funnel_delete_16" ;
             SIZE     18, 18 ;
             OF       ::oRebar ;
@@ -553,7 +553,7 @@ METHOD CreateSearchBar( oWnd )
    ::oButtonDeleteFilter:lTransparent  := .t.
    ::oButtonDeleteFilter:lBoxSelect    := .f.
 
-   @ 124, 736 COMBOBOX ::oYearComboBox ;
+   @ 124, 536 COMBOBOX ::oYearComboBox ;
             VAR      ::cYearComboBox ;
             ITEMS    ::aYearComboBox ;
             STYLE    3 ;
@@ -918,25 +918,25 @@ METHOD EnableComboFilter( aItems )
 
    local cItem
 
-   if !empty( ::oComboFilter )
+   if empty( ::oComboFilter )
+      RETURN ( nil ) 
+   end if 
 
-      ::cComboFilter       := __txtFilters__
-      ::aComboFilter       := { __txtFilters__ }
+   ::cComboFilter       := __txtFilters__
+   ::aComboFilter       := { __txtFilters__ }
 
-      // Cargamos los filtros-----------------------------------------------
+   // Cargamos los filtros-----------------------------------------------------
 
-      if !empty( aItems )
-         aeval( aItems, {|cItem| aadd( ::aComboFilter, cItem ) } )
-      end if 
+   if !empty( aItems )
+      aeval( aItems, {|cItem| aadd( ::aComboFilter, cItem ) } )
+   end if 
 
-      ::oComboFilter:SetItems( ::aComboFilter, .t. )
-      
-      ::oComboFilter:Set( ::cComboFilter )
+   ::oComboFilter:SetItems( ::aComboFilter, .t. )
+   
+   ::oComboFilter:Set( ::cComboFilter )
 
-      ::oComboFilter:Show()
-      ::oComboFilter:Enable()
-
-   end if
+   ::oComboFilter:Show()
+   ::oComboFilter:Enable()
 
 RETURN ( nil )
 

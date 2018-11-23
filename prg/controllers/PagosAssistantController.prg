@@ -74,8 +74,6 @@ RETURN ( nil )
 
 METHOD getRecibos()
 
-   msgalert("getRecibos")
-
    ::getRecibosController():getRowset():buildPad( ::getRecibosController:getModel():getGeneralSelect() )
 
    ::getRecibosController():getBrowseView():Refresh()   

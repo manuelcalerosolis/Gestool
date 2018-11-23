@@ -25,7 +25,6 @@ RETURN ( ::hValidators )
 METHOD uniqueFilter( uValue )
 
    local id
-   local nCount
    local cSQLSentence
 
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()             + space( 1 )
@@ -37,9 +36,7 @@ METHOD uniqueFilter( uValue )
       cSQLSentence   +=    "AND " + ::oController:getModelColumnKey() + " <> " + toSQLString( id )
    end if 
 
-   nCount            := getSQLDatabase():getValue( cSQLSentence )
-
-RETURN ( hb_isnumeric( nCount ) .and. nCount == 0 )
+RETURN ( getSQLDatabase():getValue( cSQLSentence, 0 ) == 0 )
 
 //---------------------------------------------------------------------------//   
 
