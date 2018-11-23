@@ -103,6 +103,7 @@ METHOD getColumnsSelect()
       facturas_clientes.updated_at AS updated_at,
       facturas_clientes.deleted_at AS deleted_at,
       clientes.nombre AS cliente_nombre,
+      clientes.dni AS cliente_dni,
       direcciones.direccion AS direccion_direccion,
       direcciones.poblacion AS direccion_poblacion,
       direcciones.codigo_provincia AS direccion_codigo_provincia,
@@ -119,7 +120,6 @@ RETURN ( cColumns )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD getInitialSelect() CLASS SQLFacturasClientesModel
 
    local cSql
@@ -133,8 +133,10 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesModel
    
       LEFT JOIN %2$s clientes  
          ON facturas_clientes.cliente_codigo = clientes.codigo
+
       LEFT JOIN %3$s direcciones  
          ON clientes.uuid = direcciones.parent_uuid AND direcciones.codigo = 0
+
       LEFT JOIN %4$s tarifas 
          ON facturas_clientes.tarifa_codigo = tarifas.codigo 
 
