@@ -64,8 +64,6 @@ METHOD Activate()
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-   ::oBitmap:End()
-
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
@@ -99,7 +97,7 @@ END CLASS
 
 METHOD New( oController ) 
 
-   ::oController     := oController
+   ::oController                 := oController
 
 RETURN ( Self )
 

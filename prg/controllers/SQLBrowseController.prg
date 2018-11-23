@@ -195,7 +195,7 @@ METHOD restoreId()
    local nId                  := ::getIdView( ::getBrowseViewType(), ::getBrowseViewName() )
 
    if !empty( nId )
-      ::getRowSet():findId( nId )
+      ::getBrowseView():findId( nId )
    end if 
 
 RETURN ( nil )
@@ -204,9 +204,7 @@ RETURN ( nil )
 
 METHOD saveState()
 
-   ::setState( ::getBrowseViewType(), ::getBrowseViewName(), ::getBrowseViewState() ) 
-
-RETURN ( nil )
+RETURN ( ::setState( ::getBrowseViewType(), ::getBrowseViewName(), ::getBrowseViewState() ) )
 
 //---------------------------------------------------------------------------//
 

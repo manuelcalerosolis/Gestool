@@ -34,14 +34,16 @@ CLASS SQLFiltrosController FROM SQLBaseController
    METHOD setComboFilterItem( cText )        INLINE ( ::oController:oWindowsBar:setComboFilterItem( cText ) )
    METHOD showCleanButtonFilter()            INLINE ( ::oController:oWindowsBar:showCleanButtonFilter() )
 
-   METHOD setTableToFilter( cTableToFilter ) INLINE ( ::oModel:setTableToFilter( cTableToFilter ) )
-   METHOD getTableToFilter()                 INLINE ( ::oModel:getTableToFilter() )
+   METHOD setTableToFilter( cTableToFilter ) INLINE ( ::getModel():setTableToFilter( cTableToFilter ) )
+   METHOD getTableToFilter()                 INLINE ( ::getModel():getTableToFilter() )
 
    METHOD getDialogView()                    INLINE ( iif( empty( ::oDialogView ), ::oDialogView := SQLFilterView():New( self ), ), ::oDialogView )
 
    METHOD getCustomView()                    INLINE ( iif( empty( ::oCustomView ), ::oCustomView := SQLCustomFilterView():New( self ), ), ::oCustomView )
    
-   METHOD getValidator()                     INLINE ( iif( empty( ::oValidator ),  ::oValidator  := SQLFiltrosValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()                     INLINE ( iif( empty( ::oValidator ), ::oValidator  := SQLFiltrosValidator():New( self ), ), ::oValidator )
+
+   METHOD getModel()                         INLINE ( iif( empty( ::oModel ), ::oModel := SQLFiltrosModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -51,9 +53,7 @@ METHOD New( oController )
 
    ::oController                             := oController
 
-   ::oModel                                  := SQLFiltrosModel():New( self )
-
-   ::oModel:setEvent( 'loadedBlankBuffer', {|| ::loadedBlankBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer', {|| ::loadedBlankBuffer() } )
 
 RETURN ( Self )
 
@@ -83,19 +83,19 @@ RETURN ( ::Super:End() )
 
 METHOD getFilters( cTableToFilter )                 
 
-RETURN ( ::oModel:getFilters( cTableToFilter ) )
+RETURN ( ::getModel():getFilters( cTableToFilter ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getFilterSentence( cNameFilter, cTableToFilter )
 
-RETURN ( ::oModel:getFilterSentence( cNameFilter, cTableToFilter ) )
+RETURN ( ::getModel():getFilterSentence( cNameFilter, cTableToFilter ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getId( cNameFilter, cTableToFilter )
 
-RETURN ( ::oModel:getId( cNameFilter, cTableToFilter ) )
+RETURN ( ::getModel():getId( cNameFilter, cTableToFilter ) )
 
 //---------------------------------------------------------------------------//
 
@@ -107,9 +107,9 @@ METHOD loadedBlankBuffer()
       RETURN ( nil )   
    end if 
 
-   hset( ::oModel:hBuffer, "nombre", cTextFilter ) 
+   ::setModelBuffer( "nombre", cTextFilter ) 
 
-   hset( ::oModel:hBuffer, "filtro", cTextFilter ) 
+   ::setModelBuffer( "filtro", cTextFilter ) 
 
 RETURN ( nil )   
 
@@ -118,8 +118,8 @@ RETURN ( nil )
 METHOD Append()
 
    if ::Super:Append()
-      ::oController:oWindowsBar:addComboFilter( hget( ::oModel:hBuffer, "nombre" ) )
-      ::oController:oWindowsBar:setComboFilter( hget( ::oModel:hBuffer, "nombre" ) )
+      ::oController:oWindowsBar:addComboFilter( ::getModelBuffer( "nombre" ) )
+      ::oController:oWindowsBar:setComboFilter( ::getModelBuffer( "nombre" ) )
    end if 
 
 RETURN ( nil )   
@@ -128,8 +128,6 @@ RETURN ( nil )
 
 METHOD DeleteByText( cNameFilter, cTableToFilter )
 
-   ::oModel:deleteById( { ::getId( cNameFilter, cTableToFilter ) } )
-
-RETURN ( nil )   
+RETURN ( ::getModel():deleteById( { ::getId( cNameFilter, cTableToFilter ) } ) )   
 
 //---------------------------------------------------------------------------//
