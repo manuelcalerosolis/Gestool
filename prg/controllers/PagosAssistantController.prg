@@ -123,8 +123,8 @@ END CLASS
 
 METHOD Activate() CLASS PagosAssistantView
 
-   DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "CONTAINER_MEDIUM_EXTENDED" ;
+   DEFINE DIALOG  ::oDialog;
+      RESOURCE    "CONTAINER_MEDIUM_EXTENDED"; 
       TITLE       ::LblTitle() + "cobro"
 
    REDEFINE BITMAP ::oBitmap ;
