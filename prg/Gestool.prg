@@ -22,6 +22,7 @@
 #define FONT_NAME             "Segoe UI" 
 
 static hDLLRich
+static oIconApp
 static nSeconds               := 0
 
 //---------------------------------------------------------------------------//
@@ -75,9 +76,6 @@ RETURN
 
 FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
-   local oIndex
-   local oIconApp
-
    appParamsMain( paramsMain )
 
    appParamsSecond( paramsSecond )
@@ -88,8 +86,6 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
    
    appDialogExtend() 
 
-   appLoadAds()
-
    xbrNumFormat( "E", .t. )
 
    // Administracion SQL-------------------------------------------------------
@@ -98,170 +94,50 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
       getSQLDatabase():ConnectWithoutDataBase()
 
-      SQLGestoolMigrations():Run()
+      // SQLGestoolMigrations():Run()
 
-      SQLGestoolSeeders():Run()
+      // SQLGestoolSeeders():Run()
          
       if AccessController():New( .f. ):isLoginSuperAdmin()
-         CreateAdminSQLWindow( oIconApp )
+         CreateAdminSQLWindow()
       end if
 
       RETURN ( nil )
 
    end if 
 
-   // Motor de bases de datos--------------------------------------------------
-
-   if ( "ADMINISTRADOR" $ appParamsMain() )
-      TDataCenter():lAdministratorTask()
-      RETURN ( nil )
-   end if
-
-   // Conexión con MySql------------------------------------------------------
+   // Conexión con MySQL------------------------------------------------------
 
    if !( getSQLDatabase():Connect() )
       msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
       RETURN ( nil )
    end if 
 
-   // Motor de bases de datos--------------------------------------------------
+   if ( "TEST" $ appParamsMain() ) 
+   
+      testMain()
 
-   if !( appConnectADS() ) 
-      msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
-      RETURN ( nil )
-   end if
+   else
 
-   TDataCenter():BuildData()
+      if AccessController():isLogin()
+         CreateMainSQLWindow()
+      end if
 
-   mainTest()
-
-   // Icono--------------------------------------------------------------------
-
-   DEFINE ICON oIconApp RESOURCE "Gestool"
-
-   // Opciones especiales de arranque hace la operacion y salir----------------
-
-   do case
-      case ( "ENVIO" $ appParamsMain() )
-
-         if ( ":" $ appParamsMain() )
-            cEmpUsr( Right( appParamsMain(), 2 ) )
-         end if
-
-         if lInitCheck()
-            TSndRecInf():Init():AutoExecute()
-         end if
-
-         RETURN ( nil )
-
-      case ( "REINDEXA" $ appParamsMain() )
-
-         if ( ":" $ appParamsMain() )
-            cEmpUsr( Right( appParamsMain(), 2 ) )
-         end if
-
-         if lInitCheck()
-            oIndex               := TReindex():New()
-            oIndex:lMessageEnd   := .f.
-            oIndex:Resource( .t. )
-         end if
-
-         RETURN ( nil )
-
-      case ( "EMPRESA" $ appParamsMain() )
-
-         if ( ":" $ appParamsMain() )
-            cEmpUsr( Right( appParamsMain(), 2 ) )
-         end if
-
-      case ( !empty( appParamsMain() ) .and. !empty( appParamsSecond() ) .and. !empty( appParamsThird() ) )
-
-         Auth():guardWhereUuid( appParamsMain() )
-
-         setEmpresa( appParamsSecond() )
-
-         ApplicationLoad()
-
-         controllerReportGallery( appParamsThird() )
-
-         RETURN ( nil )
-
-   end case
-
-   // Obtenemos la versión del programa----------------------------------------
-
-   IsStandard()
-   IsProfesional()
-   IsOsCommerce()
-
-   cNameVersion()
-
-   // Chequeamos los datos de los usuarios-------------------------------------
-
-   if !TReindex():lFreeHandle()
-      msgStop( "Existen procesos exclusivos, no se puede acceder a la aplicación" + CRLF + ;
-               "en estos momentos, reintentelo pasados unos segundos." )
-      RETURN .f.
-   end if
-
-   if AccessController():isLogin()
-      CreateMainSQLWindow( oIconApp )
-   end if
-
-   // Destruimos el icono -----------------------------------------------------
-
-   if !empty( oIconApp )
-      oIconApp:Destroy()
-   end if
-
-   // Conexión con SQL---------------------------------------------------------
+   end if 
 
    getSQLDatabase():Disconnect() 
+
+   destroyIconApp()
 
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION controllerReportGallery( cInitOptions )
-
-   local hReportGallery    
-
-   do case
-      case upper( cInitOptions ) == "ARTICULOS"
-
-         if validRunReport( "reporting_articulos" )
-            TFastVentasArticulos():New():Play()
-         endif
-
-      case upper( cInitOptions ) == "CLIENTES"
-
-         if validRunReport( "reporting_clientes" )
-            TFastVentasClientes():New():Play()
-         endif
-
-      case upper( cInitOptions ) == "PROVEEDORES"
-
-         if validRunReport( "reporting_proveedores" )
-            TFastComprasProveedores():New():Play()
-         end if 
-
-      case upper( cInitOptions ) == "PRODUCCION"
-
-         if validRunReport( "reporting_produccion" )
-            TFastProduccion():New():Play()
-         end if 
-
-   end case
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
 FUNCTION HelpTopic()
 
    msgStop( "Help wanted!" )
 
-RETURN ( Nil )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -269,7 +145,7 @@ FUNCTION HelpIndex()
 
    goWeb( __GSTHELP__ )
 
-RETURN ( Nil )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -277,9 +153,20 @@ RETURN ( Nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-Function mainTest()
+FUNCTION testMain()
 
-Return ( nil )
+   local hEmpresa := SQLEmpresasModel():getWhereCodigo( '0001' ) 
+   
+   if empty( hEmpresa )
+      msgStop( "No se ha podido seleccionar la empresa de pruebas" )
+      RETURN ( .f. )
+   end if  
+
+   Company( hEmpresa )
+
+   hbunit_test()
+
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
@@ -288,6 +175,26 @@ FUNCTION logwriteSeconds( cText )
    logwrite( cText + " -> " + str( seconds() - nSeconds ) )
 
    nSeconds := seconds()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION getIconApp()
+
+   if empty( oIconApp )
+      oIconApp    := TIcon():New( , , "Gestool" )
+   end if 
+
+RETURN ( oIconApp )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION destroyIconApp()
+
+   if !empty( oIconApp )
+      oIconApp:Destroy()
+   end if
 
 RETURN ( nil )
 

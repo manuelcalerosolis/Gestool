@@ -217,7 +217,7 @@ RETURN nil
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION CreateMainSQLWindow( oIconApp )
+FUNCTION CreateMainSQLWindow()
 
    Test()
 
@@ -228,7 +228,7 @@ FUNCTION CreateMainSQLWindow( oIconApp )
       TITLE                   __GSTROTOR__ + " " + __GSTVERSION__ + " " + cTypeVersion() + " : " + Company():Codigo() + " - " + Company():Nombre() ;
       MDI ;
       COLORS                  Rgb( 0, 0, 0 ), Rgb( 231, 234, 238 ) ;
-      ICON                    oIconApp ;
+      ICON                    getIconApp() ;
       MENU                    ( BuildMenu() )
 
    oWndBar                    := CreateMainSQLAcceso( oWnd )
@@ -7421,14 +7421,14 @@ RETURN( cNif )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION CreateAdminSQLWindow( oIconApp )
+FUNCTION CreateAdminSQLWindow()
 
    DEFINE WINDOW oWnd ;
       FROM                    0, 0 TO 26, 82;
       TITLE                   "Administrador : " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__; 
       MDI ;
       COLORS                  Rgb( 0, 0, 0 ), Rgb( 231, 234, 238 ) ;
-      ICON                    oIconApp ;
+      ICON                    getIconApp() ;
       MENU                    ( BuildMenu() )
 
    oWndBar                    := CreateAdminSQLAcceso( oWnd )

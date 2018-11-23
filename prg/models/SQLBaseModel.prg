@@ -160,20 +160,24 @@ CLASS SQLBaseModel
 
    METHOD aUuidToDelete()
    
-   METHOD getDropTableSentence()
+   METHOD getDropTableSentence()       INLINE ( "DROP TABLE " + ::getTableName() )
+   METHOD dropTable()                  INLINE ( ::getDatabase():Exec( ::getDropTableSentence() ) )
 
-   METHOD setGeneralSelect( cSelect )                 INLINE ( ::cGeneralSelect  := cSelect )
+   METHOD getTruncateTableSentence()   INLINE ( "DROP TABLE " + ::getTableName() )
+   METHOD trucateTable()               INLINE ( ::getDatabase():Exec( ::getTruncateTableSentence() ) )
 
-   METHOD setLimit( nLimit )                          INLINE ( ::nLimit := nLimit )
+   METHOD setGeneralSelect( cSelect )  INLINE ( ::cGeneralSelect  := cSelect )
+
+   METHOD setLimit( nLimit )           INLINE ( ::nLimit := nLimit )
    METHOD addLimit( cSQLSelect )
 
-   METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
-   METHOD setGeneralWhere( cWhere )                   INLINE ( ::cGeneralWhere   := cWhere )
+   METHOD getWhereOrAnd( cSQLSelect )  INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
+   METHOD setGeneralWhere( cWhere )    INLINE ( ::cGeneralWhere   := cWhere )
    METHOD addGeneralWhere( cSQLSelect )
    METHOD addDeletedAtWhere( cSQLSelect )
    
-   METHOD getHavingOrAnd( cSQLSelect )                INLINE ( if( hb_at( "HAVING", cSQLSelect ) != 0, " AND ", " HAVING " ) )
-   METHOD setGeneralHaving( cHaving )                 INLINE ( ::cGeneralHaving  := cHaving )
+   METHOD getHavingOrAnd( cSQLSelect ) INLINE ( if( hb_at( "HAVING", cSQLSelect ) != 0, " AND ", " HAVING " ) )
+   METHOD setGeneralHaving( cHaving )  INLINE ( ::cGeneralHaving  := cHaving )
    METHOD addGeneralHaving( cSQLSelect )
    
    METHOD addParentUuidWhere()                           
@@ -813,12 +817,6 @@ METHOD getAlterTableSentences( cDatabaseMySQL, aSchemaColumns )
    end if 
 
 RETURN ( aAlter )
-
-//---------------------------------------------------------------------------//
-
-METHOD getDropTableSentence()
-   
-RETURN ( "DROP TABLE " + ::getTableName() )
 
 //---------------------------------------------------------------------------//
 

@@ -10,19 +10,6 @@ FUNCTION appDialogExtend()
 
    __clsAddMsg( hClass, "aErrors", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
 
-/*
-   __clsAddMsg( hClass, "aFastKeys", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
-
-   __clsAddMsg( hClass, "aControlKeys", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
-
-   __clsAddMsg( hClass, "AddFastKey", {|Self, nKey, bAction| Self, aAdd( ::aFastKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
-
-   __clsAddMsg( hClass, "AddControlKeys", {|Self, nKey, bAction| Self, aAdd( ::aControlKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
-  
-   __clsAddMsg( hClass, "setControlFastKey", @setControlFastKey(), 0, nil, 1, .f., .f. )
-   
-   __clsModMsg( hClass, "KeyDown", @DialogKeyDown(), 1 )
-*/
    __clsAddMsg( hClass, "Enable", @DialogEnable(), 0, nil, 1, .f., .f. )
 
    __clsAddMsg( hClass, "Disable", @DialogDisable(), 0, nil, 1, .f., .f. )

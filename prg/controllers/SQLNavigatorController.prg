@@ -42,6 +42,8 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    DATA lEnableWindowsBar              INIT .f.
 
+   DATA lFilterBar                     INIT .t.
+
    DATA hFastKey                       INIT {=>}
 
    DATA oWindowsBar
@@ -437,17 +439,21 @@ METHOD EnableWindowsBar()
       ::getBrowseView():selectColumnOrder( oColumn, ::getModel():getOrientation() )
    end if 
 
-   ::oWindowsBar:enableComboFilter( ::getFilters() )
+   if ::lFilterBar
 
-   ::oWindowsBar:showAddButtonFilter()
+      ::oWindowsBar:enableComboFilter( ::getFilters() )
 
-   ::oWindowsBar:setComboFilterChange( {|| ::changeFilter() } )
+      ::oWindowsBar:showAddButtonFilter()
 
-   ::oWindowsBar:setActionAddButtonFilter( {|| ::appendFilter() } )
+      ::oWindowsBar:setComboFilterChange( {|| ::changeFilter() } )
 
-   ::oWindowsBar:setActionEditButtonFilter( {|| ::editFilter() } )
+      ::oWindowsBar:setActionAddButtonFilter( {|| ::appendFilter() } )
 
-   ::oWindowsBar:setActionDeleteButtonFilter( {|| ::deleteFilter() } )
+      ::oWindowsBar:setActionEditButtonFilter( {|| ::editFilter() } )
+
+      ::oWindowsBar:setActionDeleteButtonFilter( {|| ::deleteFilter() } )
+
+   end if 
 
    ::getNavigatorView():Refresh()
 

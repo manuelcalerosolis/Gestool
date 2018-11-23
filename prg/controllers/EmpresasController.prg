@@ -78,6 +78,8 @@ METHOD New( oController ) CLASS EmpresasController
 
    ::cName                          := "empresas"
 
+   ::lFilterBar                     := .f.
+
    ::hImage                         := {  "16" => "gc_factory_16",;
                                           "32" => "gc_factory_32",;
                                           "48" => "gc_factory_48" }
@@ -678,8 +680,6 @@ CLASS SQLEmpresasModel FROM SQLBaseModel
 
    METHOD getNombreWhereUuid( uuid )   INLINE ( ::getField( "nombre", "uuid", uuid ) )
 
-   METHOD validEmpresa( cNombre ) 
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -717,18 +717,6 @@ METHOD getColumns() CLASS SQLEmpresasModel
                                              "default"   => {|| ctod('') } }                           )
 
 RETURN ( ::hColumns )
-
-//---------------------------------------------------------------------------//
-
-METHOD validEmpresa( cNombre ) CLASS SQLEmpresasModel
-
-   local cSQL  
-
-   cSQL        := "SELECT * FROM " + ::getTableName()                         + " "    
-   cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
-   cSQL        +=    "LIMIT 1"
-
-RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

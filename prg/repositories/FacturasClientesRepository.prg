@@ -47,19 +47,23 @@ METHOD getSentenceTotals( uuidFactura ) CLASS FacturasClientesRepository
    TEXT INTO cSql
 
    SELECT
+
+      lineas.parent_uuid AS parentUuid,
+
       ROUND( lineas.importeBruto, 2 ) AS importeBruto,
 
       ( @descuento   := (  SELECT 
-                           SUM( facturas_clientes_descuentos.descuento ) 
+                              SUM( facturas_clientes_descuentos.descuento ) 
                            FROM %3$s AS facturas_clientes_descuentos 
-                           WHERE facturas_clientes_descuentos.parent_uuid = %4$s 
-                              AND facturas_clientes_descuentos.deleted_at = 0 ) ) AS totalDescuentosPie,
+                              WHERE facturas_clientes_descuentos.parent_uuid = %4$s 
+                                 AND facturas_clientes_descuentos.deleted_at = 0 ) ) AS totalDescuentosPie,
 
       ( @totalDescuento := IF( @descuento IS NULL, 0, ROUND( ( ( lineas.importeBruto - lineas.descuentoTotalLinea ) * @descuento / 100 ) ) ) + lineas.descuentoTotalLinea ) AS totalDescuento,
 
-      ( @aplicarRecargo := (  SELECT recargo_equivalencia
+      ( @aplicarRecargo := (  SELECT 
+                                 recargo_equivalencia
                               FROM %1$s AS facturas_clientes 
-                              WHERE facturas_clientes.uuid = %4$s ) ) AS aplicarRecargo,
+                                 WHERE facturas_clientes.uuid = %4$s ) ) AS aplicarRecargo,
 
       ( @neto := ROUND( lineas.importeBruto - @totalDescuento, 2 ) ) AS importeNeto,
       
@@ -76,19 +80,16 @@ METHOD getSentenceTotals( uuidFactura ) CLASS FacturasClientesRepository
    FROM 
       (
       SELECT 
-        ROUND( SUM(  
-            ( @importeLinea := ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * ( facturas_clientes_lineas.articulo_precio + IFNULL( facturas_clientes_lineas.incremento_precio, 0 ) ) ) ) ), 2 ) 
-                        AS importeBruto,
-        ROUND( SUM( 
-            @descuentoLinea := IF( facturas_clientes_lineas.descuento IS NULL, 0, ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * facturas_clientes_lineas.articulo_precio ) ) *  IFNULL(facturas_clientes_lineas.descuento,0) / 100 ) ,2 ) AS descuentoTotalLinea,
-            facturas_clientes_lineas.iva,
-            facturas_clientes_lineas.recargo_equivalencia,
-            facturas_clientes_lineas.descuento,
-            facturas_clientes_lineas.parent_uuid
-         FROM %2$s AS facturas_clientes_lineas 
-            WHERE facturas_clientes_lineas.parent_uuid = %4$s
-               AND facturas_clientes_lineas.deleted_at = 0 
-            GROUP BY facturas_clientes_lineas.iva
+         ROUND( SUM( ( @importeLinea := ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * ( facturas_clientes_lineas.articulo_precio + IFNULL( facturas_clientes_lineas.incremento_precio, 0 ) ) ) ) ), 2 ) AS importeBruto,
+         ROUND( SUM( @descuentoLinea := IF( facturas_clientes_lineas.descuento IS NULL, 0, ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * facturas_clientes_lineas.articulo_precio ) ) *  IFNULL(facturas_clientes_lineas.descuento,0) / 100 ) ,2 ) AS descuentoTotalLinea,
+         facturas_clientes_lineas.iva,
+         facturas_clientes_lineas.recargo_equivalencia,
+         facturas_clientes_lineas.descuento,
+         facturas_clientes_lineas.parent_uuid
+      FROM %2$s AS facturas_clientes_lineas 
+         WHERE facturas_clientes_lineas.parent_uuid = %4$s
+            AND facturas_clientes_lineas.deleted_at = 0 
+         GROUP BY facturas_clientes_lineas.iva
       ) lineas
 
    ENDTEXT
@@ -106,6 +107,7 @@ METHOD getSentenceTotal( uuidFactura ) CLASS FacturasClientesRepository
    TEXT INTO cSql
 
    SELECT
+      totales.parentUuid AS parentUuid,
       SUM( totales.importeBruto ) AS totalBruto,
       SUM( totales.importeNeto ) AS totalNeto,
       SUM( totales.importeIVA ) AS totalIVA,
@@ -118,6 +120,8 @@ METHOD getSentenceTotal( uuidFactura ) CLASS FacturasClientesRepository
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getSentenceTotals( uuidFactura ) )
+
+   logwrite( cSql )
 
 RETURN ( cSql )
 
@@ -310,7 +314,7 @@ METHOD createFunctionSummaryTotalWhereUuid( uuidFactura ) CLASS FacturasClientes
 
    TEXT INTO cSql
 
-      CREATE DEFINER=`root`@`localhost` PROCEDURE %1$s ( IN `uuid_factura_cliente` CHAR(40) ) 
+      CREATE DEFINER=`root`@`localhost` FUNCTION %1$s( uuid_factura_cliente CHAR( 40 ) ) RETURNS {STRING|INTEGER|REAL|DECIMAL}
       LANGUAGE SQL 
       NOT DETERMINISTIC 
       CONTAINS SQL 
@@ -320,6 +324,7 @@ METHOD createFunctionSummaryTotalWhereUuid( uuidFactura ) CLASS FacturasClientes
       BEGIN 
 
       SELECT
+         totales.parentUuid,
          SUM( totales.importeBruto ) AS totalBruto,
          SUM( totales.importeNeto ) AS totalNeto,
          SUM( totales.importeIVA ) AS totalIVA,
@@ -330,18 +335,21 @@ METHOD createFunctionSummaryTotalWhereUuid( uuidFactura ) CLASS FacturasClientes
       FROM 
          ( 
          SELECT
+            lineas.parent_uuid AS parentUuid,
+
             ROUND( lineas.importeBruto, 2 ) AS importeBruto,
 
             ( @descuento   := (  SELECT 
                                     SUM( facturas_clientes_descuentos.descuento ) 
-                                       FROM %4$s AS facturas_clientes_descuentos 
-                                       WHERE facturas_clientes_descuentos.parent_uuid = uuid_factura_cliente 
-                                          AND facturas_clientes_descuentos.deleted_at = 0 ) ) AS totalDescuentosPie,
+                                 FROM %4$s AS facturas_clientes_descuentos 
+                                    WHERE facturas_clientes_descuentos.parent_uuid = uuid_factura_cliente 
+                                       AND facturas_clientes_descuentos.deleted_at = 0 ) ) AS totalDescuentosPie,
 
             ( @totalDescuento := IF( @descuento IS NULL, 0, ROUND( ( ( lineas.importeBruto - lineas.descuentoTotalLinea ) * @descuento / 100 ) ) ) + lineas.descuentoTotalLinea ) AS totalDescuento,
 
-            ( @aplicarRecargo := (  SELECT recargo_equivalencia
-                                       FROM %2$s AS facturas_clientes 
+            ( @aplicarRecargo := (  SELECT 
+                                       recargo_equivalencia
+                                    FROM %2$s AS facturas_clientes 
                                        WHERE facturas_clientes.uuid = uuid_factura_cliente ) ) AS aplicarRecargo,
 
             ( @neto := ROUND( lineas.importeBruto - @totalDescuento, 2 ) ) AS importeNeto,

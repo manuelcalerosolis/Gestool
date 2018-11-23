@@ -229,7 +229,7 @@ METHOD validCompany() CLASS AccessController
       RETURN ( .t. )
    end if 
 
-   ::hEmpresa                 := ::getEmpresasController():getModel():validEmpresa( ::cComboEmpresa )
+   ::hEmpresa                 := ::getEmpresasController():getModel():getWhereNombre( ::cComboEmpresa )
 
    if empty( ::hEmpresa )
       ::cValidError           := "Empresa no existe" 
