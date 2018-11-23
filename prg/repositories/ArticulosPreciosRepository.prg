@@ -119,7 +119,10 @@ METHOD createFunctionUpdatePrecioIvaIncluidoWhereUuid() CLASS ArticulosPreciosRe
 
    TEXT INTO cSql
 
-      CREATE DEFINER=`root`@`localhost` PROCEDURE %1$s ( IN `uuid_precio_articulo` CHAR(40), IN `precio_iva_incluido` FLOAT(16,6) ) 
+      CREATE DEFINER=`root`@`localhost` 
+         PROCEDURE %1$s 
+            (  IN `uuid_precio_articulo` CHAR(40),
+               IN `precio_iva_incluido` FLOAT(16,6) ) 
          LANGUAGE SQL 
          NOT DETERMINISTIC 
          CONTAINS SQL 
@@ -136,7 +139,6 @@ METHOD createFunctionUpdatePrecioIvaIncluidoWhereUuid() CLASS ArticulosPreciosRe
             ON tipos_iva.codigo = articulos.tipo_iva_codigo 
 
          SET 
-
             articulos_precios.precio_iva_incluido = precio_iva_incluido, 
             articulos_precios.precio_base = ( precio_iva_incluido / ( 1 + ( tipos_iva.porcentaje / 100 ) ) ), 
             margen = ( articulos_precios.precio_base - articulos.precio_costo ) / precio_costo * 100, 
