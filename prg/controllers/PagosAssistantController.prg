@@ -44,7 +44,7 @@ METHOD New( oController ) CLASS PagosAssistantController
    ::getCuentasBancariasController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
    ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentence() } )
 
-   ::getRecibosController():setModel( SQLRecibosAssistantModel():New( ::getRecibosController() ) ) 
+   //::getRecibosController():setModel( SQLRecibosAssistantModel():New( ::getRecibosController() ) ) 
 
    ::getClientesController():getSelector():setEvent( 'validated', {|| ::getRecibos() } )
 
@@ -76,23 +76,24 @@ RETURN ( nil )
 
 METHOD getRecibos() CLASS PagosAssistantController
 
-   ::getRecibosController():getRowset():buildPad( ::getRecibosController:getModel():getGeneralSelect() )
+   ::insertRecibosPago()
 
-   ::getRecibosController():getBrowseView():Refresh()
+   ::getRecibosPagosController():getRowset():buildPad( ::getRecibosPagosController():getModel():getGeneralSelect( ::getModelBuffer( "uuid" ), ::getModelBuffer( "cliente_codigo" ) ) )
 
-   ::insertRecibosPago()   
+   ::getRecibosPagosController():getBrowseView():Refresh()
 
+      
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD insertRecibosPago() CLASS PagosAssistantController
 
-::getRecibosPagosController():getModel():insertPagoRecibo( ::getModelBuffer( "uuid" ) )
+ msgalert("insertando en la tabla pivot")
 
-msgalert("insertando en la tabla pivot")
-msgalert(::getModelBuffer('uuid'), "uuidRecibo")
-msgalert( hb_valtoexp( ::getRecibosController():getBrowseView():aSelected ) , "recibos")
+   ::getRecibosPagosController():getModel():insertPagoRecibo( ::getModelBuffer( "uuid" ), ::getModelBuffer('cliente_codigo') )
+msgalert( "modificanco importe" )
+   ::getRecibosPagosController():getModel():updateImporte( ::getModelBuffer( "uuid" ) )
 
 RETURN ( nil )
 
@@ -150,13 +151,12 @@ METHOD Activate() CLASS PagosAssistantView
    ::oController:getClientesController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oFolder:aDialogs[1] } )
    ::oController:getClientesController():getSelector():setValid( {|| ::oController:validate( "cliente_codigo" ) } )
 
-   ::getController():getRecibosController():Activate( 500, ::oFolder:aDialogs[1] )
+   ::getController():getRecibosPagosController():Activate( 500, ::oFolder:aDialogs[1] )
 
    REDEFINE GET   ::oImporte ;
       VAR         ::nImporte ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "importe" ) ) ;
       PICTURE     "@E 999999999999.99";
       OF          ::oFolder:aDialogs[1]
 

@@ -523,6 +523,8 @@ CLASS SQLRecibosAssistantModel FROM SQLRecibosModel
 
    METHOD isParentUuidColumn()   INLINE ( .f. )
 
+   METHOD getRecibosUuid( cCodigoCliente )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -531,7 +533,7 @@ METHOD getInitialSelect() CLASS SQLRecibosAssistantModel
 
    local cSql
 
-   local cliente_codigo := ::oController:oController:getModelBuffer("cliente_codigo")
+   local cliente_codigo := ::oController:oController:getModelBuffer( "cliente_codigo" )
 
    TEXT INTO cSql
 
@@ -546,19 +548,19 @@ METHOD getInitialSelect() CLASS SQLRecibosAssistantModel
          recibos.concepto AS concepto,
          recibos.deleted_at AS deleted_at,
          pagos.estado AS estado,
-         IF( pagos.estado IS NOT NULL , 0, SUM(pagos_recibos.importe) ) AS total_pagado,
-         ( recibos.importe - IF( pagos.estado IS NOT NULL, 0, SUM( pagos_recibos.importe ) ) ) AS diferencia
+         SUM( pagos_recibos.importe ) AS total_pagado,
+         ( recibos.importe - SUM( pagos_recibos.importe ) ) AS diferencia
    
    FROM %1$s AS recibos
    
    INNER JOIN %2$s AS facturas_clientes
       ON recibos.parent_uuid = facturas_clientes.uuid AND facturas_clientes.cliente_codigo = %5$s AND facturas_clientes.deleted_at = 0
    
-   INNER JOIN %3$s AS pagos_recibos
+   LEFT JOIN %3$s AS pagos_recibos
       ON recibos.uuid = pagos_recibos.recibo_uuid
       
-   INNER JOIN %4$s AS pagos
-      ON pagos.uuid = pagos_recibos.pago_uuid AND pagos.estado = "Rechazado"
+   LEFT JOIN %4$s AS pagos
+      ON pagos.uuid = pagos_recibos.pago_uuid AND pagos.estado <> "Rechazado"
 
    ENDTEXT
 
@@ -568,10 +570,46 @@ METHOD getInitialSelect() CLASS SQLRecibosAssistantModel
                                 SQLPagosModel():getTableName(),;
                                 quoted( cliente_codigo ) )
 
+   logwrite( cSql )   
+
 RETURN ( cSql )
 
-
 //---------------------------------------------------------------------------//
+
+METHOD getRecibosUuid( cCodigoCliente ) CLASS SQLRecibosAssistantModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT 
+      recibos.uuid AS uuid
+   
+   FROM %1$s AS recibos
+   
+   INNER JOIN gestool_00VG.facturas_clientes AS facturas_clientes
+      ON recibos.parent_uuid = facturas_clientes.uuid AND facturas_clientes.cliente_codigo = '000' AND facturas_clientes.deleted_at = 0
+   
+   LEFT JOIN gestool_00VG.pagos_recibos AS pagos_recibos
+      ON recibos.uuid = pagos_recibos.recibo_uuid
+      
+   LEFT JOIN gestool_00VG.pagos AS pagos
+      ON pagos.uuid = pagos_recibos.pago_uuid AND pagos.estado = "Rechazado"
+      
+   WHERE recibos.deleted_at = 0
+     
+   GROUP BY recibos.uuid
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(),;
+                                SQLFacturasClientesModel():getTableName(),;
+                                SQLRecibosPagosModel():getTableName(),;
+                                SQLPagosModel():getTableName(),;
+                                quoted( cCodigoCliente ) )
+
+RETURN (  cSql )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
