@@ -260,7 +260,9 @@ CLASS TestArticulosController FROM TTestCase
 
    METHOD testAppend()
    
-   METHOD testEmptyNombre()
+   METHOD testDialogAppend()
+
+   METHOD testDialogEmptyNombre()
 
 END CLASS
 
@@ -268,15 +270,31 @@ END CLASS
 
 METHOD testAppend() CLASS TestArticulosController
 
+   local nId
+
+   SQLArticulosModel():truncateTable()
+
+   nId   := SQLArticulosModel():insertBuffer(   {  'uuid' => win_uuidcreatestring(),;
+                                                   'codigo' => '000',;
+                                                   'nombre' => 'Test 0' } )
+
+   ::assert:notEquals( nId, 0, "test id articulos distinto de cero" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testDialogAppend() CLASS TestArticulosController
+
    local oController
 
    oController    := ArticulosController():New()
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         self:oGetCodigo:cText( '000' ),;
+         self:oGetCodigo:cText( '001' ),;
          sysrefresh(), waitSeconds( 1 ),;
-         self:oGetNombre:cText( 'Test' ),;
+         self:oGetNombre:cText( 'Test 1' ),;
          sysrefresh(), waitSeconds( 1 ),;
          self:oBtnAceptar:Click() } )
 
@@ -286,7 +304,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testEmptyNombre() CLASS TestArticulosController
+METHOD testDialogEmptyNombre() CLASS TestArticulosController
 
    local oController
 

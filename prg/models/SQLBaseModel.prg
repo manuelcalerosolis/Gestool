@@ -163,8 +163,8 @@ CLASS SQLBaseModel
    METHOD getDropTableSentence()       INLINE ( "DROP TABLE " + ::getTableName() )
    METHOD dropTable()                  INLINE ( ::getDatabase():Exec( ::getDropTableSentence() ) )
 
-   METHOD getTruncateTableSentence()   INLINE ( "DROP TABLE " + ::getTableName() )
-   METHOD trucateTable()               INLINE ( ::getDatabase():Exec( ::getTruncateTableSentence() ) )
+   METHOD getTruncateTableSentence()   INLINE ( "TRUNCATE TABLE " + ::getTableName() )
+   METHOD truncateTable()              INLINE ( ::getDatabase():Exec( ::getTruncateTableSentence() ) )
 
    METHOD setGeneralSelect( cSelect )  INLINE ( ::cGeneralSelect  := cSelect )
 

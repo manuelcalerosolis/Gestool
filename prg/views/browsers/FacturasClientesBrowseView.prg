@@ -78,6 +78,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( "direccion_direccion" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -86,6 +87,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( "direccion_poblacion" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -94,6 +96,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( "direccion_codigo_provincia" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -102,6 +105,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :nWidth              := 150
       :bEditValue          := {|| ::getRowSet():fieldGet( "direccion_provincia" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -110,6 +114,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( "direccion_codigo_postal" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -118,6 +123,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( "direccion_telefono" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -126,6 +132,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( "direccion_movil" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -134,6 +141,18 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( "direccion_email" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'total'
+      :cHeader             := 'Total'
+      :nWidth              := 100
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'total' ) }
+      :cEditPicture        := "@E 9999.9999"
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -158,7 +177,6 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :bStrData            := {|| "" }
       :bEditValue          := {|| ::getRowSet():fieldGet( "recargo_equivalencia" ) == 1 }
       :nWidth              := 60
-      //:bValid             :={||::click( ::getRowSet():fieldGet( "recargo" ) )  }
       :SetCheck( { "Sel16", "Nil16" } )
    end with
 

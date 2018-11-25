@@ -113,9 +113,12 @@ METHOD getColumnsSelect()
       direcciones.movil AS direccion_movil,
       direcciones.email AS direccion_email,
       tarifas.codigo AS tarifa_codigo,
-      tarifas.nombre AS tarifa_nombre
+      tarifas.nombre AS tarifa_nombre,
+      ( %1$s( facturas_clientes.uuid, facturas_clientes.recargo_equivalencia ) ) AS total
    ENDTEXT
       
+   cColumns    := hb_strformat( cColumns, Company():getTableName( 'FacturaClienteSummaryTotalWhereUuid' ) )
+
 RETURN ( cColumns )
 
 //---------------------------------------------------------------------------//
@@ -148,8 +151,6 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesModel
                            SQLDireccionesModel():getTableName(),;
                            SQLArticulosTarifasModel():getTableName(),;
                            ::getColumnsSelect() )
-
-   logwrite( cSql )
 
 RETURN ( cSql )
 
