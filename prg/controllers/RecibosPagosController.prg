@@ -5,17 +5,13 @@
 
 CLASS RecibosPagosController FROM SQLNavigatorController
 
-   /*DATA oRepository
-   
-   DATA oModel
-
-   DATA oBrowseView*/
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    METHOD updateField( cField, uValue )
+
+   METHOD calculatePayment( nImporte )
 
    //Construcciones tardias----------------------------------------------------
 
@@ -58,17 +54,65 @@ RETURN ( nil )
 METHOD updateField( uValue ) CLASS RecibosPagosController
 
    ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "importe", uValue )
-
-   msgalert("antes del refresh")
    
-   /*::getRowSet():Refresh()
-   
-   ::getBrowseView():Refresh()*/
+   ::getRowSet():Refresh()
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD calculatePayment( nImporte ) CLASS RecibosPagosController
+
+   local nImporteRestante  := nImporte
+   local nImportePagar     := 0
+
+   ::getRowSet():goTop() 
+
+   aadd(::getBrowseView():oBrowse:aSelected, ::oRowSet:RecNo() )
+   
+   WHILE nImporteRestante > 0 
+
+      if nImporteRestante < ::getRowSet():fieldGet( "diferencia" )
+
+         ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "importe", nImporteRestante )
+
+         nImportePagar += nImporteRestante
+         
+         nImporteRestante := 0
+      
+      end if
+
+      if nImporteRestante >= ::getRowSet():fieldGet( "diferencia" )
+
+         nImportePagar += ::getRowSet():fieldGet( "diferencia" )
+
+         ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "importe", ::getRowSet():fieldGet( "diferencia" ) )
+         
+         if ::oRowSet:RecNo() = ::getRowSet():recCount()
+
+            nImporteRestante := 0
+
+            ::oController:getDialogView():nImporte := nImportePagar
+            
+            ::oController:getDialogView():oImporte:Refresh()
+
+         end if
+
+         nImporteRestante -= ::getRowSet():fieldGet( "diferencia" )
+         
+         ::getRowSet:goDown()
+
+      end if
+
+      aadd(::getBrowseView():oBrowse:aSelected, ::oRowSet:RecNo() )
+
+   END
+
+   ::getRowSet:Refresh()
+
+   ::oBrowseView:Refresh()
+
+RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -326,6 +370,8 @@ METHOD getGeneralSelect( uuidPago, cCodigoCliente ) CLASS SQLRecibosPagosModel
       WHERE pagos_recibos.pago_uuid = %5$s
       
       GROUP BY pagos_recibos.recibo_uuid 
+
+      ORDER BY recibos.vencimiento
       
 
    ENDTEXT
