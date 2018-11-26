@@ -4648,6 +4648,29 @@ RETURN nil
 
 //---------------------------------------------------------------------------//
 
+
+Function Calendario( dDate, cTitle )
+
+   local oDlg
+   local oCal
+
+   DEFAULT dDate  := Date()
+   DEFAULT cTitle := "Calendario"
+
+   DEFINE DIALOG oDlg RESOURCE "Calendar" TITLE cTitle
+
+      oCal        := TCalendar():ReDefine( 100, { |u| if( pCount() == 0, dDate, dDate := u ) }, , oDlg, , , , , , , , , , , , {|| oDlg:End( IDOK ) }, {|| oDlg:End( IDOK ) } )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   if ( oDlg:nResult == IDOK )
+      dDate       := oCal:GetDate()
+   end if
+
+RETURN ( dDate )
+
+//----------------------------------------------------------------------------//
+
 FUNCTION msgMemory()
 
    local cText    := ""

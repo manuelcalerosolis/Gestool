@@ -4794,19 +4794,9 @@ Return ( Self )
 
 Function aGetFont()
 
-#ifdef __HARBOUR__
-
    local hDC      := GetDC( 0 )
    local aFonts   := GetFontNames( hDC )
    ReleaseDC( 0, hDC )
-
-#else
-
-   Local aFonts   := {}
-
-   EnumFonts( { | cName | aAdd( aFonts, cName ) } )
-
-#endif
 
    if Empty( aFonts )
       msgStop( "Error getting font names" )

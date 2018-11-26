@@ -6,450 +6,6 @@
 
 #define FW_BOLD                        700
 
-#define NUMERO_TARIFAS                 6
-
-//---------------------------------------------------------------------------//
-
-
-CLASS DialogBuilder
-
-   DATA aComponents                    INIT {}
-
-   DATA nView
-
-   DATA oDlg
-
-   METHOD End()                        INLINE ( ::oDlg:end() )
-
-   METHOD addComponent( oComponent )   INLINE ( aAdd( ::aComponents, oComponent ) )
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-CLASS ResourceBuilder FROM DialogBuilder
-
-   DATA bInit 
-   DATA bWhile                         INIT {|| .t. }
-   DATA bFor                           INIT {|| .t. }
-   DATA bAction   
-   DATA bSkip                          INIT {|| .t. }
-   DATA bExit
-   DATA bStart 
-
-   DATA nTotalPrinted                  INIT 0
-
-   DATA oSerieInicio       
-   DATA oSerieFin           
-
-   DATA oDocumentoInicio
-   DATA oDocumentoFin   
-
-   DATA oSufijoInicio                  
-   DATA oSufijoFin                     
-
-   DATA oClienteInicio
-   DATA oClienteFin
-
-   DATA oAgenteInicio
-   DATA oAgenteFin
-   
-   DATA oGrupoClienteInicio
-   DATA oGrupoClienteFin
-
-   DATA oProveedorInicio
-   DATA oProveedorFin
-
-   DATA oGrupoProveedorInicio
-   DATA oGrupoProveedorFin
-
-   DATA oFechaInicio
-   DATA oFechaFin
-
-   DATA oImpresora
-
-   DATA oCopias
-
-   DATA oFormatoDocumento
-
-   METHOD Serie( cSerie )                 INLINE ( ::oSerieInicio:cText( cSerie ), ::oSerieFin:cText( cSerie ) )
-   METHOD Documento( cDocumento )         INLINE ( ::oDocumentoInicio:cText( cDocumento ), ::oDocumentoFin:cText( cDocumento ) )
-   METHOD Sufijo( cSufijo )               INLINE ( ::oSufijoInicio:cText( cSufijo ), ::oSufijoFin:cText( cSufijo ) )
-   METHOD FormatoDocumento( cFormato )    INLINE ( ::oFormatoDocumento:cText( cFormato ) )
-
-   METHOD DocumentoInicio()               INLINE ( ::oSerieInicio:Value() + str( ::oDocumentoInicio:Value(), 9 ) + ::oSufijoInicio:Value() )
-   METHOD DocumentoFin()                  INLINE ( ::oSerieFin:Value() + str( ::oDocumentoFin:Value(), 9 ) + ::oSufijoFin:Value() )
-
-   // Metdos auxiliares para comparaciones -----------------------------------
-
-   METHOD InRangeDocumento( uValue )      INLINE ( empty( uValue ) .or. ( uValue >= ::DocumentoInicio() .and. uValue <= ::DocumentoFin() ) )
-   
-   METHOD InRangeCliente( uValue )        INLINE ( empty( uValue ) .or. ( uValue >= ::oClienteInicio:Value() .and. uValue <= ::oClienteFin:Value() ) )
-   METHOD InRangeGrupoCliente( uValue )   INLINE ( empty( uValue ) .or. ( uValue >= ::oGrupoClienteInicio:Value() .and. uValue <= ::oGrupoClienteFin:Value() ) )
-
-   METHOD InRangeAgente( uValue )         INLINE ( empty( uValue ) .or. ( uValue >= ::oAgenteInicio:Value() .and. uValue <= ::oAgenteFin:Value() ) )
-  
-   METHOD InRangeProveedor( uValue )      INLINE ( empty( uValue ) .or. ( uValue >= ::oProveedorInicio:Value() .and. uValue <= ::oProveedorFin:Value() ) )
-   METHOD InRangeGrupoProveedor( uValue ) INLINE ( empty( uValue ) .or. ( uValue >= ::oGrupoProveedorInicio:Value() .and. uValue <= ::oGrupoProveedorFin:Value() ) )
-
-   METHOD InRangeFecha( uValue )          INLINE ( empty( uValue ) .or. ( uValue >= ::oFechaInicio:Value() .and. uValue <= ::oFechaFin:Value() ) )
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-CLASS PrintSeries FROM ResourceBuilder
-
-   DATA lShowAgentes                      INIT .t.
-
-   METHOD New( nView )
-
-   METHOD SetCompras()
-   METHOD SetVentas()
-
-   METHOD setPrinter( cPrinter )          INLINE ( if( !empty( ::oImpresora ), ::oImpresora:set( cPrinter ), ) )
-
-   METHOD Resource()
-      METHOD StartResource()
-      METHOD ActionResource()
-      METHOD DisableRange()
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD New( nView ) CLASS PrintSeries
-
-   ::nView                 := nView
-
-   ::oSerieInicio          := GetSerie():New( 100, Self )
-   ::oSerieFin             := GetSerie():New( 110, Self )
-
-   ::oDocumentoInicio      := GetNumero():New( 120, Self )
-   ::oDocumentoFin         := GetNumero():New( 130, Self )
-
-   ::oSufijoInicio         := GetSufijo():New( 140, Self )
-   ::oSufijoFin            := GetSufijo():New( 150, Self )
-
-
-   ::oFechaInicio          := GetFecha():New( 210, Self )
-   ::oFechaInicio:FirstDayYear()
-
-   ::oFechaFin             := GetFecha():New( 220, Self )
-
-   ::oFormatoDocumento     := GetDocumentoComponent():New( 90, 91, 92, Self )
-
-   ::oImpresora            := GetPrinter():New( 160, 161, Self )
-
-   ::oCopias               := GetCopias():New( 170, 180, Self )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SetCompras()
-
-   // Proveedores-----------------------------------------------------------------
-
-   ::oProveedorInicio      := GetProveedor():New( 300, 310, 301, Self )
-   ::oProveedorInicio:SetText( "Desde proveedor" )
-   ::oProveedorInicio:First()
-
-   ::oProveedorFin         := GetProveedor():New( 320, 330, 321, Self )
-   ::oProveedorFin:SetText( "Hasta proveedor" )
-   ::oProveedorFin:Last()
-
-   // Grupo de proveedores---------------------------------------------------------
-
-   ::oGrupoProveedorInicio := GetGrupoProveedor():New( 340, 350, 341, Self )
-   ::oGrupoProveedorInicio:SetText( "Desde grupo proveedor" )
-   ::oGrupoProveedorInicio:First()
-
-   ::oGrupoProveedorFin    := GetGrupoProveedor():New( 360, 370, 361, Self )
-   ::oGrupoProveedorFin:SetText( "Hasta grupo proveedor" )
-   ::oGrupoProveedorFin:Last()
-
-   ::oAgenteInicio         := GetAgente():New( 400, 410, 401, Self )
-   ::oAgenteFin            := GetAgente():New( 420, 430, 421, Self )
-   
-   ::lShowAgentes          := .f.
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SetVentas()
-
-   // Clientes-----------------------------------------------------------------
-
-   ::oClienteInicio        := GetCliente():New( 300, 310, 301, Self )
-   ::oClienteInicio:SetText( "Desde cliente" )
-   ::oClienteInicio:First()
-
-   ::oClienteFin           := GetCliente():New( 320, 330, 321, Self )
-   ::oClienteFin:SetText( "Hasta cliente" )
-   ::oClienteFin:Last()
-
-   // Agentes-----------------------------------------------------------------
-
-   ::oAgenteInicio        := GetAgente():New( 400, 410, 401, Self )
-   ::oAgenteInicio:SetText( "Desde agente" )
-   ::oAgenteInicio:First()
-
-   ::oAgenteFin           := GetAgente():New( 420, 430, 421, Self )
-   ::oAgenteFin:SetText( "Hasta agente" )
-   ::oAgenteFin:Last()
-
-   // Grupo de cliente---------------------------------------------------------
-
-   ::oGrupoClienteInicio   := GetGrupoCliente():New( 340, 350, 341, Self )
-   ::oGrupoClienteInicio:SetText( "Desde grupo cliente" )
-   ::oGrupoClienteInicio:First()
-
-   ::oGrupoClienteFin      := GetGrupoCliente():New( 360, 370, 361, Self )
-   ::oGrupoClienteFin:SetText( "Hasta grupo cliente" )
-   ::oGrupoClienteFin:Last()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Resource() CLASS PrintSeries
-
-   local oBmp
-
-   DEFINE DIALOG ::oDlg RESOURCE "ImprimirSeries" TITLE "Imprimir series de documentos"
-
-   REDEFINE BITMAP oBmp ;
-      ID          500 ;
-      RESOURCE    "gc_printer2_48" ;
-      TRANSPARENT ;
-      OF          ::oDlg
-
-   aEval( ::aComponents, {| o | o:Resource(::oDlg) } )
-
-   REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDlg ;
-      ACTION      ( ::ActionResource() )
-
-   REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDlg ;
-      ACTION      ( ::oDlg:end() )
-
-   ::oDlg:AddFastKey( VK_F5, {|| ::ActionResource() } )
-
-   ::oDlg:bStart  := {|| ::StartResource() }
-
-   ACTIVATE DIALOG ::oDlg CENTER
-
-   oBmp:end()   
-   
-RETURN ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD StartResource() CLASS PrintSeries
-
-   //Si usamos clientes----------------------------------------------------
-
-   if !empty( ::oClienteInicio ) 
-      ::oClienteInicio:Valid()
-   end if
-
-   if !empty( ::oClienteFin )
-      ::oClienteFin:Valid()
-   end if
-
-   if !empty( ::oAgenteInicio ) 
-      if ::lShowAgentes
-         ::oAgenteInicio:Valid()
-      else
-         ::oAgenteInicio:Hide()
-      end if
-   end if
-
-   if !empty( ::oAgenteFin )
-      if ::lShowAgentes
-         ::oAgenteFin:Valid()
-      else
-         ::oAgenteFin:Hide()
-      end if
-   end if
-
-   if !empty( ::oGrupoClienteInicio )
-      ::oGrupoClienteInicio:Valid()
-   end if   
-
-   if !empty( ::oGrupoClienteFin )
-      ::oGrupoClienteFin:Valid()
-   end if
-
-   //Si usamos proveedores---------------------------------------------------
-
-   if !empty( ::oProveedorInicio ) 
-      ::oProveedorInicio:Valid()
-   end if
-
-   if !empty( ::oProveedorFin )
-      ::oProveedorFin:Valid()
-   end if
-
-   if !empty( ::oGrupoProveedorInicio )
-      ::oGrupoProveedorInicio:Valid()
-   end if   
-
-   if !empty( ::oGrupoProveedorFin )
-      ::oGrupoProveedorFin:Valid()
-   end if
-
-   ::oFormatoDocumento:Valid()
-
-   if !empty( ::bStart )
-      Eval( ::bStart )
-   end if   
-
-RETURN ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD ActionResource() CLASS PrintSeries
-
-   local nRecno
-   local nOrdAnt
-
-   ::nTotalPrinted   := 0
-
-   ::oDlg:disable()
-
-   if !empty( ::bInit )
-      eval( ::bInit )
-   end if 
-
-   while eval( ::bWhile )
-
-      if eval( ::bFor )
-
-         if !empty( ::bAction )
-            eval( ::bAction )
-            ++::nTotalPrinted
-         end if
-
-      end if 
-
-      eval( ::bSkip )
-          
-   end while 
-
-   if !empty( ::bExit )
-      eval( ::bExit )
-   end if 
-
-   ::oDlg:enable()
-   ::oDlg:end( IDOK )
-
-RETURN ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD DisableRange() CLASS PrintSeries
-
-   ::oSerieInicio:Disable()
-   ::oSerieFin:Disable()
-
-   ::oDocumentoInicio:Disable()
-   ::oDocumentoFin:Disable()
-
-   ::oSufijoInicio:Disable()
-   ::oSufijoFin:Disable()
-
-   ::oClienteInicio:Disable()
-   ::oClienteFin:Disable()
-
-   ::oGrupoClienteInicio:Disable()
-   ::oGrupoClienteFin:Disable()
-
-   ::oFechaInicio:Disable()
-   ::oFechaFin:Disable()
-
-RETURN ( Self )      
-
-//--------------------------------------------------------------------------//
-
-CLASS ImportarProductosProveedor FROM PrintSeries
-
-   DATA oPorcentaje
-
-   DATA oProceso
-
-   METHOD New( nView )
-
-   METHOD Resource()
-
-   METHOD ActionResource()
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD New( nView ) CLASS ImportarProductosProveedor
-
-   ::nView                 := nView
-
-   ::oFechaInicio          := GetFecha():New( 100, Self )
-   ::oFechaInicio:FirstDayPreviusMonth()
-
-   ::oFechaFin             := GetFecha():New( 110, Self )
-   ::oFechaFin:LastDayPreviusMonth()
-
-   ::oPorcentaje           := GetPorcentaje():New( 120, Self )
-
-   ::oProceso              := nil
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Resource() CLASS ImportarProductosProveedor
-
-   DEFINE DIALOG ::oDlg RESOURCE "ImportarProductosProveedor"
-
-   aEval( ::aComponents, {| o | o:Resource(::oDlg) } )
-
-   REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDlg ;
-      ACTION      ( ::ActionResource() )
-
-   REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDlg ;
-      ACTION      ( ::oDlg:end() )
-
-   ::oDlg:AddFastKey( VK_F5, {|| ::ActionResource() } )
-
-   ACTIVATE DIALOG ::oDlg CENTER
-
-RETURN ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD ActionResource() CLASS ImportarProductosProveedor
-
-   ::oDlg:disable()
-
-      if !empty( ::bAction )
-         eval( ::bAction )
-      end if 
-
-   ::oDlg:enable()
-   ::oDlg:end( IDOK )
-
-RETURN ( Self )
-
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 
 CLASS Component
@@ -467,7 +23,7 @@ METHOD New( oContainer )
       ::oContainer:AddComponent( Self )
    end if 
 
-Return ( Self )
+RETURN ( Self )
    
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
@@ -520,7 +76,7 @@ METHOD Resource( oDlg ) CLASS ComponentGet
    ::oGetControl:bHelp     := ::bHelp
    ::oGetControl:bWhen     := ::bWhen
 
-Return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
@@ -561,7 +117,7 @@ METHOD Resource( oDlg ) CLASS ComponentSay
       ID          ::idSay ;
       OF          oDlg
 
-Return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
@@ -609,7 +165,7 @@ METHOD Resource( oDlg ) CLASS ComponentCheck
 
    ::oCheckControl:bWhen     := ::bWhen
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -648,43 +204,12 @@ METHOD Resource( oDlg ) CLASS ComponentUrlLink
    ::oUrlLinkControl          := TURLLink():ReDefine( ::idUrlLink, oDlg, , ::cCaption, ::cCaption ) 
    ::oUrlLinkControl:bAction  := ::bAction
 
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS SayCompras FROM ComponentSay
-
-   METHOD New( idSay, oContainer )
-
-   METHOD Resource( oDlg )
-
-END CLASS 
-
-METHOD New( idSay, oContainer ) CLASS SayCompras
-
-   ::Super:New( idSay, oContainer )
-
-   ::uSayValue    := 0
-
 RETURN ( Self )
 
-METHOD Resource( oDlg ) CLASS SayCompras
-
-   REDEFINE SAY   ::oSayControl ;
-      PROMPT      ::uSayValue ;
-      ID          ::idSay ;
-      PICTURE     ( cPorDiv() ) ;
-      OF          oDlg
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 CLASS ComponentGetSay FROM ComponentGet
 
@@ -744,7 +269,7 @@ METHOD Resource( oDlg ) CLASS ComponentGetSay
 
    end if 
 
-Return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
@@ -791,7 +316,7 @@ METHOD Build( hBuilder ) CLASS GetCombo
 
    ::New( idCombo, uValue, aValues, oContainer )
 
-Return ( Self )
+RETURN ( Self )
 
 METHOD New( idCombo, uValue, aValues, oContainer ) CLASS GetCombo
 
@@ -816,249 +341,11 @@ METHOD Resource( oDlg ) CLASS GetCombo
 
    ::oControl:bChange      := {|| ::Change() }
 
-Return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-
-CLASS comboTarifa FROM GetCombo
-
-   DATA idCombo
-   DATA uValue                         INIT "Combo" 
-   DATA aValues                        INIT {"Combo"}
-   DATA oControl
-
-   METHOD Build( hBuilder ) 
-
-   METHOD getTarifa()                  
-   METHOD setTarifa( nTarifa )         INLINE   ( ::oControl:set( ::getTarifaNombre( nTarifa ) ) )
-   METHOD getTarifaNombre( nTarifa )  
-
-   METHOD varGet()                     INLINE   ( ::oControl:varGet() )
-
-END CLASS 
-
-//--------------------------------------------------------------------------//
-
-METHOD Build( hBuilder ) CLASS comboTarifa
-
-   local idCombo     := if( hhaskey( hBuilder, "idCombo" ),    hBuilder[ "idCombo"   ], nil )
-   local uValue      := if( hhaskey( hBuilder, "uValue"),      hBuilder[ "uValue"    ], nil )
-   local oContainer  := if( hhaskey( hBuilder, "oContainer"),  hBuilder[ "oContainer"], nil )
-
-   ::aValues         := aNombreTarifas()
-
-   uValue            := ::getTarifaNombre( uValue )
-
-   ::New( idCombo, uValue )
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD getTarifa()
-
-   local n
-
-   for n := 1 to NUMERO_TARIFAS
-      if uFieldEmpresa( "lShwTar" + alltrim( str( n ) ) )
-         if !empty( alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ))
-            if alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ) == ::VarGet()
-               Return ( n )
-            end if 
-         else
-            if ( 'Precio ' + alltrim( str( n ) ) ) == ::VarGet()
-               Return( n )
-            end if 
-         end if
-
-      endif
-   next
-
-Return ( 1 )
-
-//--------------------------------------------------------------------------//
-
-METHOD getTarifaNombre( nTarifa )
-
-   local cTarifaNombre  := ""
-
-   if aScan( ::aValues, uFieldEmpresa( "cTxtTar" + alltrim( str( nTarifa ) ) ) ) != 0
-      cTarifaNombre     := uFieldEmpresa( "cTxtTar" + alltrim( str( nTarifa ) ) )
-   end if 
-
-   /*----Tarifa por defecto
-
-   else
-      cTarifaNombre     := ::aValues[1]
-
-   */
-
-Return ( cTarifaNombre )
-
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-
-CLASS ComponentGetSayDatabase FROM ComponentGetSay
-
-   DATA nView
-
-   METHOD getView()        INLINE ( if( empty( ::nView ), ::oContainer:nView, ::nView ) )
-   METHOD setView( nView ) INLINE ( ::nView := nView )
-
-END CLASS 
-
-//--------------------------------------------------------------------------//
-
-CLASS GetCliente FROM ComponentGetSayDatabase
-
-   METHOD New( idGet, idSay, idText, oContainer ) 
-   METHOD Build( hBuilder )
-
-   METHOD First()          INLINE ( ::cText( Space( RetNumCodCliEmp() ) ) )
-   METHOD Last()           INLINE ( ::cText( Replicate( "Z", RetNumCodCliEmp() ) ) )
-
-   METHOD Top()            INLINE ( ::cText( D():Top( "Client", ::oContainer:nView ) ) )
-   METHOD Bottom()         INLINE ( ::cText( D():Bottom( "Client", ::oContainer:nView ) ) )
-
-END CLASS 
-
-METHOD Build( hBuilder ) CLASS GetCliente 
-
-   local idGet          := if( hhaskey( hBuilder, "idGet" ),      hBuilder[ "idGet"  ], nil )
-   local idSay          := if( hhaskey( hBuilder, "idSay" ),      hBuilder[ "idSay"  ], nil )
-   local idText         := if( hhaskey( hBuilder, "idText" ),     hBuilder[ "idText" ], nil )
-   local oContainer     := if( hhaskey( hBuilder, "oContainer" ), hBuilder[ "oContainer" ], nil )
-
-   ::New( idGet, idSay, idText, oContainer )
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD New( idGet, idSay, idText, oContainer ) CLASS GetCliente
-
-   ::cTextValue   := "Cliente"
-
-   ::Super:New( idGet, idSay, idText, oContainer )
-
-   ::bValid       := {|| cClient( ::oGetControl, D():Clientes( ::getView() ), ::oSayControl ) }
-   ::bHelp        := {|| BrwClient( ::oGetControl, ::oSayControl ) }
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
-CLASS GetAgente FROM ComponentGetSayDatabase
-
-   METHOD New( idGet, idSay, idText, oContainer ) 
-   METHOD Build( hBuilder )
-
-   METHOD First()          INLINE ( ::cText( space( 3 ) ) )
-   METHOD Last()           INLINE ( ::cText( replicate( "Z", 3 ) ) )
-
-   METHOD Top()            INLINE ( ::cText( D():Top( "Agentes", ::oContainer:nView ) ) )
-   METHOD Bottom()         INLINE ( ::cText( D():Bottom( "Agentes", ::oContainer:nView ) ) )
-
-END CLASS 
-
-METHOD Build( hBuilder ) CLASS GetAgente
-
-   local idGet          := if( hhaskey( hBuilder, "idGet" ),      hBuilder[ "idGet"  ], nil )
-   local idSay          := if( hhaskey( hBuilder, "idSay" ),      hBuilder[ "idSay"  ], nil )
-   local idText         := if( hhaskey( hBuilder, "idText" ),     hBuilder[ "idText" ], nil )
-   local oContainer     := if( hhaskey( hBuilder, "oContainer" ), hBuilder[ "oContainer" ], nil )
-
-   ::New( idGet, idSay, idText, oContainer )
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD New( idGet, idSay, idText, oContainer ) CLASS GetAgente
-
-   ::cTextValue   := "Agentes"
-
-   ::Super:New( idGet, idSay, idText, oContainer )
-
-   ::bValid       := {|| cAgentes( ::oGetControl, D():Agentes( ::getView() ), ::oSayControl ) }
-   ::bHelp        := {|| BrwAgentes( ::oGetControl, ::oSayControl ) }
-   
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-
-CLASS GetGrupoCliente FROM ComponentGetSay
-
-   METHOD New( idGet, idSay, idText, oContainer )
-
-   METHOD First()    INLINE ( ::cText( Space( 4 ) ) )
-   METHOD Last()     INLINE ( ::cText( Replicate( "Z", 4 ) ) )
-
-   METHOD Top()      INLINE ( ::cText( D():GetObject( "GruposClientes", ::oContainer:nView ):Top() ) )
-   METHOD Bottom()   INLINE ( ::cText( D():GetObject( "GruposClientes", ::oContainer:nView ):Bottom() ) )
-
-END CLASS 
-
-METHOD New( idGet, idSay, idText, oContainer ) CLASS GetGrupoCliente
-
-   ::Super:New( idGet, idSay, idText, oContainer )
-
-   ::uGetValue    := Space( 4 )
-
-   ::bValid       := {|| D():objectGruposClientes( ::oContainer:nView ):Existe( ::oGetControl, ::oSayControl, "cNomGrp", .t., .t., "0" ) }
-   ::bHelp        := {|| D():objectGruposClientes( ::oContainer:nView ):Buscar( ::oGetControl ) }
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-
-CLASS GetDocumentoComponent FROM ComponentGetSay
-
-   DATA idBtn
-   DATA cTypeDocumento              INIT Space( 2 )
-
-   METHOD New( idGet, idSay, idBtn, oContainer )
-
-   METHOD Resource(oDlg)
-
-   METHOD TypeDocumento( cType )    INLINE ( if( !empty( cType ), ::cTypeDocumento := cType, ::cTypeDocumento ) )
-
-END CLASS 
-
-METHOD New( idGet, idSay, idBtn, oContainer ) CLASS GetDocumentoComponent
-
-   ::Super:New( idGet, idSay, nil, oContainer )
-
-   ::idBtn        := idBtn
-
-   ::uGetValue    := Space( 3 )
-
-   ::bValid       := {|| cDocumento( ::oGetControl, ::oSayControl, D():Documentos( ::oContainer:nView ) ) }
-   ::bHelp        := {|| brwDocumento( ::oGetControl, ::oSayControl, ::TypeDocumento() ) }
-
-Return ( Self )
-
-METHOD Resource(oDlg) CLASS GetDocumentoComponent
-
-   ::Super:Resource(oDlg)
-
-   TBtnBmp():ReDefine( ::idBtn, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( ::uGetValue ) }, oDlg, .f., , .f.,  )
-
-Return ( Self )
-
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
@@ -1089,7 +376,7 @@ METHOD New( idGet, idBtn, oContainer ) CLASS GetPrinter
 
    ::uGetValue    := prnGetName()
 
-Return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
@@ -1101,7 +388,7 @@ METHOD Resource( oDlg ) CLASS GetPrinter
       ITEMS    aGetPrinters() ;
       OF       oDlg
 
-Return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
@@ -1113,120 +400,9 @@ METHOD set( cPrinter )
 
    ::uGetValue    := cPrinter
 
-Return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-
-CLASS GetSerie FROM ComponentGet
-
-   METHOD New( idGet, oContainer )
-
-   METHOD Resource( oDlg )
-
-END CLASS 
-
-METHOD New( idGet, oContainer ) CLASS GetSerie
-
-   ::Super:New( idGet, oContainer )
-
-   ::uGetValue    := "A"
-
-Return ( Self )
-
-METHOD Resource( oDlg ) CLASS GetSerie
-
-   REDEFINE GET   ::oGetControl ;
-      VAR         ::uGetValue ;
-      ID          ::idGet ;
-      PICTURE     "@!" ;
-      UPDATE ;
-      SPINNER ;
-      ON UP       ( UpSerie( ::oGetControl ) );
-      ON DOWN     ( DwSerie( ::oGetControl ) );
-      OF          oDlg
-
-   ::oGetControl:bValid    := {|| if( ::oGetControl:varGet() >= "A" .and. ::oGetControl:varGet() <= "Z", .t., ( msgStop( "La serie no es valida" ), .f. ) ) }
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-
-CLASS GetNumero FROM ComponentGet
-
-   METHOD New( idGet, oContainer )
-
-   METHOD Resource(oDlg)
-
-   METHOD SetPicture()
-
-END CLASS 
-
-METHOD New( idGet, oContainer ) CLASS GetNumero
-
-   ::Super:New( idGet, oContainer )
-
-   ::uGetValue    := 1
-   
-   ::bValid       := {|| ::uGetValue >= 1 .and. ::uGetValue <= 999999999 }
-
-Return ( Self )
-
-METHOD Resource(oDlg) CLASS GetNumero
-
-   REDEFINE GET   ::oGetControl ;
-      VAR         ::uGetValue ;
-      ID          ::idGet ;
-      PICTURE     "999999999" ;
-      SPINNER ;
-      VALID       ::bValid ;
-      OF          oDlg
-
-Return ( Self )
-
-METHOD SetPicture( cPicture )
-
-   ::oGetControl:oGet:Assign()
-   ::oGetControl:oGet:Picture   := cPicture
-   ::oGetControl:oGet:UpdateBuffer()
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-
-CLASS GetSufijo FROM ComponentGet
-
-   METHOD New( idGet, oContainer )
-
-   METHOD Resource(oDlg)
-
-END CLASS 
-
-METHOD New( idGet, oContainer ) CLASS GetSufijo
-
-   ::Super:New( idGet, oContainer )
-
-   ::uGetValue    := RetSufEmp()
-
-Return ( Self )
-
-METHOD Resource(oDlg) CLASS GetSufijo
-
-   REDEFINE GET   ::oGetControl ;
-      VAR         ::uGetValue ;
-      ID          ::idGet ;
-      PICTURE     "@!" ;
-      OF          oDlg
-
-Return ( Self )
-
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
@@ -1257,7 +433,7 @@ METHOD New( idGet, oContainer ) CLASS GetFecha
 
    ::uGetValue    := Date()
    
-Return ( Self )
+RETURN ( Self )
 
 METHOD Resource(oDlg) CLASS GetFecha
 
@@ -1267,7 +443,7 @@ METHOD Resource(oDlg) CLASS GetFecha
       SPINNER ;
       OF          oDlg
 
-Return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
@@ -1307,7 +483,7 @@ METHOD Build( hBuilder ) CLASS GetPeriodo
 
    ::New( idCombo, idFechaInicio, idFechaFin, oContainer )
 
-Return ( Self )
+RETURN ( Self )
 
 METHOD New( idCombo, idFechaInicio, idFechaFin, oContainer ) CLASS GetPeriodo
 
@@ -1321,7 +497,7 @@ METHOD New( idCombo, idFechaInicio, idFechaFin, oContainer ) CLASS GetPeriodo
 
    ::oFechaFin                := GetFecha():New( idFechaFin, oContainer )
 
-Return ( Self )
+RETURN ( Self )
 
 METHOD Resource( oContainer ) CLASS GetPeriodo
 
@@ -1329,7 +505,7 @@ METHOD Resource( oContainer ) CLASS GetPeriodo
    ::oFechaInicio:Resource( oContainer )
    ::oFechaFin:Resource( oContainer )
 
-Return ( Self )
+RETURN ( Self )
 
 METHOD CargaPeriodo() CLASS GetPeriodo 
 
@@ -1426,234 +602,6 @@ RETURN ( .t. )
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 
-CLASS GetRangoCliente FROM Component
-
-   DATA oAll
-   DATA oInicio
-   DATA oFin
-
-   METHOD Build( hBuilder )
-   METHOD New( idAll, idGetInicio, idSayInicio, idTextInicio, idGetFin, idSayFin, idTextFin, oContainer )
-
-   METHOD Resource( oContainer )
-
-   METHOD InRange( uValue )      INLINE ( ::oAll:Value() .or. ( uValue >= ::oInicio:Value() .and. uValue <= ::oFin:Value() ) )
-
-END CLASS 
-
-METHOD Build( hBuilder ) CLASS GetRangoCliente 
-
-   local idAll          := if( hhaskey( hBuilder, "idAll" ),         hBuilder[ "idAll"        ], nil )
-   local idGetInicio    := if( hhaskey( hBuilder, "idGetInicio" ),   hBuilder[ "idGetInicio"  ], nil )
-   local idSayInicio    := if( hhaskey( hBuilder, "idSayInicio" ),   hBuilder[ "idSayInicio"  ], nil )
-   local idTextInicio   := if( hhaskey( hBuilder, "idTextInicio" ),  hBuilder[ "idTextInicio" ], nil )
-   local idGetFin       := if( hhaskey( hBuilder, "idGetFin" ),      hBuilder[ "idGetFin"     ], nil )
-   local idSayFin       := if( hhaskey( hBuilder, "idSayFin" ),      hBuilder[ "idSayFin"     ], nil )
-   local idTextFin      := if( hhaskey( hBuilder, "idTextFin" ),     hBuilder[ "idTextFin"    ], nil )
-   local oContainer     := if( hhaskey( hBuilder, "oContainer" ),    hBuilder[ "oContainer"   ], nil )
-
-   ::New( idAll, idGetInicio, idSayInicio, idTextInicio, idGetFin, idSayFin, idTextFin, oContainer )
-
-Return ( Self )
-
-METHOD New( idAll, idGetInicio, idSayInicio, idTextInicio, idGetFin, idSayFin, idTextFin, oContainer ) CLASS GetRangoCliente
-
-   ::oAll           := ComponentCheck():New( idAll, .t., oContainer )
-
-   ::oInicio        := GetCliente():New( idGetInicio, idSayInicio, idTextInicio, oContainer )
-   ::oInicio:SetText( "Desde" )
-   ::oInicio:First()
-   ::oInicio:bWhen  := {|| !::oAll:Value() }
-
-   ::oFin           := GetCliente():New( idGetFin, idSayFin, idTextFin, oContainer )
-   ::oFin:SetText( "Hasta" )
-   ::oFin:Last()
-   ::oFin:bWhen     := {|| !::oAll:Value() }
-
-Return ( Self )
-
-METHOD Resource( oDialog ) CLASS GetRangoCliente
-
-   ::oAll:Resource( oDialog )
-   ::oInicio:Resource( oDialog )
-   ::oFin:Resource( oDialog )
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-
-CLASS GetRangoGrupoCliente FROM Component
-
-   DATA oAll
-   DATA oInicio
-   DATA oFin
-
-   METHOD Build( hBuilder )
-   METHOD New( idAll, idGetInicio, idSayInicio, idTextInicio, idGetFin, idSayFin, idTextFin, oContainer )
-
-   METHOD Resource( oContainer )
-
-   METHOD InRange( uValue )      INLINE ( ::oAll:Value() .or. ( uValue >= ::oInicio:Value() .and. uValue <= ::oFin:Value() ) )
-
-END CLASS 
-
-METHOD Build( hBuilder ) CLASS GetRangoGrupoCliente 
-
-   local idAll          := if( hhaskey( hBuilder, "idAll" ),         hBuilder[ "idAll"        ], nil )
-   local idGetInicio    := if( hhaskey( hBuilder, "idGetInicio" ),   hBuilder[ "idGetInicio"  ], nil )
-   local idSayInicio    := if( hhaskey( hBuilder, "idSayInicio" ),   hBuilder[ "idSayInicio"  ], nil )
-   local idTextInicio   := if( hhaskey( hBuilder, "idTextInicio" ),  hBuilder[ "idTextInicio" ], nil )
-   local idGetFin       := if( hhaskey( hBuilder, "idGetFin" ),      hBuilder[ "idGetFin"     ], nil )
-   local idSayFin       := if( hhaskey( hBuilder, "idSayFin" ),      hBuilder[ "idSayFin"     ], nil )
-   local idTextFin      := if( hhaskey( hBuilder, "idTextFin" ),     hBuilder[ "idTextFin"    ], nil )
-   local oContainer     := if( hhaskey( hBuilder, "oContainer" ),    hBuilder[ "oContainer"   ], nil )
-
-   ::New( idAll, idGetInicio, idSayInicio, idTextInicio, idGetFin, idSayFin, idTextFin, oContainer )
-
-Return ( Self )
-
-METHOD New( idAll, idGetInicio, idSayInicio, idTextInicio, idGetFin, idSayFin, idTextFin, oContainer ) CLASS GetRangoGrupoCliente
-
-   ::oAll           := ComponentCheck():New( idAll, .t., oContainer )
-
-   ::oInicio        := GetGrupoCliente():New( idGetInicio, idSayInicio, idTextInicio, oContainer )
-   ::oInicio:SetText( "Desde" )
-   ::oInicio:First()
-   ::oInicio:bWhen  := {|| !::oAll:Value() }
-
-   ::oFin           := GetGrupoCliente():New( idGetFin, idSayFin, idTextFin, oContainer )
-   ::oFin:SetText( "Hasta" )
-   ::oFin:Last()
-   ::oFin:bWhen     := {|| !::oAll:Value() }
-
-Return ( Self )
-
-METHOD Resource( oDialog ) CLASS GetRangoGrupoCliente
-
-   ::oAll:Resource( oDialog )
-   ::oInicio:Resource( oDialog )
-   ::oFin:Resource( oDialog )
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-
-CLASS GetRangoSeries FROM Component
-
-   DATA oTodas
-   DATA oNinguna
-   DATA hObjectSerie
-
-   METHOD Build( hBuilder )
-   METHOD New( idTodas, idNinguna, idInicio, oContainer )
-
-   METHOD Resource( oDialog )
-
-   METHOD SelectAll()         INLINE ( if( !empty( ::hObjectSerie ), hEval( ::hObjectSerie, {| h, o, i | o:uCheckValue := .t., o:oCheckControl:Refresh() } ), ) )
-
-   METHOD UnselectAll()       INLINE ( if( !empty( ::hObjectSerie ), hEval( ::hObjectSerie, {| h, o, i | o:uCheckValue := .f., o:oCheckControl:Refresh() } ), ) )
-
-   METHOD InRange( uValue )
-
-END CLASS 
-
-METHOD Build( hBuilder ) CLASS GetRangoSeries 
-
-   local idTodas        := if( hhaskey( hBuilder, "idTodas" ),          hBuilder[ "idTodas"        ], nil )
-   local idNinguna      := if( hhaskey( hBuilder, "idNinguna" ),        hBuilder[ "idNinguna"      ], nil )
-   local idInicio       := if( hhaskey( hBuilder, "idInicio" ),         hBuilder[ "idInicio"       ], nil )
-   local bActionTodas   := if( hhaskey( hBuilder, "bActionTodas" ),     hBuilder[ "bActionTodas"   ], nil )
-   local bActionNinguna := if( hhaskey( hBuilder, "bActionNinguna" ),   hBuilder[ "bActionNinguna" ], nil )
-   local oContainer     := if( hhaskey( hBuilder, "oContainer" ),       hBuilder[ "oContainer"     ], nil )
-
-   ::New( idTodas, idNinguna, idInicio, oContainer )
-
-Return ( Self )
-
-METHOD New( idTodas, idNinguna, idInicio, oContainer ) CLASS GetRangoSeries
-
-   ::oTodas          := ComponentUrlLink():New( idTodas, {|| ::SelectAll() }, "Todas", oContainer )
-   ::oNinguna        := ComponentUrlLink():New( idNinguna, {|| ::UnselectAll() }, "Ninguna", oContainer )
-
-   ::hObjectSerie    := { "A"  =>  ComponentCheck():New( idInicio, .t., oContainer ),;
-                          "B"  =>  ComponentCheck():New( idInicio + 1, .t., oContainer ),;
-                          "C"  =>  ComponentCheck():New( idInicio + 2, .t., oContainer ),;
-                          "D"  =>  ComponentCheck():New( idInicio + 3, .t., oContainer ),;
-                          "E"  =>  ComponentCheck():New( idInicio + 4, .t., oContainer ),;
-                          "F"  =>  ComponentCheck():New( idInicio + 5, .t., oContainer ),;
-                          "G"  =>  ComponentCheck():New( idInicio + 6, .t., oContainer ),;
-                          "H"  =>  ComponentCheck():New( idInicio + 7, .t., oContainer ),;
-                          "I"  =>  ComponentCheck():New( idInicio + 8, .t., oContainer ),;
-                          "J"  =>  ComponentCheck():New( idInicio + 9, .t., oContainer ),;
-                          "K"  =>  ComponentCheck():New( idInicio + 10, .t., oContainer ),;
-                          "L"  =>  ComponentCheck():New( idInicio + 11, .t., oContainer ),;
-                          "M"  =>  ComponentCheck():New( idInicio + 12, .t., oContainer ),;
-                          "N"  =>  ComponentCheck():New( idInicio + 13, .t., oContainer ),;
-                          "O"  =>  ComponentCheck():New( idInicio + 14, .t., oContainer ),;
-                          "P"  =>  ComponentCheck():New( idInicio + 15, .t., oContainer ),;
-                          "Q"  =>  ComponentCheck():New( idInicio + 16, .t., oContainer ),;
-                          "R"  =>  ComponentCheck():New( idInicio + 17, .t., oContainer ),; 
-                          "S"  =>  ComponentCheck():New( idInicio + 18, .t., oContainer ),; 
-                          "T"  =>  ComponentCheck():New( idInicio + 19, .t., oContainer ),; 
-                          "U"  =>  ComponentCheck():New( idInicio + 20, .t., oContainer ),; 
-                          "V"  =>  ComponentCheck():New( idInicio + 21, .t., oContainer ),; 
-                          "W"  =>  ComponentCheck():New( idInicio + 22, .t., oContainer ),; 
-                          "X"  =>  ComponentCheck():New( idInicio + 23, .t., oContainer ),; 
-                          "Y"  =>  ComponentCheck():New( idInicio + 24, .t., oContainer ),; 
-                          "Z"  =>  ComponentCheck():New( idInicio + 25, .t., oContainer ) }
-
-Return ( Self )
-
-METHOD Resource( oDialog ) CLASS GetRangoSeries
-
-   ::oTodas:Resource( oDialog )
-   ::oNinguna:Resource( oDialog )
-
-   if !empty( ::hObjectSerie )
-
-      hEval( ::hObjectSerie, {| h, o, i | o:Resource( oDialog ) } )
-
-   end if   
-
-Return ( Self )
-
-METHOD InRange( uValue ) CLASS GetRangoSeries
-
-   local value    := .f.
-
-   if empty( uValue )
-      Return .f.
-   end if
-
-   if !( isChar( uValue ) )
-      Return .f.
-   end if 
-
-   uValue         := upper( uValue ) 
-
-   if !empty( ::hObjectSerie )
-
-      if !( hb_hhaskey( ::hObjectSerie, uValue ) )
-         Return .f.
-      end if 
-
-      value       := hGet( ::hObjectSerie, uValue ):Value()
-   
-   end if
-
-return ( value )
-
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-
 CLASS GetCopias FROM ComponentGet
 
    DATA idCheck 
@@ -1676,7 +624,7 @@ METHOD New( idCheck, idGet, oContainer ) CLASS GetCopias
    
    ::bValid       := {|| ::uGetValue >= 1 .and. ::uGetValue <= 99999 }
 
-Return ( Self )
+RETURN ( Self )
 
 METHOD Resource(oDlg) CLASS GetCopias
 
@@ -1693,7 +641,7 @@ METHOD Resource(oDlg) CLASS GetCopias
       VALID       ::bValid ;
       OF          oDlg
 
-Return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
@@ -1715,7 +663,7 @@ METHOD New( idGet, oContainer ) CLASS GetPorcentaje
    
    ::bValid       := {|| ::uGetValue >= 0 .and. ::uGetValue <= 100 }
 
-Return ( Self )
+RETURN ( Self )
 
 METHOD Resource(oDlg) CLASS GetPorcentaje
 
@@ -1727,7 +675,7 @@ METHOD Resource(oDlg) CLASS GetPorcentaje
       VALID       ::bValid ;
       OF          oDlg
 
-Return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
@@ -1742,292 +690,10 @@ Function nLastDay( nMes )
    local cMes     := Str( if( nMes == 12, 1, nMes + 1 ), 2 )
    local cAno     := Str( if( nMes == 12, Year( Date() ) + 1, Year( Date() ) ) )
 
-Return ( Ctod( "01/" + cMes + "/" + cAno ) - 1 )
+RETURN ( Ctod( "01/" + cMes + "/" + cAno ) - 1 )
 
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-
-CLASS GetProveedor FROM ComponentGetSayDatabase
-
-   METHOD Build( hBuilder ) 
-   METHOD New( idGet, idSay, idText, oContainer ) 
-
-   METHOD First()    INLINE ( ::cText( Space( RetNumCodPrvEmp() ) ) )
-   METHOD Last()     INLINE ( ::cText( Replicate( "Z", RetNumCodPrvEmp() ) ) )
-
-   METHOD Top()      INLINE ( ::cText( D():Top( "Provee", ::getView() ) ) )
-   METHOD Bottom()   INLINE ( ::cText( D():Bottom( "Provee", ::getView() ) ) )
-
-END CLASS 
-
-//--------------------------------------------------------------------------//
-
-METHOD Build( hBuilder ) 
-
-   local idGet       := if( hhaskey( hBuilder, "idGet" ),      hBuilder[ "idGet"     ], nil )
-   local idSay       := if( hhaskey( hBuilder, "idSay"),       hBuilder[ "idSay"     ], nil )
-   local idText      := if( hhaskey( hBuilder, "idText"),      hBuilder[ "idText"    ], nil )
-   local oContainer  := if( hhaskey( hBuilder, "oContainer"),  hBuilder[ "oContainer"], nil )
-
-   ::New( idGet, idSay, idText, oContainer )
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD New( idGet, idSay, idText, oContainer ) CLASS GetProveedor
-
-   ::cTextValue   := "Proveedor"
-
-   ::Super:New( idGet, idSay, idText, oContainer )
-
-   ::bValid       := {|| cProvee( ::oGetControl, D():Proveedores( ::getView() ), ::oSayControl ) }
-   ::bHelp        := {|| BrwProvee( ::oGetControl, ::oSayControl ) }
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-
-CLASS GetEmpresa FROM ComponentGetSayDatabase
-
-   METHOD Build( hBuilder ) 
-   METHOD New( idGet, idSay, idText, oContainer ) 
-
-   METHOD Current()  INLINE ( ::cText( cCodEmp() ), ::Valid() )
-
-END CLASS 
-
-//--------------------------------------------------------------------------//
-
-METHOD Build( hBuilder ) CLASS GetEmpresa 
-
-   local idGet       := if( hhaskey( hBuilder, "idGet" ),      hBuilder[ "idGet"     ], nil )
-   local idSay       := if( hhaskey( hBuilder, "idSay"),       hBuilder[ "idSay"     ], nil )
-   local idText      := if( hhaskey( hBuilder, "idText"),      hBuilder[ "idText"    ], nil )
-   local oContainer  := if( hhaskey( hBuilder, "oContainer"),  hBuilder[ "oContainer"], nil )
-
-   ::New( idGet, idSay, idText, oContainer )
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD New( idGet, idSay, idText, oContainer ) CLASS GetEmpresa
-
-   ::cTextValue   := "Empresa"
-
-   ::Super:New( idGet, idSay, idText, oContainer )
-
-   ::bValid       := {|| cEmpresa( ::oGetControl, D():Empresa( ::getView() ), ::oSayControl ) }
-   ::bHelp        := {|| brwEmpresa( ::oGetControl, D():Empresa( ::getView() ), ::oSayControl ) }
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-
-CLASS GetArticulo FROM ComponentGetSayDatabase
-
-   METHOD Build( hBuilder ) 
-   METHOD New( idGet, idSay, idText, oContainer ) 
-
-   METHOD First()    INLINE ( ::cText( Space( 18 ) ) )
-   METHOD Last()     INLINE ( ::cText( Replicate( "Z", 18 ) ) )
-
-   METHOD Top()      INLINE ( ::cText( D():Top( "Articulo", ::getView() ) ) )
-   METHOD Bottom()   INLINE ( ::cText( D():Bottom( "Articulo", ::getView() ) ) )
-
-END CLASS 
-
-//--------------------------------------------------------------------------//
-
-METHOD Build( hBuilder ) CLASS GetArticulo
-
-   local idGet       := if( hhaskey( hBuilder, "idGet" ),      hBuilder[ "idGet"     ], nil )
-   local idSay       := if( hhaskey( hBuilder, "idSay"),       hBuilder[ "idSay"     ], nil )
-   local idText      := if( hhaskey( hBuilder, "idText"),      hBuilder[ "idText"    ], nil )
-   local oContainer  := if( hhaskey( hBuilder, "oContainer"),  hBuilder[ "oContainer"], nil )
-
-   ::New( idGet, idSay, idText, oContainer )
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD New( idGet, idSay, idText, oContainer ) CLASS GetArticulo
-
-   ::cTextValue   := "Artículo"
-
-   ::Super:New( idGet, idSay, idText, oContainer )
-
-   ::bValid       := {|| cArticulo( ::oGetControl, D():Get( "Articulo", ::getView() ), ::oSayControl ) }
-   ::bHelp        := {|| brwArticulo( ::oGetControl, ::oSayControl ) }
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-
-CLASS GetAlmacen FROM ComponentGetSayDatabase
-
-   METHOD Build( hBuilder ) 
-   METHOD New( idGet, idSay, idText, oContainer ) 
-
-   METHOD First()    INLINE ( ::cText( Space( 16 ) ) )
-   METHOD Last()     INLINE ( ::cText( Replicate( "Z", 16 ) ) )
-
-   METHOD Top()      INLINE ( ::cText( D():Top( "Articulo", ::getView() ) ) )
-   METHOD Bottom()   INLINE ( ::cText( D():Bottom( "Articulo", ::getView() ) ) )
-
-END CLASS 
-
-//--------------------------------------------------------------------------//
-
-METHOD Build( hBuilder ) CLASS GetAlmacen
-
-   local idGet       := if( hhaskey( hBuilder, "idGet" ),      hBuilder[ "idGet"     ], nil )
-   local idSay       := if( hhaskey( hBuilder, "idSay"),       hBuilder[ "idSay"     ], nil )
-   local idText      := if( hhaskey( hBuilder, "idText"),      hBuilder[ "idText"    ], nil )
-   local oContainer  := if( hhaskey( hBuilder, "oContainer"),  hBuilder[ "oContainer"], nil )
-
-   ::New( idGet, idSay, idText, oContainer )
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD New( idGet, idSay, idText, oContainer ) CLASS GetAlmacen
-
-   ::cTextValue   := "Almacén"
-
-   ::Super:New( idGet, idSay, idText, oContainer )
-
-   ::bValid       := {|| cAlmacen( ::oGetControl, D():Almacen( ::getView() ), ::oSayControl ) }
-   ::bHelp        := {|| brwAlmacen( ::oGetControl, ::oSayControl ) }
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-
-CLASS GetPropiedad FROM ComponentGetSay
-
-   METHOD Build( hBuilder ) 
-   METHOD New( idGet, idSay, idText, oContainer ) 
-
-   METHOD First()    INLINE ( ::cText( Space( 20 ) ) )
-   METHOD Last()     INLINE ( ::cText( Replicate( "Z", 20 ) ) )
-
-END CLASS 
-
-//--------------------------------------------------------------------------//
-
-METHOD Build( hBuilder ) CLASS GetPropiedad
-
-   local idGet       := if( hhaskey( hBuilder, "idGet" ),      hBuilder[ "idGet"     ], nil )
-   local idSay       := if( hhaskey( hBuilder, "idSay"),       hBuilder[ "idSay"     ], nil )
-   local idText      := if( hhaskey( hBuilder, "idText"),      hBuilder[ "idText"    ], nil )
-   local oContainer  := if( hhaskey( hBuilder, "oContainer"),  hBuilder[ "oContainer"], nil )
-
-   ::New( idGet, idSay, idText, oContainer )
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD New( idGet, idSay, idText, oContainer ) CLASS GetPropiedad
-
-   ::Super:New( idGet, idSay, idText, oContainer )
-
-   ::bValid       := {|| cProp( ::oGetControl, ::oSayControl ) }
-   ::bHelp        := {|| brwProp( ::oGetControl, ::oSayControl ) }
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-
-CLASS GetPropiedadActual FROM GetPropiedad
-
-   DATA cPropiedad
-
-   METHOD New( idGet, idSay, idText, oContainer )
-
-   METHOD PropiedadActual( cPropiedad )   INLINE ( iif( cPropiedad != nil, ::cPropiedad := cPropiedad, ::cPropiedad ) )
-
-END CLASS 
-
-//--------------------------------------------------------------------------//
-
-METHOD New( idGet, idSay, idText, oContainer ) CLASS GetPropiedadActual
-
-   ::Super:New( idGet, idSay, idText, oContainer )
-
-   ::bValid       := {|| cProp( ::oGetControl, ::oSayControl ) }
-   ::bHelp        := {|| brwPropiedadActual( ::oGetControl, ::oSayControl, ::PropiedadActual() ) }
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-
-CLASS GetGrupoProveedor FROM ComponentGetSay
-
-   METHOD New( idGet, idSay, idText, oContainer )
-
-   METHOD First()    INLINE ( ::cText( Space( 4 ) ) )
-   METHOD Last()     INLINE ( ::cText( Replicate( "Z", 4 ) ) )
-
-   METHOD Top()      INLINE ( ::cText( D():GetObject( "GruposProveedores", ::oContainer:nView ):Top() ) )
-   METHOD Bottom()   INLINE ( ::cText( D():GetObject( "GruposProveedores", ::oContainer:nView ):Bottom() ) )
-
-END CLASS 
-
-METHOD New( idGet, idSay, idText, oContainer ) CLASS GetGrupoProveedor
-
-   ::Super:New( idGet, idSay, idText, oContainer )
-
-   ::uGetValue    := Space( 4 )
-
-   ::bValid       := {|| D():GruposProveedores( ::oContainer:nView ):Existe( ::oGetControl, ::oSayControl, "cNomGrp", .t., .t., "0" ) }
-   ::bHelp        := {|| D():GruposProveedores( ::oContainer:nView ):Buscar( ::oGetControl ) }
-
-Return ( Self )
-
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
@@ -2397,7 +1063,7 @@ METHOD New( idBrowse, oContainer ) CLASS BrowseRangos
    ::idBrowse     := idBrowse
    ::oContainer   := oContainer
    
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2479,7 +1145,7 @@ METHOD Resource() CLASS BrowseRangos
       :Cargo         := 0.25
    end with
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -2489,7 +1155,7 @@ METHOD ResizeColumns() CLASS BrowseRangos
 
    aeval( ::oBrwRango:aCols, {|o, n, oCol| o:nWidth := ::oBrwRango:nWidth * o:Cargo } )
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -2497,480 +1163,19 @@ Return .t.
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS BrowseProperties
+FUNCTION aGetFont()
 
-   DATA idBrowse
-   DATA oContainer
-   
-   DATA nView
+   local hDC      := GetDC( 0 )
+   local aFonts   := GetFontNames( hDC )
+   ReleaseDC( 0, hDC )
 
-   DATA oBrwProperties
-   DATA aPropertiesTable
-
-   DATA oGetUnidades
-
-   CLASSDATA oInstance
-
-   METHOD New()
-   METHOD newInstance( idBrowse, oContainer, nView )  INLINE ( ::endInstance(), ::GetInstance( idBrowse, oContainer, nView ), ::oInstance ) 
-   METHOD getInstance( idBrowse, oContainer, nView )  INLINE ( if( empty( ::oInstance ), ::oInstance := ::New( idBrowse, oContainer, nView ), ::oInstance ) ) 
-   METHOD endInstance()                               INLINE ( if( !empty( ::oInstance ), ::oInstance := nil, ), nil ) 
-
-   METHOD Resource()
-   METHOD buildPropertiesTable()
-   METHOD setPropertiesTableToBrowse()
-
-   METHOD bGenerateEditText( n )
-   METHOD bGenerateEditValue( n )
-   METHOD bGenerateRGBValue( n )   
-
-   METHOD bPostEditProperties()
-   METHOD nTotalProperties()
-
-   METHOD Hide()                                      INLINE ( ::setCargo(), ::oBrwProperties:Hide() )
-   METHOD setCargo( uValue )                          INLINE ( ::oBrwProperties:Cargo := uValue ) 
-   METHOD Cargo                                       INLINE ( ::oBrwProperties:Cargo )
-   METHOD setBindingUnidades( oGetUnidades )          INLINE ( ::oGetUnidades := oGetUnidades )
-
-   METHOD setPropertiesUnits()
-   METHOD cleanPropertiesUnits()
-
-END CLASS 
-
-//---------------------------------------------------------------------------//
-
-METHOD New( idBrowse, oContainer, nView ) CLASS BrowseProperties
-
-   ::idBrowse     := idBrowse
-   ::oContainer   := oContainer
-   ::nView        := nView
-
-   ::Resource()
-   
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Resource() CLASS BrowseProperties
-
-   ::oBrwProperties                 := IXBrowse():New( ::oContainer )
-
-   ::oBrwProperties:nDataType       := DATATYPE_ARRAY
-
-   ::oBrwProperties:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrwProperties:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-   ::oBrwProperties:lHScroll        := .t.
-   ::oBrwProperties:lVScroll        := .t.
-
-   ::oBrwProperties:nMarqueeStyle   := 3
-   ::oBrwProperties:lRecordSelector := .f.
-   ::oBrwProperties:lFastEdit       := .t.
-   ::oBrwProperties:nFreeze         := 1
-   ::oBrwProperties:lFooter         := .f.
-
-   ::oBrwProperties:SetArray( {}, .f., 0, .f. )
-
-   ::oBrwProperties:CreateFromResource( ::idBrowse )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD buildPropertiesTable( idArticulo, idPrimeraPropiedad, idSegundaPropiedad, nPrecioCosto ) CLASS BrowseProperties
-
-   local n
-   local a
-   local o
-   local nRow                    := 1
-   local nCol                    := 1
-   local nTotalRow               := 0
-   local nTotalCol               := 0
-   local hValorPropiedad
-   local aHeadersTable           := {}
-   local aSizesTable             := {}
-   local aJustifyTable           := {}
-   local aPropiedadesArticulo1   
-   local aPropiedadesArticulo2   
-
-   ::aPropertiesTable            := {}
-
-   aPropiedadesArticulo1         := aPropiedadesArticulo1( idArticulo, ::nView ) 
-   nTotalRow                     := len( aPropiedadesArticulo1 )
-   if nTotalRow != 0
-      aPropiedadesArticulo2      := aPropiedadesArticulo2( idArticulo, ::nView ) 
-   else 
-      aPropiedadesArticulo1      := aPropiedadesGeneral( idPrimeraPropiedad, ::nView )
-      nTotalRow                  := len( aPropiedadesArticulo1 )
-      if nTotalRow != 0
-         aPropiedadesArticulo2   := aPropiedadesGeneral( idSegundaPropiedad, ::nView )
-      else
-         Return nil
-      end if 
-   end if
-
-   // Montamos los array con las propiedades-----------------------------------
-
-   if len( aPropiedadesArticulo2 ) == 0
-      nTotalCol                  := 2
+   if empty( aFonts )
+      msgStop( "Error getting font names" )
    else
-      nTotalCol                  := len( aPropiedadesArticulo2 ) + 1
-   end if
+      aSort( aFonts,,, { |x, y| upper( x ) < upper( y ) } )
+   endif
 
-   ::aPropertiesTable            := array( nTotalRow, nTotalCol )
-
-   if ( D():Propiedades( ::nView ) )->( dbSeek( idPrimeraPropiedad ) )
-      aadd( aHeadersTable, ( D():Propiedades( ::nView ) )->cDesPro )
-      aadd( aSizesTable,   60 )
-      aadd( aJustifyTable, .f. )
-   end if
-
-   for each hValorPropiedad in aPropiedadesArticulo1
-
-      ::aPropertiesTable[ nRow, nCol ]                        := TPropertiesItems():New()
-      ::aPropertiesTable[ nRow, nCol ]:cCodigo                := idArticulo
-      ::aPropertiesTable[ nRow, nCol ]:cHead                  := hValorPropiedad[ "TipoPropiedad" ]
-      ::aPropertiesTable[ nRow, nCol ]:cText                  := hValorPropiedad[ "CabeceraPropiedad" ]
-      ::aPropertiesTable[ nRow, nCol ]:cCodigoPropiedad1      := hValorPropiedad[ "CodigoPropiedad" ]
-      ::aPropertiesTable[ nRow, nCol ]:cValorPropiedad1       := hValorPropiedad[ "ValorPropiedad" ]
-      ::aPropertiesTable[ nRow, nCol ]:lColor                 := hValorPropiedad[ "ColorPropiedad" ]
-      ::aPropertiesTable[ nRow, nCol ]:nRgb                   := hValorPropiedad[ "RgbPropiedad" ]
-
-      nRow++
-
-   next
-
-   if !empty( idSegundaPropiedad ) .and. !empty( aPropiedadesArticulo2 )
-
-      for each hValorPropiedad in aPropiedadesArticulo2
-
-         nCol++
-
-         aadd( aHeadersTable, hValorPropiedad[ "CabeceraPropiedad" ] )
-         aadd( aSizesTable,   60 )
-         aadd( aJustifyTable, .t. )
-
-         for n := 1 to nTotalRow
-            ::aPropertiesTable[ n, nCol ]                     := TPropertiesItems():New()
-            ::aPropertiesTable[ n, nCol ]:Value               := 0
-            ::aPropertiesTable[ n, nCol ]:cHead               := hValorPropiedad[ "CabeceraPropiedad" ]
-            ::aPropertiesTable[ n, nCol ]:cCodigo             := idArticulo
-            ::aPropertiesTable[ n, nCol ]:cCodigoPropiedad1   := ::aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
-            ::aPropertiesTable[ n, nCol ]:cValorPropiedad1    := ::aPropertiesTable[ n, 1 ]:cValorPropiedad1
-            ::aPropertiesTable[ n, nCol ]:cCodigoPropiedad2   := hValorPropiedad[ "CodigoPropiedad" ]
-            ::aPropertiesTable[ n, nCol ]:cValorPropiedad2    := hValorPropiedad[ "ValorPropiedad" ]
-            ::aPropertiesTable[ n, nCol ]:lColor              := ::aPropertiesTable[ n, 1 ]:lColor
-            ::aPropertiesTable[ n, nCol ]:nRgb                := ::aPropertiesTable[ n, 1 ]:nRgb
-         next
-
-      next
-
-   else
-
-      nCol++
-
-      aAdd( aHeadersTable, "Unidades" )
-      aAdd( aSizesTable,   60 )
-      aAdd( aJustifyTable, .t. )
-
-      for n := 1 to nTotalRow
-         ::aPropertiesTable[ n, nCol ]                        := TPropertiesItems():New()
-         ::aPropertiesTable[ n, nCol ]:Value                  := 0
-         ::aPropertiesTable[ n, nCol ]:cHead                  := "Unidades"
-         ::aPropertiesTable[ n, nCol ]:cCodigo                := idArticulo
-         ::aPropertiesTable[ n, nCol ]:cCodigoPropiedad1      := ::aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
-         ::aPropertiesTable[ n, nCol ]:cValorPropiedad1       := ::aPropertiesTable[ n, 1 ]:cValorPropiedad1
-         ::aPropertiesTable[ n, nCol ]:cCodigoPropiedad2      := Space( 20 )
-         ::aPropertiesTable[ n, nCol ]:cValorPropiedad2       := Space( 40 )
-         ::aPropertiesTable[ n, nCol ]:lColor                 := ::aPropertiesTable[ n, 1 ]:lColor
-         ::aPropertiesTable[ n, nCol ]:nRgb                   := ::aPropertiesTable[ n, 1 ]:nRgb
-      next
-
-   end if
-
-   // Calculo de precios----------------------------------------------------------
-
-   for each a in ::aPropertiesTable
-      for each o in a
-         if IsObject( o )
-            o:PrecioCompra( nPrecioCosto, D():ArticuloPrecioPropiedades( ::nView ) )
-         end if
-      next
-   next
-
-   // Asignamos la informacion al browse---------------------------------------
-
-   ::setPropertiesTableToBrowse()
-
-Return ( Self )
+RETURN ( aFonts )
 
 //---------------------------------------------------------------------------//
-
-METHOD setPropertiesTableToBrowse( aPropertiesTable ) CLASS BrowseProperties
-
-   local n
-
-   if empty( ::oBrwProperties )
-      Return ( Self )
-   end if 
-
-   if !empty( aPropertiesTable )
-      ::aPropertiesTable      := aPropertiesTable
-   end if 
-
-   ::oBrwProperties:Hide()
-
-   ::oBrwProperties:aCols     := {}
-   ::oBrwProperties:Cargo     := ::aPropertiesTable   
-   ::oBrwProperties:nFreeze   := 1
-   
-   ::oBrwProperties:SetArray( ::aPropertiesTable, .f., 0, .f. )
-
-   for n := 1 to len( ::aPropertiesTable[ 1 ] )
-
-      if isNil( ::aPropertiesTable[ ::oBrwProperties:nArrayAt, n ]:Value )
-
-         // Columna del titulo de la propiedad---------------------------------
-
-         with object ( ::oBrwProperties:AddCol() )
-            :Adjust()
-            :cHeader          := ::aPropertiesTable[ ::oBrwProperties:nArrayAt, n ]:getHead()
-            :bEditValue       := ::bGenerateEditText( n )
-            :nWidth           := 100
-         end with
-
-         // Columna del color de la propiedad----------------------------------
-
-         if ::aPropertiesTable[ ::oBrwProperties:nArrayAt, n ]:lColor
-
-            with object ( ::oBrwProperties:AddCol() )
-               :Adjust()
-               :cHeader       := "Color"
-               :nWidth        := 40
-               :bStrData      := {|| "" }
-               :nWidth        := 16
-               :bClrStd       := ::bGenerateRGBValue( n )
-               :bClrSel       := ::bGenerateRGBValue( n )
-               :bClrSelFocus  := ::bGenerateRGBValue( n )
-            end with
-            
-            ::oBrwProperties:nFreeze++
-            // ::oBrwProperties:nColOffset++
-
-         end if 
-
-      else
-
-         with object ( ::oBrwProperties:AddCol() )
-            :Adjust()
-            :cHeader          := ::aPropertiesTable[ ::oBrwProperties:nArrayAt, n ]:getHead()
-            :bEditValue       := ::bGenerateEditValue( n )
-            :cEditPicture     := MasUnd()
-            :nWidth           := 50
-            :setAlign( AL_RIGHT )
-            :nEditType        := EDIT_GET
-            :nHeadStrAlign    := AL_RIGHT
-            :bOnPostEdit      := {| oCol, xVal, nKey | ::bPostEditProperties( oCol, xVal, nKey ) }
-            :nFootStyle       := :defStyle( AL_RIGHT, .t. )               
-            :Cargo            := n
-         end with
-
-      end if
-
-   next
-      
-   ::oBrwProperties:aCols[ 1 ]:Hide()
-   ::oBrwProperties:Adjust()
-
-   ::oBrwProperties:nColSel         := ::oBrwProperties:nFreeze + 1
-
-   ::oBrwProperties:nRowHeight      := 20
-   ::oBrwProperties:nHeaderHeight   := 20
-
-   ::oBrwProperties:Show()
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD bGenerateEditText( n ) CLASS BrowseProperties
-
-Return ( {|| ::aPropertiesTable[ ::oBrwProperties:nArrayAt, n ]:cText } )
-
-//--------------------------------------------------------------------------//
-
-METHOD bGenerateEditValue( n ) CLASS BrowseProperties
-
-Return ( {|| ::aPropertiesTable[ ::oBrwProperties:nArrayAt, n ]:Value } )
-
-//--------------------------------------------------------------------------//
-
-METHOD bGenerateRGBValue( n ) CLASS BrowseProperties
-
-Return ( {|| { nRGB( 0, 0, 0), ::aPropertiesTable[ ::oBrwProperties:nArrayAt, n ]:nRgb } } )
-
-//--------------------------------------------------------------------------//
-
-METHOD bPostEditProperties( oCol, xVal, nKey ) CLASS BrowseProperties
-
-   ::oBrwProperties:Cargo[ ::oBrwProperties:nArrayAt, oCol:Cargo ]:Value := xVal 
-
-   ::nTotalProperties()
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD nTotalProperties() CLASS BrowseProperties
-
-   local aRow  
-   local aCol
-   local nTot     := 0
-
-   for each aRow in ::aPropertiesTable
-      for each aCol in aRow
-         if isNum( aCol:Value )
-            nTot  += aCol:Value 
-         end if
-      next
-   next 
-
-   if !empty( ::oGetUnidades )
-      ::oGetUnidades:cText( nTot )
-   end if 
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD setPropertiesUnits( idArticulo, idCodigoPrimeraPropiedad, idCodigoSegundaPropiedad, idValorPrimeraPropiedad, idValorSegundaPropiedad, nUnidades )
-
-   local oColumn
-   local aProperty
-
-   for each aProperty in ::aPropertiesTable
-      for each oColumn in aProperty
-         if rtrim( oColumn:cCodigo )            == rtrim( idArticulo ) .and. ;
-            rtrim( oColumn:cCodigoPropiedad1 )  == rtrim( idCodigoPrimeraPropiedad ) .and. ;
-            rtrim( oColumn:cCodigoPropiedad2 )  == rtrim( idCodigoSegundaPropiedad ) .and. ;
-            rtrim( oColumn:cValorPropiedad1 )   == rtrim( idValorPrimeraPropiedad ) .and. ;
-            rtrim( oColumn:cValorPropiedad2 )   == rtrim( idValorSegundaPropiedad )
-
-            oColumn:Value  := nUnidades
-
-         end if
-      next
-   next 
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD cleanPropertiesUnits()
-
-   local oColumn
-   local aProperty
-
-   for each aProperty in ::aPropertiesTable
-      for each oColumn in aProperty
-         oColumn:Value  := 0
-      next
-   next 
-
-   ::nTotalProperties()
-
-   ::oBrwProperties:Refresh()
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS DialogBrowseProperties
-
-   DATA oSender
-
-   DATA oContainer
-   DATA oBrwProperties
-   DATA oGetUnidades
-
-   CLASSDATA oInstance
-
-   METHOD New( nView )
-   METHOD newInstance( nView )         INLINE ( ::endInstance(), ::GetInstance( nView ), ::oInstance ) 
-   METHOD getInstance( nView )         INLINE ( if( empty( ::oInstance ), ::oInstance := ::New( nView ), ::oInstance ) ) 
-   METHOD endInstance()                INLINE ( if( !empty( ::oInstance ), ::oInstance := nil, ) ) 
-
-   METHOD getPropertiesTable()         INLINE ( ::oSender:aPropertiesTable )
-
-   METHOD Dialog()
-   METHOD StartDialog() 
-   METHOD SaveDialog( oDlg )           INLINE ( oDlg:end( IDOK ) )
-
-END CLASS 
-
-//---------------------------------------------------------------------------//
-
-METHOD New( oSender ) CLASS DialogBrowseProperties
-
-   ::oSender   := oSender
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Dialog() CLASS DialogBrowseProperties
-
-   local n
-   local oDlg
-   local oGetUnidades
-   local nGetUnidades   := 0
-
-   DEFINE DIALOG oDlg RESOURCE "Propiedades"
-   
-      ::oBrwProperties  := BrowseProperties():new( 100, oDlg )
-
-      ::oBrwProperties:setPropertiesTableToBrowse( ::getPropertiesTable() )
-
-      REDEFINE GET      oGetUnidades ;
-         VAR            nGetUnidades ;
-         ID             110 ;
-         WHEN           ( .f. ) ;
-         PICTURE        masUnd() ;
-         OF             oDlg 
-
-      ::oBrwProperties:setBindingUnidades( oGetUnidades )
-
-      REDEFINE BUTTON;
-         ID             IDOK ;
-         OF             oDlg ;
-         ACTION         ( ::SaveDialog( oDlg ) )
-
-      REDEFINE BUTTON ;
-         ID             IDCANCEL ;
-         OF             oDlg ;
-         CANCEL ;
-         ACTION         ( oDlg:end() )
-
-      oDlg:bStart       := {|| ::StartDialog() }
-
-      oDlg:AddFastKey( VK_F5, {|| ::SaveDialog( oDlg ) } )
-
-   ACTIVATE DIALOG oDlg CENTER
-
-Return ( oDlg:nResult == IDOK )
-
-//--------------------------------------------------------------------------//
-
-METHOD StartDialog() CLASS DialogBrowseProperties
-
-   ::oBrwProperties:setPropertiesTableToBrowse( ::getPropertiesTable() )
-
-   ::oBrwProperties:nTotalProperties()
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
 

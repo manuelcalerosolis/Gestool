@@ -29,8 +29,7 @@ END CLASS
 METHOD getId( tabla, serie )
 
    local cSentence   := "SELECT id FROM " + ::getTableName()               + space( 1 ) + ;
-                           "WHERE empresa = " + toSQLString( cCodEmp() )   + space( 1 ) + ;
-                              "AND tabla = " + toSQLString( tabla )        + space( 1 ) + ;
+                           "WHERE tabla = " + toSQLString( tabla )         + space( 1 ) + ;
                               "AND serie = " + toSQLString( serie )        + space( 1 ) + ;
                            "LIMIT 1"                                         
    local aSelect     := getSQLDataBase():selectFetchHash( cSentence )
@@ -46,8 +45,7 @@ RETURN ( 0 )
 METHOD getValue( tabla, serie, default )
 
    local cSentence   := "SELECT value FROM " + ::getTableName()            + space( 1 ) + ;
-                           "WHERE empresa = " + toSQLString( cCodEmp() )   + space( 1 ) + ;
-                              "AND tabla = " + toSQLString( tabla )        + space( 1 ) + ;
+                           "WHERE tabla = " + toSQLString( tabla )         + space( 1 ) + ;
                               "AND serie = " + toSQLString( serie )        + space( 1 ) + ;
                            "LIMIT 1"                                         
    local aSelect     := getSQLDataBase():selectFetchHash( cSentence )
@@ -67,8 +65,7 @@ METHOD setValue( tabla, serie, value )
    local cSentence
 
    cSentence         := "SELECT id FROM " + ::getTableName()               + space( 1 ) + ;
-                           "WHERE empresa = " + toSQLString( cCodEmp() )   + space( 1 ) + ;
-                              "AND tabla = " + toSQLString( tabla )        + space( 1 ) + ;
+                           "WHERE tabla = " + toSQLString( tabla )         + space( 1 ) + ;
                               "AND serie = " + toSQLString( serie )        + space( 1 ) + ;
                            "LIMIT 1"                                         
    
@@ -77,13 +74,11 @@ METHOD setValue( tabla, serie, value )
    if empty( aSelect )
 
       cSentence      := "INSERT INTO " + ::getTableName()                  + space( 1 )   + ;
-                        "( empresa,"                                       + space( 1 )   + ;
-                           "tabla,"                                        + space( 1 )   + ;
+                        "( tabla,"                                        + space( 1 )   + ;
                            "serie,"                                        + space( 1 )   + ;
                            "value )"                                       + space( 1 )   + ;
                         "VALUES"                                           + space( 1 )   + ;
-                        "( " + toSQLString( cCodEmp() ) + ","              + space( 1 )   + ;
-                           toSQLString( tabla ) + ","                      + space( 1 )   + ;
+                        "( " + toSQLString( tabla ) + ","                      + space( 1 )   + ;
                            toSQLString( serie ) + ","                      + space( 1 )   + ;
                            toSQLString( value ) + " )" 
 
