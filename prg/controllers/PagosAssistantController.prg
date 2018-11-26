@@ -15,8 +15,12 @@ CLASS PagosAssistantController FROM SQLNavigatorController
 
    METHOD insertRecibosPago()
 
+   METHOD getImportePagar( nImporte )
+
    //Construcciones tardias----------------------------------------------------
 
+   METHOD getBrowseView()        INLINE( ::oController:getBrowseView() )
+   
    METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := PagosAssistantView():New( self ), ), ::oDialogView )
    
    METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLPagosModel():New( self ), ), ::oModel )
@@ -43,8 +47,6 @@ METHOD New( oController ) CLASS PagosAssistantController
 
    ::getCuentasBancariasController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
    ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentence() } )
-
-   //::getRecibosController():setModel( SQLRecibosAssistantModel():New( ::getRecibosController() ) ) 
 
    ::getClientesController():getSelector():setEvent( 'validated', {|| ::getRecibos() } )
 
@@ -89,11 +91,22 @@ RETURN ( nil )
 
 METHOD insertRecibosPago() CLASS PagosAssistantController
 
- msgalert("insertando en la tabla pivot")
-
    ::getRecibosPagosController():getModel():insertPagoRecibo( ::getModelBuffer( "uuid" ), ::getModelBuffer('cliente_codigo') )
-msgalert( "modificanco importe" )
+
    ::getRecibosPagosController():getModel():updateImporte( ::getModelBuffer( "uuid" ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getImportePagar( nImporte )
+
+   if nImporte < 0
+      msgstop("Debe introducir un importe válido")
+      RETURN ( nil )
+   end if
+
+   ::getRecibosPagosController():calculatePayment( nImporte )
 
 RETURN ( nil )
 
@@ -124,7 +137,7 @@ END CLASS
 METHOD Activate() CLASS PagosAssistantView
 
    DEFINE DIALOG  ::oDialog;
-      RESOURCE    "CONTAINER_MEDIUM_EXTENDED"; 
+      RESOURCE    "TRANSACION_COMERCIAL"; 
       TITLE       ::LblTitle() + "cobro"
 
    REDEFINE BITMAP ::oBitmap ;
@@ -147,8 +160,8 @@ METHOD Activate() CLASS PagosAssistantView
       PROMPT      "&General" ;
       DIALOGS     "PAGO_ASISTENTE_SQL" 
 
-   ::oController:getClientesController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "cliente_codigo" ] ) )
-   ::oController:getClientesController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getClientesController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "cliente_codigo" ] ) )
+   ::oController:getClientesController():getSelector():Build( { "idGet" => 100, "idLink" => 102, "idText" => 101, "idNif" => 103, "idDireccion" => 104, "idCodigoPostal" => 105, "idPoblacion" => 106, "idProvincia" => 107, "idTelefono" => 108, "oDialog" => ::oFolder:aDialogs[1] } )
    ::oController:getClientesController():getSelector():setValid( {|| ::oController:validate( "cliente_codigo" ) } )
 
    ::getController():getRecibosPagosController():Activate( 500, ::oFolder:aDialogs[1] )
@@ -156,10 +169,10 @@ METHOD Activate() CLASS PagosAssistantView
    REDEFINE GET   ::oImporte ;
       VAR         ::nImporte ;
       ID          110 ;
+      VALID       ( ::oController:getImportePagar( ::nImporte ) );
       WHEN        ( ::oController:isNotZoomMode() ) ;
       PICTURE     "@E 999999999999.99";
       OF          ::oFolder:aDialogs[1]
-
 
    REDEFINE GET   ::oController:getModel():hBuffer[ "fecha" ] ;
       ID          120 ;
