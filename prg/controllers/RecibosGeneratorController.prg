@@ -148,7 +148,7 @@ RETURN ( nil )
 
 METHOD getTotalDocumento() CLASS RecibosGeneratorController
 
-RETURN ( ::hTotalDocument  := FacturasClientesRepository():getTotal( ::getController():getuuid() ) )
+RETURN ( ::hTotalDocument  := FacturasClientesRepository():getTotalesDocument( ::getController():getuuid() ) )
 
 //---------------------------------------------------------------------------//
 
