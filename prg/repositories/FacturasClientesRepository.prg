@@ -7,33 +7,26 @@ CLASS FacturasClientesRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLFacturasClientesModel():getTableName() ) 
 
-   METHOD getSQLFunctions()               INLINE ( {  ::dropFunctionTotalWhereUuid(),;
-                                                      ::createFunctionTotalWhereUuid(),;
-                                                      ::dropFunctionSummaryTotalWhereUuid(),;
+   METHOD getSQLFunctions()               INLINE ( {  ::dropFunctionSummaryTotalWhereUuid(),;
                                                       ::createFunctionSummaryTotalWhereUuid(),;
                                                       ::createTriggerDeleted() } )
 
-   METHOD createFunctionTotalWhereUuid()
-      METHOD dropFunctionTotalWhereUuid()
-      METHOD callTotalWhereUuid( uuidFacturaCliente )
-   
    METHOD createFunctionSummaryTotalWhereUuid()
       METHOD dropFunctionSummaryTotalWhereUuid()
       METHOD selectSummaryTotalWhereUuid( uuidFacturaCliente, aplicarRecargo )
    
    METHOD getSentenceDescuento() 
    METHOD getSentenceLineas() 
+   METHOD getSentenceTotales()
+   METHOD getSentenceRecargoEquivalenciaAsSelect()
+   METHOD getSentenceRecargoEquivalenciaAsParam()
 
    METHOD createTriggerDeleted()
 
-   METHOD getSentenceTotals( uuidFactura ) 
-
-   METHOD getSentenceTotal( uuidFactura )
-
    METHOD getSentenceTotalDocument( uuidFactura )
+   METHOD getSentenceTotalesDocument( uuidFactura )
 
-   METHOD getTotal( uuidFactura )         
-   METHOD getTotals( uuidFactura )        INLINE ( ::getDatabase():selectFetchHash( ::getSentenceTotals( uuidFactura ) ) )
+   METHOD getTotalesDocument( uuidFactura )         
 
    //Envio de emails-----------------------------------------------------------
 
@@ -43,75 +36,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceTotals( uuidFactura ) CLASS FacturasClientesRepository
+METHOD getSentenceTotalesDocument( uuidFacturaCliente ) CLASS FacturasClientesRepository
 
    local cSql
 
    TEXT INTO cSql
 
    SELECT
-      ROUND( lineas.importeBruto, 2 ) AS importeBruto,
-
-      ( @descuento   := (  SELECT 
-                              SUM( facturas_clientes_descuentos.descuento ) 
-                           FROM %3$s AS facturas_clientes_descuentos 
-                              WHERE facturas_clientes_descuentos.parent_uuid = %4$s 
-                                 AND facturas_clientes_descuentos.deleted_at = 0 ) ) AS totalDescuentosPie,
-
-      ( @totalDescuento := IF( @descuento IS NULL, 0, ROUND( ( ( lineas.importeBruto - lineas.descuentoTotalLinea ) * @descuento / 100 ) ) ) + lineas.descuentoTotalLinea ) AS totalDescuento,
-
-      ( @aplicarRecargo := (  SELECT 
-                                 recargo_equivalencia
-                              FROM %1$s AS facturas_clientes 
-                                 WHERE facturas_clientes.uuid = %4$s ) ) AS aplicarRecargo,
-
-      ( @neto := ROUND( lineas.importeBruto - @totalDescuento, 2 ) ) AS importeNeto,
-      
-      lineas.iva AS porcentajeIVA, 
-
-      lineas.recargo_equivalencia AS recargoEquivalencia,
-
-      ( @iva := IF( lineas.iva IS NULL, 0, ROUND( @neto * lineas.iva / 100, 2 ) ) ) AS importeIVA,  
-
-      ( @recargo := IF( @aplicarRecargo = 0 OR lineas.recargo_equivalencia IS NULL, 0, ROUND( @neto * lineas.recargo_equivalencia / 100, 2 ) ) ) AS importeRecargo,
-
-      ROUND( ( @neto + @iva + @recargo ), 2 ) AS importeTotal
-      
-   FROM 
-      (
-      SELECT 
-         ROUND( SUM( ( @importeLinea := ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * ( facturas_clientes_lineas.articulo_precio + IFNULL( facturas_clientes_lineas.incremento_precio, 0 ) ) ) ) ), 2 ) AS importeBruto,
-         ROUND( SUM( @descuentoLinea := IF( facturas_clientes_lineas.descuento IS NULL, 0, ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * facturas_clientes_lineas.articulo_precio ) ) *  IFNULL(facturas_clientes_lineas.descuento,0) / 100 ) ,2 ) AS descuentoTotalLinea,
-         facturas_clientes_lineas.iva,
-         facturas_clientes_lineas.recargo_equivalencia,
-         facturas_clientes_lineas.descuento,
-         facturas_clientes_lineas.parent_uuid
-      FROM %2$s AS facturas_clientes_lineas 
-         WHERE facturas_clientes_lineas.parent_uuid = %4$s
-            AND facturas_clientes_lineas.deleted_at = 0 
-         GROUP BY facturas_clientes_lineas.iva
-      ) lineas
-
-   ENDTEXT
-
-   cSql  := hb_strformat(  cSql,;
-                           ::getTableName(),;
-                           SQLFacturasClientesLineasModel():getTableName(),;
-                           SQLFacturasClientesDescuentosModel():getTableName(),;
-                           quoted( uuidFactura ) )
-
-RETURN ( cSql ) 
-
-//---------------------------------------------------------------------------//
-
-METHOD getSentenceTotal( uuidFactura ) CLASS FacturasClientesRepository
-
-   local cSql
-
-   TEXT INTO cSql
-
-   SELECT
-      totales.parentUuid AS parentUuid,
       SUM( totales.importeBruto ) AS totalBruto,
       SUM( totales.importeNeto ) AS totalNeto,
       SUM( totales.importeIVA ) AS totalIVA,
@@ -123,13 +54,13 @@ METHOD getSentenceTotal( uuidFactura ) CLASS FacturasClientesRepository
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getSentenceTotals( uuidFactura ) )
+   cSql  := hb_strformat( cSql, ::getSentenceTotales( uuidFacturaCliente ) )
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceTotalDocument( uuidFactura ) CLASS FacturasClientesRepository
+METHOD getSentenceTotalDocument( uuidFacturaCliente ) CLASS FacturasClientesRepository
 
    local cSql
 
@@ -142,21 +73,23 @@ METHOD getSentenceTotalDocument( uuidFactura ) CLASS FacturasClientesRepository
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getSentenceTotals( uuidFactura ) )
+   cSql  := hb_strformat( cSql, ::getSentenceTotales( uuidFacturaCliente ) )
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTotal( uuidFactura )
+METHOD getTotalesDocument( uuidFacturaCliente )
 
-   local aTotal   := ::getDatabase():selectFetchHash( ::getSentenceTotal( uuidFactura ) ) 
+   local aTotal   
+
+   aTotal   := ::getDatabase():selectFetchHash( ::getSentenceTotalesDocument( uuidFacturaCliente ) ) 
 
 RETURN ( if( !empty( aTotal ), atail( aTotal ), nil ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getClientMailWhereFacturaUuid( uuidFactura ) CLASS FacturasClientesRepository
+METHOD getClientMailWhereFacturaUuid( uuidFacturaCliente ) CLASS FacturasClientesRepository
 
    local cSQL
 
@@ -176,7 +109,7 @@ METHOD getClientMailWhereFacturaUuid( uuidFactura ) CLASS FacturasClientesReposi
 
       ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLDireccionesModel():getTableName(), quoted(uuidFactura) ) 
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLDireccionesModel():getTableName(), quoted( uuidFacturaCliente ) ) 
 
 RETURN ( getSQLDatabase():getValue( cSql, "" ) ) 
 
@@ -224,92 +157,6 @@ RETURN ( cSql )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD createFunctionTotalWhereUuid() CLASS FacturasClientesRepository
-
-   local cSql
-
-   TEXT INTO cSql
-
-      CREATE DEFINER=`root`@`localhost` PROCEDURE %1$s ( IN `uuid_factura_cliente` CHAR(40) ) 
-
-      LANGUAGE SQL 
-      NOT DETERMINISTIC 
-      CONTAINS SQL 
-      SQL SECURITY DEFINER 
-      COMMENT '' 
-   
-      BEGIN 
-
-      SELECT
-         ROUND( lineas.importeBruto, 2 ) AS importeBruto,
-
-         ( @descuento   := (  SELECT 
-                                 SUM( facturas_clientes_descuentos.descuento ) 
-                                    FROM %4$s AS facturas_clientes_descuentos 
-                                    WHERE facturas_clientes_descuentos.parent_uuid = uuid_factura_cliente 
-                                       AND facturas_clientes_descuentos.deleted_at = 0 ) ) AS totalDescuentosPie,
-
-         ( @totalDescuento := IF( @descuento IS NULL, 0, ROUND( ( ( lineas.importeBruto - lineas.descuentoTotalLinea ) * @descuento / 100 ) ) ) + lineas.descuentoTotalLinea ) AS totalDescuento,
-
-         ( @aplicarRecargo := (  SELECT recargo_equivalencia
-                                    FROM %2$s AS facturas_clientes 
-                                    WHERE facturas_clientes.uuid = uuid_factura_cliente ) ) AS aplicarRecargo,
-
-         ( @neto := ROUND( lineas.importeBruto - @totalDescuento, 2 ) ) AS importeNeto,
-         
-         lineas.iva AS porcentajeIVA, 
-
-         lineas.recargo_equivalencia AS recargoEquivalencia,
-
-         ( @iva := IF( lineas.iva IS NULL, 0, ROUND( @neto * lineas.iva / 100, 2 ) ) ) AS importeIVA,  
-
-         ( @recargo := IF( @aplicarRecargo = 0 OR lineas.recargo_equivalencia IS NULL, 0, ROUND( @neto * lineas.recargo_equivalencia / 100, 2 ) ) ) AS importeRecargo,
-
-         ROUND( ( @neto + @iva + @recargo ), 2 ) AS importeTotal
-         
-      FROM 
-         (
-         SELECT 
-           ROUND( SUM(  
-               ( @importeLinea := ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * ( facturas_clientes_lineas.articulo_precio + IFNULL( facturas_clientes_lineas.incremento_precio, 0 ) ) ) ) ), 2 ) AS importeBruto,
-           ROUND( SUM( 
-               @descuentoLinea := IF( facturas_clientes_lineas.descuento IS NULL, 0, ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * facturas_clientes_lineas.articulo_precio ) ) *  IFNULL(facturas_clientes_lineas.descuento,0) / 100 ) ,2 ) AS descuentoTotalLinea,
-               facturas_clientes_lineas.iva,
-               facturas_clientes_lineas.recargo_equivalencia,
-               facturas_clientes_lineas.descuento,
-               facturas_clientes_lineas.parent_uuid
-            FROM %3$s AS facturas_clientes_lineas 
-               WHERE facturas_clientes_lineas.parent_uuid = uuid_factura_cliente
-                  AND facturas_clientes_lineas.deleted_at = 0 
-               GROUP BY facturas_clientes_lineas.iva
-         ) lineas;
-      
-      END 
-
-   ENDTEXT
-
-   cSql  := hb_strformat(  cSql,;
-                           Company():getTableName( 'FacturaClienteTotalWhereUuid' ),;
-                           ::getTableName(),;
-                           SQLFacturasClientesLineasModel():getTableName(),;
-                           SQLFacturasClientesDescuentosModel():getTableName() )
-
-RETURN ( cSql )
-
-//---------------------------------------------------------------------------//
-
-METHOD dropFunctionTotalWhereUuid() CLASS FacturasClientesRepository  
-
-RETURN ( "DROP PROCEDURE IF EXISTS " + Company():getTableName( 'FacturaClienteTotalWhereUuid' ) + ";" )
-
-//---------------------------------------------------------------------------//
-
-METHOD callTotalWhereUuid( uuidFacturaCliente ) CLASS FacturasClientesRepository
-
-RETURN ( getSQLDatabase():Exec( "CALL " + Company():getTableName( 'FacturaClienteTotalWhereUuid' ) + "( " + quoted( uuidFacturaCliente ) + " )" ) )
-
-//---------------------------------------------------------------------------//
-
 METHOD createFunctionSummaryTotalWhereUuid() CLASS FacturasClientesRepository
 
    local cSql
@@ -317,7 +164,7 @@ METHOD createFunctionSummaryTotalWhereUuid() CLASS FacturasClientesRepository
    TEXT INTO cSql
 
    CREATE DEFINER=`root`@`localhost` 
-   FUNCTION %1$s ( `uuid_factura_cliente` CHAR( 40 ), `recargo_equivalencia` TINYINT( 1 ) )
+   FUNCTION %1$s ( `uuid_factura_cliente` CHAR( 40 ), `recargo_equivalencia_factura_cliente` TINYINT( 1 ) )
    RETURNS DECIMAL(19,6)
    LANGUAGE SQL
    NOT DETERMINISTIC
@@ -327,40 +174,21 @@ METHOD createFunctionSummaryTotalWhereUuid() CLASS FacturasClientesRepository
 
    BEGIN
 
-      DECLARE importeTotal DECIMAL( 19,6 );
+      DECLARE summaryTotal DECIMAL( 19,6 );
 
       SELECT
-         SUM( totales.importeTotal ) INTO importeTotal
+         SUM( totales.importeTotal ) INTO summaryTotal
 
       FROM 
-         ( 
-         SELECT
-            ROUND( lineas.importeBruto, 2 ) AS importeBruto,
-            ( @descuento := ( %4$s ) ) AS totalDescuentosPie,
-            ( @totalDescuento := IF( @descuento IS NULL, 0, ROUND( ( ( lineas.importeBruto - lineas.descuentoTotalLinea ) * @descuento / 100 ) ) ) + lineas.descuentoTotalLinea ) AS totalDescuento,
-            ( @neto := ROUND( lineas.importeBruto - @totalDescuento, 2 ) ) AS importeNeto,
-            lineas.iva AS porcentajeIVA, 
-            lineas.recargo_equivalencia AS recargoEquivalencia,
-            ( @iva := IF( lineas.iva IS NULL, 0, ROUND( @neto * lineas.iva / 100, 2 ) ) ) AS importeIVA,  
-            ( @recargo := IF( recargo_equivalencia = 0 OR lineas.recargo_equivalencia IS NULL, 0, ROUND( @neto * lineas.recargo_equivalencia / 100, 2 ) ) ) AS importeRecargo,
-            ROUND( ( @neto + @iva + @recargo ), 2 ) AS importeTotal
-         FROM 
-            ( %5$s ) AS lineas
-
-         ) AS totales;
+         ( %2$s ) AS totales;
       
-      RETURN importeTotal;
+      RETURN summaryTotal;
 
    END
 
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql,;
-                           Company():getTableName( 'FacturaClienteSummaryTotalWhereUuid' ),;
-                           SQLFacturasClientesLineasModel():getTableName(),;
-                           SQLFacturasClientesDescuentosModel():getTableName(),;
-                           ::getSentenceDescuento(),;
-                           ::getSentenceLineas() )
+   cSql  := hb_strformat( cSql, Company():getTableName( 'FacturaClienteSummaryTotalWhereUuid' ), ::getSentenceTotales() )
 
 RETURN ( cSql )
 
@@ -374,11 +202,11 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'FacturaClienteSum
 
 METHOD selectSummaryTotalWhereUuid( uuidFacturaCliente, aplicarRecargo ) CLASS FacturasClientesRepository
 
-RETURN ( getSQLDatabase():Exec( "CALL " + Company():getTableName( 'FacturaClienteSummaryTotalWhereUuid' ) + "( " + quoted( uuidFacturaCliente ) + ", " + toSqlString( aplicarRecargo ) + " )" ) )
+RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaClienteSummaryTotalWhereUuid' ) + "( " + quoted( uuidFacturaCliente ) + ", " + toSqlString( aplicarRecargo ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceDescuento() CLASS FacturasClientesRepository 
+METHOD getSentenceDescuento( uuidFacturaCliente ) CLASS FacturasClientesRepository 
 
    local cSql
 
@@ -386,18 +214,17 @@ METHOD getSentenceDescuento() CLASS FacturasClientesRepository
       SELECT 
          SUM( facturas_clientes_descuentos.descuento ) 
       FROM %1$s AS facturas_clientes_descuentos 
-         WHERE facturas_clientes_descuentos.parent_uuid = uuid_factura_cliente 
+         WHERE facturas_clientes_descuentos.parent_uuid = %2$s 
             AND facturas_clientes_descuentos.deleted_at = 0 
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql,;
-                           SQLFacturasClientesDescuentosModel():getTableName() )
+   cSql  := hb_strformat( cSql, SQLFacturasClientesDescuentosModel():getTableName(), if( empty( uuidFacturaCliente ), 'uuid_factura_cliente', quoted( uuidFacturaCliente ) ) )
 
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceLineas() CLASS FacturasClientesRepository 
+METHOD getSentenceLineas( uuidFacturaCliente ) CLASS FacturasClientesRepository 
 
    local cSql
 
@@ -410,16 +237,68 @@ METHOD getSentenceLineas() CLASS FacturasClientesRepository
          facturas_clientes_lineas.descuento,
          facturas_clientes_lineas.parent_uuid
       FROM %1$s AS facturas_clientes_lineas 
-         WHERE facturas_clientes_lineas.parent_uuid = uuid_factura_cliente
+         WHERE facturas_clientes_lineas.parent_uuid = %2$s
             AND facturas_clientes_lineas.deleted_at = 0 
          GROUP BY facturas_clientes_lineas.iva
-
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql,;
-                           SQLFacturasClientesLineasModel():getTableName() )
+   cSql  := hb_strformat( cSql, SQLFacturasClientesLineasModel():getTableName(), if( empty( uuidFacturaCliente ), 'uuid_factura_cliente', quoted( uuidFacturaCliente ) ) )
 
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD getSentenceTotales( uuidFacturaCliente ) CLASS FacturasClientesRepository 
+
+   local cSql
+
+   TEXT INTO cSql
+      SELECT
+         ROUND( lineas.importeBruto, 2 ) AS importeBruto,
+         ( @descuento := ( %1$s ) ) AS totalDescuentosPie,
+         ( @totalDescuento := IF( @descuento IS NULL, 0, ROUND( ( ( lineas.importeBruto - lineas.descuentoTotalLinea ) * @descuento / 100 ) ) ) + lineas.descuentoTotalLinea ) AS totalDescuento,
+         ( @neto := ROUND( lineas.importeBruto - @totalDescuento, 2 ) ) AS importeNeto,
+         lineas.iva AS porcentajeIVA, 
+         lineas.recargo_equivalencia AS recargoEquivalencia,
+         ( @iva := IF( lineas.iva IS NULL, 0, ROUND( @neto * lineas.iva / 100, 2 ) ) ) AS importeIVA,  
+         %3$s, 
+         ROUND( ( @neto + @iva + @recargo ), 2 ) AS importeTotal
+      FROM 
+         ( %2$s ) AS lineas
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getSentenceDescuento( uuidFacturaCliente ), ::getSentenceLineas( uuidFacturaCliente ), if( empty( uuidFacturaCliente ), ::getSentenceRecargoEquivalenciaAsParam(), ::getSentenceRecargoEquivalenciaAsSelect( uuidFacturaCliente ) ) )
+
+RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceRecargoEquivalenciaAsSelect( uuidFacturaCliente ) CLASS FacturasClientesRepository 
+
+   local cSql
+
+   TEXT INTO cSql
+      ( @aplicarRecargo := (  SELECT 
+                                 recargo_equivalencia
+                              FROM %1$s AS facturas_clientes 
+                                 WHERE facturas_clientes.uuid = %2$s ) ) AS aplicarRecargo,
+      ( @recargo := IF( @aplicarRecargo = 0 OR lineas.recargo_equivalencia IS NULL, 0, ROUND( @neto * lineas.recargo_equivalencia / 100, 2 ) ) ) AS importeRecargo
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidFacturaCliente ) )
+
+RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceRecargoEquivalenciaAsParam() CLASS FacturasClientesRepository 
+
+   local cSql
+
+   TEXT INTO cSql
+      ( @recargo := IF( recargo_equivalencia_factura_cliente = 0 OR lineas.recargo_equivalencia IS NULL, 0, ROUND( @neto * lineas.recargo_equivalencia / 100, 2 ) ) ) AS importeRecargo
+   ENDTEXT
+
+RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//

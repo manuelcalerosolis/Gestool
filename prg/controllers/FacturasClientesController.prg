@@ -409,7 +409,7 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
 
    DEFAULT uuidFactura  := ::getUuid()
 
-   hTotal               := ::getRepository():getTotal( uuidFactura )
+   hTotal               := ::getRepository():getTotalesDocument( uuidFactura )
 
    if empty( hTotal )
       RETURN ( nil )
