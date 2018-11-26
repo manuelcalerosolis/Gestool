@@ -24,7 +24,7 @@ CLASS FacturasClientesRepository FROM SQLBaseRepository
    METHOD getSentenceDescuento() 
    METHOD getSentenceLineas() 
    METHOD getSentenceTotales()
-   METHOD getSentenceRecargoEquivalencia()
+   METHOD getSentenceRecargoEquivalenciaAsSelect()
    METHOD getSentenceRecargoEquivalenciaAsParam()
 
    METHOD createTriggerDeleted()
@@ -404,9 +404,11 @@ RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceTotales() CLASS FacturasClientesRepository 
+METHOD getSentenceTotales( lRecargoEquivalenciaAsSelect ) CLASS FacturasClientesRepository 
 
    local cSql
+
+   DEFAULT lRecargoEquivalenciaAsSelect  := .f.
 
    TEXT INTO cSql
       SELECT
@@ -423,13 +425,13 @@ METHOD getSentenceTotales() CLASS FacturasClientesRepository
          ( %2$s ) AS lineas
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getSentenceDescuento(), ::getSentenceLineas(), ::getSentenceRecargoEquivalenciaAsParam() )
+   cSql  := hb_strformat( cSql, ::getSentenceDescuento(), ::getSentenceLineas(), if( lRecargoEquivalenciaAsSelect, ::getSentenceRecargoEquivalenciaAsSelect(), ::getSentenceRecargoEquivalenciaAsParam() ) )
 
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceRecargoEquivalencia( uuidFacturaCliente ) CLASS FacturasClientesRepository 
+METHOD getSentenceRecargoEquivalenciaAsSelect() CLASS FacturasClientesRepository 
 
    local cSql
 
