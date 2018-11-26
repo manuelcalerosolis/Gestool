@@ -2,68 +2,16 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 [Setup]
-AppName=Gestool 2016
-AppVerName=Gestool 2016
+AppName=Gestool SQL
+AppVerName=Gestool SQL
 AppPublisher=Gestool 
 AppPublisherURL=http://www.gestool.es
 AppSupportURL=http://www.gestool.es
 AppUpdatesURL=http://www.gestool.es
 DefaultDirName={pf}\Gestool
-DefaultGroupName=Gestool 2016
+DefaultGroupName=Gestool SQL
 AllowNoIcons=yes
 OutputDir=c:\fw195\gestool\iss\exe\
-
-#ifdef InstalacionLite
-  DisableWelcomePage=yes
-  DisableDirPage=yes
-  DisableProgramGroupPage=yes
-  DisableReadyMemo=yes
-  DisableReadyPage=yes
-  DisableStartupPrompt=yes
-  DisableFinishedPage=yes
-
-  OutputBaseFilename=GestoolInstalacionLite
-#endif
-
-#ifdef InstalacionStandard
-  DisableWelcomePage=yes
-  DisableDirPage=yes
-  DisableProgramGroupPage=yes
-  DisableReadyMemo=yes
-  DisableReadyPage=yes
-  DisableStartupPrompt=yes
-  DisableFinishedPage=yes
-
-  OutputBaseFilename=GestoolInstalacionStandard
-#endif
-
-#ifdef InstalacionProfesional
-  DisableWelcomePage=yes
-  DisableDirPage=yes
-  DisableProgramGroupPage=yes
-  DisableReadyMemo=yes
-  DisableReadyPage=yes
-  DisableStartupPrompt=yes
-  DisableFinishedPage=yes
-  
-  OutputBaseFilename=GestoolInstalacionProfesional
-#endif
-
-#ifdef InstalacionPrestashop
-  DisableWelcomePage=yes
-  DisableDirPage=yes
-  DisableProgramGroupPage=yes
-  DisableReadyMemo=yes
-  DisableReadyPage=yes
-  DisableStartupPrompt=yes
-  DisableFinishedPage=yes
-
-  OutputBaseFilename=GestoolInstalacionPrestashop
-#endif
-
-#ifdef Actualizacion
-  OutputBaseFilename=GestoolActualizacion
-#endif
 
 WizardImageFile=c:\fw195\gestool\bmp\WizardImage.bmp
 WizardSmallImageFile=c:\fw195\gestool\bmp\WizardSmallImage.bmp
@@ -93,24 +41,8 @@ Name: "{app}\Firma";    Permissions: everyone-full
 
 [Files]
 
-#ifdef InstalacionStandard
-Source: "c:\fw195\gestool\bin\stndrd.";             DestDir: "{app}"; Flags: ignoreversion
-#endif
-
-#ifdef InstalacionProfesional
-Source: "c:\fw195\gestool\bin\prfsnl.";             DestDir: "{app}"; Flags: ignoreversion
-#endif
-
-#ifdef InstalacionPrestashop
-Source: "c:\fw195\gestool\bin\scmmrc.";             DestDir: "{app}"; Flags: ignoreversion
-#endif
-
 Source: "c:\fw195\gestool\bin\gestool.exe";         DestDir: "{app}"; Flags: ignoreversion;
 Source: "c:\fw195\gestool\resource\gestool.ico";    DestDir: "{app}"; Flags: ignoreversion
-
-; Source: "c:\fw195\gestool\bin\rptapolo.exe";          DestDir: "{app}"; Flags: ignoreversion
-
-Source: "c:\fw195\gestool\bin\image2pdf stdcall.dll";  DestDir: "{app}"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\bin\libmysql.dll";           DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\freeImage.dll";          DestDir: "{app}"; Flags: ignoreversion
@@ -172,7 +104,6 @@ Source: "c:\fw195\gestool\actualiza\psion\*.*";       DestDir: "{app}\Psion";   
 ; Scripts
 
 Source: "c:\fw195\gestool\bin\harbour\harbour.exe";   DestDir: "{app}\Harbour";   Flags: ignoreversion;
-Source: "c:\fw195\gestool\bin\xharbour\harbour.exe";  DestDir: "{app}\XHarbour";  Flags: ignoreversion;
 Source: "c:\fw195\gestool\include\*.*";               DestDir: "{app}\Include";   Flags: ignoreversion onlyifdoesntexist
 
 ; Firma electronica
@@ -199,13 +130,13 @@ Source: "c:\fw195\gestool\client\client.exe";         DestDir: "{app}\Client";  
 Source: "c:\fw195\gestool\actualiza\chkemp.nil";      DestDir: "{app}";           Flags: ignoreversion
 
 [Icons]
-Name: "{group}\Gestool 2016";                         Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
-Name: "{group}\Gestool táctil 2016";                  Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
-Name: "{userdesktop}\Gestool 2016";                   Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
-Name: "{userdesktop}\Gestool táctil 2016";            Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
+Name: "{group}\Gestool SQL";                         Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
+Name: "{group}\Gestool táctil SQL";                  Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
+Name: "{userdesktop}\Gestool SQL";                   Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
+Name: "{userdesktop}\Gestool táctil SQL";            Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
 
 [Run]
-Filename: "{app}\Gestool.exe";                        Description: "Iniciar Gestool 2016"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\Gestool.exe";                        Description: "Iniciar Gestool SQL"; Flags: nowait postinstall skipifsilent
 
 [Code]
 
