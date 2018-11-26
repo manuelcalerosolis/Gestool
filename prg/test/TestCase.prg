@@ -15,7 +15,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TTestCase FROM TTest
+CLASS TestCase FROM Test
 
   METHOD run()
   METHOD setUp()          VIRTUAL
@@ -28,7 +28,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD run() CLASS TTestCase
+METHOD run() CLASS TestCase
   
   ::assert  := TAssert():new( ::oResult )
   

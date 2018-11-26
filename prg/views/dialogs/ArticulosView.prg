@@ -19,6 +19,8 @@ CLASS ArticulosView FROM SQLBaseView
 
    DATA oBtnAceptar
 
+   DATA oBtnCancelar
+
    DATA oTagsEver      
 
    DATA oComboPeriodoCaducidad
@@ -206,7 +208,7 @@ METHOD Activate() CLASS ArticulosView
 
    ::oBtnAceptar           := ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+   ::oBtnCancelar          := ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    if ::oController:isNotZoomMode() 
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }

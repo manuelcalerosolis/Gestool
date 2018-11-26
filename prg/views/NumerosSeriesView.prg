@@ -53,7 +53,7 @@ METHOD Activate()
       REDEFINE GET   ::oTotalUnidades ;
          VAR         ::nTotalUnidades ;
          ID          100 ;
-         PICTURE     MasUnd() ;
+         PICTURE     "@E 999,999,999.99" ;
          WHEN        .f. ;
          OF          ::oDialog
 

@@ -208,7 +208,6 @@ FUNCTION CreateMainWindow( oIconApp )
       MAXIMIZED ;
       ON PAINT                ( WndPaint( hDC, oWnd ) ); 
       ON RESIZE               ( WndResize( oWnd ) );
-      ON INIT                 ( lStartCheck() );
       VALID                   ( EndApp() ) 
 
    SysRefresh()
@@ -219,7 +218,7 @@ RETURN nil
 
 FUNCTION CreateMainSQLWindow()
 
-   Test()
+   LoggedTest()
 
    // Carga o no la imagen de fondo--------------------------------------------
 
@@ -287,122 +286,8 @@ RETURN ( oMenu )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION lStartCheck()
+PROCEDURE loggedTest()
 
-   CursorWait()
-
-   // Chequeamos los cambios de versiones--------------------------------------
-
-   oMsgText( 'Chequeando versión de empresa' )
-
-   ChkAllEmp()
-
-   // Controla de acceso a la aplicación---------------------------------------
-
-   oMsgText( 'Control de acceso a la aplicación' )
-
-   ControlAplicacion()
-
-   // Titulo de la aplicacion con la empresa y version-------------------------
- 
-   SetTituloEmpresa()
-
-   // Opciones de inicio-------------------------------------------------------
-
-   oMsgText( 'Selección del cajón' )
-
-   SelectCajon()
-
-   oMsgText( 'Selección del la caja' )
-
-   if uFieldEmpresa( "lSelCaj", .f. )
-      SelectCajas()
-   end if
-
-   oMsgText( 'Selección del almacen' )
-
-   if uFieldEmpresa( "lSelAlm", .f. )
-      SelectAlmacen()
-   end if
-
-   // Lanzamos para los documentos automáticos---------------------------------
-
-   oMsgText( 'Facturas automáticas' )
-
-   lFacturasAutomaticas()
-
-   // Aviso de pedidos pendientes de procesar----------------------------------
-
-   oMsgText( 'Pedidos por la web' )
-
-   lPedidosWeb()
-
-   // Evento de inicio de aplicacion-------------------------------------------
-
-   oMsgText( 'Comprobando scripts de inicio' )
-   
-   runEventScript( "IniciarAplicacion" )
-
-   // Colocamos la sesion actual-----------------------------------------------
-
-   chkTurno()
- 
-   if !empty( oMsgSesion() )
-      oMsgSesion():setText( "Sesión : " + Transform( cCurSesion(), "######" ) )
-   end if
-
-   // Colocamos los avisos pa las notas----------------------------------------
-
-   oMsgText( 'Servicios de timers' )
-   
-   initServices()
-
-   // Navegación---------------------------------------------------------------
-
-   oMsgText( 'Abriendo panel de navegación' )
-
-   // if !empty( oWnd() ) .and. !( os_iswtsclient() )
-      // openWebBrowser()
-   // end if
-
-   // Texto limpio y a trabajar------------------------------------------------
-
-   oMsgText()
-
-   CursorWe()
-
-   Test() 
-
-RETURN ( .t. ) 
-
-//---------------------------------------------------------------------------//
-
-PROCEDURE Test()
-
-   // hbunit_test()
-/*
-   local oOle
-   local cRet
-   local cXml  := getXML()
-
-   oOle := CreateObject( "Microsoft.XMLDOM" )
-
-
-   oOle:Open( "GET", "http://ps.local/api/languages?ws_key=449K7Y8PZTPPVBIFCSMCPDVYLZNK9J9B", .f. )
-   // oOle:SetRequestHeader( "Content-Type", "application/x-www-form-urlencoded")
-   // oOle:SetRequestHeader( "Content-Length", len( cXml ) )
-   oOle:SetRequestHeader( "Output-Format", "JSON" )
-   oOle:Send()
-
-   ? oOle:Status
-
-   ? oOle:ResponseText
-
-   hb_jsonDecode( oOle:ResponseText, @hJson )   
-
-   ? valtype( hJson )
-   ? hb_valtoexp( hJson )
-*/
 RETURN 
 
 //----------------------------------------------------------------------------//

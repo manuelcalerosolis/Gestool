@@ -41,52 +41,36 @@ Name: "{app}\Firma";    Permissions: everyone-full
 
 [Files]
 
-Source: "c:\fw195\gestool\bin\gestool.exe";         DestDir: "{app}"; Flags: ignoreversion;
-Source: "c:\fw195\gestool\resource\gestool.ico";    DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\gestool.exe";           DestDir: "{app}"; Flags: ignoreversion;
+Source: "c:\fw195\gestool\resource\gestool.ico";      DestDir: "{app}"; Flags: ignoreversion
 
-Source: "c:\fw195\gestool\bin\libmysql.dll";           DestDir: "{app}"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bin\freeImage.dll";          DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\libmysql.dll";          DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\freeImage.dll";         DestDir: "{app}"; Flags: ignoreversion
 
-Source: "c:\fw195\gestool\bin\frsysth.dll";            DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\frsysth.dll";           DestDir: "{app}"; Flags: ignoreversion
 
-Source: "c:\fw195\gestool\bin\ace32.dll";              DestDir: "{app}"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bin\aicu32.dll";             DestDir: "{app}"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bin\axcws32.dll";            DestDir: "{app}"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bin\adsloc32.dll";           DestDir: "{app}"; Flags: ignoreversion
-
-Source: "c:\fw195\gestool\bin\libcurl.dll";             DestDir: "{app}"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bin\libcrypto.dll";           DestDir: "{app}"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bin\libeay32.dll";            DestDir: "{app}"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bin\libssl.dll";              DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\libcurl.dll";           DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\libcrypto.dll";         DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\libeay32.dll";          DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\libssl.dll";            DestDir: "{app}"; Flags: ignoreversion
                                                         
-Source: "c:\fw195\gestool\bin\mscomctl.ocx";           DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\gestool\bin\richtx32.ocx";           DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\gestool\bin\comct332.ocx";           DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\gestool\bin\mscomctl.ocx";          DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\gestool\bin\richtx32.ocx";          DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\gestool\bin\comct332.ocx";          DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
 
-Source: "c:\fw195\gestool\bin\jmail.dll";              DestDir: "{app}"; Flags: ignoreversion regserver
+Source: "c:\fw195\gestool\bin\jmail.dll";             DestDir: "{app}"; Flags: ignoreversion regserver
 
-Source: "c:\fw195\gestool\bin\aeatfact.dll";           DestDir: "{app}"; Flags: ignoreversion regserver
+Source: "c:\fw195\gestool\bin\aeatfact.dll";          DestDir: "{app}"; Flags: ignoreversion regserver
 
-Source: "c:\fw195\gestool\bin\adslocal.cfg";           DestDir: "{app}"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bin\ads.ini";                DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\adslocal.cfg";          DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\ads.ini";               DestDir: "{app}"; Flags: ignoreversion
 
-Source: "c:\fw195\gestool\bin\ansi.chr";               DestDir: "{app}"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bin\extend.chr";             DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\ansi.chr";              DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\extend.chr";            DestDir: "{app}"; Flags: ignoreversion
 
-Source: "c:\fw195\gestool\bmp\gestoollogo.bmp";        DestDir: "{app}\Bmp"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bmp\gestoolpro.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bmp\gestoollite.bmp";        DestDir: "{app}\Bmp"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bmp\gestoolstandard.bmp";    DestDir: "{app}\Bmp"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bmp\gc_gestoolprestashop.bmp";  DestDir: "{app}\Bmp"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bmp\gestoollogo.bmp";       DestDir: "{app}\Bmp"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\bmp\noimage.bmp";           DestDir: "{app}\Bmp"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bmp\imgfaccli.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bmp\imgalbcli.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bmp\imgpedcli.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bmp\imgprecli.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bmp\imgfacprv.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bmp\imgalbprv.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bmp\imgpedprv.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\actualiza\chkemp.nil";      DestDir: "{app}";           Flags: ignoreversion
 Source: "c:\fw195\gestool\actualiza\reporting\*.*";   DestDir: "{app}\Reporting"; Flags: ignoreversion onlyifdoesntexist recursesubdirs createallsubdirs
@@ -95,11 +79,6 @@ Source: "c:\fw195\gestool\actualiza\out\*.*";         DestDir: "{app}\Out";     
 Source: "c:\fw195\gestool\actualiza\log\*.*";         DestDir: "{app}\Log";       Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\gestool\actualiza\html\*.*";        DestDir: "{app}\Html";      Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\gestool\actualiza\tmp\*.*";         DestDir: "{app}\Tmp";       Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\gestool\actualiza\emptmp\*.*";      DestDir: "{app}\Emptmp";    Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\gestool\actualiza\safe\*.*";        DestDir: "{app}\Safe";      Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\gestool\actualiza\emp00vg\*.*";     DestDir: "{app}\Emp00VG";   Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\gestool\actualiza\datos\*.*";       DestDir: "{app}\Datos";     Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\gestool\actualiza\psion\*.*";       DestDir: "{app}\Psion";     Flags: ignoreversion onlyifdoesntexist
 
 ; Scripts
 
@@ -108,7 +87,7 @@ Source: "c:\fw195\gestool\include\*.*";               DestDir: "{app}\Include"; 
 
 ; Firma electronica
 
-Source: "c:\fw195\gestool\bin\firma\*.*";             DestDir: "{app}\Firma";   Flags: ignoreversion onlyifdoesntexist recursesubdirs createallsubdirs
+; Source: "c:\fw195\gestool\bin\firma\*.*";             DestDir: "{app}\Firma";   Flags: ignoreversion onlyifdoesntexist recursesubdirs createallsubdirs
 
 ; Fuentes
 
@@ -119,7 +98,7 @@ Source: "c:\fw195\gestool\font\segoeuib.ttf";         DestDir: "{fonts}";       
 
 ; Fichero de imagenes
 
-Source: "c:\fw195\gestool\actualiza\imagen\*.*";      DestDir: "{app}\Imagen";    Flags: ignoreversion onlyifdoesntexist recursesubdirs
+; Source: "c:\fw195\gestool\actualiza\imagen\*.*";      DestDir: "{app}\Imagen";    Flags: ignoreversion onlyifdoesntexist recursesubdirs
 
 ; Asistencia remota
 
@@ -130,10 +109,8 @@ Source: "c:\fw195\gestool\client\client.exe";         DestDir: "{app}\Client";  
 Source: "c:\fw195\gestool\actualiza\chkemp.nil";      DestDir: "{app}";           Flags: ignoreversion
 
 [Icons]
-Name: "{group}\Gestool SQL";                         Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
-Name: "{group}\Gestool táctil SQL";                  Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
-Name: "{userdesktop}\Gestool SQL";                   Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
-Name: "{userdesktop}\Gestool táctil SQL";            Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
+Name: "{group}\Gestool SQL";                          Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
+Name: "{userdesktop}\Gestool SQL";                    Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
 
 [Run]
 Filename: "{app}\Gestool.exe";                        Description: "Iniciar Gestool SQL"; Flags: nowait postinstall skipifsilent

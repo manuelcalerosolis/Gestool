@@ -5,6 +5,8 @@
 
 CLASS PagosAssistantController FROM SQLNavigatorController
 
+   DATA nImporte                       INIT 0
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -19,13 +21,13 @@ CLASS PagosAssistantController FROM SQLNavigatorController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()        INLINE( ::oController:getBrowseView() )
+   METHOD getBrowseView()              INLINE( ::oController:getBrowseView() )
    
-   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := PagosAssistantView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := PagosAssistantView():New( self ), ), ::oDialogView )
    
-   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLPagosModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE( if( empty( ::oModel ), ::oModel := SQLPagosModel():New( self ), ), ::oModel )
    
-   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := PagosValidator():New( self  ), ), ::oValidator ) 
+   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := PagosValidator():New( self  ), ), ::oValidator ) 
 
 END CLASS
 
@@ -83,7 +85,6 @@ METHOD getRecibos() CLASS PagosAssistantController
    ::getRecibosPagosController():getRowset():buildPad( ::getRecibosPagosController():getModel():getGeneralSelect( ::getModelBuffer( "uuid" ), ::getModelBuffer( "cliente_codigo" ) ) )
 
    ::getRecibosPagosController():getBrowseView():Refresh()
-
       
 RETURN ( nil )
 
@@ -101,12 +102,19 @@ RETURN ( nil )
 
 METHOD getImportePagar( nImporte )
 
-   if nImporte < 0
-      msgstop("Debe introducir un importe válido")
-      RETURN ( nil )
-   end if
+   if nImporte != ::nImporte 
 
-   ::getRecibosPagosController():calculatePayment( nImporte )
+      ::nImporte  := nImporte
+
+      // vacio los importes de la tabla pivot
+
+      ::getRecibosPagosController():calculatePayment( nImporte )
+
+      ::getRecibosPagosController():getRowSet():Refresh()
+
+      ::getRecibosPagosController():getBrowseView():Refresh()
+   
+   end if 
 
 RETURN ( nil )
 

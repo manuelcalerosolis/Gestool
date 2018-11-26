@@ -11,8 +11,6 @@ RESOURCE             = 	.\resource
 BORLAND              = 	\bcc73
 BORLANDLIB           = 	\bcc73\lib
 
-IMG2PDFLIB           = 	\img2Pdf
-
 OBJ                  = 	obj1801
 
 SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Commands;.\Prg\Services;.\Prg\Http;.\Prg\Reports;.\Prg\Test;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
@@ -34,9 +32,6 @@ $(TARGETPRG)             										\
 SQLDatabase.prg 													\
 DialogExtend.prg           									\
 C5Lib.prg               										\
-RpreviewC3.prg 													\
-ReportC3.prg            										\
-RocolumnC3.prg          										\
 Treeitem.prg            										\
 TViewImg.prg            										\
 Printer.prg             										\
@@ -46,7 +41,6 @@ Timaglst.prg            										\
 GestoolFont.prg          										\
 TTagEver.prg 														\
 WebBrow.prg             										\
-TMySql.prg              										\
 TComercio.prg           										\
 TComercioCustomer.prg 											\
 TComercioBudget.prg 												\
@@ -67,7 +61,6 @@ Toleexcel.prg           										\
 Toleword.prg            										\
 Empresa.prg             										\
 EmpresasController.prg             							\
-Empcnf.prg              										\
 Reindexa.prg            										\
 TDataCenter.prg         										\
 D.prg                      									\
@@ -115,7 +108,6 @@ Agentes.prg             										\
 Genfcli.prg             										\
 Ruta.prg                										\
 Contaplu.prg            										\
-Ritems.prg              										\
 Tdet.prg                										\
 TDetailGuid.prg 													\
 Grpvent.prg             										\
@@ -143,10 +135,8 @@ Avifile.prg             										\
 Tpv.prg                 										\
 Tactil.prg              										\
 Cajero.prg              										\
-Cajas.prg               										\
 Entsal.prg              										\
 Usuario.prg             										\
-Tuser.prg               										\
 AuthManager.prg           										\
 BoxManager.prg    												\
 SessionManager.prg  												\
@@ -212,7 +202,6 @@ Tloitem.prg             										\
 Pdlabel.prg             										\
 Tinfcols.prg            										\
 Tbuscar.prg             										\
-Tmant.prg               										\
 TFiltercreator.prg 												\
 Tarray.prg              										\
 Webbtn.prg              										\
@@ -230,7 +219,6 @@ Tvisor.prg              										\
 Tgrpfam.prg             										\
 Tdiprvfa.prg            										\
 Ctarem.prg              										\
-Tmasdet.prg             										\
 TMasterDetailGuid.prg 											\
 Newimp.prg              										\
 Tcajon.prg              										\
@@ -240,8 +228,6 @@ InfoArticulo.prg        										\
 TAuditor.prg            										\
 Tur2ses.prg             										\
 Ttrans.prg              										\
-TCaptura.prg            										\
-TDetCaptura.prg         										\
 TICobAge.prg            													\
 Tchgtar.prg             													\
 Tchgdia.prg             													\
@@ -258,7 +244,6 @@ SQLXbrowse.prg            													\
 Autoseek.prg            													\
 Cccheck.prg             													\
 Digit.prg               													\
-Dlgtools.prg            													\
 Toolbar.prg             													\
 Medicon.prg             													\
 Utildbf.prg             													\
@@ -277,8 +262,6 @@ Tseanum.prg             													\
 WebService.prg               												\
 Trazalote.prg           													\
 Trazadocumento.prg      													\
-Pdreport.prg            													\
-RcolumnC3.prg           													\
 TInfAlm.prg             													\
 TInfGrp.prg             													\
 TInfFam.prg             													\
@@ -540,7 +523,6 @@ TpvRestaurante.prg      													\
 TpvPunto.prg            													\
 TpvMesa.prg             													\
 TpvSalon.prg            													\
-TScripts.prg            													\
 Cuaderno.prg 																	\
 SepaXml.prg                            								\
 FacturarLineasAlbaranes.prg 												\
@@ -594,7 +576,6 @@ GeneraFacturasClientes.prg             								\
 CamposExtra.prg                        								\
 DetCamposExtra.prg                     								\
 Lenguajes.prg                          								\
-CentroCoste.Prg                        								\
 Autoget.prg                            								\
 EstadoSat.prg                          								\
 TSpecialSearchArticulo.prg             								\
@@ -705,7 +686,6 @@ SQLRowSet.prg 																	\
 PdaEnvioRecepcionController.prg 											\
 PdaEnvioRecepcionView.prg 													\
 RelacionesEntidadesController.prg 										\
-CentroCosteModel.prg 														\
 TransportistasModel.prg 													\
 MdiChild.prg 																	\
 SQLComboSelector.prg 														\
@@ -753,7 +733,6 @@ TestAssert.prg                                                 \
 TestAllSuite.prg                                               \
 
 C               =       	            								\
-Img2pdf.c               	            								\
 Treeview.c 					               								\
 
 OBJS            =                                  				\
@@ -762,7 +741,6 @@ SQLDatabase.obj 																\
 GestoolFont.obj                                     				\
 TTagEver.obj 																	\
 WebBrow.obj                                        				\
-TMySql.obj                                         				\
 TComercio.obj                                      				\
 TComercioCustomer.obj 														\
 TComercioBudget.obj 															\
@@ -786,7 +764,6 @@ Toleexcel.obj                                      				\
 Toleword.obj                                       				\
 Empresa.obj                                        				\
 EmpresasController.obj                                			\
-Empcnf.obj                                         				\
 Reindexa.obj                                       				\
 TDataCenter.obj                                    				\
 D.obj                                              				\
@@ -835,7 +812,6 @@ Agentes.obj                                        				\
 Genfcli.obj                                        				\
 Ruta.obj                                           				\
 Contaplu.obj                                       				\
-Ritems.obj                                         				\
 Tdet.obj                                           				\
 TDetailGuid.obj 																\
 Grpvent.obj                                        				\
@@ -864,10 +840,8 @@ Tpv.obj                                            				\
 Tactil.obj                                         				\
 Trentfam.obj                                       				\
 Cajero.obj                                         				\
-Cajas.obj                                          				\
 Entsal.obj                                         				\
 Usuario.obj                                        				\
-Tuser.obj                                          				\
 AuthManager.obj                                          		\
 StoreManager.obj 																\
 DelegationManager.obj 														\
@@ -906,9 +880,6 @@ SQLPermisosOpcionesModel.obj												\
 PermisosController.obj														\
 SQLFiltrosValidator.obj 													\
 SQLFiltrosController.obj													\
-RpreviewC3.obj 																\
-ReportC3.obj                                       				\
-RocolumnC3.obj                                     				\
 Rfile.obj                                          				\
 Tdprnc3.obj                                        				\
 Animat.obj                                         				\
@@ -952,7 +923,6 @@ Pdlabel.obj                                        				\
 Tinforme.obj                                       				\
 Tinfcols.obj                                       				\
 Tbuscar.obj                                        				\
-Tmant.obj                                          				\
 TFiltercreator.obj 		                           				\
 Tarray.obj                                         				\
 Webbtn.obj                                         				\
@@ -973,7 +943,6 @@ Tgrpfam.obj                                        				\
 Tdiprvfa.obj            													\
 Tinftik.obj             													\
 Ctarem.obj              													\
-Tmasdet.obj             													\
 TMasterDetailGuid.obj 														\
 Tsysdata.obj            													\
 Newimp.obj              													\
@@ -986,8 +955,6 @@ Treeitem.obj            													\
 Tur2ses.obj             													\
 Allfamar.obj            													\
 Ttrans.obj              													\
-TCaptura.obj            													\
-TDetCaptura.obj         													\
 TICobAge.obj            													\
 Tchgtar.obj             													\
 Tchgdia.obj             													\
@@ -1004,7 +971,6 @@ SQLXbrowse.obj         														\
 Autoseek.obj            													\
 Cccheck.obj             													\
 Digit.obj               													\
-Dlgtools.obj            													\
 Toolbar.obj             													\
 Medicon.obj             													\
 Utildbf.obj             													\
@@ -1016,10 +982,7 @@ Tiremage.obj            													\
 Tchgcode.obj            													\
 Tgethlp.obj             													\
 TSayCheck.obj 																	\
-Pdreport.obj            													\
-RcolumnC3.obj           													\
 Metafi32.obj            													\
-Img2pdf.obj             													\
 Treeview.obj 																	\
 Ean.obj                 													\
 C5Lib.obj               													\
@@ -1275,7 +1238,6 @@ TpvRestaurante.obj      													\
 TpvPunto.obj            													\
 TpvMesa.obj             													\
 TpvSalon.obj            													\
-TScripts.obj            													\
 Cuaderno.obj                           								\
 SepaXml.obj                            								\
 FacturarLineasAlbaranes.obj            								\
@@ -1332,7 +1294,6 @@ CamposExtra.obj                        								\
 Lenguajes.obj                          								\
 DetCamposExtra.obj                     								\
 EstadoSat.obj                          								\
-Centrocoste.obj                        								\
 Autoget.obj                            								\
 TSpecialSearchArticulo.obj             								\
 TSpecialInfoArticulo.obj               								\
@@ -1431,7 +1392,6 @@ PdaEnvioRecepcionController.obj 											\
 PdaEnvioRecepcionView.obj 													\
 PedidosProveedoresLineasModel.obj 										\
 RelacionesEntidadesController.obj 										\
-CentroCosteModel.obj 														\
 MdiChild.obj 																	\
 TransportistasModel.obj 													\
 SQLComboSelector.obj 														\
@@ -1500,7 +1460,6 @@ $(OBJ)\SQLDatabase.obj                                      	+
 $(OBJ)\GestoolFont.obj                                       	+
 $(OBJ)\TTagEver.obj 															+
 $(OBJ)\WebBrow.obj                                          	+
-$(OBJ)\TMySql.obj                                           	+
 $(OBJ)\TComercio.obj                                        	+
 $(OBJ)\TComercioCustomer.obj                                	+
 $(OBJ)\TComercioBudget.obj                                		+
@@ -1523,7 +1482,6 @@ $(OBJ)\Toleexcel.obj                                        	+
 $(OBJ)\Toleword.obj                                         	+
 $(OBJ)\Empresa.obj                                          	+
 $(OBJ)\EmpresasController.obj                                  +
-$(OBJ)\Empcnf.obj                                           	+
 $(OBJ)\Reindexa.obj                                         	+
 $(OBJ)\TDataCenter.obj                                      	+
 $(OBJ)\D.obj                                                	+
@@ -1572,7 +1530,6 @@ $(OBJ)\Agentes.obj               										+
 $(OBJ)\Genfcli.obj               										+
 $(OBJ)\Ruta.obj                  										+
 $(OBJ)\Contaplu.obj              										+
-$(OBJ)\Ritems.obj                										+
 $(OBJ)\Trentfam.obj              										+
 $(OBJ)\Tdet.obj                  										+
 $(OBJ)\TDetailGuid.obj             										+
@@ -1601,10 +1558,8 @@ $(OBJ)\Avifile.obj               										+
 $(OBJ)\Tpv.obj                   										+
 $(OBJ)\Tactil.obj                										+
 $(OBJ)\Cajero.obj                										+
-$(OBJ)\Cajas.obj                 										+
 $(OBJ)\Entsal.obj                										+
 $(OBJ)\Usuario.obj               										+
-$(OBJ)\Tuser.obj                 										+
 $(OBJ)\AuthManager.obj             										+
 $(OBJ)\StoreManager.obj             									+
 $(OBJ)\DelegationManager.obj        									+
@@ -1661,7 +1616,6 @@ $(OBJ)\TInfGrp.obj              											+
 $(OBJ)\TInfFam.obj              											+
 $(OBJ)\TLstFam.obj              											+
 $(OBJ)\TInfTip.obj              											+
-$(OBJ)\Tinfgen.obj              											+
 $(OBJ)\TNewInfGen.obj           											+
 $(OBJ)\TFastReportInfGen.obj    											+
 $(OBJ)\TFastVentasArticulos.obj 											+
@@ -1682,7 +1636,6 @@ $(OBJ)\Pdlabel.obj              											+
 $(OBJ)\Tinforme.obj             											+
 $(OBJ)\Tinfcols.obj             											+
 $(OBJ)\Tbuscar.obj              											+
-$(OBJ)\Tmant.obj                											+
 $(OBJ)\TFiltercreator.obj 													+
 $(OBJ)\Tarray.obj               											+
 $(OBJ)\Webbtn.obj               											+
@@ -1700,7 +1653,6 @@ $(OBJ)\Tvisor.obj               											+
 $(OBJ)\Tgrpfam.obj              											+
 $(OBJ)\Tinftik.obj              											+
 $(OBJ)\Ctarem.obj               											+
-$(OBJ)\Tmasdet.obj              											+
 $(OBJ)\TMasterDetailGuid.obj    											+
 $(OBJ)\Tsysdata.obj             											+
 $(OBJ)\Newimp.obj               											+
@@ -1712,8 +1664,6 @@ $(OBJ)\TAuditor.obj             											+
 $(OBJ)\Treeitem.obj             											+
 $(OBJ)\Tur2ses.obj              											+
 $(OBJ)\Ttrans.obj               											+
-$(OBJ)\TCaptura.obj             											+
-$(OBJ)\TDetCaptura.obj          											+
 $(OBJ)\TICobAge.obj             											+
 $(OBJ)\Tchgtar.obj              											+
 $(OBJ)\Tchgdia.obj              											+
@@ -1730,7 +1680,6 @@ $(OBJ)\SQLXbrowse.obj             										+
 $(OBJ)\Autoseek.obj             											+
 $(OBJ)\Cccheck.obj              											+
 $(OBJ)\Digit.obj                											+
-$(OBJ)\Dlgtools.obj             											+
 $(OBJ)\Toolbar.obj              											+
 $(OBJ)\Medicon.obj              											+
 $(OBJ)\Utildbf.obj              											+
@@ -1742,10 +1691,6 @@ $(OBJ)\Tiremage.obj             											+
 $(OBJ)\Tchgcode.obj             											+
 $(OBJ)\Tgethlp.obj              											+
 $(OBJ)\TSayCheck.obj 														+
-$(OBJ)\Pdreport.obj             											+
-$(OBJ)\RpreviewC3.obj 														+
-$(OBJ)\ReportC3.obj             											+
-$(OBJ)\RcolumnC3.obj            											+
 $(OBJ)\Metafi32.obj             											+
 $(OBJ)\Tseanum.obj              											+
 $(OBJ)\WebService.obj                									+
@@ -1928,7 +1873,6 @@ $(OBJ)\TDetProduccion.obj       											+
 $(OBJ)\TDetMaterial.obj         											+
 $(OBJ)\TDetPersonal.obj         											+
 $(OBJ)\TDetMaquina.obj          											+
-$(OBJ)\Img2pdf.obj              											+
 $(OBJ)\Treeview.obj             											+
 $(OBJ)\ReportGallery.obj        											+
 $(OBJ)\PInfMateriales.obj       											+
@@ -1997,7 +1941,6 @@ $(OBJ)\TpvRestaurante.obj       											+
 $(OBJ)\TpvPunto.obj             											+
 $(OBJ)\TpvMesa.obj              											+
 $(OBJ)\TpvSalon.obj             											+
-$(OBJ)\TScripts.obj             											+
 $(OBJ)\Cuaderno.obj                          						+
 $(OBJ)\SepaXML.obj                           						+
 $(OBJ)\FacturarLineasAlbaranes.obj 	         						+
@@ -2056,7 +1999,6 @@ $(OBJ)\DocumentLines.obj                     						+
 $(OBJ)\DocumentBase.obj                      						+
 $(OBJ)\DocumentHeader.obj                    						+
 $(OBJ)\DocumentLine.obj                      						+
-$(OBJ)\CentroCoste.Obj                       						+
 $(OBJ)\TSpecialSearchArticulo.obj            						+
 $(OBJ)\TSpecialInfoArticulo.obj              						+
 $(OBJ)\TSpecialInfoCliente.obj               						+
@@ -2148,7 +2090,6 @@ $(OBJ)\PdaEnvioRecepcionController.obj 								+
 $(OBJ)\PdaEnvioRecepcionView.obj 										+
 $(OBJ)\PedidosProveedoresLineasModel.obj 							   +
 $(OBJ)\RelacionesEntidadesController.obj 							   +
-$(OBJ)\CentroCosteModel.obj 												+
 $(OBJ)\TransportistasModel.obj 											+
 $(OBJ)\MdiChild.obj 															+
 $(OBJ)\SQLComboSelector.obj 												+
@@ -2243,7 +2184,6 @@ $(HBLIB)\hbcurl.lib              										+
 $(HBLIB)\hbusrrdd.lib            										+
 $(HBLIB)\libcurl.lib             										+
 $(HBLIB)\hbcplr.lib            											+
-$(IMG2PDFLIB)\Image2pdf.lib      										+
 $(HBLIB)\b32\rddads.lib          										+
 $(HBLIB)\ace32.lib               										+
 $(BORLANDLIB)\cw32mt.lib         										+ 

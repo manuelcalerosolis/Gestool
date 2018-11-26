@@ -13,7 +13,7 @@
 
 #include "hbunit.ch"
 
-CLASS TTest
+CLASS Test
 
    METHOD new() CONSTRUCTOR
 
@@ -25,9 +25,9 @@ CLASS TTest
 
 ENDCLASS
 
-METHOD new() CLASS TTest
+METHOD new() CLASS Test
 
-   ::oResult   := TTestResult():new()
+   ::oResult   := TestResult():new()
    
 RETURN ( self )
 

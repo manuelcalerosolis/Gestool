@@ -1308,33 +1308,6 @@ RETURN ( cPatImg )
 RETURN ( cPatDoc )
 
 //---------------------------------------------------------------------------//
-
-
-Function cPathImageApplicationStorage()
-
-RETURN ( FullCurDir() + "Imagen\" )
-
-//---------------------------------------------------------------------------//
-
-Function cRelativeImageApplicationStorage()
-
-RETURN ( ".\Imagen\" )
-
-//---------------------------------------------------------------------------//
-
-Function cPathDocumentApplicationStorage()
-
-RETURN ( FullCurDir() + "Documento\" )
-
-//---------------------------------------------------------------------------//
-
-Function cRelativeDocumentApplicationStorage()
-
-RETURN ( ".\Documento\" )
-
-//---------------------------------------------------------------------------//
-
-
 /*
 Devuelve el numero de digitos de proveedores de la empresa activa--------------
 */

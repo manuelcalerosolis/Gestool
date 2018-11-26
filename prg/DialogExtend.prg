@@ -117,27 +117,6 @@ RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION setControlFastKey( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
-
-   local Self        := HB_QSelf()
-
-   if Empty( cDirectory ) 
-      RETURN ( nil )
-   end if
-  
-   Self:AddControlKeys(  VK_F2,    {|| runEventScript( cDirectory + "\F2", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-   Self:AddControlKeys(  VK_F3,    {|| runEventScript( cDirectory + "\F3", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-   Self:AddControlKeys(  VK_F4,    {|| runEventScript( cDirectory + "\F4", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-   Self:AddControlKeys(  VK_F5,    {|| runEventScript( cDirectory + "\F5", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-   Self:AddControlKeys(  VK_F6,    {|| runEventScript( cDirectory + "\F6", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-   Self:AddControlKeys(  VK_F7,    {|| runEventScript( cDirectory + "\F7", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-   Self:AddControlKeys(  VK_F8,    {|| runEventScript( cDirectory + "\F8", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-   Self:AddControlKeys(  VK_F9,    {|| runEventScript( cDirectory + "\F9", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-  
-RETURN ( nil )
-
-//----------------------------------------------------------------------------//
-
 STATIC FUNCTION DialogEvalValid() 
 
    local oControl
@@ -519,3 +498,40 @@ RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
+FUNCTION clp2xlnumpic( cPic, lEnglish )
+
+   local c 
+   local aPic 
+   local cFormat
+
+   DEFAULT lEnglish  := .f.
+
+   if cPic == nil
+      cFormat  := if( lEnglish, "#,##0", "#.##0" )
+   else
+      cPic     := strtran( cPic, "#", "9" )
+      aPic     := hb_atokens( cPic, " " )
+
+      cFormat  := ""
+      for each c in aPic
+         if Left( c, 1 ) != "@"
+            if "9" $ c
+               if Left( c, 1 ) == '$'
+                  cFormat  += '$'
+               endif
+               cFormat  += if( ",9" $ cPic, if( lEnglish, "#,##0", "#.##0" ), "0" )
+               if ".9" $ c
+                  cFormat  += if( lEnglish, ".", "," )
+                  cFormat  += StrTran( SubStr( c, At( ".", c ) + 1 ), "9", "0" )
+               endif
+               cFormat  += " "
+            else
+               cFormat  += ( '"' + c + '" ' )
+            endif
+         endif
+      next
+   endif
+
+RETURN trim( cFormat )
+
+//------------------------------------------------------------------//
