@@ -107,7 +107,7 @@ METHOD addColumns()
       :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'total_precio' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :cEditPicture        := cPinDiv()
+      :cEditPicture        := "@E 999,999,999.99"
    end with
 
    with object ( ::oBrowse:AddCol() )

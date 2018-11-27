@@ -3,7 +3,6 @@
 #include "Menu.ch" 
 #include "Font.ch"
 #include "Inkey.ch"
-#include "Ads.ch"
 #include "Xbrowse.ch"
 #include "dbInfo.ch" 
 #include "directry.ch"
@@ -33,18 +32,12 @@ PROCEDURE RddInit()
 
    REQUEST DBFCDX
    REQUEST DBFFPT
-   REQUEST ADS
 
    REQUEST RDLMYSQL 
 
    REQUEST OrdKeyCount
    REQUEST OrdKeyNo
    REQUEST OrdKeyGoto
-
-   REQUEST AdsKeyNo
-   REQUEST AdsKeyCount
-   REQUEST AdsGetRelKeyPos 
-   REQUEST AdsSetRelKeyPos
 
 RETURN
 
@@ -86,6 +79,8 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
    
    appDialogExtend() 
 
+   appCheckDirectory()
+
    xbrNumFormat( "E", .t. )
 
    // Administracion SQL-------------------------------------------------------
@@ -94,10 +89,6 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
       getSQLDatabase():ConnectWithoutDataBase()
 
-      // SQLGestoolMigrations():Run()
-
-      // SQLGestoolSeeders():Run()
-         
       if AccessController():New( .f. ):isLoginSuperAdmin()
          CreateAdminSQLWindow()
       end if

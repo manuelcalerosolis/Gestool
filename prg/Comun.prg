@@ -155,67 +155,6 @@ FUNCTION oWndBar() ; RETURN oWndBar
 
 //---------------------------------------------------------------------------//
 
-FUNCTION CreateMainWindow( oIconApp )
-
-   if !( lInitCheck() )
-      RETURN nil
-   end if 
-
-   // Carga o no la imagen de fondo--------------------------------------------
-
-   DEFINE WINDOW oWnd ;
-      FROM                    0, 0 TO 26, 82;
-      TITLE                   __GSTROTOR__ + space( 1 ) + __GSTVERSION__; 
-      MDI ;
-      COLORS                  Rgb( 0, 0, 0 ), Rgb( 231, 234, 238 ) ;
-      ICON                    oIconApp ;
-      MENU                    ( BuildMenu() )
-
-   // oWndBar                    := CreateAcceso( oWnd )
-   // oWndBar:CreateButtonBar( oWnd )
-
-   // Set the bar messages-----------------------------------------------------
-
-   oWnd:Cargo                 := appParamsMain()
-
-   oWnd:bKeyDown              := {| nKey | StdKey( nKey ) }  
-
-   // Mensajes-----------------------------------------------------------------
-
-   oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), oFontLittleTitle(), .f. )
-   oWnd:oMsgBar:lPaint3L      := .f.
-
-   oDlgProgress               := TMsgItem():New( oWnd:oMsgBar, "", 100, , , , .t., {|| hb_gcall( .t. ) } )
-
-   oWnd:oMsgBar:oDate         := TMsgItem():New( oWnd:oMsgBar, Dtoc( GetSysDate() ), oWnd:oMsgBar:GetWidth( dtoc( getsysdate() ) ) + 12, , , , .t., {|| SelSysDate() } )
-   oWnd:oMsgBar:oDate:lTimer  := .t.
-   oWnd:oMsgBar:oDate:bMsg    := {|| GetSysDate() }
-   oWnd:oMsgBar:checkTimer()
-
-   oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " + Rtrim( Auth():Nombre() ), 200,,,, .t. )
-
-   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( Application():codigoDelegacion() ), 200,,,, .t., {|| SelectDelegacion(), chkTurno() } )
-
-   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + Application():codigoCaja(), 200,,,, .t., {|| SelectCajas(), chkTurno() } )
-   
-   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " + Rtrim( Application():codigoAlmacen() ), 200,,,, .t., {|| SelectAlmacen() } )
-
-   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : ", 100,,,, .t., {|| dbDialog() } ) 
-
-   // Abrimos la ventana-------------------------------------------------------
-
-   ACTIVATE WINDOW oWnd ;
-      MAXIMIZED ;
-      ON PAINT                ( WndPaint( hDC, oWnd ) ); 
-      ON RESIZE               ( WndResize( oWnd ) );
-      VALID                   ( EndApp() ) 
-
-   SysRefresh()
-
-RETURN nil
-
-//-----------------------------------------------------------------------------//
-
 FUNCTION CreateMainSQLWindow()
 
    LoggedTest()
@@ -366,93 +305,49 @@ RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
-Static FUNCTION StdKey( nKey )
-
-   do case
-      case nKey == 65 .and. GetKeyState( VK_CONTROL ) // Crtl + A
-         CreateInfoArticulo()
-      case nKey == 66 .and. GetKeyState( VK_CONTROL ) // Crtl + B
-         BrwSelArticulo()
-      case nKey == 68 .and. GetKeyState( VK_CONTROL ) // Crtl + C
-         BrwClient()
-      case nKey == 38 .and. GetKeyState( VK_CONTROL ) // Ctrl + Down
-         NextEmpresa()
-      case nKey == 40 .and. GetKeyState( VK_CONTROL ) // Ctrl + Up
-         PriorEmpresa()
-      case nKey == 48 .and. GetKeyState( VK_CONTROL ) // Ctrl + 0
-         TDataCenter():GetAllTables( "Tables" )
-   end case
-
-RETURN Nil
-
-//---------------------------------------------------------------------------//
-
 STATIC FUNCTION EndApp()
 
-   local oAni
    local oDlg
-   local oError
-   local oBlock
    local oBrush
    local oBtnOk
-   local oBtnZip
    local lFinish
    local oBtnCancel
    local oBmpVersion
 
-   // oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   // BEGIN SEQUENCE
+   SysRefresh()
 
-      SysRefresh()
+   if !empty( oWnd() )
+      oWnd():CloseAll()
+   end if
 
-      if !empty( oWnd() )
-         oWnd():CloseAll()
-      end if
+   SysRefresh()
 
-      SysRefresh()
+   DEFINE BRUSH oBrush COLOR Rgb( 255, 255, 255 ) // FILE ( cBmpVersion() )
 
-      DEFINE BRUSH oBrush COLOR Rgb( 255, 255, 255 ) // FILE ( cBmpVersion() )
+   DEFINE DIALOG oDlg RESOURCE "EndApp" BRUSH oBrush
 
-      DEFINE DIALOG oDlg RESOURCE "EndApp" BRUSH oBrush
+      REDEFINE BITMAP oBmpVersion ;
+         RESOURCE    cBmpVersion() ;
+         ID          600 ;
+         OF          oDlg
 
-         REDEFINE BITMAP oBmpVersion ;
-            RESOURCE     cBmpVersion() ;
-            ID          600 ;
-            OF          oDlg
+      oBtnOk         := ApoloBtnFlat():Redefine( IDOK, {|| oDlg:end( IDOK ) }, oDlg, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-         TWebBtn():Redefine( 100,,,,,, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ):SetTransparent()
-         TWebBtn():Redefine( 110,,,,,, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ):SetTransparent()
-         TWebBtn():Redefine( 120,,,,,, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ):SetTransparent()
+      oBtnCancel     := ApoloBtnFlat():Redefine( IDCANCEL, {|| oDlg:end()  }, oDlg, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-         oAni           := TAnimat():Redefine( oDlg, 200, { "BAR_01" }, 1 )
+      oDlg:bKeyDown  := {| nKey | if( nKey == VK_F5, oDlg:end( IDOK ), ) }    
 
-         oBtnZip        := ApoloBtnFlat():Redefine( 3, {|| CompressEmpresa( cCodEmp(), nil, { oBtnZip, oBtnOk, oBtnCancel }, nil, oAni, nil, oDlg ) }, oDlg, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
-         
-         oBtnOk         := ApoloBtnFlat():Redefine( IDOK, {|| CompressEmpresa( cCodEmp(), nil, { oBtnZip, oBtnOk, oBtnCancel }, nil, oAni, nil, oDlg, .f. ) }, oDlg, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ACTIVATE DIALOG oDlg CENTER
 
-         oBtnCancel     := ApoloBtnFlat():Redefine( IDCANCEL, {|| oDlg:end()  }, oDlg, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+   if !empty( oBrush )
+      oBrush:End()
+   end if
 
-         oDlg:bKeyDown  := {| nKey | if( nKey == VK_F5, oDlg:end( IDOK ), ) }    
+   if !empty( oBmpVersion )
+      oBmpVersion:End()
+   end if 
 
-         oDlg:bStart    := {|| oAni:Hide() }
-
-      ACTIVATE DIALOG oDlg CENTER
-
-      if !empty( oBrush )
-         oBrush:End()
-      end if
-
-      if !empty( oBmpVersion )
-         oBmpVersion:End()
-      end if 
-
-   // RECOVER
-
-   // END SEQUENCE
-
-   // ErrorBlock( oBlock )
-
-   lFinish     := !empty( oDlg ) .and. ( oDlg:nResult == IDOK )
+   lFinish           := !empty( oDlg ) .and. ( oDlg:nResult == IDOK )
 
    if ( lFinish )
       FinishAplication()
@@ -822,96 +717,11 @@ RETURN nil
 
 FUNCTION lEnviarCorreoWatchdog( cSay, oDlg )
 
-   oDlg:Disable()
-
-   CursorWait()
-
-   with object ( TGenMailing():Create() )
-
-      /*
-      Introducimos los datos del servidor a fuego------------------------------
-      */
-
-      :MailServer          := "smtp.gestool.es"
-      :MailServerPort      := 587
-      :MailServerUserName  := "info@gestool.es"
-      :MailServerPassword  := "123Ab456"
-
-      /*
-      Creamos el cuerpo del mensaje--------------------------------------------
-      */
-
-      :SetDe(              "Gestool sistema de registro" )
-      :SetPara(            "registro@gestool.es" )
-      :SetAsunto(          "Registro de usuario de Gestool SAAS." )
-      :cGetMensaje         := "Datos de registro de usuario de Gestool SAAS" + "<br>"
-      :cGetMensaje         += "NIF: "           + AllTrim( cSay[1] ) + "<br>"
-      :cGetMensaje         += "Nombre: "        + AllTrim( cSay[2] ) + "<br>"
-      :cGetMensaje         += "Domicilio: "     + AllTrim( cSay[3] ) + "<br>"
-      :cGetMensaje         += "Población: "     + AllTrim( cSay[4] ) + "<br>"
-      :cGetMensaje         += "Cod. postal: "   + AllTrim( cSay[5] ) + "<br>"
-      :cGetMensaje         += "Provincia: "     + AllTrim( cSay[8] ) + "<br>"
-      :cGetMensaje         += "Email: "         + AllTrim( cSay[6] ) + "<br>"
-      :cGetMensaje         += "Teléfono: "      + AllTrim( cSay[7] ) + "<br>"
-      :cGetMensaje         += "<br>"
-      :cGetMensaje         += "Serial : "       + Str( Abs( nSerialHD() ) ) + "<br>"
-
-      /*
-      Mandamos el Mail---------------------------------------------------------
-      */
-
-      :lExternalSend()
-
-   end with
-
-   CursorWe()
-
-   oDlg:Enable()
-
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
          
 FUNCTION lEnviarCorreoCliente( cSay, oDlg )
-
-   oDlg:Disable()
-
-   CursorWait()
-
-   with object ( TGenMailing():Create() )
-
-      /*
-      Introducimos los datos del servidor a fuego------------------------------
-      */
-
-      :MailServer            := "smtp.gestool.es"
-      :MailServerPort        := 587
-      :MailServerUserName    := "info@gestool.es"
-      :MailServerPassword    := "123Ab456"
-
-      /*
-      Creamos el cuerpo del mensaje--------------------------------------------
-      */
-
-      :SetDe(                "Gestool sistema de registro" )
-      :SetPara(              alltrim( cSay[6] ) )
-      :SetAsunto(            "Registro de Gestool." )
-      :cGetMensaje           := "Su petición de registro está siendo procesada. En breve nos pondremos en contacto con usted "
-      :cGetMensaje           += "para finalizar el proceso de registro." + "<br>"
-      :cGetMensaje           += "Puede ponerse en contacto con nosotros mediante email en registro@gestool.es; o en el teléfono 902 930 252" + "<br>"
-      :cGetMensaje           += "de 09:00 a 15:00"
-
-      /*
-      Mandamos el Mail---------------------------------------------------------
-      */
-
-      :lExternalSend()
-
-   end with
-
-   CursorWe()
-
-   oDlg:Enable()
 
 RETURN ( .t. )
 
@@ -922,10 +732,6 @@ RETURN ( .t. )
 Static FUNCTION FinishAplication() //  Static FUNCTION
 
    CursorWait()
-
-   if !empty( cCodEmp() )
-      WritePProString( "main", "Ultima Empresa", cCodEmp(), cIniAplication() )
-   end if 
 
    // Cerramos las auditorias--------------------------------------------------
 
@@ -1088,1631 +894,6 @@ RETURN ( nil ) // if( !empty( oWndBar ), oWndBar:Enable(), ) )
 FUNCTION DisableAcceso()
 
 RETURN ( nil ) // if( !empty( oWndBar ), oWndBar:Disable(), ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION CreateAcceso( oWnd )
-
-   local oAcceso
-   local oGrupo
-
-   local oItem
-   local oItemArchivo
-   local oItemCompras
-   local oItemAlmacen
-   local oItemProduccion
-   local oItemExpediente
-   local oItemVentas
-   local oItemTpv
-   local oItemHerramientas
-   local oItemAyudas
-   local oItemReporting
-   local oItemSQL
-
-   oAcceso              := TAcceso():New()
-
-   oItemArchivo         := oAcceso:Add()
-   oItemArchivo:cPrompt := 'ARCHIVOS'
-   oItemArchivo:cBmp    := "gc_folder_open_16"
-   oItemArchivo:cBmpBig := "gc_folder_open_32"
-   oItemArchivo:lShow   := .t.
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 2
-   oGrupo:nLittleItems  := 1
-   oGrupo:cPrompt       := 'Inicio'
-   oGrupo:cLittleBitmap := "gc_clock_16"
-   oGrupo:cBigBitmap    := "gc_clock_32"
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Gestión de cartera'
-   oItem:cMessage       := 'Gestión de cartera'
-   oItem:bAction        := {|| PageIni( "gestion_de_cartera", oWnd() ) }
-   oItem:cId            := "gestion_de_cartera"
-   oItem:cBmp           := "gc_briefcase_16"
-   oItem:cBmpBig        := "gc_briefcase_32"
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Iniciar sesión'
-   oItem:cMessage       := 'Inicia una nueva sesión de trabajo'
-   oItem:bAction        := {|| ChkTurno( "iniciar_sesion", oWnd() ) }
-   oItem:cId            := "iniciar_sesion"
-   oItem:cBmp           := "gc_clock_play_16"
-   oItem:cBmpBig        := "gc_clock_play_32"
-   oItem:lLittle        := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Arqueo parcial (X)'
-   oItem:cMessage       := 'Inicia una nueva sesión de trabajo'
-   oItem:bAction        := {|| CloseTurno( "arqueo_parcial", oWnd(), .t. ) }
-   oItem:cId            := "arqueo_parcial"
-   oItem:cBmp           := "gc_clock_refresh_16"
-   oItem:cBmpBig        := "gc_clock_refresh_32"
-   oItem:lLittle        := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Cerrar sesión (Z)'
-   oItem:cMessage       := 'Cierra la sesión de trabajo actual'
-   oItem:bAction        := {|| CloseTurno( "cerrar_sesion", oWnd() ) }
-   oItem:cId            := "cerrar_sesion"
-   oItem:cBmp           := "gc_clock_stop_16"
-   oItem:cBmpBig        := "gc_clock_stop_32"
-   oItem:lLittle        := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Sesiones'
-   oItem:cMessage       := 'Sesiones de trabajo'
-   oItem:bAction        := {|| Turnos( "sesiones" ) }
-   oItem:cId            := "sesiones"
-   oItem:cBmp           := "gc_clock_16"
-   oItem:cBmpBig        := "gc_clock_32"
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 2
-   oGrupo:cPrompt       := 'Empresa'
-   oGrupo:cLittleBitmap := "gc_factory_16"
-   oGrupo:cBigBitmap    := "gc_factory_32"
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Empresa'
-   oItem:cMessage       := 'Acceso al fichero de empresas'
-   oItem:bAction        := {|| Empresa( "empresa" ) }
-   oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_factory_16"
-   oItem:cBmpBig        := "gc_factory_32"
-   oItem:lShow          := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Configurar empresa'
-   oItem:cMessage       := 'Configurar empresa en curso'
-   oItem:bAction        := {|| ConfEmpresa( "configurar_empresa" ) }
-   oItem:cId            := "configurar_empresa"
-   oItem:cBmp           := "gc_wrench_16"
-   oItem:cBmpBig        := "gc_wrench_32"
-   oItem:lShow          := .t.
-
-   // Articulos----------------------------------------------------------------
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 3
-   oGrupo:nLittleItems  := 3
-   oGrupo:cPrompt       := 'Artículos'
-   oGrupo:cLittleBitmap := "gc_object_cube_16"
-   oGrupo:cBigBitmap    := "gc_object_cube_32"
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Grupos de familias'
-   oItem:cMessage       := 'Acceso al fichero de grupos de familias'
-   oItem:bAction        := {|| TGrpFam():New( cPatEmp(), oWnd(), 'grupos_de_familias' ):Play() }
-   oItem:cId            := 'grupos_de_familias'
-   oItem:cBmp           := "gc_folder_cubes_16"
-   oItem:cBmpBig        := "gc_folder_cubes_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Familias'
-   oItem:cMessage       := 'Acceso al fichero de familias'
-   oItem:bAction        := {|| Familia( "familias", oWnd() ) }
-   oItem:cId            := "familias"
-   oItem:cBmp           := "gc_cubes_16"
-   oItem:cBmpBig        := "gc_cubes_32"
-   oItem:lShow          := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Artículos'
-   oItem:cMessage       := 'Acceso al fichero de artículo'
-   oItem:bAction        := {|| Articulo( "articulos", oWnd ) }
-   oItem:cId            := "articulos"
-   oItem:cBmp           := "gc_object_cube_16"
-   oItem:cBmpBig        := "gc_object_cube_32"
-   oItem:lShow          := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Fabricantes'
-   oItem:cMessage       := 'Clasificación de artículos por fabricantes'
-   oItem:bAction        := {|| TFabricantes():New( cPatEmp(), oWnd, "fabricantes" ):Activate() }
-   oItem:cId            := "fabricantes"
-   oItem:cBmp           := "gc_bolt_16"
-   oItem:cBmpBig        := "gc_bolt_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Comentarios'
-   oItem:cMessage       := 'Acceso a los comentarios de los artículos'
-   oItem:bAction        := {|| TComentarios():New( cPatEmp(), cDriver(), oWnd, "comentarios" ):Activate() }
-   oItem:cId            := "comentarios"
-   oItem:cBmp           := "gc_message_16"
-   oItem:cBmpBig        := "gc_message_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Propiedades'
-   oItem:cMessage       := 'Acceso a las propiedades los artículos'
-   oItem:bAction        := {|| Prop( "propiedades", oWnd ) }
-   oItem:cId            := "propiedades"
-   oItem:cBmp           := "gc_coathanger_16"
-   oItem:cBmpBig        := "gc_coathanger_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Unidades medición'
-   oItem:cMessage       := 'Unidades de medición'
-   oItem:bAction        := {|| UniMedicion():New( cPatEmp(), oWnd, "unidades_de_medicion" ):Activate() }
-   oItem:cId            := "unidades_de_medicion"
-   oItem:cBmp           := "gc_tape_measure2_16"
-   oItem:cBmpBig        := "gc_tape_measure2_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Tipos'
-   oItem:cMessage       := 'Clasificación de artículos por tipos'
-   oItem:bAction        := {|| TTipArt():New( cPatEmp(), cDriver(), oWnd, "tipos" ):Activate() }
-   oItem:cId            := "tipos"
-   oItem:cBmp           := "gc_objects_16"
-   oItem:cBmpBig        := "gc_objects_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := getConfigTraslation( 'Temporadas' )
-   oItem:cMessage       := 'Acceso al fichero de ' + getConfigTraslation( 'temporadas' )
-   oItem:bAction        := {|| Temporada( "temporadas", oWnd() ) }
-   oItem:cId            := "temporadas"
-   oItem:cBmp           := "gc_cloud_sun_16"
-   oItem:cBmpBig        := "gc_cloud_sun_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Envasado"
-   oItem:cMessage       := 'Acceso al fichero de envasado'
-   oItem:bAction        := {|| TFrasesPublicitarias():New():Activate( , , , "envasado" ) }
-   oItem:cId            := "envasado"
-   oItem:cBmp           := "gc_box_closed_16"
-   oItem:cBmpBig        := "gc_box_closed_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Categorías"
-   oItem:cMessage       := 'Acceso al fichero de categorías'
-   oItem:bAction        := {|| Categoria( "categorias", oWnd() ) }
-   oItem:cId            := "categorias"
-   oItem:cBmp           := "gc_photographic_filters_16"
-   oItem:cBmpBig        := "gc_photographic_filters_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   // Tarifas------------------------------------------------------------------
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nLittleItems  := 1
-   oGrupo:cPrompt       := 'Tarifas'
-   oGrupo:cLittleBitmap := "gc_symbol_percent_16"
-   oGrupo:cBigBitmap    := "gc_symbol_percent_32"
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Tarifas de precios'
-   oItem:cMessage       := 'Acceso a las tarifas de precios'
-   oItem:bAction        := {|| Tarifa( "tarifas_de_precios", oWnd ) }
-   oItem:cId            := "tarifas_de_precios"
-   oItem:cBmp           := "gc_symbol_percent_16"
-   oItem:cBmpBig        := "gc_symbol_percent_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Ofertas'
-   oItem:cMessage       := 'Acceso a las ofertas de artículos'
-   oItem:bAction        := {|| Oferta( "ofertas", oWnd ) }
-   oItem:cId            := "ofertas"
-   oItem:cBmp           := "gc_star2_16"
-   oItem:cBmpBig        := "gc_star2_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Promociones'
-   oItem:cMessage       := 'Acceso a las promociones comerciales'
-   oItem:bAction        := {|| Promocion( "promociones", oWnd ) }
-   oItem:cId            := "promociones"
-   oItem:cBmp           := "gc_star2_blue_16"
-   oItem:cBmpBig        := "gc_star2_blue_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   // Busquedas----------------------------------------------------------------
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := if( lAIS(), 3, 2 )
-   oGrupo:cPrompt       := 'Búsquedas'
-   oGrupo:cLittleBitmap := "gc_package_binocular_16"
-   oGrupo:cBigBitmap    := "gc_package_binocular_32"
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Búsqueda por series'
-   oItem:cMessage       := 'Búsqueda por series'
-   oItem:bAction        := {|| TSeaNumSer():Activate( "busquedas_por_series", oWnd ) }
-   oItem:cId            := "busquedas_por_series"
-   oItem:cBmp           := "gc_package_binocular_16"
-   oItem:cBmpBig        := "gc_package_binocular_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Búsqueda por lotes'
-   oItem:cMessage       := 'Búsqueda por lotes'
-   oItem:bAction        := {|| TTrazarLote():Activate( "busqueda_por_lotes", oWnd ) }
-   oItem:cId            := "busqueda_por_lotes"
-   oItem:cBmp           := "gc_package_lupa_16"
-   oItem:cBmpBig        := "gc_package_lupa_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .f.
-
-   if lAIS()
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Búsqueda especial'
-   oItem:cMessage       := 'Búsqueda especial'
-   oItem:bAction        := {|| tSpecialSearchArticulo():New( "busqueda_especial", oWnd ) }
-   oItem:cId            := "busqueda_especial"
-   oItem:cBmp           := "gc_zoom_in_16"
-   oItem:cBmpBig        := "gc_zoom_in_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .f.
-
-   end if
-
-
-   // Impuestos----------------------------------------------------------------
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 2
-   oGrupo:cPrompt       := 'Impuestos'
-   oGrupo:cLittleBitmap := "gc_moneybag_16"
-   oGrupo:cBigBitmap    := "gc_moneybag_32"
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Tipos de " + cImp()
-   oItem:cMessage       := "Acceso a los tipos de " + cImp()
-   oItem:bAction        := {|| Tiva( "tipos_de_impuestos", oWnd ) }
-   oItem:cId            := "tipos_de_impuestos"
-   oItem:cBmp           := "gc_moneybag_16"
-   oItem:cBmpBig        := "gc_moneybag_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Impuestos especiales"
-   oItem:cMessage       := "Impuestos especiales"
-   oItem:bAction        := {|| NewImp( "impuestos_especiales", oWnd ) }
-   oItem:cId            := "impuestos_especiales"
-   oItem:cBmp           := "gc_moneybag_euro_16"
-   oItem:cBmpBig        := "gc_moneybag_euro_32"
-   oItem:lShow          := .f.
-
-   // Impuestos----------------------------------------------------------------
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 5
-   oGrupo:cPrompt       := 'Pagos'
-   oGrupo:cLittleBitmap := "gc_currency_euro_16"
-   oGrupo:cBigBitmap    := "gc_currency_euro_32"
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Divisas monetarias"
-   oItem:cMessage       := "Acceso a divisas monetarias"
-   oItem:bAction        := {|| Divisas( "divisas_monetarias", oWnd ) }
-   oItem:cId            := "divisas_monetarias"
-   oItem:cBmp           := "gc_currency_euro_16"
-   oItem:cBmpBig        := "gc_currency_euro_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Bancos'
-   oItem:cMessage       := 'Acceso a las entidades bancarias'
-   oItem:bAction        := {|| TBancos():New( cPatEmp(), oWnd, "bancos" ):Activate() }
-   oItem:cId            := "bancos"
-   oItem:cBmp           := "gc_central_bank_euro_16"
-   oItem:cBmpBig        := "gc_central_bank_euro_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Cuentas bancarias'
-   oItem:cMessage       := 'Acceso a las cuentas bancarias'
-   oItem:bAction        := {|| TCuentasBancarias():New( cPatEmp(), oWnd, "cuentas_bancarias" ):Activate() }
-   oItem:cId            := "cuentas_bancarias"
-   oItem:cBmp           := "gc_central_bank_euro_text_16"
-   oItem:cBmpBig        := "gc_central_bank_euro_text_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Formas de pago"
-   oItem:cMessage       := "Acceso a formas de pago"
-   oItem:bAction        := {|| Fpago( "formas_de_pago", oWnd ) }
-   oItem:cId            := "formas_de_pago"
-   oItem:cBmp           := "gc_credit_cards_16"
-   oItem:cBmpBig        := "gc_credit_cards_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Cuentas de remesas"
-   oItem:cMessage       := "Acceso a las cuentas de remesas"
-   oItem:bAction        := {|| TCtaRem():New( cPatEmp(), cDriver(), oWnd, "cuentas_de_remesas" ):Activate() }
-   oItem:cId            := "cuentas_de_remesas"
-   oItem:cBmp           := "gc_portfolio_folder_16"
-   oItem:cBmpBig        := "gc_portfolio_folder_32"
-   oItem:lShow          := .f.
-
-   // Otros--------------------------------------------------------------------
-
-   oGrupo               := TGrupoAcceso() 
-   oGrupo:nBigItems     := 10
-   oGrupo:cPrompt       := 'Global'
-   oGrupo:cLittleBitmap := "gc_folder2_16"
-   oGrupo:cBigBitmap    := "gc_folder2_32"
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Cajas"
-   oItem:cMessage       := "Acceso a las cajas"
-   oItem:bAction        := {|| Cajas( "cajas", oWnd ) }
-   oItem:cId            := "cajas"
-   oItem:cBmp           := "gc_cash_register_16"
-   oItem:cBmpBig        := "gc_cash_register_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Centro de costes"
-   oItem:cMessage       := "Acceso al centro de coste"
-   oItem:bAction        := {|| TCentroCoste():New( cPatDat(), cDriver(), oWnd, "centro_de_costes" ):Activate() }
-   oItem:cId            := "centro_de_costes"
-   oItem:cBmp           := "gc_folder_open_money_16"
-   oItem:cBmpBig        := "gc_folder_open_money_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Codigos postales'
-   oItem:cMessage       := 'Acceso al fichero de codigos postales'
-   oItem:bAction        := {|| CodigosPostalesController():New():ActivateNavigatorView() }
-   oItem:cId            := "codigos_postales"
-   oItem:cBmp           := "gc_postage_stamp_16"
-   oItem:cBmpBig        := "gc_postage_stamp_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Provincias'
-   oItem:cMessage       := 'Acceso al fichero de grupos de provincias'
-   oItem:bAction        := {|| ProvinciasController():New():ActivateNavigatorView() }
-   oItem:cId            := "provincias"
-   oItem:cBmp           := "gc_flag_spain_16"
-   oItem:cBmpBig        := "gc_flag_spain_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Paises"
-   oItem:cMessage       := "Acceso a los paises"
-   oItem:bAction        := {|| PaisesController():New():ActivateNavigatorView() }
-   oItem:cId            := "paises"
-   oItem:cBmp           := "gc_globe_16"
-   oItem:cBmpBig        := "gc_globe_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Lenguajes"
-   oItem:cMessage       := "Acceso a los lenguajes"
-   oItem:bAction        := {|| LenguajesController():New():ActivateNavigatorView() }
-   oItem:cId            := "lenguajes"
-   oItem:cBmp           := "gc_user_message_16"
-   oItem:cBmpBig        := "gc_user_message_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Transportistas"
-   oItem:cMessage       := "Acceso a los transportistas"
-   oItem:bAction        := {|| TransportistasController():New():ActivateNavigatorView() }
-   oItem:cId            := "transportistas"
-   oItem:cBmp           := "gc_small_truck_16"
-   oItem:cBmpBig        := "gc_small_truck_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Situaciones"
-   oItem:cMessage       := "Acceso a los tipos de situaciones"
-   oItem:bAction        := {|| SituacionesController():New():ActivateNavigatorView() }
-   oItem:cId            := "situaciones"
-   oItem:cBmp           := "gc_document_attachment_16"
-   oItem:cBmpBig        := "gc_document_attachment_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Marcadores'
-   oItem:cMessage       := 'Marcadores'
-   oItem:bAction        := {|| TagsController():New():ActivateNavigatorView() }
-   oItem:cId            := "marcadores"
-   oItem:cBmp           := "gc_bookmarks_16"
-   oItem:cBmpBig        := "gc_bookmarks_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Tipos de impresoras"
-   oItem:cMessage       := "Acceso a los tipos de impresoras"
-   oItem:bAction        := {|| TiposImpresorasController():New():ActivateNavigatorView() }
-   oItem:cId            := "tipos_de_impresoras"
-   oItem:cBmp           := "gc_printer2_16"
-   oItem:cBmpBig        := "gc_printer2_32"
-   oItem:lShow          := .f.
-
-   // Compras-------------------------------------------------------------------
-
-   if IsStandard()
-
-   oItemCompras         := oAcceso:Add()
-   oItemCompras:cPrompt := 'COMPRAS'
-   oItemCompras:cBmp    := "gc_folder_open_16"
-   oItemCompras:cBmpBig := "gc_folder_open_32"
-   oItemCompras:lShow   := .t.
-
-   // Proveedores--------------------------------------------------------------
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 2
-   oGrupo:cPrompt       := 'Proveedores'
-   oGrupo:cLittleBitmap := "gc_businessmen2_16"
-   oGrupo:cBigBitmap    := "gc_businessmen2_32"
-
-   oItem                := oItemCompras:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Grupos'
-   oItem:cMessage       := 'Acceso a los grupos de proveedores'
-   oItem:bAction        := {|| TGrpPrv():New( cPatEmp(), oWnd, "grupos" ):Activate() }
-   oItem:cId            := "grupos"
-   oItem:cBmp           := "gc_businessmen2_16"
-   oItem:cBmpBig        := "gc_businessmen2_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemCompras:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Proveedores'
-   oItem:cMessage       := 'Acceso a los proveedores'
-   oItem:bAction        := {|| Provee( "proveedores", oWnd ) }
-   oItem:cId            := "proveedores"
-   oItem:cBmp           := "gc_businessman_16"
-   oItem:cBmpBig        := "gc_businessman_32"
-   oItem:lShow          := .t.
-
-   // Compras------------------------------------------------------------------
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 5
-   oGrupo:cPrompt       := 'Compras'
-   oGrupo:cLittleBitmap := "gc_document_text_businessman_16"
-   oGrupo:cBigBitmap    := "gc_document_text_businessman_32"
-
-   oItem                := oItemCompras:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Pedidos'
-   oItem:cMessage       := 'Acceso a los pedidos de proveedores'
-   oItem:bAction        := {|| PedPrv( "pedidos_de_proveedores", oWnd ) }
-   oItem:cId            := "pedidos_de_proveedores"
-   oItem:cBmp           := "gc_clipboard_empty_businessman_16"
-   oItem:cBmpBig        := "gc_clipboard_empty_businessman_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemCompras:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Albaranes'
-   oItem:cMessage       := 'Acceso a los albaranes de proveedores'
-   oItem:bAction        := {|| AlbPrv( "albaranes_de_proveedores", oWnd ) }
-   oItem:cId            := "albaranes_de_proveedores"
-   oItem:cBmp           := "gc_document_empty_businessman_16"
-   oItem:cBmpBig        := "gc_document_empty_businessman_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemCompras:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Facturas'
-   oItem:cMessage       := 'Acceso a las facturas de proveedores'
-   oItem:bAction        := {|| FacPrv( "facturas_de_proveedores", oWnd ) }
-   oItem:cId            := "facturas_de_proveedores"
-   oItem:cBmp           := "gc_document_text_businessman_16"
-   oItem:cBmpBig        := "gc_document_text_businessman_32"
-   oItem:lShow          := .t.
-
-   oItem                := oItemCompras:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Facturas rectificativas'
-   oItem:cMessage       := 'Acceso a las facturas rectificativas de proveedores'
-   oItem:bAction        := {|| RctPrv( "rectificativas_de_proveedores", oWnd ) }
-   oItem:cId            := "rectificativas_de_proveedores"
-   oItem:cBmp           := "gc_document_text_delete2_16"
-   oItem:cBmpBig        := "gc_document_text_delete2_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemCompras:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Pagos'
-   oItem:cMessage       := 'Acceso a los pagos a proveedores'
-   oItem:bAction        := {|| RecPrv( "pagos_a_proveedores", oWnd ) }
-   oItem:cId            := "pagos_a_proveedores"
-   oItem:cBmp           := "gc_briefcase2_businessman_16"
-   oItem:cBmpBig        := "gc_briefcase2_businessman_32"
-   oItem:lShow          := .t.
-
-   // Almacenes--------------------------------------------------------------
-
-   oItemAlmacen         := oAcceso:Add()
-   oItemAlmacen:cPrompt := 'ALMACENES'
-   oItemAlmacen:cBmp    := "gc_folder_open_16"
-   oItemAlmacen:cBmpBig := "gc_folder_open_32"
-   oItemAlmacen:lShow   := .t.
-
-   // Almacenes----------------------------------------------------------------
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 2
-   oGrupo:cPrompt       := 'Almacenes'
-   oGrupo:cLittleBitmap := "gc_package_16"
-   oGrupo:cBigBitmap    := "gc_package_16"
-
-   oItem                := oItemAlmacen:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Almacenes'
-   oItem:cMessage       := 'Acceso a los almacenes'
-   oItem:bAction        := {|| Almacen( "almacenes", oWnd ) }
-   oItem:cId            := "almacenes"
-   oItem:cBmp           := "gc_package_16"
-   oItem:cBmpBig        := "gc_package_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemAlmacen:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Movimientos almacén'
-   oItem:cMessage       := 'Acceso a los movimientos de almacén'
-   oItem:bAction        := {|| MovimientosAlmacenController():New():ActivateNavigatorView() } // RemMovAlm( "01050", oWnd ) }
-   oItem:cId            := "movimientos_de_almacen"
-   oItem:cBmp           := "gc_pencil_package_16"
-   oItem:cBmpBig        := "gc_pencil_package_32"
-   oItem:lShow          := .f.
-
-   end if
-
-   // Producción---------------------------------------------------------------
-
-   if IsProfesional()
-
-   oItemProduccion            := oAcceso:Add()
-   oItemProduccion:cPrompt    := 'PRODUCCIÓN' 
-   oItemProduccion:cBmp       := "gc_folder_open_16"
-   oItemProduccion:cBmpBig    := "gc_folder_open_32"
-   oItemProduccion:lShow      := .t. 
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 7
-   oGrupo:cPrompt       := 'Estructura'
-   oGrupo:cLittleBitmap := "gc_worker_group_16"
-   oGrupo:cBigBitmap    := "gc_worker_group_32"
-
-   oItem                := oItemProduccion:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Secciones'
-   oItem:cMessage       := 'Acceso a las secciones de producción'
-   oItem:bAction        := {|| TSeccion():New( cPatEmp(), cDriver(), oWnd, "secciones" ):Activate() }
-   oItem:cId            := "secciones"
-   oItem:cBmp           := "gc_worker_group_16"
-   oItem:cBmpBig        := "gc_worker_group_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemProduccion:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Operarios'
-   oItem:cMessage       := 'Acceso a los operarios'
-   oItem:bAction        := {|| TOperarios():New( cPatEmp(), cDriver(), oWnd, "operarios" ):Activate() }
-   oItem:cId            := "operarios"
-   oItem:cBmp           := "gc_worker2_16"
-   oItem:cBmpBig        := "gc_worker2_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemProduccion:Add()
-   oItem:oGroup         := oGrupo  
-   oItem:cPrompt        := 'Tipos de horas'
-   oItem:cMessage       := 'Acceso a tipos de horas de producción'
-   oItem:bAction        := {|| THoras():New( cPatEmp(), cDriver(), oWnd, "tipos_de_horas" ):Activate() }
-   oItem:cId            := "tipos_de_horas"
-   oItem:cBmp           := "gc_worker2_clock_16"
-   oItem:cBmpBig        := "gc_worker2_clock_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemProduccion:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Operaciones'
-   oItem:cMessage       := 'Acceso a las operaciones'
-   oItem:bAction        := {|| TOperacion():New( cPatEmp(), cDriver(), oWnd, "operaciones" ):Activate() }
-   oItem:cId            := "operaciones"
-   oItem:cBmp           := "gc_worker2_hammer_16"
-   oItem:cBmpBig        := "gc_worker2_hammer_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemProduccion:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Tipos de operaciones'
-   oItem:cMessage       := 'Acceso a tipos de operaciones'
-   oItem:bAction        := {|| TTipOpera():New( cPatEmp(), cDriver(), oWnd, "tipos_de_operaciones" ):Activate() }
-   oItem:cId            := "tipos_de_operaciones"
-   oItem:cBmp           := "gc_folder_open_worker_16"
-   oItem:cBmpBig        := "gc_folder_open_worker_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemProduccion:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Maquinaria'
-   oItem:cMessage       := 'Acceso a la maquinaria'
-   oItem:bAction        := {|| StartTMaquina() }
-   oItem:cId            := "maquinaria"
-   oItem:cBmp           := "gc_industrial_robot_16"
-   oItem:cBmpBig        := "gc_industrial_robot_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemProduccion:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Costes de maquinaria'
-   oItem:cMessage       := 'Acceso a los costes de la maquinaria'
-   oItem:bAction        := {|| TCosMaq():New( cPatEmp(), cDriver(), oWnd, "costes_maquinaria" ):Activate() }
-   oItem:cId            := "costes_maquinaria"
-   oItem:cBmp           := "gc_industrial_robot_money_16"
-   oItem:cBmpBig        := "gc_industrial_robot_money_32"
-   oItem:lShow          := .f.
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 2
-   oGrupo:cPrompt       := 'Producción'
-   oGrupo:cLittleBitmap := "gc_document_text_worker_16"
-   oGrupo:cBigBitmap    := "gc_document_text_worker_32"
-
-   oItem                := oItemProduccion:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Partes de producción'
-   oItem:cMessage       := 'Acceso a los partes de producción'
-   oItem:bAction        := {|| StartTProduccion( cDriver()) }
-   oItem:cId            := "partes_de_produccion"
-   oItem:cBmp           := "gc_document_text_worker_16"
-   oItem:cBmpBig        := "gc_document_text_worker_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemProduccion:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Costos mano obra'
-   oItem:cMessage       := 'Actualiza costos de mano de obra'
-   oItem:bAction        := {|| ActualizaCosto():Activate( "costos_mano_obra", oWnd ) }
-   oItem:cId            := "costos_mano_obra"
-   oItem:cBmp           := "gc_worker2_money_16"
-   oItem:cBmpBig        := "gc_worker2_money_32"
-   oItem:lShow          := .f.
-
-   end if
-
-   // Producción---------------------------------------------------------------
-
-   if IsProfesional()
-
-   oItemExpediente            := oAcceso:Add()
-   oItemExpediente:cPrompt    := 'EXPEDIENTES'
-   oItemExpediente:cBmp       := "gc_folder_open_16"
-   oItemExpediente:cBmpBig    := "gc_folder_open_32"
-   oItemExpediente:lShow      := .t.
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 5
-   oGrupo:cPrompt       := 'Expedientes'
-   oGrupo:cLittleBitmap := "gc_folder_document_16"
-   oGrupo:cBigBitmap    := "gc_folder_document_32"
-
-   oItem                := oItemExpediente:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Tipo expediente'
-   oItem:cMessage       := 'Acceso a los tipos de expedientes'
-   oItem:bAction        := {|| StartTTipoExpediente() }
-   oItem:cId            := "tipo_expediente"
-   oItem:cBmp           := "gc_folders_16"
-   oItem:cBmpBig        := "gc_folders_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemExpediente:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Entidades'
-   oItem:cMessage       := 'Acceso a las distintas entidades'
-   oItem:bAction        := {|| TEntidades():New( cPatEmp(), cDriver(), oWnd, "entidades" ):Activate() }
-   oItem:cId            := "entidades"
-   oItem:cBmp           := "gc_office_building2_16"
-   oItem:cBmpBig        := "gc_office_building2_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemExpediente:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Colaboradores'
-   oItem:cMessage       := 'Acceso a la tabla de colaboradores'
-   oItem:bAction        := {|| TColaboradores():New( cPatEmp(), cDriver(), oWnd, "colaboradores" ):Activate() }
-   oItem:cId            := "colaboradores"
-   oItem:cBmp           := "gc_users_relation_16"
-   oItem:cBmpBig        := "gc_users_relation_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemExpediente:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Actuaciones'
-   oItem:cMessage       := 'Acceso a la tabla de actuaciones'
-   oItem:bAction        := {|| TActuaciones():New( cPatEmp(), cDriver(), oWnd, "actuaciones" ):Activate() }
-   oItem:cId            := "actuaciones"
-   oItem:cBmp           := "gc_power_drill2_16"
-   oItem:cBmpBig        := "gc_power_drill2_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemExpediente:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Expedientes'
-   oItem:cMessage       := 'Acceso a los expedientes'
-   oItem:bAction        := {|| StartTExpediente() }
-   oItem:cId            := "expedientes"
-   oItem:cBmp           := "gc_folder_document_16"
-   oItem:cBmpBig        := "gc_folder_document_32"
-   oItem:lShow          := .f.
-
-   end if
-
-   // Ventas-------------------------------------------------------------------
-
-   oItemVentas          := oAcceso:Add()
-   oItemVentas:cPrompt  := 'VENTAS'
-   oItemVentas:cBmp     := "gc_folder_open_16"
-   oItemVentas:cBmpBig  := "gc_folder_open_32"
-   oItemVentas:lShow    := .t.
-
-   // Clientes----------------------------------------------------------------
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := If( IsProfesional(), 7, 4 )
-   oGrupo:cPrompt       := 'Clientes'
-   oGrupo:cLittleBitmap := "gc_user_16"
-   oGrupo:cBigBitmap    := "gc_user_32"
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Grupos'
-   oItem:cMessage       := 'Acceso a los grupos de clientes'
-   oItem:bAction        := {|| TGrpCli():New( cPatEmp(), cDriver(), oWnd, "grupos_de_clientes" ):Activate() }
-   oItem:cId            := "grupos_de_clientes"
-   oItem:cBmp           := "gc_users3_16"
-   oItem:cBmpBig        := "gc_users3_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Rutas'
-   oItem:cMessage       := 'Acceso a las rutas de clientes'
-   oItem:bAction        := {|| Ruta( "rutas_de_clientes", oWnd ) }
-   oItem:cId            := "rutas_de_clientes"
-   oItem:cBmp           := "gc_signpost2_16"
-   oItem:cBmpBig        := "gc_signpost2_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Clientes'
-   oItem:cMessage       := 'Acceso a los clientes'
-   oItem:bAction        := {|| Client( "clientes", oWnd ) }
-   oItem:cId            := "clientes"
-   oItem:cBmp           := "gc_user_16"
-   oItem:cBmpBig        := "gc_user_32"
-   oItem:lShow          := .t.
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Agentes'
-   oItem:cMessage       := 'Acceso a los agentes'
-   oItem:bAction        := {|| Agentes( "agentes", oWnd ) }
-   oItem:cId            := "agentes"
-   oItem:cBmp           := "gc_businessman2_16"
-   oItem:cBmpBig        := "gc_businessman2_32"
-   oItem:lShow          := .f.
-
-   if IsProfesional()
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Programa de fidelización'
-   oItem:cMessage       := 'Acceso al programa de fidelización'
-   oItem:bAction        := {|| StartTFideliza() }
-   oItem:cId            := "programa_de_fidelizacion"
-   oItem:cBmp           := "gc_id_card_16"
-   oItem:cBmpBig        := "gc_id_card_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Grupo de plantillas'
-   oItem:cMessage       := 'Acceso a grupos de plantillas automáticas'
-   oItem:bAction        := {|| TGrpFacturasAutomaticas():New( cPatEmp(), oWnd, "grupo_de_plantillas" ):Activate() }
-   oItem:cId            := "grupo_de_plantillas"
-   oItem:cBmp           := "gc_folder_gear_16"
-   oItem:cBmpBig        := "gc_folder_gear_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Plantillas automáticas'
-   oItem:cMessage       := 'Acceso a plantillas de ventas automáticas'
-   oItem:bAction        := {|| StartTFacAutomatica() }
-   oItem:cId            := "plantillas_automaticas"
-   oItem:cBmp           := "gc_document_text_gear_16"
-   oItem:cBmpBig        := "gc_document_text_gear_32" 
-   oItem:lShow          := .f.
-
-   end if
-
-   // Ventas-------------------------------------------------------------------
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 7
-   oGrupo:cPrompt       := 'Ventas'
-   oGrupo:cLittleBitmap := "gc_notebook_user_16"
-   oGrupo:cBigBitmap    := "gc_notebook_user_32"
-
-   if IsStandard()
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'S.A.T.'
-   oItem:cMessage       := 'Acceso al S.A.T. de clientes'
-   oItem:bAction        := {|| SatCli( "sat_de_clientes", oWnd ) }
-   oItem:cId            := "sat_de_clientes"
-   oItem:cBmp           := "gc_power_drill_sat_user_16"
-   oItem:cBmpBig        := "gc_power_drill_sat_user_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Presupuesto'
-   oItem:cMessage       := 'Acceso a los presupuestos de clientes'
-   oItem:bAction        := {|| PreCli( "presupuestos_de_clientes", oWnd ) }
-   oItem:cId            := "presupuestos_de_clientes"
-   oItem:cBmp           := "gc_notebook_user_16"
-   oItem:cBmpBig        := "gc_notebook_user_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Pedidos'
-   oItem:cMessage       := 'Acceso a los pedidos de clientes'
-   oItem:bAction        := {|| PedCli( "pedidos_de_clientes", oWnd ) }
-   oItem:cId            := "pedidos_de_clientes"
-   oItem:cBmp           := "gc_clipboard_empty_user_16"
-   oItem:cBmpBig        := "gc_clipboard_empty_user_32"
-   oItem:lShow          := .f.
-
-   end if
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Albaranes'
-   oItem:cMessage       := 'Acceso a los albaranes de clientes'
-   oItem:bAction        := {|| AlbCli( "albaranes_de_clientes", oWnd ) }
-   oItem:cId            := "albaranes_de_clientes"
-   oItem:cBmp           := "gc_document_empty_16"
-   oItem:cBmpBig        := "gc_document_empty_32"
-   oItem:lShow          := .t.
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Facturas'
-   oItem:cMessage       := 'Acceso a las facturas de clientes'
-   oItem:bAction        := {|| FactCli( "facturas_de_clientes", oWnd ) }
-   oItem:cId            := "facturas_de_clientes"
-   oItem:cBmp           := "gc_document_text_user_16"
-   oItem:cBmpBig        := "gc_document_text_user_32"
-   oItem:lShow          := .t.
-
-   if IsStandard()
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Facturas anticipos'
-   oItem:cMessage       := 'Acceso a las facturas de anticipos de clientes'
-   oItem:bAction        := {|| FacAntCli( "facturas_de_anticipos", oWnd ) }
-   oItem:cId            := "facturas_de_anticipos"
-   oItem:cBmp           := "gc_document_text_money2_16"
-   oItem:cBmpBig        := "gc_document_text_money2_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Facturas rectificativas'
-   oItem:cMessage       := 'Acceso a las facturas rectificativas de clientes'
-   oItem:bAction        := {|| FacRec( "rectificativas_de_clientes", oWnd ) }
-   oItem:cId            := "rectificativas_de_clientes"
-   oItem:cBmp           := "gc_document_text_delete_16"
-   oItem:cBmpBig        := "gc_document_text_delete_32"
-   oItem:lShow          := .f.
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 3
-   oGrupo:cPrompt       := 'Cobros'
-   oGrupo:cLittleBitmap := "gc_briefcase2_user_16"
-   oGrupo:cBigBitmap    := "gc_briefcase2_user_32"
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Recibos'
-   oItem:cMessage       := 'Acceso a los recibos de clientes'
-   oItem:bAction        := {|| RecCli( "recibos_de_clientes", oWnd ) }
-   oItem:cId            := "recibos_de_clientes"
-   oItem:cBmp           := "gc_briefcase2_user_16"
-   oItem:cBmpBig        := "gc_briefcase2_user_32"
-   oItem:lShow          := .t.
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Remesas bancarias'
-   oItem:cMessage       := 'Acceso a las remesas bancarias'
-   oItem:bAction        := {|| TRemesas():New( cPatEmp(), cDriver(), oWnd, "remesas_bancarias" ):Activate() }
-   oItem:cId            := "remesas_bancarias"
-   oItem:cBmp           := "gc_briefcase2_document_16"
-   oItem:cBmpBig        := "gc_briefcase2_document_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Liquidación de agentes'
-   oItem:cMessage       := 'Acceso a las liquidaciones de agentes'
-   oItem:bAction        := {|| StartTCobAge() }
-   oItem:cId            := "liquidacion_de_agentes"
-   oItem:cBmp           := "gc_briefcase2_agent_16"
-   oItem:cBmpBig        := "gc_briefcase2_agent_32"
-   oItem:lShow          := .t.
-
-   end if
-
-   if IsOsCommerce()
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 1
-   oGrupo:cPrompt       := 'Comercio electrónico'
-   oGrupo:cLittleBitmap := "gc_earth_money_16"
-   oGrupo:cBigBitmap    := "gc_earth_money_32"
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Comercio electrónico'
-   oItem:cMessage       := 'Comercio electrónico'
-   oItem:bAction        := {|| TComercio():New():dialogActivate() }
-   oItem:cId            := "comercio_electronico"
-   oItem:cBmp           := "gc_earth_money_16"
-   oItem:cBmpBig        := "gc_earth_money_32"
-   oItem:lShow          := .f.
-
-   end if
-
-   // TPV----------------------------------------------------------------------
-
-   oItemTpv             := oAcceso:Add()
-   oItemTpv:cPrompt     := 'T.P.V.'
-   oItemTpv:cBmp        := "gc_folder_open_16"
-   oItemTpv:cBmpBig     := "gc_folder_open_32"
-   oItemTpv:lShow       := .t.
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 7
-   oGrupo:cPrompt       := 'T.P.V.'
-   oGrupo:cLittleBitmap := "gc_cash_register_user_16"
-   oGrupo:cBigBitmap    := "gc_cash_register_user_32"
-
-   oItem                := oItemTpv:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'T.P.V.'
-   oItem:cMessage       := 'Acceso a terminal punto de venta'
-   oItem:bAction        := {|| FrontTpv( "terminal_punto_de_venta", oWnd ) }
-   oItem:cId            := "terminal_punto_de_venta"
-   oItem:cBmp           := "gc_cash_register_user_16"
-   oItem:cBmpBig        := "gc_cash_register_user_32"
-   oItem:lShow          := .t.
-
-   oItem                := oItemTpv:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'T.P.V. táctil'
-   oItem:cMessage       := 'Acceso a terminal punto de venta táctil'
-   oItem:bAction        := {|| TpvTactil():New():Activate() } // TactilTpv( "01064", oWnd ) }  // {|| TpvTactil():New( oWnd, "01116" ):Activate() } //
-   oItem:cId            := "terminal_punto_de_venta_tactil"
-   oItem:cBmp           := "gc_cash_register_touch_16"
-   oItem:cBmpBig        := "gc_cash_register_touch_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemTpv:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Entradas y salidas'
-   oItem:cMessage       := 'Acceso a las entradas y salidas de caja'
-   oItem:bAction        := {|| EntSal( "entradas_y_salidas", oWnd ) }
-   oItem:cId            := "entradas_y_salidas"
-   oItem:cBmp           := "gc_cash_register_refresh_16"
-   oItem:cBmpBig        := "gc_cash_register_refresh_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemTpv:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Sala de ventas'
-   oItem:cMessage       := 'Sala de ventas'
-   oItem:bAction        := {|| TTpvRestaurante():New( cPatEmp(), cDriver(), oWnd, "sala_de_ventas" ):Activate() }
-   oItem:cId            := "sala_de_ventas"
-   oItem:cBmp           := "gc_cup_16"
-   oItem:cBmpBig        := "gc_cup_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemTpv:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Invitaciones'
-   oItem:cMessage       := 'Acceso a los tipos de invitaciones'
-   oItem:bAction        := {|| TInvitacion():New( cPatEmp(), oWnd, "invitaciones" ):Activate() }
-   oItem:cId            := "invitaciones"
-   oItem:cBmp           := "gc_masks_16"
-   oItem:cBmpBig        := "gc_masks_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemTPV:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Ordenes de comanda'
-   oItem:cMessage       := 'Acceso a los comentarios de los artículos'
-   oItem:bAction        := {|| TOrdenComanda():New( cPatEmp(), oWnd, "ordenes_de_comanda" ):Activate() }
-   oItem:cId            := "ordenes_de_comanda"
-   oItem:cBmp           := "gc_sort_az_descending_16"
-   oItem:cBmpBig        := "gc_sort_az_descending_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemTPV:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Menús'
-   oItem:cMessage       := 'Acceso a los menús'
-   oItem:bAction        := {|| TpvMenu():New( cPatEmp(), oWnd, "menus" ):Activate() }
-   oItem:cId            := "menus"
-   oItem:cBmp           := "gc_clipboard_empty_16"
-   oItem:cBmpBig        := "gc_clipboard_empty_32"
-   oItem:lShow          := .f.
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 1
-   oGrupo:nLittleItems  := 1
-   oGrupo:cPrompt       := 'Útiles'
-   oGrupo:cLittleBitmap := "gc_window_pencil_16"
-   oGrupo:cBigBitmap    := "gc_window_pencil_32"
-
-   oItem                := oItemTPV:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Capturas T.P.V.'
-   oItem:cMessage       := 'Capturas T.P.V.'
-   oItem:bAction        := {|| TCaptura():New( cPatDat(), oWnd, "capturas" ):Activate() }
-   oItem:cId            := "capturas"
-   oItem:cBmp           := "gc_window_pencil_16"
-   oItem:cBmpBig        := "gc_window_pencil_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemTPV:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Balanzas'
-   oItem:cMessage       := 'Balanzas'
-   oItem:bAction        := {|| ConfImpTiket( "balanzas", oWnd ) }
-   oItem:cId            := "balanzas"
-   oItem:cBmp           := "gc_balance_16"
-   oItem:cBmpBig        := "gc_balance_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemTPV:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Configurar visor'
-   oItem:cMessage       := 'Configurar visor'
-   oItem:bAction        := {|| ConfVisor( "visor", oWnd ) }
-   oItem:cId            := "visor"
-   oItem:cBmp           := "gc_odometer_screw_16"
-   oItem:cBmpBig        := "gc_odometer_screw_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemTPV:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Cajón portamonedas'
-   oItem:cMessage       := 'Cajón portamonedas'
-   oItem:bAction        := {|| CajonesPortamonedasController():New():ActivateNavigatorView() }
-   oItem:cId            := "cajon_portamonedas"
-   oItem:cBmp           := "gc_modem_screw_16"
-   oItem:cBmpBig        := "gc_modem_screw_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   // Herramientas-------------------------------------------------------------
-
-   oItemHerramientas          := oAcceso:Add()
-   oItemHerramientas:cPrompt  := 'HERRAMIENTAS'
-   oItemHerramientas:cBmp     := "gc_folder_open_16"
-   oItemHerramientas:cBmpBig  := "gc_folder_open_32"
-   oItemHerramientas:lShow    := .t.
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 3
-
-   oGrupo:cPrompt       := 'Usuarios, roles y permisos'
-   oGrupo:cLittleBitmap := "gc_document_text_screw_16"
-   oGrupo:cBigBitmap    := "gc_document_text_screw_32"
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Usuarios'
-   oItem:cMessage       := 'Acceso a los usuarios del programa'
-   oItem:bAction        := {|| UsuariosController():New():ActivateNavigatorView() }
-   oItem:cId            := "usuarios"
-   oItem:cBmp           := "gc_businesspeople_16"
-   oItem:cBmpBig        := "gc_businesspeople_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Roles'
-   oItem:cMessage       := 'Roles'
-   oItem:bAction        := {|| RolesController():New():ActivateNavigatorView() }
-   oItem:cId            := "usuarios_roles"
-   oItem:cBmp           := "GC_ID_CARDS_16"
-   oItem:cBmpBig        := "GC_ID_CARDS_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Permisos'
-   oItem:cMessage       := 'Permisos'
-   oItem:bAction        := {|| PermisosController():New():ActivateNavigatorView() }
-   oItem:cId            := "usuarios_permisos"
-   oItem:cBmp           := "GC_ID_BADGE_16"
-   oItem:cBmpBig        := "GC_ID_BADGE_32"
-   oItem:lShow          := .f.
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 3
-
-   oGrupo:cPrompt       := 'Herramientas'
-   oGrupo:cLittleBitmap := "gc_document_text_screw_16"
-   oGrupo:cBigBitmap    := "gc_document_text_screw_32"
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Documentos y etiquetas'
-   oItem:cMessage       := 'Configurar documentos y etiquetas'
-   oItem:bAction        := {|| CfgDocs( "documentos_y_etiquetas", oWnd ) }
-   oItem:cId            := "documentos_y_etiquetas"
-   oItem:cBmp           := "gc_document_text_screw_16"
-   oItem:cBmpBig        := "gc_document_text_screw_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Especificar impresora'
-   oItem:cMessage       := 'Especificar impresora por defecto'
-   oItem:bAction        := {|| PrinterSetup() }
-   oItem:cId            := "especificar_impresora"
-   oItem:cBmp           := "gc_printer2_check_16"
-   oItem:cBmpBig        := "gc_printer2_check_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Centro de contabilización'
-   oItem:cMessage       := 'Centro de contabilización'
-   oItem:bAction        := {|| TTurno():Build( cPatEmp(), cDriver(), oWnd, "centro_de_contabilizacion" ) }
-   oItem:cId            := "centro_de_contabilizacion"
-   oItem:cBmp           := "gc_folders2_16"
-   oItem:cBmpBig        := "gc_folders2_32"
-   oItem:lShow          := .f.
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 4
-   oGrupo:cPrompt       := 'Útiles'
-   oGrupo:cLittleBitmap := "gc_notebook2_16"
-   oGrupo:cBigBitmap    := "gc_notebook2_32"
-
-   oItem                := oItemHerramientas:Add()    
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Campos extra'
-   oItem:cMessage       := 'Acceso a los campos extra'
-   oItem:bAction        := {|| CamposExtra( "campos_extra", oWnd ) } 
-   oItem:cId            := "campos_extra"
-   oItem:cBmp           := "gc_form_plus2_16"
-   oItem:cBmpBig        := "gc_form_plus2_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Agenda/ CRM'
-   oItem:cMessage       := 'Acceso a la agenda del usuario'
-   oItem:bAction        := {|| TNotas():New( cPatDat(), , oWnd, "agenda" ):Activate() }
-   oItem:cId            := "agenda"
-   oItem:cBmp           := "gc_notebook2_16"
-   oItem:cBmpBig        := "gc_notebook2_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Listín telefónico'
-   oItem:cMessage       := 'Acceso al listín telefónico'
-   oItem:bAction        := {|| ListinController():New():ActivateNavigatorView() }
-   oItem:cId            := "listin_telefonico"
-   oItem:cBmp           := "gc_book_telephone_16"
-   oItem:cBmpBig        := "gc_book_telephone_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Scripts'
-   oItem:cMessage       := 'Ejecutar scripts'
-   oItem:bAction        := {|| TScripts():New( cPatEmp(), , oWnd, "scripts" ):Activate() }
-   oItem:cId            := "scripts"
-   oItem:cBmp           := "gc_code_line_16"
-   oItem:cBmpBig        := "gc_code_line_32"
-   oItem:lShow          := .f.
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 2
-   oGrupo:cPrompt       := 'Archivos'
-   oGrupo:cLittleBitmap := "gc_shield_16"
-   oGrupo:cBigBitmap    := "gc_shield_32"
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Regenerar índices'
-   oItem:cMessage       := 'Regenerar índices'
-   oItem:bAction        := {|| Reindexa() }
-   oItem:cId            := "regenerar_indices"
-   oItem:cBmp           := "gc_recycle_16"
-   oItem:cBmpBig        := "gc_recycle_32"
-   oItem:lShow          := .t.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Copia seguridad'
-   oItem:cMessage       := 'Copia seguridad'
-   oItem:bAction        := {|| TBackup():New( "copia_seguridad", oWnd ) }
-   oItem:cId            := "copia_seguridad"
-   oItem:cBmp           := "gc_shield_16"
-   oItem:cBmpBig        := "gc_shield_32"
-   oItem:lShow          := .t.
-
-   if isProfesional()
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 3
-   oGrupo:nLittleItems  := 1
-   oGrupo:cPrompt       := 'Exportaciones e importaciones'
-   oGrupo:cLittleBitmap := "gc_satellite_dish2_16"
-   oGrupo:cBigBitmap    := "gc_satellite_dish2_32"
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Envío y recepción'
-   oItem:cMessage       := 'Envío y recepción de información a las delegaciones'
-   oItem:bAction        := {|| TSndRecInf():New( "envio_y_recepcion", oWnd ):Activate() }
-   oItem:cId            := "envio_y_recepcion"
-   oItem:cBmp           := "gc_satellite_dish2_16"
-   oItem:cBmpBig        := "gc_satellite_dish2_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Terminales'
-   oItem:cMessage       := 'Exportar e importar datos a terminales'
-   oItem:bAction        := {|| TEdm():Activate( "terminales", oWnd ) }
-   oItem:cId            := "terminales"
-   oItem:cBmp           := "gc_pda_16"
-   oItem:cBmpBig        := "gc_pda_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Pda'
-   oItem:cMessage       := 'Exportar e importar datos a pda'
-   oItem:bAction        := {|| PdaEnvioRecepcionController():getInstance():Activate() }
-   oItem:cId            := "pda"
-   oItem:cBmp           := "gc_pda_16"
-   oItem:cBmpBig        := "portable_barcode_scanner_yellow_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Factuplus®'
-   oItem:cMessage       := 'Imp. factuplus®'
-   oItem:bAction        := {|| ImpFactu( "factuplus", oWnd ) }
-   oItem:cId            := "factuplus"
-   oItem:cBmp           := "gc_inbox_into_16"
-   oItem:cBmpBig        := "gc_inbox_into_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Factucont®'
-   oItem:cMessage       := 'Imp. factucont®'
-   oItem:bAction        := {|| ImpFacCom( "factucont", oWnd ) }
-   oItem:cId            := "factucont"
-   oItem:cBmp           := "gc_inbox_into_16"
-   oItem:cBmpBig        := "gc_inbox_into_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Tarifas artículos'
-   oItem:cMessage       := 'Importa tarifa de artículos desde Excel'
-   oItem:bAction        := {|| TImpEstudio():New( "tarifa_articulos_excel", oWnd ):Activate() }
-   oItem:cId            := "tarifa_articulos_excel"
-   oItem:cBmp           := "gc_inbox_into_16"
-   oItem:cBmpBig        := "gc_inbox_into_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   end if
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 4
-   oGrupo:nBigItems++
-   oGrupo:cPrompt       := 'Extras'
-   oGrupo:cLittleBitmap := "gc_magic_wand_16"
-   oGrupo:cBigBitmap    := "gc_magic_wand_32"
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Actualizar precios'
-   oItem:cMessage       := 'Actualizar precios de tarifas'
-   oItem:bAction        := {|| ChgTarifa( "actualizar_precios", oWnd ) }
-   oItem:cId            := "actualizar_precios"
-   oItem:cBmp           := "gc_table_selection_column_refresh_16"
-   oItem:cBmpBig        := "gc_table_selection_column_refresh_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Configurar botones'
-   oItem:cMessage       := 'Configurar barra de botones'
-   oItem:bAction        := {|| oWndBar():EditButtonBar( oWnd, "configurar_botones" ) }
-   oItem:cId            := "configurar_botones"
-   oItem:cBmp           := "gc_magic_wand_16"
-   oItem:cBmpBig        := "gc_magic_wand_32"
-   oItem:lShow          := .f.
-   oItem:lHide          := .t.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Calculadora'
-   oItem:cMessage       := 'Ejecuta la calculadora de windows'
-   oItem:bAction        := {|| WinExec( "Calc" ) }
-   oItem:cId            := "calculadora"
-   oItem:cBmp           := "gc_calculator_16"
-   oItem:cBmpBig        := "gc_calculator_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Fecha trabajo'
-   oItem:cMessage       := 'Selecciona la fecha de trabajo'
-   oItem:bAction        := {|| SelSysDate( "fecha_trabajo" ) }
-   oItem:cId            := "fecha_trabajo"
-   oItem:cBmp           := "gc_calendar_16"
-   oItem:cBmpBig        := "gc_calendar_32"
-   oItem:lShow          := .f.
-
-   if GetPvProfString( "OPCIONES", "CambiarCodigos", ".F.", cIniAplication() ) == ".T."
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Cambiar códigos'
-   oItem:cMessage       := 'Cambia códigos'
-   oItem:bAction        := {|| TChgCode():New( "cambiar_codigos", oWnd ):Resource() }
-   oItem:cId            := "cambiar_codigos"
-   oItem:cBmp           := "gc_calendar_16"
-   oItem:cBmpBig        := "gc_calendar_32"
-   oItem:lShow          := .f.
-
-   end if
-
-   // Reporting----------------------------------------------------------------
-
-   oItemReporting          := oAcceso:Add()
-   oItemReporting:cPrompt  := 'INFORMES'
-   oItemReporting:cBmp     := "gc_folder_open_16"
-   oItemReporting:cBmpBig  := "gc_folder_open_32"
-   oItemReporting:lShow    := .t.
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 1
-   oGrupo:cPrompt       := 'Informes'
-   oGrupo:cLittleBitmap := "gc_lifebelt_16"
-   oGrupo:cBigBitmap    := "gc_lifebelt_32"
-
-   oItem                := oItemReporting:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Galería de informes'
-   oItem:cMessage       := 'Galería de informes'
-   oItem:bAction        := {|| RunReportGalery() }
-   oItem:cId            := "galeria_de_informes"
-   oItem:cBmp           := "gc_cabinet_open_16"
-   oItem:cBmpBig        := "gc_cabinet_open_32"
-   oItem:lShow          := .f.
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 4
-   oGrupo:cPrompt       := 'Informes personalizables'
-   oGrupo:cLittleBitmap := "gc_object_cube_print_16"
-   oGrupo:cBigBitmap    := "gc_object_cube_print_32"
-
-   oItem                := oItemReporting:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Artículos'
-   oItem:cMessage       := 'Informes realacionados con articulos'
-   oItem:bAction        := {|| runFastGallery( "Articulos" ) }
-   oItem:cId            := "reporting_articulos"
-   oItem:cBmp           := "gc_object_cube_print_16"
-   oItem:cBmpBig        := "gc_object_cube_print_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemReporting:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Clientes'
-   oItem:cMessage       := 'Informes realacionados con clientes'
-   oItem:bAction        := {|| runFastGallery( "Clientes" ) }
-   oItem:cId            := "reporting_clientes"
-   oItem:cBmp           := "gc_user_print_16"
-   oItem:cBmpBig        := "gc_user_print_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemReporting:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Proveedores'
-   oItem:cMessage       := 'Informes realacionados con proveedores'
-   oItem:bAction        := {|| runFastGallery( "Proveedores" ) }
-   oItem:cId            := "reporting_proveedores"
-   oItem:cBmp           := "gc_businessman_print_16"
-   oItem:cBmpBig        := "gc_businessman_print_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemReporting:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Producción'
-   oItem:cMessage       := 'Informes realacionados con la producción'
-   oItem:bAction        := {|| runFastGallery( "Produccion" ) }
-   oItem:cId            := "reporting_produccion"
-   oItem:cBmp           := "gc_worker2_print_16"
-   oItem:cBmpBig        := "gc_worker2_print_32"
-   oItem:lShow          := .f.
-
-   /*if lAIS()
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 1
-   oGrupo:cPrompt       := 'Auditor'
-   oGrupo:cLittleBitmap := "gc_lifebelt_16"
-   oGrupo:cBigBitmap    := "gc_lifebelt_32"
-
-   oItem                := oItemReporting:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Auditoria'
-   oItem:cMessage       := 'Auditoria'
-   oItem:bAction        := {|| TDataCenter():Auditor() }
-   oItem:cId            := "01122"
-   oItem:cBmp           := "gc_document_empty_chart_16"
-   oItem:cBmpBig        := "gc_document_empty_chart_32"
-   oItem:lShow          := .f.
-
-   end if */
-
-   // Ayudas-------------------------------------------------------------------
-
-   oItemAyudas          := oAcceso:Add()
-   oItemAyudas:cPrompt  := 'AYUDAS'
-   oItemAyudas:cBmp     := "gc_folder_open_16"
-   oItemAyudas:cBmpBig  := "gc_folder_open_32"
-   oItemAyudas:lShow    := .t.
-
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 3
-   oGrupo:cPrompt       := 'Ayudas'
-   oGrupo:cLittleBitmap := "gc_lifebelt_16"
-   oGrupo:cBigBitmap    := "gc_lifebelt_32"
-
-   oItem                := oItemAyudas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Visitar web'
-   oItem:cMessage       := 'Visitar web'
-   oItem:bAction        := {|| goWeb( __GSTWEB__ ) }
-   oItem:cId            := "visitar_web"
-   oItem:cBmp           := "gc_earth_16"
-   oItem:cBmpBig        := "gc_earth_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemAyudas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Acerca de...'
-   oItem:cMessage       := 'Datos sobre el autor'
-   oItem:bAction        := {|| About() }
-   oItem:cId            := "acerca_de"
-   oItem:cBmp           := "gc_question_16"
-   oItem:cBmpBig        := "gc_question_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemAyudas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Asistencia remota'
-   oItem:cMessage       := 'Solicitar asistencia remota'
-   oItem:bAction        := {|| RunAsistenciaRemota() }
-   oItem:cId            := "asistencia_remota"
-   oItem:cBmp           := "gc_user_headset_16"
-   oItem:cBmpBig        := "gc_user_headset_32"
-   oItem:lShow          := .f.
-
-RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//
 
@@ -3141,16 +1322,6 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cId            := "almacenes"
    oItem:cBmp           := "gc_warehouse_16"
    oItem:cBmpBig        := "gc_warehouse_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemAlmacen:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Movimientos almacén'
-   oItem:cMessage       := 'Acceso a los movimientos de almacén'
-   oItem:bAction        := {|| MovimientosAlmacenController():New():ActivateNavigatorView() }
-   oItem:cId            := "movimientos_de_almacen"
-   oItem:cBmp           := "gc_pencil_package_16"
-   oItem:cBmpBig        := "gc_pencil_package_32"
    oItem:lShow          := .f.
 
    // Ventas-------------------------------------------------------------------
@@ -3720,14 +1891,11 @@ FUNCTION appCheckDirectory()
 
    local hDirectory
 
+   msgalert( cPatDocuments() + FacturasClientesController():getName() )
+
    for each hDirectory in getScafolding()
       checkDirectory( hDirectory )
    next 
-
-   // Elimina los temporales de la aplicación----------------------------------
-
-   eraseFilesInDirectory( cPatTmp(), "*.*" )
-   eraseFilesInDirectory( cPatLog(), "*.*" )
 
 RETURN ( nil )
 
@@ -3836,41 +2004,6 @@ RETURN u
 
 FUNCTION InitClasses()
 
-   TShell()
-   TAgenda()
-   TDbf()
-   TIndex()
-   TInfGen()
-   TMant()
-   TMasDet()
-   TDet()
-   TCatalogo()
-   TGrpCli()
-   TInfoArticulo()
-   TSndRecInf()
-   TNotas()
-   TPais()
-   TReindex()
-   TRemesas()
-   TCamposExtra()
-   TStock()
-   TDeleleteObsoletos()
-   TInternet()
-   TSeaNumSer()
-   TTrazarLote()
-   TAlbaranesClientesSenderReciver()
-   TAlbaranesProveedorSenderReciver()
-   TArticuloSenderReciver()
-   TFacturasClientesSenderReciver()
-   TFacturasProveedorSenderReciver()
-   TTiketsClientesSenderReciver()
-   TClienteSenderReciver()
-   TTurno()
-   TInvitacion()
-   TXBrowse():Register( nOr( CS_VREDRAW, CS_HREDRAW, CS_DBLCLKS ) )
-   TBandera():New()
-   TCentroCoste()
-
 RETURN .t.
 
 //--------------------------------------------------------------------------//
@@ -3901,18 +2034,6 @@ FUNCTION lInitCheck( oMessage, oProgress )
 
    appCheckDirectory()
 
-   // Inicializamos classes----------------------------------------------------
-
-   if !empty( oMessage )
-      oMessage:SetText( 'Inicializamos las clases de la aplicación' )
-   end if
-
-   if !empty( oProgress )
-      oProgress:AutoInc()
-   end if
-
-   InitClasses()
-
    // Selección de la empresa actual------------------------------------------
 
    if !empty( oMessage )
@@ -3923,7 +2044,7 @@ FUNCTION lInitCheck( oMessage, oProgress )
       oProgress:AutoInc()
    end if
 
-   setEmpresa()
+   SQLAjustableModel():getUsuarioEmpresa( Auth():Uuid() )
 
    // Selección de los datos de la aplicacion----------------------------------
 
@@ -3957,35 +2078,11 @@ RETURN ( lCheck )
 
 FUNCTION InitServices()
 
-   // Colocamos los avisos pa las notas----------------------------------------
-
-   if oUser():lAlerta()
-      SetNotas()
-   end if
-
-   TScripts():New( cPatEmp() ):StartTimer()
-
-   PdaEnvioRecepcionController():getInstance():activateTimer()   
-   
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 FUNCTION StopServices()
- 
-   // Informe rapido de articulos----------------------------------------------
-
-   CloseInfoArticulo()
-
-   // Quitamos los avisos pa las notas-----------------------------------------
-
-   if oUser():lAlerta()
-      CloseNotas()
-   end if
-
-   TScripts():EndTimer()
-
-   PdaEnvioRecepcionController():getInstance():stopTimer()
 
 RETURN ( nil )
 
@@ -4237,21 +2334,11 @@ RETURN ( "PDA" $ appParamsMain() )
 
 FUNCTION SetIndexToADSCDX()
 
-   lCdx( .f. )
-   lAIS( .t. )
-
-   RddSetDefault( "ADSCDX" )
-
 RETURN nil 
 
 //---------------------------------------------------------------------------//
 
 FUNCTION SetIndexToCDX()
-
-   lCdx( .t. )
-   lAIS( .f. )
-   
-   RddSetDefault( "DBFCDX" )
 
 RETURN nil 
 
@@ -4261,8 +2348,6 @@ FUNCTION SetIndexToADS()
 
    lCdx( .f. )
    lAIS( .t. )
-
-   RddSetDefault( "ADS" )
 
 RETURN nil 
 
@@ -4309,10 +2394,6 @@ RETURN ( cNombrePc )
 //--------------------------------------------------------------------------//
 
 FUNCTION CacheRecords( cAlias )
-
-   if lAdsRdd()
-      ( cAlias )->( AdsCacheRecords( 50 ) )
-   end if
 
 RETURN nil
 
@@ -4513,16 +2594,6 @@ RETURN ( if( !lShort, fullCurDir(), "" ) + "Xml\" )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION PicIn()
-
-   if empty( cDefPicIn )
-      cDefPicIn   := cPirDiv( cDivEmp() )
-   end if
-
-RETURN ( cDefPicIn )
-
-//---------------------------------------------------------------------------//
-
 FUNCTION cPatReport( lShort )
 
    DEFAULT lShort  := .f.
@@ -4570,144 +2641,6 @@ FUNCTION SelSysDate( oMenuItem )
 RETURN ( dSysDate )
 
 //----------------------------------------------------------------------------//
-
-FUNCTION ExcMnuNext( cName )
-
-   local nPos
-
-   if cName == nil
-      nPos  := len( aMnuNext )
-   else
-      nPos  := aScan( aMnuNext, {|c| c[1] == cName } )
-   end if
-
-   if nPos != 0
-
-      Eval( aMnuNext[ nPos, 2 ] )
-
-      // Pasamos la accion a menu atras
-
-      addMnuPrev( aMnuNext[ nPos, 1 ], aMnuNext[ nPos, 2 ] )
-
-      // Eliminamos la accion
-
-      aDel( aMnuNext, nPos )
-      aSize( aMnuNext, len( aMnuNext ) - 1 )
-
-   end if
-
-RETURN .t.
-
-//---------------------------------------------------------------------------//
-
-FUNCTION MnuNext( oBtn, oWnd )
-
-   local n
-   local cText
-   local oMenu
-   local bAction
-
-   DEFAULT oWnd   := oWnd()
-
-   oMenu := MenuBegin( .T. )
-
-   for n := 1 to len( aMnuNext )
-
-      cText    := by( aMnuNext[ n, 1 ] )
-      bAction  := bMnuNext( cText )
-
-      MenuAddItem( cText,, .F.,, bAction,,,,,,, .F.,,, .F. )
-
-   next
-
-   MenuEnd()
-
-   oMenu:Activate( 0, oBtn:nRight, oBtn )
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
-
-FUNCTION addMnuPrev( cName, uAction )
-
-   if aScan( aMnuPrev, {|c| c[1] == cName } ) == 0
-      if valtype( uAction ) == "C"
-         aAdd( aMnuPrev, { cName, &( "{||" + uAction + "() }" ) } )
-      else
-         aAdd( aMnuPrev, { cName, uAction } )
-      end if
-   end if
-
-RETURN nil
-
-//---------------------------------------------------------------------------//
-
-FUNCTION ExcMnuPrev( cName )
-
-   local nPos
-
-   if cName == nil
-      nPos  := len( aMnuPrev )
-   else
-      nPos  := aScan( aMnuPrev, {|c| c[1] == cName } )
-   end if
-
-   if nPos != 0
-
-      Eval( aMnuPrev[ nPos, 2 ] )
-
-      // Pasamos la accion a menu atras
-
-      addMnuNext( aMnuPrev[ nPos, 1 ], aMnuPrev[ nPos, 2 ] )
-
-      // Eliminamos la accion
-
-      aDel( aMnuPrev, nPos )
-      aSize( aMnuPrev, len( aMnuPrev ) - 1 )
-
-   end if
-
-RETURN .t.
-
-//---------------------------------------------------------------------------//
-
-FUNCTION MnuPrev( oBtn, oWnd )
-
-   local n
-   local cText
-   local oMenu
-   local bAction
-
-   DEFAULT oWnd   := oWnd()
-
-   oMenu := MenuBegin( .T. )
-
-   for n := 1 to len( aMnuPrev )
-
-      cText    := by( aMnuPrev[ n, 1 ] )
-      bAction  := bMnuPrev( cText )
-
-      MenuAddItem( cText,, .F.,, bAction,,,,,,, .F.,,, .F. )
-
-   next
-
-   MenuEnd()
-
-   oMenu:Activate( oBtn:nBottom - 1, 0, oBtn )
-
-RETURN nil
-
-//---------------------------------------------------------------------------//
-
-static FUNCTION bMnuPrev( uValue )
-RETURN {|| ExcMnuPrev( uValue ) }
-
-//---------------------------------------------------------------------------//
-
-static FUNCTION bMnuNext( uValue )
-RETURN {|| ExcMnuNext( uValue ) }
-
-//---------------------------------------------------------------------------//
 
 FUNCTION Visor( aMsg )
 
@@ -4758,376 +2691,6 @@ FUNCTION Visor( aMsg )
 	ACTIVATE DIALOG oDlg CENTER
 
 RETURN NIL
-
-//------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-FUNCTION aItmVentas()
-
-   local aItmVta := {}
-
-   aAdd( aItmVta, { { "CSERALB",    "CSERIE",      "CSERIE",      "CSERTIK" }, { "C", "C", "C", "C" },   1, 0, "Serie del documento" } )
-   aAdd( aItmVta, { { "NNUMALB",    "NNUMFAC",     "NNUMFAC",     "CNUMTIK" }, { "N", "N", "N", "C" },   9, 0, "Número del documento" } )
-   aAdd( aItmVta, { { "CSUFALB",    "CSUFFAC",     "CSUFFAC",     "CSUFTIK" }, { "C", "C", "C", "C" },   2, 0, "Sufijo del documento" } )
-   aAdd( aItmVta, { { "CTURALB",    "CTURFAC",     "CTURFAC",     "CTURTIK" }, { "C", "C", "C", "C" },   6, 0, "Sesión del documento" } )
-   aAdd( aItmVta, { { "DFECALB",    "DFECFAC",     "DFECFAC",     "DFECTIK" }, { "D", "D", "D", "D" },   8, 0, "Fecha del documento" } )
-   aAdd( aItmVta, { { "CCODCLI",    "CCODCLI",     "CCODCLI",     "CCLITIK" }, { "C", "C", "C", "C" },  12, 0, "Código del cliente" } )
-   aAdd( aItmVta, { { "CNOMCLI",    "CNOMCLI",     "CNOMCLI",     "CNOMTIK" }, { "C", "C", "C", "C" },  80, 0, "Nombre del cliente" } )
-   aAdd( aItmVta, { { "CDIRCLI",    "CDIRCLI",     "CDIRCLI",     "CDIRCLI" }, { "C", "C", "C", "C" }, 100, 0, "Domicilio del cliente" } )
-   aAdd( aItmVta, { { "CPOBCLI",    "CPOBCLI",     "CPOBCLI",     "CPOBCLI" }, { "C", "C", "C", "C" },  35, 0, "Población del cliente" } )
-   aAdd( aItmVta, { { "CPRVCLI",    "CPRVCLI",     "CPRVCLI",     "CPRVCLI" }, { "C", "C", "C", "C" },  20, 0, "Provincia del cliente" } )
-   aAdd( aItmVta, { { "CPOSCLI",    "CPOSCLI",     "CPOSCLI",     "CPOSCLI" }, { "C", "C", "C", "C" },  15, 0, "Código postal del cliente" } )
-   aAdd( aItmVta, { { "CDNICLI",    "CDNICLI",     "CDNICLI",     "CDNICLI" }, { "C", "C", "C", "C" },  15, 0, "DNI/CIF del cliente" } )
-   aAdd( aItmVta, { { "CCODALM",    "CCODALM",     "CCODALM",     "CALMTIK" }, { "C", "C", "C", "C" },   3, 0, "Código del almacén" } )
-   aAdd( aItmVta, { { "CCODCAJ",    "CCODCAJ",     "CCODCAJ",     "CNCJTIK" }, { "C", "C", "C", "C" },   3, 0, "Código de la caja" } )
-   aAdd( aItmVta, { { "CCODPAGO",   "CCODPAGO",    "CCODPAGO",    "CFPGTIK" }, { "C", "C", "C", "C" },   2, 0, "Forma de pago del documento" } )
-   aAdd( aItmVta, { { "CCODOBR",    "CCODOBR",     "CCODOBR",     "CCODOBR" }, { "C", "C", "C", "C" },  10, 0, "Obra del documento" } )
-   aAdd( aItmVta, { { "CCODTAR",    "CCODTAR",     "CCODTAR",     "CCODTAR" }, { "C", "C", "C", "C" },   5, 0, "Código de la tarifa" } )
-   aAdd( aItmVta, { { "CCODRUT",    "CCODRUT",     "CCODRUT",     "CCODRUT" }, { "C", "C", "C", "C" },   4, 0, "Código de la ruta" } )
-   aAdd( aItmVta, { { "CCODAGE",    "CCODAGE",     "CCODAGE",     "CCODAGE" }, { "C", "C", "C", "C" },   3, 0, "Código del agente" } )
-   aAdd( aItmVta, { { "NPCTCOMAGE", "NPCTCOMAGE",  "NPCTCOMAGE",  "NCOMAGE" }, { "N", "N", "N", "" },    6, 2, "Comisión agente" } )
-   aAdd( aItmVta, { { "NTARIFA",    "NTARIFA",     "NTARIFA",     "NTARIFA" }, { "N", "N", "N", "N" },   1, 0, "Tarifa del documento" } )
-   aAdd( aItmVta, { { "NDTOESP",    "NDTOESP",     "NDTOESP",     "" },        { "N", "N", "N", "" },    6, 2, "Descuento general" } )
-   aAdd( aItmVta, { { "NDPP",       "NDPP",        "NDPP",        "" },        { "N", "N", "N", "" },    6, 2, "Descuento por pronto pago" } )
-   aAdd( aItmVta, { { "NDTOUNO",    "NDTOUNO",     "NDTOUNO",     "" },        { "N", "N", "N", "" },    6, 2, "Descuento definido 1" } )
-   aAdd( aItmVta, { { "NDTODOS",    "NDTODOS",     "NDTODOS",     "" },        { "N", "N", "N", "" },    4, 1, "Descuento definido 2" } )
-   aAdd( aItmVta, { { "LRECARGO",   "LRECARGO",    "LRECARGO",    "" },        { "L", "L", "L", "" },    1, 0, "Lógico de recargo" } )
-   aAdd( aItmVta, { { "CDIVALB",    "CDIVFAC",     "CDIVFAC",     "CDIVTIK" }, { "C", "C", "C", "C" },   3, 0, "Código divisa" } )
-   aAdd( aItmVta, { { "NVDVALB",    "NVDVFAC",     "NVDVFAC",     "NVDVTIK" }, { "N", "N", "N", "N" },  10, 4, "Valor divisa" } )
-   aAdd( aItmVta, { { "CRETPOR",    "CRETPOR",     "CRETPOR",     "CRETPOR" }, { "C", "C", "C", "C" }, 100, 0, "Retirado por" } )
-   aAdd( aItmVta, { { "CRETMAT",    "CRETMAT",     "CRETMAT",     "CRETMAT" }, { "C", "C", "C", "C" },  20, 0, "Matricula" } )
-   aAdd( aItmVta, { { "LIVAINC",    "LIVAINC",     "LIVAINC",     "" },        { "L", "L", "L", "" },    1, 0, "Lógico impuestos incluido" } )
-   aAdd( aItmVta, { { "NREGIVA",    "NREGIVA",     "NREGIVA",     "" },        { "N", "N", "N", "" },   20, 0, "Régimen de " + cImp() } )
-   aAdd( aItmVta, { { "CCODTRN",    "CCODTRN",     "CCODTRN",     "" },        { "C", "C", "C", "" },    9, 0, "Código del transportista" } )
-   aAdd( aItmVta, { { "CCODUSR",    "CCODUSR",     "CCODUSR",     "CCCJTIK" }, { "C", "C", "C", "C" },   3, 0, "Código de usuario" } )
-   aAdd( aItmVta, { { "DFECCRE",    "DFECCRE",     "DFECCRE",     "DFECCRE" }, { "D", "D", "D", "D" },   8, 0, "Fecha de creación/modificación" } )
-   aAdd( aItmVta, { { "CTIMCRE",    "CTIMCRE",     "CTIMCRE",     "CTIMCRE" }, { "C", "C", "C", "C" },  20, 0, "Hora de creación/modificación" } )
-   aAdd( aItmVta, { { "CCODGRP",    "CCODGRP",     "CCODGRP",     ""        }, { "C", "C", "C", "" },    4, 0, "Grupo de cliente" } )
-   aAdd( aItmVta, { { "lImprimido", "lImprimido",  "lImprimido",  ""        }, { "L", "L", "L", "" },    1, 0, "Lógico de imprimido" } )
-   aAdd( aItmVta, { { "dFecImp",    "dFecImp",     "dFecImp",     ""        }, { "D", "D", "D", "" },    8, 0, "Fecha última impresión" } )
-   aAdd( aItmVta, { { "cHorImp",    "cHorImp",     "cHorImp",     ""        }, { "C", "C", "C", "" },    5, 0, "Hora última impresión" } )
-   aAdd( aItmVta, { { "cCodDlg",    "cCodDlg",     "cCodDlg",     "cCodDlg" }, { "C", "C", "C", "C" },   2, 0, "Código delegación" } )
-
-RETURN ( aItmVta )
-
-//----------------------------------------------------------------------------//
-
-FUNCTION aItmCompras()
-
-   local aItmCom := {}
-
-   aAdd( aItmCom, { { "CSERALB",    "CSERFAC"   }, { "C", "C" },  1, 0, "Serie del documento" } )
-   aAdd( aItmCom, { { "NNUMALB",    "NNUMFAC"   }, { "N", "N" },  9, 0, "Número del documento" } )
-   aAdd( aItmCom, { { "CSUFALB",    "CSUFFAC"   }, { "C", "C" },  2, 0, "Sufijo del documento" } )
-   aAdd( aItmCom, { { "CTURALB",    "CTURFAC"   }, { "C", "C" },  6, 0, "Sesión del documento" } )
-   aAdd( aItmCom, { { "DFECALB",    "DFECFAC"   }, { "D", "D" },  8, 0, "Fecha del documento" } )
-   aAdd( aItmCom, { { "CCODALM",    "CCODALM"   }, { "C", "C" },  3, 0, "Código del almacén" } )
-   aAdd( aItmCom, { { "CCODCAJ",    "CCODCAJ"   }, { "C", "C" },  3, 0, "Código de la caja" } )
-   aAdd( aItmCom, { { "CCODPRV",    "CCODPRV"   }, { "C", "C" }, 12, 0, "Código del proveedor" } )
-   aAdd( aItmCom, { { "CNOMPRV",    "CNOMPRV"   }, { "C", "C" }, 35, 0, "Nombre del proveedor" } )
-   aAdd( aItmCom, { { "CDIRPRV",    "CDIRPRV"   }, { "C", "C" }, 35, 0, "Domicilio del proveedor" } )
-   aAdd( aItmCom, { { "CPOBPRV",    "CPOBPRV"   }, { "C", "C" }, 25, 0, "Población del proveedor" } )
-   aAdd( aItmCom, { { "CPROPRV",    "CPROVPROV" }, { "C", "C" }, 20, 0, "Provincia del proveedor" } )
-   aAdd( aItmCom, { { "CPOSPRV",    "CPOSPRV"   }, { "C", "C" },  5, 0, "Código postal del provedor" } )
-   aAdd( aItmCom, { { "CDNIPRV",    "CDNIPRV"   }, { "C", "C" }, 30, 0, "DNI/CIF del proveedor" } )
-   aAdd( aItmCom, { { "DFECENT",    "DFECENT"   }, { "D", "D" },  8, 0, "Fecha de entrada" } )
-   aAdd( aItmCom, { { "CCODPGO",    "CCODPAGO"  }, { "C", "C" },  2, 0, "Forma de pago" } )
-   aAdd( aItmCom, { { "NBULTOS",    "NBULTOS"   }, { "N", "N" },  3, 0, "Número de bultos" } )
-   aAdd( aItmCom, { { "NPORTES",    "NPORTES"   }, { "N", "N" },  6, 0, "Valor de los portes" } )
-   aAdd( aItmCom, { { "NDTOESP",    "NDTOESP"   }, { "N", "N" },  6, 2, "Descuento general" } )
-   aAdd( aItmCom, { { "NDPP",       "NDPP"      }, { "N", "N" },  6, 2, "Descuento por pronto pago" } )
-   aAdd( aItmCom, { { "LRECARGO",   "LRECARGO"  }, { "L", "L" },  1, 0, "Lógico de recargo" } )
-   aAdd( aItmCom, { { "CCONDENT",   "CCONDENT"  }, { "C", "C" }, 20, 0, "Condición de entrada" } )
-   aAdd( aItmCom, { { "CEXPED",     "CEXPED"    }, { "C", "C" }, 20, 0, "Expedición" } )
-   aAdd( aItmCom, { { "COBSERV",    "COBSERV"   }, { "M", "M" }, 10, 0, "Observaciones" } )
-   aAdd( aItmCom, { { "CDIVALB",    "CDIVFAC"   }, { "C", "C" },  3, 0, "Código de la divisa" } )
-   aAdd( aItmCom, { { "NVDVALB",    "NVDVFAC"   }, { "N", "N" }, 10, 4, "Valor de la divisa" } )
-   aAdd( aItmCom, { { "NDTOUNO",    "NDTOUNO"   }, { "N", "N" },  5, 2, "Descuento definido 1" } )
-   aAdd( aItmCom, { { "NDTODOS",    "NDTODOS"   }, { "N", "N" },  5, 2, "Descuento definido 2" } )
-   aAdd( aItmCom, { { "CCODUSR",    "CCODUSR"   }, { "C", "C" },  3, 0, "Código de usuario" } )
-   aAdd( aItmCom, { { "LIMPRIMIDO", "LIMPRIMIDO"}, { "L", "L" },  1, 0, "Lógico de imprimido" } )
-   aAdd( aItmCom, { { "DFECIMP",    "DFECIMP"   }, { "D", "D" },  8, 0, "Fecha de última impresión" } )
-   aAdd( aItmCom, { { "CHORIMP",    "CHORIMP"   }, { "C", "C" },  5, 0, "Hora última impresión" } )
-   aAdd( aItmCom, { { "DFECCHG",    "DFECCHG"   }, { "D", "D" },  8, 0, "Fecha creación/modificación" } )
-   aAdd( aItmCom, { { "CTIMCHG",    "CTIMCHG"   }, { "C", "C" },  5, 0, "Hora creación/modificación" } )
-   aAdd( aItmCom, { { "CCODDLG",    "CCODDLG"   }, { "C", "C" },  2, 0, "Código de la delegación" } )
-
-RETURN ( aItmCom )
-
-//----------------------------------------------------------------------------//
-
-FUNCTION aEmpresa( cCodigoEmpresa )
-
-   setArrayEmpresa( EmpresasModel():scatter( cCodigoEmpresa ) )
-
-   /*
-   Configuraciones desde el usuario-----------------------------------------
-   */
-
-   if !( isReport() )
-
-      if empty( Application():codigoCaja() )
-         Application():getCaja()
-      end if
-
-      if empty( Application():codigoAlmacen() )
-         Application():getAlmacen()
-      end if
-
-      /*
-      Cargamos el programa contable--------------------------------------
-      */
-
-      setAplicacionContable( uFieldEmpresa( "nExpContbl" ) )
-
-   end if
-
-   /*
-   Verificamos la existencia de la delegacion-------------------------------
-   */
-
-   setArrayDelegacionEmpresa( DelegacionesModel():arrayDelegaciones( cCodigoEmpresa ) )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION SetEmp( uVal, nPos )
-
-   if nPos >= 0 .and. nPos <= len( aEmpresa )
-      aEmpresa[ nPos ]  := uVal
-   end if
-
- RETURN ( aEmpresa )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION aRetDlgEmp() ; RETURN ( aDlgEmp )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION setArrayDelegacionEmpresa( aDelegaciones )
-
-   aDlgEmp  := aDelegaciones
-
-RETURN ( aDlgEmp )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cCodigoEmpresaEnUso( cCodEmp )
-
-   if cCodEmp != nil
-      cCodigoEmpresaEnUso     := cCodEmp
-   end if
-
-RETURN ( cCodigoEmpresaEnUso )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cCodigoDelegacionEnUso( cCodDlg )
-
-   if cCodDlg != nil
-      cCodigoDelegacionEnUso  := cCodDlg
-   end if
-
-RETURN ( cCodigoDelegacionEnUso )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION setPathEmpresa( cCodEmp )
-
-   cPatEmp( cCodEmp )
-   cPatEmp( cCodEmp, nil, .t. )
-   cPatEmp( cCodEmp, nil, .t. )
-   cPatEmp( cCodEmp, nil, .t. )
-   cPatEmp( cCodEmp, nil, .t. )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION GetCodEmp( dbfEmp )
-
-   local oBlock
-   local oError
-   local nRec
-   local cCodEmp
-   local lClose   := .f.
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   IF dbfEmp == NIL
-      USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
-      SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
-      lClose      := .t.
-	END IF
-
-   nRec           := ( dbfEmp )->( RecNo() )
-   cCodEmp        := ""
-
-   ( dbfEmp )->( dbGoTop() )
-   while !( dbfEmp )->( eof() )
-      if ( dbfEmp )->lActiva
-         cCodEmp  := ( dbfEmp )->CodEmp
-      end if
-      ( dbfEmp )->( dbSkip() )
-   end while
-
-   /*
-   Quitamos la empresa actual--------------------------------------------------
-   */
-
-   if empty( cCodEmp )
-      ( dbfEmp )->( dbGoTop() )
-      cCodEmp     := ( dbfEmp )->CodEmp
-   end if
-
-   ( dbfEmp )->( dbGoTo( nRec ) )
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if lClose
-      CLOSE ( dbfEmp )
-   end if
-
-RETURN ( cCodEmp )
-
-//---------------------------------------------------------------------------//
-/*
-Funciones para crear las bases de datos de los favoritos de la galeria de
-informenes; lo metemos aqui para que pueda actualizar ficheros
-*/
-
-FUNCTION mkReport( cPath, lAppend, cPathOld, oMeter )
-
-   DEFAULT lAppend      := .f.
-
-   IF oMeter != NIL
-		oMeter:cText		:= "Generando Bases"
-      sysRefresh()
-	END IF
-
-   CreateDbfReport( cPath )
-   
-   rxReport( cPath, oMeter )
-
-   if lAppend .and. lIsDir( cPathOld )
-      AppDbf( cPathOld, cPath, "CfgCar" )
-   end if
-
-   if lAppend .and. lIsDir( cPathOld )
-      AppDbf( cPathOld, cPath, "CfgFav" )
-   end if
-
-RETURN .t.
-
-//---------------------------------------------------------------------------//
-
-FUNCTION rxReport( cPath, oMeter )
-
-   local dbfFolder
-   local dbfFavorito
-
-   DEFAULT cPath  := cPatEmp()
-
-   if !lExistTable( cPath + "CfgCar.Dbf" ) .or.;
-      !lExistTable( cPath + "CfgFav.Dbf" )
-
-      CreateDbfReport( cPath )
-
-   end if
-
-   fEraseIndex( cPath + "CFGCAR.CDX" )
-
-   dbUseArea( .t., cDriver(), cPath + "CFGCAR.DBF", cCheckArea( "CFGCAR", @dbfFolder ), .f. )
-   if !( dbfFolder )->( neterr() )
-      ( dbfFolder )->( __dbPack() )
-
-      ( dbfFolder )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfFolder )->( ordCreate( cPath + "CFGCAR.CDX", "CUSRNOM", "CCODUSR + CNOMBRE", {|| Field->CCODUSR + Field->CNOMBRE } ) )
-
-      ( dbfFolder )->( dbCloseArea() )
-
-   else
-
-      msgStop( "Imposible abrir en modo exclusivo la tabla de configuraciones" )
-
-   end if
-
-   fEraseIndex( cPath + "CFGFAV.CDX" )
-
-   dbUseArea( .t., cDriver(), cPath + "CFGFAV.DBF", cCheckArea( "CFGFAV", @dbfFavorito ), .f. )
-   if !( dbfFavorito )->( neterr() )
-      ( dbfFavorito )->( __dbPack() )
-
-      ( dbfFavorito )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfFavorito )->( ordCreate( cPath + "CFGFAV.CDX", "CUSRFAV", "CCODUSR + CNOMFAV", {|| Field->CCODUSR + Field->CNOMFAV } ) )
-
-      ( dbfFavorito )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfFavorito )->( ordCreate( cPath + "CFGFAV.CDX", "CUSRCAR", "CCODUSR + CCARPETA", {|| Field->CCODUSR + Field->CCARPETA } ) )
-
-      ( dbfFavorito )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfFavorito )->( ordCreate( cPath + "CFGFAV.CDX", "CUSRRPT", "CCODUSR + CCARPETA + CNOMRPT", {|| Field->CCODUSR + Field->CCARPETA + Field->CNOMRPT } ) )
-
-      ( dbfFavorito )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfFavorito )->( ordCreate( cPath + "CFGFAV.CDX", "CUSRCARFAV", "CCODUSR + CCARPETA + CNOMFAV", {|| Field->CCODUSR + Field->CCARPETA + Field->CNOMFAV } ) )
-
-      ( dbfFavorito )->( dbCloseArea() )
-
-   else
-
-      msgStop( "Imposible abrir en modo exclusivo la tabla de configuraciones" )
-
-   end if
-
-RETURN nil
-
-//---------------------------------------------------------------------------//
-
-FUNCTION CreateDbfReport( cPath )
-
-   DEFAULT cPath  := cPatEmp()
-
-   if !lExistTable( cPath + "CFGCAR.DBF" )
-      dbCreate( cPath + "CFGCAR.DBF", aSqlStruct( aItmDbfReport() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "CFGFAV.DBF" )
-      dbCreate( cPath + "CFGFAV.DBF", aSqlStruct( aItmDbfFavoritos() ), cDriver() )
-   end if
-
-RETURN nil
-
-//---------------------------------------------------------------------------//
-
-FUNCTION aItmDbfReport()
-
-   local aBase := {}
-
-   aAdd( aBase, { "cCodUsr",  "C",   3, 0, "Código de usuario" } )
-   aAdd( aBase, { "cNombre",  "C", 100, 0, "Nombre de la carpeta" } )
-
-RETURN ( aBase )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION aItmDbfFavoritos()
-
-   local aBase := {}
-
-   aAdd( aBase, { "cCodUsr",  "C",   3, 0, "Código de usuario" } )
-   aAdd( aBase, { "cCarpeta", "C", 100, 0, "Nombre de la carpeta" } )
-   aAdd( aBase, { "cNomFav",  "C", 100, 0, "Descripción para favoritos" } )
-   aAdd( aBase, { "cNomRpt",  "C", 100, 0, "Descripción original" } )
-
-RETURN ( aBase )
 
 //---------------------------------------------------------------------------//
 
@@ -5195,17 +2758,17 @@ RETURN nil
 
 //---------------------------------------------------------------------------//
 
-static FUNCTION Load( oStreetFrom, oCityFrom, oCountryFrom )
+STATIC FUNCTION Load( oStreetFrom, oCityFrom, oCountryFrom )
 
-   oStreetFrom:cText(   Padr( cDomEmp(), 200 ) )
-   oCityFrom:cText(     Padr( Rtrim( cPobEmp() ) + Space( 1 ) + Rtrim( cPrvEmp() ), 200 ) )
-   oCountryFrom:cText(  Padr( "Spain", 100 ) )
+   oStreetFrom:cText(   space( 200 ) )
+   oCityFrom:cText(     space( 200 ) )
+   oCountryFrom:cText(  space( 100 ) )
 
 RETURN nil
 
 //---------------------------------------------------------------------------//
 
-static FUNCTION ShowInWin( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo, cCityTo, cCountryTo, oWebMap, oActiveX )
+STATIC FUNCTION ShowInWin( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo, cCityTo, cCountryTo, oWebMap, oActiveX )
 
    oWebMap:aAddress  := {}
 
@@ -5226,7 +2789,7 @@ RETURN nil
 
 //---------------------------------------------------------------------------//
 
-static FUNCTION ShowInExplorer( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo, cCityTo, cCountryTo, oWebMap, oActiveX )
+STATIC FUNCTION ShowInExplorer( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo, cCityTo, cCountryTo, oWebMap, oActiveX )
 
    oWebMap:aAddress  := {}
 
@@ -5242,34 +2805,6 @@ RETURN nil
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cUnidadMedicion( cDbf, lParentesis )
-
-   local cUnidad        := ""
-
-   DEFAULT lParentesis  := .f.
-
-   if !empty( ( cDbf )->nMedUno )
-      cUnidad           += AllTrim( Trans( ( cDbf )->nMedUno, MasUnd() ) )
-   end if
-
-   if !empty( ( cDbf )->nMedDos )
-      cUnidad           += " x "
-      cUnidad           += AllTrim( Trans( ( cDbf )->nMedDos, MasUnd() ) )
-   end if
-
-   if !empty( ( cDbf )->nMedTre )
-      cUnidad           += " x "
-      cUnidad           += AllTrim( Trans( ( cDbf )->nMedTre, MasUnd() ) )
-   end if
-
-   if lParentesis .and. !empty( cUnidad )
-      cUnidad           := "(" + cUnidad + ")"
-   end if
-
-RETURN ( cUnidad )
-
-//---------------------------------------------------------------------------//
-
 FUNCTION sErrorBlock( bBlock )
 
    nError++
@@ -5278,6 +2813,8 @@ FUNCTION sErrorBlock( bBlock )
    logwrite( "suma control del errores 1:" + procname(1) + "2:" + procname(2) + str( nError ) )
 
 RETURN ( ErrorBlock( {| oError | ApoloBreak( oError ) } ) )
+
+//---------------------------------------------------------------------------//
 
 FUNCTION rErrorBlock( oBlock )
 
@@ -5315,112 +2852,23 @@ RETURN nil
 
 FUNCTION appLoadAds()
 
-   if !file( cIniAplication() ) .and. file( fullCurDir() + "Gestion.Ini" )
-      fRename( fullCurDir() + "Gestion.Ini", cIniAplication() )
-   end if
-
-   cAdsIp(     GetPvProfString(  "ADS",      "Ip",       hb_curdrive() + ":\", cIniAplication() ) )
-   cAdsData(   GetPvProfString(  "ADS",      "Data",     curdir() + if( !empty( curdir() ), "\", "" ), cIniAplication() ) )
-   cAdsPort(   GetPvProfString(  "ADS",      "Port",     "",   cIniAplication() ) )
-   nAdsServer( GetPvProfInt(     "ADS",      "Server",   7,    cIniAplication() ) )
-   cAdsFile(   GetPvProfString(  "ADS",      "File",     "Gestool.add",   cIniAplication() ) )
-
 RETURN nil 
 
 //---------------------------------------------------------------------------//
 
 FUNCTION AppSql( cEmpDbf, cEmpSql, cFile )
 
-   local oBlock
-   local oError
-   local dbfOld
-	local dbfTmp
-   local dbfDbf      := fullCurDir() + cEmpDbf + "\" + cFile + ".Dbf"
-   local cdxDbf      := fullCurDir() + cEmpDbf + "\" + cFile + ".Cdx"
-   local dbfSql      := cEmpSql + "\" + cFile + ".Dbf"
-   local cdxSql      := cEmpSql + "\" + cFile + ".Cdx"
-
-   if !File( dbfDbf )
-      RETURN nil
-   end if
-
-   if !lExistTable( dbfSql )
-      RETURN nil
-   end if
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      // DBFCDX ------------------------------------------------------------------
-
-      USE ( dbfDbf ) NEW VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "OLD", @dbfOld ) )
-      if File( cdxDbf )
-         SET ADSINDEX TO ( cdxDbf ) ADDITIVE
-      end if
-
-      // SQLRDD ------------------------------------------------------------------
-
-      USE ( dbfSql ) NEW VIA "SQLRDD" ALIAS ( cCheckArea( "TMP", @dbfTmp ) )
-      if lExistIndex( cdxSql )
-         SET ADSINDEX TO ( cdxSql ) ADDITIVE
-      end if
-
-      // Pasamos los datos---------------------------------------------------------
-
-      // APPEND FROM ( dbfDbf ) VIA ( cLocalDriver() )
-
-      while !( dbfOld )->( eof() )
-         dbPass( dbfOld, dbfTmp, .t. )
-         ( dbfOld )->( dbSkip() )
-         sysRefresh()
-      end while
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-	CLOSE ( dbfOld )
-	CLOSE ( dbfTmp )
-
 RETURN NIL
 
 //--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
 
 FUNCTION cSqlTableName( cTableName )
-
-   if cTableName[2] == ":"
-      cTableName  := SubStr( cTableName, 3 )
-   endif
-
-   cTableName     := StrTran( AllTrim( Lower( cTableName ) ), ".dbf", "_dbf" )
-   cTableName     := StrTran( cTableName, ".ntx", "" )
-   cTableName     := StrTran( cTableName, ".cdx", "" )
-   cTableName     := StrTran( cTableName, "\", "_" )
-
-   if cTableName[1] == "/"
-      cTableName  := SubStr( cTableName, 2 )
-   endif
-
-   cTableName     := StrTran( cTableName, "/", "_" )
-   cTableName     := StrTran( cTableName, ".", "_" )
-   cTableName     := AllTrim( cTableName )
-
-   if len( cTableName ) > 30
-      cTableName  := SubStr( cTableName, len( cTableName ) - 30 + 1 )
-   endif
 
 RETURN ( cTableName )
 
 //--------------------------------------------------------------------------//
 
 FUNCTION PrinterPreferences( oGet )
-
-   // MsgInfo( hb_valtoexp( aGetPrinters() ) )
 
    PrinterSetup()
 
@@ -5545,335 +2993,9 @@ RETURN cEmpUsr
 
 //---------------------------------------------------------------------------//
 
-FUNCTION lGrupoEmpresa( cCodEmp, dbfEmpresa )
-
-   local oBlock
-   local oError
-   local lClose   := .f.
-   local lGrupo   := .f.
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if empty( dbfEmpresa )
-      USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmpresa ) )
-      SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
-      lClose      := .t.
-   end if
-
-   if dbSeekInOrd( cCodEmp, "CodEmp", dbfEmpresa )
-      lGrupo      := ( dbfEmpresa )->lGrupo
-   end if
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if lClose
-      CLOSE ( dbfEmpresa )
-   end if
-
-RETURN ( lGrupo )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cCodigoGrupo( cCodEmp, dbfEmpresa )
-
-   local nRec
-   local oBlock
-   local oError
-   local lClose   := .f.
-   local cGrupo   := ""
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if empty( dbfEmpresa )
-      dbUseArea( .t., ( cDriver() ), ( cPatDat() + "Empresa.Dbf" ), ( cCheckArea( "Empresa", @dbfEmpresa ) ), .t. )
-      if !lAIS() ; ( dbfEmpresa )->( ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      lClose      := .t.
-   else
-      nRec        := ( dbfEmpresa )->( Recno() )
-   end if
-
-   if dbSeekInOrd( cCodEmp, "CodEmp", dbfEmpresa )
-      cGrupo      := ( dbfEmpresa )->cCodGrp
-   end if
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if lClose
-      CLOSE ( dbfEmpresa )
-   else
-      ( dbfEmpresa )->( dbGoTo( nRec ) )
-   end if
-
-RETURN ( cGrupo )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cItemsToReport( aItems )
-
-   local aItem
-   local cString  := ""
-
-   for each aItem in aItems
-      if !empty( aItem[ 5 ] )
-         cString  += aItem[ 1 ] + "=" + aItem[ 5 ] + ";"
-      end if
-   next
-
-RETURN ( cString )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cObjectsToReport( oDbf )
-
-   local oItem
-   local cString  := ""
-
-   for each oItem in oDbf:aTField
-
-      if !empty( oItem:cComment ) .and. !( oItem:lCalculate )
-         cString  += oItem:cName + "=" + oItem:cComment + ";"
-      end if
-
-   next
-
-RETURN ( cString )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION aEmpGrp( cCodGrp, dbfEmp, lEmpresa )
-
-   local nRec
-   local nOrd
-   local lClose            := .f.
-
-   DEFAULT lEmpresa        := .f.
-
-   if !empty( cCodGrp )
-
-      if empty( dbfEmp )
-
-         USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
-         SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
-
-         ( dbfEmp )->( OrdSetFocus( "cCodGrp" ) )
-
-         lClose            := .t.
-
-      else
-
-         nOrd              := ( dbfEmp )->( OrdSetFocus( "cCodGrp" ) )
-         nRec              := ( dbfEmp )->( Recno() )
-
-      end if
-
-      aEmpresasGrupo       := {}
-
-      if lEmpresa
-
-         aAdd( aEmpresasGrupo, cCodGrp )
-
-      else
-
-         if ( dbfEmp )->( dbSeek( cCodGrp ) )
-
-            while ( dbfEmp )->cCodGrp == cCodGrp .and. !( dbfEmp )->( Eof() )
-
-               aAdd( aEmpresasGrupo, ( dbfEmp )->CodEmp )
-
-               ( dbfEmp )->( dbSkip() )
-
-            end while
-
-         end if
-
-      end if
-
-      if lClose
-
-         CLOSE( dbfEmp )
-
-      else
-
-         ( dbfEmp )->( OrdSetFocus( nOrd ) )
-         ( dbfEmp )->( dbGoTo( nRec ) )
-
-      end if
-
-   end if
-
-RETURN ( aEmpresasGrupo )
-
-//----------------------------------------------------------------------------//
-
 FUNCTION cPatStk( cPath, lPath, lShort, lGrp )
 
-   DEFAULT lPath  := .t.
-   DEFAULT lShort := .f.
-   DEFAULT lGrp   := .f.
-
-   if lAds()
-      RETURN ( cAdsUNC() + if( lGrp, "Emp", "Emp" ) + cPath + if( lPath, "\", "" ) )
-   end if
-
 RETURN ( if( !lShort, fullCurDir(), "" ) + if( lGrp, "Emp", "Emp" ) + cPath + if( lPath, "\", "" ) )
-
-//---------------------------------------------------------------------------//
-/*
-Devuelve la descripción de una line de factura
-*/
-
-FUNCTION Descrip( cFacCliL, cFacCliS )
-
-   local cKey
-   local cRETURN     := ""
-
-   if !empty( ( cFacCliL )->cDetalle )
-      cRETURN        := Rtrim( ( cFacCliL )->cDetalle )
-   else
-      cRETURN        := Rtrim( ( cFacCliL )->mLngDes )
-   end if
-
-   if !empty( cFacCliS )
-
-      ckey           := ( cFacCliL )->( fieldget( 1 ) ) + Str( ( cFacCliL )->( fieldget( 2 ) ) ) + ( cFacCliL )->( fieldget( 3 ) ) + Str( ( cFacCliL )->nNumLin, 4 ) 
-
-      cRETURN        += SerialDescrip( cKey, cFacCliS )
-
-   end if
-
-RETURN ( cRETURN )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION DescripLeng( cFacCliL, cFacCliS, cArtLeng )
-
-    local nOrd
-    local cKey
-    local cRETURN     := ""
-    local nOrdAnt     := ( cArtLeng )->( OrdSetFocus( "CARTLEN" ) )
-
-    if !( cArtLeng )->( dbSeek( ( cFacCliL )->cRef + getLenguajeSegundario() ) )
-
-      if !empty( ( cFacCliL )->cDetalle )
-        cRETURN       := Rtrim( ( cFacCliL )->cDetalle ) 
-      else
-        cRETURN       := Rtrim( ( cFacCliL )->mLngDes )
-      end if
-
-    else
-
-      if !empty( ( cArtLeng )->cDesArt ) 
-        cRETURN       := AllTrim( ( cArtLeng )->cDesArt )
-      else
-        cRETURN       := AllTrim( ( cArtLeng )->cDesTik )
-      end if
-
-    end if
-
-    if !empty( cFacCliS )
-
-        nOrd           := ( cFacCliL )->( OrdSetFocus( 1 ) )
-        cKey           := ( cFacCliL )->( OrdKeyVal() ) + Str( ( cFacCliL )->nNumLin, 4 )
-
-        cRETURN        += SerialDescrip( cKey, cFacCliS )
-
-        ( cFacCliL )->( OrdSetFocus( nOrd ) )
-
-    end if
-
-  ( cArtLeng )->( OrdSetFocus( "nOrdAnt" ) )   
-
-RETURN ( cRETURN )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION SerialDescrip( cKey, cFacCliS )
-
-   local nOrd
-   local nInc
-   local nLast
-   local cLast
-   local nPrior
-   local cPrior
-   local cRETURN           := ""
-
-   nInc                    := 0
-   nOrd                    := ( cFacCliS )->( OrdSetFocus( 1 ) )
-
-   if ( cFacCliS )->( dbSeek( cKey ) )
-
-      while ( ( cFacCliS )->( ordKeyVal() ) == cKey .and. !( cFacCliS )->( eof() ) )
-
-         if empty( nPrior )
-            nInc           := 0
-            cPrior         := ( cFacCliS )->cNumSer
-            nPrior         := SpecialVal( ( cFacCliS )->cNumSer )
-         else
-            nInc++
-         end if
-
-         if !empty( nPrior ) .and. ( nInc != 0 )
-
-            if ( SpecialVal( ( cFacCliS )->cNumSer ) == nPrior + nInc )
-
-               cLast       := ( cFacCliS )->cNumSer
-               nLast       := SpecialVal( ( cFacCliS )->cNumSer )
-
-            else
-
-               cRETURN     += Alltrim( cPrior )    // cRETURN     += Alltrim( Str( nPrior ) )
-
-               if !empty( nLast )
-                  cRETURN  += "-"
-                  cRETURN  += Alltrim( cLast )     // Alltrim( Str( nLast ) )
-               end if
-
-               cRETURN     += ","
-
-               nInc        := 0
-               nLast       := nil
-               cPrior      := ( cFacCliS )->cNumSer
-               nPrior      := SpecialVal( ( cFacCliS )->cNumSer )
-
-            end if
-
-         end if
-
-         ( cFacCliS )->( dbSkip() )
-
-      end while
-
-      if !empty( nPrior )
-         cRETURN           += Alltrim( cPrior )    // Alltrim( Str( nPrior ) )
-      end if
-
-      if !empty( nLast )
-         cRETURN           += "-"
-         cRETURN           += Alltrim( cLast )     // Alltrim( Str( nLast ) )
-      end if
-
-      cRETURN              := Space( 1 ) + "[" + cRETURN + "]"
-
-   end if
-
-   ( cFacCliS )->( OrdSetFocus( nOrd ) )
-
-RETURN ( cRETURN )
 
 //---------------------------------------------------------------------------//
 
@@ -5903,12 +3025,12 @@ FUNCTION AppDbf( cEmpOld, cEmpTmp, cFile, aStruct )
 
    USE ( dbfNamOld ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "OLD", @dbfOld ) ) EXCLUSIVE
    if File( cdxNamOld )
-      SET ADSINDEX TO ( cdxNamOld ) ADDITIVE
+      SET INDEX TO ( cdxNamOld ) ADDITIVE
    end if
 
    USE ( dbfNamTmp ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TMP", @dbfTmp ) ) EXCLUSIVE
    if File( cdxNamTmp )
-      SET ADSINDEX TO ( cdxNamTmp ) ADDITIVE
+      SET INDEX TO ( cdxNamTmp ) ADDITIVE
    end if
 
    if !empty( aStruct )
@@ -6039,102 +3161,6 @@ RETURN ( appParamsThird )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION appConnectADS()
-
-   local TDataCenter     
-
-   lAIS( .t. )
-
-   rddRegister( 'ADS', 1 )
-   rddSetDefault( 'ADSCDX' )
-
-   adsSetServerType( nAdsServer() )    // TODOS
-   adsSetFileType( 2 )                 // ADS_CDX
-   adsRightsCheck( .f. )
-
-   adsLocking( .t. )                   // NON-compatible locking mode
-   // adsTestRecLocks( .t. )
-
-   adsSetDeleted( .t. )
-
-   // Conexion con el motor de base de datos-----------------------------------
-
-   TDataCenter          := TDataCenter()
-
-   TDataCenter:ConnectDataDictionary()
-
-RETURN ( TDataCenter:lAdsConnection )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION appConnectCDX()
-
-    lCdx( .t. )
-    rddSetDefault( 'DBFCDX' )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION runReportGalery( cFastReport )
-
-   local nLevel         := Auth():Level( "galeria_de_informes" )
-
-   DEFAULT cFastReport  := ""
-
-   if nAnd( nLevel, 1 ) == 0
-      msgStop( "Acceso no permitido." )
-      RETURN nil
-   end if
-
-   if DirChange( fullCurDir() ) != 0
-      MsgStop( "No puedo cambiar al directorio " + fullCurDir() )
-      RETURN nil
-   end if
-
-   if file( fullCurDir() + "RptApolo.Exe" )
-
-      nHndReport        := winExec( fullCurDir() + "RptApolo.Exe " + cCodEmp() + " " + Auth():Codigo() + " " + cFastReport, 1 )
-
-
-      if !( nHndReport > 21 .or. nHndReport < 0 )
-         msgStop( "Error en la ejecución de la galeria de informes" )
-      end if
-
-   end if
-
-RETURN nil
-
-//---------------------------------------------------------------------------//
-
-FUNCTION runFastGallery( cFastReport )
-
-   local nLevel         := Auth():Level( "01119" )
-
-   DEFAULT cFastReport  := ""
-
-   if nAnd( nLevel, 1 ) == 0
-      msgStop( "Acceso no permitido." )
-      RETURN nil
-   end if
-
-   if dirchange( fullCurDir() ) != 0
-      MsgStop( "No puedo cambiar al directorio " + fullCurDir() )
-      RETURN nil
-   end if
-
-   if file( fullCurDir() + "gestool.exe" )
-      nHndReport        := winExec( fullCurDir() + "gestool.exe " + Auth():Uuid() + " " + cCodEmp() + " " + cFastReport, 1 )
-
-      if !( nHndReport > 21 .or. nHndReport < 0 )
-         msgStop( "Error en la ejecución de la galeria de informes" )
-      end if
-   end if
-
-RETURN nil
-
-//---------------------------------------------------------------------------//
-
 FUNCTION cIniEmpresa()
 
 RETURN ( cPath( cPatEmp() ) + "Empresa.Ini" )
@@ -6250,32 +3276,6 @@ RETURN ( fullCurDir() + "Usr\" )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION cImp()
-
-   local cImp  := uFieldEmpresa( "cNomImp" )
-
-   if !IsChar( cImp )
-      cImp     := ""
-   end if
-
-RETURN ( cImp )
-
-//----------------------------------------------------------------------------//
-
-FUNCTION addMnuNext( cName, uAction )
-
-   if aScan( aMnuNext, {|c| c[1] == cName } ) == 0
-      if valtype( uAction ) == "C"
-         aAdd( aMnuNext, { cName, &( "{||" + uAction + "() }" ) } )
-      else
-         aAdd( aMnuNext, { cName, uAction } )
-      end if
-   end if
-
-RETURN .t.
-
-//---------------------------------------------------------------------------//
-
 FUNCTION cValToChar( uVal )
 
    local cType := ValType( uVal )
@@ -6323,14 +3323,6 @@ FUNCTION cCharToVal( xVal, cType )
             cTemp   := Padr( Rtrim( xVal ), 100 )
          end if
          
-         /*
-         if ( '"' $ xVal ) .or. ( "'" $ xVal )
-            cTemp := Rtrim( cValToChar( xVal ) )
-         else
-            cTemp := '"' + Rtrim( cValToChar( xVal ) ) + '"'
-         end if
-        */
-
       case cType == "N"
          cTemp    := Val( cValToChar( xVal ) )
 
@@ -6503,38 +3495,6 @@ METHOD setCaption( cCaption ) CLASS ApoloBtnFlat
 RETURN ( ::Refresh() )
 
 //----------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-FUNCTION PicOut()
-
-   if empty( cDefPicOut )
-      cDefPicOut  := cPorDiv( cDivEmp() )
-   end if
-
-RETURN ( cDefPicOut )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cUsrTik( cCodUsr )
-
-   if !empty( cCodUsr )
-      cUsrTik     := cCodUsr
-   end if
-
-RETURN cUsrTik
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cDelUsrTik( cCodUsr )
-
-   cUsrTik     := Space(3)
-
-RETURN .t.
-
-//---------------------------------------------------------------------------//
 
 FUNCTION cPatLog( lShort )
 
@@ -6553,6 +3513,7 @@ FUNCTION cCodigoEmpresa( xValue )
 RETURN ( cCodEmp )
 
 //--------------------------------------------------------------------------//
+
 Static FUNCTION lControlAcceso()
 
    if lCheckPerpetuoMode()
@@ -6720,12 +3681,6 @@ endif
    cText          += "Terminated. Press any key to continue"
 
 RETURN
-
-//---------------------------------------------------------------------------//
-
-FUNCTION lBancas()
-
-RETURN ( "BANCAS" $ appParamsMain() )
 
 //---------------------------------------------------------------------------//
 
@@ -6948,18 +3903,6 @@ FUNCTION DestroyFastReport()
    end if
 
 RETURN ( nil )
-
-//----------------------------------------------------------------------------//
-
-FUNCTION cDirectorioImagenes()
-
-  local cDirectorio := AllTrim( uFieldEmpresa( "CDIRIMG" ) )
-
-  if Right( cDirectorio, 1 ) != "\"
-    cDirectorio     := cDirectorio + "\"
-  end if
-
-RETURN ( cDirectorio )
 
 //----------------------------------------------------------------------------//
 /*
@@ -7283,12 +4226,6 @@ RETURN ( strtran( time(), ":", "" ) )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION getHoraInicioEmpresa()
-
-RETURN ( uFieldEmpresa( "cIniJor" ) + "00")
-
-//--------------------------------------------------------------------------//
-
 FUNCTION DownLoadFileToUrl( cUrl, cName )
 
 RETURN DOWNLOADFILE( cUrl, cName )
@@ -7339,40 +4276,6 @@ FUNCTION CreateAdminSQLWindow()
 RETURN nil
 
 //-----------------------------------------------------------------------------//
-
-FUNCTION aNombreTarifas() 
-
-   local n                
-   local aNombreTarifas   := {}
-   
-   for n := 1 to NUMERO_TARIFAS
-
-      if uFieldEmpresa( "lShwTar" + alltrim( str( n ) ) ) .or. ( n == 1 )
-         aadd( aNombreTarifas, uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ), "Precio " + alltrim( str( n ) ) ) )
-      endif
-
-   next
-
-RETURN ( aNombreTarifas )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nNumeroTarifa( cNombreTarifa ) 
-
-   local n
-   
-   for n := 1 to NUMERO_TARIFAS
-
-      if ( uFieldEmpresa( "lShwTar" + alltrim( str( n ) ) ) .or. ( n == 1 ) ) .and. ;
-         alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ) == cNombreTarifa
-         RETURN ( n )
-      endif
-
-   next
-
-RETURN ( 1 )
-
-//---------------------------------------------------------------------------//
 
 FUNCTION inicializateHashVariables()
 
@@ -7437,7 +4340,7 @@ static Function getScafolding()
 
    local hScafolding    := {  {  "Directory"    => cPatDat(),;
                                  "Backup"       => .t. },;
-                              {  "Directory"    => cPatADS(),;   
+                              {  "Directory"    => cPatUsr(),;   
                                  "Backup"       => .t. },;
                               {  "Directory"    => cPatScript(),;   
                                  "Backup"       => .t. },;
@@ -7446,11 +4349,11 @@ static Function getScafolding()
                               {  "Directory"    => cPatDocuments(),;   
                                  "Backup"       => .t.,;
                                  "Subdirectory" => ;
-                                 { "Directory"  => cPatDocuments() + "Movimientos almacen\" } },;
-                              {  "Directory"    => cPatLabels(),;   
-                                 "Backup"       => .t.,;
-                                 "Subdirectory" => ;
-                              { "Directory"  => cPatLabels() + "Movimientos almacen\" } },;
+                                 {  "Directory"    => cPatDocuments() + FacturasClientesController():getName() + "\" } },;
+                                 {  "Directory"    => cPatLabels(),;   
+                                    "Backup"       => .t.,;
+                                    "Subdirectory" => ;
+                                    {  "Directory"  => cPatLabels() + FacturasClientesController():getName() + "\" } },;
                               {  "Directory"    => cPatReporting(),;  
                                  "Backup"       => .t. },;
                               {  "Directory"    => cPatUserReporting(),;   

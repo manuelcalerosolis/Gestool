@@ -78,6 +78,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    // Contrucciones tardias----------------------------------------------------
 
+   METHOD getName()                    INLINE ( "facturas_clientes" )
+
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasClientesModel():New( self ), ), ::oModel )
 
    METHOD getContadoresModel()         INLINE ( if( empty( ::oContadoresModel ), ::oContadoresModel := SQLContadoresModel():New( self ), ), ::oContadoresModel )

@@ -4,7 +4,9 @@
 
 //----------------------------------------------------------------------------//
 
-CLASS TScripts FROM TMant
+CLASS TScripts 
+
+   CLASSDATA   aTimer      INIT {}
 
    DATA     cMru           INIT "gc_code_line_16"
    DATA     cBitmap        INIT "WebTopBlack"
@@ -19,42 +21,30 @@ CLASS TScripts FROM TMant
 
    DATA     aMinutes       INIT { 0, 1, 2, 5, 10, 15, 30, 45, 60, 120, 240, 480 }
 
-   CLASSDATA   aTimer      INIT {}
-
-   METHOD   Activate()
-
-   METHOD   OpenFiles( lExclusive )
-
-   METHOD   DefineFiles()
-
-   METHOD   Resource( nMode )
-
-   METHOD   lPreSave()
-
    // Compilaciones y ejecuciones----------------------------------------------
 
    METHOD   CompilarFicheroScript()
-   METHOD   CompilarCodigoScript( cCodScr )     INLINE ( ::CompilarFicheroScript( cPatScript() + cCodScr + ".prg" ) )
+   METHOD   CompilarCodigoScript( cCodScr ) ; 
+                                       INLINE ( ::CompilarFicheroScript( cPatScript() + cCodScr + ".prg" ) )
 
    METHOD   EjecutarFicheroScript()
-   METHOD   EjecutarCodigoScript( cCodScr )     INLINE ( ::CompilarFicheroScript( cPatScript() + cCodScr + ".hbr" ) )
+   METHOD   EjecutarCodigoScript( cCodScr ) ; 
+                                       INLINE ( ::CompilarFicheroScript( cPatScript() + cCodScr + ".hbr" ) )
 
    METHOD   CompilarEjecutarFicheroScript( cFilePrg )
 
    METHOD   CompilarEjecutarCodigoScript( cCodScr ) ;  
-                                                INLINE ( ::CompilarEjecutarFicheroScript( cPatScript() + cCodScr + ".prg" ) )
+                                       INLINE ( ::CompilarEjecutarFicheroScript( cPatScript() + cCodScr + ".prg" ) )
 
    METHOD   RunScript( cFichero )
-   METHOD   RunCodigoScript( cCodScr )          INLINE ( ::RunScript( cPatScript() + cCodScr + ".hbr" ) )
+   METHOD   RunCodigoScript( cCodScr ) ;      
+                                       INLINE ( ::RunScript( cPatScript() + cCodScr + ".hbr" ) )
 
    // Metodos para los timers--------------------------------------------------
 
    METHOD   StartTimer()
    METHOD   EndTimer()
-   METHOD   ReStartTimer()                      INLINE ( ::EndTimer(), ::StartTimer() )
-
-   METHOD   ActivateAllTimer()                  INLINE ( aEval( ::aTimer, {|o| o:Activate() } ) )
-   METHOD   DeActivateAllTimer()                INLINE ( aEval( ::aTimer, {|o| o:DeActivate() } ) )
+   METHOD   ReStartTimer()             INLINE ( ::EndTimer(), ::StartTimer() )
 
    METHOD   getCompileHbr( cDirectorio )
 
@@ -63,286 +53,6 @@ CLASS TScripts FROM TMant
    METHOD   getCompileFiles( aDirectory )
 
 END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD OpenFiles( lExclusive, cPath ) CLASS TScripts
-
-   local lOpen          := .t.
-   local oError
-   local oBlock
-
-   DEFAULT  lExclusive  := .f.
-
-   oBlock               := ErrorBlock( {| oError | ( oError ) } ) 
-   BEGIN SEQUENCE
-
-      if Empty( ::oDbf )
-         ::oDbf         := ::DefineFiles( cPath )
-      end if
-
-      ::oDbf:Activate( .f., !( lExclusive ) )
-
-   RECOVER USING oError
-
-      lOpen             := .f.
-
-      ::CloseFiles()
-
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError )  )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( lOpen )
-
-//----------------------------------------------------------------------------//
-
-METHOD DefineFiles( cPath, cDriver ) CLASS TScripts
-   
-   local oDbf
-
-   DEFAULT cPath        := ::cPath
-
-   DEFINE TABLE oDbf FILE "Scripts.Dbf" CLASS "Scripts" ALIAS "Scripts" PATH ( cPath ) VIA ( cDriver() ) COMMENT "Scripts"
-
-      FIELD NAME "cCodScr"    TYPE "C" LEN   3  DEC 0 COMMENT "Código"              COLSIZE 100    OF oDbf
-      FIELD NAME "cDesScr"    TYPE "C" LEN  35  DEC 0 COMMENT "Nombre"              COLSIZE 400    OF oDbf
-      FIELD NAME "nMinScr"    TYPE "N" LEN   3  DEC 0 COMMENT "Minutos"             HIDE           OF oDbf
-      FIELD NAME "cCodUsr"    TYPE "C" LEN   3  DEC 0 COMMENT "Código de usuario"   HIDE           OF oDbf
-
-      INDEX TO "Scripts.Cdx" TAG "cCodScr" ON "cCodScr" COMMENT "Código" NODELETED                 OF oDbf
-      INDEX TO "Scripts.Cdx" TAG "cDesScr" ON "cDesScr" COMMENT "Nombre" NODELETED                 OF oDbf
-
-   END DATABASE oDbf
-
-RETURN ( oDbf )
-
-//---------------------------------------------------------------------------//
-
-METHOD Activate() CLASS TScripts
-
-   ::EndTimer()
- 
-   if nAnd( ::nLevel, 1 ) == 0
-      msgStop( "Acceso no permitido." )
-      Return ( Self )
-   end if
-
-   /*
-   Cerramos todas las ventanas----------------------------------------------
-   */
-
-   if ::oWndParent != nil
-      ::oWndParent:CloseAll()
-   end if
-
-   if Empty( ::oDbf )
-      if !::OpenFiles()
-         return nil
-      end if
-   end if
-
-   /*
-   Creamos el Shell---------------------------------------------------------
-   */
-
-   if !::lCreateShell
-      ::CreateShell( ::nLevel )
-   end if
-
-   DEFINE BTNSHELL RESOURCE "BUS" OF ::oWndBrw ;
-      NOBORDER ;
-      ACTION   ( ::oWndBrw:SearchSetFocus() ) ;
-      TOOLTIP  "(B)uscar" ;
-      HOTKEY   "B";
-
-      ::oWndBrw:AddSeaBar()
-
-   DEFINE BTNSHELL RESOURCE "NEW" OF ::oWndBrw ;
-      NOBORDER ;
-      ACTION   ( ::oWndBrw:RecAdd() );
-      ON DROP  ( ::oWndBrw:RecAdd() );
-      TOOLTIP  "(A)ñadir";
-      BEGIN GROUP ;
-      HOTKEY   "A" ;
-      LEVEL    ACC_APPD
-
-   DEFINE BTNSHELL RESOURCE "DUP" OF ::oWndBrw ;
-      NOBORDER ;
-      ACTION   ( ::oWndBrw:RecDup() );
-      TOOLTIP  "(D)uplicar";
-      HOTKEY   "D" ;
-      LEVEL    ACC_APPD
-
-   DEFINE BTNSHELL RESOURCE "EDIT" OF ::oWndBrw ;
-      NOBORDER ;
-      ACTION   ( ::oWndBrw:RecEdit() );
-      TOOLTIP  "(M)odificar";
-      HOTKEY   "M" ;
-      LEVEL    ACC_EDIT
-
-   DEFINE BTNSHELL RESOURCE "ZOOM" OF ::oWndBrw ;
-      NOBORDER ;
-      ACTION   ( ::oWndBrw:RecZoom() );
-      TOOLTIP  "(Z)oom";
-      HOTKEY   "Z" ;
-      LEVEL    ACC_ZOOM
-
-   DEFINE BTNSHELL RESOURCE "DEL" OF ::oWndBrw ;
-      NOBORDER ;
-      ACTION   ( ::oWndBrw:RecDel() );
-      TOOLTIP  "(E)liminar";
-      MRU ;
-      HOTKEY   "E";
-      LEVEL    ACC_DELE
-
-   DEFINE BTNSHELL ;
-      RESOURCE "gc_flash_" ;
-      OF       ::oWndBrw ;
-      NOBORDER ;
-      ACTION   ( ::CompilarEjecutarCodigoScript( ::oDbf:cCodScr ) ) ;
-      TOOLTIP  "E(j)ecutar";
-      HOTKEY   "J" ;
-      LEVEL    ACC_ZOOM
-
-   ::oWndBrw:EndButtons( Self )
-
-   if ::cHtmlHelp != nil
-      ::oWndBrw:cHtmlHelp  := ::cHtmlHelp
-   end if
-
-   ::oWndBrw:Activate( nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles(), ::StartTimer() } )
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD Resource( nMode ) CLASS TScripts
-
-   local oDlg
-   local oGet
-   local oGetUsuario
-   local oScript
-   local cScript
-   local nMinScr
-   local oFont       := TFont():New( "Courier New", 8, 18, .f., .t. )
-
-   if nMode != APPD_MODE
-
-      ::cFicheroPRG  := cPatScript() + ::oDbf:cCodScr + ".prg"
-
-      if File( ::cFicheroPRG )
-         cScript     := MemoRead( ::cFicheroPRG )
-      end if
-
-   end if
-
-   nMinScr           := aScan( ::aMinutes, ::oDbf:nMinScr )
-   nMinScr           := Min( Max( nMinScr, 1 ), len( ::aMinutes ) )
-
-   ::cTime           := ::aTime[ nMinScr ]
-
-   DEFINE DIALOG oDlg RESOURCE "Scripts" TITLE LblTitle( nMode ) + "Script"
-
-      REDEFINE GET oGet VAR ::oDbf:cCodScr ;
-         ID       100 ;
-         WHEN     ( nMode == APPD_MODE ) ;
-         VALID    NotValid( oGet, ::oDbf:cAlias, .t., "0" ) ;
-			PICTURE 	"@!" ;
-			OF 		oDlg
-
-      REDEFINE GET ::oDbf:cDesScr ;
-         ID       110 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-			OF 		oDlg
-
-      REDEFINE GET oGetUsuario VAR ::oDbf:cCodUsr;
-         ID       130 ;
-         IDTEXT   131 ;
-         OF       oDlg
-
-      REDEFINE COMBOBOX ::oTime VAR ::cTime ;
-         ITEMS    ::aTime ;
-         ID       120 ;
-         OF       oDlg
-
-      REDEFINE GET oScript VAR cScript MEMO ;
-         ID       200 ;
-         FONT     oFont ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
-
-      REDEFINE BUTTON ;
-         ID       IDOK ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( if( ::lPreSave( nMode, cScript ), oDlg:end( IDOK ), ) )
-
-      REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         CANCEL ;
-         ACTION   ( oDlg:end() )
-
-      REDEFINE BUTTON ;
-         ID       500 ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( if( ::lPreSave( nMode, cScript ), ( ::CompilarCodigoScript( ::oDbf:cCodScr ), oDlg:end( IDOK ) ), ) )
-
-      if nMode != ZOOM_MODE
-         oDlg:AddFastKey( VK_F5, {|| if( ::lPreSave( nMode, cScript ), oDlg:end( IDOK ), ) } )
-      end if
-
-      oDlg:bStart := { || oGet:SetFocus() }
-
-   ACTIVATE DIALOG oDlg CENTER
-
-   if !Empty( oFont )
-      oFont:End()
-   end if
-
-   ::cFicheroPRG  := ""
-
-RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-METHOD lPreSave( nMode, cScript ) CLASS TScripts 
-
-   if nMode == APPD_MODE .or. nMode == DUPL_MODE
-
-      if ::oDbf:SeekInOrd( ::oDbf:cCodScr, "cCodScr" )
-         MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodScr ) )
-         Return .f.
-      end if
-
-   end if
-
-   if Empty( ::oDbf:cDesScr )
-      MsgStop( "La descripción del Script no puede estar vacía." )
-      Return .f.
-   end if
-
-   ::oDbf:nMinScr       := ::aMinutes[ ::oTime:nAt ]
-
-   if nMode != ZOOM_MODE
-
-      /*
-      Guardamos el fichero prg con lo que tenemos escrito en el Memo-----------
-      */
-   
-      if Empty( ::cFicheroPRG )
-         ::cFicheroPRG  := cPatScript() + ::oDbf:cCodScr + ".prg"
-      end if
-   
-      MemoWrit( ::cFicheroPRG, cScript )
-   
-   end if
-
-Return .t.
 
 //---------------------------------------------------------------------------//
 /*
@@ -356,12 +66,12 @@ METHOD CompilarFicheroScript( lMessage ) CLASS TScripts
 
    if !File( FullCurDir() + "harbour\harbour.exe" )
       msgStop( "No existe compilador" )
-      Return .t.
+      RETURN .t.
    end if 
 
    if !File( ::cFicheroPrg ) 
       msgStop( "No existe el fichero " + ::cFicheroPrg )
-      Return .t.
+      RETURN .t.
    end if 
 
    // Vemos si tenemos q compilar por tiempos de los ficheros------------------
@@ -384,27 +94,17 @@ METHOD CompilarFicheroScript( lMessage ) CLASS TScripts
 
    end if 
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD EjecutarFicheroScript( uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) CLASS TScripts
 
-   local uReturn
-
-   // Desactivamos todos los Scripts-------------------------------------------
-
-   ::DeActivateAllTimer()
-
-   // Ejecutamos el script compilado----------------------------------------
-
-   uReturn  := ::RunScript( ::cFicheroHbr, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
-
-   // Activamos todos los scripts----------------------------------------------
+   local uReturn  := ::RunScript( ::cFicheroHbr, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
 
    ::ActivateAllTimer()
 
-Return uReturn
+RETURN uReturn
 
 //---------------------------------------------------------------------------//
 
@@ -415,8 +115,8 @@ METHOD RunScript( cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6
    local oBlock
    local uReturn
 
-   /*oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       if file( cFichero )
          pHrb        := hb_hrbLoad( cFichero )
@@ -424,52 +124,13 @@ METHOD RunScript( cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6
          hb_hrbUnload( pHrb )   
       end if
 
-   /*RECOVER USING oError
+   RECOVER USING oError
       msgStop( "Error de ejecución script." + CRLF + ErrorMessage( oError ) )
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
 RETURN ( uReturn )
-
-//---------------------------------------------------------------------------//
-
-METHOD StartTimer()
-
-   local cCodScr
-   local oTimer
-
-   ::aTimer          := {} 
-
-   CursorWait()
-
-   if ::OpenFiles()
-
-      ::oDbf:GoTop()
-      while !::oDbf:Eof()
-
-         if ( ::oDbf:nMinScr != 0 ) .and. ( Empty( ::oDbf:cCodUsr ) .or. ( ::oDbf:cCodUsr == Auth():Codigo() ) )
-            
-            cCodScr  := by( ::oDbf:cCodScr )
-
-            oTimer   := TTimer():New( ::oDbf:nMinScr * 60000, {|| ::RunCodigoScript( cCodScr ) }, oWnd() )
-            oTimer:Activate()
-
-            aAdd( ::aTimer, oTimer ) 
-
-         end if
-
-         ::oDbf:Skip()
-
-      end while
-
-      ::CloseFiles()
-
-   end if
-
-   CursorWE()
-
-Return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -502,6 +163,26 @@ Return ( uReturn )
 
 //---------------------------------------------------------------------------//
 
+METHOD StartTimer()
+
+   local cCodScr
+   local oTimer
+
+   ::aTimer          := {} 
+
+   CursorWait()
+
+   oTimer   := TTimer():New( ::oDbf:nMinScr * 60000, {|| ::RunCodigoScript( cCodScr ) }, oWnd() )
+   oTimer:Activate()
+
+   aAdd( ::aTimer, oTimer ) 
+
+   CursorWE()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
 METHOD getCompileHbr( cDirectory ) CLASS TScripts
 
    local aDirectory  := {}
@@ -521,20 +202,20 @@ METHOD getCompileFiles( aDirectory ) CLASS TScripts
    local aFile
    local aFilesHbr   := {}
 
-      for each aFile in aDirectory
+   for each aFile in aDirectory
 
-         if !empty( aFile[1] )
-            ::cFicheroPrg  := aFile[1]
-            ::cFicheroHbr  := strtran( aFile[1], ".prg", ".hbr" )
-         end if 
+      if !empty( aFile[1] )
+         ::cFicheroPrg  := aFile[1]
+         ::cFicheroHbr  := strtran( aFile[1], ".prg", ".hbr" )
+      end if 
 
-         ::CompilarFicheroScript( .f. )
+      ::CompilarFicheroScript( .f. )
 
-         if file( ::cFicheroHbr )
-            aAdd( aFilesHbr, ::cFicheroHbr )
-         end if
+      if file( ::cFicheroHbr )
+         aAdd( aFilesHbr, ::cFicheroHbr )
+      end if
 
-      next 
+   next 
 
 Return ( aFilesHbr )
 
@@ -559,14 +240,14 @@ Return uReturn
 
 //---------------------------------------------------------------------------//
 
-Function ImportScript( oMainWindow, oBoton, cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
+FUNCTION ImportScript( oMainWindow, oBoton, cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
 
    local aFile
    local aDirectory  
 
    aDirectory  := aDirectoryEventScript( cDirectory )
 
-   if !Empty( aDirectory )
+   if !empty( aDirectory )
 
       for each aFile in aDirectory
 
@@ -580,7 +261,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function aDirectoryEventScript( cDirectory )
+STATIC FUNCTION aDirectoryEventScript( cDirectory )
 
    local aDirectory
 
@@ -595,11 +276,11 @@ Static Function aDirectoryEventScript( cDirectory )
       aEval( aDirectory, {|a| a[1] := cPatScript() + cDirectory + "\" + a[1]} )
    end if 
 
-Return ( aDirectory )
+RETURN ( aDirectory )
 
 //---------------------------------------------------------------------------//
 
-Function runEventScript( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
+FUNCTION runEventScript( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
 
    local aFile
    local aFiles
@@ -608,7 +289,7 @@ Function runEventScript( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5
    aFiles         := aDirectoryEventScript( cDirectory ) 
 
    if empty( aFiles )
-      Return ( nil )
+      RETURN ( nil )
    end if 
 
    for each aFile in aFiles
@@ -625,7 +306,7 @@ RETURN ( uReturn )
 
 //---------------------------------------------------------------------------//
 
-Function RunScript( cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) 
+FUNCTION runScript( cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) 
 
    if file( cPatScriptEmp() + cFichero )
       RETURN ( TScripts():CompilarEjecutarFicheroScript( cPatScriptEmp() + cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) )
@@ -638,4 +319,3 @@ Function RunScript( cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uPara
 RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
-

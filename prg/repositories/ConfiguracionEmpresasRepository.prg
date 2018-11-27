@@ -25,8 +25,7 @@ END CLASS
 METHOD getValue( name, default )
 
    local cSentence   := "SELECT value FROM " + ::getTableName()            + space( 1 ) + ;
-                           "WHERE empresa = " + toSQLString( cCodEmp() )   + space( 1 ) + ;
-                           "AND name = " + toSQLString( name )             + space( 1 ) + ;
+                           "WHERE name = " + toSQLString( name )           + space( 1 ) + ;
                            "LIMIT 1"                                         
    local aSelect     := getSQLDataBase():selectFetchHash( cSentence )
 
@@ -77,8 +76,7 @@ METHOD setValue( name, value )
    value          := cValToStr( value )
 
    cSentence      := "SELECT id FROM " + ::getTableName()               + space( 1 )   + ;
-                        "WHERE empresa = " + toSQLString( cCodEmp() )   + space( 1 )   + ;
-                        "AND name = " + toSQLString( name )             + space( 1 )   + ;
+                        "WHERE name = " + toSQLString( name )           + space( 1 )   + ;
                         "LIMIT 1"                                         
 
    aSelect        := getSQLDataBase():selectFetchHash( cSentence )
@@ -86,12 +84,10 @@ METHOD setValue( name, value )
    if empty( aSelect )
 
       cSentence   := "INSERT INTO " + ::getTableName()                  + space( 1 )   + ;
-                     "( empresa,"                                       + space( 1 )   + ;
-                        "name,"                                         + space( 1 )   + ;
+                     "( name,"                                          + space( 1 )   + ;
                         "value )"                                       + space( 1 )   + ;
                      "VALUES"                                           + space( 1 )   + ;
-                     "( " + toSQLString( cCodEmp() ) + ","              + space( 1 )   + ;
-                        toSQLString( name ) + ","                       + space( 1 )   + ;
+                     "( " + toSQLString( name ) + ","                   + space( 1 )   + ;
                         toSQLString( value ) + " )" 
 
    else 

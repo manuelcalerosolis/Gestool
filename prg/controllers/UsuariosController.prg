@@ -162,37 +162,11 @@ METHOD loadConfig() CLASS UsuariosController
       RETURN ( .f. )
    end if 
 
-   ::aEmpresas                   := EmpresasModel():aNombresSeleccionables()
-   ::cCodigoEmpresaExclusiva     := ::getAjustableGestoolController():getModel():getUsuarioEmpresaExclusiva( ::cUuidUsuario )
-   ::cNombreEmpresaExclusiva     := EmpresasModel():getNombreFromCodigo( ::cCodigoEmpresaExclusiva )
-
-   ::aCajas                      := CajasModel():aNombresSeleccionables()
-   ::cUuidCajaExclusiva          := ::getAjustableGestoolController():getModel():getUsuarioCajaExclusiva( ::cUuidUsuario )
-   ::cNombreCajaExclusiva        := CajasModel():getNombreFromUuid( ::cUuidCajaExclusiva )
-
-   ::aAlmacenes                  := AlmacenesModel():aNombresSeleccionables()
-   ::cUuidAlmacenExclusivo       := ::getAjustableGestoolController():getModel():getUsuarioAlmacenExclusivo( ::cUuidUsuario )
-   ::cNombreAlmacenExclusivo     := AlmacenesModel():getNombreFromUuid( ::cUuidAlmacenExclusivo )
-
-   ::aDelegaciones               := SQLDelegacionesModel():getNombres()
-   ::cUuidDelegacionExclusiva    := ::getAjustableGestoolController():getModel():getUsuarioDelegacionExclusiva( ::cUuidUsuario )
-   ::cNombreDelegacionExclusiva  := SQLDelegacionesModel():getNombreFromUuid( ::cUuidDelegacionExclusiva )
-
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD saveConfig() CLASS UsuariosController
-
-   ::cCodigoEmpresaExclusiva     := EmpresasModel():getCodigoFromNombre( ::cNombreEmpresaExclusiva )
-   ::cUuidCajaExclusiva          := CajasModel():getUuidFromNombre( ::cNombreCajaExclusiva )
-   ::cUuidAlmacenExclusivo       := AlmacenesModel():getUuidFromNombre( ::cNombreAlmacenExclusivo )
-   ::cUuidDelegacionExclusiva    := SQLDelegacionesModel():getUuidFromNombre( ::cNombreDelegacionExclusiva )
-
-   ::getAjustableGestoolController():getModel():setUsuarioEmpresaExclusiva( ::cCodigoEmpresaExclusiva, ::cUuidUsuario )
-   ::getAjustableGestoolController():getModel():setUsuarioCajaExclusiva( ::cUuidCajaExclusiva, ::cUuidUsuario )
-   ::getAjustableGestoolController():getModel():setUsuarioAlmacenExclusivo( ::cUuidAlmacenExclusivo, ::cUuidUsuario )
-   ::getAjustableGestoolController():getModel():setUsuarioDelegacionExclusiva( ::cUuidDelegacionExclusiva, ::cUuidUsuario )
 
 RETURN ( nil )
 
@@ -202,34 +176,11 @@ METHOD startingActivate() CLASS UsuariosController
 
    local oPanel               := ::getAjustableGestoolController():getDialogView():oExplorerBar:AddPanel( "Propiedades usuario", nil, 1 ) 
 
-   ::oComboEmpresa            := oPanel:addComboBox( "Empresa exclusiva", @::cNombreEmpresaExclusiva, ::aEmpresas )
-   ::oComboEmpresa:bChange    := {|| ::changeComboEmpresa() }
-
-   ::oComboDelegacion         := oPanel:addComboBox( "Delegación exclusiva", @::cNombreDelegacionExclusiva, ::aDelegaciones )
-
-   ::oComboCaja               := oPanel:addComboBox( "Caja exclusiva", @::cNombreCajaExclusiva, ::aCajas )
-
-   ::oComboAlmacen            := oPanel:addComboBox( "Almacén exclusivo", @::cNombreAlmacenExclusivo, ::aAlmacenes )
-
-   ::changeComboEmpresa()
-      
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD changeComboEmpresa() CLASS UsuariosController
-
-   iif(  empty( ::cNombreEmpresaExclusiva ),;
-         ( ::oComboDelegacion:Disable(), ::oComboDelegacion:Set( "" ) ),;
-         ::oComboDelegacion:Enable() )
-   
-   iif(  empty( ::cNombreEmpresaExclusiva ),;
-         ( ::oComboCaja:Disable(), ::oComboCaja:Set( "" ) ),;
-         ::oComboCaja:Enable() )
-   
-   iif(  empty( ::cNombreEmpresaExclusiva ),;
-         ( ::oComboAlmacen:Disable(), ::oComboAlmacen:Set( "" ) ),;
-         ::oComboAlmacen:Enable() )
 
 RETURN ( nil )
 

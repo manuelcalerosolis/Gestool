@@ -64,8 +64,7 @@ METHOD getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cV
       cSql     +=    "movimientos_almacen_lineas.fecha_caducidad "
       cSql     += "FROM " + ::getTableName() + " "
       cSql     +=    "INNER JOIN movimientos_almacen ON movimientos_almacen_lineas.parent_uuid = movimientos_almacen.uuid " 
-      cSql     += "WHERE movimientos_almacen.empresa = " + quoted( cCodEmp() ) + " "                    
-      cSql     +=    "AND movimientos_almacen_lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " " 
+      cSql     += "WHERE movimientos_almacen_lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " " 
       cSql     +=    "AND movimientos_almacen_lineas.fecha_caducidad IS NOT NULL "       
 
    if !empty(cValorPrimeraPropiedad)
@@ -175,8 +174,7 @@ METHOD getSQLSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cC
                      "cabecera.fecha_hora "                                                              + ;
                   "FROM movimientos_almacen_lineas lineas "                                              + ;
                      "INNER JOIN movimientos_almacen cabecera ON lineas.parent_uuid = cabecera.uuid "    + ;
-                  "WHERE empresa_uuid = " + quoted( uuidEmpresa() ) + " "                                         + ;
-                     "AND lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " "                   + ;
+                  "WHERE lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " "                    + ;
                      "AND cabecera.tipo_movimiento = 4 "                                                 
 
    if !empty( cCodigoAlmacen )
@@ -268,12 +266,12 @@ METHOD getSQLSentenceTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlma
    cSentence         += "INNER JOIN movimientos_almacen_lineas "
    cSentence         +=    "ON movimientos_almacen_lineas.parent_uuid = movimientos_almacen.uuid "
 
-   cSentence         += "WHERE empresa = " + quoted( cCodEmp() ) + " "                                     
+   cSentence         += "WHERE "                                     
    
    if lEntrada
-      cSentence      +=    "AND movimientos_almacen.almacen_destino = " + quoted( cCodigoAlmacen ) + " "
+      cSentence      +=    "movimientos_almacen.almacen_destino = " + quoted( cCodigoAlmacen ) + " "
    else
-      cSentence      +=    "AND movimientos_almacen.almacen_origen = " + quoted( cCodigoAlmacen ) + " "
+      cSentence      +=    "movimientos_almacen.almacen_origen = " + quoted( cCodigoAlmacen ) + " "
    end if
    
    if !empty( tConsolidacion )
@@ -334,10 +332,9 @@ METHOD getSQLSentenceMovimientosAlmacenForReport( oReporting )
    cSentence         += "FROM movimientos_almacen_lineas "
    cSentence         += "INNER JOIN movimientos_almacen "
    cSentence         +=    "ON movimientos_almacen.uuid = movimientos_almacen_lineas.parent_uuid "
-   cSentence         += "WHERE movimientos_almacen.empresa = " + quoted( cCodEmp() ) + " "                                     
    
    if !empty( oReporting )
-
+      cSentence      += "WHERE "                                      
       cSentence      +=    "AND CAST(movimientos_almacen.fecha_hora AS date) >= " + toSqlString( oReporting:getDesdeFecha() ) + " "
       cSentence      +=    "AND CAST(movimientos_almacen.fecha_hora AS date) <= " + toSqlString( oReporting:getHastaFecha() ) + " "
 
@@ -405,9 +402,7 @@ METHOD getSQLSentenceMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenL
    cSentence         += "INNER JOIN movimientos_almacen "
    cSentence         +=    "ON movimientos_almacen.uuid = movimientos_almacen_lineas.parent_uuid "
 
-   cSentence         += "WHERE movimientos_almacen.empresa_uuid = " + quoted( uuidEmpresa() ) + " "
-   
-   cSentence         +=    "AND movimientos_almacen_lineas.codigo_articulo = " + quoted( hget( hParams, "codigo_articulo" ) ) + " "
+   cSentence         += "WHERE movimientos_almacen_lineas.codigo_articulo = " + quoted( hget( hParams, "codigo_articulo" ) ) + " "
 
    if hhaskey( hParams, "year" ) .and. !empty( hget( hParams, "year" ) )
       cSentence      +=    "AND DATE_FORMAT( CAST( movimientos_almacen.fecha_hora AS date ), '%Y' ) = " + Str( hget( hParams, "year" ) ) + " "

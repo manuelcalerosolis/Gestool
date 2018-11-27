@@ -214,12 +214,6 @@ METHOD getTotalUnidadesStatement( lSalida )
 
    local cSql        := ""
 
-   if lCalCaj()
-      cSql           += "( SUM( " + ::getCajasStatement() + " * " + ::getUnidadesFieldName() + " ) " + if( lSalida, "* - 1", "" ) + " ) as [totalUnidadesStock], "
-   else
-      cSql           += "( SUM( " + ::getUnidadesFieldName() + " ) " + if( lSalida, "* - 1", "" ) + " ) as [totalUnidadesStock], "
-   end if
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//

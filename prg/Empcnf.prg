@@ -1277,37 +1277,6 @@ RETURN ( cRutCnt )
 
 //----------------------------------------------------------------------------//
 
- FUNCTION cPatImg( cPath )
-
-   local cPatImg  := aEmp( _CDIRIMG ) 
-
-   if !empty( cPatImg )
-      
-      cPatImg     := alltrim( cPatImg )
-
-      if right( cPatImg, 1 ) != "\"
-         cPatImg  := cPatImg += "\"
-      end if
-
-   end if
-
-RETURN ( cPatImg )
-
-//----------------------------------------------------------------------------//
-
- FUNCTION cPatDoc( cPath )
-
-   local cPatDoc  := Rtrim( aEmp()[ _CDIRIMG ] )
-
-   if !Empty( cPatDoc )
-      if Right( cPatDoc, 1 ) != "\"
-         cPatDoc  := cPatDoc += "\"
-      end if
-   end if
-
-RETURN ( cPatDoc )
-
-//---------------------------------------------------------------------------//
 /*
 Devuelve el numero de digitos de proveedores de la empresa activa--------------
 */
