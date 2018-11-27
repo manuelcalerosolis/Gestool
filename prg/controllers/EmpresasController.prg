@@ -48,6 +48,8 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    METHOD seedEmpresa()
 
+   METHOD BackUp()
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getModel()                         INLINE ( iif( empty( ::oModel ), ::oModel := SQLEmpresasModel():New( self ), ), ::oModel )
@@ -218,6 +220,18 @@ METHOD seedEmpresa()
                Company():guardWhereCodigo( ::getRowSet():fieldGet( 'codigo' ) ),;
                msgRun( "Importando empresa : " + alltrim( cvaltostr( ::getRowSet():fieldGet( 'nombre' ) ) ),;
                   "Espere por favor...", {|| SQLCompanySeeders():Run( cvaltostr( ::getRowSet():fieldGet( 'codigo' ) ) ) } ) } )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD BackUp()
+
+   local oDialogWait
+
+   oDialogWait          := TWaitMeter():New( "Copia de seguridad", "Creando copia de seguridad..." )
+   oDialogWait:setStart( {|| getSQLDatabase():Export(), oDialogWait:End() } )
+   oDialogWait:Run()
 
 RETURN ( nil )
 
@@ -568,7 +582,7 @@ RETURN ( nil )
 METHOD createButtonCopiasSeguridad() CLASS EmpresasPanelView
 
    with object ( TBtnBmp():New( 330, 30, 140, 80, "gc_backup_32",,,,, ::oWnd,,, .f., .f., "Realizar copias de seguridad",,,, .f.,, .f.,,, .f.,, .t.,, .t., .f., .t., ::nClrText, ::nClrBack, .f. ) )
-      :bAction       := {|| ::oController:Edit( Company():id ) }
+      :bAction       := {|| ::oController:BackUp() }
       :nClrBorder    := ::nClrBorder
       :bColorMap     := {|o| o:lBorder := o:lMOver, ::nClrBorder }
       :oFontBold     := ::oBold

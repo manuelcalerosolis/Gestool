@@ -1891,8 +1891,6 @@ FUNCTION appCheckDirectory()
 
    local hDirectory
 
-   msgalert( cPatDocuments() + FacturasClientesController():getName() )
-
    for each hDirectory in getScafolding()
       checkDirectory( hDirectory )
    next 
@@ -1918,7 +1916,6 @@ STATIC FUNCTION checkDirectory( hDirectory )
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
 /*
 Ejecuta un fichero .hrb creado a partir de un .prg
 c:\xharbour\bin>harbour c:\test.prg /gh /n
@@ -1926,11 +1923,11 @@ c:\xharbour\bin>harbour c:\test.prg /gh /n
 
 FUNCTION Ejecutascript()
 
-   local aScripts
-   local cScript  := ""
-   Local pHrb
    Local u
+   Local pHrb
    Local dFecha
+   local cScript  
+   local aScripts
 
    /*
    Comprobaciones iniciales antes de mandar el script--------------------------

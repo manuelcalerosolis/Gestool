@@ -58,21 +58,23 @@ CLASS UsuariosController FROM SQLNavigatorGestoolController
 
    METHOD checkSuperUser()
 
-   METHOD getRolesController()               INLINE ( iif( empty( ::oRolesController), ::oRolesController := RolesController():New( self ), ), ::oRolesController )
+   METHOD getRolesController()         INLINE ( iif( empty( ::oRolesController), ::oRolesController := RolesController():New( self ), ), ::oRolesController )
 
    METHOD getCamposExtraValoresController()  INLINE ( iif( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresGestoolController():New( self ), ), ::oCamposExtraValoresController )
 
    //Construcciones tardias----------------------------------------------------
    
-   METHOD getDialogView()                    INLINE ( iif( empty( ::oDialogView ), ::oDialogView := UsuariosView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := UsuariosView():New( self ), ), ::oDialogView )
    
-   METHOD getBrowseView()                    INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := UsuariosBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := UsuariosBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getValidator()                     INLINE ( iif( empty( ::oValidator ), ::oValidator := UsuariosValidator():New( self, ::getDialogView() ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( iif( empty( ::oValidator ), ::oValidator := UsuariosValidator():New( self, ::getDialogView() ), ), ::oValidator )
 
-   METHOD getRepository()                    INLINE ( iif( empty( ::oRepository ), ::oRepository := UsuariosRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( iif( empty( ::oRepository ), ::oRepository := UsuariosRepository():New( self ), ), ::oRepository )
 
-   METHOD getModel()                         INLINE ( iif( empty( ::oModel ), ::oModel := SQLUsuariosModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLUsuariosModel():New( self ), ), ::oModel )
+
+   METHOD getName()                    INLINE ( "usuarios" )
 
 END CLASS
 
@@ -83,8 +85,6 @@ METHOD New( oController ) CLASS UsuariosController
    ::Super:New( oController )
 
    ::cTitle                            := "Usuarios"
-
-   ::cName                             := "usuarios"
 
    ::lTransactional                    := .t.
 

@@ -286,13 +286,15 @@ RETURN ( Self )
 
 METHOD Run() CLASS TWaitMeter
 
-   CursorWait()
+   cursorWait()
+   
+   sysRefresh()
 
    ::oDlgWait:Activate( , , , .t., {|| .f. }, .f. )
 
-   SysRefresh()
+   sysRefresh()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 

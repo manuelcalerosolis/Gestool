@@ -526,9 +526,11 @@ METHOD Export( cFileName )
    local hFileName   
    local aListTables 
 
+   DEFAULT cFileName := cPatSafe() + ::cDatabaseMySQL + dtos( date() ) + ".sql"
+
    hFileName         := fcreate( cFileName )
    if ferror() <> 0
-      msgStop( "Error creando fichero de backup : " + cFileName + ", error " + alltrim( str(  ferror() ) ), "Error" )
+      msgStop( "Error creando fichero de backup : " + cFileName + ", error " + alltrim( str( ferror() ) ), "Error" )
       RETURN ( .f. )
    endif
 
@@ -545,9 +547,9 @@ METHOD Export( cFileName )
       {|aTables| aeval( aTables,;
          {|cTable| ::exportTable( hFileName, cTable ) } ) } )
 
-   cString           := "--  " + hb_OSNewLine()
-   cString           += "--  Fin del procesado de la base de datos " + ::cDatabaseMySQL + hb_OSNewLine()
-   cString           += "--  " + hb_OSNewLine() + hb_OSNewLine()
+   cString           := "--  " + hb_osnewline()
+   cString           += "--  Fin del procesado de la base de datos " + ::cDatabaseMySQL + hb_osnewline()
+   cString           += "--  " + hb_osnewline() + hb_osnewline()
 
    fwrite( hFileName, cString )
 
@@ -560,18 +562,12 @@ RETURN ( self )
 METHOD exportTable( hFileName, cTable )
 
    local nCount
-   local aFetch
-   local oQuery
    local cString
 
-   oQuery         := ::Query( "SELECT Count(*) " + cTable )
-
-   aFetch         := oQuery:fetch()
-
-   oQuery:free()
+   nCount         := ::getValue( "SELECT count(*) FROM " + cTable, 0 )
 
    if nCount == 0
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    cString        := "--  Datos de la tabla " + cTable + hb_osnewline()
@@ -585,7 +581,7 @@ METHOD exportTable( hFileName, cTable )
 
    fwrite( hFileName, cString )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

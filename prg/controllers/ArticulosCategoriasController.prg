@@ -11,15 +11,17 @@ CLASS ArticulosCategoriasController FROM SQLNavigatorController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosCategoriasBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosCategoriasBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ArticulosCategoriasView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := ArticulosCategoriasView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ArticulosCategoriasValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := ArticulosCategoriasValidator():New( self ), ), ::oValidator )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosCategoriasRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosCategoriasRepository():New( self ), ), ::oRepository )
    
-   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLArticulosCategoriasModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLArticulosCategoriasModel():New( self ), ), ::oModel )
+   
+   METHOD getName()                    INLINE ( "articulos_categorias" )
 
 END CLASS
 
@@ -31,17 +33,16 @@ METHOD New( oController ) CLASS ArticulosCategoriasController
 
    ::cTitle                         := "Articulos categorias"
 
-   ::cName                          := "articulos_categorias"
-
    ::hImage                         := {  "16" => "gc_photographic_filters_16",;
                                           "32" => "gc_photographic_filters_32",;
                                           "48" => "gc_photographic_filters_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::getName() )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS ArticulosCategoriasController
 
    if !empty( ::oModel )
@@ -64,9 +65,7 @@ METHOD End() CLASS ArticulosCategoriasController
    ::oRepository:End()
    end if
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
