@@ -75,6 +75,8 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
    
    appParamsThird( paramsThird )
 
+   appTest()
+
    appSettings()
    
    appDialogExtend() 
@@ -119,6 +121,40 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
    getSQLDatabase():Disconnect() 
 
    destroyIconApp()
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION appTest()
+
+   local oRootElement
+   local oMemberElement
+   local oMemberAttribute
+   local oMemberName   
+   local oDOMDocument   := CreateObject( "MSXML2.DOMDocument.6.0" )
+   
+   oRootElement         := oDOMDocument:createElement("Familia")
+   oDOMDocument:appendChild( oRootElement )
+   
+   oMemberElement       := oDOMDocument:createElement("Miembro")
+   oRootElement:appendChild( oMemberElement )
+   
+   //' Creates Attribute to the Member Element
+   oMemberAttribute     := oDOMDocument:createAttribute("Relationship")
+   oMemberAttribute:nodeValue    := "Padre"
+   oMemberElement:setAttributeNode( oMemberAttribute )
+   
+   // Create element under Member element, and
+   // gives value "some guy"
+   oMemberName          := oDOMDocument:createCDATASection("<Name>")
+   oMemberElement:appendChild( oMemberName )
+   oMemberName:Text     := "Some Guy"
+
+   //' Saves XML data to disk:
+   oDOMDocument:save ("c:\temp\andrew.xml")
+
+   oDOMDocument         := nil
 
 RETURN ( nil )
 
