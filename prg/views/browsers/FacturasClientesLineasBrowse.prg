@@ -182,7 +182,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_medicion_factor' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :cEditPicture        := "@E 999,999.999999"
+      :cEditPicture        := "@E 99,999,999.999999"
       :cDataType           := "N"
       :lHide               := .t.
       :nEditType           := ::getEditGet()
@@ -195,7 +195,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'total_unidades' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :cEditPicture        := "@E 999,999.999999"
+      :cEditPicture        := "@E 99,999,999.999999"
       :nFootStyle          := :nDataStrAlign               
       :nFooterType         := AGGR_SUM
       :cFooterPicture      := :cEditPicture
@@ -208,7 +208,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :cSortOrder          := 'articulo_precio'
       :cHeader             := 'Precio'
       :nWidth              := 80
-      :cEditPicture        := "@E 999,999.999999"
+      :cEditPicture        := "@E 99,999,999.999999"
       :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_precio' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nFootStyle          := :nDataStrAlign               

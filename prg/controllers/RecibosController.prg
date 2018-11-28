@@ -38,6 +38,8 @@ METHOD New( oController ) CLASS RecibosController
 
    ::cName                       := "recibos"
 
+   ::lTransactional              := .t.
+
    ::hImage                      := {  "16" => "gc_briefcase2_user_16",;
                                        "32" => "gc_briefcase2_user_32",;
                                        "48" => "gc_briefcase2_user_48" }
@@ -223,7 +225,7 @@ METHOD addColumns() CLASS RecibosBrowseView
       :cSortOrder          := 'importe'
       :cHeader             := 'Importe'
       :nWidth              := 80
-      :cEditPicture        := "999999999999.99"
+      :cEditPicture        := "@E 99,999,999.99"
       :bEditValue          := {|| ::getRowSet():fieldGet( 'importe' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -231,7 +233,7 @@ METHOD addColumns() CLASS RecibosBrowseView
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Total pagado'
       :nWidth              := 80
-      :cEditPicture        := "999999999999.99"
+      :cEditPicture        := "@E 99,999,999.99"
       :bEditValue          := {|| ::getRowSet():fieldGet( 'total_pagado' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -239,7 +241,7 @@ METHOD addColumns() CLASS RecibosBrowseView
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Importe restante'
       :nWidth              := 100
-      :cEditPicture        := "999999999999.99"
+      :cEditPicture        := "@E 99,999,999.99"
       :bEditValue          := {|| ::getRowSet():fieldGet( 'diferencia' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
@@ -338,7 +340,7 @@ METHOD Activate() CLASS RecibosView
   REDEFINE GET   ::oController:getModel():hBuffer[ "importe" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      PICTURE     "@E 999999999999.99";
+      PICTURE     "@E 99,999,999.99";
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE GET   ::oController:getModel():hBuffer[ "concepto" ] ;
@@ -494,7 +496,6 @@ METHOD getColumns() CLASS SQLRecibosModel
    hset( ::hColumns, "concepto",                   {  "create"    => "VARCHAR( 200 )"                              ,;
                                                       "default"   => {|| space( 200 ) } }                          )
 
-
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
@@ -514,11 +515,10 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
       recibos.vencimiento AS vencimiento,
       recibos.importe AS importe,
       recibos.concepto AS concepto,
-      recibos.deleted_at AS deleted_at,
       clientes.codigo AS cliente_codigo,
       clientes.nombre AS cliente_nombre,
-      SUM(pagos_recibos.importe) AS total_pagado,
-      ( recibos.importe -  SUM( pagos_recibos.importe ) ) AS diferencia
+      SUM( pagos_recibos.importe ) AS total_pagado,
+      ( recibos.importe - IFNULL( SUM( pagos_recibos.importe ), 0 ) ) AS diferencia
    FROM %1$s AS recibos
 
    LEFT JOIN %2$s AS pagos_recibos
@@ -528,10 +528,10 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
       ON pagos.uuid = pagos_recibos.pago_uuid
 
    INNER JOIN %4$s AS facturas_clientes
-      ON recibos.parent_uuid = facturas_clientes.uuid
+      ON recibos.parent_uuid = facturas_clientes.uuid AND facturas_clientes.deleted_at = 0
 
    INNER JOIN %5$s AS clientes 
-      ON facturas_clientes.cliente_codigo = clientes.codigo
+      ON facturas_clientes.cliente_codigo = clientes.codigo AND clientes.deleted_at = 0
 
    ENDTEXT
 
@@ -546,8 +546,6 @@ CLASS SQLRecibosAssistantModel FROM SQLRecibosModel
    METHOD getInitialSelect()
 
    METHOD isParentUuidColumn()   INLINE ( .f. )
-
-   METHOD getRecibosUuid( cCodigoCliente )
 
 END CLASS
 
@@ -570,7 +568,6 @@ METHOD getInitialSelect() CLASS SQLRecibosAssistantModel
          recibos.vencimiento AS vencimiento,
          recibos.importe AS importe,
          recibos.concepto AS concepto,
-         recibos.deleted_at AS deleted_at,
          pagos.estado AS estado,
          SUM( pagos_recibos.importe ) AS total_pagado,
          ( recibos.importe - SUM( pagos_recibos.importe ) ) AS diferencia
@@ -588,52 +585,17 @@ METHOD getInitialSelect() CLASS SQLRecibosAssistantModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(),;
-                                SQLFacturasClientesModel():getTableName(),;
-                                SQLRecibosPagosModel():getTableName(),;
-                                SQLPagosModel():getTableName(),;
-                                quoted( cliente_codigo ) )
+   cSql  := hb_strformat( cSql,  ::getTableName(),;
+                                 SQLFacturasClientesModel():getTableName(),;
+                                 SQLRecibosPagosModel():getTableName(),;
+                                 SQLPagosModel():getTableName(),;
+                                 quoted( cliente_codigo ) )
 
    logwrite( cSql )   
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
-
-METHOD getRecibosUuid( cCodigoCliente ) CLASS SQLRecibosAssistantModel
-
-   local cSql
-
-   TEXT INTO cSql
-
-   SELECT 
-      recibos.uuid AS uuid
-   
-   FROM %1$s AS recibos
-   
-   INNER JOIN gestool_00VG.facturas_clientes AS facturas_clientes
-      ON recibos.parent_uuid = facturas_clientes.uuid AND facturas_clientes.cliente_codigo = '000' AND facturas_clientes.deleted_at = 0
-   
-   LEFT JOIN gestool_00VG.pagos_recibos AS pagos_recibos
-      ON recibos.uuid = pagos_recibos.recibo_uuid
-      
-   LEFT JOIN gestool_00VG.pagos AS pagos
-      ON pagos.uuid = pagos_recibos.pago_uuid AND pagos.estado = "Rechazado"
-      
-   WHERE recibos.deleted_at = 0
-     
-   GROUP BY recibos.uuid
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(),;
-                                SQLFacturasClientesModel():getTableName(),;
-                                SQLRecibosPagosModel():getTableName(),;
-                                SQLPagosModel():getTableName(),;
-                                quoted( cCodigoCliente ) )
-
-RETURN (  cSql )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -645,5 +607,8 @@ CLASS RecibosRepository FROM SQLBaseRepository
 
 END CLASS
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

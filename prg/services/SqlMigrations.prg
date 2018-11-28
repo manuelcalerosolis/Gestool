@@ -449,6 +449,8 @@ METHOD addRepositories() CLASS SQLCompanyMigrations
    aadd( ::aRepositories, ArticulosPreciosRepository():New() )
 
    aadd( ::aRepositories, FacturasClientesRepository():New() )
+   
+   aadd( ::aRepositories, RecibosPagosRepository():New() )
 
 RETURN ( nil )
 

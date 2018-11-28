@@ -188,7 +188,9 @@ METHOD createFunctionSummaryTotalWhereUuid() CLASS FacturasClientesRepository
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, Company():getTableName( 'FacturaClienteSummaryTotalWhereUuid' ), ::getSentenceTotales() )
+   cSql  := hb_strformat(  cSql,;
+                           Company():getTableName( 'FacturaClienteSummaryTotalWhereUuid' ),;
+                           ::getSentenceTotales() )
 
 RETURN ( cSql )
 

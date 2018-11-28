@@ -113,9 +113,10 @@ METHOD getColumnsSelect()
       direcciones.movil AS direccion_movil,
       direcciones.email AS direccion_email,
       tarifas.codigo AS tarifa_codigo,
-      tarifas.nombre AS tarifa_nombre,
+      tarifas.nombre AS tarifa_nombre, 
       ( %1$s( facturas_clientes.uuid, facturas_clientes.recargo_equivalencia ) ) AS total
    ENDTEXT
+
       
    cColumns    := hb_strformat( cColumns, Company():getTableName( 'FacturaClienteSummaryTotalWhereUuid' ) )
 
@@ -135,7 +136,7 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesModel
    FROM %1$s AS facturas_clientes
    
       LEFT JOIN %2$s clientes  
-         ON facturas_clientes.cliente_codigo = clientes.codigo
+         ON facturas_clientes.cliente_codigo = clientes.codigo AND clientes.deleted_at = 0 
 
       LEFT JOIN %3$s direcciones  
          ON clientes.uuid = direcciones.parent_uuid AND direcciones.codigo = 0

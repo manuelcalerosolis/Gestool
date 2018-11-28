@@ -128,6 +128,7 @@ RETURN ( nil )
 
 FUNCTION appTest()
 
+/*
    local oRootElement
    local oMemberElement
    local oMemberAttribute
@@ -152,9 +153,10 @@ FUNCTION appTest()
    oMemberName:Text     := "Some Guy"
 
    //' Saves XML data to disk:
-   oDOMDocument:save ("c:\temp\andrew.xml")
+   oDOMDocument:save( "c:\temp\andrew.xml" )
 
    oDOMDocument         := nil
+*/
 
 RETURN ( nil )
 

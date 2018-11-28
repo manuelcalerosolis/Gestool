@@ -5,11 +5,7 @@
 
 CLASS PagosAssistantController FROM SQLNavigatorController
 
-<<<<<<< HEAD
-   DATA nImporte
-=======
    DATA nImporte                       INIT 0
->>>>>>> 624efd2a361f5ffc989c41ac1180e24782623640
 
    METHOD New() CONSTRUCTOR
 
@@ -45,10 +41,11 @@ METHOD New( oController ) CLASS PagosAssistantController
 
    ::cName                          := "cobros"
 
+//   ::lTransactional                 := .t.
+
    ::hImage                         := {  "16" => "gc_hand_money_16",;
                                           "32" => "gc_hand_money_32",;
                                           "48" => "gc_hand_money_48" }
-
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -91,11 +88,7 @@ METHOD getRecibos() CLASS PagosAssistantController
    ::getRecibosPagosController():getRowset():buildPad( ::getRecibosPagosController():getModel():getGeneralSelect( ::getModelBuffer( "uuid" ), ::getModelBuffer( "cliente_codigo" ) ) )
 
    ::getRecibosPagosController():getBrowseView():Refresh()
-<<<<<<< HEAD
 
-=======
-      
->>>>>>> 624efd2a361f5ffc989c41ac1180e24782623640
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -112,8 +105,7 @@ RETURN ( nil )
 
 METHOD getImportePagar( nImporte )
 
-<<<<<<< HEAD
-   if ::nImporte == ::getDialogView():nImporte
+   if ::nImporte == nImporte
       RETURN ( nil )
    end if
 
@@ -122,30 +114,15 @@ METHOD getImportePagar( nImporte )
       RETURN ( nil )
    end if
 
+   ::nImporte  := nImporte
+
    ::getRecibosPagosController():getModel():updateImporte( ::getModelBuffer( "uuid" ) )
 
-   ::getRecibosPagosController():getRowSet:Refresh()
-
-   ::nImporte := ::getDialogView():nImporte
+   ::getRecibosPagosController():getRowSet():Refresh()
 
    ::getRecibosPagosController():calculatePayment( nImporte )
-=======
-   if nImporte != ::nImporte 
 
-      ::nImporte  := nImporte
-
-      // vacio los importes de la tabla pivot
-
-      ::getRecibosPagosController():calculatePayment( nImporte )
-
-      ::getRecibosPagosController():getRowSet():Refresh()
-
-      ::getRecibosPagosController():getBrowseView():Refresh()
-   
-   end if 
->>>>>>> 624efd2a361f5ffc989c41ac1180e24782623640
-
-   ::getRecibosPagosController():getRowSet:Refresh()
+   ::getRecibosPagosController():getRowSet():Refresh()
 
    ::getRecibosPagosController():getBrowseView():Refresh()
 
@@ -212,7 +189,7 @@ METHOD Activate() CLASS PagosAssistantView
       ID          110 ;
       VALID       ( ::oController:getImportePagar( ::nImporte ) );
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      PICTURE     "@E 999999999999.99";
+      PICTURE     "@E 99,999,999.99";
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE GET   ::oController:getModel():hBuffer[ "fecha" ] ;

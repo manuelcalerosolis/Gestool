@@ -423,7 +423,7 @@ CLASS SQLPagosModel FROM SQLCompanyModel
 
    DATA cGroupBy                 INIT "pagos.uuid"
    
-   DATA cOrderBy                 INIT "pagos.fecha ASC"
+   DATA cOrderBy                 INIT "pagos.fecha"
 
    METHOD getColumns()
 
@@ -485,13 +485,13 @@ METHOD getInitialSelect() CLASS SQLPagosModel
    FROM %1$s AS pagos
 
    LEFT JOIN %2$s AS clientes
-      ON pagos.cliente_codigo = clientes.codigo
+      ON pagos.cliente_codigo = clientes.codigo AND clientes.deleted_at = 0
 
    LEFT JOIN %3$s AS medio_pago
-      ON pagos.medio_pago_codigo = medio_pago.codigo
+      ON pagos.medio_pago_codigo = medio_pago.codigo AND medio_pago.deleted_at = 0
 
    LEFT JOIN %4$s AS cuentas_bancarias
-      ON pagos.cuenta_bancaria_codigo = cuentas_bancarias.codigo 
+      ON pagos.cuenta_bancaria_codigo = cuentas_bancarias.codigo AND cuentas_bancarias.deleted_at = 0 
       AND cuentas_bancarias.parent_uuid = %6$s
 
    LEFT JOIN %5$s AS pagos_recibos
@@ -515,5 +515,8 @@ CLASS PagosRepository FROM SQLBaseRepository
 
 END CLASS
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
