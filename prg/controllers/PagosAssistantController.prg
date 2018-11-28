@@ -5,7 +5,11 @@
 
 CLASS PagosAssistantController FROM SQLNavigatorController
 
+<<<<<<< HEAD
+   DATA nImporte
+=======
    DATA nImporte                       INIT 0
+>>>>>>> 624efd2a361f5ffc989c41ac1180e24782623640
 
    METHOD New() CONSTRUCTOR
 
@@ -45,12 +49,14 @@ METHOD New( oController ) CLASS PagosAssistantController
                                           "32" => "gc_hand_money_32",;
                                           "48" => "gc_hand_money_48" }
 
+
    ::nLevel                         := Auth():Level( ::cName )
 
    ::getCuentasBancariasController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
    ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentence() } )
 
    ::getClientesController():getSelector():setEvent( 'validated', {|| ::getRecibos() } )
+   ::setEvent( 'appended', {|| ::getRecibosPagosController():getModel():deleteBlankPayment( ::getModelBuffer( "uuid" ) ) } )
 
 RETURN ( Self )
 
@@ -85,7 +91,11 @@ METHOD getRecibos() CLASS PagosAssistantController
    ::getRecibosPagosController():getRowset():buildPad( ::getRecibosPagosController():getModel():getGeneralSelect( ::getModelBuffer( "uuid" ), ::getModelBuffer( "cliente_codigo" ) ) )
 
    ::getRecibosPagosController():getBrowseView():Refresh()
+<<<<<<< HEAD
+
+=======
       
+>>>>>>> 624efd2a361f5ffc989c41ac1180e24782623640
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -102,6 +112,24 @@ RETURN ( nil )
 
 METHOD getImportePagar( nImporte )
 
+<<<<<<< HEAD
+   if ::nImporte == ::getDialogView():nImporte
+      RETURN ( nil )
+   end if
+
+   if nImporte < 0
+      msgstop("Debe introducir un importe válido")
+      RETURN ( nil )
+   end if
+
+   ::getRecibosPagosController():getModel():updateImporte( ::getModelBuffer( "uuid" ) )
+
+   ::getRecibosPagosController():getRowSet:Refresh()
+
+   ::nImporte := ::getDialogView():nImporte
+
+   ::getRecibosPagosController():calculatePayment( nImporte )
+=======
    if nImporte != ::nImporte 
 
       ::nImporte  := nImporte
@@ -115,6 +143,11 @@ METHOD getImportePagar( nImporte )
       ::getRecibosPagosController():getBrowseView():Refresh()
    
    end if 
+>>>>>>> 624efd2a361f5ffc989c41ac1180e24782623640
+
+   ::getRecibosPagosController():getRowSet:Refresh()
+
+   ::getRecibosPagosController():getBrowseView():Refresh()
 
 RETURN ( nil )
 
@@ -222,6 +255,8 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 
 METHOD StartActivate() CLASS PagosAssistantView
+
+   ::oController:getClientesController():getSelector():setFocus()
 
    ::addLinksToExplorerBar()
 

@@ -119,7 +119,9 @@ RETURN ( nil )
 
 CLASS PagosBrowseView FROM SQLBrowseView
 
-   METHOD addColumns()                       
+   METHOD addColumns()
+
+   METHOD PaidIcon()                       
 
 END CLASS
 
@@ -128,6 +130,26 @@ END CLASS
 METHOD addColumns() CLASS PagosBrowseView
 
    ::getColumnIdAndUuid()
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'fecha'
+      :cHeader             := 'Expedicion'
+      :cDataType           := 'D'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'estado'
+      :cHeader             := 'Estado'
+      :bBmpData            := {|| ::PaidIcon() }
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'estado' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :AddResource( "bullet_square_green_16" )
+      :AddResource( "bullet_square_red_16" )
+   end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'cliente_codigo'
@@ -155,15 +177,6 @@ METHOD addColumns() CLASS PagosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'fecha'
-      :cHeader             := 'Expedicion'
-      :cDataType           := 'D'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'medio_pago_nombre'
       :cHeader             := 'Medio de Pago'
       :nWidth              := 150
@@ -180,17 +193,9 @@ METHOD addColumns() CLASS PagosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'estado'
-      :cHeader             := 'Estado'
-      :nWidth              := 90
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'estado' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'comentario'
       :cHeader             := 'Comentario'
-      :nWidth              := 90
+      :nWidth              := 250
       :bEditValue          := {|| ::getRowSet():fieldGet( 'comentario' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -198,6 +203,15 @@ METHOD addColumns() CLASS PagosBrowseView
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD PaidIcon() CLASS PagosBrowseView
+
+   if ::getRowSet():fieldGet( 'estado' ) == "Presentado"
+      RETURN ( 1 )
+   end if 
+
+RETURN ( 2 )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -408,6 +422,8 @@ CLASS SQLPagosModel FROM SQLCompanyModel
    DATA cTableName               INIT "pagos"
 
    DATA cGroupBy                 INIT "pagos.uuid"
+   
+   DATA cOrderBy                 INIT "pagos.fecha ASC"
 
    METHOD getColumns()
 

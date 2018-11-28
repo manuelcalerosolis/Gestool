@@ -13,11 +13,12 @@ CLASS RecibosPagosController FROM SQLNavigatorController
 
    METHOD calculatePayment( nImporte )
 
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getRepository()        INLINE( if(empty( ::oRepository ), ::oRepository := RecibosPagosRepository():New( self ), ), ::oRepository )
    
-   METHOD getModel()             INLINE ( if( empty( ::oModel ), ::oModel := SQLRecibosPagosModel():New( self ), ), ::oModel ) 
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLRecibosPagosModel():New( self ), ), ::oModel ) 
 
    METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := RecibosPagosBrowseView():New( self ), ), ::oBrowseView ) 
 
@@ -26,8 +27,9 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD New( oController ) CLASS RecibosPagosController
-
+   
    ::Super:New( oController )
+
 
 RETURN ( Self )
 
@@ -67,15 +69,25 @@ METHOD calculatePayment( nImporte ) CLASS RecibosPagosController
    local nImporteRestante  := nImporte
 
    ::getRowSet():goTop() 
+<<<<<<< HEAD
+   
+   WHILE nImporteRestante > 0 
+         
+=======
 
    while nImporteRestante > 0 
 
+>>>>>>> 624efd2a361f5ffc989c41ac1180e24782623640
       if nImporteRestante < ::getRowSet():fieldGet( "diferencia" )
 
          ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "importe", nImporteRestante )
 
          RETURN ( nil )
+<<<<<<< HEAD
+      
+=======
 
+>>>>>>> 624efd2a361f5ffc989c41ac1180e24782623640
       end if
 
       if nImporteRestante >= ::getRowSet():fieldGet( "diferencia" )
@@ -84,9 +96,15 @@ METHOD calculatePayment( nImporte ) CLASS RecibosPagosController
 
          ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "importe", ::getRowSet():fieldGet( "diferencia" ) )
          
+<<<<<<< HEAD
+         if ::oRowSet:Eof()
+            
+            ::oController:getDialogView():oImporte:cText(nImportePagar)
+=======
          if ::getRowSet():Eof()
 
             ::getController():getDialogView():oImporte:cText( nImportePagar )
+>>>>>>> 624efd2a361f5ffc989c41ac1180e24782623640
 
             RETURN ( nil )
 
@@ -98,7 +116,11 @@ METHOD calculatePayment( nImporte ) CLASS RecibosPagosController
 
       end if
 
+<<<<<<< HEAD
+   END
+=======
    end
+>>>>>>> 624efd2a361f5ffc989c41ac1180e24782623640
 
 RETURN ( nil )
 
@@ -112,9 +134,15 @@ RETURN ( nil )
 
 CLASS RecibosPagosBrowseView FROM SQLBrowseView
 
+   DATA lFooter            INIT .t.
+
+   DATA nMarqueeStyle      INIT 3
+
    METHOD addColumns()
 
    METHOD getEditGet()     INLINE ( if( ::getSuperController():isNotZoomMode(), EDIT_GET, 0 ) )                    
+
+   METHOD PaidIcon()
 
 END CLASS
 
@@ -141,15 +169,6 @@ METHOD addColumns() CLASS RecibosPagosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Concepto'
-      :cSortOrder          := 'concepto'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'concepto' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .f.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'expedicion'
       :cHeader             := 'Expedición'
       :cDataType           := 'D'
@@ -168,6 +187,15 @@ METHOD addColumns() CLASS RecibosPagosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Concepto'
+      :cSortOrder          := 'concepto'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'concepto' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .f.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Importe recibo'
       :cSortOrder          := 'importe_recibo'
       :cEditPicture        := "@E 999999999999.99"
@@ -175,6 +203,11 @@ METHOD addColumns() CLASS RecibosPagosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'importe_recibo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .f.
+      :nFootStyle          := :nDataStrAlign
+      :nFooterType         := AGGR_SUM
+      :cFooterPicture      := :cEditPicture
+      :oFooterFont         := oFontBold()
+      :cDataType           := "N"
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -185,6 +218,11 @@ METHOD addColumns() CLASS RecibosPagosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'diferencia' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .f.
+      :nFootStyle          := :nDataStrAlign
+      :nFooterType         := AGGR_SUM
+      :cFooterPicture      := :cEditPicture
+      :oFooterFont         := oFontBold()
+      :cDataType           := "N"
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -197,11 +235,34 @@ METHOD addColumns() CLASS RecibosPagosBrowseView
       :lHide               := .f.
       :nEditType           := ::getEditGet()
       :bOnPostEdit         := {|oCol, uNewValue| ::oController:updateField( uNewValue ) }
+      :nFootStyle          := :nDataStrAlign
+      :nFooterType         := AGGR_SUM
+      :cFooterPicture      := :cEditPicture
+      :oFooterFont         := oFontBold()
+      :cDataType           := "N"
    end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Pagado'
+      :bBmpData            := {|| ::PaidIcon() }
+      :nWidth              := 90
+      :lHide               := .f.
+      :AddResource( "Sel16" )
+   end with
+
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD PaidIcon() CLASS RecibosPagosBrowseView
+
+   if ::getRowSet():fieldGet( 'importe_pagar' ) != 0
+      RETURN ( 1 )
+   end if 
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -210,6 +271,10 @@ RETURN ( nil )
 CLASS SQLRecibosPagosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "pagos_recibos"
+
+   DATA cOrderBy                 INIT "recibos.vencimiento"
+
+   DATA cConstraints             INIT "PRIMARY KEY ( pago_uuid, recibo_uuid )"
 
    METHOD getColumns()
 
@@ -222,6 +287,8 @@ CLASS SQLRecibosPagosModel FROM SQLCompanyModel
    METHOD getImporteSentence( uuidPago )
 
    METHOD updateImporte( uuidPago )
+
+   METHOD deleteBlankPayment( uuidPago )
 
 END CLASS
 
@@ -255,7 +322,7 @@ METHOD InsertPagoRecibo( uuidPago, cClienteCodigo ) CLASS SQLRecibosPagosModel
 
    TEXT INTO cSql
 
-   INSERT INTO %1$s
+   INSERT IGNORE INTO %1$s
       ( uuid, pago_uuid, recibo_uuid, importe ) 
    SELECT 
       UUID(), %5$s, recibos.uuid, recibos.importe
@@ -269,13 +336,13 @@ METHOD InsertPagoRecibo( uuidPago, cClienteCodigo ) CLASS SQLRecibosPagosModel
       ON recibos.uuid = pagos_recibos.recibo_uuid
       
    LEFT JOIN %4$s AS pagos
-      ON pagos.uuid = pagos_recibos.pago_uuid AND pagos.estado = "Rechazado"
+      ON pagos.uuid = pagos_recibos.pago_uuid
       
-   WHERE recibos.deleted_at = 0 
+   WHERE recibos.deleted_at = 0 AND ( pagos.estado = "Rechazado" OR pagos.estado IS NULL) 
 
    GROUP BY recibos.uuid
    
-   HAVING ( recibos.importe - SUM( pagos_recibos.importe ) IS null OR recibos.importe - SUM( pagos_recibos.importe ) > 0 )
+   HAVING ( recibos.importe - SUM( pagos_recibos.importe ) IS NULL OR recibos.importe - SUM( pagos_recibos.importe ) > 0 )
         
    ENDTEXT
 
@@ -329,6 +396,24 @@ RETURN ( getSQLDatabase():Exec ( cSql ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD deleteBlankPayment( uuidPago ) CLASS SQLRecibosPagosModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   DELETE FROM %1$s
+      WHERE importe = 0
+   AND pago_uuid = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(),quoted( uuidPago ) )
+
+RETURN ( getSQLDatabase():Exec ( cSql ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD getGeneralSelect( uuidPago, cCodigoCliente ) CLASS SQLRecibosPagosModel
 
  local cSql
@@ -351,21 +436,21 @@ METHOD getGeneralSelect( uuidPago, cCodigoCliente ) CLASS SQLRecibosPagosModel
          ON pagos_recibos.recibo_uuid = recibos.uuid
       
       INNER JOIN %3$s AS facturas_clientes
-         ON facturas_clientes.uuid = recibos.parent_uuid AND facturas_clientes.cliente_codigo = %4$s
+         ON facturas_clientes.uuid = recibos.parent_uuid AND facturas_clientes.cliente_codigo = %5$s
 
       INNER JOIN %1$s AS pagos_recibos_realizados
          ON pagos_recibos_realizados.recibo_uuid = recibos.uuid
 
-      WHERE pagos_recibos.pago_uuid = %5$s
-      
-      GROUP BY pagos_recibos.recibo_uuid 
+      LEFT JOIN %4$s AS pagos
+         ON pagos.uuid = pagos_recibos_realizados.pago_uuid
 
-      ORDER BY recibos.vencimiento
+      WHERE pagos_recibos.pago_uuid = %6$s AND ( pagos.estado <> "Rechazado" OR pagos.estado IS NULL)
       
+      GROUP BY pagos_recibos.recibo_uuid       
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLRecibosModel():getTableName() , SQLFacturasClientesModel():getTableName(), quoted( cCodigoCliente ), quoted( uuidPago ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLRecibosModel():getTableName() , SQLFacturasClientesModel():getTableName(), SQLPagosModel():getTableName(), quoted( cCodigoCliente ), quoted( uuidPago ) )
 
 RETURN ( cSql )
 
