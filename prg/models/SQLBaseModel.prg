@@ -1562,13 +1562,13 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD deleteSelection( aIds, aUuids ) 
+METHOD deleteSelection( aIds ) 
 
    ::aRecordsToDelete   := aIds
 
    ::fireEvent( 'deletingSelection' )
 
-   ::getDatabase():Execs( ::getDeleteOrUpdateSentenceById( aIds, aUuids ) )
+   ::getDatabase():Execs( ::getDeleteOrUpdateSentenceById( aIds ) )
 
    ::fireEvent( 'deletedSelection' )
    

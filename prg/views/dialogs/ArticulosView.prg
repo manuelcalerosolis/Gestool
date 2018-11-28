@@ -35,8 +35,6 @@ CLASS ArticulosView FROM SQLBaseView
 
    METHOD startActivate()
 
-   METHOD paintedActivate()
-
    METHOD addLinksToExplorerBar()
 
    METHOD changeLote()                 INLINE ( iif( ::oController:oModel:hBuffer[ "lote" ], ::oGetLoteActual:Show(), ::oGetLoteActual:Hide() ) )
@@ -216,7 +214,7 @@ METHOD Activate() CLASS ArticulosView
 
    ::oDialog:bStart        := {|| ::startActivate() }
 
-   ::oDialog:Activate( , , {|hDC, cPS| ::paintedActivate( hDC, cPS ) }, .t. )
+   ::oDialog:Activate( , , {|| ::paintedActivate() }, .t. )
 
    ::oController:getArticulosPreciosController():saveState()
 
@@ -257,12 +255,6 @@ METHOD startActivate() CLASS ArticulosView
    ::oGetCodigo:SetFocus()
 
 RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD paintedActivate() CLASS ArticulosView
-
-RETURN ( ::fireEvent( 'painted', self ) )
 
 //---------------------------------------------------------------------------//
 

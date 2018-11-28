@@ -22,6 +22,8 @@ USER FUNCTION hbunit_test()
 
    oSuite:addTest( TestAssert():new() )
    
+   oSuite:addTest( TestEmpresasController():new() )
+   
    oSuite:addTest( TestArticulosController():new() )
 
    oRunner:run( oSuite )

@@ -30,20 +30,21 @@ CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
 
    METHOD setOnCancelEdit()
 
-   METHOD getEditButton()  INLINE ( if( ::getSuperController():isNotZoomMode(), EDIT_GET_BUTTON, 0 ) )
-   
-   METHOD getEditGet()     INLINE ( if( ::getSuperController():isNotZoomMode(), EDIT_GET, 0 ) )
+   METHOD keyChar( nKey )
 
-   METHOD getEditListBox() INLINE ( if( ::getSuperController():isNotZoomMode(), EDIT_GET_LISTBOX, 0 ) )
+   METHOD getEditButton()              INLINE ( if( ::getSuperController():isNotZoomMode(), EDIT_GET_BUTTON, 0 ) )
+   
+   METHOD getEditGet()                 INLINE ( if( ::getSuperController():isNotZoomMode(), EDIT_GET, 0 ) )
+
+   METHOD getEditListBox()             INLINE ( if( ::getSuperController():isNotZoomMode(), EDIT_GET_LISTBOX, 0 ) )
 
    METHOD setFocusColumnCodigoArticulo() ;
-                           INLINE ( ::oBrowse:setFocus(), ::oBrowse:goToCol( ::oColumnCodigoArticulo ) )
+                                       INLINE ( ::oBrowse:setFocus(), ::oBrowse:goToCol( ::oColumnCodigoArticulo ) )
 
    METHOD setFocusColumnCodigoAlmacen() ;
-                           INLINE ( ::oBrowse:setFocus(), ::oBrowse:goToCol( ::oColumnCodigoAlmacen ) )
+                                       INLINE ( ::oBrowse:setFocus(), ::oBrowse:goToCol( ::oColumnCodigoAlmacen ) )
 
-   METHOD setFocusColumnPropiedades() ;
-                           INLINE ( ::oBrowse:setFocus(), ::oBrowse:goToCol( ::oColumnPropiedades ) )
+   METHOD setFocusColumnPropiedades()  INLINE ( ::oBrowse:setFocus(), ::oBrowse:goToCol( ::oColumnPropiedades ) )
 
 ENDCLASS
 
@@ -55,6 +56,8 @@ METHOD Create( oWindow ) CLASS FacturasClientesLineasBrowseView
 
    ::oBrowse:bOnSkip       := {|| ::getController():validLine() }
 
+   ::oBrowse:bKeyChar      := {| nKey | ::keyChar( nKey ) }
+
    ::oBrowse:setChange( {|| ::getController():getHistoryManager():Set( ::getRowSet():getValuesAsHash() ) } )
 
    ::oBrowse:setGotFocus( {|| ::getController():getHistoryManager():Set( ::getRowSet():getValuesAsHash() ) } )
@@ -63,9 +66,23 @@ RETURN ( ::oBrowse )
 
 //---------------------------------------------------------------------------//
 
-METHOD setOnCancelEdit()
+METHOD setOnCancelEdit() CLASS FacturasClientesLineasBrowseView
 
 RETURN ( ::getController():validLine() )   
+
+//---------------------------------------------------------------------------//
+
+METHOD keyChar( nKey ) CLASS FacturasClientesLineasBrowseView
+
+   if nkey != VK_EXECUTE
+      RETURN ( nil )
+   end if 
+
+   if !empty( ::oBrowse:SelectedCol() ) .and. !empty( ::oBrowse:SelectedCol():bEditBlock )
+      eval( ::oBrowse:SelectedCol():bEditBlock )
+   end if 
+
+RETURN ( nil )   
 
 //---------------------------------------------------------------------------//
 
@@ -92,8 +109,8 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bEditValid          := {|oGet, oCol| ::getController():validArticuloCodigo( oGet, oCol ) }
       :bEditBlock          := {|| ::getSuperController():getArticulosController():ActivateSelectorView() }
       :nBtnBmp             := 1
-      :AddResource( "Lupa" )
       :bOnPostEdit         := {|oCol, uNewValue, nKey| ::getController():postValidateArticuloCodigo( oCol, uNewValue, nKey ) }
+      :AddResource( "Lupa" )
    end with
 
    with object ( ::oBrowse:AddCol() )

@@ -39,7 +39,7 @@ METHOD New( oController ) CLASS ArticulosFamiliasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getImagenesController():loadPrincipalBlankBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getImagenesController():loadMainBlankBuffer() } )
    ::getModel():setEvent( 'insertedBuffer',               {|| ::getImagenesController():insertBuffer() } )
 
    ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getImagenesController():loadedCurrentBuffer( ::getUuid() ) } )
