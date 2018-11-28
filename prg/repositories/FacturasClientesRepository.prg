@@ -7,13 +7,13 @@ CLASS FacturasClientesRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLFacturasClientesModel():getTableName() ) 
 
-   METHOD getSQLFunctions()               INLINE ( {  ::dropFunctionSummaryTotalWhereUuid(),;
-                                                      ::createFunctionSummaryTotalWhereUuid(),;
+   METHOD getSQLFunctions()               INLINE ( {  ::dropFunctionTotalSummaryWhereUuid(),;
+                                                      ::createFunctionTotalSummaryWhereUuid(),;
                                                       ::createTriggerDeleted() } )
 
-   METHOD createFunctionSummaryTotalWhereUuid()
-      METHOD dropFunctionSummaryTotalWhereUuid()
-      METHOD selectSummaryTotalWhereUuid( uuidFacturaCliente, aplicarRecargo )
+   METHOD createFunctionTotalSummaryWhereUuid()
+      METHOD dropFunctionTotalSummaryWhereUuid()
+      METHOD selectTotalSummaryWhereUuid( uuidFacturaCliente, aplicarRecargo )
    
    METHOD getSentenceDescuento() 
    METHOD getSentenceLineas() 
@@ -157,7 +157,7 @@ RETURN ( cSql )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD createFunctionSummaryTotalWhereUuid() CLASS FacturasClientesRepository
+METHOD createFunctionTotalSummaryWhereUuid() CLASS FacturasClientesRepository
 
    local cSql
 
@@ -174,37 +174,37 @@ METHOD createFunctionSummaryTotalWhereUuid() CLASS FacturasClientesRepository
 
    BEGIN
 
-      DECLARE summaryTotal DECIMAL( 19,6 );
+      DECLARE TotalSummary DECIMAL( 19,6 );
 
       SELECT
-         SUM( totales.importeTotal ) INTO summaryTotal
+         SUM( totales.importeTotal ) INTO TotalSummary
 
       FROM 
          ( %2$s ) AS totales;
       
-      RETURN summaryTotal;
+      RETURN TotalSummary;
 
    END
 
    ENDTEXT
 
    cSql  := hb_strformat(  cSql,;
-                           Company():getTableName( 'FacturaClienteSummaryTotalWhereUuid' ),;
+                           Company():getTableName( 'FacturaClienteTotalSummaryWhereUuid' ),;
                            ::getSentenceTotales() )
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD dropFunctionSummaryTotalWhereUuid() CLASS FacturasClientesRepository  
+METHOD dropFunctionTotalSummaryWhereUuid() CLASS FacturasClientesRepository  
 
-RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'FacturaClienteSummaryTotalWhereUuid' ) + ";" )
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'FacturaClienteTotalSummaryWhereUuid' ) + ";" )
 
 //---------------------------------------------------------------------------//
 
-METHOD selectSummaryTotalWhereUuid( uuidFacturaCliente, aplicarRecargo ) CLASS FacturasClientesRepository
+METHOD selectTotalSummaryWhereUuid( uuidFacturaCliente, aplicarRecargo ) CLASS FacturasClientesRepository
 
-RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaClienteSummaryTotalWhereUuid' ) + "( " + quoted( uuidFacturaCliente ) + ", " + toSqlString( aplicarRecargo ) + " )" ) )
+RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaClienteTotalSummaryWhereUuid' ) + "( " + quoted( uuidFacturaCliente ) + ", " + toSqlString( aplicarRecargo ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 

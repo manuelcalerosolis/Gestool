@@ -118,7 +118,7 @@ METHOD getColumnsSelect()
    ENDTEXT
 
       
-   cColumns    := hb_strformat( cColumns, Company():getTableName( 'FacturaClienteSummaryTotalWhereUuid' ) )
+   cColumns    := hb_strformat( cColumns, Company():getTableName( 'FacturaClienteTotalSummaryWhereUuid' ) )
 
 RETURN ( cColumns )
 

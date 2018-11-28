@@ -485,18 +485,18 @@ METHOD createFunctionTotalPaidWhereUuid() CLASS RecibosPagosRepository
       DECLARE totalPaid DECIMAL( 19,6 );
 
       SELECT 
-         SUM( recibos_pagos.importe ) AS totalPaid
+         SUM( recibos_pagos.importe ) INTO totalPaid
       
          FROM %2$s AS recibos_pagos
 
          LEFT JOIN %3$s AS pagos
             ON pagos.uuid = recibos_pagos.pago_uuid
 
-         WHERE ( recibos_pagos.recibo_uuid = uuid_recibo_cliente )
+         WHERE recibos_pagos.recibo_uuid = uuid_recibo_cliente 
          
-         GROUP BY ( pagos.estado )
+         GROUP BY pagos.estado 
          
-         HAVING ( pagos.estado = "Presentado" ) 
+         HAVING pagos.estado = "Presentado";  
 
       RETURN totalPaid;
 
@@ -508,8 +508,6 @@ METHOD createFunctionTotalPaidWhereUuid() CLASS RecibosPagosRepository
                            Company():getTableName( 'RecibosPagosTotalPaidWhereUuid' ),;
                            ::getTableName(),;
                            SQLPagosModel():getTableName() )
-
-   logwrite( cSql )
 
 RETURN ( cSql )
 
