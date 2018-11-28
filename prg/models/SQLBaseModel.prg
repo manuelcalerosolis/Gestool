@@ -510,6 +510,8 @@ METHOD getSelectSentence( cOrderBy, cOrientation )
 
    ::fireEvent( 'gotSelectSentence')
 
+
+
 RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//

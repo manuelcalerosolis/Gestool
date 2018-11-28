@@ -167,16 +167,6 @@ METHOD addColumns() CLASS RecibosBrowseView
       :lHide               := .t.
    end with
 
-   with object ( ::oBrowse:AddCol()  )
-      :cHeader          := "Estado"
-      :bStrData         := {|| ::Paid() }
-      :bBmpData         := {|| ::PaidIcon() }
-      :nWidth           := 120
-      :AddResource( "bullet_square_green_16" )
-      :AddResource( "bullet_square_yellow_16" )
-      :AddResource( "bullet_square_red_16" )
-   end with
-
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'expedicion'
       :cHeader             := 'Expedición'
@@ -192,6 +182,32 @@ METHOD addColumns() CLASS RecibosBrowseView
       :cDataType           := 'D'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'vencimiento' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol()  )
+      :cHeader          := "Estado"
+      :bStrData         := {|| ::Paid() }
+      :bBmpData         := {|| ::PaidIcon() }
+      :nWidth           := 120
+      :AddResource( "bullet_square_green_16" )
+      :AddResource( "bullet_square_yellow_16" )
+      :AddResource( "bullet_square_red_16" )
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'cliente_codigo'
+      :cHeader             := 'Código cliente'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'cliente_codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'cliente_nombre'
+      :cHeader             := 'Nombre cliente'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'cliente_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -237,11 +253,11 @@ RETURN ( nil )
 
 METHOD Paid() CLASS RecibosBrowseView
 
-   if ::getRowSet():fieldGet( 'diferencia' ) = 0
+   if ::getRowSet():fieldGet( 'diferencia' ) == 0
       RETURN ( "Cobrado" )
    end if 
 
-   if ::getRowSet():fieldGet( 'diferencia' ) < ::getRowSet():fieldGet( 'importe' )
+   if ::getRowSet():fieldGet( 'diferencia' ) < ::getRowSet():fieldGet( 'importe' ) 
       RETURN ( "Parcialmente" )
    end if 
 
@@ -251,7 +267,7 @@ RETURN ( "No cobrado" )
 
 METHOD PaidIcon() CLASS RecibosBrowseView
 
-   if ::getRowSet():fieldGet( 'diferencia' ) = 0
+   if ::getRowSet():fieldGet( 'diferencia' ) == 0
       RETURN ( 1 )
    end if 
 
@@ -442,6 +458,8 @@ CLASS SQLRecibosModel FROM SQLCompanyModel
 
    DATA cGroupBy                 INIT "recibos.uuid"
 
+   DATA cGeneralWhere            INIT '( pagos.estado <> "Rechazado" OR pagos.estado IS NULL )'
+
    METHOD getColumns()
 
    METHOD getInitialSelect()
@@ -476,8 +494,6 @@ METHOD getColumns() CLASS SQLRecibosModel
    hset( ::hColumns, "concepto",                   {  "create"    => "VARCHAR( 200 )"                              ,;
                                                       "default"   => {|| space( 200 ) } }                          )
 
-   ::getDeletedStampColumn()
-
 
 RETURN ( ::hColumns )
 
@@ -499,19 +515,27 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
       recibos.importe AS importe,
       recibos.concepto AS concepto,
       recibos.deleted_at AS deleted_at,
-      IF( pagos.estado IS NULL, 0, SUM(pagos_recibos.importe) ) AS total_pagado,
-      ( recibos.importe - IF( pagos.estado IS NULL, 0, SUM( pagos_recibos.importe ) ) ) AS diferencia
+      clientes.codigo AS cliente_codigo,
+      clientes.nombre AS cliente_nombre,
+      SUM(pagos_recibos.importe) AS total_pagado,
+      ( recibos.importe -  SUM( pagos_recibos.importe ) ) AS diferencia
    FROM %1$s AS recibos
 
    LEFT JOIN %2$s AS pagos_recibos
       ON pagos_recibos.recibo_uuid = recibos.uuid
 
    LEFT JOIN %3$s AS pagos
-      ON pagos.uuid = pagos_recibos.pago_uuid AND pagos.estado = "Presentado"
+      ON pagos.uuid = pagos_recibos.pago_uuid
+
+   INNER JOIN %4$s AS facturas_clientes
+      ON recibos.parent_uuid = facturas_clientes.uuid
+
+   INNER JOIN %5$s AS clientes 
+      ON facturas_clientes.cliente_codigo = clientes.codigo
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLRecibosPagosModel():getTableName(), SQLPagosModel():getTableName() )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLRecibosPagosModel():getTableName(), SQLPagosModel():getTableName(), SQLFacturasClientesModel():getTableName(), SQLClientesModel():getTableName() )
 
 RETURN ( cSql )
 

@@ -5,6 +5,8 @@
 
 CLASS PagosAssistantController FROM SQLNavigatorController
 
+   DATA nImporte
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -43,12 +45,14 @@ METHOD New( oController ) CLASS PagosAssistantController
                                           "32" => "gc_hand_money_32",;
                                           "48" => "gc_hand_money_48" }
 
+
    ::nLevel                         := Auth():Level( ::cName )
 
    ::getCuentasBancariasController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
    ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentence() } )
 
    ::getClientesController():getSelector():setEvent( 'validated', {|| ::getRecibos() } )
+   ::setEvent( 'appended', {|| ::getRecibosPagosController():getModel():deleteBlankPayment( ::getModelBuffer( "uuid" ) ) } )
 
 RETURN ( Self )
 
@@ -84,7 +88,6 @@ METHOD getRecibos() CLASS PagosAssistantController
 
    ::getRecibosPagosController():getBrowseView():Refresh()
 
-      
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -101,12 +104,26 @@ RETURN ( nil )
 
 METHOD getImportePagar( nImporte )
 
+   if ::nImporte == ::getDialogView():nImporte
+      RETURN ( nil )
+   end if
+
    if nImporte < 0
       msgstop("Debe introducir un importe válido")
       RETURN ( nil )
    end if
 
+   ::getRecibosPagosController():getModel():updateImporte( ::getModelBuffer( "uuid" ) )
+
+   ::getRecibosPagosController():getRowSet:Refresh()
+
+   ::nImporte := ::getDialogView():nImporte
+
    ::getRecibosPagosController():calculatePayment( nImporte )
+
+   ::getRecibosPagosController():getRowSet:Refresh()
+
+   ::getRecibosPagosController():getBrowseView():Refresh()
 
 RETURN ( nil )
 
@@ -214,6 +231,8 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 
 METHOD StartActivate() CLASS PagosAssistantView
+
+   ::oController:getClientesController():getSelector():setFocus()
 
    ::addLinksToExplorerBar()
 
