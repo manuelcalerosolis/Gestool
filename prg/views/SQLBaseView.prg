@@ -83,12 +83,16 @@ CLASS SQLBaseView
    METHOD setEvent( cEvent, bEvent )                  INLINE ( ::getEvents():set( cEvent, bEvent ) )
    METHOD fireEvent( cEvent, uValue )                 INLINE ( ::getEvents():fire( cEvent, uValue ) )
 
+   METHOD getControl( nId )                              
+
    METHOD getTimer()  
 
    METHOD defaultTitle()                                           
 
    METHOD setTitle( cTitle )                          INLINE ( ::cTitle := cTitle )
    METHOD getTitle()                                  INLINE ( iif( empty( ::cTitle ), ::defaultTitle(), ::cTitle ) )          
+
+   METHOD paintedActivate()
 
 END CLASS
 
@@ -258,5 +262,28 @@ METHOD defaultTitle()
    end if 
 
 RETURN ( cTitle )
+
+//---------------------------------------------------------------------------//
+
+METHOD paintedActivate() 
+
+RETURN ( ::fireEvent( 'painted', self ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getControl( nId )
+
+   local nPos
+
+   if empty( ::oDialog ) 
+      RETURN ( nil )
+   end if 
+   
+   nPos  := ascan( ::oDialog:aControls, { | o | o:nId == nId } ) 
+   if nPos == 0
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::oDialog:aControls[ nPos ] )
 
 //---------------------------------------------------------------------------//

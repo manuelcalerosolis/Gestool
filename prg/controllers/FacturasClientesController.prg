@@ -62,21 +62,23 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    // Impresiones--------------------------------------------------------------
 
-   METHOD getDocumentPrint()           INLINE ( ::getConfiguracionesController():getModelValue( ::cName, 'documento_impresion', '' ) )
+   METHOD getDocumentPrint()           INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_impresion', '' ) )
 
-   METHOD getDocumentPdf()             INLINE ( ::getConfiguracionesController():getModelValue( ::cName, 'documento_pdf', '' ) )
+   METHOD getDocumentPdf()             INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_pdf', '' ) )
 
-   METHOD getDocumentPreview()         INLINE ( ::getConfiguracionesController():getModelValue( ::cName, 'documento_previsulizacion', '' ) )
+   METHOD getDocumentPreview()         INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_previsulizacion', '' ) )
 
-   METHOD getCopyPrint()               INLINE ( ::getConfiguracionesController():getModelNumeric( ::cName, 'copias_impresion', 1 ) )
+   METHOD getCopyPrint()               INLINE ( ::getConfiguracionesController():getModelNumeric( ::getName(), 'copias_impresion', 1 ) )
 
-   METHOD getTemplateMails()           INLINE ( ::getConfiguracionesController():getModelValue( ::cName, 'plantilla_para_mails', '' ) )
+   METHOD getTemplateMails()           INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'plantilla_para_mails', '' ) )
    
    METHOD generateReport( hReport )    INLINE ( ::getReport():Generate( hReport ) )
 
    METHOD getSubject()                 INLINE ( "Factura de cliente número" )
 
    // Contrucciones tardias----------------------------------------------------
+
+   METHOD getName()                    INLINE ( "facturas_clientes" )
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasClientesModel():New( self ), ), ::oModel )
 
@@ -94,7 +96,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
    
    METHOD getReport()                  INLINE ( if( empty( ::oReport ), ::oReport := FacturasClientesReport():New( self ), ), ::oReport )
 
-   METHOD getSerieDocumentoComponent()    INLINE ( if( empty( ::oSerieDocumentoComponent ), ::oSerieDocumentoComponent := SerieDocumentoComponent():New( self ), ), ::oSerieDocumentoComponent )
+   METHOD getSerieDocumentoComponent() INLINE ( if( empty( ::oSerieDocumentoComponent ), ::oSerieDocumentoComponent := SerieDocumentoComponent():New( self ), ), ::oSerieDocumentoComponent )
 
    METHOD getNumeroDocumentoComponent()   INLINE ( if( empty( ::oNumeroDocumentoComponent ), ::oNumeroDocumentoComponent := NumeroDocumentoComponent():New( self ), ), ::oNumeroDocumentoComponent )
 
@@ -108,8 +110,6 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::cTitle                            := "Facturas de clientes"
 
-   ::cName                             := "facturas_clientes"
-   
    ::lTransactional                    := .t.
 
    ::lInsertable                       := .t.
@@ -124,6 +124,8 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::lMultiDelete                      := .f.
 
+   ::cName                             := "facturas_clientes" 
+
    ::hImage                            := {  "16" => "gc_document_text_user_16",;
                                              "32" => "gc_document_text_user_32",;
                                              "48" => "gc_document_text_user_48" }
@@ -132,7 +134,7 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )
    ::getModel():setEvent( 'loadedDuplicateBuffer', {|| ::loadedDuplicateBuffer() } )
 
-   ::getModel():setEvent( 'updatedBuffer',   {|| ::updatedBuffer() } )
+   ::getModel():setEvent( 'updatedBuffer',                           {|| ::updatedBuffer() } )
    ::getModel():setEvents( { 'updatingBuffer', 'insertingBuffer' },  {|| ::updatingBuffer() } )
 
    ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',              {|| ::isClientFilled() } ) 
@@ -211,9 +213,9 @@ RETURN ( ::getConfiguracionesController():Edit() )
 
 METHOD loadedBlankBuffer() CLASS FacturasClientesController 
 
-   ::setModelBuffer( "serie", SQLContadoresModel():getDocumentSerie( ::cName ) )
+   ::setModelBuffer( "serie", SQLContadoresModel():getDocumentSerie( ::getName() ) )
 
-   ::setModelBuffer( "numero", SQLContadoresModel():getPosibleNext( ::cName, ::getModelBuffer( "serie" ) ) )
+   ::setModelBuffer( "numero", SQLContadoresModel():getPosibleNext( ::getName(), ::getModelBuffer( "serie" ) ) )
 
    ::setModelBuffer( "almacen_codigo", Store():getCodigo() )
 
@@ -223,14 +225,14 @@ RETURN ( nil )
 
 METHOD loadedDuplicateBuffer() CLASS FacturasClientesController 
 
-RETURN ( ::setModelBuffer( "numero", SQLContadoresModel():getPosibleNext( ::cName, ::getModelBuffer( "serie" ) ) ) )
+RETURN ( ::setModelBuffer( "numero", SQLContadoresModel():getPosibleNext( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD updatingBuffer() CLASS FacturasClientesController 
 
    if ::isAppendOrDuplicateMode()
-      ::setModelBuffer( "numero", SQLContadoresModel():getNext( ::cName, ::getModelBuffer( "serie" ) ) )
+      ::setModelBuffer( "numero", SQLContadoresModel():getNext( ::getName(), ::getModelBuffer( "serie" ) ) )
    end if 
 
 RETURN ( nil )
@@ -387,7 +389,7 @@ RETURN ( nil )
 
 METHOD clientChangeRecargo() CLASS FacturasClientesController
 
-   ::getModel():updateFieldWhereId( ::getModel():getBufferColumnKey(), "recargo_equivalencia", ::getModel():hBuffer[ "recargo_equivalencia" ] )
+   ::getModel():updateFieldWhereId( ::getModel():getBufferColumnKey(), "recargo_equivalencia", ::getModelBuffer( "recargo_equivalencia" ) )
 
    ::calculateTotals()
 
@@ -397,7 +399,7 @@ RETURN ( nil )
 
 METHOD changedSerie() CLASS FacturasClientesController 
 
-   ::getNumeroDocumentoComponent():setValue( SQLContadoresModel():getPosibleNext( ::cName, ::getModelBuffer( "serie" ) ) )
+   ::getNumeroDocumentoComponent():setValue( SQLContadoresModel():getPosibleNext( ::getName(), ::getModelBuffer( "serie" ) ) )
 
 RETURN ( nil )
 

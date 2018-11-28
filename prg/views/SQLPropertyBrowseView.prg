@@ -37,7 +37,6 @@ CLASS SQLPropertyBrowseView
    METHOD setOnPostEdit( onPostEdit )     INLINE ( ::onPostEdit := onPostEdit  )
 
    METHOD build()
-   METHOD buildPropertyTable()
    METHOD setBrowsePropertyTable()
    METHOD createColumnBrowseProperty()
    METHOD Adjust()
@@ -142,50 +141,11 @@ RETURN ( self )
 
 METHOD build()
 
-   ::buildPropertyTable()
-
    ::setBrowsePropertyTable()
 
    ::createColumnBrowseProperty()
 
    ::Adjust()
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD buildPropertyTable()
-
-   local n
-   local nRow           := 1
-   local nCol           := 1
-   local hPropiedad
-
-   ::aPropertiesTable   := array( ::nTotalRow, ::nTotalColumn )
-
-   aeval( ::aPropertyOne, {| h, n | ::aPropertiesTable[ n, nCol ] := TPropertiesItems():buildOne( h ) } ) 
-
-   if !empty( ::aPropertyTwo )
-
-      for each hPropiedad in ::aPropertyTwo
-
-         nCol++
-
-         for n := 1 to ::nTotalRow
-            ::aPropertiesTable[ n, nCol ] := TPropertiesItems():buildTwo( hPropiedad, ::aPropertiesTable[ n, 1 ] )
-         next
-
-      next
-
-   else
-
-      nCol++
-
-      for n := 1 to ::nTotalRow
-         ::aPropertiesTable[ n, nCol ]    := TPropertiesItems():buildUnits( hPropiedad, ::aPropertiesTable[ n, 1 ] )
-      next
-
-   end if
 
 RETURN ( self )
 

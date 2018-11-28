@@ -6,19 +6,9 @@
 
 CLASS SQLConfiguracionVistasGestoolController FROM SQLConfiguracionVistasController
 
-   //METHOD New( oController )
-
-   METHOD getConfiguracionVistaModel() INLINE ( SQLConfiguracionVistasGestoolModel():New( self ) )
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLConfiguracionVistasGestoolModel():New( self ), ), ::oModel )
 
 ENDCLASS
-
-//---------------------------------------------------------------------------//
-
-/*METHOD New( oController ) CLASS SQLConfiguracionVistasGestoolController
-
-   ::oController                 := oController
-   
-RETURN ( Self )*/
 
 //---------------------------------------------------------------------------//
 
@@ -26,37 +16,37 @@ CLASS SQLConfiguracionVistasController FROM SQLBaseController
 
    METHOD New( oController )
 
-   METHOD getConfiguracionVistaModel() INLINE ( SQLConfiguracionVistasModel():New( self ) )
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLConfiguracionVistasModel():New( self ), ), ::oModel )
 
    METHOD setId( cViewType, cViewName, nId ) ;
-                                       INLINE ( ::oModel:setId( cViewType, cViewName, nId ) )
+                                       INLINE ( ::getModel():setId( cViewType, cViewName, nId ) )
    
    METHOD getId( cViewType, cViewName ) ;
-                                       INLINE ( ::oModel:getId( cViewType, cViewName ) )
+                                       INLINE ( ::getModel():getId( cViewType, cViewName ) )
 
    METHOD setColumnOrder( cViewType, cViewName, cColumnOrder ) ;
-                                       INLINE ( ::oModel:setColumnOrder( cViewType, cViewName, cColumnOrder ) )
+                                       INLINE ( ::getModel():setColumnOrder( cViewType, cViewName, cColumnOrder ) )
    
    METHOD getColumnOrder( cViewType, cViewName ) ;
-                                       INLINE ( ::oModel:getColumnOrder( cViewType, cViewName ) )
+                                       INLINE ( ::getModel():getColumnOrder( cViewType, cViewName ) )
 
    METHOD setState( cViewType, cViewName, cState ) ;
-                                       INLINE ( ::oModel:setState( cViewType, cViewName, cState ) )
+                                       INLINE ( ::getModel():setState( cViewType, cViewName, cState ) )
    
    METHOD getState( cViewType, cViewName ) ;
-                                       INLINE ( ::oModel:getState( cViewType, cViewName ) )
+                                       INLINE ( ::getModel():getState( cViewType, cViewName ) )
 
    METHOD getColumnOrderNavigator( cViewName ) ;
-                                       INLINE ( ::oModel:getColumnOrderNavigator( cViewName ) )
+                                       INLINE ( ::getModel():getColumnOrderNavigator( cViewName ) )
 
    METHOD setColumnOrientation( cViewType, cViewName, cColumnOrientation ) ;
-                                       INLINE ( ::oModel:setColumnOrientation( cViewType, cViewName, cColumnOrientation ) ) 
+                                       INLINE ( ::getModel():setColumnOrientation( cViewType, cViewName, cColumnOrientation ) ) 
    
    METHOD getColumnOrientation( cViewType, cViewName ) ;
-                                       INLINE ( ::oModel:getColumnOrientation( cViewType, cViewName ) ) 
+                                       INLINE ( ::getModel():getColumnOrientation( cViewType, cViewName ) ) 
 
    METHOD getColumnOrientationNavigator( cViewName ) ;
-                                       INLINE ( ::oModel:getColumnOrientationNavigator( cViewName ) )
+                                       INLINE ( ::getModel():getColumnOrientationNavigator( cViewName ) )
 
 ENDCLASS
 
@@ -66,8 +56,6 @@ METHOD New( oController ) CLASS SQLConfiguracionVistasController
 
    ::oController                 := oController
 
-   ::oModel                            := ::getConfiguracionVistaModel() 
-   
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

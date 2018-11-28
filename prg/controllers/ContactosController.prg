@@ -337,9 +337,9 @@ CLASS SQLContactosModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD loadPrincipalBlankBuffer()   INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "principal", .t. ) )
+   METHOD loadMainBlankBuffer()   INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "principal", .t. ) )
 
-   METHOD insertPrincipalBlankBuffer() INLINE ( ::loadPrincipalBlankBuffer(), ::insertBuffer() ) 
+   METHOD insertPrincipalBlankBuffer() INLINE ( ::loadMainBlankBuffer(), ::insertBuffer() ) 
 
    METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 

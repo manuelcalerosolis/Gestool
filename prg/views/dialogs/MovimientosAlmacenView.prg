@@ -81,7 +81,6 @@ METHOD Activate()
          OF          ::oDialog
 
       ::oGetAlmacenOrigen:bValid   := {|| ::oController:validateAlmacenOrigen() }
-      ::oGetAlmacenOrigen:bHelp    := {|| brwAlmacen( ::oGetAlmacenOrigen, ::oGetAlmacenOrigen:oHelpText ) }
 
       REDEFINE GET   ::oGetAlmacenDestino ;
          VAR         ::oController:oModel:hBuffer[ "almacen_destino" ] ;
@@ -94,7 +93,6 @@ METHOD Activate()
          OF          ::oDialog
 
       ::oGetAlmacenDestino:bValid   := {|| ::oController:validateAlmacenDestino() }
-      ::oGetAlmacenDestino:bHelp    := {|| brwAlmacen( ::oGetAlmacenDestino, ::oGetAlmacenDestino:oHelpText ) }
 
       // Marcadores---------------------------------------------------------------
 

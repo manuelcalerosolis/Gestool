@@ -69,19 +69,12 @@ RETURN ( nil )
 
 METHOD loadDefaultHtmlFile() CLASS TemplateHtml
 
-   local cFile    
-
    if empty( ::cTypeDocument )
       msgInfo( "No se ha especificado el tipo de documento." )
       RETURN ( nil )
    end if 
 
-   cFile             := cGetHtmlDocumento( ::cTypeDocument )
-   if !empty( cFile )
-      ::loadHtmlFile( cFile )
-   end if 
-
-RETURN ( nil )
+RETURN ( ::selectHtmlFile() )
 
 //--------------------------------------------------------------------------//
 
@@ -116,19 +109,6 @@ RETURN ( lLoad )
 //--------------------------------------------------------------------------//
 
 METHOD setFileDefaultHtml( cFile ) CLASS TemplateHtml
-
-   if empty( ::cTypeDocument )
-      msgInfo( "No se ha especificado el tipo de documento." )
-      RETURN ( nil )
-   end if 
-
-   if !Empty( ::cHtmlFile )
-      if ApoloMsgNoYes( "¿Desea establecer el documento " + Rtrim( ::cHtmlFile ) + " como documento por defecto?", "Confirme" )
-         setHtmlDocumento( ::cTypeDocument, ::cHtmlFile )
-      end if
-   else
-      MsgInfo( "No ha documentos para establecer por defecto" )
-   end if
 
 RETURN ( nil )
 

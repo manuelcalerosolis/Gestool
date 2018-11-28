@@ -19,6 +19,8 @@ CLASS ArticulosView FROM SQLBaseView
 
    DATA oBtnAceptar
 
+   DATA oBtnCancelar
+
    DATA oTagsEver      
 
    DATA oComboPeriodoCaducidad
@@ -32,8 +34,6 @@ CLASS ArticulosView FROM SQLBaseView
    METHOD Activate()
 
    METHOD startActivate()
-
-   METHOD paintedActivate()
 
    METHOD addLinksToExplorerBar()
 
@@ -206,7 +206,7 @@ METHOD Activate() CLASS ArticulosView
 
    ::oBtnAceptar           := ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+   ::oBtnCancelar          := ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    if ::oController:isNotZoomMode() 
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }
@@ -214,7 +214,7 @@ METHOD Activate() CLASS ArticulosView
 
    ::oDialog:bStart        := {|| ::startActivate() }
 
-   ::oDialog:Activate( , , {|hDC, cPS| ::paintedActivate( hDC, cPS ) }, .t. )
+   ::oDialog:Activate( , , {|| ::paintedActivate() }, .t. )
 
    ::oController:getArticulosPreciosController():saveState()
 
@@ -255,12 +255,6 @@ METHOD startActivate() CLASS ArticulosView
    ::oGetCodigo:SetFocus()
 
 RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD paintedActivate() CLASS ArticulosView
-
-RETURN ( ::fireEvent( 'painted', self ) )
 
 //---------------------------------------------------------------------------//
 

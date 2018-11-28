@@ -17,15 +17,17 @@ CLASS AlmacenesController FROM SQLNavigatorController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := AlmacenesBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := AlmacenesBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := AlmacenesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := AlmacenesView():New( self ), ), ::oDialogView )
 
-   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := AlmacenesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE(if(empty( ::oRepository ), ::oRepository := AlmacenesRepository():New( self ), ), ::oRepository )
 
-   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := AlmacenesValidator():New( self  ), ), ::oValidator ) 
+   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := AlmacenesValidator():New( self  ), ), ::oValidator ) 
    
-   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLAlmacenesModel():New( self ), ), ::oModel ) 
+   METHOD getModel()                   INLINE( if( empty( ::oModel ), ::oModel := SQLAlmacenesModel():New( self ), ), ::oModel ) 
+   
+   METHOD getName()                    INLINE ( "almacenes" )
 
 END CLASS
 
@@ -37,13 +39,11 @@ METHOD New( oController ) CLASS AlmacenesController
 
    ::cTitle                         := "Almacenes"
 
-   ::cName                          := "almacenes"
-
    ::hImage                         := {  "16" => "gc_warehouse_16",;
                                           "32" => "gc_warehouse_32",;
                                           "48" => "gc_warehouse_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::getName() )
 
    ::oPaisesController              := PaisesController():New( self )
 

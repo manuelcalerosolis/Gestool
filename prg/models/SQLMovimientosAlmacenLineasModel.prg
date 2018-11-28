@@ -250,10 +250,6 @@ METHOD getSQLSubSentenceTotalUnidadesLinea( cTable, cAs )
       cTable         += "."
    end if 
 
-   if lCalCaj()   
-      RETURN ( "( IF( " + cTable + "cajas_articulo = 0, 1, " + cTable + "cajas_articulo ) * " + cTable + "unidades_articulo ) AS " + cAs + " " )
-   end if 
-
 RETURN ( cTable + "unidades_articulo AS " + cAs + " " )
 
 //---------------------------------------------------------------------------//
@@ -265,10 +261,6 @@ METHOD getSQLSubSentenceTotalPrecioLinea( cTable, cAs )
 
    if !empty( cTable )
       cTable         += "."
-   end if 
-
-   if lCalCaj()   
-      RETURN ( "( IF( " + cTable + "cajas_articulo = 0, 1, " + cTable + "cajas_articulo ) * " + cTable + "unidades_articulo * " + cTable + "precio_articulo ) AS " + cAs + " " )
    end if 
 
 RETURN ( cTable + "unidades_articulo * " + cTable + "precio_articulo AS " + cAs + " " )
@@ -285,10 +277,6 @@ METHOD getSQLSubSentenceSumatorioUnidadesLinea( cTable, cAs )
       cTable         += "."
    end if
 
-   if lCalCaj()   
-      RETURN ( "SUM( IF( " + cTable + "cajas_articulo = 0, 1, " + cTable + "cajas_articulo ) * " + cTable + "unidades_articulo ) AS " + cAs + " " )
-   end if 
-
 RETURN ( "SUM( " + cTable + "unidades_articulo ) AS " + cAs + " " )
 
 //---------------------------------------------------------------------------//
@@ -302,10 +290,6 @@ METHOD getSQLSubSentenceSumatorioTotalPrecioLinea( cTable, cAs )
    else
       cTable         += "."
    end if
-
-   if lCalCaj()   
-      RETURN ( "SUM( IF( " + cTable + "cajas_articulo = 0, 1, " + cTable + "cajas_articulo ) * " + cTable + "unidades_articulo * " + cTable + "precio_articulo ) AS " + cAs + " " )
-   end if 
 
 RETURN ( "SUM( " + cTable + "unidades_articulo * " + cTable + "precio_articulo ) AS " + cAs + " " )
 

@@ -48,23 +48,31 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    METHOD seedEmpresa()
 
+   METHOD BackUp()
+
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getModel()                         INLINE ( iif( empty( ::oModel ), ::oModel := SQLEmpresasModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLEmpresasModel():New( self ), ), ::oModel )
 
-   METHOD getAjustableController()           INLINE ( iif( empty( ::oAjustableController ), ::oAjustableController := AjustableController():New( self ), ), ::oAjustableController ) 
+   METHOD getAjustableController()     INLINE ( iif( empty( ::oAjustableController ), ::oAjustableController := AjustableController():New( self ), ), ::oAjustableController ) 
 
-   METHOD getRepository()                    INLINE ( iif( empty( ::oRepository ), ::oRepository := EmpresasRepository():New( self ), ), ::oRepository ) 
+   METHOD getRepository()              INLINE ( iif( empty( ::oRepository ), ::oRepository := EmpresasRepository():New( self ), ), ::oRepository ) 
 
-   METHOD getBrowseView()                    INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := EmpresasBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := EmpresasBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getDialogView()                    INLINE ( iif( empty( ::oDialogView ), ::oDialogView := EmpresasView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := EmpresasView():New( self ), ), ::oDialogView )
 
-   METHOD getPanelView()                     INLINE ( iif( empty( ::oPanelView ), ::oPanelView := EmpresasPanelView():New( self ), ), ::oPanelView )
+   METHOD getPanelView()               INLINE ( iif( empty( ::oPanelView ), ::oPanelView := EmpresasPanelView():New( self ), ), ::oPanelView )
 
-   METHOD getValidator()                     INLINE ( iif( empty( ::oValidator ), ::oValidator := EmpresasValidator():New( self, ::getDialogView() ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( iif( empty( ::oValidator ), ::oValidator := EmpresasValidator():New( self, ::getDialogView() ), ), ::oValidator )
 
-   METHOD getCamposExtraValoresController()  INLINE ( iif( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresGestoolController():New( self ), ), ::oCamposExtraValoresController )
+   METHOD getCamposExtraValoresController();
+                                       INLINE ( iif( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresGestoolController():New( self ), ), ::oCamposExtraValoresController )
+
+   METHOD getConfiguracionVistasController();
+                                       INLINE ( iif( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
+   
+   METHOD getDireccionesController()   INLINE ( iif( empty( ::oDireccionesController ), ::oDireccionesController := DireccionesGestoolController():New( self ), ), ::oDireccionesController )
 
 END CLASS
 
@@ -84,7 +92,7 @@ METHOD New( oController ) CLASS EmpresasController
                                           "32" => "gc_factory_32",;
                                           "48" => "gc_factory_48" }
    
-   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadMainBlankBuffer() } )
    ::getModel():setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    
    ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
@@ -218,6 +226,18 @@ METHOD seedEmpresa()
                Company():guardWhereCodigo( ::getRowSet():fieldGet( 'codigo' ) ),;
                msgRun( "Importando empresa : " + alltrim( cvaltostr( ::getRowSet():fieldGet( 'nombre' ) ) ),;
                   "Espere por favor...", {|| SQLCompanySeeders():Run( cvaltostr( ::getRowSet():fieldGet( 'codigo' ) ) ) } ) } )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD BackUp()
+
+   local oDialogWait
+
+   oDialogWait          := TWaitMeter():New( "Copia de seguridad", "Creando copia de seguridad..." )
+   oDialogWait:setStart( {|| getSQLDatabase():Export(), oDialogWait:End() } )
+   oDialogWait:Run()
 
 RETURN ( nil )
 
@@ -403,7 +423,7 @@ METHOD Activate() CLASS EmpresasView
 
    ::oDialog:bStart  := {|| ::startDialog() }
 
-   ACTIVATE DIALOG ::oDialog CENTER
+   ::oDialog:Activate( , , {|| ::paintedActivate() }, .t. )
 
 RETURN ( ::oDialog:nResult )
 
@@ -568,7 +588,7 @@ RETURN ( nil )
 METHOD createButtonCopiasSeguridad() CLASS EmpresasPanelView
 
    with object ( TBtnBmp():New( 330, 30, 140, 80, "gc_backup_32",,,,, ::oWnd,,, .f., .f., "Realizar copias de seguridad",,,, .f.,, .f.,,, .f.,, .t.,, .t., .f., .t., ::nClrText, ::nClrBack, .f. ) )
-      :bAction       := {|| ::oController:Edit( Company():id ) }
+      :bAction       := {|| ::oController:BackUp() }
       :nClrBorder    := ::nClrBorder
       :bColorMap     := {|o| o:lBorder := o:lMOver, ::nClrBorder }
       :oFontBold     := ::oBold
@@ -752,5 +772,95 @@ METHOD getNombres() CLASS EmpresasRepository
 
 RETURN ( aNombres )
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TestEmpresasController FROM TestCase
+
+   METHOD testDialogAppend()
+
+   METHOD testDelete()
+
+   METHOD testDialogEmptyCIF()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD testDialogAppend() CLASS TestEmpresasController
+
+   local oController := EmpresasController():New()
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         self:getControl( 110 ):cText( 'TEST' ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 120 ):cText( 'Test empresa' ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 130 ):cText( '99999999A' ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )
+
+   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testDelete() CLASS TestEmpresasController
+
+   local nId         := EmpresasController():getModel():getField( 'id', 'codigo', 'TEST' )
+   
+   if nId != 0
+      EmpresasController():getModel():deleteSelection( nId ) 
+   end if 
+
+   ::assert:equals( nil, EmpresasController():getModel():getField( 'id', 'codigo', 'TEST' ), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testDialogEmptyCIF() CLASS TestEmpresasController
+
+   local oController := EmpresasController():New()
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         self:getControl( 110 ):cText( 'TEST' ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 120 ):cText( 'Test empresa' ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDCANCEL ):Click() } )
+
+   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+
+/*
+METHOD testDialogEmptyNombre() CLASS TestArticulosController
+
+   local oController := ArticulosController():New()
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         ::oGetCodigo:cText( '002' ),;
+         apoloWaitSeconds( 1 ),;
+         ::oBtnAceptar:Click(),;
+         apoloWaitSeconds( 1 ),;
+         ::oBtnCancelar:Click() } )
+
+   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+*/
 //---------------------------------------------------------------------------//
 

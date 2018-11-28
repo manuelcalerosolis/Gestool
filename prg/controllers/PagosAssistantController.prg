@@ -5,7 +5,11 @@
 
 CLASS PagosAssistantController FROM SQLNavigatorController
 
+<<<<<<< HEAD
    DATA nImporte
+=======
+   DATA nImporte                       INIT 0
+>>>>>>> 624efd2a361f5ffc989c41ac1180e24782623640
 
    METHOD New() CONSTRUCTOR
 
@@ -21,13 +25,13 @@ CLASS PagosAssistantController FROM SQLNavigatorController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()        INLINE( ::oController:getBrowseView() )
+   METHOD getBrowseView()              INLINE( ::oController:getBrowseView() )
    
-   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := PagosAssistantView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := PagosAssistantView():New( self ), ), ::oDialogView )
    
-   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLPagosModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE( if( empty( ::oModel ), ::oModel := SQLPagosModel():New( self ), ), ::oModel )
    
-   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := PagosValidator():New( self  ), ), ::oValidator ) 
+   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := PagosValidator():New( self  ), ), ::oValidator ) 
 
 END CLASS
 
@@ -87,7 +91,11 @@ METHOD getRecibos() CLASS PagosAssistantController
    ::getRecibosPagosController():getRowset():buildPad( ::getRecibosPagosController():getModel():getGeneralSelect( ::getModelBuffer( "uuid" ), ::getModelBuffer( "cliente_codigo" ) ) )
 
    ::getRecibosPagosController():getBrowseView():Refresh()
+<<<<<<< HEAD
 
+=======
+      
+>>>>>>> 624efd2a361f5ffc989c41ac1180e24782623640
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -104,6 +112,7 @@ RETURN ( nil )
 
 METHOD getImportePagar( nImporte )
 
+<<<<<<< HEAD
    if ::nImporte == ::getDialogView():nImporte
       RETURN ( nil )
    end if
@@ -120,6 +129,21 @@ METHOD getImportePagar( nImporte )
    ::nImporte := ::getDialogView():nImporte
 
    ::getRecibosPagosController():calculatePayment( nImporte )
+=======
+   if nImporte != ::nImporte 
+
+      ::nImporte  := nImporte
+
+      // vacio los importes de la tabla pivot
+
+      ::getRecibosPagosController():calculatePayment( nImporte )
+
+      ::getRecibosPagosController():getRowSet():Refresh()
+
+      ::getRecibosPagosController():getBrowseView():Refresh()
+   
+   end if 
+>>>>>>> 624efd2a361f5ffc989c41ac1180e24782623640
 
    ::getRecibosPagosController():getRowSet:Refresh()
 

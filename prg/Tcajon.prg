@@ -6,65 +6,19 @@
 
 CLASS TCajon
 
-   CLASSDATA lCreated      AS LOGIC INIT .f.
+   CLASSDATA lCreated                  AS LOGIC INIT .f.
 
    DATA  cPrinter
-   DATA  cApertura                  INIT ""
+   DATA  cApertura                     INIT ""
 
-   METHOD Create()                  CONSTRUCTOR
+   METHOD New( cApertura, cPrinter )   CONSTRUCTOR
 
-   METHOD New( cApertura, cPrinter )
+   METHOD Open()
+   METHOD OpenTest()                   INLINE ( ::Open() )
 
-   METHOD Open( nView )
-   METHOD OpenTest()                INLINE ( ::Open() )
-
-   METHOD End()                     VIRTUAL
-
-   METHOD LogCajon()
+   METHOD End()                        VIRTUAL
 
 END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD Create( cCodCaj )
-
-   local oBlock
-   local oError
-   local dbfCajPorta
-
-   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   USE ( cPatDat() + "CAJPORTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJPORTA", @dbfCajPorta ) )
-   SET ADSINDEX TO ( cPatDat() + "CAJPORTA.CDX" ) ADDITIVE
-
-   if !Empty( cCodCaj ) .and. ( dbfCajPorta)->( dbSeek( cCodCaj ) )
-
-      ::cApertura          := ( dbfCajPorta )->cCodAper
-      ::cPrinter           := ( dbfCajPorta )->cPrinter
-
-   else
-
-      ::cApertura          := "27 112 0 60 240"
-      ::cPrinter           := ""
-
-   end if
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if dbfCajPorta != nil
-      ( dbfCajPorta )->( dbCloseArea() )
-   end if
-
-   dbfCajPorta             := nil
-
-RETURN Self
 
 //---------------------------------------------------------------------------//
 
@@ -76,59 +30,19 @@ METHOD New( cApertura, cPrinter ) CLASS TCajon
    ::cApertura          := cApertura
    ::cPrinter           := cPrinter
 
-RETURN Self
-
-//---------------------------------------------------------------------------//
-
-METHOD Open( nView )
-
-   PrintEscCode( ::cApertura, ::cPrinter )
-
-   if IsNum( nView )
-      ::LogCajon( nView )
-   end if 
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD LogCajon( nView )
+METHOD Open()
 
-   local oBlock
-   local oError
-   local dbfLogPorta
+   PrintEscCode( ::cApertura, ::cPrinter )
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if !Empty( D():Get( "LogPorta", nView ) )
-
-      ( D():Get( "LogPorta", nView ) )->( dbAppend() )
-
-      ( D():Get( "LogPorta", nView ) )->cNumTur   := cCurSesion()
-      ( D():Get( "LogPorta", nView ) )->cSufTur   := RetSufEmp()
-      ( D():Get( "LogPorta", nView ) )->cCodCaj   := Application():CodigoCaja()
-      ( D():Get( "LogPorta", nView ) )->cCodUse   := Auth():Codigo()
-      ( D():Get( "LogPorta", nView ) )->dFecApt   := GetSysDate()
-      ( D():Get( "LogPorta", nView ) )->cHorApt   := Substr( Time(), 1, 5 )
-
-      ( D():Get( "LogPorta", nView ) )->( dbUnLock() )
-
-   end if
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir bases de datos log de cajón portamonedas" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-return .t.
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function PrintEscCode( cEscCode, cPrinter )
+FUNCTION PrintEscCode( cEscCode, cPrinter )
 
    local nResult
    local cFile    := "EscFile.txt"
@@ -138,6 +52,6 @@ Function PrintEscCode( cEscCode, cPrinter )
       fErase( cFile )
    end if 
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//

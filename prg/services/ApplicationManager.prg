@@ -45,33 +45,11 @@ RETURN ( self )
 
 METHOD setDelegacion( uuidDelegacion, codigoDelegacion )
 
-   ::uuidDelegacion        := if( hb_isnil( uuidDelegacion ), "", uuidDelegacion )
-
-   ::codigoDelegacion      := if( hb_isnil( codigoDelegacion ), "", codigoDelegacion )
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD getDelegacion()
-
-   local delegacion        
-
-   ::setDelegacion()
-
-   delegacion              := SQLAjustableGestoolModel():getUsuarioDelegacionExclusiva( Auth():Uuid() )
-
-   if !empty( delegacion )
-      ::setDelegacion( delegacion, DelegacionesModel():getField( "cCodDlg", "Uuid", delegacion ) )
-      RETURN ( nil )
-   end if 
-
-   delegacion              := uFieldEmpresa( "cSufDoc" )
-
-   if !empty( delegacion )
-      ::setDelegacion( DelegacionesModel():getField( "Uuid", "cCodDlg", delegacion ), delegacion )
-      RETURN ( nil )
-   end if 
 
 RETURN ( nil )
 
@@ -99,12 +77,6 @@ METHOD getCaja()
       RETURN ( nil )
    end if 
 
-   caja                    := uFieldEmpresa( "cDefCaj" )
-   if !empty( caja )
-      ::setCaja( CajasModel():getField( "Uuid", "cCodCaj", caja ), caja )
-      RETURN ( nil )
-   end if 
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -128,14 +100,7 @@ METHOD getAlmacen()
    almacen                 := SQLAjustableGestoolModel():getUsuarioAlmacenExclusivo( Auth():Uuid() )
 
    if !empty( almacen )
-      ::setAlmacen( almacen, AlmacenesModel():getField( "cCodAlm", "Uuid", almacen ) )
-      RETURN ( nil )
-   end if 
-
-   almacen                 := uFieldEmpresa( "cDefAlm" )
-
-   if !empty( almacen )
-      ::setAlmacen( AlmacenesModel():getField( "Uuid", "cCodAlm", almacen ), almacen )
+      ::setAlmacen( almacen )
       RETURN ( nil )
    end if 
 

@@ -3,6 +3,13 @@
 
 //---------------------------------------------------------------------------//
 
+static hBmpOpen
+static hBmpClose
+static aTrees     := {}
+static nLevel     := 0
+
+//---------------------------------------------------------------------------//
+
 CLASS PermisosController FROM SQLNavigatorGestoolController
    
    DATA cUuidRoles
@@ -548,4 +555,64 @@ FUNCTION hPermiso( cId, nPermiso )
 RETURN ( hPermiso )
 
 //---------------------------------------------------------------------------//
+
+FUNCTION TreeAddItem( cPrompt, cResName1, cResName2, cBmpOpen, cBmpClose, lOpened )
+
+   local hBmpOpen, hBmpClose
+
+   if ! Empty( cResName1 )
+      hBmpOpen    := LoadBitmap( GetResources(), cResName1 )
+      hBmpClose   := hBmpOpen
+   endif
+
+   if ! Empty( cResName2 )
+      hBmpClose   := LoadBitmap( GetResources(), cResName2 )
+   endif
+
+   if ! Empty( cBmpOpen )
+      hBmpOpen    := ReadBitmap( 0, cBmpOpen )
+      hBmpClose   := hBmpOpen
+   endif
+
+   if ! Empty( cBmpClose )
+      hBmpClose   := ReadBitmap( 0, cBmpClose )
+   endif
+
+RETURN ( atail( aTrees ):Add( cPrompt, nLevel, hBmpOpen, hBmpClose, lOpened ) )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION TreeEnd()
+
+   local oItem
+   local oTree    := atail( aTrees )
+
+   if len( aTrees ) > 1
+
+      asize( aTrees, len( aTrees ) - 1 )
+
+      oItem       := atail( aTrees ):oLast
+      oItem:oTree := oTree
+
+      if oItem:hBmpOpen == nil
+         oItem:hBmpOpen := hBmpOpen
+      endif
+
+      if oItem:hBmpClose == nil
+         oItem:hBmpClose := hBmpClose
+      endif
+
+      oTree:oFirst:oPrev := atail( aTrees ):oLast
+
+   else
+
+      aTrees      := {}
+
+   endif
+
+   nLevel--
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
 

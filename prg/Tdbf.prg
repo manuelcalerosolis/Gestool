@@ -261,8 +261,6 @@ CLASS TDbf
     METHOD SwapUp()
     METHOD SwapDown()
 
-    METHOD lRddAdsCdx()                   INLINE ( ::cRDD == "ADSCDX" )
-
     METHOD aCommentIndex()
 
     METHOD lExistFile( cFile )            INLINE ( ::cRDD != "DBFCDX" .or. File( cFile ) ) // 
@@ -275,9 +273,6 @@ CLASS TDbf
 
     METHOD setCustomFilter( cExpresionFilter )
     METHOD quitCustomFilter( cExpresionFilter )
-
-    METHOD adsSetAOF( cExpresionFilter ) INLINE ( ( ::nArea )->( adsSetAOF( cExpresionFilter ) ) )
-    METHOD adsClearAOF()                 INLINE ( ( ::nArea )->( adsClearAOF() ) )  
 
 ENDCLASS
 
@@ -1244,35 +1239,22 @@ METHOD AddTmpIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOp
     local nRec
     local oIdx
 
-    if ::lRddAdsCdx()
+    DEFAULT lFocus  := .t.
 
-        if ::nArea != 0 .and. !empty(cFor)
-            ( ::nArea )->( adsSetAOF( cFor ) )
-        end if 
+    nRec            := ::RecNo()
+    oIdx            := ::AddIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOption, nStep, lNoDel, .t. )
 
-    else
+    oIdx:IdxExt()
+    oIdx:Create()
 
-        DEFAULT lFocus  := .t.
-
-        nRec            := ::RecNo()
-        oIdx            := ::AddIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOption, nStep, lNoDel, .t. )
-
-        oIdx:IdxExt()
-        oIdx:Create()
-
-        if ::nArea != 0
-            ( ::nArea )->( OrdListClear() )
-            if !::lRddAdsCdx() 
-                aEval( ::aTIndex, { | o | ( ::nArea )->( OrdListAdd( o:cFile, o:cName ) ) } )
-            end if 
-            ( ::nArea )->( OrdSetFocus( 1 ) )
-        end if
-
-        if( lFocus, oIdx:SetFocus(), ::oIndex:SetFocus() )
-
-        ::GoTo( nRec )
-
+    if ::nArea != 0
+        ( ::nArea )->( OrdListClear() )
+        ( ::nArea )->( OrdSetFocus( 1 ) )
     end if
+
+    if( lFocus, oIdx:SetFocus(), ::oIndex:SetFocus() )
+
+    ::GoTo( nRec )
 
 return( oIdx )
 
@@ -1298,9 +1280,6 @@ METHOD AddBag( cFile ) CLASS TDbf
 
 
         if ::lExistFile( cFile )
-            if !::lRddAdsCdx() 
-                ( ::nArea )->( OrdListAdd( cFile ) )
-            end if
             ( ::nArea )->( OrdSetFocus( 1 ) )
         else
             if !ApoloMsgNoYes( "No existe INDEX BAG FILE: " + cFile  )
@@ -1314,7 +1293,6 @@ METHOD AddBag( cFile ) CLASS TDbf
 return( Self )
 
 //----------------------------------------------------------------------------//
-// Activa los �ndices como un SET ADSINDEX TO y pone el foco en el primero:
 //
 //@
 METHOD IdxActivate() CLASS TDbf
@@ -1703,53 +1681,6 @@ return( nOldCount )
 // Atencion a�adir el ClassName del Browse si no est� contemplado aqu�.
 
 METHOD SetBrowse( oBrw ) CLASS TDbf
-
-   if Upper( oBrw:ClassName() ) $ "TXBROWSE IXBROWSE"
-
-      oBrw:nDataType    := 0
-      oBrw:cAlias       := ::cAlias
-      oBrw:bGoTop       := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( DbGoTop() ), ) }
-      oBrw:bGoBottom    := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( DbGoBottom() ), ) }
-      oBrw:bSkip        := {| n | iif( n == nil, n := 1, ), if( ( ::cAlias )->( Used() ), ( ::cAlias )->( DbSkipper( n ) ), ) }
-      oBrw:bBof         := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( Bof() ), ) }
-      oBrw:bEof         := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( Eof() ), ) }
-
-      oBrw:bBookMark    := {| n | iif( n == nil,;
-                                  iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( RecNo() ), 0 ),;
-                                  iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( DbGoto( n ) ), 0 ) ) }
-
-      if lAIS()
-         oBrw:bKeyNo    := {| n | iif( n == nil,;
-                              iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( adsKeyNo(,,1) ), 0 ),;
-                              iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( OrdKeyGoto( n ) ), 0 ) ) }
-         oBrw:bKeyCount := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( ADSKeyCount(,,1) ), ) }
-      else
-         oBrw:bKeyNo    := {| n | iif( n == nil,;
-                              iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( OrdKeyNo() ), 0 ),;
-                              iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( OrdKeyGoto( n ) ), 0 ) ) }
-         oBrw:bKeyCount := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( OrdKeyCount() ), 0 ) }
-      end if
-
-      oBrw:bLock        := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( DbrLock() ), ) }
-      oBrw:bUnlock      := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( DbrUnlock() ), ) }
-
-   elseif Upper( oBrw:ClassName() ) $ "TWBROWSE TCBROWSE TSBROWSE"
-
-      oBrw:bGoTop     := {|| ::GoTop() }
-      oBrw:bGoBottom  := {|| ::GoBottom() }
-      oBrw:bSkip      := {| n | ::Skipper( n ) }
-      oBrw:bLogicLen  := {|| ::OrdKeyCount() }
-      oBrw:bLogicPos  := {|| ::OrdKeyNo() }
-      if oBrw:oVScroll() != nil
-          oBrw:oVscroll():SetRange( 1, ::OrdKeyCount() )
-      endif
-      oBrw:Refresh()
-
-   else
-
-      ::DbError( dbBRWBLOCK )
-
-   endif
 
 return( oBrw )
 
@@ -2189,11 +2120,7 @@ Return ( say )
 
 METHOD setCustomFilter( cExpresionFilter )
 
-   if lAIS()
-      ( ::nArea )->( adsSetAOF( cExpresionFilter ) ) 
-   else 
-      ( ::nArea )->( dbSetFilter( bCheck2Block( cExpresionFilter ), cExpresionFilter ) )
-   end if 
+   ( ::nArea )->( dbSetFilter( bCheck2Block( cExpresionFilter ), cExpresionFilter ) )
 
 RETURN ( Self )
 
@@ -2201,11 +2128,7 @@ RETURN ( Self )
 
 METHOD quitCustomFilter( cExpresionFilter )
 
-   if lAIS()
-      ( ::nArea )->( adsClearAOF() ) 
-   else 
-      ( ::nArea )->( dbSetFilter() )
-   end if 
+   ( ::nArea )->( dbSetFilter() )
 
 RETURN ( Self )
 

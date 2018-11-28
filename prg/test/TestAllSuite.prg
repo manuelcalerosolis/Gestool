@@ -17,10 +17,12 @@
 
 USER FUNCTION hbunit_test()
 
-   local oRunner   := TTextRunner():new()
-   local oSuite    := TTestSuite():new()
+   local oRunner   := TextRunner():new()
+   local oSuite    := TestSuite():new()
 
-   oSuite:addTest( TTestAssert():new() )
+   oSuite:addTest( TestAssert():new() )
+   
+   oSuite:addTest( TestEmpresasController():new() )
    
    oSuite:addTest( TestArticulosController():new() )
 
@@ -30,7 +32,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-CLASS TTestAssert FROM TTestCase
+CLASS TestAssert FROM TestCase
 
   METHOD testAssertErrors()
   METHOD testLogicals()
@@ -44,7 +46,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD testAssertErrors() CLASS TTestAssert
+METHOD testAssertErrors() CLASS TestAssert
 
    local a
    local oError
@@ -66,7 +68,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testLogicals() CLASS TTestAssert
+METHOD testLogicals() CLASS TestAssert
 
   ::assert:true( .t., "test ::assert:true with .t." )
   ::assert:false( .f., "test ::assert:false with .f." )
@@ -75,7 +77,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testAssertEquals() CLASS TTestAssert
+METHOD testAssertEquals() CLASS TestAssert
 
   // test with nil
   ::assert:equals( nil, nil, "test ::assert:equals nil with nil" )
@@ -102,7 +104,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testAssertNotEquals() CLASS TTestAssert
+METHOD testAssertNotEquals() CLASS TestAssert
 
   ::assert:notEquals( 0, 1, "test ::assert:notEquals on small integers" )
   ::assert:notEquals( 1234567890, 1234567891, "test ::assert:notEquals on large integers" )
@@ -113,7 +115,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testAssertNull() CLASS TTestAssert
+METHOD testAssertNull() CLASS TestAssert
 
   ::assert:null( , "test ::assert:notNull with empty parameter" )
   ::assert:null( nil, "test ::assert:notNull with coded nil" )
@@ -122,7 +124,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testAssertNotNull() CLASS TTestAssert
+METHOD testAssertNotNull() CLASS TestAssert
 
   ::assert:notNull( 1, "test ::assert:notNull on numerics" )
   ::assert:notNull( 'a', "test ::assert:notNull with character" )

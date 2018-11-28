@@ -3,11 +3,10 @@
 #include "Report.ch"
 #include "MesDbf.ch"
 
-static lThouSep        := .f.
 static cNumFormat      := 'A'
 static lExcelInstl
 static lCalcInstl
-static nxlLangID, cxlTrue := "=(1=1)", cxlFalse := "=(1=0)", cxlSum, cxlSubTotal, lxlEnglish := .f., hLib
+static nxlLangID, cxlTrue := "=(1=1)", cxlFalse := "=(1=0)", cxlSum, cxlSubTotal, hLib
 
 static oThis
 
@@ -4795,19 +4794,9 @@ Return ( Self )
 
 Function aGetFont()
 
-#ifdef __HARBOUR__
-
    local hDC      := GetDC( 0 )
    local aFonts   := GetFontNames( hDC )
    ReleaseDC( 0, hDC )
-
-#else
-
-   Local aFonts   := {}
-
-   EnumFonts( { | cName | aAdd( aFonts, cName ) } )
-
-#endif
 
    if Empty( aFonts )
       msgStop( "Error getting font names" )
@@ -6035,46 +6024,6 @@ Return ( ::oDbfGrp )
 
 //--------------------------------------------------------------------------//
 
-Function clp2xlnumpic( cPic )
-
-   local cFormat, aPic, c, lEnglish := lxlEnglish
-
-   if cPic == nil
-      cFormat  := If( lThouSep, If( lEnglish, "#,##0", "#.##0" ), "0" )
-   else
-      cPic     := StrTran( cPic, "#", "9" )
-      aPic     := HB_ATokens( cPic, " " )
-
-      cFormat  := ""
-      for each c in aPic
-         if Left( c, 1 ) == "@"
-/*
-            if 'E' $ c
-               lEnglish := .f.
-            endif
-*/
-         else
-            if "9" $ c
-               if Left( c, 1 ) == '$'
-                  cFormat  += '$'
-               endif
-               cFormat  += If( lThouSep .or. ",9" $ cPic, If( lEnglish, "#,##0", "#.##0" ), "0" )
-               if ".9" $ c
-                  cFormat  += If( lEnglish, ".", "," )
-                  cFormat  += StrTran( SubStr( c, At( ".", c ) + 1 ), "9", "0" )
-
-               endif
-               cFormat  += " "
-            else
-               cFormat  += ( '"' + c + '" ' )
-            endif
-         endif
-      next
-   endif
-
-return Trim( cFormat )
-
-//------------------------------------------------------------------//
 
 Function oTInfGen( cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
 

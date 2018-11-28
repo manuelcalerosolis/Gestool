@@ -63,12 +63,6 @@ METHOD getColumns()
    hset( ::hColumns, "almacen_destino",   {  "create"    => "CHAR ( 16 )"                             ,;
                                              "default"   => {|| space( 16 ) } }                       )
 
-   hset( ::hColumns, "divisa",            {  "create"    => "CHAR ( 3 )"                              ,;
-                                             "default"   => {|| cDivEmp() } }                         )
-
-   hset( ::hColumns, "divisa_cambio",     {  "create"    => "DECIMAL( 16, 6 )"                        ,;
-                                             "default"   => {|| 1 } }                                 )
-
    hset( ::hColumns, "comentarios",       {  "create"    => "TEXT"                                    ,;
                                              "default"   => {|| "" } }                                )
 

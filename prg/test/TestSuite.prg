@@ -13,14 +13,11 @@
 
 #include "hbunit.ch"
 
-CLASS TTestSuite FROM TTest
+CLASS TestSuite FROM Test
 
    DATA aTests
 
-   DATA cClassName
-
    METHOD New() CONSTRUCTOR
-   METHOD className()
 
    METHOD run()
    METHOD addTest( oTest )
@@ -29,11 +26,9 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS TTestSuite
+METHOD New() CLASS TestSuite
 
   ::Super:New()
-
-  ::cClassName := "TTestSuite"
 
   ::aTests     := {}
 
@@ -41,13 +36,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD className() CLASS TTestSuite
-
-RETURN( ::cClassName )
-
-//---------------------------------------------------------------------------//
-
-METHOD Run() CLASS TTestSuite
+METHOD Run() CLASS TestSuite
 
    aeval( ::aTests, {|oTest| oTest:Run() } )
 
@@ -55,7 +44,7 @@ RETURN ( ::oResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD addTest( oTest ) CLASS TTestSuite
+METHOD addTest( oTest ) CLASS TestSuite
 
 RETURN ( aadd( ::aTests, oTest ) )
 

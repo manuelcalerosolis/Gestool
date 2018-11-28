@@ -28,8 +28,6 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
 
    METHOD getInsertSentence()
 
-   METHOD addInsertSentence()
-
    METHOD addUpdateSentence()
    
    METHOD addDeleteSentence()
@@ -41,14 +39,6 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
    METHOD aUuidToDelete( uuid )
 
    METHOD getDeleteSentenceFromParentsUuid()
-
-   METHOD getSQLSubSentenceTotalUnidadesLinea( cTable, cAs )
-
-   METHOD getSQLSubSentenceTotalPrecioLinea( cTable, cAs )
-
-   METHOD getSQLSubSentenceSumatorioUnidadesLinea( cTable, cAs )
-
-   METHOD getSQLSubSentenceSumatorioTotalPrecioLinea( cTable, cAs )
 
    METHOD getSentenceNotSent( aFetch )
 
@@ -237,25 +227,6 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD addInsertSentence( aSQLInsert, oProperty ) CLASS SQLFacturasClientesLineasModel
-
-   if empty( oProperty:Value )
-      RETURN ( nil )
-   end if
-
-   hset( ::hBuffer, "uuid",                     win_uuidcreatestring() )
-   hset( ::hBuffer, "codigo_primera_propiedad", oProperty:cCodigoPropiedad1 )
-   hset( ::hBuffer, "valor_primera_propiedad",  oProperty:cValorPropiedad1 )
-   hset( ::hBuffer, "codigo_segunda_propiedad", oProperty:cCodigoPropiedad2 )
-   hset( ::hBuffer, "valor_segunda_propiedad",  oProperty:cValorPropiedad2 )
-   hset( ::hBuffer, "unidades_articulo",        oProperty:Value )
-
-   aadd( aSQLInsert, ::Super:getInsertSentence() + "; " )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
 METHOD addUpdateSentence( aSQLUpdate, oProperty ) CLASS SQLFacturasClientesLineasModel
 
    aadd( aSQLUpdate, "UPDATE " + ::getTableName() + " " +                                                       ;
@@ -318,76 +289,6 @@ METHOD getDeleteSentenceFromParentsUuid( aParentsUuid ) CLASS SQLFacturasCliente
    end if 
 
 RETURN ( "" )
-
-//---------------------------------------------------------------------------//
-
-METHOD getSQLSubSentenceTotalUnidadesLinea( cTable, cAs ) CLASS SQLFacturasClientesLineasModel
-
-   DEFAULT cTable    := ""
-   DEFAULT cAs       := "total_unidades"
-   
-   if !empty( cTable )
-      cTable         += "."
-   end if 
-
-   if lCalCaj()   
-      RETURN ( "( IF( " + cTable + "cajas_articulo = 0, 1, " + cTable + "cajas_articulo ) * " + cTable + "unidades_articulo ) AS " + cAs + " " )
-   end if 
-
-RETURN ( cTable + "unidades_articulo AS " + cAs + " " )
-
-//---------------------------------------------------------------------------//
-
-METHOD getSQLSubSentenceTotalPrecioLinea( cTable, cAs ) CLASS SQLFacturasClientesLineasModel
-
-   DEFAULT cTable    := ""
-   DEFAULT cAs       := "total_precio"
-
-   if !empty( cTable )
-      cTable         += "."
-   end if 
-
-   if lCalCaj()   
-      RETURN ( "( IF( " + cTable + "cajas_articulo = 0, 1, " + cTable + "cajas_articulo ) * " + cTable + "unidades_articulo * " + cTable + "precio_articulo ) AS " + cAs + " " )
-   end if 
-
-RETURN ( cTable + "unidades_articulo * " + cTable + "precio_articulo AS " + cAs + " " )
-
-//---------------------------------------------------------------------------//
-
-METHOD getSQLSubSentenceSumatorioUnidadesLinea( cTable, cAs ) CLASS SQLFacturasClientesLineasModel
-
-   DEFAULT cAs       := "total_unidades"
-
-   if empty( cTable )
-      cTable         := ""
-   else
-      cTable         += "."
-   end if
-
-   if lCalCaj()   
-      RETURN ( "SUM( IF( " + cTable + "cajas_articulo = 0, 1, " + cTable + "cajas_articulo ) * " + cTable + "unidades_articulo ) AS " + cAs + " " )
-   end if 
-
-RETURN ( "SUM( " + cTable + "unidades_articulo ) AS " + cAs + " " )
-
-//---------------------------------------------------------------------------//
-
-METHOD getSQLSubSentenceSumatorioTotalPrecioLinea( cTable, cAs ) CLASS SQLFacturasClientesLineasModel
-
-   DEFAULT cAs       := "total_precio"
-
-   if empty( cTable )
-      cTable         := ""
-   else
-      cTable         += "."
-   end if
-
-   if lCalCaj()   
-      RETURN ( "SUM( IF( " + cTable + "cajas_articulo = 0, 1, " + cTable + "cajas_articulo ) * " + cTable + "unidades_articulo * " + cTable + "precio_articulo ) AS " + cAs + " " )
-   end if 
-
-RETURN ( "SUM( " + cTable + "unidades_articulo * " + cTable + "precio_articulo ) AS " + cAs + " " )
 
 //---------------------------------------------------------------------------//
 

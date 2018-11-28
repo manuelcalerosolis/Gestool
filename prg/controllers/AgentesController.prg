@@ -11,15 +11,17 @@ CLASS AgentesController FROM SQLNavigatorController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()           INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := AgentesBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := AgentesBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getRepository()           INLINE ( if( empty( ::oRepository ), ::oRepository := AgentesRepository():New( self ), ), ::oRepository ) 
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := AgentesRepository():New( self ), ), ::oRepository ) 
 
-   METHOD getDialogView()           INLINE ( if( empty( ::oDialogView ), ::oDialogView := AgentesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := AgentesView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()            INLINE ( if( empty( ::oValidator ), ::oValidator := AgentesValidator():New( self  ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := AgentesValidator():New( self  ), ), ::oValidator )
 
-   METHOD getModel()                INLINE ( if( empty( ::oModel ), ::oModel := SQLAgentesModel():New( self  ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLAgentesModel():New( self  ), ), ::oModel )
+   
+   METHOD getName()                    INLINE ( "agentes" )
 
 END CLASS
 
@@ -31,13 +33,11 @@ METHOD New( oController ) CLASS AgentesController
 
    ::cTitle                         := "Agentes"
 
-   ::cName                          := "agentes"
-
    ::hImage                         := {  "16" => "gc_businessman2_16",;
                                           "32" => "gc_businessman2_32",;
                                           "48" => "gc_businessman2_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::getName() )
 
    ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadMainBlankBuffer() } )
    ::getModel():setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
@@ -76,9 +76,7 @@ METHOD End() CLASS AgentesController
       ::oValidator:End()
    end if 
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

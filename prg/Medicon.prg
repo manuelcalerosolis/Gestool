@@ -770,24 +770,6 @@ Return ( xVal )
 
 //---------------------------------------------------------------------------//
 
-Function ReplaceCreator( oShell, cDbf, aStructure, cType )
-
-   local oReplaceDialog
-
-   oReplaceDialog       := TReplaceCreator():Init( oShell )
-
-   if !Empty( oReplaceDialog )
-      oReplaceDialog:SetFields( aStructure )
-      oReplaceDialog:SetFilterType( cType )
-      oReplaceDialog:SetDatabaseToReplace( cDbf )
-      oReplaceDialog:Dialog()
-      oReplaceDialog:End()
-   end if
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
 Function AutoMeterDialog( oDialog )
 
    oDialog:Disable()
@@ -903,37 +885,3 @@ Function GetAutoTextDialog()
 RETURN ( oText )
 
 //---------------------------------------------------------------------------//
-
-
-
-/*
-Function ErrorMessage( e )
-
-   // start error message
-    local cMessage := if( empty( e:OsCode ), ;
-                          if( e:severity > ES_WARNING, "Error ", "Warning " ),;
-                          "(DOS Error " + NTRIM(e:osCode) + ") " )
-
-   // add subsystem name if available
-    cMessage += if( ValType( e:SubSystem ) == "C",;
-                    e:SubSystem()                ,;
-                    "???" )
-
-   // add subsystem's error code if available
-    cMessage += if( ValType( e:SubCode ) == "N",;
-                    "/" + NTRIM( e:SubCode )   ,;
-                    "/???" )
-   // add error description if available
-  if ( ValType( e:Description ) == "C" )
-        cMessage += "  " + e:Description
-   end
-
-   // add either filename or operation
-    cMessage += if( ! Empty( e:FileName ),;
-                    ": " + e:FileName   ,;
-                    if( !Empty( e:Operation ),;
-                        ": " + e:Operation   ,;
-                        "" ) )
-return cMessage
-*/
-//----------------------------------------------------------------------------//

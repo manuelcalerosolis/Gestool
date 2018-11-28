@@ -65,44 +65,65 @@ RETURN ( nil )
 
 METHOD calculatePayment( nImporte ) CLASS RecibosPagosController
 
-   local nImporteRestante  := nImporte
    local nImportePagar     := 0
+   local nImporteRestante  := nImporte
 
    ::getRowSet():goTop() 
+<<<<<<< HEAD
    
    WHILE nImporteRestante > 0 
          
+=======
+
+   while nImporteRestante > 0 
+
+>>>>>>> 624efd2a361f5ffc989c41ac1180e24782623640
       if nImporteRestante < ::getRowSet():fieldGet( "diferencia" )
 
          ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "importe", nImporteRestante )
 
          RETURN ( nil )
+<<<<<<< HEAD
       
+=======
+
+>>>>>>> 624efd2a361f5ffc989c41ac1180e24782623640
       end if
 
       if nImporteRestante >= ::getRowSet():fieldGet( "diferencia" )
 
-         nImportePagar += ::getRowSet():fieldGet( "diferencia" )
+         nImportePagar     += ::getRowSet():fieldGet( "diferencia" )
 
          ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "importe", ::getRowSet():fieldGet( "diferencia" ) )
          
+<<<<<<< HEAD
          if ::oRowSet:Eof()
             
             ::oController:getDialogView():oImporte:cText(nImportePagar)
+=======
+         if ::getRowSet():Eof()
+
+            ::getController():getDialogView():oImporte:cText( nImportePagar )
+>>>>>>> 624efd2a361f5ffc989c41ac1180e24782623640
 
             RETURN ( nil )
 
          end if
 
-         nImporteRestante -= ::getRowSet():fieldGet( "diferencia" )
+         nImporteRestante  -= ::getRowSet():fieldGet( "diferencia" )
          
-         ::getRowSet:goDown()
+         ::getRowSet():goDown()
 
       end if
 
+<<<<<<< HEAD
    END
+=======
+   end
+>>>>>>> 624efd2a361f5ffc989c41ac1180e24782623640
 
 RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

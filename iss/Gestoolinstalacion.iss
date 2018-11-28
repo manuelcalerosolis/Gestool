@@ -108,7 +108,7 @@ Source: "c:\fw195\gestool\bin\scmmrc.";             DestDir: "{app}"; Flags: ign
 Source: "c:\fw195\gestool\bin\gestool.exe";         DestDir: "{app}"; Flags: ignoreversion;
 Source: "c:\fw195\gestool\resource\gestool.ico";    DestDir: "{app}"; Flags: ignoreversion
 
-; Source: "c:\fw195\gestool\bin\rptapolo.exe";        DestDir: "{app}"; Flags: ignoreversion
+; Source: "c:\fw195\gestool\bin\rptapolo.exe";          DestDir: "{app}"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\bin\image2pdf stdcall.dll";  DestDir: "{app}"; Flags: ignoreversion
 

@@ -29,10 +29,7 @@ END CLASS
 METHOD getSQLSentenceIdByNumber( nNumber ) 
 
    local cSql  := "SELECT id FROM " + ::getTableName()         + " " 
-
-   cSql        +=    "WHERE empresa_uuid = " + quoted( cCodEmp() )  + " "  
-   
-   cSql        +=       "AND numero = " + quoted( nNumber ) 
+   cSql        +=    "WHERE numero = " + quoted( nNumber ) 
 
 RETURN ( cSql )
 
@@ -41,7 +38,6 @@ RETURN ( cSql )
 METHOD getSQLSentenceIdByUuid( uuid ) 
 
    local cSql  := "SELECT id FROM " + ::getTableName()         + " " 
-
    cSql        +=    "WHERE uuid = " + quoted( uuid ) 
 
 RETURN ( cSql )
@@ -52,10 +48,8 @@ METHOD getLastNumberByUser( cUser )
 
    local cSql  := "SELECT numero FROM " + ::getTableName()        + " " 
 
-   cSql        +=    "WHERE empresa_uuid = " + quoted( cCodEmp() )     + " "  
-
    if empty( cUser )
-      cSql     +=       "AND usuario_uuid = " + quoted( cUser )        + " " 
+      cSql     +=    "WHERE usuario_uuid = " + quoted( cUser )    + " " 
    end if 
 
    cSql        +=    "ORDER BY creado DESC, numero DESC"          + " "

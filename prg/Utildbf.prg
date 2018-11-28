@@ -1,4 +1,3 @@
-#include "Ads.ch"
 #include "FileIO.ch"
 #include "FiveWin.Ch"
 #include "Error.ch"
@@ -1035,49 +1034,7 @@ No borrar esta version es para el Garrido
 
 FUNCTION cNumTiket( cCodAlb, dbfAlbCliT )
 
-   local oBlock
-   local oError
-   local dbfTiket
-   local cNumTiq  := ""
-   local cNumDoc  := cCodAlb
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   USE ( cPatEmp() + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTiket ) )
-   SET ADSINDEX TO ( cPatEmp() + "TIKET.CDX" ) ADDITIVE
-   ( dbfTiket )->( OrdSetFocus( "CNUMDOC" ) )
-
-   if ( dbfTiket )->( dbSeek( cCodAlb ) )
-
-      if empty( ( dbfTiket )->cRetMat )
-
-         cNumTiq     := ( dbfTiket )->cNumDoc
-
-         if ( dbfAlbCliT )->( dbSeek( cNumTiq ) )
-            cNumDoc  := ( dbfAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb
-         end if
-
-      else
-
-         cNumTiq     := ( dbfTiket )->cNumDoc
-         cNumDoc     := ( dbfTiket )->cSerTik + "/" + AllTrim( ( dbfTiket )->cNumTik ) + "/" + ( dbfTiket )->cSufTik
-
-      end if
-
-   end if
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   CLOSE ( dbfTiket )
-
-RETURN ( cNumDoc )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -1289,37 +1246,6 @@ RETURN cAlias
 
 //---------------------------------------------------------------------------//
 
-FUNCTION dbSeekArticuloUpperLower( uVal, nView )
-
-   if dbSeekInOrd( uVal, "Codigo", D():Articulos( nView ) )
-      RETURN .t.
-   end if 
-
-   if dbSeekInOrd( upper( uVal ), "Codigo", D():Articulos( nView ) )
-      RETURN .t.
-   end if 
-
-   if dbSeekInOrd( lower( uVal ), "Codigo", D():Articulos( nView ) )
-      RETURN .t.
-   end if 
-
-RETURN ( .f. )
-
-//---------------------------------------------------------------------------//
-
-
-FUNCTION dbSeekUpperLower( uVal, nView )
-
-   local lRETURN
-
-   lRETURN     := ( ( D():Articulos( nView ) )->( dbSeek( uVal ) ) )           .or.;
-                  ( ( D():Articulos( nView ) )->( dbSeek( Lower( uVal ) ) ) )  .or.;
-                  ( ( D():Articulos( nView ) )->( dbSeek( Upper( uVal ) ) ) )
-
-RETURN ( lRETURN )
-
-//---------------------------------------------------------------------------//
-
 FUNCTION dbSeekInOrd( uVal, cOrd, cAlias, lSoft, lLast )
 
    local nOrd
@@ -1405,10 +1331,6 @@ FUNCTION lExistTable( cTable, cVia )
    
    DEFAULT cVia   := cDriver()
    
-   if cVia == "ADS"
-      RETURN .t.
-   end if
-
 RETURN ( file( cTable ) ) // dbExists( cTable ) )
 
 //----------------------------------------------------------------------------//
@@ -1416,10 +1338,6 @@ RETURN ( file( cTable ) ) // dbExists( cTable ) )
 FUNCTION lExistIndex( cIndex, cVia )
 
    DEFAULT cVia   := cDriver()
-
-   if cVia == "ADS"
-      RETURN .t.
-   end if
 
 RETURN ( file( cIndex ) )
 
@@ -1650,7 +1568,6 @@ FUNCTION runScriptAfterEdit()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
 /*
 A¤ade regsitros a la base de datos
 	- oBrw. Browse de procedencia
@@ -1771,10 +1688,6 @@ FUNCTION WinDupRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
    if empty( ( cAlias )->( OrdSetFocus() ) )
       nOrd        := ( cAlias )->( OrdSetFocus( 1 ) )
    end if
-
-   // if lAdsRDD()
-   //    ( cAlias )->( dbClearFilter() )
-   // end if
 
 	// Bloqueamos el registro durante la edición--------------------------------
 
@@ -2455,16 +2368,6 @@ RETURN ( if( nUnits != 0, nUnits, 1 ) )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION NotCaja( nUnits )
-
-   if !lCalCaj()
-      nUnits   := 1
-   end if
-
-RETURN ( if( nUnits == 0, 1, nUnits ) )
-
-//--------------------------------------------------------------------------//
-
 FUNCTION SetStatus( cAlias, aStatus )
 
    ( cAlias )->( OrdSetFocus( aStatus[ 2 ] ) )
@@ -2493,17 +2396,12 @@ FUNCTION hGetStatus( cAlias, uOrder )
 
    local hStatus  := {  "Alias" => cAlias,;
                         "Recno" => ( cAlias )->( Recno() ),;
-                        "Order" => ( cAlias )->( OrdSetFocus() ),;
-                        "Aof" => ( cAlias )->( adsGetAof() ) }
+                        "Order" => ( cAlias )->( OrdSetFocus() ) }
 
    if !isNil( uOrder )
       ( cAlias )->( OrdSetFocus( uOrder ) )
       ( cAlias )->( dbGoTop() )
    end if
-
-   if !empty( hget( hStatus, "Aof" ) )
-      ( cAlias )->( adsClearAof() )
-   end if 
 
 RETURN ( hStatus )
 
@@ -2513,10 +2411,6 @@ FUNCTION hSetStatus( hStatus )
 
    ( hget( hStatus, "Alias" ) )->( ordsetfocus( hget( hStatus, "Order" ) ) )
    ( hget( hStatus, "Alias" ) )->( dbgoto(      hget( hStatus, "Recno" ) ) )
-
-   if !empty( hget( hStatus, "Aof" ) )
-      ( hget( hStatus, "Alias" ) )->( adssetaof( hget( hStatus, "Aof" ) ) )
-   end if 
 
 RETURN nil
 
@@ -2798,10 +2692,6 @@ RETURN cTemp
 
 FUNCTION CommitTransaction()
 
-   // if lAds() .or. lAIS()
-   //    RETURN ( AdsCommitTransaction() )
-   // end if
-
    dbCommitAll()
 
 RETURN ( .t. )
@@ -2810,19 +2700,11 @@ RETURN ( .t. )
 
 FUNCTION BeginTransaction()
 
-   // if lAds() .or. lAIS()
-   //    RETURN ( AdsBeginTransaction() )
-   // end if
-
 RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
 FUNCTION RollBackTransaction()
-
-   // if lAds() .or. lAIS()
-   //    RETURN ( AdsRollback() )
-   // end if
 
 RETURN ( .t. )
 
@@ -3355,20 +3237,6 @@ RETURN ( file( cPatLog() + Alltrim( Str( ( cAlias )->( Recno() ) ) ) + ".txt" ) 
 
 FUNCTION AdsFile( cFile )
 
-   local cAdsFile
-
-   if empty( aAdsDirectory )
-      aAdsDirectory  := AdsDirectory()
-   end if
-
-   for each cAdsFile in aAdsDirectory
-
-      if ( cAdsFile == cFile )
-         RETURN .t.
-      end if
-
-   next
-
 RETURN .f.
 
 //--------------------------------------------------------------------------//
@@ -3456,144 +3324,6 @@ FUNCTION lChangeStruct( cAlias, aStruct )
 RETURN .f.
 
 //----------------------------------------------------------------------------//
-
-FUNCTION dbDialog( cTitle )
-
-   local j
-   local n
-   local oDlg
-   local oGet
-   local oFont
-   local oError
-   local oBlock
-   local nTarget
-   local nAreas      := 0
-   local cErrorLog
-
-   DEFAULT cTitle    := "Bases de datos abiertas"
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if lAis()
-      msgStop( TDataCenter():GetAllLocksTablesUsers() )
-   end if
-
-   for n = 1 to 255
-      if !empty( alias( n ) )
-         nAreas++
-      end if 
-   next 
-
-   oFont             := TFont():New( "Ms Sans Serif", 0, -10, .f., .f. )
-
-   DEFINE DIALOG     oDlg ;
-         SIZE        300, 200 + If( IsWinNT(), 50, 0 ) ;
-         TITLE       cTitle + ":" + str( nAreas) ;
-         FONT        oFont
-
-   cErrorLog         := CRLF + "DataBases in use" + CRLF + "================" + CRLF
-
-   for n = 1 to nAreas
-
-      if ! empty( Alias( n ) )
-
-         cErrorLog   += CRLF + Str( n, 3 ) + ": " + If( select() == n,"=> ", "   " ) + ;
-                        PadR( Alias( n ), 15 ) + Space( 20 ) + "RddName: " + ;
-                        ( Alias( n ) )->( RddName() ) + CRLF
-         cErrorLog   += "     ==============================" + CRLF
-         cErrorLog   += "     RecNo    RecCount    BOF   EOF" + CRLF
-         cErrorLog   += "    " + Transform( ( Alias( n ) )->( RecNo() ), "99999" ) + ;
-                        "      " + Transform( ( Alias( n ) )->( RecCount() ), "99999" ) + ;
-                        "      " + cValToChar( ( Alias( n ) )->( BoF() ) ) + ;
-                        "   " + cValToChar( ( Alias( n ) )->( EoF() ) ) + CRLF + CRLF
-         cErrorLog   += "     Indexes in use " + Space( 23 ) + "TagName" + CRLF
-
-         for j = 1 to 15
-
-            if ! empty( ( Alias( n ) )->( IndexKey( j ) ) )
-
-               cErrorLog   += Space( 8 ) + ;
-                              If( ( Alias( n ) )->( OrdNumber() ) == j, "=> ", "   " ) + ;
-                              PadR( ( Alias( n ) )->( IndexKey( j ) ), 35 ) + ;
-                              ( Alias( n ) )->( OrdName( j ) ) + ;
-                              CRLF
-            endif
-
-         next
-
-         cErrorLog   += CRLF + "     Relations in use" + CRLF
-
-         for j = 1 to 8
-
-            if ! empty( ( nTarget := ( Alias( n ) )->( DbRselect( j ) ) ) )
-
-               cErrorLog += Space( 8 ) + Str( j ) + ": " + ;
-                            "TO " + ( Alias( n ) )->( DbRelation( j ) ) + ;
-                            " INTO " + Alias( nTarget ) + CRLF
-               // uValue = ( Alias( n ) )->( DbRelation( j ) )
-               // cErrorLog += cValToChar( &( uValue ) ) + CRLF
-
-            endif
-
-         next
-
-      endif
-
-   next
-
-   memoWritex( "dbDialog.log", cErrorLog )
-
-   @ 0, 0 GET oGet VAR cErrorLog ;
-         MULTILINE ;
-         OF       oDlg ;
-         FONT     oFont ;
-         SIZE     149, 100
-
-   @ 87 + If( IsWinNT(), 24, 0 ), 60 BUTTON "&Quit" ;
-         OF       oDlg ;
-         ACTION   ( oDlg:End() );
-         SIZE     30, 12 ;
-         PIXEL ;
-         FONT     oFont ;
-         DEFAULT
-
-   ACTIVATE DIALOG oDlg CENTERED
-
-   oFont:End()
-
-   RECOVER USING oError
-
-      msgStop( cErrorLog, ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
-/*
-FUNCTION getConfigTraslation( cText )
-
-   local cTraslation    := ""
-
-   if empty(hTraslations)
-
-   end if 
-
-   if HHasKey( hTraslations, cText )
-      cTraslation       := HGet( hTraslations, cText )
-   else 
-      cTraslation       := GetPvProfString( "Traslations", cText, "", cIniAplication() )      
-      if !empty( cTraslation )
-         hSet( hTraslations, cText, cTraslation )   
-      end if
-   end if 
-
-RETURN ( if( !empty( cTraslation ), cTraslation, cText ) )   
-*/
-//---------------------------------------------------------------------------//
 
 FUNCTION ValToMoney( cMoney )
 
@@ -3857,7 +3587,6 @@ RETURN( strDate )
 
 //---------------------------------------------------------------------------//
 
-
 FUNCTION DlgWait( nRetardo )
 
    local nSeconds
@@ -3870,34 +3599,6 @@ FUNCTION DlgWait( nRetardo )
    end while
 
 RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nRedondeaVenta( nValor )
-
-RETURN ( Round( nValor, nRouDiv() ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nCalculaDescuentoVenta( nValor, nDescuento )
-
-   local nTotalDescuento   := 0
-
-   if nDescuento != 0
-      nValor               := nRedondeaVenta( nValor )
-      nTotalDescuento      := nValor * nDescuento / 100
-      nTotalDescuento      := nRedondeaVenta( nTotalDescuento )
-   end if 
-
-RETURN ( nTotalDescuento )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nRestaDescuentoVenta( nValor, nDescuento )
-
-   nValor -= nCalculaDescuentoVenta( nValor, nDescuento )
-
-RETURN ( nValor )
 
 //---------------------------------------------------------------------------//
 
@@ -3949,135 +3650,6 @@ CLASS excluyentArray
 END CLASS
 
 //---------------------------------------------------------------------------//
-
-FUNCTION CaptureSignature( cFile )
-
-   local oDlg
-   local lSig        := .f.
-   local oSig
-   local lPaint      := .f.
-   local hDC
-   local lReset      := .f.
-   local oBrush
-   local nPenWidth   := 4
-   local oPenSig
-   local nTop        := 2
-   local nBottom     := 0
-   local aCoord
-   local nColor      := CLR_WHITE
-   local oRichEdit
-   local cConditions := "Por favor cumplimente el fichero Conditions.txt, en el directorio Config de su empresa"
-
-   oBrush            := TBrush():New( , nColor )
-
-   if file( cPatConfig() + cCodEmp() + "\conditions.txt" )
-      cConditions    := memoread( cPatConfig() + cCodEmp() + "\conditions.txt" )
-   end if 
-
-   DEFINE DIALOG oDlg TITLE "Firma" PIXEL RESOURCE "DLG_SIGNATURE"
-
-   DEFINE PEN oPenSig WIDTH nPenWidth COLOR CLR_BLACK
-
-   oRichEdit         := GetRichEdit():ReDefine( 600, oDlg )
-
-   oRichEdit:oRTF:setText( cConditions )
-
-/*
-   REDEFINE GET cConditions ;
-      MEMO ;
-      ID             220 ;
-      OF             oDlg
-*/
-
-   REDEFINE CHECKBOX lSig ;
-      ID             210 ;
-      OF             oDlg
-
-   REDEFINE SAY      oSig ;
-      ID             200 ;
-      PROMPT         "" ;
-      OF             oDlg
-      
-   oSig:nClrPane     := nRgb( 255,255,255 )
-   oSig:oBrush       := oBrush
-   
-   REDEFINE BUTTON ;
-      ID             100 ;
-      OF             oDlg ;
-      WHEN           ( lSig ) ;
-      UPDATE;
-      ACTION         ( oSig:SaveToBmp( cFile ), oDlg:End( IDOK ) )
-
-   REDEFINE BUTTON ;
-      ID             101 ;
-      OF             oDlg ;
-      ACTION         ( oDlg:End() )
-
-   REDEFINE BUTTON ;
-      ID             102 ;
-      OF             oDlg ;
-      ACTION         (  lPaint := .f., ;
-                        fillRect( hDC, GetClientRect( oSig:hWnd ), oBrush:hBrush ), ;
-                        oSig:refresh( .t. ) )
-
-   oSig:lWantClick   := .t.
-   
-   // Fixed row, col to y, x conversion, x/y designation was reversed
-
-   oSig:bLButtonUp   := { | y, x, z | DoDraw( hDC, x, y, lPaint := .f.,, oPenSig ) }
-   
-   // Added limits to Top and Bottom in case users draw off canvas
-   
-   oSig:bMMoved      := { | y, x, z | lReset := ( y >= nBottom .or. y <= nTop ), DoDraw( hDC, x, y , lPaint, lReset, oPenSig ) }
-   oSig:bLClicked    := { | y, x, z | DoDraw( hDC, x, y, lPaint := .t., .t., oPenSig  ) }
-   
-   // if button released when not on Signature area
-   
-   oDlg:bLButtonUp   := { || lPaint := .f. }
-   
-   ACTIVATE DIALOG oDlg CENTER ;
-      ON INIT        (  aCoord         := GetCoors( oSig:hWnd ), ;
-                        nBottom        := aCoord[3] - aCoord[1] - 2, ;
-                        hDC            := GetDC( oSig:hWnd ),;
-                        oSig:nClrPane  := nColor ) ;
-      VALID          ( releaseDC( oSig:hWnd, hDC ), .t. )
-
-   RELEASE PEN oPenSig
-
-RETURN ( oDlg:nResult == IDOK )
-
-Static FUNCTION DoDraw( hDc, x, y, lPaint, lReset, oPen )
-   
-   if ! lPaint .or. ( lReset != nil .and. lReset )
-      MoveTo( hDC, x, y )
-   else
-      LineTo( hDc, x, y, oPen:hPen )
-   endif
-
-   sysRefresh()
-
-RETURN nil
-
-FUNCTION signatureToMemo()
-
-   local hBmp
-   local cMemo
-   local cFile    := cPatTmp() + "signature.bmp"  
-
-   if captureSignature( cFile ) .and. file( cFile ) 
-
-      hBmp        := readBitMap( 0, cFile )
-      if !empty( hBmp )
-         cMemo    := bmpToStr( hBmp )
-      end if 
-
-      deleteObject( hBmp )
-   
-   end if 
-
-RETURN ( cMemo )
-
-//----------------------------------------------------------------------------//
 
 FUNCTION assertUserActive( uuidUsuario )
 
@@ -4135,11 +3707,7 @@ RETURN ( msgInfo( hb_valtoexp( uValue ), cTitle ) )
 
 FUNCTION setCustomFilter( cExpresionFilter )
 
-   if lAIS()
-      ( select() )->( adsSetAOF( cExpresionFilter ) ) 
-   else 
-      ( select() )->( dbSetFilter( bCheck2Block( cExpresionFilter ), cExpresionFilter ) )
-   end if 
+   ( select() )->( dbSetFilter( bCheck2Block( cExpresionFilter ), cExpresionFilter ) )
 
 RETURN ( nil )
 
@@ -4147,21 +3715,13 @@ RETURN ( nil )
 
 FUNCTION quitCustomFilter()
 
-   if lAIS()
-      ( select() )->( adsClearAOF() ) 
-   else 
-      ( select() )->( dbSetFilter() )
-   end if 
+   ( select() )->( dbSetFilter() )
 
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 FUNCTION dbCustomKeyCount()
-
-   if lAIS()
-      RETURN ( ( select() )->( adsKeyCount( , , ADS_RESPECTFILTERS ) ) )
-   end if 
 
 RETURN ( ( select() )->( ordkeycount() ) )
 
@@ -4648,6 +4208,28 @@ RETURN nil
 
 //---------------------------------------------------------------------------//
 
+Function Calendario( dDate, cTitle )
+
+   local oDlg
+   local oCal
+
+   DEFAULT dDate  := Date()
+   DEFAULT cTitle := "Calendario"
+
+   DEFINE DIALOG oDlg RESOURCE "Calendar" TITLE cTitle
+
+      oCal        := TCalendar():ReDefine( 100, { |u| if( pCount() == 0, dDate, dDate := u ) }, , oDlg, , , , , , , , , , , , {|| oDlg:End( IDOK ) }, {|| oDlg:End( IDOK ) } )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   if ( oDlg:nResult == IDOK )
+      dDate       := oCal:GetDate()
+   end if
+
+RETURN ( dDate )
+
+//----------------------------------------------------------------------------//
+
 FUNCTION msgMemory()
 
    local cText    := ""
@@ -4673,155 +4255,33 @@ FUNCTION msgMemory()
 RETURN ( msgInfo( cText, "Estado de la memmoria" ) )
 
 //---------------------------------------------------------------------------//
+
+FUNCTION cPatImg( cPath )
+
+   DEFAULT cPath  := "Imagen" 
+
+   if right( cPath, 1 ) != "\"
+      cPath       += "\"
+   end if
+
+RETURN ( cPath )
+
+//----------------------------------------------------------------------------//
+
+ FUNCTION cPatDoc( cPath )
+
+   DEFAULT cPath  := "Doc"
+
+   if right( cPath, 1 ) != "\"
+      cPath       += "\"
+   end if
+
+RETURN ( cPath )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-
-
-/*
-FUNCTION QrCodeToHBmp( nLineWidth, nLineHeight, cVar, cFileName, cFlags, nColor, nColorBack  )
-
-   local oBmp
-   local hBmp
-   local hGraf
-   local hBrush
-   LOCAL hZebra
-   LOCAL nFlags
-   local nWidth
-   local nHeight
-   local hBrush2
-   local hBitmap
-
-   DEFAULT cFlags       := ""
-   DEFAULT nColor       := CLR_BLACK
-   DEFAULT nColorBack   := CLR_WHITE
-
-   hBrush               := GdiPlusNewSolidBrush( 255, nRGBRed( nColorBack ), nRGBGreen( nColorBack ), nRGBBlue( nColorBack ) )
-   hBrush2              := GdiPlusNewSolidBrush( 255, nRGBRed( nColor ), nRGBGreen( nColor ), nRGBBlue( nColor ) )
-   
-   oBmp                 := GdiBmp():new()
-   hZebra               := hb_zebra_create_qrcode( cVar, nFlags )
-   nWidth               := hb_Zebra_GetWidth ( hZebra, nLineWidth, nLineHeight, nFlags )
-   nHeight              := hb_Zebra_GetHeight( hZebra, nLineWidth, nLineHeight, nFlags )
-   hBmp                 := GdiPlusBmpFromBrush( nWidth + 2, nHeight+2, hBrush )
-   hGraf                := GdiPlushGrafFromHbmp( hBmp )
-   
-   hb_zebra_draw_gdip( hZebra, hGraf, hBrush2, 1, 1, nLineWidth, nLineHeight )
-   
-   oBmp:hBmp            := hBmp
-
-   GdiPlusDeleteGraphics( hGraf )
-   GdiPlusDeleteBrush( hBrush )
-   GdiPlusDeleteBrush( hBrush2 )
-   
-   hb_zebra_destroy( hZebra )
-   
-   if !empty( cFileName )
-      oBmp:Save( cFileName )
-   endif
-   
-   hBitmap              := oBmp:GetGDIhBitmap()
-
-   oBmp:End()
-
-RETURN ( hBitmap )
-
-//----------------------------------------------------------------------------//
-
-FUNCTION hb_zebra_draw_gdip( hZebra, hGraf, hBrush, ... )
-
-   hb_zebra_draw( hZebra, {| x, y, w, h |  GdiPlusDrawRect( hGraf,,hbrush,x, y, w, h ) }, ... )
-
-RETURN 0
-
-//----------------------------------------------------------------------------//
-
-FUNCTION hb_Zebra_GetWidth ( hZebra, nLineWidth, nLineHeight, iFlags)
-
-   local x1          := 0
-   local y1          := 0
-   local nBarWidth   := 0
-   local nBarHeight  := 0
-
-   if hb_zebra_GetError( hZebra ) != 0
-      RETURN HB_ZEBRA_ERROR_INVALIDZEBRA
-   endif
-
-   hb_zebra_draw( hZebra, {| x, y, w, h | nBarWidth := x + w - x1, nBarHeight := y + h - y1 }, x1, y1, nLineWidth, nLineHeight, iFlags )
-
-RETURN nBarWidth
-
-//----------------------------------------------------------------------------//
-
-FUNCTION hb_Zebra_GetHeight ( hZebra, nLineWidth, nLineHeight, iFlags)
-
-   local x1          := 0
-   local y1          := 0
-   local nBarWidth   := 0
-   local nBarHeight  := 0
-
-   if hb_zebra_GetError( hZebra ) != 0
-      RETURN HB_ZEBRA_ERROR_INVALIDZEBRA
-   endif
-
-   hb_zebra_draw( hZebra, {| x, y, w, h | nBarWidth := x + w - x1, nBarHeight := y + h - y1 }, x1, y1, nLineWidth, nLineHeight, iFlags )
-
-RETURN nBarHeight
-
-//----------------------------------------------------------------------------//
-*/
-/*
-#pragma BEGINDUMP
-
-#include "hbapi.h"
-#include "hbapiitm.h"
-#include "hbapierr.h"
-
-#include "shlobj.h"
-#include "windows.h"
-
-//----------------------------------------------------------------------------//
-//
-// funcion wrapper para obtener una cadena GUID de 16 bits
-//
-
-HB_FUNC( NEWGUID16 )
-{
-   GUID mguid;
-
-   if( !CoCreateGuid(&mguid) )
-   {
-      memset( ( LPVOID ) &mguid,'?',sizeof( mguid ));
-   }
-
-   hb_retclen( (char *) &mguid,sizeof( mguid ) );
-}
-
-//----------------------------------------------------------------------------//
-// 
-// funcion wrapper para obtener una cadena GUID de 32 bits
-// 
-
-HB_FUNC( NEWGUID32 )
-{
-   GUID guid;
-   char obuff[38];
-   memset( obuff, 0x0, 38 );
-
-   if( CoCreateGuid( &guid ) )
-   {
-      OLECHAR tmpbuff[ 76 ];
-
-      StringFromGUID2( &guid, tmpbuff, 76 );
-      WideCharToMultiByte( CP_OEMCP, 0, tmpbuff, -1, obuff, 38, NULL, NULL );
-   }
-
-   hb_retclen( obuff, 38 );
-}
-
-#pragma ENDDUMP
-*/
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 

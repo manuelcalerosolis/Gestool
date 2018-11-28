@@ -332,8 +332,6 @@ CLASS SQLClientesEntidadesModel FROM SQLCompanyModel
 
    METHOD getParentUuidAttribute( value )
 
-   METHOD addEmpresaWhere( cSQLSelect )
-
    METHOD getInitialSelect()
 
 END CLASS
@@ -367,18 +365,6 @@ METHOD getInitialSelect() CLASS SQLClientesEntidadesModel
    cSql  := hb_strformat( cSql, ::getTableName(), SQLEntidadesModel():getTableName(), SQLClientesModel():getTableName() )
 
 RETURN ( cSql )
-
-//---------------------------------------------------------------------------//
-
-METHOD addEmpresaWhere( cSQLSelect ) CLASS SQLClientesEntidadesModel
-
-   if !::isEmpresaColumn()
-      RETURN ( cSQLSelect )
-   end if 
-
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "clientes_entidades.empresa_uuid = " + toSQLString( uuidEmpresa() )
-
-RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 

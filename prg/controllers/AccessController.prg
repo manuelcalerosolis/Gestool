@@ -50,6 +50,8 @@ CLASS AccessController FROM SQLApplicationController
 
    METHOD getMacAddress()              
 
+   METHOD getName()                    INLINE ( "access" )
+
    METHOD getAccessView()              INLINE ( iif( empty( ::oAccessView ), ::oAccessView := AccessView():New( self ), ), ::oAccessView )
 
    METHOD getAccessTactilView()        INLINE ( iif( empty( ::oAccessTactilView ), ::oAccessTactilView := AccessTactilView():New( self ), ), ::oAccessTactilView )
@@ -63,8 +65,6 @@ METHOD New() CLASS AccessController
    ::Super:New()
 
    ::cTitle                            := "Access"
-
-   ::cName                             := "access"
 
    ::hImage                            := {  "16" => "gc_businesspeople_16",;
                                              "48" => "gc_businesspeople_48" }

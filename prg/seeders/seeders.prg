@@ -558,7 +558,6 @@ METHOD insertAgentes( dbf ) CLASS SQLCompanySeeders
    hset( hBuffer, "nombre",            AllTrim( ( dbf )->cNbrAge ) + Space(1) + AllTrim( ( dbf )->cApeAge ) )
    hset( hBuffer, "dni",               ( dbf )->cDniNif  )
    hset( hBuffer, "comision",          ( dbf )->nCom1    )
-   hset( hBuffer, "empresa_uuid",      uuidEmpresa()     )
 
    nId            := SQLAgentesModel():insertIgnoreBuffer( hBuffer )
 
@@ -620,7 +619,6 @@ METHOD insertTransportista( dbf ) CLASS SQLCompanySeeders
    hset( hBuffer, "codigo",            ( dbf )->cCodTrn  )
    hset( hBuffer, "nombre",            ( dbf )->cNomTrn  )
    hset( hBuffer, "dni",               ( dbf )->cDniTrn  )
-   hset( hBuffer, "empresa_uuid",      uuidEmpresa()     )
 
    nId            := SQLTransportistasModel():insertIgnoreBuffer( hBuffer )
 
@@ -748,7 +746,6 @@ METHOD insertFabricantes( dbf ) CLASS SQLCompanySeeders
    hset( hBuffer, "codigo",            ( dbf )->cCodFab  )
    hset( hBuffer, "nombre",            ( dbf )->cNomFab  )
    hset( hBuffer, "pagina_web",        ( dbf )->cUrlFab  )
-   hset( hBuffer, "empresa_uuid",      uuidEmpresa()     )
 
    nId            := SQLArticulosFabricantesModel():insertIgnoreBuffer( hBuffer )
 
@@ -820,7 +817,7 @@ RETURN ( Self )
 METHOD getStatementCamposExtraValores( dbf ) CLASS SQLCompanySeeders
 
    local hCampos  := {  "uuid"                     => quoted( ( dbf )->Uuid ),;
-                        "campo_extra_entidad_uuid" => quoted( CamposExtraModel():getUuid( ( dbf )->cCodTipo ) ),;
+                        "campo_extra_entidad_uuid" => quoted( ( dbf )->cCodTipo ),;
                         "entidad_uuid"             => quoted( ::getEntidadUuid( ( dbf )->cTipDoc, ( dbf )->cClave ) ),;
                         "valor"                    => quoted( ( dbf )->cValor ) }
 
@@ -940,8 +937,7 @@ RETURN ( Self )
 
 METHOD getStatementSeederMovimientosAlmacen( dbfRemMov ) CLASS SQLCompanySeeders
 
-   local hCampos  := {  "empresa" =>            quoted( cCodEmp() ),;
-                        "uuid" =>               quoted( ( dbfRemMov )->cGuid ),;
+   local hCampos  := {  "uuid" =>               quoted( ( dbfRemMov )->cGuid ),;
                         "numero" =>             quoted( rjust( ( dbfRemMov )->nNumRem, "0", 6 ) ),;
                         "tipo_movimiento" =>    quoted( ( dbfRemMov )->nTipMov ),;
                         "fecha_hora" =>         quoted( DateTimeFormatTimestamp( ( dbfRemMov )->dFecRem, ( dbfRemMov )->cTimRem ) ),;
@@ -949,8 +945,7 @@ METHOD getStatementSeederMovimientosAlmacen( dbfRemMov ) CLASS SQLCompanySeeders
                         "almacen_destino" =>    quoted( ( dbfRemMov )->cAlmDes ),;
                         "divisa" =>             quoted( ( dbfRemMov )->cCodDiv ),;
                         "divisa_cambio" =>      quoted( ( dbfRemMov )->nVdvDiv ),;
-                        "comentarios" =>        quoted( ( dbfRemMov )->cComMov ),;
-                        "empresa_uuid" =>       quoted( uuidEmpresa() ) }
+                        "comentarios" =>        quoted( ( dbfRemMov )->cComMov ) }
 
 RETURN ( ::getInsertStatement( hCampos, "movimientos_almacen" ) )
 

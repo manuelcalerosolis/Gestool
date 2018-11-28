@@ -38,61 +38,7 @@ END CLASS
 
 METHOD executeSqlStatement( cSql, cSqlStatement, hStatement )
 
-   local lOk
-   local nError
-   local oError
-   local oBlock
-   local cErrorAds
-
-   DEFAULT cSqlStatement   := "ADSArea" // + trimedSeconds()
-   DEFAULT hStatement      := ADS_CDX
-
-   if !( lAIS() )
-      RETURN ( .f. )
-   end if
-
-   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      ::closeArea( cSqlStatement )
-
-      ADSCacheOpenCursors( 0 )
-      
-      dbSelectArea( 0 )
-
-      lOk                  := ADSCreateSQLStatement( cSqlStatement, hStatement )
-      if lOk
-   
-         lOk               := ADSExecuteSQLDirect( cSql )
-         if !lOk
-            nError         := AdsGetLastError( @cErrorAds )
-            msgStop( "Error : " + str( nError) + "[" + cErrorAds + "]" + CRLF + CRLF + ;
-                     "SQL : " + cSql                                                   ,;
-                     'ERROR en ADSCreateSQLStatement' )
-         endif
-   
-      else
-
-         ::closeArea( cSqlStatement ) 
-   
-         nError            := AdsGetLastError( @cErrorAds )
-         msgStop( "Error : " + str( nError) + "[" + cErrorAds + "]" + CRLF + CRLF +    ;
-                  "SQL : " + cSql                                                      ,;
-                  'ERROR en ADSCreateSQLStatement' )
-   
-      end if
-   
-      if lOk 
-         ADSCacheOpenCursors( 0 )
-         ADSClrCallBack()
-      endif
-   
-   RECOVER USING oError
-      msgStop( ErrorMessage( oError ), "Error en sentencia SQL" )
-   END SEQUENCE
-   ErrorBlock( oBlock )
-
-RETURN ( lOk )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

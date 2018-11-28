@@ -157,10 +157,6 @@ RETURN ( nil )
 
 METHOD SearchEntidad() CLASS RelacionesEntidadesController
 
-   local Uuid  := TCentroCoste():Create( cPatDat() ):SearchToUuid()
-
-   ::UpdateLine( Uuid, 'uuid_destino' )
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -323,8 +319,6 @@ CLASS RelacionesEntidadesRepository FROM SQLBaseRepository
 
    METHOD getSQLSentenceUuidRelacionado( uuid, entidad_destino )
 
-   METHOD getUuidRelacionadoCentroCoste( uuid, entidad_destino )
-   
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -356,17 +350,6 @@ METHOD getSQLSentenceUuidRelacionado( uuid, entidad_destino ) CLASS RelacionesEn
 
 RETURN ( cSql )
 
-//---------------------------------------------------------------------------//
-
-METHOD getUuidRelacionadoCentroCoste( uuid ) CLASS RelacionesEntidadesRepository
-
-   local cSentence   := ::getSQLSentenceUuidRelacionado( uuid, "Centro de coste" )
-
-RETURN ( getSQLDataBase():getValue( cSentence ) )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -422,17 +405,6 @@ METHOD addColumns() CLASS RelacionesEntidadesLineasBrowseView
       :nWidth              := 155
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid_destino' ) }
       :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Relación'
-      :nWidth              := 250
-      :bEditValue          := {|| CentroCosteModel():getNombre( ::getRowSet():fieldGet( 'uuid_destino' ) ) }
-      :nEditType           := 5
-      :cEditPicture        := ""
-      :bEditBlock          := {|| ::oController:SearchEntidad() }
-      :nBtnBmp             := 1
-      :AddResource( "Lupa" )
    end with
 
 RETURN ( self )

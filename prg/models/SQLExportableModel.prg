@@ -49,8 +49,6 @@ METHOD getSentenceNotSent()
 
    local cSentence   := "SELECT * FROM " + ::cTableName + " "
 
-   cSentence         +=    "WHERE empresa = " + quoted( cCodEmp() ) + " "
-
    cSentence         +=       "AND enviado IS NULL"
 
 RETURN ( cSentence )

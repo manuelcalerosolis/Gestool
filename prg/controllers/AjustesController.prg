@@ -21,7 +21,9 @@ CLASS AjustesController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD getModel()          INLINE ( if( !empty( ::oModel ), ::oModel := SQLAjustesModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( !empty( ::oModel ), ::oModel := SQLAjustesModel():New( self ), ), ::oModel )
+   
+   METHOD getName()                    INLINE ( "ajustes" )
 
 END CLASS
 
@@ -31,13 +33,11 @@ METHOD New() CLASS AjustesController
 
    ::Super:New()
 
-   ::cTitle                   := "Ajustes"
+   ::cTitle                            := "Ajustes"
 
-   ::cName                    := "ajustes"
+   ::lTransactional                    := .t.
 
-   ::lTransactional           := .t.
-
-   ::hImage                   := { "16" => "gc_businesspeople_16" }
+   ::hImage                            := { "16" => "gc_businesspeople_16" }
 
 RETURN ( Self )
 
@@ -59,7 +59,7 @@ RETURN ( ::Super:End() )
 
 CLASS SQLAjustesGestoolModel FROM SQLAjustesModel
 
-   METHOD getTableName()         INLINE ( "gestool." + ::cTableName )
+   METHOD getTableName()               INLINE ( "gestool." + ::cTableName )
 
    METHOD getInsertAjustesSentence() 
 

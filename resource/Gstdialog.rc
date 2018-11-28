@@ -5830,11 +5830,6 @@ FONT 8, "Ms Sans Serif"
 {
   CONTROL "&Aceptar", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 393, 249, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 448, 249, 50, 14
-  CONTROL "C&opiar", IDOKANDNEW, "Button", WS_TABSTOP, 2, 249, 50, 14
-  CONTROL "Nuestro programa puede realizar una copia de seguridad de manera", 100, "Static", WS_GROUP, 268, 200, 219, 10
-  CONTROL "Los datos serán comprimidos y guardados en una carpeta para el efecto.", 120, "Static", WS_GROUP, 268, 224, 234, 11
-  CONTROL "automática para minimizar la posibilidad de perdidas de datos", 110, "Static", WS_GROUP, 268, 209, 196, 10
-  CONTROL "", 200, "TAnimat", 0x00800000, 0, 238, 504, 8
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 2, 2, 156, 224
 }
 

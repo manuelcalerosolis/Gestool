@@ -210,19 +210,13 @@ RETURN ( nil )
 
 METHOD validatePrecioCosto() CLASS ArticulosController
 
-   local uuidArticulo   
-   local nPrecioCosto   
-
    if ::isEmptyModelBuffer()
       RETURN ( 0 )
    end if 
 
-   uuidArticulo      := ::getModelBuffer( "uuid" )
-   nPrecioCosto      := ::getModelBuffer( "precio_costo" )
+   ::getModel():updateFieldWhereUuid( ::getModelBuffer( "uuid" ), "precio_costo", ::getModelBuffer( "precio_costo" ) )
 
-   ::getModel():updateFieldWhereUuid( uuidArticulo, "precio_costo", nPrecioCosto )
-
-   ::getArticulosPreciosController():getRepository():callUpdatePreciosWhereUuidArticulo( uuidArticulo )
+   ::getArticulosPreciosController():getRepository():callUpdatePreciosWhereUuidArticulo( ::getModelBuffer( "uuid" ) )
    
    ::getArticulosPreciosController():refreshRowSet()
 
@@ -232,19 +226,13 @@ RETURN ( .t. )
 
 METHOD validateTipoIVA() CLASS ArticulosController
 
-   local uuidArticulo   
-   local cCodigoTipoIVA 
-
    if ::isEmptyModelBuffer()
       RETURN ( 0 )
    end if 
 
-   uuidArticulo      := ::getModelBuffer( "uuid" )
-   cCodigoTipoIVA    := ::getModelBuffer( "tipo_iva_codigo" )
+   ::getModel():updateFieldWhereUuid( ::getModelBuffer( "uuid" ), "tipo_iva_codigo", ::getModelBuffer( "tipo_iva_codigo" ) )
 
-   ::getModel():updateFieldWhereUuid( uuidArticulo, "tipo_iva_codigo", cCodigoTipoIVA )
-
-   ::getArticulosPreciosController():getRepository():callUpdatePreciosWhereUuidArticulo( uuidArticulo )
+   ::getArticulosPreciosController():getRepository():callUpdatePreciosWhereUuidArticulo( ::getModelBuffer( "uuid" ) )
    
    ::getArticulosPreciosController():refreshRowSet()
 
@@ -256,7 +244,19 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TestArticulosController FROM TTestCase
+CLASS ArticulosRepository FROM SQLBaseRepository
+
+   METHOD getTableName()                  INLINE ( SQLArticulosModel():getTableName() ) 
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TestArticulosController FROM TestCase
 
    METHOD testAppend()
    
@@ -272,7 +272,7 @@ METHOD testAppend() CLASS TestArticulosController
 
    local nId
 
-   SQLArticulosModel():truncateTable()
+   SQLArticulosModel():truncateTable() 
 
    nId   := SQLArticulosModel():insertBuffer(   {  'uuid' => win_uuidcreatestring(),;
                                                    'codigo' => '000',;
@@ -286,16 +286,14 @@ RETURN ( nil )
 
 METHOD testDialogAppend() CLASS TestArticulosController
 
-   local oController
-
-   oController    := ArticulosController():New()
+   local oController := ArticulosController():New()
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:oGetCodigo:cText( '001' ),;
-         sysrefresh(), waitSeconds( 1 ),;
+         apoloWaitSeconds( 1 ),;
          self:oGetNombre:cText( 'Test 1' ),;
-         sysrefresh(), waitSeconds( 1 ),;
+         apoloWaitSeconds( 1 ),;
          self:oBtnAceptar:Click() } )
 
    ::assert:true( oController:Append(), "test ::assert:true with .t." )
@@ -306,27 +304,18 @@ RETURN ( nil )
 
 METHOD testDialogEmptyNombre() CLASS TestArticulosController
 
-   local oController
-
-   oController    := ArticulosController():New()
+   local oController := ArticulosController():New()
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         self:oGetCodigo:cText( '000' ),;
-         sysrefresh(), waitSeconds( 1 ),;
-         self:oBtnAceptar:Click() } )
+         ::oGetCodigo:cText( '002' ),;
+         apoloWaitSeconds( 1 ),;
+         ::oBtnAceptar:Click(),;
+         apoloWaitSeconds( 1 ),;
+         ::oBtnCancelar:Click() } )
 
    ::assert:false( oController:Append(), "test ::assert:true with .t." )
 
 RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-
-CLASS ArticulosRepository FROM SQLBaseRepository
-
-   METHOD getTableName()                  INLINE ( SQLArticulosModel():getTableName() ) 
-
-END CLASS
 
 //---------------------------------------------------------------------------//

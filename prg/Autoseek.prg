@@ -603,32 +603,6 @@ Return .t.
 
 Function buildSetFilter( cExpresionFilter, cAlias, lInclude, cExpUsuario, cExpFecha )
 
-   local cOrdKey
-   local bExpFilter
-
-   DEFAULT lInclude     := .t.
-   DEFAULT cExpUsuario  := ""
-   DEFAULT cExpFecha    := ""
-
-   cOrdKey              := ( cAlias )->( OrdKey() )
-
-   if lInclude
-      cExpresionFilter  := "'" + cExpresionFilter + "' $ " + cOrdKey + " .and. !Deleted()"
-   end if
-
-   if empty( cExpUsuario ) .and. !empty( cFiltroUsuario )
-      cExpresionFilter  += if( !empty( cExpresionFilter ), " .and. ", "" ) + cFiltroUsuario
-   end if
-
-   if empty( cExpFecha ) .and. !empty( cFiltroFecha )
-      cExpresionFilter  += if( !empty( cExpresionFilter ), " .and. ", "" ) + cFiltroFecha
-   end if
-
-   if !empty( cExpresionFilter )
-      ( cAlias )->( adsSetAOF( cExpresionFilter ) )
-      ( cAlias )->( dbgotop() )
-   end if
-
 Return nil
 
 //---------------------------------------------------------------------------//

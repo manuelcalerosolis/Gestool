@@ -11,7 +11,7 @@ CLASS ImagenesController FROM SQLNavigatorController
 
    METHOD loadedBlankBuffer()
 
-   METHOD loadPrincipalBlankBuffer()   INLINE ( ::getModel():loadPrincipalBlankBuffer() )
+   METHOD loadMainBlankBuffer()        INLINE ( ::getModel():loadMainBlankBuffer() )
    METHOD insertBuffer()               INLINE ( ::getModel():insertBuffer() )
 
    METHOD LoadedCurrentBuffer( uuidEntidad )
@@ -31,7 +31,6 @@ CLASS ImagenesController FROM SQLNavigatorController
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ImagenesValidator():New( self ), ), ::oValidator )
 
    METHOD getModel()                      INLINE( if( empty( ::oModel ), ::oModel := SQLImagenesModel():New( self ), ), ::oModel )
-
 
 END CLASS
 
@@ -331,9 +330,9 @@ CLASS SQLImagenesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD loadPrincipalBlankBuffer()               INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "principal", .t. ) )
+   METHOD loadMainBlankBuffer()               INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "principal", .t. ) )
 
-   METHOD insertPrincipalBlankBuffer()             INLINE ( ::loadPrincipalBlankBuffer(), ::insertBuffer() ) 
+   METHOD insertPrincipalBlankBuffer()             INLINE ( ::loadMainBlankBuffer(), ::insertBuffer() ) 
 
    METHOD getIdWhereParentUuid( uuid )             INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 

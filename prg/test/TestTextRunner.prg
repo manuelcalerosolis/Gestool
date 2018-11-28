@@ -15,7 +15,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TTextRunner FROM TTestRunner
+CLASS TextRunner FROM TTestRunner
 
    DATA cResults
 
@@ -29,7 +29,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD new() CLASS TTextRunner
+METHOD new() CLASS TextRunner
 
    ::Super:new()
 
@@ -39,7 +39,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD addResults( ... ) CLASS TTextRunner
+METHOD addResults( ... ) CLASS TextRunner
 
    local i
 
@@ -51,7 +51,7 @@ RETURN ( ::cResults )
 
 //---------------------------------------------------------------------------//
 
-METHOD showResults( oResult ) CLASS TTextRunner
+METHOD showResults( oResult ) CLASS TextRunner
 
    local i
    local oError

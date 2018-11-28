@@ -15,15 +15,11 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TTestResult
+CLASS TestResult
 
    DATA oData
 
-   DATA cClassName
-
    METHOD new() CONSTRUCTOR
-
-   METHOD ClassName()
 
    METHOD run()
 
@@ -35,23 +31,15 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD new() CLASS TTestResult
+METHOD new() CLASS TestResult
 
-  ::oData      := TTestResultData():new()
-
-  ::cClassName := "TTestResult"
+  ::oData      := TestResultData():new()
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ClassName() CLASS TTestResult
-
-RETURN ( ::cClassName )
-
-//---------------------------------------------------------------------------//
-
-METHOD run( oTest ) CLASS TTestResult
+METHOD run( oTest ) CLASS TestResult
 
    local i
    local aTestMethods   := ::getTestMethods( oTest )
@@ -69,7 +57,7 @@ RETURN ( NIL )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTestMethods( oTest ) CLASS TTestResult
+METHOD getTestMethods( oTest ) CLASS TestResult
 
    local i
    local aTestMethods   := {}
@@ -85,7 +73,7 @@ RETURN ( aTestMethods )
 
 //---------------------------------------------------------------------------//
 
-METHOD invokeTestMethod( oTest, cMethod ) CLASS TTestResult
+METHOD invokeTestMethod( oTest, cMethod ) CLASS TestResult
 
    local oError
 

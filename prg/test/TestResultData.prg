@@ -15,111 +15,97 @@
 
 //---------------------------------------------------------------------------//
 
-STATIC STaErrors
-STATIC STaFailures
-STATIC STnTestCases
-STATIC STnAssertCount
+CLASS TestResultData
 
-//---------------------------------------------------------------------------//
+   CLASSDATA aErrors
+   CLASSDATA aFailures
+   CLASSDATA nTestCases
+   CLASSDATA nAssertCount
 
-CLASS TTestResultData
+   METHOD new() CONSTRUCTOR
 
-  DATA cClassName
-  
-  METHOD new() CONSTRUCTOR
-
-  METHOD ClassName()
-
-  METHOD countErrors()
-  METHOD countFailures()
-  METHOD addError( oError )
-  METHOD addFailure( oFailure )
-  METHOD incrementAssertCount()
-  METHOD addTestCaseCount( nCount )
-  METHOD getErrors()
-  METHOD getFailures()
-  METHOD getTestCasesCount()
-  METHOD getAssertCount()
+   METHOD countErrors()
+   METHOD countFailures()
+   METHOD addError( oError )
+   METHOD addFailure( oFailure )
+   METHOD incrementAssertCount()
+   METHOD addTestCaseCount( nCount )
+   METHOD getErrors()
+   METHOD getFailures()
+   METHOD getTestCasesCount()
+   METHOD getAssertCount()
 
 ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD new() CLASS TTestResultData
+METHOD new() CLASS TestResultData
 
-   ::cClassName := "TTestResultData"
-
-   iif( STaErrors == nil, STaErrors := {}, )
-   iif( STaFailures == nil, STaFailures := {}, )
-   iif( STnTestCases == nil, STnTestCases := 0, )
-   iif( STnAssertCount == nil, STnAssertCount := 0, )
+   iif( ::aErrors == nil, ::aErrors := {}, )
+   iif( ::aFailures == nil, ::aFailures := {}, )
+   iif( ::nTestCases == nil, ::nTestCases := 0, )
+   iif( ::nAssertCount == nil, ::nAssertCount := 0, )
 
 RETURN ( SELF )
 
 //---------------------------------------------------------------------------//
 
-METHOD countErrors() CLASS TTestResultData
+METHOD countErrors() CLASS TestResultData
 
-RETURN ( len( STaErrors ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD countFailures() CLASS TTestResultData
-
-RETURN ( len( STaFailures ) )
+RETURN ( len( ::aErrors ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD addError( oError ) CLASS TTestResultData
+METHOD countFailures() CLASS TestResultData
 
-RETURN ( aadd( STaErrors, oError ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD addFailure( oFailure ) CLASS TTestResultData
-
-RETURN ( aadd( STaFailures, oFailure ) )
+RETURN ( len( ::aFailures ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD incrementAssertCount() CLASS TTestResultData
+METHOD addError( oError ) CLASS TestResultData
 
-RETURN ( STnAssertCount++ )
-
-//---------------------------------------------------------------------------//
-
-METHOD addTestCaseCount( nCount ) CLASS TTestResultData
-
-RETURN ( STnTestCases += nCount )
+RETURN ( aadd( ::aErrors, oError ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getErrors() CLASS TTestResultData
+METHOD addFailure( oFailure ) CLASS TestResultData
 
-RETURN ( STaErrors )
-
-//---------------------------------------------------------------------------//
-
-METHOD getFailures() CLASS TTestResultData
-
-RETURN ( STaFailures )
+RETURN ( aadd( ::aFailures, oFailure ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTestCasesCount() CLASS TTestResultData
+METHOD incrementAssertCount() CLASS TestResultData
 
-RETURN ( STnTestCases )
-
-//---------------------------------------------------------------------------//
-
-METHOD getAssertCount() CLASS TTestResultData
-
-RETURN ( STnAssertCount )
+RETURN ( ::nAssertCount++ )
 
 //---------------------------------------------------------------------------//
 
-METHOD ClassName() CLASS TTestResultData
+METHOD addTestCaseCount( nCount ) CLASS TestResultData
 
-RETURN ( ::cClassName )
+RETURN ( ::nTestCases += nCount )
+
+//---------------------------------------------------------------------------//
+
+METHOD getErrors() CLASS TestResultData
+
+RETURN ( ::aErrors )
+
+//---------------------------------------------------------------------------//
+
+METHOD getFailures() CLASS TestResultData
+
+RETURN ( ::aFailures )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTestCasesCount() CLASS TestResultData
+
+RETURN ( ::nTestCases )
+
+//---------------------------------------------------------------------------//
+
+METHOD getAssertCount() CLASS TestResultData
+
+RETURN ( ::nAssertCount )
 
 //---------------------------------------------------------------------------//
