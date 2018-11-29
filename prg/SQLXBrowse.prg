@@ -195,7 +195,7 @@ RETURN ( nil )
 //----------------------------------------------------------------------------//
 
 METHOD MakeTotals() CLASS SQLXBrowse
-/*
+
    local uBm
    local aCols    := {}
 
@@ -215,7 +215,7 @@ METHOD MakeTotals() CLASS SQLXBrowse
    until ( ::skip( 1 ) < 1 )
 
    eval( ::bBookMark, uBm )
-*/
+
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//

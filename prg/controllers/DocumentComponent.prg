@@ -23,8 +23,6 @@ CLASS DocumentComponent FROM Events
 
    METHOD createControl()           VIRTUAL
 
-
-
    METHOD getValue()                INLINE ( eval( ::bValue ) )
    METHOD setValue( uValue )        INLINE ( ::oGet:cText( uValue ) )
    METHOD bindValue( bValue )       INLINE ( ::bValue := bValue )
@@ -81,7 +79,7 @@ END CLASS
 
 METHOD createControl( id, oDialog ) CLASS SerieDocumentoComponent
 
-RETURN ( ::oGet := TGet():ReDefine( id, ::bValue, oDialog, , "@! XXXXXXXXXXXXXXXXXXXX", {|| ::Validate() }, , , , , , .f., {|| ::oController:isNotZoomMode() }, , .f., .f. ) )
+RETURN ( ::oGet := TGet():ReDefine( id, ::bValue, oDialog, , "@! XXXXXXXXXXXXXXXXXXXX", {|| ::Validate() }, , , , , , .f., {|| ::oController:isAppendOrDuplicateMode() }, , .f., .f. ) )
 
 //---------------------------------------------------------------------------//
 

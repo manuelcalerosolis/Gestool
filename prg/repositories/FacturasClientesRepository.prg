@@ -8,8 +8,7 @@ CLASS FacturasClientesRepository FROM SQLBaseRepository
    METHOD getTableName()                  INLINE ( SQLFacturasClientesModel():getTableName() ) 
 
    METHOD getSQLFunctions()               INLINE ( {  ::dropFunctionTotalSummaryWhereUuid(),;
-                                                      ::createFunctionTotalSummaryWhereUuid(),;
-                                                      ::createTriggerDeleted() } )
+                                                      ::createFunctionTotalSummaryWhereUuid() } )
 
    METHOD createFunctionTotalSummaryWhereUuid()
       METHOD dropFunctionTotalSummaryWhereUuid()

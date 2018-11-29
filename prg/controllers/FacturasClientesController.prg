@@ -130,6 +130,8 @@ METHOD New( oController ) CLASS FacturasClientesController
                                              "32" => "gc_document_text_user_32",;
                                              "48" => "gc_document_text_user_48" }
 
+   ::getNavigatorView():getMenuTreeView():setEvent( 'addingDeleteButton', { || .f. } )
+
    ::getModel():setEvent( 'loadedBuffer',          {|| ::loadedBuffer() } )
    ::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )
    ::getModel():setEvent( 'loadedDuplicateBuffer', {|| ::loadedDuplicateBuffer() } )
@@ -140,8 +142,8 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',              {|| ::isClientFilled() } ) 
    ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence',  {|| ::getClientUuid() } )
 
-   ::getFacturasClientesLineasController():setEvent( 'appending', {|| ::isClientFilled() } )
-   ::getFacturasClientesLineasController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
+   ::getFacturasClientesLineasController():setEvent( 'appending',          {|| ::isClientFilled() } )
+   ::getFacturasClientesLineasController():setEvent( 'deletedSelection',   {|| ::calculateTotals() } ) 
 
    ::getFacturasClientesDescuentosController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
 

@@ -173,7 +173,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := "recargo_equivalencia"
-      :cHeader             := "Recargo equivalencia"
+      :cHeader             := "Recargo"
       :bStrData            := {|| "" }
       :bEditValue          := {|| ::getRowSet():fieldGet( "recargo_equivalencia" ) == 1 }
       :nWidth              := 60

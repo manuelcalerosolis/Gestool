@@ -318,7 +318,8 @@ ExportableController.prg													\
 SQLRowSet.prg 																	\
 RelacionesEntidadesController.prg 										\
 TransportistasModel.prg 													\
-MdiChild.prg 																	\
+FacturaeController.prg 														\
+FacturaeModel.prg 															\
 SQLComboSelector.prg 														\
 CompanyManager.prg 															\
 TercerosController.prg 														\
@@ -657,7 +658,8 @@ ExportableController.obj 													\
 SQLRowSet.obj 																	\
 PedidosProveedoresLineasModel.obj 										\
 RelacionesEntidadesController.obj 										\
-MdiChild.obj 																	\
+FacturaeController.obj 														\
+FacturaeModel.obj 															\
 TransportistasModel.obj 													\
 SQLComboSelector.obj 														\
 CompanyManager.obj 															\
@@ -995,7 +997,8 @@ $(OBJ)\ExportableController.obj											+
 $(OBJ)\PedidosProveedoresLineasModel.obj 							   +
 $(OBJ)\RelacionesEntidadesController.obj 							   +
 $(OBJ)\TransportistasModel.obj 											+
-$(OBJ)\MdiChild.obj 															+
+$(OBJ)\FacturaeController.obj												+
+$(OBJ)\FacturaeModel.obj 													+
 $(OBJ)\SQLComboSelector.obj 												+
 $(OBJ)\CompanyManager.obj 													+
 $(OBJ)\TercerosController.obj 											+

@@ -7,7 +7,7 @@ CLASS SQLFacturasClientesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "facturas_clientes"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( numero, serie, deleted_at )"
+   DATA cConstraints             INIT "PRIMARY KEY ( numero, serie )"
 
    METHOD getColumns()
 
@@ -53,12 +53,12 @@ METHOD getColumns() CLASS SQLFacturasClientesModel
                                                          "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "recargo_equivalencia",          {  "create"    => "TINYINT( 1 )"                         ,;
-                                                         "default"   => {|| 1 } }                              )
+                                                         "default"   => {|| 0 } }                              )
 
    hset( ::hColumns, "direccion_principal_uuid",      {  "create"    => "VARCHAR( 40 )"                        ,;
                                                          "default"   => {|| space( 40 ) } }                    )
 
-   hset( ::hColumns, "metodo_pago_codigo",             {  "create"    => "VARCHAR( 20 )"                        ,;
+   hset( ::hColumns, "metodo_pago_codigo",             {  "create"   => "VARCHAR( 20 )"                        ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "almacen_codigo",                {  "create"    => "VARCHAR( 20 )"                        ,;
@@ -79,8 +79,6 @@ METHOD getColumns() CLASS SQLFacturasClientesModel
    ::getTimeStampColumns()
 
    ::getClosedColumns()
-
-   ::getDeletedStampColumn()
    
 RETURN ( ::hColumns )
 
@@ -101,7 +99,6 @@ METHOD getColumnsSelect()
       facturas_clientes.cliente_codigo AS cliente_codigo,
       facturas_clientes.created_at AS created_at,
       facturas_clientes.updated_at AS updated_at,
-      facturas_clientes.deleted_at AS deleted_at,
       clientes.nombre AS cliente_nombre,
       clientes.dni AS cliente_dni,
       direcciones.direccion AS direccion_direccion,
@@ -116,7 +113,6 @@ METHOD getColumnsSelect()
       tarifas.nombre AS tarifa_nombre, 
       ( %1$s( facturas_clientes.uuid, facturas_clientes.recargo_equivalencia ) ) AS total
    ENDTEXT
-
       
    cColumns    := hb_strformat( cColumns, Company():getTableName( 'FacturaClienteTotalSummaryWhereUuid' ) )
 
@@ -202,7 +198,12 @@ METHOD totalPaid( uuidFactura ) CLASS SQLFacturasClientesModel
       GROUP BY facturas_clientes.uuid
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLRecibosModel():getTableName(), SQLRecibosPagosModel():getTableName(), SQLPagosModel():getTableName(), quoted( uuidFactura ) )
+   cSql  := hb_strformat(  cSql,;
+                           ::getTableName(),;
+                           SQLRecibosModel():getTableName(),;
+                           SQLRecibosPagosModel():getTableName(),;
+                           SQLPagosModel():getTableName(),;
+                           quoted( uuidFactura ) )
 
 RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
