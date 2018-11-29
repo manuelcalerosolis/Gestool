@@ -7,6 +7,8 @@ CLASS PagosAssistantController FROM SQLNavigatorController
 
    DATA nImporte                       INIT 0
 
+   DATA cCodigoCliente                 INIT ""
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -18,6 +20,8 @@ CLASS PagosAssistantController FROM SQLNavigatorController
    METHOD insertRecibosPago()
 
    METHOD getImportePagar( nImporte )
+
+   METHOD OtherClient()
 
    //Construcciones tardias----------------------------------------------------
 
@@ -41,7 +45,7 @@ METHOD New( oController ) CLASS PagosAssistantController
 
    ::cName                          := "cobros"
 
-//   ::lTransactional                 := .t.
+   ::lTransactional                 := .t.
 
    ::hImage                         := {  "16" => "gc_hand_money_16",;
                                           "32" => "gc_hand_money_32",;
@@ -81,13 +85,33 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getRecibos() CLASS PagosAssistantController
+METHOD OtherClient( cCodigoCliente ) CLASS PagosAssistantController
+
+   ::getRecibosPagosController():getModel():deleteBlankPayment( ::getModelBuffer( "uuid" ) )
 
    ::insertRecibosPago()
 
    ::getRecibosPagosController():getRowset():buildPad( ::getRecibosPagosController():getModel():getGeneralSelect( ::getModelBuffer( "uuid" ), ::getModelBuffer( "cliente_codigo" ) ) )
 
    ::getRecibosPagosController():getBrowseView():Refresh()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getRecibos() CLASS PagosAssistantController
+
+   /*::getRecibosPagosController():getModel():createTemporalTable()*/
+
+   if ::cCodigoCliente == ::getModelBuffer("cliente_codigo")
+      RETURN ( nil )
+   end if
+
+   ::cCodigoCliente := ::getModelBuffer("cliente_codigo")
+
+   ::OtherClient()
+
+   /*::getRecibosPagosController():getModel():dropTemporalTable()*/
 
 RETURN ( nil )
 

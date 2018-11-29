@@ -41,6 +41,8 @@ METHOD New( oController ) CLASS PagosController
 
    ::cName                       := "cobros"
 
+   ::lTransactional              := .t.
+
    ::hImage                      := {  "16" => "gc_hand_money_16",;
                                        "32" => "gc_hand_money_32",;
                                        "48" => "gc_hand_money_48" }

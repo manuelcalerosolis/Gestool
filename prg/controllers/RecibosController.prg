@@ -460,8 +460,6 @@ CLASS SQLRecibosModel FROM SQLCompanyModel
 
    DATA cGroupBy                 INIT "recibos.uuid"
 
-   DATA cGeneralWhere            INIT '( pagos.estado <> "Rechazado" OR pagos.estado IS NULL )'
-
    METHOD getColumns()
 
    METHOD getInitialSelect()
@@ -517,8 +515,8 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
       recibos.concepto AS concepto,
       clientes.codigo AS cliente_codigo,
       clientes.nombre AS cliente_nombre,
-      SUM( pagos_recibos.importe ) AS total_pagado,
-      ( recibos.importe - IFNULL( SUM( pagos_recibos.importe ), 0 ) ) AS diferencia
+      @total_pagado:=( SELECT %6$s(recibos.uuid) ) AS total_pagado,
+      ( recibos.importe - @total_pagado ) AS diferencia
    FROM %1$s AS recibos
 
    LEFT JOIN %2$s AS pagos_recibos
@@ -535,8 +533,14 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLRecibosPagosModel():getTableName(), SQLPagosModel():getTableName(), SQLFacturasClientesModel():getTableName(), SQLClientesModel():getTableName() )
-
+   cSql  := hb_strformat(  cSql,;
+                           ::getTableName(),;
+                           SQLRecibosPagosModel():getTableName(),;
+                           SQLPagosModel():getTableName(),;
+                           SQLFacturasClientesModel():getTableName(),;
+                           SQLClientesModel():getTableName(),;
+                           Company():getTableName( 'RecibosPagosTotalPaidWhereUuid' ) )
+logwrite(cSql)
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//

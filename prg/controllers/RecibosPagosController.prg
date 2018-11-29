@@ -13,6 +13,8 @@ CLASS RecibosPagosController FROM SQLNavigatorController
 
    METHOD calculatePayment( nImporte )
 
+   METHOD validateAmount( uValue )
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getRepository()        INLINE( if(empty( ::oRepository ), ::oRepository := RecibosPagosRepository():New( self ), ), ::oRepository )
@@ -28,6 +30,8 @@ END CLASS
 METHOD New( oController ) CLASS RecibosPagosController
    
    ::Super:New( oController )
+   
+   ::lTransactional                 := .t.
 
 RETURN ( Self )
 
@@ -53,9 +57,34 @@ RETURN ( nil )
 
 METHOD updateField( uValue ) CLASS RecibosPagosController
 
-   ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "importe", uValue )
+   ::validateAmount( uValue )
    
    ::getRowSet():Refresh()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD validateAmount( uValue )
+
+   msgalert( uValue, "importe a pagar")
+
+   if uValue == ::getRowSet():fieldGet( "importe_pagar" )
+      RETURN ( nil )
+   end if 
+
+   if uValue > ::getRowSet():fieldGet( "diferencia" )
+      msgstop("Importe introducido incorrecto")
+      RETURN ( nil )
+   end if
+
+   ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "importe", uValue )
+
+   ::getRowSet():goTop()
+
+   ::getRowSet():Refresh()
+
+   ::getBrowseView():Refresh()
 
 RETURN ( nil )
 
@@ -268,6 +297,10 @@ CLASS SQLRecibosPagosModel FROM SQLCompanyModel
 
    METHOD deleteBlankPayment( uuidPago )
 
+   METHOD createTemporalTable()
+
+   METHOD dropTemporalTable()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -304,13 +337,13 @@ METHOD InsertPagoRecibo( uuidPago, cClienteCodigo ) CLASS SQLRecibosPagosModel
       ( uuid, pago_uuid, recibo_uuid, importe ) 
 
    SELECT 
-      UUID(), %5$s, recibos.uuid, recibos.importe
+      UUID(), %6$s, recibos.uuid, recibos.importe
    
       FROM %2$s AS recibos
       
       INNER JOIN %3$s AS facturas_clientes
          ON recibos.parent_uuid = facturas_clientes.uuid 
-            AND facturas_clientes.cliente_codigo = %6$s 
+            AND facturas_clientes.cliente_codigo = %7$s 
             AND facturas_clientes.deleted_at = 0
       
       LEFT JOIN %1$s AS pagos_recibos
@@ -319,8 +352,8 @@ METHOD InsertPagoRecibo( uuidPago, cClienteCodigo ) CLASS SQLRecibosPagosModel
       LEFT JOIN %4$s AS pagos
          ON pagos.uuid = pagos_recibos.pago_uuid
       
-      WHERE ( recibos.importe - IFNULL( SUM( pagos_recibos.importe ), 0 ) > 0 ) 
-         AND ( pagos.estado = "Rechazado" OR pagos.estado IS NULL ) 
+      WHERE ( ( SELECT %5$s( recibos.uuid ) ) < recibos.importe ) 
+            
 
       GROUP BY recibos.uuid
    
@@ -330,11 +363,10 @@ METHOD InsertPagoRecibo( uuidPago, cClienteCodigo ) CLASS SQLRecibosPagosModel
                                  SQLRecibosModel():getTableName(),;
                                  SQLFacturasClientesModel():getTableName(),;
                                  SQLPagosModel():getTableName(),;
+                                 Company():getTableName( 'RecibosPagosTotalPaidWhereUuid' ),;
                                  quoted( uuidPago ),;
                                  quoted( cClienteCodigo ) )
 
-   logwrite( "InsertPagoRecibo" )
-   logwrite( cSql )
 
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 
@@ -444,6 +476,42 @@ METHOD getGeneralSelect( uuidPago, cCodigoCliente ) CLASS SQLRecibosPagosModel
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
+
+METHOD createTemporalTable() CLASS SQLRecibosPagosModel
+
+local cSql
+
+   TEXT INTO cSql
+
+   CREATE TEMPORARY TABLE tmp_recibos_pagos(
+         uuid_pago VARCHAR(40) NOT NULL,
+         uuid_recibo VARCHAR(40) NOT NULL,
+         diferencia FLOAT( 16,2 ),
+         importe FLOAT( 16,2 ) ) ;
+
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql )
+
+RETURN ( getSQLDatabase():Exec( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD dropTemporalTable() CLASS SQLRecibosPagosModel
+
+local cSql
+
+   TEXT INTO cSql
+
+      DROP  TABLE tmp_recibos_pagos
+      
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql )
+
+RETURN ( getSQLDatabase():Exec( cSql ) )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -455,11 +523,17 @@ CLASS RecibosPagosRepository FROM SQLBaseRepository
    METHOD getTableName()                  INLINE ( SQLRecibosPagosModel():getTableName() ) 
 
    METHOD getSQLFunctions()               INLINE ( {  ::dropFunctionTotalPaidWhereUuid(),;
-                                                      ::createFunctionTotalPaidWhereUuid() } )
+                                                      ::createFunctionTotalPaidWhereUuid(),;
+                                                      ::dropFunctionTotalDifferenceWhereUuid(),;
+                                                      ::createFunctionTotalDifferenceWhereUuid() } )
 
    METHOD createFunctionTotalPaidWhereUuid()
 
    METHOD dropFunctionTotalPaidWhereUuid()
+
+   METHOD createFunctionTotalDifferenceWhereUuid()
+
+   METHOD dropFunctionTotalDifferenceWhereUuid()
 
 END CLASS
 
@@ -498,7 +572,7 @@ METHOD createFunctionTotalPaidWhereUuid() CLASS RecibosPagosRepository
          
          HAVING pagos.estado = "Presentado";  
 
-      RETURN totalPaid;
+      RETURN IFNULL( totalPaid, 0 );
 
    END
 
@@ -513,8 +587,57 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
+ METHOD createFunctionTotalDifferenceWhereUuid()
+
+ local cSql
+
+   TEXT INTO cSql
+
+   CREATE DEFINER=`root`@`localhost` 
+   FUNCTION %1$s ( `uuid_recibo_cliente` CHAR( 40 ) )
+   RETURNS DECIMAL(19,6)
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
+
+   BEGIN
+
+      DECLARE totalDifference DECIMAL( 19,6 );
+
+      SELECT 
+         ( recibos.importe - ( SELECT ( %2$s( recibos.uuid ) ) ) ) INTO totalDifference
+      
+         FROM %3$s AS recibos
+
+         WHERE recibos.uuid = uuid_recibo_cliente;
+
+      RETURN totalDifference;
+
+   END
+
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql,; 
+                           Company():getTableName( 'RecibosPagosTotalDifferenceWhereUuid' ),;
+                           Company():getTableName( 'RecibosPagosTotalPaidWhereUuid' ),;
+                           SQLRecibosModel():getTableName() )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
 METHOD dropFunctionTotalPaidWhereUuid() CLASS RecibosPagosRepository  
 
 RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'RecibosPagosTotalPaidWhereUuid' ) + ";" )
 
 //---------------------------------------------------------------------------//
+
+METHOD dropFunctionTotalDifferenceWhereUuid()
+
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'RecibosPagosTotalDifferenceWhereUuid' ) + ";" )
+
+//---------------------------------------------------------------------------//
+
+
