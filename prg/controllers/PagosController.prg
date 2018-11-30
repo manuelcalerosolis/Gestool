@@ -95,7 +95,9 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD Append() CLASS PagosController
-   
+
+   ::getRecibosPagosTemporalController():getModel():createTemporalTable()
+ 
    ::getPagosAssistantController():Append()
 
 RETURN ( nil )

@@ -170,6 +170,8 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oPagosAssistantController 
 
    DATA oRecibosPagosController 
+
+   DATA oRecibosPagosTemporalController 
    
    DATA oPermisosController 
    
@@ -403,6 +405,9 @@ CLASS SQLApplicationController FROM SQLBaseController
    
    METHOD getRecibosPagosController() ;
                                     INLINE ( if( empty( ::oRecibosPagosController ), ::oRecibosPagosController := RecibosPagosController():New( self ), ), ::oRecibosPagosController )
+
+   METHOD getRecibosPagosTemporalController() ;
+                                    INLINE ( if( empty( ::oRecibosPagosTemporalController ), ::oRecibosPagosTemporalController := RecibosPagosTemporalController():New( self ), ), ::oRecibosPagosTemporalController )
 
    METHOD getPermisosController()   INLINE ( if( empty( ::oPermisosController ), ::oPermisosController := PermisosController():New( self ), ), ::oPermisosController )
 
@@ -728,6 +733,9 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oRecibosPagosController )
       ::oRecibosPagosController:End()
+   end if 
+   if !empty( ::oRecibosPagosTemporalController )
+      ::oRecibosPagosTemporalController:End()
    end if  
 
    if !empty( ::oRecibosGeneratorController )

@@ -23,6 +23,8 @@ CLASS PagosAssistantController FROM SQLNavigatorController
 
    METHOD OtherClient()
 
+   METHOD resetImporteAndCliente()
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getBrowseView()              INLINE( ::oController:getBrowseView() )
@@ -45,8 +47,6 @@ METHOD New( oController ) CLASS PagosAssistantController
 
    ::cName                          := "cobros"
 
-   ::lTransactional                 := .t.
-
    ::hImage                         := {  "16" => "gc_hand_money_16",;
                                           "32" => "gc_hand_money_32",;
                                           "48" => "gc_hand_money_48" }
@@ -57,7 +57,8 @@ METHOD New( oController ) CLASS PagosAssistantController
    ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentence() } )
 
    ::getClientesController():getSelector():setEvent( 'validated', {|| ::getRecibos() } )
-   ::setEvent( 'appended', {|| ::getRecibosPagosController():getModel():deleteBlankPayment( ::getModelBuffer( "uuid" ) ) } )
+   ::setEvent( 'appended',     {|| ::getRecibosPagosController():getModel():InsertPagoRecibo( ::getModelBuffer( "uuid" ) ) } )
+   ::setEvent( 'exitAppended', {|| ::getRecibosPagosTemporalController():getModel():dropTemporalTable(), ::resetImporteAndCliente() } )
 
 RETURN ( Self )
 
@@ -77,6 +78,16 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
+METHOD resetImporteAndCliente()
+
+   ::cCodigoCliente :=""
+
+   ::getDialogView():oImporte:cText( 0 )
+   
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD gettingSelectSentence() CLASS PagosAssistantController
 
    ::getCuentasBancariasController():getModel():setGeneralWhere( "parent_uuid = " + quoted( Company():Uuid() ) )
@@ -87,21 +98,19 @@ RETURN ( nil )
 
 METHOD OtherClient( cCodigoCliente ) CLASS PagosAssistantController
 
-   ::getRecibosPagosController():getModel():deleteBlankPayment( ::getModelBuffer( "uuid" ) )
+   ::getRecibosPagosTemporalController():getModel():deleteTemporal()
 
    ::insertRecibosPago()
 
-   ::getRecibosPagosController():getRowset():buildPad( ::getRecibosPagosController():getModel():getGeneralSelect( ::getModelBuffer( "uuid" ), ::getModelBuffer( "cliente_codigo" ) ) )
+   ::getRecibosPagosTemporalController():getRowset():buildPad( ::getRecibosPagosTemporalController():getModel():getGeneralSelect( ::getModelBuffer( "uuid" ), ::getModelBuffer( "cliente_codigo" ) ) )
 
-   ::getRecibosPagosController():getBrowseView():Refresh()
+   ::getRecibosPagosTemporalController():getBrowseView():Refresh()
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD getRecibos() CLASS PagosAssistantController
-
-   /*::getRecibosPagosController():getModel():createTemporalTable()*/
 
    if ::cCodigoCliente == ::getModelBuffer("cliente_codigo")
       RETURN ( nil )
@@ -111,17 +120,13 @@ METHOD getRecibos() CLASS PagosAssistantController
 
    ::OtherClient()
 
-   /*::getRecibosPagosController():getModel():dropTemporalTable()*/
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD insertRecibosPago() CLASS PagosAssistantController
 
-   ::getRecibosPagosController():getModel():insertPagoRecibo( ::getModelBuffer( "uuid" ), ::getModelBuffer('cliente_codigo') )
-
-   ::getRecibosPagosController():getModel():updateImporte( ::getModelBuffer( "uuid" ) )
+   ::getRecibosPagosTemporalController():getModel():InsertPagoReciboTemporal( ::getModelBuffer( "uuid" ), ::getModelBuffer('cliente_codigo') )
 
 RETURN ( nil )
 
@@ -140,15 +145,13 @@ METHOD getImportePagar( nImporte )
 
    ::nImporte  := nImporte
 
-   ::getRecibosPagosController():getModel():updateImporte( ::getModelBuffer( "uuid" ) )
+   ::getRecibosPagosTemporalController():getRowSet():Refresh()
 
-   ::getRecibosPagosController():getRowSet():Refresh()
+   ::getRecibosPagosTemporalController():calculatePayment( nImporte )
 
-   ::getRecibosPagosController():calculatePayment( nImporte )
+   ::getRecibosPagosTemporalController():getRowSet():Refresh()
 
-   ::getRecibosPagosController():getRowSet():Refresh()
-
-   ::getRecibosPagosController():getBrowseView():Refresh()
+   ::getRecibosPagosTemporalController():getBrowseView():Refresh()
 
 RETURN ( nil )
 
@@ -206,7 +209,7 @@ METHOD Activate() CLASS PagosAssistantView
    ::oController:getClientesController():getSelector():Build( { "idGet" => 100, "idLink" => 102, "idText" => 101, "idNif" => 103, "idDireccion" => 104, "idCodigoPostal" => 105, "idPoblacion" => 106, "idProvincia" => 107, "idTelefono" => 108, "oDialog" => ::oFolder:aDialogs[1] } )
    ::oController:getClientesController():getSelector():setValid( {|| ::oController:validate( "cliente_codigo" ) } )
 
-   ::getController():getRecibosPagosController():Activate( 500, ::oFolder:aDialogs[1] )
+   ::getController():getRecibosPagosTemporalController():Activate( 500, ::oFolder:aDialogs[1] )
 
    REDEFINE GET   ::oImporte ;
       VAR         ::nImporte ;
@@ -236,20 +239,19 @@ METHOD Activate() CLASS PagosAssistantView
 
    // Botones------------------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
    
    if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }
    end if
 
    ::oDialog:bStart  := {|| ::startActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
-
 
 RETURN ( ::oDialog:nResult )
 

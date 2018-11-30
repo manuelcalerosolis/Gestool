@@ -144,6 +144,7 @@ RecibosController.prg 														\
 PagosController.prg 															\
 PagosAssistantController.prg 												\
 RecibosPagosController.prg 												\
+RecibosPagosTemporalController.prg 										\
 RecibosGeneratorController.prg 							    			\
 BalanzasController.prg 														\
 ImpresorasController.prg 													\
@@ -492,6 +493,7 @@ RecibosController.obj    		   										\
 PagosController.obj    		   											\
 PagosAssistantController.obj    		   								\
 RecibosPagosController.obj    		   								\
+RecibosPagosTemporalController.obj    		  							\
 RecibosGeneratorController.obj    		   							\
 BalanzasController.obj       												\
 ImpresorasController.obj       											\
@@ -837,6 +839,7 @@ $(OBJ)\RecibosController.obj    											+
 $(OBJ)\PagosController.obj    											+
 $(OBJ)\PagosAssistantController.obj    								+
 $(OBJ)\RecibosPagosController.obj    									+
+$(OBJ)\RecibosPagosTemporalController.obj    						+
 $(OBJ)\RecibosGeneratorController.obj    								+
 $(OBJ)\BalanzasController.obj    										+	
 $(OBJ)\ImpresorasController.obj    										+

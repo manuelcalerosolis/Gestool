@@ -230,7 +230,7 @@ RETURN ( hb_isobject( ::oXml ) )
 
 METHOD Run()
 
-   if !::CreateDocument()
+   /*if !::CreateDocument()
       RETURN ( nil )
    end if 
 
@@ -243,7 +243,7 @@ METHOD Run()
 
    // ::GenerateXml()
 
-   ::DestroyDocument()
+   ::DestroyDocument()*/
 
 RETURN ( nil )
 
