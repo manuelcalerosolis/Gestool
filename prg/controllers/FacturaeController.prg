@@ -234,7 +234,7 @@ METHOD Run()
       RETURN ( nil )
    end if 
 
-   ::oXml:loadXML( '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' 
+   ::oXml:loadXML( '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' )
    // '<fe:Facturae xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:fe="http://www.facturae.es/Facturae/2009/v3.2/Facturae">'
 
    ::oXml:appendChild( ::oXml:createElement( "Familia" ) )
