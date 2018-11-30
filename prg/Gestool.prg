@@ -128,9 +128,11 @@ RETURN ( nil )
 
 FUNCTION appTest()
 
-   // logwrite( hb_valtoexp( SELCERT() ) )
+   // local oCertificate   := SELCERT()
 
-   // FacturaeController():New():Run()
+   // msgalert( hb_valtoexp( oCertificate ), valtype( oCertificate ) )
+
+   FacturaeController():New():Run()
 
 
 /*

@@ -161,12 +161,16 @@ CLASS FacturaeController
 
    METHOD New() CONSTRUCTOR
 
+   METHOD Default()
+
    METHOD Run()
 
    METHOD CreateDocument()
    METHOD DestroyDocument()            INLINE ( ::oXml   := nil )
+   METHOD saveDocument()               INLINE ( ::oXml:Save( ::cFicheroOrigen ) )
 
-   METHOD createXmlNode( cName, cText)
+   METHOD createXmlNode( cName, cText ) 
+   METHOD createCDataXmlNode( cName, cData )
 
    METHOD GenerateXml()
       METHOD initialXML()
@@ -197,7 +201,7 @@ CLASS FacturaeController
    METHOD addTax( oTax )                  INLINE ( ::nTotalTaxOutputs += oTax:nTaxAmount, aAdd( ::aTax, oTax ), ::aTax )
    METHOD addDiscount( oDiscount )        INLINE ( ::nTotalGeneralDiscounts += oDiscount:nDiscountAmount, aAdd( ::aDiscount, oDiscount ), ::aDiscount )
 
-   METHOD MailServerSend()                INLINE ( ::cMailServer + if( !Empty( ::cMailServerPort ), ":" + Alltrim( Str( ::cMailServerPort ) ), "" ) )
+   METHOD MailServerSend()                INLINE ( ::cMailServer + if( !empty( ::cMailServerPort ), ":" + Alltrim( Str( ::cMailServerPort ) ), "" ) )
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := FacturaeModel():New( self ), ), ::oModel )
 
@@ -207,9 +211,43 @@ ENDCLASS
 
 METHOD New( oController )
 
-   ::oController                    := oController
+   ::oController                       := oController
+
+   ::Default()
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Default()
+
+   ::cInvoiceCurrencyCode              := 'EUR'
+   ::cLanguageName                     := 'es'
+
+   ::nTotalGrossAmount                 := 0
+   ::nTotalGeneralDiscounts            := 0
+   ::nTotalGeneralSurcharges           := 0
+   ::nTotalGrossAmountBeforeTaxes      := 0
+   ::nTotalTaxOutputs                  := 0
+   ::nTotalTaxesWithheld               := 0
+   ::nInvoiceTotal                     := 0
+   ::nTotalOutstandingAmount           := 0
+   ::nTotalExecutableAmount            := 0
+   ::nTotalReimbursableExpenses        := 0
+   ::nInvoiceTotalAmount               := 0
+
+   ::oSellerParty                      := Party()
+   ::oSellerParty:cCorporateName       := "Mºª/&%<div1>"
+
+   ::oBuyerParty                       := Party()
+
+   ::aTax                              := {}
+   ::aDiscount                         := {}
+   ::aItemLine                         := {}
+   ::aInstallment                      := {}
+   ::aAdministrativeCentres            := {}
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -252,8 +290,9 @@ RETURN ( nil )
 
 METHOD Run()
 
-   local oNode
-   local oAttribute
+   ::cFicheroOrigen  := "c:\temp\andrew.xml"
+   ::cFicheroDestino := "c:\temp\andrew-signed.xml"
+   ::cNif            := "CALERO SOLIS MANUEL - 75541180A"
 
    if !::CreateDocument()
       RETURN ( nil )
@@ -261,20 +300,18 @@ METHOD Run()
 
    ::initialXML()
 
-   ::HeaderXml()
+   ::headerXml()
 
-   ::oXml:Save( "c:\temp\andrew.xml" )
+   ::partiesXml()
 
-   // ::GenerateXml()
+   ::invoiceXml()
 
-   ::DestroyDocument()
+   ::saveDocument()
 
-   ::cFicheroOrigen  := "c:\temp\andrew.xml"
-   ::cFicheroDestino := "c:\temp\andrew-signed.xml"
-   ::cNif            := "CALERO SOLIS MANUEL - 75541180A"
+   ::destroyDocument()
 
-   logwrite( fullcurdir() + "autofirma\autofirmacommandline sign -i " + ::cFicheroOrigen + " -o " + ::cFicheroDestino + " -format facturae -store windows -alias " + ::cNif )
-   waitRun( fullcurdir() + "autofirma\autofirmacommandline sign -i " + ::cFicheroOrigen + " -o " + ::cFicheroDestino + " -format facturae -store windows -alias " + SELCERT() )
+   // logwrite( fullcurdir() + "autofirma\autofirmacommandline sign -i " + ::cFicheroOrigen + " -o " + ::cFicheroDestino + " -format facturae -store windows -alias " + ::cNif )
+   // waitRun( fullcurdir() + "autofirma\autofirmacommandline sign -i " + ::cFicheroOrigen + " -o " + ::cFicheroDestino + " -format facturae -store windows -alias " + SELCERT() )
 
 RETURN ( nil )
 
@@ -288,7 +325,7 @@ METHOD GenerateXml()
    Comienza el nodo principal--------------------------------------------------
    */
 
-   ::oXmlNode     := TXmlNode():new( , "fe:Facturae",;
+   ::oXmlNode     := ::createXmlNode( "fe:Facturae",;
                                        {  "xmlns:ds" => "http://www.w3.org/2000/09/xmldsig#",;
                                           "xmlns:fe" => "http://www.facturae.es/Facturae/2009/v3.2/Facturae" } )
 
@@ -298,23 +335,33 @@ METHOD GenerateXml()
 
    ::InvoiceXml()
 
-   ::oXml:oRoot:addBelow( ::oXmlNode )
+   ::oXml:oRoot:appendChild( ::oXmlNode )
 
-Return ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD createXmlNode( cName, cText)
 
-   local oNode
-
-   oNode          := ::oXml:createNode( 1, cName, '' )
+   local oNode    := ::oXml:createNode( 1, cName, '' )
 
    if !empty( cText )
       oNode:Text  := cText
    end if
 
-Return ( oNode )
+RETURN ( oNode )
+
+//---------------------------------------------------------------------------//
+
+METHOD createCDataXmlNode( cName, cData )
+
+   local oNode    := ::oXml:createNode( 1, cName, '' )
+
+   if !empty( cData )
+      oNode:appendChild( ::oXml:createCDATASection( cData ) )
+   end if
+
+RETURN ( oNode )
 
 //---------------------------------------------------------------------------//
 
@@ -363,113 +410,105 @@ METHOD PartiesXml()
 
    local oAdministrativeCentre
 
-   /*
-   Comienza el nodo parties----------------------------------------------------
-   */
+   ::oXmlParties   := ::createXmlNode( 'Parties' )
 
-   ::oXmlParties   := TXmlNode():new( , 'Parties' )
-
-      /*
-      Comienza el nodo SellerParty---------------------------------------------
-      */
-
-      ::oXmlSellerParty    := TXmlNode():new( , 'SellerParty' )
+      ::oXmlSellerParty    := ::createXmlNode( 'SellerParty' )
 
          /*
          Comienza el nodo TotalInvoicesAmount-------------------------------
          */
 
-         ::oXmlTaxIdentification  := TXmlNode():new( , 'TaxIdentification' )
-            ::oXmlTaxIdentification:addBelow( TXmlNode():new( , 'PersonTypeCode', ,          ::oSellerParty:cPersonTypeCode ) )
-            ::oXmlTaxIdentification:addBelow( TXmlNode():new( , 'ResidenceTypeCode', ,       ::oSellerParty:cResidenceTypeCode ) )
-            ::oXmlTaxIdentification:addBelow( TXmlNode():new( , 'TaxIdentificationNumber', , ::oSellerParty:TaxIdentificationNumber() ) )
+         ::oXmlTaxIdentification  := ::createXmlNode( 'TaxIdentification' )
+            ::oXmlTaxIdentification:appendChild( ::createXmlNode( 'PersonTypeCode', ::oSellerParty:cPersonTypeCode ) )
+            ::oXmlTaxIdentification:appendChild( ::createXmlNode( 'ResidenceTypeCode', ::oSellerParty:cResidenceTypeCode ) )
+            ::oXmlTaxIdentification:appendChild( ::createXmlNode( 'TaxIdentificationNumber', ::oSellerParty:TaxIdentificationNumber() ) )
 
-         ::oXmlSellerParty:addBelow( ::oXmlTaxIdentification )
+         ::oXmlSellerParty:appendChild( ::oXmlTaxIdentification )
 
          /*
          Comienza el nodo LegalEntity------------------------------------------
          */
 
-         if !Empty( ::oSellerParty:cCorporateName )
+         if !empty( ::oSellerParty:cCorporateName )
 
-            ::oXmlLegalEntity  := TXmlNode():new( , 'LegalEntity' )
+            ::oXmlLegalEntity  := ::createXmlNode( 'LegalEntity' )
 
-               if !Empty( ::oSellerParty:CorporateName() )
-                  ::oXmlLegalEntity:addBelow( TXmlNode():new( , 'CorporateName', ,  ::oSellerParty:CorporateName() ) )
+               if !empty( ::oSellerParty:CorporateName() )
+                  ::oXmlLegalEntity:appendChild( ::createCDataXmlNode( 'CorporateName', ::oSellerParty:CorporateName() ) )
                end if
 
-               if !Empty( ::oSellerParty:TradeName() )
-                  ::oXmlLegalEntity:addBelow( TXmlNode():new( , 'TradeName', ,      ::oSellerParty:TradeName() ) )
+               if !empty( ::oSellerParty:TradeName() )
+                  ::oXmlLegalEntity:appendChild( ::createXmlNode( 'TradeName', ::oSellerParty:TradeName() ) )
                end if
 
-               ::oXmlRegistrationData  := TXmlNode():new( , 'RegistrationData' )
+               ::oXmlRegistrationData  := ::createXmlNode( 'RegistrationData' )
 
-                  if !Empty( ::oSellerParty:nBook )
-                     ::oXmlRegistrationData:addBelow( TXmlNode():new( , 'Book', ,                        ::oSellerParty:nBook ) )
+                  if !empty( ::oSellerParty:nBook )
+                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Book', ::oSellerParty:nBook ) )
                   end if
 
-                  if !Empty( ::oSellerParty:cRegisterOfCompaniesLocation )
-                     ::oXmlRegistrationData:addBelow( TXmlNode():new( , 'RegisterOfCompaniesLocation', , ::oSellerParty:cRegisterOfCompaniesLocation ) )
+                  if !empty( ::oSellerParty:cRegisterOfCompaniesLocation )
+                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'RegisterOfCompaniesLocation', ::oSellerParty:cRegisterOfCompaniesLocation ) )
                   end if
 
-                  if !Empty( ::oSellerParty:nSheet )
-                     ::oXmlRegistrationData:addBelow( TXmlNode():new( , 'Sheet', ,                       ::oSellerParty:nSheet ) )
+                  if !empty( ::oSellerParty:nSheet )
+                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Sheet', ::oSellerParty:nSheet ) )
                   end if
 
-                  if !Empty( ::oSellerParty:nFolio )
-                     ::oXmlRegistrationData:addBelow( TXmlNode():new( , 'Folio', ,                       ::oSellerParty:nFolio ) )
+                  if !empty( ::oSellerParty:nFolio )
+                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Folio', ::oSellerParty:nFolio ) )
                   end if
 
-                  if !Empty( ::oSellerParty:cSection )
-                     ::oXmlRegistrationData:addBelow( TXmlNode():new( , 'Section', ,                     ::oSellerParty:cSection ) )
+                  if !empty( ::oSellerParty:cSection )
+                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Section', ::oSellerParty:cSection ) )
                   end if
 
-                  if !Empty( ::oSellerParty:nVolume )
-                     ::oXmlRegistrationData:addBelow( TXmlNode():new( , 'Volume', ,                      ::oSellerParty:nVolume ) )
+                  if !empty( ::oSellerParty:nVolume )
+                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Volume', ::oSellerParty:nVolume ) )
                   end if
 
-                  if !Empty( ::oSellerParty:AditionalRegistrationData() )
-                     ::oXmlRegistrationData:addBelow( TXmlNode():new( , 'AditionalRegistrationData', ,   ::oSellerParty:AditionalRegistrationData() ) )
+                  if !empty( ::oSellerParty:AditionalRegistrationData() )
+                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'AditionalRegistrationData', ::oSellerParty:AditionalRegistrationData() ) )
                   end if
 
-               ::oXmlLegalEntity:addBelow( ::oXmlRegistrationData )
+               ::oXmlLegalEntity:appendChild( ::oXmlRegistrationData )
 
                /*
                Comienza el nodo de direcciones------------------------------------
                */
 
-               ::oXmlAddressInSpain  := TXmlNode():new( , 'AddressInSpain' )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Address', ,     ::oSellerParty:Address() ) )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'PostCode', ,    ::oSellerParty:PostCode() ) )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Town', ,        ::oSellerParty:Town() ) )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Province', ,    ::oSellerParty:Province() ) )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'CountryCode', , ::oSellerParty:CountryCode() ) )
+               ::oXmlAddressInSpain  := ::createXmlNode( 'AddressInSpain' )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Address', ::oSellerParty:Address() ) )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'PostCode', ::oSellerParty:PostCode() ) )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Town', ::oSellerParty:Town() ) )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Province', ::oSellerParty:Province() ) )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'CountryCode', ::oSellerParty:CountryCode() ) )
 
-               ::oXmlLegalEntity:addBelow( ::oXmlAddressInSpain )
+               ::oXmlLegalEntity:appendChild( ::oXmlAddressInSpain )
 
-               ::oXmlContactDetails := TXmlNode():new( , 'ContactDetails' )
+               ::oXmlContactDetails := ::createXmlNode( 'ContactDetails' )
 
-                  if !Empty( ::oSellerParty:Telephone() )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'Telephone', ,      ::oSellerParty:Telephone() ) )
+                  if !empty( ::oSellerParty:Telephone() )
+                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'Telephone',     ::oSellerParty:Telephone() ) )
                   end if
 
-                  if !Empty( ::oSellerParty:cTelFax )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'TeleFax', ,        ::oSellerParty:cTelFax ) )
+                  if !empty( ::oSellerParty:cTelFax )
+                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'TeleFax',       ::oSellerParty:cTelFax ) )
                   end if
 
-                  if !Empty( ::oSellerParty:cWebAddress )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'WebAddress', ,     ::oSellerParty:cWebAddress ) )
+                  if !empty( ::oSellerParty:cWebAddress )
+                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'WebAddress',    ::oSellerParty:cWebAddress ) )
                   end if
 
-                  if !Empty( ::oSellerParty:cElectronicMail )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'ElectronicMail', , ::oSellerParty:cElectronicMail ) )
+                  if !empty( ::oSellerParty:cElectronicMail )
+                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'ElectronicMail',::oSellerParty:cElectronicMail ) )
                   end if
 
-                  ::oXmlLegalEntity:addBelow( ::oXmlContactDetails )
+                  ::oXmlLegalEntity:appendChild( ::oXmlContactDetails )
 
-               ::oXmlSellerParty:addBelow( ::oXmlLegalEntity )
+               ::oXmlSellerParty:appendChild( ::oXmlLegalEntity )
 
-            ::oXmlParties:addBelow( ::oXmlSellerParty )
+            ::oXmlParties:appendChild( ::oXmlSellerParty )
 
          end if
 
@@ -477,58 +516,58 @@ METHOD PartiesXml()
          Comienza el nodo Individual------------------------------------------
          */
 
-         if !Empty( ::oSellerParty:cName )
+         if !empty( ::oSellerParty:cName )
 
-            ::oXmlLegalEntity  := TXmlNode():new( , 'Individual' )
+            ::oXmlLegalEntity  := ::createXmlNode( 'Individual' )
 
-               if !Empty( ::oSellerParty:cName )
-                  ::oXmlLegalEntity:addBelow( TXmlNode():new( , 'Name', ,  ::oSellerParty:Name() ) )
+               if !empty( ::oSellerParty:cName )
+                  ::oXmlLegalEntity:appendChild( ::createXmlNode( 'Name', ::oSellerParty:Name() ) )
                end if
 
-               if !Empty( ::oSellerParty:cName ) .or. !Empty( ::oSellerParty:cFirstSurname )
-                  ::oXmlLegalEntity:addBelow( TXmlNode():new( , 'FirstSurname', , ::oSellerParty:FirstSurname() ) )
+               if !empty( ::oSellerParty:cName ) .or. !empty( ::oSellerParty:cFirstSurname )
+                  ::oXmlLegalEntity:appendChild( ::createXmlNode( 'FirstSurname', ::oSellerParty:FirstSurname() ) )
                end if
 
-               if !Empty( ::oSellerParty:cSecondSurname )
-                  ::oXmlLegalEntity:addBelow( TXmlNode():new( , 'SecondSurname', , ::oSellerParty:SecondSurname() ) )
+               if !empty( ::oSellerParty:cSecondSurname )
+                  ::oXmlLegalEntity:appendChild( ::createXmlNode( 'SecondSurname', ::oSellerParty:SecondSurname() ) )
                end if
 
                /*
                Comienza el nodo de direcciones------------------------------------
                */
 
-               ::oXmlAddressInSpain  := TXmlNode():new( , 'AddressInSpain' )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Address', ,     ::oSellerParty:Address() ) )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'PostCode', ,    ::oSellerParty:PostCode() ) )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Town', ,        ::oSellerParty:Town() ) )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Province', ,    ::oSellerParty:Province() ) )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'CountryCode', , ::oSellerParty:CountryCode() ) )
+               ::oXmlAddressInSpain  := ::createXmlNode( 'AddressInSpain' )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Address',    ::oSellerParty:Address() ) )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'PostCode',   ::oSellerParty:PostCode() ) )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Town',       ::oSellerParty:Town() ) )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Province',   ::oSellerParty:Province() ) )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'CountryCode',::oSellerParty:CountryCode() ) )
 
-               ::oXmlLegalEntity:addBelow( ::oXmlAddressInSpain )
+               ::oXmlLegalEntity:appendChild( ::oXmlAddressInSpain )
 
-               ::oXmlContactDetails := TXmlNode():new( , 'ContactDetails' )
+               ::oXmlContactDetails := ::createXmlNode( 'ContactDetails' )
 
-                  if !Empty( ::oSellerParty:Telephone() )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'Telephone', ,      ::oSellerParty:Telephone() ) )
+                  if !empty( ::oSellerParty:Telephone() )
+                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'Telephone',     ::oSellerParty:Telephone() ) )
                   end if
 
-                  if !Empty( ::oSellerParty:cTelFax )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'TeleFax', ,        ::oSellerParty:cTelFax ) )
+                  if !empty( ::oSellerParty:cTelFax )
+                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'TeleFax',       ::oSellerParty:cTelFax ) )
                   end if
 
-                  if !Empty( ::oSellerParty:cWebAddress )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'WebAddress', ,     ::oSellerParty:cWebAddress ) )
+                  if !empty( ::oSellerParty:cWebAddress )
+                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'WebAddress',    ::oSellerParty:cWebAddress ) )
                   end if
 
-                  if !Empty( ::oSellerParty:cElectronicMail )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'ElectronicMail', , ::oSellerParty:cElectronicMail ) )
+                  if !empty( ::oSellerParty:cElectronicMail )
+                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'ElectronicMail',::oSellerParty:cElectronicMail ) )
                   end if
 
-                  ::oXmlLegalEntity:addBelow( ::oXmlContactDetails )
+                  ::oXmlLegalEntity:appendChild( ::oXmlContactDetails )
 
-               ::oXmlSellerParty:addBelow( ::oXmlLegalEntity )
+               ::oXmlSellerParty:appendChild( ::oXmlLegalEntity )
 
-            ::oXmlParties:addBelow( ::oXmlSellerParty )
+            ::oXmlParties:appendChild( ::oXmlSellerParty )
 
          end if
 
@@ -536,18 +575,18 @@ METHOD PartiesXml()
       Comienza el nodo BuyerParty---------------------------------------------
       */
 
-      ::oXmlBuyerParty    := TXmlNode():new( , 'BuyerParty' )
+      ::oXmlBuyerParty    := ::createXmlNode( 'BuyerParty' )
 
          /*
          Comienza el nodo TaxIdentification-------------------------------
          */
 
-         ::oXmlTaxIdentification  := TXmlNode():new( , 'TaxIdentification' )
-            ::oXmlTaxIdentification:addBelow( TXmlNode():new( , 'PersonTypeCode', ,          ::oBuyerParty:cPersonTypeCode ) )
-            ::oXmlTaxIdentification:addBelow( TXmlNode():new( , 'ResidenceTypeCode', ,       ::oBuyerParty:cResidenceTypeCode ) )
-            ::oXmlTaxIdentification:addBelow( TXmlNode():new( , 'TaxIdentificationNumber', , ::oBuyerParty:TaxIdentificationNumber() ) )
+         ::oXmlTaxIdentification  := ::createXmlNode( 'TaxIdentification' )
+            ::oXmlTaxIdentification:appendChild( ::createXmlNode( 'PersonTypeCode',         ::oBuyerParty:cPersonTypeCode ) )
+            ::oXmlTaxIdentification:appendChild( ::createXmlNode( 'ResidenceTypeCode',      ::oBuyerParty:cResidenceTypeCode ) )
+            ::oXmlTaxIdentification:appendChild( ::createXmlNode( 'TaxIdentificationNumber',::oBuyerParty:TaxIdentificationNumber() ) )
 
-         ::oXmlBuyerParty:addBelow( ::oXmlTaxIdentification )
+         ::oXmlBuyerParty:appendChild( ::oXmlTaxIdentification )
 
          /*
          Comienza el nodo AdministrativeCentres-------------------------------
@@ -555,13 +594,13 @@ METHOD PartiesXml()
 
          if !empty( ::aAdministrativeCentres )
 
-            ::oXmlAdministrativeCentres      := TXmlNode():new( , 'AdministrativeCentres' )
+            ::oXmlAdministrativeCentres      := ::createXmlNode( 'AdministrativeCentres' )
 
             for each oAdministrativeCentre in ::aAdministrativeCentres
                ::AdministrativeCentresXml( oAdministrativeCentre )
             next
 
-            ::oXmlBuyerParty:addBelow( ::oXmlAdministrativeCentres )
+            ::oXmlBuyerParty:appendChild( ::oXmlAdministrativeCentres )
 
          end if
 
@@ -569,84 +608,84 @@ METHOD PartiesXml()
          Comienza el nodo LegalEntity------------------------------------------
          */
 
-         if !Empty( ::oBuyerParty:cCorporateName )
+         if !empty( ::oBuyerParty:cCorporateName )
 
-            ::oXmlLegalEntity  := TXmlNode():new( , 'LegalEntity' )
+            ::oXmlLegalEntity  := ::createXmlNode( 'LegalEntity' )
 
-               if !Empty( ::oBuyerParty:CorporateName() )
-                  ::oXmlLegalEntity:addBelow( TXmlNode():new( , 'CorporateName', ,  ::oBuyerParty:CorporateName() ) )
+               if !empty( ::oBuyerParty:CorporateName() )
+                  ::oXmlLegalEntity:appendChild( ::createXmlNode( 'CorporateName', ::oBuyerParty:CorporateName() ) )
                end if
 
-               if !Empty( ::oBuyerParty:TradeName() )
-                  ::oXmlLegalEntity:addBelow( TXmlNode():new( , 'TradeName', ,      ::oBuyerParty:TradeName() ) )
+               if !empty( ::oBuyerParty:TradeName() )
+                  ::oXmlLegalEntity:appendChild( ::createXmlNode( 'TradeName',     ::oBuyerParty:TradeName() ) )
                end if
 
-               ::oXmlRegistrationData  := TXmlNode():new( , 'RegistrationData' )
+               ::oXmlRegistrationData  := ::createXmlNode( 'RegistrationData' )
 
-                  if !Empty( ::oBuyerParty:nBook )
-                     ::oXmlRegistrationData:addBelow( TXmlNode():new( , 'Book', ,                        ::oBuyerParty:nBook ) )
+                  if !empty( ::oBuyerParty:nBook )
+                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Book',                       ::oBuyerParty:nBook ) )
                   end if
 
-                  if !Empty( ::oBuyerParty:cRegisterOfCompaniesLocation )
-                     ::oXmlRegistrationData:addBelow( TXmlNode():new( , 'RegisterOfCompaniesLocation', , ::oBuyerParty:cRegisterOfCompaniesLocation ) )
+                  if !empty( ::oBuyerParty:cRegisterOfCompaniesLocation )
+                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'RegisterOfCompaniesLocation',::oBuyerParty:cRegisterOfCompaniesLocation ) )
                   end if
 
-                  if !Empty( ::oBuyerParty:nSheet )
-                     ::oXmlRegistrationData:addBelow( TXmlNode():new( , 'Sheet', ,                       ::oBuyerParty:nSheet ) )
+                  if !empty( ::oBuyerParty:nSheet )
+                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Sheet',                      ::oBuyerParty:nSheet ) )
                   end if
 
-                  if !Empty( ::oBuyerParty:nFolio )
-                     ::oXmlRegistrationData:addBelow( TXmlNode():new( , 'Folio', ,                       ::oBuyerParty:nFolio ) )
+                  if !empty( ::oBuyerParty:nFolio )
+                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Folio',                      ::oBuyerParty:nFolio ) )
                   end if
 
-                  if !Empty( ::oBuyerParty:cSection )
-                     ::oXmlRegistrationData:addBelow( TXmlNode():new( , 'Section', ,                     ::oBuyerParty:cSection ) )
+                  if !empty( ::oBuyerParty:cSection )
+                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Section',                    ::oBuyerParty:cSection ) )
                   end if
 
-                  if !Empty( ::oBuyerParty:nVolume )
-                     ::oXmlRegistrationData:addBelow( TXmlNode():new( , 'Volume', ,                      ::oBuyerParty:nVolume ) )
+                  if !empty( ::oBuyerParty:nVolume )
+                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Volume',                     ::oBuyerParty:nVolume ) )
                   end if
 
-                  if !Empty( ::oBuyerParty:cAditionalRegistrationData )
-                     ::oXmlRegistrationData:addBelow( TXmlNode():new( , 'AditionalRegistrationData', ,   ::oBuyerParty:cAditionalRegistrationData ) )
+                  if !empty( ::oBuyerParty:cAditionalRegistrationData )
+                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'AditionalRegistrationData',  ::oBuyerParty:cAditionalRegistrationData ) )
                   end if
 
-               ::oXmlLegalEntity:addBelow( ::oXmlRegistrationData )
+               ::oXmlLegalEntity:appendChild( ::oXmlRegistrationData )
 
                /*
                Comienza el nodo de direcciones------------------------------------
                */
 
-               ::oXmlAddressInSpain  := TXmlNode():new( , 'AddressInSpain' )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Address', ,     ::oBuyerParty:Address() ) )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'PostCode', ,    ::oBuyerParty:PostCode() ) )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Town', ,        ::oBuyerParty:Town() ) )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Province', ,    ::oBuyerParty:Province() ) )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'CountryCode', , ::oBuyerParty:CountryCode() ) )
+               ::oXmlAddressInSpain  := ::createXmlNode( 'AddressInSpain' )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Address',    ::oBuyerParty:Address() ) )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'PostCode',   ::oBuyerParty:PostCode() ) )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Town',       ::oBuyerParty:Town() ) )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Province',   ::oBuyerParty:Province() ) )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'CountryCode',::oBuyerParty:CountryCode() ) )
 
-               ::oXmlLegalEntity:addBelow( ::oXmlAddressInSpain )
+               ::oXmlLegalEntity:appendChild( ::oXmlAddressInSpain )
 
-               ::oXmlContactDetails := TXmlNode():new( , 'ContactDetails' )
+               ::oXmlContactDetails := ::createXmlNode( 'ContactDetails' )
 
-                  if !Empty( ::oBuyerParty:Telephone )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'Telephone', ,   ::oBuyerParty:Telephone() ) )
+                  if !empty( ::oBuyerParty:Telephone )
+                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'Telephone',  ::oBuyerParty:Telephone() ) )
                   end if
 
-                  if !Empty( ::oBuyerParty:TelFax() )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'TeleFax', ,     ::oBuyerParty:TelFax() ) )
+                  if !empty( ::oBuyerParty:TelFax() )
+                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'TeleFax',    ::oBuyerParty:TelFax() ) )
                end if
 
-               if !Empty( ::oBuyerParty:WebAddress() )
-                  ::oXmlContactDetails:addBelow( TXmlNode():new( , 'WebAddress', ,     ::oBuyerParty:WebAddress() ) )
+               if !empty( ::oBuyerParty:WebAddress() )
+                  ::oXmlContactDetails:appendChild( ::createXmlNode( 'WebAddress',    ::oBuyerParty:WebAddress() ) )
                end if
 
-               if !Empty( ::oBuyerParty:ElectronicMail() )
-                  ::oXmlContactDetails:addBelow( TXmlNode():new( , 'ElectronicMail', , ::oBuyerParty:ElectronicMail() ) )
+               if !empty( ::oBuyerParty:ElectronicMail() )
+                  ::oXmlContactDetails:appendChild( ::createXmlNode( 'ElectronicMail',::oBuyerParty:ElectronicMail() ) )
                end if
 
-               ::oXmlLegalEntity:addBelow( ::oXmlContactDetails )
+               ::oXmlLegalEntity:appendChild( ::oXmlContactDetails )
 
-            ::oXmlBuyerParty:addBelow( ::oXmlLegalEntity )
+            ::oXmlBuyerParty:appendChild( ::oXmlLegalEntity )
 
          end if
 
@@ -654,64 +693,64 @@ METHOD PartiesXml()
          Comienza el nodo Individual------------------------------------------
          */
 
-         if !Empty( ::oBuyerParty:cName )
+         if !empty( ::oBuyerParty:cName )
 
-            ::oXmlLegalEntity  := TXmlNode():new( , 'Individual' )
+            ::oXmlLegalEntity  := ::createXmlNode( 'Individual' )
 
-               if !Empty( ::oBuyerParty:cName )
-                  ::oXmlLegalEntity:addBelow( TXmlNode():new( , 'Name', ,  ::oBuyerParty:Name() ) )
+               if !empty( ::oBuyerParty:cName )
+                  ::oXmlLegalEntity:appendChild( ::createXmlNode( 'Name', ::oBuyerParty:Name() ) )
                end if
 
-               if !Empty( ::oBuyerParty:cFirstSurname )
-                  ::oXmlLegalEntity:addBelow( TXmlNode():new( , 'FirstSurname', ,  ::oBuyerParty:FirstSurname() ) )
+               if !empty( ::oBuyerParty:cFirstSurname )
+                  ::oXmlLegalEntity:appendChild( ::createXmlNode( 'FirstSurname', ::oBuyerParty:FirstSurname() ) )
                end if
 
-               if !Empty( ::oBuyerParty:cSecondSurname() )
-                  ::oXmlLegalEntity:addBelow( TXmlNode():new( , 'SecondSurname', ,  ::oBuyerParty:SecondSurname() ) )
+               if !empty( ::oBuyerParty:cSecondSurname() )
+                  ::oXmlLegalEntity:appendChild( ::createXmlNode( 'SecondSurname', ::oBuyerParty:SecondSurname() ) )
                end if
 
                /*
                Comienza el nodo de direcciones------------------------------------
                */
 
-               ::oXmlAddressInSpain  := TXmlNode():new( , 'AddressInSpain' )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Address', ,     ::oBuyerParty:Address() ) )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'PostCode', ,    ::oBuyerParty:PostCode() ) )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Town', ,        ::oBuyerParty:Town() ) )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Province', ,    ::oBuyerParty:Province() ) )
-                  ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'CountryCode', , ::oBuyerParty:CountryCode() ) )
+               ::oXmlAddressInSpain  := ::createXmlNode( 'AddressInSpain' )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Address',    ::oBuyerParty:Address() ) )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'PostCode',   ::oBuyerParty:PostCode() ) )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Town',       ::oBuyerParty:Town() ) )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Province',   ::oBuyerParty:Province() ) )
+                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'CountryCode',::oBuyerParty:CountryCode() ) )
 
-               ::oXmlLegalEntity:addBelow( ::oXmlAddressInSpain )
+               ::oXmlLegalEntity:appendChild( ::oXmlAddressInSpain )
 
-               ::oXmlContactDetails := TXmlNode():new( , 'ContactDetails' )
+               ::oXmlContactDetails := ::createXmlNode( 'ContactDetails' )
 
-               if !Empty( ::oBuyerParty:Telephone() )
-                  ::oXmlContactDetails:addBelow( TXmlNode():new( , 'Telephone', ,      ::oBuyerParty:Telephone() ) )
+               if !empty( ::oBuyerParty:Telephone() )
+                  ::oXmlContactDetails:appendChild( ::createXmlNode( 'Telephone',     ::oBuyerParty:Telephone() ) )
                end if
 
-               if !Empty( ::oBuyerParty:TelFax() )
-                  ::oXmlContactDetails:addBelow( TXmlNode():new( , 'TeleFax', ,        ::oBuyerParty:TelFax() ) )
+               if !empty( ::oBuyerParty:TelFax() )
+                  ::oXmlContactDetails:appendChild( ::createXmlNode( 'TeleFax',       ::oBuyerParty:TelFax() ) )
                end if
 
-               if !Empty( ::oBuyerParty:WebAddress() )
-                  ::oXmlContactDetails:addBelow( TXmlNode():new( , 'WebAddress', ,     ::oBuyerParty:WebAddress() ) )
+               if !empty( ::oBuyerParty:WebAddress() )
+                  ::oXmlContactDetails:appendChild( ::createXmlNode( 'WebAddress',    ::oBuyerParty:WebAddress() ) )
                end if
 
-               if !Empty( ::oBuyerParty:ElectronicMail() )
-                  ::oXmlContactDetails:addBelow( TXmlNode():new( , 'ElectronicMail', , ::oBuyerParty:ElectronicMail() ) )
+               if !empty( ::oBuyerParty:ElectronicMail() )
+                  ::oXmlContactDetails:appendChild( ::createXmlNode( 'ElectronicMail',::oBuyerParty:ElectronicMail() ) )
                end if
 
-               ::oXmlLegalEntity:addBelow( ::oXmlContactDetails )
+               ::oXmlLegalEntity:appendChild( ::oXmlContactDetails )
 
-            ::oXmlBuyerParty:addBelow( ::oXmlLegalEntity )
+            ::oXmlBuyerParty:appendChild( ::oXmlLegalEntity )
 
          end if
 
-         ::oXmlParties:addBelow( ::oXmlBuyerParty )
+      ::oXmlParties:appendChild( ::oXmlBuyerParty )
 
-      ::oXmlNode:addBelow( ::oXmlParties )
+   ::oXml:documentElement():appendChild( ::oXmlParties )
 
-Return ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -721,77 +760,69 @@ METHOD InvoiceXml()
    local oItem
    local oInstallment
 
-   /*
-   Comienza el nodo header--------------------------------------------------
-   */
+   ::oXmlInvoices    := ::createXmlNode( 'Invoices' )
 
-   ::oXmlInvoices    := TXmlNode():new( , 'Invoices' )
-
-      ::oXmlInvoice  := TXmlNode():new( , 'Invoice' )
+      ::oXmlInvoice  := ::createXmlNode( 'Invoice' )
 
          /*
          Inicio de InvoiceHeader-----------------------------------------------
          */
 
-         ::oXmlInvoiceHeader  := TXmlNode():new( , 'InvoiceHeader' )
-            ::oXmlInvoiceHeader:addBelow( TXmlNode():new( , 'InvoiceNumber', ,         ::cInvoiceNumber ) )
-            ::oXmlInvoiceHeader:addBelow( TXmlNode():new( , 'InvoiceSeriesCode', ,     ::cInvoiceSeriesCode ) )
-            ::oXmlInvoiceHeader:addBelow( TXmlNode():new( , 'InvoiceDocumentType', ,   INVOICEDOCUMENTTYPE ) )
-            ::oXmlInvoiceHeader:addBelow( TXmlNode():new( , 'InvoiceClass', ,          INVOICECLASS ) )
+         ::oXmlInvoiceHeader  := ::createXmlNode( 'InvoiceHeader' )
+            ::oXmlInvoiceHeader:appendChild( ::createXmlNode( 'InvoiceNumber',        ::cInvoiceNumber ) )
+            ::oXmlInvoiceHeader:appendChild( ::createXmlNode( 'InvoiceSeriesCode',    ::cInvoiceSeriesCode ) )
+            ::oXmlInvoiceHeader:appendChild( ::createXmlNode( 'InvoiceDocumentType',  INVOICEDOCUMENTTYPE ) )
+            ::oXmlInvoiceHeader:appendChild( ::createXmlNode( 'InvoiceClass',         INVOICECLASS ) )
 
             /*
             Inicio de factura rectificativa rellenar solo si es el caso--------
             */
 
-            if !Empty( ::cCorrectiveInvoiceNumber )
+            if !empty( ::cCorrectiveInvoiceNumber )
 
-               ::oXmlCorrective  := TXmlNode():new( , 'Corrective' )
-                  ::oXmlCorrective:addBelow( TXmlNode():new( , 'InvoiceNumber', ,      ::cCorrectiveInvoiceNumber ) )
-                  ::oXmlCorrective:addBelow( TXmlNode():new( , 'ReasonCode', ,         ::cCorrectiveReasonCode ) )
-                  ::oXmlCorrective:addBelow( TXmlNode():new( , 'ReasonDescription', ,  ::cCorrectiveReasonDescription ) )
+               ::oXmlCorrective  := ::createXmlNode( 'Corrective' )
+                  ::oXmlCorrective:appendChild( ::createXmlNode( 'InvoiceNumber',     ::cCorrectiveInvoiceNumber ) )
+                  ::oXmlCorrective:appendChild( ::createXmlNode( 'ReasonCode',        ::cCorrectiveReasonCode ) )
+                  ::oXmlCorrective:appendChild( ::createXmlNode( 'ReasonDescription', ::cCorrectiveReasonDescription ) )
 
-                  ::oXmlTaxPeriod   := TXmlNode():new( , 'TaxPeriod' )
-                     ::oXmlTaxPeriod:addBelow( TXmlNode():new( , 'StartDate', ,  ::CorrectiveStartDate() ) )
-                     ::oXmlTaxPeriod:addBelow( TXmlNode():new( , 'EndDate', ,    ::CorrectiveEndDate() ) )
+                  ::oXmlTaxPeriod   := ::createXmlNode( 'TaxPeriod' )
+                     ::oXmlTaxPeriod:appendChild( ::createXmlNode( 'StartDate', ::CorrectiveStartDate() ) )
+                     ::oXmlTaxPeriod:appendChild( ::createXmlNode( 'EndDate',   ::CorrectiveEndDate() ) )
 
-                  ::oXmlCorrective:addBelow( ::oXmlTaxPeriod )
+                  ::oXmlCorrective:appendChild( ::oXmlTaxPeriod )
 
-                  ::oXmlCorrective:addBelow( TXmlNode():new( , 'CorrectionMethod', ,            ::cCorrectiveCorrectionMethod ) )
-                  ::oXmlCorrective:addBelow( TXmlNode():new( , 'CorrectionMethodDescription', , ::cCorrectiveCorrectionMethodDescription ) )
+                  ::oXmlCorrective:appendChild( ::createXmlNode( 'CorrectionMethod',           ::cCorrectiveCorrectionMethod ) )
+                  ::oXmlCorrective:appendChild( ::createXmlNode( 'CorrectionMethodDescription',::cCorrectiveCorrectionMethodDescription ) )
 
-               ::oXmlInvoiceHeader:addBelow( ::oXmlCorrective )
+               ::oXmlInvoiceHeader:appendChild( ::oXmlCorrective )
 
             end if
 
-         ::oXmlInvoice:addBelow( ::oXmlInvoiceHeader )
-
-         /*
-         Fin de InvoiceHeader--------------------------------------------------
-         */
+         ::oXmlInvoice:appendChild( ::oXmlInvoiceHeader )
 
          /*
          Inicio de IssueData---------------------------------------------------
          */
 
-         if !Empty( ::dIssueDate )
+         if !empty( ::dIssueDate )
 
-            ::oXmlInvoiceIssueData  := TXmlNode():new( , 'InvoiceIssueData' )
+            ::oXmlInvoiceIssueData  := ::createXmlNode( 'InvoiceIssueData' )
 
-               ::oXmlInvoiceIssueData:addBelow( TXmlNode():new( , 'IssueDate', ,      ::IssueDate() ) )
-               ::oXmlInvoiceIssueData:addBelow( TXmlNode():new( , 'OperationDate', ,  ::OperationDate() ) )
+               ::oXmlInvoiceIssueData:appendChild( ::createXmlNode( 'IssueDate', ::IssueDate() ) )
+               ::oXmlInvoiceIssueData:appendChild( ::createXmlNode( 'OperationDate', ::OperationDate() ) )
 
-               ::oXmlPlaceOfIssue  := TXmlNode():new( , 'PlaceOfIssue' )
+               ::oXmlPlaceOfIssue  := ::createXmlNode( 'PlaceOfIssue' )
 
-                  ::oXmlPlaceOfIssue:addBelow( TXmlNode():new( , 'PostCode', ,                 ::PlaceOfIssuePostCode() ) )
-                  ::oXmlPlaceOfIssue:addBelow( TXmlNode():new( , 'PlaceOfIssueDescription', ,  ::PlaceOfIssueDescription() ) )
+                  ::oXmlPlaceOfIssue:appendChild( ::createXmlNode( 'PostCode', ::PlaceOfIssuePostCode() ) )
+                  ::oXmlPlaceOfIssue:appendChild( ::createXmlNode( 'PlaceOfIssueDescription', ::PlaceOfIssueDescription() ) )
 
-               ::oXmlInvoiceIssueData:addBelow( ::oXmlPlaceOfIssue )
+               ::oXmlInvoiceIssueData:appendChild( ::oXmlPlaceOfIssue )
 
-               ::oXmlInvoiceIssueData:addBelow( TXmlNode():new( , 'InvoiceCurrencyCode', ,   ::cInvoiceCurrencyCode ) )
-               ::oXmlInvoiceIssueData:addBelow( TXmlNode():new( , 'TaxCurrencyCode', ,       ::cTaxCurrencyCode ) )
-               ::oXmlInvoiceIssueData:addBelow( TXmlNode():new( , 'LanguageName', ,          ::cLanguageName ) )
+               ::oXmlInvoiceIssueData:appendChild( ::createXmlNode( 'InvoiceCurrencyCode', ::cInvoiceCurrencyCode ) )
+               ::oXmlInvoiceIssueData:appendChild( ::createXmlNode( 'TaxCurrencyCode', ::cTaxCurrencyCode ) )
+               ::oXmlInvoiceIssueData:appendChild( ::createXmlNode( 'LanguageName', ::cLanguageName ) )
 
-            ::oXmlInvoice:addBelow( ::oXmlInvoiceIssueData )
+            ::oXmlInvoice:appendChild( ::oXmlInvoiceIssueData )
 
          end if
 
@@ -799,17 +830,17 @@ METHOD InvoiceXml()
          Comenzamos los Taxes--------------------------------------------------
          */
 
-         ::oXmlTaxesOutputs   := TXmlNode():new( , 'TaxesOutputs' )
+         ::oXmlTaxesOutputs   := ::createXmlNode( 'TaxesOutputs' )
 
             for each oTax in ::aTax
 
                ::TaxesXml( oTax )
 
-               ::oXmlTaxesOutputs:addBelow( ::oXmlTax )
+               ::oXmlTaxesOutputs:appendChild( ::oXmlTax )
 
             next
 
-         ::oXmlInvoice:addBelow( ::oXmlTaxesOutputs )
+         ::oXmlInvoice:appendChild( ::oXmlTaxesOutputs )
 
          /*
          Comenzamos los Totals-------------------------------------------------
@@ -821,19 +852,19 @@ METHOD InvoiceXml()
          Comenzamos las lineas-------------------------------------------------
          */
 
-         if !Empty( ::aItemLine )
+         if !empty( ::aItemLine )
 
-            ::oXmlItems := TXmlNode():new( , 'Items' )
+            ::oXmlItems := ::createXmlNode( 'Items' )
 
                for each oItem in ::aItemLine
 
                   ::ItemsXml( oItem )
 
-                  ::oXmlItems:addBelow( ::oXmlInvoiceLine )
+                  ::oXmlItems:appendChild( ::oXmlInvoiceLine )
 
                next
 
-            ::oXmlInvoice:addBelow( ::oXmlItems )
+            ::oXmlInvoice:appendChild( ::oXmlItems )
 
          end if
 
@@ -841,70 +872,58 @@ METHOD InvoiceXml()
          Comenzamos los pagos--------------------------------------------------
          */
 
-         if !Empty( ::aInstallment )
+         if !empty( ::aInstallment )
 
-            ::oXmlPaymentDetails := TXmlNode():new( , 'PaymentDetails' )
+            ::oXmlPaymentDetails := ::createXmlNode( 'PaymentDetails' )
 
             for each oInstallment in ::aInstallment
 
                ::InstallmentXml( oInstallment )
 
-               ::oXmlPaymentDetails:addBelow( ::oXmlInstallment )
+               ::oXmlPaymentDetails:appendChild( ::oXmlInstallment )
 
             next
 
-            ::oXmlInvoice:addBelow( ::oXmlPaymentDetails )
+            ::oXmlInvoice:appendChild( ::oXmlPaymentDetails )
 
          end if
 
-         /*
-         Fin de los pagos--------------------------------------------------
-         */
+      ::oXmlInvoices:appendChild( ::oXmlInvoice )
 
-      ::oXmlInvoices:addBelow( ::oXmlInvoice )
+   ::oXml:documentElement():appendChild( ::oXmlInvoices )
 
-   ::oXmlNode:addBelow( ::oXmlInvoices )
-
-Return ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD TaxesXml( oTax )
 
    if Empty( oTax )
-      Return ( nil )
+      RETURN ( nil )
    end if
-/*
-   if oTax:nTaxBase == 0
-      Return ( nil )
-   end if
-*/
-   /*
-   Inicio de InvoiceHeader-----------------------------------------------------
-   */
 
-   ::oXmlTax         := TXmlNode():new( , 'Tax' )
+   ::oXmlTax         := ::createXmlNode( 'Tax' )
 
    /*
    Tipo de impuestos--------------------------------------------------------------
    */
 
-   ::oXmlTax:addBelow( TXmlNode():new( , 'TaxTypeCode', ,   oTax:cTaxTypeCode ) )
-   ::oXmlTax:addBelow( TXmlNode():new( , 'TaxRate', ,       oTax:TaxRate() ) )
+   ::oXmlTax:appendChild( ::createXmlNode( 'TaxTypeCode', oTax:cTaxTypeCode ) )
+   ::oXmlTax:appendChild( ::createXmlNode( 'TaxRate', oTax:TaxRate() ) )
 
-   ::oXmlTaxableBase := TXmlNode():new( , 'TaxableBase' )
+   ::oXmlTaxableBase := ::createXmlNode( 'TaxableBase' )
 
-      ::oXmlTaxableBase:addBelow( TXmlNode():new( , 'TotalAmount', ,       oTax:TaxBase() ) )
-      ::oXmlTaxableBase:addBelow( TXmlNode():new( , 'EquivalentInEuros', , EQUIVALENTINEUROS ) )
+      ::oXmlTaxableBase:appendChild( ::createXmlNode( 'TotalAmount', oTax:TaxBase() ) )
+      ::oXmlTaxableBase:appendChild( ::createXmlNode( 'EquivalentInEuros', EQUIVALENTINEUROS ) )
 
-   ::oXmlTax:addBelow( ::oXmlTaxableBase )
+   ::oXmlTax:appendChild( ::oXmlTaxableBase )
 
-   ::oXmlTaxAmount   := TXmlNode():new( , 'TaxAmount' )
+   ::oXmlTaxAmount   := ::createXmlNode( 'TaxAmount' )
 
-      ::oXmlTaxAmount:addBelow( TXmlNode():new( , 'TotalAmount', ,         oTax:TaxAmount() ) )
-      ::oXmlTaxAmount:addBelow( TXmlNode():new( , 'EquivalentInEuros', ,   EQUIVALENTINEUROS ) )
+      ::oXmlTaxAmount:appendChild( ::createXmlNode( 'TotalAmount', oTax:TaxAmount() ) )
+      ::oXmlTaxAmount:appendChild( ::createXmlNode( 'EquivalentInEuros', EQUIVALENTINEUROS ) )
 
-   ::oXmlTax:addBelow( ::oXmlTaxAmount )
+   ::oXmlTax:appendChild( ::oXmlTaxAmount )
 
    /*
    Recargo de equivalencia--------------------------------------------------
@@ -912,18 +931,18 @@ METHOD TaxesXml( oTax )
 
    if oTax:nEquivalenceSurchargeAmount != 0
 
-      ::oXmlTax:addBelow( TXmlNode():new( , 'EquivalenceSurcharge', ,   oTax:EquivalenceSurcharge() ) )
+      ::oXmlTax:appendChild( ::createXmlNode( 'EquivalenceSurcharge', oTax:EquivalenceSurcharge() ) )
 
-      ::oXmlEquivalenceSurcharge := TXmlNode():new( , 'EquivalenceSurchargeAmount' )
+      ::oXmlEquivalenceSurcharge := ::createXmlNode( 'EquivalenceSurchargeAmount' )
 
-         ::oXmlEquivalenceSurcharge:addBelow( TXmlNode():new( , 'TotalAmount', ,         oTax:EquivalenceSurchargeAmount() ) )
-         ::oXmlEquivalenceSurcharge:addBelow( TXmlNode():new( , 'EquivalentInEuros', ,   EQUIVALENTINEUROS ) )
+         ::oXmlEquivalenceSurcharge:appendChild( ::createXmlNode( 'TotalAmount', oTax:EquivalenceSurchargeAmount() ) )
+         ::oXmlEquivalenceSurcharge:appendChild( ::createXmlNode( 'EquivalentInEuros', EQUIVALENTINEUROS ) )
 
-      ::oXmlTax:addBelow( ::oXmlEquivalenceSurcharge )
+      ::oXmlTax:appendChild( ::oXmlEquivalenceSurcharge )
 
    end if
 
-Return ( ::oXmlTax )
+RETURN ( ::oXmlTax )
 
 //---------------------------------------------------------------------------//
 
@@ -931,26 +950,26 @@ METHOD AdministrativeCentresXml( oAdministrativeCentre )
 
    local oXmlCentreDescription
 
-   ::oXmlAdministrativeCentre    := TXmlNode():new( , 'AdministrativeCentre' )
+   ::oXmlAdministrativeCentre    := ::createXmlNode( 'AdministrativeCentre' )
 
-      ::oXmlAdministrativeCentre:addBelow( TXmlNode():new( , 'CentreCode', ,     oAdministrativeCentre:CentreCode() ) )
-      ::oXmlAdministrativeCentre:addBelow( TXmlNode():new( , 'RoleTypeCode', ,   oAdministrativeCentre:RoleTypeCode() ) )
+      ::oXmlAdministrativeCentre:appendChild( ::createXmlNode( 'CentreCode', oAdministrativeCentre:CentreCode() ) )
+      ::oXmlAdministrativeCentre:appendChild( ::createXmlNode( 'RoleTypeCode', oAdministrativeCentre:RoleTypeCode() ) )
 
-      ::oXmlAddressInSpain       := TXmlNode():new( , 'AddressInSpain' )
-         ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Address', ,     oAdministrativeCentre:Address() ) )
-         ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'PostCode', ,    oAdministrativeCentre:PostCode() ) )
-         ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Town', ,        oAdministrativeCentre:Town() ) )
-         ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Province', ,    oAdministrativeCentre:Province() ) )
-         ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'CountryCode', , oAdministrativeCentre:CountryCode() ) )
+      ::oXmlAddressInSpain       := ::createXmlNode( 'AddressInSpain' )
+         ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Address', oAdministrativeCentre:Address() ) )
+         ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'PostCode', oAdministrativeCentre:PostCode() ) )
+         ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Town', oAdministrativeCentre:Town() ) )
+         ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Province', oAdministrativeCentre:Province() ) )
+         ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'CountryCode', oAdministrativeCentre:CountryCode() ) )
 
-      ::oXmlAdministrativeCentre:addBelow( ::oXmlAddressInSpain )
+      ::oXmlAdministrativeCentre:appendChild( ::oXmlAddressInSpain )
 
-      oXmlCentreDescription      := TXmlNode():new( , 'CentreDescription', , oAdministrativeCentre:CentreDescription() )
-      ::oXmlAdministrativeCentre:addBelow( oXmlCentreDescription )
+      oXmlCentreDescription      := ::createXmlNode( 'CentreDescription', oAdministrativeCentre:CentreDescription() )
+      ::oXmlAdministrativeCentre:appendChild( oXmlCentreDescription )
 
-   ::oXmlAdministrativeCentres:addBelow( ::oXmlAdministrativeCentre )
+   ::oXmlAdministrativeCentres:appendChild( ::oXmlAdministrativeCentre )
 
-Return ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -958,29 +977,29 @@ METHOD TotalXml()
 
    local oDiscount
 
-   ::oXmlInvoiceTotals   := TXmlNode():new( , 'InvoiceTotals' )
+   ::oXmlInvoiceTotals   := ::createXmlNode( 'InvoiceTotals' )
 
-      if !Empty( ::TotalGrossAmount() )
-         ::oXmlInvoiceTotals:addBelow( TXmlNode():new( , 'TotalGrossAmount', ,   ::TotalGrossAmount() ) )
+      if !empty( ::TotalGrossAmount() )
+         ::oXmlInvoiceTotals:appendChild( ::createXmlNode( 'TotalGrossAmount',  ::TotalGrossAmount() ) )
       end if
 
       /*
       Descuentos generales-----------------------------------------------------
       */
 
-      if !Empty( ::aDiscount )
+      if !empty( ::aDiscount )
 
-         ::oXmlGeneralDiscounts  := TXmlNode():new( , 'GeneralDiscounts' )
+         ::oXmlGeneralDiscounts  := ::createXmlNode( 'GeneralDiscounts' )
 
             for each oDiscount in ::aDiscount
 
                ::DiscountXml( oDiscount )
 
-               ::oXmlGeneralDiscounts:addBelow( ::oXmlDiscount )
+               ::oXmlGeneralDiscounts:appendChild( ::oXmlDiscount )
 
             next
 
-         ::oXmlInvoiceTotals:addBelow( ::oXmlGeneralDiscounts )
+         ::oXmlInvoiceTotals:appendChild( ::oXmlGeneralDiscounts )
 
       end if
 
@@ -988,61 +1007,61 @@ METHOD TotalXml()
       Fin de descuentos generales----------------------------------------------
       */
 
-      if !Empty( ::TotalGeneralDiscounts() )
-         ::oXmlInvoiceTotals:addBelow( TXmlNode():new( , 'TotalGeneralDiscounts', ,       ::TotalGeneralDiscounts() ) )
+      if !empty( ::TotalGeneralDiscounts() )
+         ::oXmlInvoiceTotals:appendChild( ::createXmlNode( 'TotalGeneralDiscounts',      ::TotalGeneralDiscounts() ) )
       end if
 
-      if !Empty( ::TotalGeneralSurcharges() )
-         ::oXmlInvoiceTotals:addBelow( TXmlNode():new( , 'TotalGeneralSurcharges', ,      ::TotalGeneralSurcharges() ) )
+      if !empty( ::TotalGeneralSurcharges() )
+         ::oXmlInvoiceTotals:appendChild( ::createXmlNode( 'TotalGeneralSurcharges',     ::TotalGeneralSurcharges() ) )
       end if
 
-      if !Empty( ::TotalGrossAmountBeforeTaxes() )
-         ::oXmlInvoiceTotals:addBelow( TXmlNode():new( , 'TotalGrossAmountBeforeTaxes', , ::TotalGrossAmountBeforeTaxes() ) )
+      if !empty( ::TotalGrossAmountBeforeTaxes() )
+         ::oXmlInvoiceTotals:appendChild( ::createXmlNode( 'TotalGrossAmountBeforeTaxes',::TotalGrossAmountBeforeTaxes() ) )
       end if
 
-      if !Empty( ::TotalTaxOutputs() )
-         ::oXmlInvoiceTotals:addBelow( TXmlNode():new( , 'TotalTaxOutputs', ,             ::TotalTaxOutputs() ) )
+      if !empty( ::TotalTaxOutputs() )
+         ::oXmlInvoiceTotals:appendChild( ::createXmlNode( 'TotalTaxOutputs',            ::TotalTaxOutputs() ) )
       end if
 
-      if !Empty( ::TotalTaxesWithheld() )
-         ::oXmlInvoiceTotals:addBelow( TXmlNode():new( , 'TotalTaxesWithheld', ,          ::TotalTaxesWithheld() ) )
+      if !empty( ::TotalTaxesWithheld() )
+         ::oXmlInvoiceTotals:appendChild( ::createXmlNode( 'TotalTaxesWithheld',         ::TotalTaxesWithheld() ) )
       end if
 
-      if !Empty( ::InvoiceTotal() )
-         ::oXmlInvoiceTotals:addBelow( TXmlNode():new( , 'InvoiceTotal', ,                ::InvoiceTotal() ) )
+      if !empty( ::InvoiceTotal() )
+         ::oXmlInvoiceTotals:appendChild( ::createXmlNode( 'InvoiceTotal',               ::InvoiceTotal() ) )
       end if
 
-      if !Empty( ::TotalOutstandingAmount() )
-         ::oXmlInvoiceTotals:addBelow( TXmlNode():new( , 'TotalOutstandingAmount', ,      ::TotalOutstandingAmount() ) )
+      if !empty( ::TotalOutstandingAmount() )
+         ::oXmlInvoiceTotals:appendChild( ::createXmlNode( 'TotalOutstandingAmount',     ::TotalOutstandingAmount() ) )
       end if
 
-      if !Empty( ::TotalExecutableAmount() )
-         ::oXmlInvoiceTotals:addBelow( TXmlNode():new( , 'TotalExecutableAmount', ,       ::TotalExecutableAmount() ) )
+      if !empty( ::TotalExecutableAmount() )
+         ::oXmlInvoiceTotals:appendChild( ::createXmlNode( 'TotalExecutableAmount',      ::TotalExecutableAmount() ) )
       end if
 
-      if !Empty( ::TotalReimbursableExpenses() )
-         ::oXmlInvoiceTotals:addBelow( TXmlNode():new( , 'TotalReimbursableExpenses', ,   ::TotalReimbursableExpenses() ) )
+      if !empty( ::TotalReimbursableExpenses() )
+         ::oXmlInvoiceTotals:appendChild( ::createXmlNode( 'TotalReimbursableExpenses',  ::TotalReimbursableExpenses() ) )
       end if
 
-   ::oXmlInvoice:addBelow( ::oXmlInvoiceTotals )
+   ::oXmlInvoice:appendChild( ::oXmlInvoiceTotals )
 
-Return ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD DiscountXml( oDiscount )
 
-   ::oXmlDiscount   := TXmlNode():new( , 'Discount' )
+   ::oXmlDiscount   := ::createXmlNode( 'Discount' )
 
-      ::oXmlDiscount:addBelow( TXmlNode():new( , 'DiscountReason', , oDiscount:DiscountReason() ) )
+      ::oXmlDiscount:appendChild( ::createXmlNode( 'DiscountReason',oDiscount:DiscountReason() ) )
 
       if ( oDiscount:nDiscountRate != 0 )
-         ::oXmlDiscount:addBelow( TXmlNode():new( , 'DiscountRate', ,   oDiscount:DiscountRate() ) )
+         ::oXmlDiscount:appendChild( ::createXmlNode( 'DiscountRate',  oDiscount:DiscountRate() ) )
       end if
 
-      ::oXmlDiscount:addBelow( TXmlNode():new( , 'DiscountAmount', , oDiscount:DiscountAmount() ) )
+      ::oXmlDiscount:appendChild( ::createXmlNode( 'DiscountAmount',oDiscount:DiscountAmount() ) )
 
-Return ( ::oXmlDiscount )
+RETURN ( ::oXmlDiscount )
 
 //---------------------------------------------------------------------------//
 
@@ -1051,111 +1070,111 @@ METHOD ItemsXml( oItemLine )
    local oTax
    local oDiscount
 
-   ::oXmlInvoiceLine := TXmlNode():new( , 'InvoiceLine' )
+   ::oXmlInvoiceLine := ::createXmlNode( 'InvoiceLine' )
 
-   ::oXmlInvoiceLine:addBelow( TXmlNode():new( , 'ItemDescription', ,      oItemLine:ItemDescription() ) )
-   ::oXmlInvoiceLine:addBelow( TXmlNode():new( , 'Quantity', ,             oItemLine:Quantity() ) )
-   ::oXmlInvoiceLine:addBelow( TXmlNode():new( , 'UnitOfMeasure', ,        oItemLine:UnitOfMeasure() ) )
-   ::oXmlInvoiceLine:addBelow( TXmlNode():new( , 'UnitPriceWithoutTax', ,  oItemLine:UnitPriceWithoutTax() ) )
-   ::oXmlInvoiceLine:addBelow( TXmlNode():new( , 'TotalCost', ,            oItemLine:TotalCost() ) )
+   ::oXmlInvoiceLine:appendChild( ::createXmlNode( 'ItemDescription',     oItemLine:ItemDescription() ) )
+   ::oXmlInvoiceLine:appendChild( ::createXmlNode( 'Quantity',            oItemLine:Quantity() ) )
+   ::oXmlInvoiceLine:appendChild( ::createXmlNode( 'UnitOfMeasure',       oItemLine:UnitOfMeasure() ) )
+   ::oXmlInvoiceLine:appendChild( ::createXmlNode( 'UnitPriceWithoutTax', oItemLine:UnitPriceWithoutTax() ) )
+   ::oXmlInvoiceLine:appendChild( ::createXmlNode( 'TotalCost',           oItemLine:TotalCost() ) )
 
    /*
    Descuentos---------------------------------------------------------------
    */
 
-   if !Empty( oItemLine:aDiscount )
+   if !empty( oItemLine:aDiscount )
 
-      ::oXmlDiscountsAndRebates := TXmlNode():new( , 'DiscountsAndRebates' )
+      ::oXmlDiscountsAndRebates := ::createXmlNode( 'DiscountsAndRebates' )
 
       for each oDiscount in oItemLine:aDiscount
 
          ::DiscountXml( oDiscount )
 
-         ::oXmlDiscountsAndRebates:addBelow( ::oXmlDiscount )
+         ::oXmlDiscountsAndRebates:appendChild( ::oXmlDiscount )
 
       next
 
-      ::oXmlInvoiceLine:addBelow( ::oXmlDiscountsAndRebates )
+      ::oXmlInvoiceLine:appendChild( ::oXmlDiscountsAndRebates )
 
    end if
 
-   ::oXmlInvoiceLine:addBelow( TXmlNode():new( , 'GrossAmount', , oItemLine:GrossAmount() ) )
+   ::oXmlInvoiceLine:appendChild( ::createXmlNode( 'GrossAmount',oItemLine:GrossAmount() ) )
 
    /*
    Comenzamos los Taxes--------------------------------------------------
    */
 
-   if !Empty( oItemLine:aTax )
+   if !empty( oItemLine:aTax )
 
-      ::oXmlTaxesOutputs   := TXmlNode():new( , 'TaxesOutputs' )
+      ::oXmlTaxesOutputs   := ::createXmlNode( 'TaxesOutputs' )
 
       for each oTax in oItemLine:aTax
 
          ::TaxesXml( oTax )
 
-         ::oXmlTaxesOutputs:addBelow( ::oXmlTax )
+         ::oXmlTaxesOutputs:appendChild( ::oXmlTax )
 
       next
 
-      ::oXmlInvoiceLine:addBelow( ::oXmlTaxesOutputs )
+      ::oXmlInvoiceLine:appendChild( ::oXmlTaxesOutputs )
 
    end if
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD InstallmentXml( oInstallment )
 
-   ::oXmlInstallment := TXmlNode():new( , 'Installment' )
+   ::oXmlInstallment := ::createXmlNode( 'Installment' )
 
-   ::oXmlInstallment:addBelow( TXmlNode():new( , 'InstallmentDueDate', ,   oInstallment:InstallmentDueDate() ) )
-   ::oXmlInstallment:addBelow( TXmlNode():new( , 'InstallmentAmount', ,    oInstallment:InstallmentAmount() ) )
-   ::oXmlInstallment:addBelow( TXmlNode():new( , 'PaymentMeans', ,         oInstallment:cPaymentMeans ) )
+   ::oXmlInstallment:appendChild( ::createXmlNode( 'InstallmentDueDate',  oInstallment:InstallmentDueDate() ) )
+   ::oXmlInstallment:appendChild( ::createXmlNode( 'InstallmentAmount',   oInstallment:InstallmentAmount() ) )
+   ::oXmlInstallment:appendChild( ::createXmlNode( 'PaymentMeans',        oInstallment:cPaymentMeans ) )
 
-   if !Empty( oInstallment:oAccountToBeDebited )
+   if !empty( oInstallment:oAccountToBeDebited )
 
-      ::oXmlAccountToBeDebited  := TXmlNode():new( , 'AccountToBeDebited' )
+      ::oXmlAccountToBeDebited  := ::createXmlNode( 'AccountToBeDebited' )
 
-         ::oXmlAccountToBeDebited:addBelow( TXmlNode():new( , 'IBAN', ,       oInstallment:oAccountToBeDebited:IBAN() ) )
-         ::oXmlAccountToBeDebited:addBelow( TXmlNode():new( , 'BankCode', ,   oInstallment:oAccountToBeDebited:BankCode() ) )
-         ::oXmlAccountToBeDebited:addBelow( TXmlNode():new( , 'BranchCode', , oInstallment:oAccountToBeDebited:BranchCode() ) )
+         ::oXmlAccountToBeDebited:appendChild( ::createXmlNode( 'IBAN',      oInstallment:oAccountToBeDebited:IBAN() ) )
+         ::oXmlAccountToBeDebited:appendChild( ::createXmlNode( 'BankCode',  oInstallment:oAccountToBeDebited:BankCode() ) )
+         ::oXmlAccountToBeDebited:appendChild( ::createXmlNode( 'BranchCode',oInstallment:oAccountToBeDebited:BranchCode() ) )
 
-         ::oXmlAddressInSpain  := TXmlNode():new( , 'AddressInSpain' )
-            ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Address', ,     oInstallment:oAccountToBeDebited:Address() ) )
-            ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'PostCode', ,    oInstallment:oAccountToBeDebited:PostCode() ) )
-            ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Town', ,        oInstallment:oAccountToBeDebited:Town() ) )
-            ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Province', ,    oInstallment:oAccountToBeDebited:Province() ) )
-            ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'CountryCode', , oInstallment:oAccountToBeDebited:CountryCode() ) )
+         ::oXmlAddressInSpain  := ::createXmlNode( 'AddressInSpain' )
+            ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Address',    oInstallment:oAccountToBeDebited:Address() ) )
+            ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'PostCode',   oInstallment:oAccountToBeDebited:PostCode() ) )
+            ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Town',       oInstallment:oAccountToBeDebited:Town() ) )
+            ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Province',   oInstallment:oAccountToBeDebited:Province() ) )
+            ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'CountryCode',oInstallment:oAccountToBeDebited:CountryCode() ) )
 
-         ::oXmlAccountToBeDebited:addBelow( ::oXmlAddressInSpain )
+         ::oXmlAccountToBeDebited:appendChild( ::oXmlAddressInSpain )
 
-      ::oXmlInstallment:addBelow( ::oXmlAccountToBeDebited )
-
-   end if
-
-   if !Empty( oInstallment:oAccountToBeCredited )
-
-      ::oXmlAccountToBeCredited  := TXmlNode():new( , 'AccountToBeCredited' )
-
-         ::oXmlAccountToBeCredited:addBelow( TXmlNode():new( , 'IBAN', ,         oInstallment:oAccountToBeCredited:IBAN() ) )
-         ::oXmlAccountToBeCredited:addBelow( TXmlNode():new( , 'BankCode', ,     oInstallment:oAccountToBeCredited:BankCode() ) )
-         ::oXmlAccountToBeCredited:addBelow( TXmlNode():new( , 'BranchCode', ,   oInstallment:oAccountToBeCredited:BranchCode() ) )
-
-         ::oXmlAddressInSpain  := TXmlNode():new( , 'BranchInSpainAddress' )
-            ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Address', ,        oInstallment:oAccountToBeCredited:Address() ) )
-            ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'PostCode', ,       oInstallment:oAccountToBeCredited:PostCode() ) )
-            ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Town', ,           oInstallment:oAccountToBeCredited:Town() ) )
-            ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Province', ,       oInstallment:oAccountToBeCredited:Province() ) )
-            ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'CountryCode', ,    oInstallment:oAccountToBeCredited:CountryCode() ) )
-
-         ::oXmlAccountToBeCredited:addBelow( ::oXmlAddressInSpain )
-
-      ::oXmlInstallment:addBelow( ::oXmlAccountToBeCredited )
+      ::oXmlInstallment:appendChild( ::oXmlAccountToBeDebited )
 
    end if
 
-Return ( self )
+   if !empty( oInstallment:oAccountToBeCredited )
+
+      ::oXmlAccountToBeCredited  := ::createXmlNode( 'AccountToBeCredited' )
+
+         ::oXmlAccountToBeCredited:appendChild( ::createXmlNode( 'IBAN',        oInstallment:oAccountToBeCredited:IBAN() ) )
+         ::oXmlAccountToBeCredited:appendChild( ::createXmlNode( 'BankCode',    oInstallment:oAccountToBeCredited:BankCode() ) )
+         ::oXmlAccountToBeCredited:appendChild( ::createXmlNode( 'BranchCode',  oInstallment:oAccountToBeCredited:BranchCode() ) )
+
+         ::oXmlAddressInSpain  := ::createXmlNode( 'BranchInSpainAddress' )
+            ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Address',       oInstallment:oAccountToBeCredited:Address() ) )
+            ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'PostCode',      oInstallment:oAccountToBeCredited:PostCode() ) )
+            ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Town',          oInstallment:oAccountToBeCredited:Town() ) )
+            ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Province',      oInstallment:oAccountToBeCredited:Province() ) )
+            ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'CountryCode',   oInstallment:oAccountToBeCredited:CountryCode() ) )
+
+         ::oXmlAccountToBeCredited:appendChild( ::oXmlAddressInSpain )
+
+      ::oXmlInstallment:appendChild( ::oXmlAccountToBeCredited )
+
+   end if
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -1169,7 +1188,7 @@ METHOD Firma()
 
    if !File( FullCurDir() + "\aeatfact.dll")
       ::oTree:Add( "No existe el componente AeatFact.Dll" )
-      Return ( Self )
+      RETURN ( Self )
    end if
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -1187,7 +1206,7 @@ METHOD Firma()
 
    ErrorBlock( oBlock )
 
-   if !Empty( ::oFirma )
+   if !empty( ::oFirma )
 
       xRet        := ::oFirma:FIRMA( ::cFicheroOrigen, ::cNif, ::cFicheroDestino )
       xRet        := ::oFirma:VERIFICA( ::cFicheroOrigen, ::cFicheroDestino )
@@ -1214,7 +1233,7 @@ METHOD Firma()
 
    end if
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -1226,7 +1245,7 @@ METHOD VerificaFirma()
 
    if !File( FullCurDir() + "\aeatfact.dll")
       ::oTree:Add( "No existe el componente AeatFact.Dll" )
-      Return ( Self )
+      RETURN ( Self )
    end if
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -1244,7 +1263,7 @@ METHOD VerificaFirma()
 
    ErrorBlock( oBlock )
 
-   if !Empty( ::oFirma )
+   if !empty( ::oFirma )
 
       xRet        := ::oFirma:VERIFICA( ::cFicheroOrigen, ::cFicheroDestino )
 
@@ -1252,7 +1271,7 @@ METHOD VerificaFirma()
 
    end if
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -1277,7 +1296,7 @@ METHOD FirmaJava()
 
    ErrorBlock( oBlock )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -1302,7 +1321,7 @@ METHOD ShowInWeb()
 
    ACTIVATE DIALOG oDlg CENTERED
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -1316,6 +1335,6 @@ METHOD startInWeb( oActiveX, oDlg )
 
    sysRefresh()
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
