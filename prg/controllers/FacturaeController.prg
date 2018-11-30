@@ -6,14 +6,14 @@
 
 #include "Factu.ch" 
 
-#define SchemaVersion            '3.2'
-#define Modality                 'I'   // "individual" (I)
-#define InvoiceIssuerType        'EM'
-#define InvoicesCount            '1'
-#define EquivalentInEuros        '0.00'
-#define InvoiceDocumentType      'FC'
-#define InvoiceClass             'OO'
-#define TaxTypeCode              '01'
+#define SCHEMAVERSION            '3.2'
+#define MODALITY                 'I'   // "individual" (I)
+#define INVOICEISSUERTYPE        'EM'
+#define INVOICESCOUNT            '1'
+#define EQUIVALENTINEUROS        '0.00'
+#define INVOICEDOCUMENTTYPE      'FC'
+#define INVOICECLASS             'OO'
+#define TAXTYPECODE              '01'
 
 #define DoubleTwoDecimalPicture  "999999999.99"
 #define DoubleFourDecimalPicture "999999999.9999"
@@ -161,16 +161,21 @@ CLASS FacturaeController
 
    METHOD New() CONSTRUCTOR
 
-   METHOD GeneraXml()
-   METHOD HeaderXml()
-   METHOD PartiesXml()
-   METHOD InvoiceXml()
-   METHOD TaxesXml()
-   METHOD TotalXml()
-   METHOD DiscountXml()
-   METHOD ItemsXml()
-   METHOD InstallmentXml()
-   METHOD AdministrativeCentresXml( oAdministrativeCentre )
+   METHOD Run()
+
+   METHOD CreateDocument()
+   METHOD DestroyDocument()            INLINE ( ::oXml   := nil )
+
+   METHOD GenerateXml()
+      METHOD HeaderXml()
+      METHOD PartiesXml()
+      METHOD InvoiceXml()
+      METHOD TaxesXml()
+      METHOD TotalXml()
+      METHOD DiscountXml()
+      METHOD ItemsXml()
+      METHOD InstallmentXml()
+      METHOD AdministrativeCentresXml( oAdministrativeCentre )
 
    METHOD ShowInWeb()
       METHOD startInWeb( oActiveX, oDlg )
@@ -205,10 +210,46 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GeneraXml()
+METHOD CreateDocument()
 
    local oError
-   local oBlock
+
+   TRY
+      ::oXml      := CreateObject( "MSXML2.DOMDocument.6.0" )   
+   CATCH
+      TRY
+         ::oXml   := CreateObject( "MSXML2.DOMDocument" )
+      CATCH oError
+         msgstop( oError:SubSystem + ";" + padl( oError:SubCode, 4 ) + ";" + oError:Operation + ";" + oError:Description, "Error en la creacion de objeto" )  
+      END
+   END
+
+RETURN ( hb_isobject( ::oXml ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD Run()
+
+   if !::CreateDocument()
+      RETURN ( nil )
+   end if 
+
+   ::oXml:loadXML( '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' 
+   // '<fe:Facturae xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:fe="http://www.facturae.es/Facturae/2009/v3.2/Facturae">'
+
+   ::oXml:appendChild( ::oXml:createElement( "Familia" ) )
+
+   ::oXml:Save( "c:\temp\andrew.xml" )
+
+   // ::GenerateXml()
+
+   ::DestroyDocument()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD GenerateXml()
 
    ::oXml         := TXmlDocument():new( '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' )
 
@@ -228,41 +269,6 @@ METHOD GeneraXml()
 
    ::oXml:oRoot:addBelow( ::oXmlNode )
 
-   /*
-   Generar fisicamente el fichero----------------------------------------------
-   */
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      ferase( ::cFicheroOrigen )
-
-      ::hDC       := fCreate( ::cFicheroOrigen )
-
-      if ::hDC < 0
-         ::hDC    := 0
-      endif
-
-      ::oXml:Write( ::hDC, HBXML_STYLE_INDENT )
-
-      fClose( ::hDC )
-
-      ::hDC       := 0
-
-      ::oTree:Add( "Fichero generado " + Lower( ::cFicheroOrigen ) + " satisfactoriamente.", 1 )
-
-   RECOVER USING oError
-
-      ::lError    := .t.
-
-      ::oTree:Add( "Error el generar el fichero " + Lower( ::cFicheroOrigen ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   // GoWeb( AllTrim( ::cFicheroOrigen ) )
-
 Return ( Self )
 
 //---------------------------------------------------------------------------//
@@ -274,9 +280,9 @@ METHOD HeaderXml()
    */
 
    ::oXmlHeader   := TXmlNode():new( , 'FileHeader' )
-      ::oXmlHeader:addBelow( TXmlNode():new( , 'SchemaVersion', ,       SchemaVersion ) )
-      ::oXmlHeader:addBelow( TXmlNode():new( , 'Modality', ,            Modality ) )
-      ::oXmlHeader:addBelow( TXmlNode():new( , 'InvoiceIssuerType', ,   InvoiceIssuerType ) )
+      ::oXmlHeader:addBelow( TXmlNode():new( , 'SchemaVersion', ,       SCHEMAVERSION ) )
+      ::oXmlHeader:addBelow( TXmlNode():new( , 'Modality', ,            MODALITY ) )
+      ::oXmlHeader:addBelow( TXmlNode():new( , 'InvoiceIssuerType', ,   INVOICEISSUERTYPE ) )
 
       /*
       Comienza el nodo batch------------------------------------------------
@@ -284,7 +290,7 @@ METHOD HeaderXml()
 
       ::oXmlBatch    := TXmlNode():new( , 'Batch' )
          ::oXmlBatch:addBelow( TXmlNode():new( , 'BatchIdentifier', ,   ::cInvoiceNumber ) )
-         ::oXmlBatch:addBelow( TXmlNode():new( , 'InvoicesCount', ,     InvoicesCount  ) )
+         ::oXmlBatch:addBelow( TXmlNode():new( , 'InvoicesCount', ,     INVOICESCOUNT  ) )
 
          /*
          Comienza el nodo TotalInvoicesAmount-------------------------------
@@ -292,7 +298,7 @@ METHOD HeaderXml()
 
          ::oXmlTotalInvoicesAmount  := TXmlNode():new( , 'TotalInvoicesAmount' )
             ::oXmlTotalInvoicesAmount:addBelow( TXmlNode():new( , 'TotalAmount', ,        ::InvoiceTotalAmount() ) )
-            ::oXmlTotalInvoicesAmount:addBelow( TXmlNode():new( , 'EquivalentInEuros', ,  EquivalentInEuros ) )
+            ::oXmlTotalInvoicesAmount:addBelow( TXmlNode():new( , 'EquivalentInEuros', ,  EQUIVALENTINEUROS ) )
 
          ::oXmlBatch:addBelow( ::oXmlTotalInvoicesAmount )
 
@@ -302,7 +308,7 @@ METHOD HeaderXml()
 
          ::oXmlTotalOutstandingAmount  := TXmlNode():new( , 'TotalOutstandingAmount' )
             ::oXmlTotalOutstandingAmount:addBelow( TXmlNode():new( , 'TotalAmount', ,        ::TotalOutstandingAmount() ) )
-            ::oXmlTotalOutstandingAmount:addBelow( TXmlNode():new( , 'EquivalentInEuros', ,  EquivalentInEuros ) )
+            ::oXmlTotalOutstandingAmount:addBelow( TXmlNode():new( , 'EquivalentInEuros', ,  EQUIVALENTINEUROS ) )
 
          ::oXmlBatch:addBelow( ::oXmlTotalOutstandingAmount )
 
@@ -312,7 +318,7 @@ METHOD HeaderXml()
 
          ::oXmlTotalExecutableAmount  := TXmlNode():new( , 'TotalExecutableAmount' )
             ::oXmlTotalExecutableAmount:addBelow( TXmlNode():new( , 'TotalAmount', ,         ::TotalExecutableAmount() ) )
-            ::oXmlTotalExecutableAmount:addBelow( TXmlNode():new( , 'EquivalentInEuros', ,   EquivalentInEuros ) )
+            ::oXmlTotalExecutableAmount:addBelow( TXmlNode():new( , 'EquivalentInEuros', ,   EQUIVALENTINEUROS ) )
 
          ::oXmlBatch:addBelow( ::oXmlTotalExecutableAmount )
 
@@ -707,8 +713,8 @@ METHOD InvoiceXml()
          ::oXmlInvoiceHeader  := TXmlNode():new( , 'InvoiceHeader' )
             ::oXmlInvoiceHeader:addBelow( TXmlNode():new( , 'InvoiceNumber', ,         ::cInvoiceNumber ) )
             ::oXmlInvoiceHeader:addBelow( TXmlNode():new( , 'InvoiceSeriesCode', ,     ::cInvoiceSeriesCode ) )
-            ::oXmlInvoiceHeader:addBelow( TXmlNode():new( , 'InvoiceDocumentType', ,   InvoiceDocumentType ) )
-            ::oXmlInvoiceHeader:addBelow( TXmlNode():new( , 'InvoiceClass', ,          InvoiceClass ) )
+            ::oXmlInvoiceHeader:addBelow( TXmlNode():new( , 'InvoiceDocumentType', ,   INVOICEDOCUMENTTYPE ) )
+            ::oXmlInvoiceHeader:addBelow( TXmlNode():new( , 'InvoiceClass', ,          INVOICECLASS ) )
 
             /*
             Inicio de factura rectificativa rellenar solo si es el caso--------
@@ -866,14 +872,14 @@ METHOD TaxesXml( oTax )
    ::oXmlTaxableBase := TXmlNode():new( , 'TaxableBase' )
 
       ::oXmlTaxableBase:addBelow( TXmlNode():new( , 'TotalAmount', ,       oTax:TaxBase() ) )
-      ::oXmlTaxableBase:addBelow( TXmlNode():new( , 'EquivalentInEuros', , EquivalentInEuros ) )
+      ::oXmlTaxableBase:addBelow( TXmlNode():new( , 'EquivalentInEuros', , EQUIVALENTINEUROS ) )
 
    ::oXmlTax:addBelow( ::oXmlTaxableBase )
 
    ::oXmlTaxAmount   := TXmlNode():new( , 'TaxAmount' )
 
       ::oXmlTaxAmount:addBelow( TXmlNode():new( , 'TotalAmount', ,         oTax:TaxAmount() ) )
-      ::oXmlTaxAmount:addBelow( TXmlNode():new( , 'EquivalentInEuros', ,   EquivalentInEuros ) )
+      ::oXmlTaxAmount:addBelow( TXmlNode():new( , 'EquivalentInEuros', ,   EQUIVALENTINEUROS ) )
 
    ::oXmlTax:addBelow( ::oXmlTaxAmount )
 
@@ -888,7 +894,7 @@ METHOD TaxesXml( oTax )
       ::oXmlEquivalenceSurcharge := TXmlNode():new( , 'EquivalenceSurchargeAmount' )
 
          ::oXmlEquivalenceSurcharge:addBelow( TXmlNode():new( , 'TotalAmount', ,         oTax:EquivalenceSurchargeAmount() ) )
-         ::oXmlEquivalenceSurcharge:addBelow( TXmlNode():new( , 'EquivalentInEuros', ,   EquivalentInEuros ) )
+         ::oXmlEquivalenceSurcharge:addBelow( TXmlNode():new( , 'EquivalentInEuros', ,   EQUIVALENTINEUROS ) )
 
       ::oXmlTax:addBelow( ::oXmlEquivalenceSurcharge )
 
@@ -1254,35 +1260,7 @@ Return ( self )
 
 METHOD Enviar()
 
-   local oError
-   local oBlock
-   local lSendMail               := .f.
-
-   if Empty( ::cMailServer ) .or. Empty( ::cMailServerUserName ) .or. Empty( ::cMailServerPassword )
-      ::oTree:Add( "Debe cumplimentar los datos de servidor de correo electrónico en la configuración de empresa." )
-      Return ( lSendMail )
-   end if
-
-   if !File( ::cFicheroDestino )
-      ::oTree:Add( "No existe fichero firmado " + Lower( ::cFicheroDestino ) + " en formato Facturae." )
-      Return ( lSendMail )
-   end if
-
-   with object ( TGenMailing():New() )
-
-      :SetAdjunto(      ::cFicheroDestino )
-      :SetPara(         "mcalero@gestool.es" )
-      :SetAsunto(       "Envío de  factura de cliente" )
-      :SetMensaje(      "Adjunto le remito nuestra factura de cliente" )
-      :SetMensaje(      CRLF )
-      :SetMensaje(      CRLF )
-      :SetMensaje(      "Reciba un cordial saludo." )
-
-      :lExternalSend()
-
-   end with
-
-Return ( lSendMail )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -1316,260 +1294,6 @@ METHOD startInWeb( oActiveX, oDlg )
    sysRefresh()
 
 Return ( self )
-
-//---------------------------------------------------------------------------//
-// Estructuras y clases auxiliares-------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS Party FROM Address
-
-   DATA     cTaxIdentificationNumber      INIT ''
-   DATA     cCorporateName                INIT ''
-   DATA     cTradeName                    INIT ''
-   DATA     cRegistrationData             INIT ''
-   DATA     nBook                         INIT ''
-   DATA     cRegisterOfCompaniesLocation  INIT ''
-   DATA     nSheet                        INIT '-'
-   DATA     nFolio                        INIT ''
-   DATA     cSection                      INIT ''
-   DATA     nVolume                       INIT ''
-   DATA     cAditionalRegistrationData    INIT ''
-   DATA     cTelephone                    INIT ''
-   DATA     cTelFax                       INIT ''
-   DATA     cWebAddress                   INIT ''
-   DATA     cElectronicMail               INIT ''
-   DATA     cPersonTypeCode               INIT 'F'
-   DATA     cResidenceTypeCode            INIT 'R'
-
-   DATA     cName                         INIT ''
-   DATA     cFirstSurname                 INIT ''
-   DATA     cSecondSurname                INIT ''
-
-   ACCESS   TaxIdentificationNumber       INLINE ( hb_StrToUTF8( Rtrim( Left( ::cTaxIdentificationNumber, 30 ) ) ) )
-
-   ACCESS   AditionalRegistrationData     INLINE ( hb_StrToUTF8( Rtrim( ::cAditionalRegistrationData ) ) )
-   ACCESS   Telephone                     INLINE ( hb_StrToUTF8( Rtrim( ::cTelephone ) ) )
-   ACCESS   TelFax                        INLINE ( hb_StrToUTF8( Rtrim( ::cTelFax ) ) )
-   ACCESS   WebAddress                    INLINE ( hb_StrToUTF8( Rtrim( ::cWebAddress ) ) )
-   ACCESS   ElectronicMail                INLINE ( hb_StrToUTF8( Rtrim( ::cElectronicMail ) ) )
-   ACCESS   PersonTypeCode                INLINE ( hb_StrToUTF8( Rtrim( ::cPersonTypeCode ) ) )
-   ACCESS   ResidenceTypeCode             INLINE ( hb_StrToUTF8( Rtrim( ::cResidenceTypeCode ) ) )
-
-   ACCESS   CorporateName                 INLINE ( hb_StrToUTF8( Rtrim( Left( ::cCorporateName, 80 ) ) ) )
-   ACCESS   TradeName                     INLINE ( hb_StrToUTF8( Rtrim( Left( ::cTradeName, 40 ) ) ) )
-
-   ACCESS   Name                          INLINE ( hb_StrToUTF8( Rtrim( Left( ::cName, 40 ) ) ) )
-   ACCESS   FirstSurname                  INLINE ( hb_StrToUTF8( Rtrim( Left( ::cFirstSurname, 40 ) ) ) )
-   ACCESS   SecondSurname                 INLINE ( hb_StrToUTF8( Rtrim( Left( ::cSecondSurname, 40 ) ) ) )
-
-ENDCLASS
-
-//---------------------------------------------------------------------------//
-
-CLASS Tax
-
-   DATA     cTaxTypeCode                  INIT '01'
-   DATA     nTaxRate                      INIT 0.00
-   DATA     nTaxBase                      INIT 0.00
-   DATA     nTaxAmount                    INIT 0.00
-   DATA     nEquivalenceSurcharge         INIT 0.00
-   DATA     nEquivalenceSurchargeAmount   INIT 0.00
-
-   ACCESS   TaxRate                       INLINE ( Alltrim( Trans( ::nTaxRate,                     DoubleTwoDecimalPicture ) ) )
-   ACCESS   TaxBase                       INLINE ( Alltrim( Trans( ::nTaxBase,                     DoubleTwoDecimalPicture ) ) )
-   ACCESS   TaxAmount                     INLINE ( Alltrim( Trans( ::nTaxAmount,                   DoubleTwoDecimalPicture ) ) )
-   ACCESS   EquivalenceSurcharge          INLINE ( Alltrim( Trans( ::nEquivalenceSurcharge,        DoubleTwoDecimalPicture ) ) )
-   ACCESS   EquivalenceSurchargeAmount    INLINE ( Alltrim( Trans( ::nEquivalenceSurchargeAmount,  DoubleTwoDecimalPicture ) ) )
-
-ENDCLASS
-
-//---------------------------------------------------------------------------//
-
-CLASS Discount
-
-   DATA     cDiscountReason               INIT '-'
-   DATA     nDiscountRate                 INIT 0.00
-   DATA     nDiscountAmount               INIT 0.000000
-
-   ACCESS   DiscountReason                INLINE ( ::cDiscountReason )
-   ACCESS   DiscountRate                  INLINE ( Alltrim( Trans( ::nDiscountRate,    DoubleFourDecimalPicture ) ) )
-   ACCESS   DiscountAmount                INLINE ( Alltrim( Trans( ::nDiscountAmount,  DoubleSixDecimalPicture  ) ) )
-
-ENDCLASS
-
-//---------------------------------------------------------------------------//
-
-CLASS ItemLine
-
-   DATA     oFacturaElectronica
-
-   DATA     cItemDescription              INIT ''
-   DATA     nQuantity                     INIT 0.00
-   DATA     cUnitOfMeasure                INIT '01'
-   DATA     nUnitPriceWithTax             INIT 0.000000
-   DATA     nUnitPriceWithoutTax          INIT 0.000000
-   DATA     nTotalCost                    INIT 0.00
-   DATA     nIva                          INIT 0
-   DATA     lIvaInc                       INIT .f.
-   DATA     aDiscount                     INIT {}
-   DATA     nGrossAmount                  INIT 0.00
-   DATA     aTax                          INIT {}
-
-   ACCESS   ItemDescription               INLINE ( hb_StrToUTF8( rtrim( ::cItemDescription ) ) )
-   ACCESS   UnitOfMeasure                 INLINE ( ::cUnitOfMeasure )
-   ACCESS   Quantity                      INLINE ( Alltrim( Trans( ::nQuantity,                                      DoubleTwoDecimalPicture ) ) )
-   ACCESS   UnitPriceWithoutTax           INLINE ( Alltrim( Trans( ::nUnitPriceWithoutTax,                           DoubleSixDecimalPicture ) ) )
-   //ACCESS   TotalCost                     INLINE ( Alltrim( Trans( Round( ::nQuantity * Round( ::nUnitPriceWithoutTax, 2 ), 2 ), DoubleSixDecimalPicture ) ) )
-
-   //------------------------------------------------------------------------//
-
-   METHOD New( oFacturaElectronica )      CONSTRUCTOR
-
-   METHOD addDiscount( oDiscount )
-   METHOD GrossAmount()
-
-   METHOD TotalCost()
-
-   METHOD addTax( oTax )                  INLINE aAdd( ::aTax, oTax )
-
-ENDCLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD New( oFacturaElectronica ) CLASS ItemLine
-
-   ::oFacturaElectronica               := oFacturaElectronica 
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD addDiscount( oDiscount ) CLASS ItemLine
-
-   if Empty( ::nTotalCost )
-      ::nTotalCost                     := ::nQuantity * ::nUnitPriceWithoutTax
-   end if
-
-   if oDiscount:nDiscountRate != 0
-      oDiscount:nDiscountAmount       := Round( ::nTotalCost * oDiscount:nDiscountRate / 100, nRouDiv() )
-   end if
-
-   aAdd( ::aDiscount, oDiscount )
-
-RETURN ( oDiscount )
-
-//------------------------------------------------------------------------//
-
-METHOD GrossAmount() CLASS ItemLine
-
-   local oDiscount
-
-   ::nGrossAmount       := ::nQuantity * ::nUnitPriceWithTax
-
-   for each oDiscount in ::aDiscount
-      ::nGrossAmount    -= oDiscount:nDiscountAmount
-   next
-
-   ::nGrossAmount       := Round( ::nGrossAmount, 6 )
-
-   if ::lIvaInc
-
-      ::nGrossAmount    := ::nGrossAmount / ( 1 + ( ::nIva / 100 ) )
-      ::nGrossAmount    := Round( ::nGrossAmount, 6 )
-
-   end if 
-
-RETURN ( Alltrim( Trans( ::nGrossAmount, DoubleSixDecimalPicture ) ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD TotalCost() CLASS ItemLine
-
-   local oDiscount
-   local nTotal         := 0
-
-   nTotal       := ::nQuantity * ::nUnitPriceWithTax
-
-   for each oDiscount in ::aDiscount
-      nTotal    -= oDiscount:nDiscountAmount
-   next
-
-   nTotal       := Round( nTotal, 6 )
-
-   if ::lIvaInc
-
-      nTotal    := nTotal / ( 1 + ( ::nIva / 100 ) )
-      nTotal    := Round( nTotal, 6 )
-
-   end if 
-
-RETURN ( Alltrim( Trans( nTotal, DoubleSixDecimalPicture ) ) )
-
-//---------------------------------------------------------------------------//
-//ACCESS   TotalCost                     INLINE ( Alltrim( Trans( Round( ::nQuantity * Round( ::nUnitPriceWithoutTax, 2 ), 2 ), DoubleSixDecimalPicture ) ) )
-
-CLASS Installment
-
-   DATA     dInstallmentDueDate
-   DATA     nInstallmentAmount      INIT 0.00
-   DATA     cPaymentMeans           INIT '02'
-
-   DATA     oAccountToBeCredited
-   DATA     oAccountToBeDebited
-
-   ACCESS   InstallmentDueDate      INLINE ( dtoiso( ::dInstallmentDueDate ) )
-   ACCESS   InstallmentAmount       INLINE ( alltrim( Trans( ::nInstallmentAmount,  DoubleTwoDecimalPicture ) ) )
-
-ENDCLASS
-
-//---------------------------------------------------------------------------//
-
-CLASS Address
-
-   DATA     cAddress                INIT ''
-   DATA     cPostCode               INIT ''
-   DATA     cTown                   INIT ''
-   DATA     cProvince               INIT ''
-   DATA     cCountryCode            INIT 'ESP'
-
-   ACCESS   Address                 INLINE ( hb_StrToUTF8( alltrim( left( ::cAddress, 80 ) ) ) )
-   ACCESS   PostCode                INLINE ( hb_StrToUTF8( alltrim( left( ::cPostCode, 9 ) ) ) )
-   ACCESS   Town                    INLINE ( hb_StrToUTF8( alltrim( left( ::cTown, 50 ) ) ) )
-   ACCESS   Province                INLINE ( hb_StrToUTF8( alltrim( left( ::cProvince, 20 ) ) ) )
-   ACCESS   CountryCode             INLINE ( hb_StrToUTF8( alltrim( left( ::cCountryCode, 3 ) ) ) )
-
-ENDCLASS
-
-//---------------------------------------------------------------------------//
-
-CLASS Account FROM Address
-
-   DATA     cIBAN                   INIT ''
-   DATA     cBankCode               INIT ''
-   DATA     cBranchCode             INIT ''
-
-   ACCESS   IBAN                    INLINE ( alltrim( Left( ::cIBAN, 30 ) ) )
-   ACCESS   BankCode                INLINE ( alltrim( Left( ::cBankCode, 60 ) ) )
-   ACCESS   BranchCode              INLINE ( alltrim( Left( ::cBranchCode, 60 ) ) )
-
-ENDCLASS
-
-//---------------------------------------------------------------------------//
-
-CLASS AdministrativeCentres FROM Address
-
-   DATA     cCentreCode             INIT ''
-   DATA     cRoleTypeCode           INIT ''
-   DATA     cCentreDescription      INIT ''
-
-   ACCESS   CentreCode              INLINE ( hb_StrToUTF8( alltrim( ::cCentreCode   ) ) )
-   ACCESS   RoleTypeCode            INLINE ( hb_StrToUTF8( alltrim( ::cRoleTypeCode ) ) )
-   ACCESS   CentreDescription       INLINE ( hb_StrToUTF8( alltrim( ::cCentreDescription ) ) )
-
-ENDCLASS
 
 //---------------------------------------------------------------------------//
 

@@ -128,6 +128,10 @@ RETURN ( nil )
 
 FUNCTION appTest()
 
+   FacturaeController():New():Run()
+
+   // msgInfo( hb_valtoexp( SELCERT() ), "CryptoApi" )
+
 /*
    local oRootElement
    local oMemberElement
@@ -228,3 +232,98 @@ FUNCTION destroyIconApp()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+#pragma BEGINDUMP
+
+#include <windows.h>
+
+#define CRYPTUI_SELECT_LOCATION_COLUMN 0x000000010
+
+//Definir el prototipo de las funciones:
+typedef HCERTSTORE (WINAPI * PTYPECERTOPEN) (HCRYPTPROV, LPTSTR);
+typedef PCCERT_CONTEXT (WINAPI * PTYPECERTSELECTDLG) (HCERTSTORE, HWND, LPCWSTR, LPCWSTR, DWORD, DWORD, void*);
+typedef PCCERT_CONTEXT (WINAPI * PTYPECERTENUM) (HCERTSTORE, PCCERT_CONTEXT);
+typedef DWORD (WINAPI * PTYPECERTGETNAME) (PCCERT_CONTEXT, DWORD, DWORD, VOID*, LPTSTR, DWORD);
+typedef DWORD (WINAPI * PTYPECERTNAMETOSTR) (DWORD, PCERT_NAME_BLOB, DWORD, LPTSTR, DWORD);
+typedef BOOL (WINAPI * PTYPECERTFREECC) (PCCERT_CONTEXT);
+typedef BOOL (WINAPI * PTYPECERTCLOSESTORE) (HCERTSTORE, DWORD);
+
+HB_FUNC(SELCERT)
+{
+
+   // Hay varios ejemplos en: https://msdn.microsoft.com/en-us/librar ... 61(v=vs.85).aspx
+
+   HCERTSTORE hStore;
+   PCCERT_CONTEXT PrevContext, CurContext;
+   PCHAR sNombre;
+   DWORD cbSize;
+   PHB_ITEM pArray;
+   PHB_ITEM pItem;
+   PCCERT_CONTEXT   pCertContext;
+   // Cargamos las librerías de las que queremos la dirección de las funciones.
+   HMODULE HCrypt = LoadLibrary("Crypt32.dll");
+   HMODULE HCrypt2 = LoadLibrary("Cryptui.dll");
+
+   // Declaramos el tipo de puntero a la función, tenemos la definición arriba.
+   PTYPECERTOPEN    pCertOpen;
+   PTYPECERTSELECTDLG    pCertSelectDlg;
+   PTYPECERTGETNAME pCertGetName;
+   PTYPECERTNAMETOSTR pCertNameToStr;
+   PTYPECERTFREECC pCertFreeCC;
+   PTYPECERTCLOSESTORE pCertCloseStore;
+
+
+   if (HCrypt != NULL && HCrypt2 != NULL){
+      //Sacamos el puntero todas las funciones que vamos a usar mediante GetProcAddress:
+      #ifdef UNICODE
+         pCertOpen    = (PTYPECERTOPEN) GetProcAddress(HCrypt, "CertOpenSystemStoreW");
+         pCertGetName = (PTYPECERTGETNAME) GetProcAddress(HCrypt, "CertGetNameStringW");
+      #else
+         pCertOpen    = (PTYPECERTOPEN) GetProcAddress(HCrypt, "CertOpenSystemStoreA");
+         pCertGetName = (PTYPECERTGETNAME) GetProcAddress(HCrypt, "CertGetNameStringA");
+      #endif
+      pCertSelectDlg = (PTYPECERTSELECTDLG) GetProcAddress(HCrypt2, "CryptUIDlgSelectCertificateFromStore");
+      pCertFreeCC  = (PTYPECERTFREECC) GetProcAddress(HCrypt, "CertFreeCertificateContext");
+      pCertCloseStore  = (PTYPECERTCLOSESTORE) GetProcAddress(HCrypt, "CertCloseStore");
+   }
+
+   if (pCertOpen){
+      // Llamada a CertOpenSystemStore:
+      hStore = pCertOpen(NULL, TEXT("MY"));
+   }
+
+   if (hStore){
+      // Diálogo de selección de certificado:
+      pCertContext = pCertSelectDlg(hStore, NULL, NULL, NULL, CRYPTUI_SELECT_LOCATION_COLUMN, 0, NULL);
+
+      if (pCertContext){
+         cbSize = pCertGetName(pCertContext, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, NULL, NULL, 0);
+         if (cbSize>0) {
+            //Reservamos la memoria que necesitamos para el texto que recibiremos
+            sNombre = (LPTSTR)malloc(cbSize * sizeof(TCHAR));
+
+            pCertGetName(pCertContext, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, NULL, sNombre, cbSize);
+
+            // Llamada a CertFreeCertificateContext:
+            pCertFreeCC(pCertContext);
+         }
+      }
+
+      // Cerrar el almacen de certificados:
+      // Llamada a CertCloseStore:
+      pCertCloseStore(hStore, 0);
+    }
+
+    FreeLibrary(HCrypt);
+    FreeLibrary(HCrypt2);
+
+    hb_retc(sNombre);
+
+}
+
+#pragma ENDDUMP
+

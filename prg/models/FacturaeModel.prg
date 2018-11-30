@@ -178,8 +178,6 @@ CLASS FacturaeModel
 
    METHOD FirmaJava()
 
-   METHOD Enviar()
-
    METHOD addItemLine( oItemLine )        INLINE ( aAdd( ::aItemLine, oItemLine ) )
    METHOD addInstallment( oInstallment )  INLINE ( aAdd( ::aInstallment, oInstallment ) )
    METHOD addAdministrativeCentres( aAdministrativeCentres ) ;
@@ -1280,40 +1278,6 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Enviar()
-
-   local oError
-   local oBlock
-   local lSendMail               := .f.
-
-   if Empty( ::cMailServer ) .or. Empty( ::cMailServerUserName ) .or. Empty( ::cMailServerPassword )
-      ::oTree:Add( "Debe cumplimentar los datos de servidor de correo electrónico en la configuración de empresa." )
-      Return ( lSendMail )
-   end if
-
-   if !File( ::cFicheroDestino )
-      ::oTree:Add( "No existe fichero firmado " + Lower( ::cFicheroDestino ) + " en formato Facturae." )
-      Return ( lSendMail )
-   end if
-
-   with object ( TGenMailing():New() )
-
-      :SetAdjunto(      ::cFicheroDestino )
-      :SetPara(         "mcalero@gestool.es" )
-      :SetAsunto(       "Envío de  factura de cliente" )
-      :SetMensaje(      "Adjunto le remito nuestra factura de cliente" )
-      :SetMensaje(      CRLF )
-      :SetMensaje(      CRLF )
-      :SetMensaje(      "Reciba un cordial saludo." )
-
-      :lExternalSend()
-
-   end with
-
-Return ( lSendMail )
-
-//---------------------------------------------------------------------------//
-
 METHOD ShowInWeb()
 
    local oDlg
@@ -1482,7 +1446,7 @@ METHOD addDiscount( oDiscount ) CLASS ItemLine
    end if
 
    if oDiscount:nDiscountRate != 0
-      oDiscount:nDiscountAmount       := Round( ::nTotalCost * oDiscount:nDiscountRate / 100, nRouDiv() )
+      oDiscount:nDiscountAmount       := Round( ::nTotalCost * oDiscount:nDiscountRate / 100, 2 )
    end if
 
    aAdd( ::aDiscount, oDiscount )
