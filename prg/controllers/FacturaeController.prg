@@ -166,7 +166,10 @@ CLASS FacturaeController
    METHOD CreateDocument()
    METHOD DestroyDocument()            INLINE ( ::oXml   := nil )
 
+   METHOD createXmlNode( cName, cText)
+
    METHOD GenerateXml()
+      METHOD initialXML()
       METHOD HeaderXml()
       METHOD PartiesXml()
       METHOD InvoiceXml()
@@ -224,26 +227,55 @@ METHOD CreateDocument()
       END
    END
 
-RETURN ( hb_isobject( ::oXml ) )
+   if hb_isobject( ::oXml )
+
+      ::oXml:async            := .f.
+      ::oXml:resolveExternals := .f.
+   
+      RETURN ( .t. )
+   
+   end if 
+
+RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD initialXML()
+
+   ::oXml:loadXML(   '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' + ;
+                     '<fe:Facturae xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:fe="http://www.facturae.es/Facturae/2009/v3.2/Facturae">' + ;
+                     '</fe:Facturae>' )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD Run()
 
+   local oNode
+   local oAttribute
+
    if !::CreateDocument()
       RETURN ( nil )
    end if 
 
-   ::oXml:loadXML( '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' )
-   // '<fe:Facturae xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:fe="http://www.facturae.es/Facturae/2009/v3.2/Facturae">'
+   ::initialXML()
 
-   ::oXml:appendChild( ::oXml:createElement( "Familia" ) )
+   ::HeaderXml()
 
    ::oXml:Save( "c:\temp\andrew.xml" )
 
    // ::GenerateXml()
 
    ::DestroyDocument()
+
+
+   ::cFicheroOrigen  := "c:\temp\andrew.xml"
+   ::cFicheroDestino := "c:\temp\andrew-signed.xml"
+   ::cNif            := "CALERO SOLIS MANUEL - 75541180A"
+
+   logwrite( fullcurdir() + "autofirma\autofirmacommandline sign -i " + ::cFicheroOrigen + " -o " + ::cFicheroDestino + " -format facturae -store windows -alias " + ::cNif )
+   waitRun( fullcurdir() + "autofirma\autofirmacommandline sign -i " + ::cFicheroOrigen + " -o " + ::cFicheroDestino + " -format facturae -store windows -alias " + SELCERT() )
 
 RETURN ( nil )
 
@@ -273,66 +305,58 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD createXmlNode( cName, cText)
+   
+   local oNode
+
+   oNode          := ::oXml:createNode( 1, cName, '' )
+
+   if !empty( cText )
+      oNode:Text  := cText
+   end if 
+
+Return ( oNode )
+
+//---------------------------------------------------------------------------//
+
 METHOD HeaderXml()
 
-   /*
-   Comienza el nodo header--------------------------------------------------
-   */
+   ::oXmlHeader   := ::createXmlNode( 'FileHeader' )
 
-   ::oXmlHeader   := TXmlNode():new( , 'FileHeader' )
-      ::oXmlHeader:addBelow( TXmlNode():new( , 'SchemaVersion', ,       SCHEMAVERSION ) )
-      ::oXmlHeader:addBelow( TXmlNode():new( , 'Modality', ,            MODALITY ) )
-      ::oXmlHeader:addBelow( TXmlNode():new( , 'InvoiceIssuerType', ,   INVOICEISSUERTYPE ) )
+      ::oXmlHeader:appendChild( ::createXmlNode( 'SchemaVersion', SCHEMAVERSION ) ) 
+      ::oXmlHeader:appendChild( ::createXmlNode( 'Modality', MODALITY ) ) 
+      ::oXmlHeader:appendChild( ::createXmlNode( 'InvoiceIssuerType', INVOICEISSUERTYPE ) )
+      
+      ::oXmlBatch    := ::createXmlNode( 'Batch' )
+   
+         ::oXmlBatch:appendChild( ::createXmlNode( 'BatchIdentifier', ::cInvoiceNumber ) )
+         ::oXmlBatch:appendChild( ::createXmlNode( 'InvoicesCount', INVOICESCOUNT ) )
 
-      /*
-      Comienza el nodo batch------------------------------------------------
-      */
+         ::oXmlTotalInvoicesAmount  := ::createXmlNode( 'TotalInvoicesAmount' )
+            ::oXmlTotalInvoicesAmount:appendChild( ::createXmlNode( 'TotalAmount', ::InvoiceTotalAmount() ) )
+            ::oXmlTotalInvoicesAmount:appendChild( ::createXmlNode( 'EquivalentInEuros', EQUIVALENTINEUROS ) )
 
-      ::oXmlBatch    := TXmlNode():new( , 'Batch' )
-         ::oXmlBatch:addBelow( TXmlNode():new( , 'BatchIdentifier', ,   ::cInvoiceNumber ) )
-         ::oXmlBatch:addBelow( TXmlNode():new( , 'InvoicesCount', ,     INVOICESCOUNT  ) )
+         ::oXmlBatch:appendChild( ::oXmlTotalInvoicesAmount )
 
-         /*
-         Comienza el nodo TotalInvoicesAmount-------------------------------
-         */
+         ::oXmlTotalOutstandingAmount  := ::createXmlNode( 'TotalOutstandingAmount' )
+            ::oXmlTotalOutstandingAmount:appendChild( ::createXmlNode( 'TotalAmount', ::TotalOutstandingAmount() ) )
+            ::oXmlTotalOutstandingAmount:appendChild( ::createXmlNode( 'EquivalentInEuros', EQUIVALENTINEUROS ) )
 
-         ::oXmlTotalInvoicesAmount  := TXmlNode():new( , 'TotalInvoicesAmount' )
-            ::oXmlTotalInvoicesAmount:addBelow( TXmlNode():new( , 'TotalAmount', ,        ::InvoiceTotalAmount() ) )
-            ::oXmlTotalInvoicesAmount:addBelow( TXmlNode():new( , 'EquivalentInEuros', ,  EQUIVALENTINEUROS ) )
+         ::oXmlBatch:appendChild( ::oXmlTotalOutstandingAmount )
 
-         ::oXmlBatch:addBelow( ::oXmlTotalInvoicesAmount )
+         ::oXmlTotalExecutableAmount  := ::createXmlNode( 'TotalExecutableAmount' )
+            ::oXmlTotalExecutableAmount:appendChild( ::createXmlNode( 'TotalAmount', ::TotalExecutableAmount() ) )
+            ::oXmlTotalExecutableAmount:appendChild( ::createXmlNode( 'EquivalentInEuros', EQUIVALENTINEUROS ) )
 
-         /*
-         Comienza el nodo TotalOutstandingAmount----------------------------
-         */
+         ::oXmlBatch:appendChild( ::oXmlTotalExecutableAmount )
 
-         ::oXmlTotalOutstandingAmount  := TXmlNode():new( , 'TotalOutstandingAmount' )
-            ::oXmlTotalOutstandingAmount:addBelow( TXmlNode():new( , 'TotalAmount', ,        ::TotalOutstandingAmount() ) )
-            ::oXmlTotalOutstandingAmount:addBelow( TXmlNode():new( , 'EquivalentInEuros', ,  EQUIVALENTINEUROS ) )
+         ::oXmlBatch:appendChild( ::createXmlNode( 'InvoiceCurrencyCode', ::cInvoiceCurrencyCode ) )
 
-         ::oXmlBatch:addBelow( ::oXmlTotalOutstandingAmount )
+      ::oXmlHeader:appendChild( ::oXmlBatch )
 
-         /*
-         Comienza el nodo TotalExecutableAmount----------------------------
-         */
+   ::oXml:documentElement():appendChild( ::oXmlHeader )   
 
-         ::oXmlTotalExecutableAmount  := TXmlNode():new( , 'TotalExecutableAmount' )
-            ::oXmlTotalExecutableAmount:addBelow( TXmlNode():new( , 'TotalAmount', ,         ::TotalExecutableAmount() ) )
-            ::oXmlTotalExecutableAmount:addBelow( TXmlNode():new( , 'EquivalentInEuros', ,   EQUIVALENTINEUROS ) )
-
-         ::oXmlBatch:addBelow( ::oXmlTotalExecutableAmount )
-
-         /*
-         Comienza el nodo InvoiceCurrencyCode----------------------------
-         */
-
-         ::oXmlBatch:addBelow( TXmlNode():new( , 'InvoiceCurrencyCode', , ::cInvoiceCurrencyCode ) )
-
-      ::oXmlHeader:addBelow( ::oXmlBatch )
-
-   ::oXmlNode:addBelow( ::oXmlHeader )
-
-Return ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

@@ -128,9 +128,10 @@ RETURN ( nil )
 
 FUNCTION appTest()
 
-   FacturaeController():New():Run()
+   // logwrite( hb_valtoexp( SELCERT() ) )
 
-   // msgInfo( hb_valtoexp( SELCERT() ), "CryptoApi" )
+   // FacturaeController():New():Run()
+
 
 /*
    local oRootElement
