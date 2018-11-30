@@ -199,9 +199,9 @@ CLASS SQLBaseController
 
    // Transactional system-----------------------------------------------------
 
-   METHOD beginTransactionalMode()                    INLINE ( if( ::lTransactional, ( msgalert( "inicio Transactional" ), getSQLDatabase():BeginTransaction() ), ) )
-   METHOD commitTransactionalMode()                   INLINE ( if( ::lTransactional, ( msgalert( "Commit Transactional" ), getSQLDatabase():Commit() ), ) )
-   METHOD rollbackTransactionalMode()                 INLINE ( if( ::lTransactional, ( msgalert( "Rollback Transactional" ), getSQLDatabase():Rollback() ), ) )
+   METHOD beginTransactionalMode()                    INLINE ( if( ::lTransactional, getSQLDatabase():BeginTransaction(), ) )
+   METHOD commitTransactionalMode()                   INLINE ( if( ::lTransactional, getSQLDatabase():Commit(), ) )
+   METHOD rollbackTransactionalMode()                 INLINE ( if( ::lTransactional, getSQLDatabase():Rollback(), ) )
 
    // Events-------------------------------------------------------------------
 

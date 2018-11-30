@@ -267,8 +267,7 @@ METHOD Run()
 
    // ::GenerateXml()
 
-   ::DestroyDocument()*/
-
+   ::DestroyDocument()
 
    ::cFicheroOrigen  := "c:\temp\andrew.xml"
    ::cFicheroDestino := "c:\temp\andrew-signed.xml"

@@ -526,7 +526,7 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
       ON pagos.uuid = pagos_recibos.pago_uuid
 
    INNER JOIN %4$s AS facturas_clientes
-      ON recibos.parent_uuid = facturas_clientes.uuid AND facturas_clientes.deleted_at = 0
+      ON recibos.parent_uuid = facturas_clientes.uuid 
 
    INNER JOIN %5$s AS clientes 
       ON facturas_clientes.cliente_codigo = clientes.codigo AND clientes.deleted_at = 0
@@ -579,7 +579,7 @@ METHOD getInitialSelect() CLASS SQLRecibosAssistantModel
    FROM %1$s AS recibos
    
    INNER JOIN %2$s AS facturas_clientes
-      ON recibos.parent_uuid = facturas_clientes.uuid AND facturas_clientes.cliente_codigo = %5$s AND facturas_clientes.deleted_at = 0
+      ON recibos.parent_uuid = facturas_clientes.uuid AND facturas_clientes.cliente_codigo = %5$s 
    
    LEFT JOIN %3$s AS pagos_recibos
       ON recibos.uuid = pagos_recibos.recibo_uuid
