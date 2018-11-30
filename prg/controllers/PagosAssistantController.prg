@@ -135,12 +135,12 @@ RETURN ( nil )
 METHOD getImportePagar( nImporte )
 
    if ::nImporte == nImporte
-      RETURN ( nil )
+      RETURN ( .t. )
    end if
 
    if nImporte < 0
       msgstop("Debe introducir un importe válido")
-      RETURN ( nil )
+      RETURN ( .f. )
    end if
 
    ::nImporte  := nImporte
@@ -153,7 +153,7 @@ METHOD getImportePagar( nImporte )
 
    ::getRecibosPagosTemporalController():getBrowseView():Refresh()
 
-RETURN ( nil )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

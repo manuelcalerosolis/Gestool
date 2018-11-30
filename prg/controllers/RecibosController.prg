@@ -255,11 +255,11 @@ RETURN ( nil )
 
 METHOD Paid() CLASS RecibosBrowseView
 
-   if ::getRowSet():fieldGet( 'diferencia' ) == 0
-      RETURN ( "Cobrado" )
+   if round( ::getRowSet():fieldGet( 'diferencia' ), 2 ) == 0.00
+      RETURN ( "Cobrado" ) 
    end if 
 
-   if ::getRowSet():fieldGet( 'diferencia' ) < ::getRowSet():fieldGet( 'importe' ) 
+   if round( ::getRowSet():fieldGet( 'diferencia' ), 2 ) < round( ::getRowSet():fieldGet( 'importe' ), 2 ) 
       RETURN ( "Parcialmente" )
    end if 
 
@@ -269,11 +269,11 @@ RETURN ( "No cobrado" )
 
 METHOD PaidIcon() CLASS RecibosBrowseView
 
-   if ::getRowSet():fieldGet( 'diferencia' ) == 0
+   if round( ::getRowSet():fieldGet( 'diferencia' ), 2 ) == 0.00
       RETURN ( 1 )
    end if 
 
-   if ::getRowSet():fieldGet( 'diferencia' ) < ::getRowSet():fieldGet( 'importe' )
+   if round( ::getRowSet():fieldGet( 'diferencia' ), 2 ) < round( ::getRowSet():fieldGet( 'importe' ), 2 ) 
       RETURN ( 2 )
    end if 
 
