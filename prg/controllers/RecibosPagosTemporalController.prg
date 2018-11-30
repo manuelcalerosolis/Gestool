@@ -343,8 +343,6 @@ METHOD InsertPagoReciboTemporal( uuidPago, cClienteCodigo ) CLASS SQLRecibosPago
                                  quoted( uuidPago ),;
                                  quoted( cClienteCodigo ) )
 
-
-
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 
 //---------------------------------------------------------------------------//
