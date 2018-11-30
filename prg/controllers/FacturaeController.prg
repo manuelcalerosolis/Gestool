@@ -4,7 +4,7 @@
 #include "Hbclass.ch"
 #include "Fileio.ch"
 
-#include "Factu.ch" 
+#include "Factu.ch"
 
 #define SCHEMAVERSION            '3.2'
 #define MODALITY                 'I'   // "individual" (I)
@@ -19,7 +19,7 @@
 #define DoubleFourDecimalPicture "999999999.9999"
 #define DoubleSixDecimalPicture  "999999999.999999"
 
-CLASS FacturaeController 
+CLASS FacturaeController
 
    DATA oController
 
@@ -218,12 +218,12 @@ METHOD CreateDocument()
    local oError
 
    TRY
-      ::oXml      := CreateObject( "MSXML2.DOMDocument.6.0" )   
+      ::oXml      := CreateObject( "MSXML2.DOMDocument.6.0" )
    CATCH
       TRY
          ::oXml   := CreateObject( "MSXML2.DOMDocument" )
       CATCH oError
-         msgstop( oError:SubSystem + ";" + padl( oError:SubCode, 4 ) + ";" + oError:Operation + ";" + oError:Description, "Error en la creacion de objeto" )  
+         msgstop( oError:SubSystem + ";" + padl( oError:SubCode, 4 ) + ";" + oError:Operation + ";" + oError:Description, "Error en la creacion de objeto" )
       END
    END
 
@@ -231,10 +231,10 @@ METHOD CreateDocument()
 
       ::oXml:async            := .f.
       ::oXml:resolveExternals := .f.
-   
+
       RETURN ( .t. )
-   
-   end if 
+
+   end if
 
 RETURN ( .f. )
 
@@ -257,7 +257,7 @@ METHOD Run()
 
    if !::CreateDocument()
       RETURN ( nil )
-   end if 
+   end if
 
    ::initialXML()
 
@@ -267,7 +267,7 @@ METHOD Run()
 
    // ::GenerateXml()
 
-   ::DestroyDocument()
+   ::DestroyDocument()*/
 
 
    ::cFicheroOrigen  := "c:\temp\andrew.xml"
@@ -306,14 +306,14 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD createXmlNode( cName, cText)
-   
+
    local oNode
 
    oNode          := ::oXml:createNode( 1, cName, '' )
 
    if !empty( cText )
       oNode:Text  := cText
-   end if 
+   end if
 
 Return ( oNode )
 
@@ -323,12 +323,12 @@ METHOD HeaderXml()
 
    ::oXmlHeader   := ::createXmlNode( 'FileHeader' )
 
-      ::oXmlHeader:appendChild( ::createXmlNode( 'SchemaVersion', SCHEMAVERSION ) ) 
-      ::oXmlHeader:appendChild( ::createXmlNode( 'Modality', MODALITY ) ) 
+      ::oXmlHeader:appendChild( ::createXmlNode( 'SchemaVersion', SCHEMAVERSION ) )
+      ::oXmlHeader:appendChild( ::createXmlNode( 'Modality', MODALITY ) )
       ::oXmlHeader:appendChild( ::createXmlNode( 'InvoiceIssuerType', INVOICEISSUERTYPE ) )
-      
+
       ::oXmlBatch    := ::createXmlNode( 'Batch' )
-   
+
          ::oXmlBatch:appendChild( ::createXmlNode( 'BatchIdentifier', ::cInvoiceNumber ) )
          ::oXmlBatch:appendChild( ::createXmlNode( 'InvoicesCount', INVOICESCOUNT ) )
 
@@ -354,7 +354,7 @@ METHOD HeaderXml()
 
       ::oXmlHeader:appendChild( ::oXmlBatch )
 
-   ::oXml:documentElement():appendChild( ::oXmlHeader )   
+   ::oXml:documentElement():appendChild( ::oXmlHeader )
 
 RETURN ( nil )
 
@@ -560,7 +560,7 @@ METHOD PartiesXml()
 
             for each oAdministrativeCentre in ::aAdministrativeCentres
                ::AdministrativeCentresXml( oAdministrativeCentre )
-            next 
+            next
 
             ::oXmlBuyerParty:addBelow( ::oXmlAdministrativeCentres )
 
@@ -1039,7 +1039,7 @@ METHOD DiscountXml( oDiscount )
 
       if ( oDiscount:nDiscountRate != 0 )
          ::oXmlDiscount:addBelow( TXmlNode():new( , 'DiscountRate', ,   oDiscount:DiscountRate() ) )
-      end if 
+      end if
 
       ::oXmlDiscount:addBelow( TXmlNode():new( , 'DiscountAmount', , oDiscount:DiscountAmount() ) )
 
@@ -1313,11 +1313,10 @@ METHOD startInWeb( oActiveX, oDlg )
       oActiveX:Do( "Navigate", ::cFicheroDestino )
    else
       oActiveX:Do( "Navigate", ::cFicheroOrigen )
-   end if 
+   end if
 
    sysRefresh()
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
-

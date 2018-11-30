@@ -110,6 +110,7 @@ CLASS SQLBaseModel
    // Sentences----------------------------------------------------------------
 
    METHOD getCreateTableSentence()
+   METHOD getCreateTableTemporalSentence( cDatabaseMySQL )
    METHOD getAlterTableSentences()
    
    METHOD getGeneralSelect()
@@ -758,16 +759,24 @@ RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD getCreateTableSentence( cDatabaseMySQL )
+METHOD getCreateTableSentence( cDatabaseMySQL, lTemporal )
    
    local cSQLCreateTable 
+
+   DEFAULT lTemporal       := .f.
 
    if empty( cDatabaseMySQL )
       msgstop( "Error al crear la tabla " + ::getTableName() + " no se proporciono el nombre de la base de datos" )
       RETURN ( "" )
    end if 
 
-   cSQLCreateTable         := "CREATE TABLE " + ::getTableName() + " ( "
+   cSQLCreateTable         := "CREATE "  
+
+   if lTemporal            
+      cSQLCreateTable      += "TEMPORARY "
+   end if 
+
+   cSQLCreateTable         += "TABLE " +::getTableName() + " ( "
 
    hEval( ::getColumns(),;
       {| k, hash | if( hhaskey( hash, "create" ), cSQLCreateTable += k + " " + hget( hash, "create" ) + ", ", ) } )
@@ -779,6 +788,12 @@ METHOD getCreateTableSentence( cDatabaseMySQL )
    end if
 
 RETURN ( cSQLCreateTable )
+
+//---------------------------------------------------------------------------//
+
+METHOD getCreateTableTemporalSentence( cDatabaseMySQL )
+   
+RETURN ( ::getCreateTableSentence( cDatabaseMySQL, .t. ) )
 
 //---------------------------------------------------------------------------//
 
