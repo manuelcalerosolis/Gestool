@@ -1148,8 +1148,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Formas de pago'
-   oItem:cMessage       := 'Formas de pago'
+   oItem:cPrompt        := 'Metodos de pago'
+   oItem:cMessage       := 'Metodos de pago'
    oItem:bAction        := {|| MetodosPagosController():New():ActivateNavigatorView() }
    oItem:cId            := "forma_pago"
    oItem:cBmp           := "gc_credit_cards_16"
