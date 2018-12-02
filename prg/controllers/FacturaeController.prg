@@ -19,7 +19,7 @@
 #define DoubleFourDecimalPicture "999999999.9999"
 #define DoubleSixDecimalPicture  "999999999.999999"
 
-CLASS FacturaeController
+CLASS FacturaeModel
 
    DATA oController
 
@@ -94,23 +94,23 @@ CLASS FacturaeController
    DATA     nTotalExecutableAmount        INIT  0
    DATA     nTotalReimbursableExpenses    INIT  0
 
-   ACCESS   TotalGrossAmount              INLINE ( Alltrim( Trans( ::nTotalGrossAmount,            DoubleTwoDecimalPicture ) ) )
-   ACCESS   InvoiceTotalAmount            INLINE ( Alltrim( Trans( ::nInvoiceTotalAmount,          DoubleTwoDecimalPicture ) ) )
-   ACCESS   TotalOutstandingAmount        INLINE ( Alltrim( Trans( ::nTotalOutstandingAmount,      DoubleTwoDecimalPicture ) ) )
-   ACCESS   TotalExecutableAmount         INLINE ( Alltrim( Trans( ::nTotalExecutableAmount,       DoubleTwoDecimalPicture ) ) )
-   ACCESS   TotalGeneralSurcharges        INLINE ( Alltrim( Trans( ::nTotalGeneralSurcharges,      DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalGrossAmount              INLINE ( alltrim( Trans( ::nTotalGrossAmount,            DoubleTwoDecimalPicture ) ) )
+   ACCESS   InvoiceTotalAmount            INLINE ( alltrim( Trans( ::nInvoiceTotalAmount,          DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalOutstandingAmount        INLINE ( alltrim( Trans( ::nTotalOutstandingAmount,      DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalExecutableAmount         INLINE ( alltrim( Trans( ::nTotalExecutableAmount,       DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalGeneralSurcharges        INLINE ( alltrim( Trans( ::nTotalGeneralSurcharges,      DoubleTwoDecimalPicture ) ) )
 
-   ACCESS   TotalTaxOutputs               INLINE ( Alltrim( Trans( ::nTotalTaxOutputs,             DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalTaxOutputs               INLINE ( alltrim( Trans( ::nTotalTaxOutputs,             DoubleTwoDecimalPicture ) ) )
 
-   ACCESS   TotalGrossAmountBeforeTaxes   INLINE ( Alltrim( Trans( ::nTotalGrossAmountBeforeTaxes, DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalGrossAmountBeforeTaxes   INLINE ( alltrim( Trans( ::nTotalGrossAmountBeforeTaxes, DoubleTwoDecimalPicture ) ) )
 
-   ACCESS   TotalGeneralDiscounts         INLINE ( Alltrim( Trans( ::nTotalGeneralDiscounts,       DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalGeneralDiscounts         INLINE ( alltrim( Trans( ::nTotalGeneralDiscounts,       DoubleTwoDecimalPicture ) ) )
 
-   ACCESS   TotalTaxesWithheld            INLINE ( Alltrim( Trans( ::nTotalTaxesWithheld,          DoubleTwoDecimalPicture ) ) )
-   ACCESS   InvoiceTotal                  INLINE ( Alltrim( Trans( ::nInvoiceTotal,                DoubleTwoDecimalPicture ) ) )
-   ACCESS   TotalOutstandingAmount        INLINE ( Alltrim( Trans( ::nTotalOutstandingAmount,      DoubleTwoDecimalPicture ) ) )
-   ACCESS   TotalExecutableAmount         INLINE ( Alltrim( Trans( ::nTotalExecutableAmount,       DoubleTwoDecimalPicture ) ) )
-   ACCESS   TotalReimbursableExpenses     INLINE ( Alltrim( Trans( ::nTotalReimbursableExpenses,   DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalTaxesWithheld            INLINE ( alltrim( Trans( ::nTotalTaxesWithheld,          DoubleTwoDecimalPicture ) ) )
+   ACCESS   InvoiceTotal                  INLINE ( alltrim( Trans( ::nInvoiceTotal,                DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalOutstandingAmount        INLINE ( alltrim( Trans( ::nTotalOutstandingAmount,      DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalExecutableAmount         INLINE ( alltrim( Trans( ::nTotalExecutableAmount,       DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalReimbursableExpenses     INLINE ( alltrim( Trans( ::nTotalReimbursableExpenses,   DoubleTwoDecimalPicture ) ) )
 
    DATA     cCorrectiveInvoiceNumber
    DATA     cCorrectiveReasonCode
@@ -159,9 +159,11 @@ CLASS FacturaeController
 
    METHOD New() CONSTRUCTOR
 
+   METHOD End() VIRTUAL
+
    METHOD Default()
 
-   METHOD Run()
+   METHOD Generate()
 
    METHOD CreateDocument()
    METHOD DestroyDocument()            INLINE ( ::oXml   := nil )
@@ -199,7 +201,7 @@ CLASS FacturaeController
    METHOD addTax( oTax )                  INLINE ( ::nTotalTaxOutputs += oTax:nTaxAmount, aAdd( ::aTax, oTax ), ::aTax )
    METHOD addDiscount( oDiscount )        INLINE ( ::nTotalGeneralDiscounts += oDiscount:nDiscountAmount, aAdd( ::aDiscount, oDiscount ), ::aDiscount )
 
-   METHOD MailServerSend()                INLINE ( ::cMailServer + if( !empty( ::cMailServerPort ), ":" + Alltrim( Str( ::cMailServerPort ) ), "" ) )
+   METHOD MailServerSend()                INLINE ( ::cMailServer + if( !empty( ::cMailServerPort ), ":" + alltrim( Str( ::cMailServerPort ) ), "" ) )
 
 ENDCLASS
 
@@ -284,7 +286,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD Run()
+METHOD Generate()
 
    ::cFicheroOrigen  := "c:\temp\andrew.xml"
    ::cFicheroDestino := "c:\temp\andrew-signed.xml"
@@ -307,7 +309,7 @@ METHOD Run()
    ::destroyDocument()
 
    // logwrite( fullcurdir() + "autofirma\autofirmacommandline sign -i " + ::cFicheroOrigen + " -o " + ::cFicheroDestino + " -format facturae -store windows -alias " + ::cNif )
-   // waitRun( fullcurdir() + "autofirma\autofirmacommandline sign -i " + ::cFicheroOrigen + " -o " + ::cFicheroDestino + " -format facturae -store windows -alias " + SELCERT() )
+   // waitGenerate( fullcurdir() + "autofirma\autofirmacommandline sign -i " + ::cFicheroOrigen + " -o " + ::cFicheroDestino + " -format facturae -store windows -alias " + SELCERT() )
 
 RETURN ( nil )
 
@@ -1190,7 +1192,7 @@ METHOD Firma()
 
    RECOVER USING oError
 
-      WaitRun( "regsvr32 /s " + FullcurDir() + "AeatFact.Dll" )
+      WaitGenerate( "regsvr32 /s " + FullcurDir() + "AeatFact.Dll" )
 
       ::oFirma    := CreateObject( "AEATFACT.AeatFactCtl" )
 
@@ -1247,7 +1249,7 @@ METHOD VerificaFirma()
 
    RECOVER USING oError
 
-      WaitRun( "regsvr32 /s " + FullcurDir() + "AeatFact.Dll" )
+      WaitGenerate( "regsvr32 /s " + FullcurDir() + "AeatFact.Dll" )
 
       ::oFirma    := CreateObject( "AEATFACT.AeatFactCtl" )
 
@@ -1276,7 +1278,7 @@ METHOD FirmaJava()
    BEGIN SEQUENCE
 
       logwrite(   "java -jar " + fullcurdir() + "firma\firma.jar " + ::cFicheroOrigen + space(1) + ::cFicheroDestino + space( 1 ) + "Explorer 0" )
-      waitRun(    "java -jar " + fullcurdir() + "firma\firma.jar " + ::cFicheroOrigen + space(1) + ::cFicheroDestino + space( 1 ) + "Explorer 0", 6 )
+      waitGenerate(    "java -jar " + fullcurdir() + "firma\firma.jar " + ::cFicheroOrigen + space(1) + ::cFicheroDestino + space( 1 ) + "Explorer 0", 6 )
 
       ::oTree:Add( "Proceso de firma digital iniciado.", 1 )
 
@@ -1359,22 +1361,22 @@ CLASS Party FROM Address
    DATA     cFirstSurname                 INIT ''
    DATA     cSecondSurname                INIT ''
 
-   ACCESS   TaxIdentificationNumber       INLINE ( hb_StrToUTF8( Rtrim( Left( ::cTaxIdentificationNumber, 30 ) ) ) )
+   ACCESS   TaxIdentificationNumber       INLINE ( hb_strtoutf8( Rtrim( Left( ::cTaxIdentificationNumber, 30 ) ) ) )
 
-   ACCESS   AditionalRegistrationData     INLINE ( hb_StrToUTF8( Rtrim( ::cAditionalRegistrationData ) ) )
-   ACCESS   Telephone                     INLINE ( hb_StrToUTF8( Rtrim( ::cTelephone ) ) )
-   ACCESS   TelFax                        INLINE ( hb_StrToUTF8( Rtrim( ::cTelFax ) ) )
-   ACCESS   WebAddress                    INLINE ( hb_StrToUTF8( Rtrim( ::cWebAddress ) ) )
-   ACCESS   ElectronicMail                INLINE ( hb_StrToUTF8( Rtrim( ::cElectronicMail ) ) )
-   ACCESS   PersonTypeCode                INLINE ( hb_StrToUTF8( Rtrim( ::cPersonTypeCode ) ) )
-   ACCESS   ResidenceTypeCode             INLINE ( hb_StrToUTF8( Rtrim( ::cResidenceTypeCode ) ) )
+   ACCESS   AditionalRegistrationData     INLINE ( hb_strtoutf8( Rtrim( ::cAditionalRegistrationData ) ) )
+   ACCESS   Telephone                     INLINE ( hb_strtoutf8( Rtrim( ::cTelephone ) ) )
+   ACCESS   TelFax                        INLINE ( hb_strtoutf8( Rtrim( ::cTelFax ) ) )
+   ACCESS   WebAddress                    INLINE ( hb_strtoutf8( Rtrim( ::cWebAddress ) ) )
+   ACCESS   ElectronicMail                INLINE ( hb_strtoutf8( Rtrim( ::cElectronicMail ) ) )
+   ACCESS   PersonTypeCode                INLINE ( hb_strtoutf8( Rtrim( ::cPersonTypeCode ) ) )
+   ACCESS   ResidenceTypeCode             INLINE ( hb_strtoutf8( Rtrim( ::cResidenceTypeCode ) ) )
 
-   ACCESS   CorporateName                 INLINE ( hb_StrToUTF8( Rtrim( Left( ::cCorporateName, 80 ) ) ) )
-   ACCESS   TradeName                     INLINE ( hb_StrToUTF8( Rtrim( Left( ::cTradeName, 40 ) ) ) )
+   ACCESS   CorporateName                 INLINE ( hb_strtoutf8( Rtrim( Left( ::cCorporateName, 80 ) ) ) )
+   ACCESS   TradeName                     INLINE ( hb_strtoutf8( Rtrim( Left( ::cTradeName, 40 ) ) ) )
 
-   ACCESS   Name                          INLINE ( hb_StrToUTF8( Rtrim( Left( ::cName, 40 ) ) ) )
-   ACCESS   FirstSurname                  INLINE ( hb_StrToUTF8( Rtrim( Left( ::cFirstSurname, 40 ) ) ) )
-   ACCESS   SecondSurname                 INLINE ( hb_StrToUTF8( Rtrim( Left( ::cSecondSurname, 40 ) ) ) )
+   ACCESS   Name                          INLINE ( hb_strtoutf8( Rtrim( Left( ::cName, 40 ) ) ) )
+   ACCESS   FirstSurname                  INLINE ( hb_strtoutf8( Rtrim( Left( ::cFirstSurname, 40 ) ) ) )
+   ACCESS   SecondSurname                 INLINE ( hb_strtoutf8( Rtrim( Left( ::cSecondSurname, 40 ) ) ) )
 
 ENDCLASS
 
@@ -1389,11 +1391,11 @@ CLASS Tax
    DATA     nEquivalenceSurcharge         INIT 0.00
    DATA     nEquivalenceSurchargeAmount   INIT 0.00
 
-   ACCESS   TaxRate                       INLINE ( Alltrim( Trans( ::nTaxRate,                     DoubleTwoDecimalPicture ) ) )
-   ACCESS   TaxBase                       INLINE ( Alltrim( Trans( ::nTaxBase,                     DoubleTwoDecimalPicture ) ) )
-   ACCESS   TaxAmount                     INLINE ( Alltrim( Trans( ::nTaxAmount,                   DoubleTwoDecimalPicture ) ) )
-   ACCESS   EquivalenceSurcharge          INLINE ( Alltrim( Trans( ::nEquivalenceSurcharge,        DoubleTwoDecimalPicture ) ) )
-   ACCESS   EquivalenceSurchargeAmount    INLINE ( Alltrim( Trans( ::nEquivalenceSurchargeAmount,  DoubleTwoDecimalPicture ) ) )
+   ACCESS   TaxRate                       INLINE ( alltrim( Trans( ::nTaxRate,                     DoubleTwoDecimalPicture ) ) )
+   ACCESS   TaxBase                       INLINE ( alltrim( Trans( ::nTaxBase,                     DoubleTwoDecimalPicture ) ) )
+   ACCESS   TaxAmount                     INLINE ( alltrim( Trans( ::nTaxAmount,                   DoubleTwoDecimalPicture ) ) )
+   ACCESS   EquivalenceSurcharge          INLINE ( alltrim( Trans( ::nEquivalenceSurcharge,        DoubleTwoDecimalPicture ) ) )
+   ACCESS   EquivalenceSurchargeAmount    INLINE ( alltrim( Trans( ::nEquivalenceSurchargeAmount,  DoubleTwoDecimalPicture ) ) )
 
 ENDCLASS
 
@@ -1406,8 +1408,8 @@ CLASS Discount
    DATA     nDiscountAmount               INIT 0.000000
 
    ACCESS   DiscountReason                INLINE ( ::cDiscountReason )
-   ACCESS   DiscountRate                  INLINE ( Alltrim( Trans( ::nDiscountRate,    DoubleFourDecimalPicture ) ) )
-   ACCESS   DiscountAmount                INLINE ( Alltrim( Trans( ::nDiscountAmount,  DoubleSixDecimalPicture  ) ) )
+   ACCESS   DiscountRate                  INLINE ( alltrim( Trans( ::nDiscountRate,    DoubleFourDecimalPicture ) ) )
+   ACCESS   DiscountAmount                INLINE ( alltrim( Trans( ::nDiscountAmount,  DoubleSixDecimalPicture  ) ) )
 
 ENDCLASS
 
@@ -1429,10 +1431,10 @@ CLASS ItemLine
    DATA     nGrossAmount                  INIT 0.00
    DATA     aTax                          INIT {}
 
-   ACCESS   ItemDescription               INLINE ( hb_StrToUTF8( rtrim( ::cItemDescription ) ) )
+   ACCESS   ItemDescription               INLINE ( hb_strtoutf8( rtrim( ::cItemDescription ) ) )
    ACCESS   UnitOfMeasure                 INLINE ( ::cUnitOfMeasure )
-   ACCESS   Quantity                      INLINE ( Alltrim( Trans( ::nQuantity,                                      DoubleTwoDecimalPicture ) ) )
-   ACCESS   UnitPriceWithoutTax           INLINE ( Alltrim( Trans( ::nUnitPriceWithoutTax,                           DoubleSixDecimalPicture ) ) )
+   ACCESS   Quantity                      INLINE ( alltrim( Trans( ::nQuantity,                                      DoubleTwoDecimalPicture ) ) )
+   ACCESS   UnitPriceWithoutTax           INLINE ( alltrim( Trans( ::nUnitPriceWithoutTax,                           DoubleSixDecimalPicture ) ) )
 
    METHOD New( oFacturaElectronica )      CONSTRUCTOR
 
@@ -1492,7 +1494,7 @@ METHOD GrossAmount() CLASS ItemLine
 
    end if 
 
-RETURN ( Alltrim( Trans( ::nGrossAmount, DoubleSixDecimalPicture ) ) )
+RETURN ( alltrim( Trans( ::nGrossAmount, DoubleSixDecimalPicture ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -1516,7 +1518,7 @@ METHOD TotalCost() CLASS ItemLine
 
    end if 
 
-RETURN ( Alltrim( Trans( nTotal, DoubleSixDecimalPicture ) ) )
+RETURN ( alltrim( Trans( nTotal, DoubleSixDecimalPicture ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -1544,11 +1546,11 @@ CLASS Address
    DATA     cProvince               INIT ''
    DATA     cCountryCode            INIT 'ESP'
 
-   ACCESS   Address                 INLINE ( hb_StrToUTF8( alltrim( left( ::cAddress, 80 ) ) ) )
-   ACCESS   PostCode                INLINE ( hb_StrToUTF8( alltrim( left( ::cPostCode, 9 ) ) ) )
-   ACCESS   Town                    INLINE ( hb_StrToUTF8( alltrim( left( ::cTown, 50 ) ) ) )
-   ACCESS   Province                INLINE ( hb_StrToUTF8( alltrim( left( ::cProvince, 20 ) ) ) )
-   ACCESS   CountryCode             INLINE ( hb_StrToUTF8( alltrim( left( ::cCountryCode, 3 ) ) ) )
+   ACCESS   Address                 INLINE ( hb_strtoutf8( alltrim( left( ::cAddress, 80 ) ) ) )
+   ACCESS   PostCode                INLINE ( hb_strtoutf8( alltrim( left( ::cPostCode, 9 ) ) ) )
+   ACCESS   Town                    INLINE ( hb_strtoutf8( alltrim( left( ::cTown, 50 ) ) ) )
+   ACCESS   Province                INLINE ( hb_strtoutf8( alltrim( left( ::cProvince, 20 ) ) ) )
+   ACCESS   CountryCode             INLINE ( hb_strtoutf8( alltrim( left( ::cCountryCode, 3 ) ) ) )
 
 ENDCLASS
 
@@ -1574,9 +1576,9 @@ CLASS AdministrativeCentres FROM Address
    DATA     cRoleTypeCode           INIT ''
    DATA     cCentreDescription      INIT ''
 
-   ACCESS   CentreCode              INLINE ( hb_StrToUTF8( alltrim( ::cCentreCode   ) ) )
-   ACCESS   RoleTypeCode            INLINE ( hb_StrToUTF8( alltrim( ::cRoleTypeCode ) ) )
-   ACCESS   CentreDescription       INLINE ( hb_StrToUTF8( alltrim( ::cCentreDescription ) ) )
+   ACCESS   CentreCode              INLINE ( hb_strtoutf8( alltrim( ::cCentreCode   ) ) )
+   ACCESS   RoleTypeCode            INLINE ( hb_strtoutf8( alltrim( ::cRoleTypeCode ) ) )
+   ACCESS   CentreDescription       INLINE ( hb_strtoutf8( alltrim( ::cCentreDescription ) ) )
 
 ENDCLASS
 

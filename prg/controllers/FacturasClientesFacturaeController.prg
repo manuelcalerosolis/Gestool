@@ -5,13 +5,17 @@
 
 CLASS FacturasClientesFacturaeController
 
-   DATA oController
+   DATA oModel
 
-   METHOD New( oController ) CONSTRUCTOR
+   DATA oController 
 
-   METHOD End()                        VIRTUAL
+   METHOD New( oController )           CONSTRUCTOR
+
+   METHOD End()                       
 
    METHOD Run( aSelectedRecno )
+
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := FacturaeModel():New( self ), ), ::oModel )
 
 ENDCLASS
 
@@ -25,10 +29,35 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Run( aSelectedRecno )
+METHOD End() CLASS FacturasClientesFacturaeController
 
-   msgalert( hb_valtoexp( ::getUuidFromRecno( aSelectedRecno ) ) )
+   if !empty(::oModel)
+      ::oModel:end()
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD Run( aSelectedRecno ) CLASS FacturasClientesFacturaeController
+
+   aeval( ::oController:getUuidFromRecno( aSelectedRecno ), {| uuid| ::Generate( uuid ) } ) )
    
-RETURN ( self )
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD Generate( uuid ) CLASS FacturasClientesFacturaeController
+   
+   ::getModel():Default()
+   
+   ::getModel():cInvoiceNumber   := uuid
+   ::cFicheroOrigen  := "c:\temp\andrew.xml"
+   ::cFicheroDestino := "c:\temp\andrew-signed.xml"
+   ::cNif            := "CALERO SOLIS MANUEL - 75541180A"
+
+   ::getModel():Generate()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//

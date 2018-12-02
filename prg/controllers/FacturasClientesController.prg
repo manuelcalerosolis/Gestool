@@ -106,7 +106,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
                                        INLINE ( if( empty( ::oNumeroDocumentoComponent ), ::oNumeroDocumentoComponent := NumeroDocumentoComponent():New( self ), ), ::oNumeroDocumentoComponent )
 
    METHOD getFacturasClientesFacturaeController() ;
-                                       INLINE ( if( empty( ::oFacturasClientesFacturaeController ), ::oFacturasClientesFacturaeController := FacturaeController():New( self ), ), ::oFacturasClientesFacturaeController )
+                                       INLINE ( if( empty( ::oFacturasClientesFacturaeController ), ::oFacturasClientesFacturaeController := FacturasClientesFacturaeController():New( self ), ), ::oFacturasClientesFacturaeController )
 
 END CLASS
 
@@ -218,7 +218,7 @@ RETURN ( ::Super:End() )
 
 METHOD addExtraButtons() CLASS FacturasClientesController
 
-   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturae 3.2", "gc_document_text_earth_16", {|| ::getFacturasClientesFacturaeController( ::getBrowseView():getBrowseSelected() ) } ) 
+   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturae 3.2", "gc_document_text_earth_16", {|| ::getFacturasClientesFacturaeController():Run( ::getBrowseView():getBrowseSelected() ) } ) 
 
 RETURN ( nil )
 
