@@ -5,11 +5,13 @@
 
 CLASS FacturasClientesFacturaeController
 
+   DATA oController
+
    METHOD New( oController ) CONSTRUCTOR
 
    METHOD End()                        VIRTUAL
 
-   DATA oController
+   METHOD Run( aSelectedRecno )
 
 ENDCLASS
 
@@ -19,6 +21,14 @@ METHOD New( oController ) CLASS FacturasClientesFacturaeController
 
    ::oController                       := oController
 
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Run( aSelectedRecno )
+
+   msgalert( hb_valtoexp( ::getUuidFromRecno( aSelectedRecno ) ) )
+   
 RETURN ( self )
 
 //---------------------------------------------------------------------------//

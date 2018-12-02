@@ -6,7 +6,7 @@
         {
             "label": "build gestool",
             "type": "shell",
-            "command": ".\\hb.bat",
+            "command": "c:\\fw195\\gestool\\\\hb.bat",
             "group": "build",
             "presentation": {
                 "reveal": "always",

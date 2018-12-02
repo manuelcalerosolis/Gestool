@@ -78,7 +78,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
    
    METHOD generateReport( hReport )    INLINE ( ::getReport():Generate( hReport ) )
 
-   METHOD getSubject()                 INLINE ( "Factura de cliente número" )
+   METHOD getSubject()                 INLINE ( "Factura de cliente nï¿½mero" )
 
    // Contrucciones tardias----------------------------------------------------
 
@@ -106,7 +106,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
                                        INLINE ( if( empty( ::oNumeroDocumentoComponent ), ::oNumeroDocumentoComponent := NumeroDocumentoComponent():New( self ), ), ::oNumeroDocumentoComponent )
 
    METHOD getFacturasClientesFacturaeController() ;
-                                       INLINE ( if( empty( ::oFacturasClientesFacturaeController ), ::oFacturasClientesFacturaeController := FacturaeController():New( self ), ), ::oFacturaeController )
+                                       INLINE ( if( empty( ::oFacturasClientesFacturaeController ), ::oFacturasClientesFacturaeController := FacturaeController():New( self ), ), ::oFacturasClientesFacturaeController )
 
 END CLASS
 
@@ -218,7 +218,7 @@ RETURN ( ::Super:End() )
 
 METHOD addExtraButtons() CLASS FacturasClientesController
 
-   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturae 3.2", "gc_document_text_earth_16", {|| msgalert( hb_valtoexp( ::getBrowseView():getBrowseSelected() ) ) } ) 
+   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturae 3.2", "gc_document_text_earth_16", {|| ::getFacturasClientesFacturaeController( ::getBrowseView():getBrowseSelected() ) } ) 
 
 RETURN ( nil )
 
@@ -473,13 +473,13 @@ METHOD getConfigItems() CLASS FacturasClientesController
 
    local aItems   := {}
 
-   aadd( aItems,  {  'texto'  => 'Documento impresión',;
+   aadd( aItems,  {  'texto'  => 'Documento impresiï¿½n',;
                      'clave'  => 'documento_impresion',;
                      'valor'  => ::getDocumentPrint(),;
                      'tipo'   => "B",;
                      'lista'  =>  ::loadDocuments() } )
 
-   aadd( aItems,  {  'texto'  => 'Copias impresión',;
+   aadd( aItems,  {  'texto'  => 'Copias impresiï¿½n',;
                      'clave'  => 'copias_impresion',;
                      'valor'  => ::getCopyPrint(),;
                      'tipo'   => "N" } )
@@ -490,7 +490,7 @@ METHOD getConfigItems() CLASS FacturasClientesController
                      'tipo'   => "B",;
                      'lista'  =>  ::loadDocuments() } )
 
-   aadd( aItems,  {  'texto'  => 'Documento previsulización',;
+   aadd( aItems,  {  'texto'  => 'Documento previsulizaciï¿½n',;
                      'clave'  => 'documento_previsulizacion',;
                      'valor'  => ::getDocumentPreview(),;
                      'tipo'   => "B",;
@@ -525,15 +525,15 @@ END CLASS
 
 METHOD getValidators() CLASS FacturasClientesValidator
 
-   ::hValidators  := {  "cliente_codigo"     => {  "required"        => "El código del cliente es un dato requerido",;
-                                                   "clienteExist"    => "El código del cliente no existe" } ,;  
-                        "metodo_pago_codigo" => {  "required"        => "El código del método de pago es un dato requerido",;
-                                                   "formaPagoExist"  => "El código del método de pago no existe" } ,;  
-                        "almacen_codigo"     => {  "required"        => "El código del almacén es un dato requerido",;
-                                                   "almacenExist"    => "El código del almacén no existe" } ,;  
-                        "tarifa_codigo"      => {  "required"        => "El código de la tarifa es un dato requerido",; 
-                                                   "tarifaExist"     => "El código de la tarifa no existe" },;
-                        "formulario"         => {  "emptyLines"      => "Las líneas no pueden estar vacias",;
+   ::hValidators  := {  "cliente_codigo"     => {  "required"        => "El cï¿½digo del cliente es un dato requerido",;
+                                                   "clienteExist"    => "El cï¿½digo del cliente no existe" } ,;  
+                        "metodo_pago_codigo" => {  "required"        => "El cï¿½digo del mï¿½todo de pago es un dato requerido",;
+                                                   "formaPagoExist"  => "El cï¿½digo del mï¿½todo de pago no existe" } ,;  
+                        "almacen_codigo"     => {  "required"        => "El cï¿½digo del almacï¿½n es un dato requerido",;
+                                                   "almacenExist"    => "El cï¿½digo del almacï¿½n no existe" } ,;  
+                        "tarifa_codigo"      => {  "required"        => "El cï¿½digo de la tarifa es un dato requerido",; 
+                                                   "tarifaExist"     => "El cï¿½digo de la tarifa no existe" },;
+                        "formulario"         => {  "emptyLines"      => "Las lï¿½neas no pueden estar vacias",;
                                                    "validLine"       => "" } }  
 
 RETURN ( ::hValidators )
