@@ -13,9 +13,13 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oNumeroDocumentoComponent
 
+   DATA oFacturasClientesFacturaeController
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   METHOD addExtraButtons()
 
    METHOD editConfig()
 
@@ -98,7 +102,11 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD getSerieDocumentoComponent() INLINE ( if( empty( ::oSerieDocumentoComponent ), ::oSerieDocumentoComponent := SerieDocumentoComponent():New( self ), ), ::oSerieDocumentoComponent )
 
-   METHOD getNumeroDocumentoComponent()   INLINE ( if( empty( ::oNumeroDocumentoComponent ), ::oNumeroDocumentoComponent := NumeroDocumentoComponent():New( self ), ), ::oNumeroDocumentoComponent )
+   METHOD getNumeroDocumentoComponent() ;
+                                       INLINE ( if( empty( ::oNumeroDocumentoComponent ), ::oNumeroDocumentoComponent := NumeroDocumentoComponent():New( self ), ), ::oNumeroDocumentoComponent )
+
+   METHOD getFacturasClientesFacturaeController() ;
+                                       INLINE ( if( empty( ::oFacturasClientesFacturaeController ), ::oFacturasClientesFacturaeController := FacturaeController():New( self ), ), ::oFacturaeController )
 
 END CLASS
 
@@ -122,8 +130,6 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::lOthers                           := .t.
 
-   ::lMultiDelete                      := .f.
-
    ::cName                             := "facturas_clientes" 
 
    ::hImage                            := {  "16" => "gc_document_text_user_16",;
@@ -131,6 +137,7 @@ METHOD New( oController ) CLASS FacturasClientesController
                                              "48" => "gc_document_text_user_48" }
 
    ::getNavigatorView():getMenuTreeView():setEvent( 'addingDeleteButton', { || .f. } )
+   ::getNavigatorView():getMenuTreeView():setEvent( 'addedPdfButton', {|| ::addExtraButtons() } )
 
    ::getModel():setEvent( 'loadedBuffer',          {|| ::loadedBuffer() } )
    ::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )
@@ -150,8 +157,6 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::getClientesController():getSelector():setEvent( 'settedHelpText', {|| ::clientesSettedHelpText() } )
 
    ::getSerieDocumentoComponent():setEvents( { 'inserted', 'changedAndExist' }, {|| ::changedSerie() } )
-
-   ::setEvent( 'deleting', {|| ::hasNotPaid( ::getRowSet():fieldGet( 'uuid' ) ) } )
 
 RETURN ( Self )
 
@@ -203,7 +208,19 @@ METHOD End() CLASS FacturasClientesController
       ::oSerieDocumentoComponent:End()
    end if 
 
+   if !empty( ::oFacturasClientesFacturaeController )
+      ::oFacturasClientesFacturaeController:End()
+   end if 
+
 RETURN ( ::Super:End() )
+
+//---------------------------------------------------------------------------//
+
+METHOD addExtraButtons() CLASS FacturasClientesController
+
+   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturae 3.2", "gc_document_text_earth_16", {|| msgalert( hb_valtoexp( ::getBrowseView():getBrowseSelected() ) ) } ) 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

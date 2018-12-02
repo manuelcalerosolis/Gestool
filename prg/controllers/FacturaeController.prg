@@ -23,8 +23,6 @@ CLASS FacturaeController
 
    DATA oController
 
-   DATA oModel
-
    DATA  oXml
    DATA  oXmlNode
    DATA  oXmlHeader
@@ -203,8 +201,6 @@ CLASS FacturaeController
 
    METHOD MailServerSend()                INLINE ( ::cMailServer + if( !empty( ::cMailServerPort ), ":" + Alltrim( Str( ::cMailServerPort ) ), "" ) )
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := FacturaeModel():New( self ), ), ::oModel )
-
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -320,10 +316,6 @@ RETURN ( nil )
 METHOD GenerateXml()
 
    ::oXml         := TXmlDocument():new( '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' )
-
-   /*
-   Comienza el nodo principal--------------------------------------------------
-   */
 
    ::oXmlNode     := ::createXmlNode( "fe:Facturae",;
                                        {  "xmlns:ds" => "http://www.w3.org/2000/09/xmldsig#",;
@@ -1337,4 +1329,256 @@ METHOD startInWeb( oActiveX, oDlg )
 
 RETURN ( self )
 
+// Estructuras y clases auxiliares-------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS Party FROM Address
+
+   DATA     cTaxIdentificationNumber      INIT ''
+   DATA     cCorporateName                INIT ''
+   DATA     cTradeName                    INIT ''
+   DATA     cRegistrationData             INIT ''
+   DATA     nBook                         INIT ''
+   DATA     cRegisterOfCompaniesLocation  INIT ''
+   DATA     nSheet                        INIT '-'
+   DATA     nFolio                        INIT ''
+   DATA     cSection                      INIT ''
+   DATA     nVolume                       INIT ''
+   DATA     cAditionalRegistrationData    INIT ''
+   DATA     cTelephone                    INIT ''
+   DATA     cTelFax                       INIT ''
+   DATA     cWebAddress                   INIT ''
+   DATA     cElectronicMail               INIT ''
+   DATA     cPersonTypeCode               INIT 'F'
+   DATA     cResidenceTypeCode            INIT 'R'
+
+   DATA     cName                         INIT ''
+   DATA     cFirstSurname                 INIT ''
+   DATA     cSecondSurname                INIT ''
+
+   ACCESS   TaxIdentificationNumber       INLINE ( hb_StrToUTF8( Rtrim( Left( ::cTaxIdentificationNumber, 30 ) ) ) )
+
+   ACCESS   AditionalRegistrationData     INLINE ( hb_StrToUTF8( Rtrim( ::cAditionalRegistrationData ) ) )
+   ACCESS   Telephone                     INLINE ( hb_StrToUTF8( Rtrim( ::cTelephone ) ) )
+   ACCESS   TelFax                        INLINE ( hb_StrToUTF8( Rtrim( ::cTelFax ) ) )
+   ACCESS   WebAddress                    INLINE ( hb_StrToUTF8( Rtrim( ::cWebAddress ) ) )
+   ACCESS   ElectronicMail                INLINE ( hb_StrToUTF8( Rtrim( ::cElectronicMail ) ) )
+   ACCESS   PersonTypeCode                INLINE ( hb_StrToUTF8( Rtrim( ::cPersonTypeCode ) ) )
+   ACCESS   ResidenceTypeCode             INLINE ( hb_StrToUTF8( Rtrim( ::cResidenceTypeCode ) ) )
+
+   ACCESS   CorporateName                 INLINE ( hb_StrToUTF8( Rtrim( Left( ::cCorporateName, 80 ) ) ) )
+   ACCESS   TradeName                     INLINE ( hb_StrToUTF8( Rtrim( Left( ::cTradeName, 40 ) ) ) )
+
+   ACCESS   Name                          INLINE ( hb_StrToUTF8( Rtrim( Left( ::cName, 40 ) ) ) )
+   ACCESS   FirstSurname                  INLINE ( hb_StrToUTF8( Rtrim( Left( ::cFirstSurname, 40 ) ) ) )
+   ACCESS   SecondSurname                 INLINE ( hb_StrToUTF8( Rtrim( Left( ::cSecondSurname, 40 ) ) ) )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS Tax
+
+   DATA     cTaxTypeCode                  INIT '01'
+   DATA     nTaxRate                      INIT 0.00
+   DATA     nTaxBase                      INIT 0.00
+   DATA     nTaxAmount                    INIT 0.00
+   DATA     nEquivalenceSurcharge         INIT 0.00
+   DATA     nEquivalenceSurchargeAmount   INIT 0.00
+
+   ACCESS   TaxRate                       INLINE ( Alltrim( Trans( ::nTaxRate,                     DoubleTwoDecimalPicture ) ) )
+   ACCESS   TaxBase                       INLINE ( Alltrim( Trans( ::nTaxBase,                     DoubleTwoDecimalPicture ) ) )
+   ACCESS   TaxAmount                     INLINE ( Alltrim( Trans( ::nTaxAmount,                   DoubleTwoDecimalPicture ) ) )
+   ACCESS   EquivalenceSurcharge          INLINE ( Alltrim( Trans( ::nEquivalenceSurcharge,        DoubleTwoDecimalPicture ) ) )
+   ACCESS   EquivalenceSurchargeAmount    INLINE ( Alltrim( Trans( ::nEquivalenceSurchargeAmount,  DoubleTwoDecimalPicture ) ) )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS Discount
+
+   DATA     cDiscountReason               INIT '-'
+   DATA     nDiscountRate                 INIT 0.00
+   DATA     nDiscountAmount               INIT 0.000000
+
+   ACCESS   DiscountReason                INLINE ( ::cDiscountReason )
+   ACCESS   DiscountRate                  INLINE ( Alltrim( Trans( ::nDiscountRate,    DoubleFourDecimalPicture ) ) )
+   ACCESS   DiscountAmount                INLINE ( Alltrim( Trans( ::nDiscountAmount,  DoubleSixDecimalPicture  ) ) )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS ItemLine
+
+   DATA     oFacturaElectronica
+
+   DATA     cItemDescription              INIT ''
+   DATA     nQuantity                     INIT 0.00
+   DATA     cUnitOfMeasure                INIT '01'
+   DATA     nUnitPriceWithTax             INIT 0.000000
+   DATA     nUnitPriceWithoutTax          INIT 0.000000
+   DATA     nTotalCost                    INIT 0.00
+   DATA     nIva                          INIT 0
+   DATA     lIvaInc                       INIT .f.
+   DATA     aDiscount                     INIT {}
+   DATA     nGrossAmount                  INIT 0.00
+   DATA     aTax                          INIT {}
+
+   ACCESS   ItemDescription               INLINE ( hb_StrToUTF8( rtrim( ::cItemDescription ) ) )
+   ACCESS   UnitOfMeasure                 INLINE ( ::cUnitOfMeasure )
+   ACCESS   Quantity                      INLINE ( Alltrim( Trans( ::nQuantity,                                      DoubleTwoDecimalPicture ) ) )
+   ACCESS   UnitPriceWithoutTax           INLINE ( Alltrim( Trans( ::nUnitPriceWithoutTax,                           DoubleSixDecimalPicture ) ) )
+
+   METHOD New( oFacturaElectronica )      CONSTRUCTOR
+
+   METHOD addDiscount( oDiscount )
+   METHOD GrossAmount()
+
+   METHOD TotalCost()
+
+   METHOD addTax( oTax )                  INLINE aAdd( ::aTax, oTax )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------//
+
+METHOD New( oFacturaElectronica ) CLASS ItemLine
+
+   ::oFacturaElectronica               := oFacturaElectronica 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD addDiscount( oDiscount ) CLASS ItemLine
+
+   if Empty( ::nTotalCost )
+      ::nTotalCost                     := ::nQuantity * ::nUnitPriceWithoutTax
+   end if
+
+   if oDiscount:nDiscountRate != 0
+      oDiscount:nDiscountAmount       := Round( ::nTotalCost * oDiscount:nDiscountRate / 100, 2 )
+   end if
+
+   aAdd( ::aDiscount, oDiscount )
+
+RETURN ( oDiscount )
+
+//------------------------------------------------------------------------//
+
+METHOD GrossAmount() CLASS ItemLine
+
+   local oDiscount
+
+   ::nGrossAmount       := ::nQuantity * ::nUnitPriceWithTax
+
+   for each oDiscount in ::aDiscount
+      ::nGrossAmount    -= oDiscount:nDiscountAmount
+   next
+
+   ::nGrossAmount       := Round( ::nGrossAmount, 6 )
+
+   if ::lIvaInc
+
+      ::nGrossAmount    := ::nGrossAmount / ( 1 + ( ::nIva / 100 ) )
+      ::nGrossAmount    := Round( ::nGrossAmount, 6 )
+
+   end if 
+
+RETURN ( Alltrim( Trans( ::nGrossAmount, DoubleSixDecimalPicture ) ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD TotalCost() CLASS ItemLine
+
+   local oDiscount
+   local nTotal         := 0
+
+   nTotal       := ::nQuantity * ::nUnitPriceWithTax
+
+   for each oDiscount in ::aDiscount
+      nTotal    -= oDiscount:nDiscountAmount
+   next
+
+   nTotal       := Round( nTotal, 6 )
+
+   if ::lIvaInc
+
+      nTotal    := nTotal / ( 1 + ( ::nIva / 100 ) )
+      nTotal    := Round( nTotal, 6 )
+
+   end if 
+
+RETURN ( Alltrim( Trans( nTotal, DoubleSixDecimalPicture ) ) )
+
+//---------------------------------------------------------------------------//
+
+CLASS Installment
+
+   DATA     dInstallmentDueDate
+   DATA     nInstallmentAmount      INIT 0.00
+   DATA     cPaymentMeans           INIT '02'
+
+   DATA     oAccountToBeCredited
+   DATA     oAccountToBeDebited
+
+   ACCESS   InstallmentDueDate      INLINE ( dtoiso( ::dInstallmentDueDate ) )
+   ACCESS   InstallmentAmount       INLINE ( alltrim( Trans( ::nInstallmentAmount,  DoubleTwoDecimalPicture ) ) )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS Address
+
+   DATA     cAddress                INIT ''
+   DATA     cPostCode               INIT ''
+   DATA     cTown                   INIT ''
+   DATA     cProvince               INIT ''
+   DATA     cCountryCode            INIT 'ESP'
+
+   ACCESS   Address                 INLINE ( hb_StrToUTF8( alltrim( left( ::cAddress, 80 ) ) ) )
+   ACCESS   PostCode                INLINE ( hb_StrToUTF8( alltrim( left( ::cPostCode, 9 ) ) ) )
+   ACCESS   Town                    INLINE ( hb_StrToUTF8( alltrim( left( ::cTown, 50 ) ) ) )
+   ACCESS   Province                INLINE ( hb_StrToUTF8( alltrim( left( ::cProvince, 20 ) ) ) )
+   ACCESS   CountryCode             INLINE ( hb_StrToUTF8( alltrim( left( ::cCountryCode, 3 ) ) ) )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS Account FROM Address
+
+   DATA     cIBAN                   INIT ''
+   DATA     cBankCode               INIT ''
+   DATA     cBranchCode             INIT ''
+
+   ACCESS   IBAN                    INLINE ( alltrim( Left( ::cIBAN, 30 ) ) )
+   ACCESS   BankCode                INLINE ( alltrim( Left( ::cBankCode, 60 ) ) )
+   ACCESS   BranchCode              INLINE ( alltrim( Left( ::cBranchCode, 60 ) ) )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS AdministrativeCentres FROM Address
+
+   DATA     cCentreCode             INIT ''
+   DATA     cRoleTypeCode           INIT ''
+   DATA     cCentreDescription      INIT ''
+
+   ACCESS   CentreCode              INLINE ( hb_StrToUTF8( alltrim( ::cCentreCode   ) ) )
+   ACCESS   RoleTypeCode            INLINE ( hb_StrToUTF8( alltrim( ::cRoleTypeCode ) ) )
+   ACCESS   CentreDescription       INLINE ( hb_StrToUTF8( alltrim( ::cCentreDescription ) ) )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
