@@ -70,8 +70,6 @@ METHOD Generate( uuid ) CLASS FacturasClientesFacturaeController
       RETURN ( nil )
    end if 
 
-   msgalert( hb_valtoexp( hTotal ), "hTotal" )
-
    ::getModel():setInvoiceNumber( hget( hDocument, "serie" ) + hb_ntos( hget( hDocument, "numero" ) ) )
 
    ::getModel():Generate()

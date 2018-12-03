@@ -10,7 +10,7 @@ CLASS SQLFiltrosModel FROM SQLCompanyModel
 
    DATA cTableName                                    INIT "filtros"
 
-   METHOD setTableToFilter( cTableToFilter )          INLINE ( msgalert( cTableToFilter, "cTableToFilter" ), ::cTableToFilter := cTableToFilter )
+   METHOD setTableToFilter( cTableToFilter )          INLINE ( ::cTableToFilter := cTableToFilter )
    METHOD getTableToFilter()                          INLINE ( if( empty( ::cTableToFilter ), ::getController():getController():getName(), ::cTableToFilter ) )
 
    METHOD getColumns()

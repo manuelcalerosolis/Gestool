@@ -422,6 +422,9 @@ CLASS SQLMetodoPagoModel FROM SQLCompanyModel
 
    METHOD getMedioPagoCodigo( CodigoMetodoPago )   INLINE ( ::getField( "codigo_medio_pago", "codigo", CodigoMetodoPago ) )
 
+   METHOD testCreateContado()
+
+   METHOD testCreateReposicion()
 
 END CLASS
 
@@ -474,6 +477,31 @@ METHOD setBlankMedioPago() CLASS SQLMetodoPagoModel
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD testCreateContado() CLASS SQLMetodoPagoModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "codigo", 0 )
+   hset( hBuffer, "nombre", "Contado" )
+   hset( hBuffer, "cobrado", 1 )
+   hset( hBuffer, "codigo_medio_pago", "0" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateReposicion() CLASS SQLMetodoPagoModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "codigo", 1 )
+   hset( hBuffer, "nombre", "Reposición" )
+   hset( hBuffer, "cobrado", 0 )
+   hset( hBuffer, "codigo_medio_pago", "0" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

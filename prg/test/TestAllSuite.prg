@@ -26,6 +26,8 @@ USER FUNCTION hbunit_test()
    
    oSuite:addTest( TestArticulosController():new() )
 
+   oSuite:addTest( TestPagosController():new() )
+
    oRunner:run( oSuite )
 
 RETURN ( nil )

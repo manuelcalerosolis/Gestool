@@ -435,8 +435,6 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
 
    hTotal               := ::getRepository():getTotalesDocument( uuidFactura )
 
-   msgalert( hb_valtoexp( hTotal ), "hTotal" )
-
    if empty( hTotal )
       RETURN ( nil )
    end if 
@@ -478,13 +476,13 @@ METHOD getConfigItems() CLASS FacturasClientesController
 
    local aItems   := {}
 
-   aadd( aItems,  {  'texto'  => 'Documento impresiï¿½n',;
+   aadd( aItems,  {  'texto'  => 'Documento impresión',;
                      'clave'  => 'documento_impresion',;
                      'valor'  => ::getDocumentPrint(),;
                      'tipo'   => "B",;
                      'lista'  =>  ::loadDocuments() } )
 
-   aadd( aItems,  {  'texto'  => 'Copias impresiï¿½n',;
+   aadd( aItems,  {  'texto'  => 'Copias impresión',;
                      'clave'  => 'copias_impresion',;
                      'valor'  => ::getCopyPrint(),;
                      'tipo'   => "N" } )
@@ -495,7 +493,7 @@ METHOD getConfigItems() CLASS FacturasClientesController
                      'tipo'   => "B",;
                      'lista'  =>  ::loadDocuments() } )
 
-   aadd( aItems,  {  'texto'  => 'Documento previsulizaciï¿½n',;
+   aadd( aItems,  {  'texto'  => 'Documento previsulización',;
                      'clave'  => 'documento_previsulizacion',;
                      'valor'  => ::getDocumentPreview(),;
                      'tipo'   => "B",;

@@ -1275,7 +1275,7 @@ METHOD getAttribute( key, value )
 
    local cMethod  := "get" + strtran( key, "_", "" ) + "attribute"
 
-   if __ObjHasMethod( Self, cMethod )
+   if __objhasmethod( Self, cMethod )
       RETURN ( Self:&( cMethod )( value ) )
    end if 
 
@@ -1401,7 +1401,6 @@ METHOD getSerializeColumnsSelect()
    local cColumns       := ""
    
    if empty( ::getColumnsSelect() )
-      msgalert( hb_valtoexp( ::getColumnsSelect() ), "getColumnsSelect" / 0 )
       RETURN ( cColumns )
    end if 
 

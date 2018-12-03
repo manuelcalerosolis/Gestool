@@ -17,7 +17,7 @@ CLASS RecibosController FROM SQLNavigatorController
 
    METHOD totalPayed()
 
-   METHOD getImporte()           INLINE ( ::getRowSet():fieldGet( 'diferencia' ) )
+   METHOD getImporte()           INLINE ( round( ::getRowSet():fieldGet( 'diferencia' ), 2 ) )
 
    //Construcciones tardias----------------------------------------------------
 

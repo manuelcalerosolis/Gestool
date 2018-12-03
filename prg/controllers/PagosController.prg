@@ -21,8 +21,6 @@ CLASS PagosController FROM SQLNavigatorController
 
    METHOD addExtraButtons()
 
-   METHOD maxImporte( nImporte )
-
    //Construcciones tardias----------------------------------------------------
 
    METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := PagosBrowseView():New( self ), ), ::oBrowseView ) 
@@ -62,6 +60,7 @@ METHOD New( oController ) CLASS PagosController
 
    ::getCuentasBancariasController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
    ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentence() } )
+   
    ::setEvents( {'appended', 'duplicated' }, {|| ::insertPagoRecibo() } )
 
 RETURN ( Self )
@@ -129,20 +128,6 @@ METHOD insertPagoRecibo() CLASS PagosController
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
-METHOD maxImporte( nImporte ) CLASS PagosController
-   
-   if nImporte > ::oController:getImporte()
-      
-      msgstop("El importe no puede ser mayor que la cantidad adeudada")
-      
-      RETURN( .f. )
-   
-   end if 
-
-RETURN( .t. )
-
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -152,7 +137,7 @@ CLASS PagosBrowseView FROM SQLBrowseView
 
    METHOD addColumns()
 
-   METHOD PaidIcon()                       
+   METHOD getPaidIcon()                       
 
 END CLASS
 
@@ -174,7 +159,7 @@ METHOD addColumns() CLASS PagosBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'estado'
       :cHeader             := 'Estado'
-      :bBmpData            := {|| ::PaidIcon() }
+      :bBmpData            := {|| ::getPaidIcon() }
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'estado' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -235,13 +220,9 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD PaidIcon() CLASS PagosBrowseView
+METHOD getPaidIcon() CLASS PagosBrowseView
 
-   if ::getRowSet():fieldGet( 'estado' ) == "Presentado"
-      RETURN ( 1 )
-   end if 
-
-RETURN ( 2 )
+RETURN ( if( ::getRowSet():fieldGet( 'estado' ) == "Presentado", 1, 2 ) ) 
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -303,32 +284,35 @@ METHOD Activate() CLASS PagosView
 
    ::oController:getClientesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_codigo" ] ) )
    ::oController:getClientesController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getClientesController():getSelector():setWhen( {|| ::oController:isAppendMode() } )
    ::oController:getClientesController():getSelector():setValid( {|| ::oController:validate( "cliente_codigo" ) } )
 
   REDEFINE GET    ::oImporte ;
       VAR         ::nImporte ;
       ID          110 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:maxImporte( ::nImporte ) ) ;
+      WHEN        ( ::oController:isAppendMode() ) ;
+      VALID       ( ::oController:validate( "importe_maximo", ::nImporte ) ) ;
       PICTURE     "@E 999999999999.99";
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE GET   ::oController:getModel():hBuffer[ "fecha" ] ;
       ID          120 ;
       VALID       ( ::oController:validate( "fecha" ) ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
    ::oController:getMediosPagoController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "medio_pago_codigo" ] ) )
    ::oController:getMediosPagoController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getMediosPagoController():getSelector():setWhen( {|| ::oController:isAppendMode() } )
    ::oController:getMediosPagoController():getSelector():setValid( {|| ::oController:validate( "medio_pago_codigo" ) } )
 
    ::oController:getCuentasBancariasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cuenta_bancaria_codigo" ] ) )
    ::oController:getCuentasBancariasController():getSelector():Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getCuentasBancariasController():getSelector():setWhen( {|| ::oController:isAppendMode() } )
 
    REDEFINE GET   ::oController:getModel():hBuffer[ "comentario" ] ;
       ID          150 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE COMBOBOX ::oEstado ;
@@ -433,6 +417,8 @@ RETURN ( cTitle )
 CLASS PagosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
+
+   METHOD validateImporteMaximo( value )
  
 END CLASS
 
@@ -443,10 +429,21 @@ METHOD getValidators() CLASS PagosValidator
    ::hValidators  := {  "cliente_codigo"     =>   {  "required"   => "El código del cliente es un dato requerido" },;
                         "importe"            =>   {  "required"   => "El importe es un dato requerido" },;
                         "fecha"              =>   {  "required"   => "La fecha es un dato requerido" },;
-                        "medio_pago_codigo"  =>   {  "required"   => "El medio de pago es un dato requerido" } }
+                        "medio_pago_codigo"  =>   {  "required"   => "El medio de pago es un dato requerido" },;
+                        "importe_maximo"     =>   {  "validateImporteMaximo"  => "El importe no puede ser mayor que la cantidad adeudada" } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
+
+METHOD validateImporteMaximo( nImporte ) CLASS PagosValidator
+   
+   if empty( ::getSuperController() )
+      RETURN ( .t. )
+   end if 
+
+RETURN ( ::getSuperController():getImporte() >= nImporte )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -558,3 +555,80 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TestPagosController FROM TestCase
+
+   METHOD testAppend()
+   
+//   METHOD testDialogAppend()
+
+//   METHOD testDialogEmptyNombre()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD testAppend() CLASS TestPagosController
+
+   local nId
+
+   SQLMediosPagoModel():truncateTable() 
+
+   ::assert:notEquals( SQLMediosPagoModel():testCreateMetalico(), 0, "test create medio de pago metalico" )
+
+   SQLMetodoPagoModel():truncateTable() 
+
+   ::assert:notEquals( SQLMetodoPagoModel():testCreateContado(), 0, "test create metodo de pago contado" )
+
+   ::assert:notEquals( SQLMetodoPagoModel():testCreateReposicion(), 0, "test create metodos de pago reposicion" )
+
+   SQLClientesModel():truncateTable() 
+
+   ::assert:notEquals( SQLClientesModel():testCreateContado(), 0, "test create cliente de contado" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+/*
+METHOD testDialogAppend() CLASS TestArticulosController
+
+   local oController := ArticulosController():New()
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         self:oGetCodigo:cText( '001' ),;
+         apoloWaitSeconds( 1 ),;
+         self:oGetNombre:cText( 'Test 1' ),;
+         apoloWaitSeconds( 1 ),;
+         self:oBtnAceptar:Click() } )
+
+   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testDialogEmptyNombre() CLASS TestArticulosController
+
+   local oController := ArticulosController():New()
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         ::oGetCodigo:cText( '002' ),;
+         apoloWaitSeconds( 1 ),;
+         ::oBtnAceptar:Click(),;
+         apoloWaitSeconds( 1 ),;
+         ::oBtnCancelar:Click() } )
+
+   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+*/

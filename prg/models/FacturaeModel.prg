@@ -304,7 +304,7 @@ METHOD Generate()
 
    ::destroyDocument()
 
-   msgalert( "proceso finalizado" )
+   msginfo( "proceso finalizado" )
 
 RETURN ( nil )
 

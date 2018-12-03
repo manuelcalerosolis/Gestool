@@ -118,7 +118,7 @@ METHOD InsertPagoReciboAssistant() CLASS SQLRecibosPagosModel
       ( uuid, pago_uuid, recibo_uuid, importe ) 
 
    SELECT 
-       UUID(), pago_uuid,recibo_uuid, importe
+      UUID(), pago_uuid,recibo_uuid, importe
    
       FROM %2$s AS tmp
 
@@ -126,33 +126,21 @@ METHOD InsertPagoReciboAssistant() CLASS SQLRecibosPagosModel
       
    ENDTEXT
 
-   cSql  := hb_strformat( cSql,  ::getTableName(),;
+   cSql  := hb_strformat(  cSql, ::getTableName(),;
                                  SQLRecibosPagosTemporalModel():getTableName() )
                                  
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD InsertPagoRecibo( uuidPago, uuidRecibo, nImporte )
+METHOD InsertPagoRecibo( uuidPago, uuidRecibo, nImporte ) CLASS SQLRecibosPagosModel
 
-   local cSql
+   local hPago := {  "uuid"         => win_uuidcreatestring(),;
+                     "pago_uuid"    => uuidPago,;
+                     "recibo_uuid"  => uuidRecibo,;
+                     "importe"      => nImporte }
 
-      TEXT INTO cSql
-
-      INSERT  INTO %1$s
-         ( uuid, pago_uuid, recibo_uuid, importe ) 
-
-      VALUES 
-         ( UUID(), %2$s, %3$s, %4$d )
-         
-      ENDTEXT
-
-      cSql  := hb_strformat( cSql,  ::getTableName(),;
-                                    quoted( uuidPago ),;
-                                    quoted( uuidRecibo ),;
-                                    nImporte )
-
-RETURN ( getSQLDatabase():Exec ( cSql ) )
+RETURN ( ::insertBuffer( hPago ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

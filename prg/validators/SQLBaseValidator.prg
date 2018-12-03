@@ -39,6 +39,7 @@ CLASS SQLBaseValidator
    METHOD getAsserts()                    VIRTUAL
 
    METHOD getController()                 INLINE   ( ::oController )
+   METHOD getSuperController()            INLINE   ( ::oController:getController() )
 
    METHOD Validate( cColumn, uValue, uOthers ) ;
                                           INLINE   (  ::assignValue( cColumn, uValue ),;

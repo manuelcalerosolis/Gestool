@@ -66,9 +66,6 @@ METHOD getSentenceTotalesDocument( uuidFacturaCliente ) CLASS FacturasClientesRe
 
    cSql  := hb_strformat( cSql, ::getSentenceTotales( uuidFacturaCliente ) )
 
-   logwrite( "getSentenceTotalesDocument" )
-   logwrite( cSql )
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
@@ -95,13 +92,7 @@ METHOD getTotalesDocument( uuidFacturaCliente )
 
    local aTotal   
 
-   logwrite( "getTotalesDocument( uuidFacturaCliente )" ) 
-   logwrite( ::getSentenceTotalesDocument( uuidFacturaCliente ) ) 
-   msgalert( ::getSentenceTotalesDocument( uuidFacturaCliente ), "getTotalesDocument" ) 
-
    aTotal   := ::getDatabase():selectFetchHash( ::getSentenceTotalesDocument( uuidFacturaCliente ) ) 
-
-   msgalert( hb_valtoexp( aTotal ), "getTotalesDocument" )
 
 RETURN ( if( hb_isarray( aTotal ), atail( aTotal ), nil ) )
 
@@ -183,7 +174,7 @@ METHOD createFunctionTotalSummaryWhereUuid() CLASS FacturasClientesRepository
 
    CREATE DEFINER=`root`@`localhost` 
    FUNCTION %1$s ( `uuid_factura_cliente` CHAR( 40 ), `recargo_equivalencia_factura_cliente` TINYINT( 1 ) )
-   RETURNS DECIMAL(19,6)
+   RETURNS DECIMAL( 19, 6 )
    LANGUAGE SQL
    NOT DETERMINISTIC
    CONTAINS SQL
@@ -192,7 +183,7 @@ METHOD createFunctionTotalSummaryWhereUuid() CLASS FacturasClientesRepository
 
    BEGIN
 
-      DECLARE TotalSummary DECIMAL( 19,6 );
+      DECLARE TotalSummary DECIMAL( 19, 6 );
 
       SELECT
          SUM( totales.importeTotal ) INTO TotalSummary

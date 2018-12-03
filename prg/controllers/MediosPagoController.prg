@@ -302,6 +302,8 @@ CLASS SQLMediosPagoModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD testCreateMetalico()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -333,6 +335,16 @@ METHOD getColumns() CLASS SQLMediosPagoModel
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD testCreateMetalico() CLASS SQLMediosPagoModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "codigo", 0 )
+   hset( hBuffer, "nombre", "metalico" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

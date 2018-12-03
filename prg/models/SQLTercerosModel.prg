@@ -41,7 +41,7 @@ METHOD getColumns() CLASS SQLTercerosModel
    hset( ::hColumns, "dni",                        {  "create"    => "VARCHAR( 20 )"                        ,;
                                                       "default"   => {|| space( 20 ) } }                    )
 
-   hset( ::hColumns, "metodo_pago_codigo",          {  "create"    => "VARCHAR( 20 )"                        ,;
+   hset( ::hColumns, "metodo_pago_codigo",         {  "create"    => "VARCHAR( 20 )"                        ,;
                                                       "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "web",                        {  "create"    => "VARCHAR( 150 )"                       ,;

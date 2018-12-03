@@ -130,10 +130,7 @@ FUNCTION appTest()
 
    // local oCertificate   := SELCERT()
 
-   // msgalert( hb_valtoexp( oCertificate ), valtype( oCertificate ) )
-
    // FacturaeController():New():Run()
-
 
 /*
    local oRootElement
