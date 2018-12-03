@@ -183,12 +183,12 @@ CLASS SQLBaseModel
    
    METHOD addParentUuidWhere()                           
 
-   METHOD setOthersWhere( cWhere )                    INLINE ( ::cOthersWhere   := cWhere )
+   METHOD setOthersWhere( cWhere )     INLINE ( ::cOthersWhere   := cWhere )
    METHOD addOthersWhere( cSQLSelect )
 
-   METHOD setFilterWhere( cWhere )                    INLINE ( ::cFilterWhere    := cWhere )
-   METHOD clearFilterWhere()                          INLINE ( ::cFilterWhere    := "" )
-   METHOD getFilterWhere( cWhere )                    INLINE ( ::cFilterWhere )
+   METHOD setFilterWhere( cWhere )     INLINE ( ::cFilterWhere    := cWhere )
+   METHOD clearFilterWhere()           INLINE ( ::cFilterWhere    := "" )
+   METHOD getFilterWhere( cWhere )     INLINE ( ::cFilterWhere )
    METHOD insertFilterWhere( cWhere )                  
    METHOD addFilterWhere( cSQLSelect )
 
@@ -198,14 +198,15 @@ CLASS SQLBaseModel
    METHOD getExpresionToFind()
    METHOD getFindExpresionColumn( oColumn )
 
-   METHOD setOrderBy( cOrderBy )                      INLINE ( ::cOrderBy        := cOrderBy )
-   METHOD getOrderBy()                                INLINE ( if( !empty( ::cAs ) .and. !empty( ::cOrderBy ), ::cAs + "." + ::cOrderBy, ::cOrderBy ) )
+   METHOD setOrderBy( cOrderBy )       INLINE ( ::cOrderBy        := cOrderBy )
+   METHOD getOrderBy()                 INLINE ( if( !empty( ::cAs ) .and. !empty( ::cOrderBy ), ::cAs + "." + ::cOrderBy, ::cOrderBy ) )
 
-   METHOD setOrientation( cOrientation )              INLINE ( ::cOrientation    := cOrientation )
-   METHOD getOrientation()                            INLINE ( ::cOrientation )
+   METHOD setOrientation( cOrientation );
+                                       INLINE ( ::cOrientation    := cOrientation )
+   METHOD getOrientation()             INLINE ( ::cOrientation )
 
-   METHOD setGroupBy( cGroupBy )                      INLINE ( ::cGroupBy        := cGroupBy )
-   METHOD getGroupBy()                                INLINE ( ::cGroupBy )
+   METHOD setGroupBy( cGroupBy )       INLINE ( ::cGroupBy        := cGroupBy )
+   METHOD getGroupBy()                 INLINE ( ::cGroupBy )
    METHOD addGroupBy( cSQLSelect )
 
    METHOD findAll( nOffset, nLimit )
@@ -213,8 +214,8 @@ CLASS SQLBaseModel
 
    // Where for columns--------------------------------------------------------
 
-   METHOD isEmpresaColumn()                           INLINE ( hb_hhaskey( ::hColumns, "empresa_codigo" ) )
-   METHOD isParentUuidColumn()                        INLINE ( hb_hhaskey( ::hColumns, "parent_uuid" ) )
+   METHOD isEmpresaColumn()            INLINE ( hb_hhaskey( ::hColumns, "empresa_codigo" ) )
+   METHOD isParentUuidColumn()         INLINE ( hb_hhaskey( ::hColumns, "parent_uuid" ) )
 
    // Get edit value for xbrowse-----------------------------------------------
 
@@ -225,11 +226,12 @@ CLASS SQLBaseModel
 
    METHOD getSelectByOrder()
 
-   METHOD getWhere( cField, cOperator, uValue )       INLINE ( atail( ::getDatabase():selectFetchHash( ::getWhereSelect( cField, cOperator, uValue ) ) ) )
+   METHOD getWhere( cField, cOperator, uValue );
+                                       INLINE ( atail( ::getDatabase():selectFetchHash( ::getWhereSelect( cField, cOperator, uValue ) ) ) )
 
    // Busquedas----------------------------------------------------------------
 
-   METHOD setFind( cFind, aColumns )                  INLINE ( ::cFind := cFind, ::aColumns := aColumns )
+   METHOD setFind( cFind, aColumns )   INLINE ( ::cFind := cFind, ::aColumns := aColumns )
 
    METHOD getBufferById( nId )
    METHOD getBufferByUuid( uuid )
@@ -238,7 +240,7 @@ CLASS SQLBaseModel
    // Buffer-------------------------------------------------------------------
 
    METHOD getBuffer( cColumn )    
-   METHOD getBufferColumnKey()                        INLINE ( ::getBuffer( ::cColumnKey ) )
+   METHOD getBufferColumnKey()         INLINE ( ::getBuffer( ::cColumnKey ) )
                     
    METHOD setBuffer( cColumn, uValue )
    METHOD setBufferPadr( cColumn, uValue )
@@ -247,7 +249,8 @@ CLASS SQLBaseModel
    METHOD insertIgnoreBuffer( hBuffer )                    
    METHOD updateBuffer( hBuffer )
    METHOD insertOnDuplicate( hBuffer )
-   METHOD insertOnDuplicateTransactional( hBuffer )   INLINE ( ::insertOnDuplicate( hBuffer, .t. ) )
+   METHOD insertOnDuplicateTransactional( hBuffer ) ;
+                                       INLINE ( ::insertOnDuplicate( hBuffer, .t. ) )
    METHOD deleteSelection( aIds )
    METHOD deleteById( uId )
    METHOD deleteByUuid( uUuid )
@@ -258,13 +261,13 @@ CLASS SQLBaseModel
    METHOD loadCurrentBuffer()
    METHOD defaultCurrentBuffer()
 
-   METHOD insertBlankBuffer()                         INLINE ( ::loadBlankBuffer(), ::insertBuffer() ) 
+   METHOD insertBlankBuffer()          INLINE ( ::loadBlankBuffer(), ::insertBuffer() ) 
 
    // Events-------------------------------------------------------------------
 
    METHOD setEvents( aEvents, bEvent )
-   METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
-   METHOD fireEvent( cEvent, uValue )                 INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent, uValue ), ) )
+   METHOD setEvent( cEvent, bEvent )   INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
+   METHOD fireEvent( cEvent, uValue )  INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent, uValue ), ) )
 
    // Updates------------------------------------------------------------------
 
@@ -279,14 +282,13 @@ CLASS SQLBaseModel
    // Metodos de consulta------------------------------------------------------
 
    METHOD getUuidWhereColumn( uValue, cColumn, uDefault ) 
-   METHOD getUuidWhereNombre( uValue )                INLINE ( ::getUuidWhereColumn( uValue, 'nombre', '' ) )
-   METHOD getUuidWhereCodigo( uValue )                INLINE ( ::getUuidWhereColumn( uValue, 'codigo', '' ) )
-
+   METHOD getUuidWhereNombre( uValue ) INLINE ( ::getUuidWhereColumn( uValue, 'nombre', '' ) )
+   METHOD getUuidWhereCodigo( uValue ) INLINE ( ::getUuidWhereColumn( uValue, 'codigo', '' ) )
 
    METHOD getIdWhereColumn( uValue, cColumn, uDefault ) 
-   METHOD getIdWhereNombre( uValue )                  INLINE ( ::getIdWhereColumn( uValue, 'nombre', '' ) )
-   METHOD getIdWhereCodigo( uValue )                  INLINE ( ::getIdWhereColumn( uValue, 'codigo', '' ) )
-   METHOD getIdWhereUuid( uValue )                    INLINE ( ::getIdWhereColumn( uValue, 'uuid', '' ) ) 
+   METHOD getIdWhereNombre( uValue )   INLINE ( ::getIdWhereColumn( uValue, 'nombre', '' ) )
+   METHOD getIdWhereCodigo( uValue )   INLINE ( ::getIdWhereColumn( uValue, 'codigo', '' ) )
+   METHOD getIdWhereUuid( uValue )     INLINE ( ::getIdWhereColumn( uValue, 'uuid', '' ) ) 
 
    METHOD getWhereUuid( Uuid )
    METHOD getWhereCodigo( cCodigo )
@@ -511,8 +513,6 @@ METHOD getSelectSentence( cOrderBy, cOrientation )
 
    ::fireEvent( 'gotSelectSentence')
 
-
-
 RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
@@ -726,18 +726,6 @@ METHOD getFindExpresionColumn( oColumn )
    end if
 
 RETURN ( "UPPER(" + oColumn:cSortOrder + ") LIKE '%" + upper( toSlash( ::cFind ) ) + "%' OR " )
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION toSlash( cFind )
-
-   local nAt   := at( '/', cFind ) 
-
-   if nAt == 0
-      RETURN ( cFind )
-   end if 
-
-RETURN ( left( cFind, ( nAt - 1 ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2022,7 +2010,6 @@ METHOD duplicateOthers( uuidEntidad )
 
    aOthers         := ::getHashOthersWhereParentUuid( ::getUuidOlderParent() )
 
-
    if empty( aOthers )
       RETURN ( nil )
    end if 
@@ -2046,5 +2033,17 @@ METHOD duplicateOthers( uuidEntidad )
    next
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION toSlash( cFind )
+
+   local nAt   := at( '/', cFind ) 
+
+   if nAt == 0
+      RETURN ( cFind )
+   end if 
+
+RETURN ( left( cFind, ( nAt - 1 ) ) )
 
 //---------------------------------------------------------------------------//

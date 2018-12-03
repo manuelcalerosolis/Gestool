@@ -540,7 +540,7 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
                            SQLFacturasClientesModel():getTableName(),;
                            SQLClientesModel():getTableName(),;
                            Company():getTableName( 'RecibosPagosTotalPaidWhereUuid' ) )
-logwrite(cSql)
+
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
@@ -594,8 +594,6 @@ METHOD getInitialSelect() CLASS SQLRecibosAssistantModel
                                  SQLRecibosPagosModel():getTableName(),;
                                  SQLPagosModel():getTableName(),;
                                  quoted( cliente_codigo ) )
-
-   logwrite( cSql )   
 
 RETURN ( cSql )
 

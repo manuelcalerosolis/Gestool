@@ -62,6 +62,9 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD calculateTotals( uuidFactura )  
 
+   METHOD getTotalesDocument( uuidFactura ) ;
+                                       INLINE ( ::getRepository():getTotalesDocument( uuidFactura ) )
+
    METHOD hasNotPaid( uuidFactura )
 
    // Impresiones--------------------------------------------------------------

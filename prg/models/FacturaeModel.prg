@@ -68,20 +68,18 @@ CLASS FacturaeModel
    DATA  oXmlAdministrativeCentres
    DATA  oXmlAdministrativeCentre
 
-   DATA  hDC
-
-   DATA  cFicheroOrigen
-   DATA  cFicheroDestino
-   DATA  cFicheroOriginal
+   DATA  cXmlFile
+   DATA  cSignedXmlFile
    DATA  cNif
-   DATA  oFirma
-
-   DATA     oTree
 
    DATA     cInvoiceNumber
    DATA     cInvoiceSeriesCode
    DATA     cInvoiceCurrencyCode
-   DATA     nInvoiceTotalAmount           INIT  0
+
+   DATA nInvoiceTotalAmount
+   METHOD setInvoiceTotalAmount( nInvoiceTotalAmount) ;
+                                       INLINE ( ::nInvoiceTotalAmount := nInvoiceTotalAmount )
+   ACCESS InvoiceTotalAmount           INLINE ( alltrim( Trans( ::nInvoiceTotalAmount, DoubleTwoDecimalPicture ) ) )
 
    DATA     nTotalGrossAmount             INIT  0
    DATA     nTotalGrossAmountBeforeTaxes  INIT  0
@@ -95,7 +93,6 @@ CLASS FacturaeModel
    DATA     nTotalReimbursableExpenses    INIT  0
 
    ACCESS   TotalGrossAmount              INLINE ( alltrim( Trans( ::nTotalGrossAmount,            DoubleTwoDecimalPicture ) ) )
-   ACCESS   InvoiceTotalAmount            INLINE ( alltrim( Trans( ::nInvoiceTotalAmount,          DoubleTwoDecimalPicture ) ) )
    ACCESS   TotalOutstandingAmount        INLINE ( alltrim( Trans( ::nTotalOutstandingAmount,      DoubleTwoDecimalPicture ) ) )
    ACCESS   TotalExecutableAmount         INLINE ( alltrim( Trans( ::nTotalExecutableAmount,       DoubleTwoDecimalPicture ) ) )
    ACCESS   TotalGeneralSurcharges        INLINE ( alltrim( Trans( ::nTotalGeneralSurcharges,      DoubleTwoDecimalPicture ) ) )
@@ -104,13 +101,13 @@ CLASS FacturaeModel
 
    ACCESS   TotalGrossAmountBeforeTaxes   INLINE ( alltrim( Trans( ::nTotalGrossAmountBeforeTaxes, DoubleTwoDecimalPicture ) ) )
 
-   ACCESS   TotalGeneralDiscounts         INLINE ( alltrim( Trans( ::nTotalGeneralDiscounts,       DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalGeneralDiscounts      INLINE ( alltrim( Trans( ::nTotalGeneralDiscounts,       DoubleTwoDecimalPicture ) ) )
 
-   ACCESS   TotalTaxesWithheld            INLINE ( alltrim( Trans( ::nTotalTaxesWithheld,          DoubleTwoDecimalPicture ) ) )
-   ACCESS   InvoiceTotal                  INLINE ( alltrim( Trans( ::nInvoiceTotal,                DoubleTwoDecimalPicture ) ) )
-   ACCESS   TotalOutstandingAmount        INLINE ( alltrim( Trans( ::nTotalOutstandingAmount,      DoubleTwoDecimalPicture ) ) )
-   ACCESS   TotalExecutableAmount         INLINE ( alltrim( Trans( ::nTotalExecutableAmount,       DoubleTwoDecimalPicture ) ) )
-   ACCESS   TotalReimbursableExpenses     INLINE ( alltrim( Trans( ::nTotalReimbursableExpenses,   DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalTaxesWithheld         INLINE ( alltrim( Trans( ::nTotalTaxesWithheld,          DoubleTwoDecimalPicture ) ) )
+   ACCESS   InvoiceTotal               INLINE ( alltrim( Trans( ::nInvoiceTotal,                DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalOutstandingAmount     INLINE ( alltrim( Trans( ::nTotalOutstandingAmount,      DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalExecutableAmount      INLINE ( alltrim( Trans( ::nTotalExecutableAmount,       DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalReimbursableExpenses  INLINE ( alltrim( Trans( ::nTotalReimbursableExpenses,   DoubleTwoDecimalPicture ) ) )
 
    DATA     cCorrectiveInvoiceNumber
    DATA     cCorrectiveReasonCode
@@ -166,11 +163,13 @@ CLASS FacturaeModel
    METHOD Generate()
 
    METHOD CreateDocument()
-   METHOD DestroyDocument()            INLINE ( ::oXml   := nil )
-   METHOD saveDocument()               INLINE ( ::oXml:Save( ::cFicheroOrigen ) )
+   METHOD DestroyDocument()            INLINE ( ::oXml := nil )
+   METHOD saveDocument()               INLINE ( ::oXml:Save( ::cXmlFile ) )
 
    METHOD createXmlNode( cName, cText ) 
    METHOD createCDataXmlNode( cName, cData )
+
+   METHOD setInvoiceNumber( cInvoiceNumber )
 
    METHOD GenerateXml()
       METHOD initialXML()
@@ -194,14 +193,15 @@ CLASS FacturaeModel
 
    METHOD Enviar()
 
-   METHOD addItemLine( oItemLine )        INLINE ( aAdd( ::aItemLine, oItemLine ) )
-   METHOD addInstallment( oInstallment )  INLINE ( aAdd( ::aInstallment, oInstallment ) )
+   METHOD addItemLine( oItemLine )     INLINE ( aAdd( ::aItemLine, oItemLine ) )
+   METHOD addInstallment( oInstallment );
+                                       INLINE ( aAdd( ::aInstallment, oInstallment ) )
    METHOD addAdministrativeCentres( aAdministrativeCentres ) ;
-                                          INLINE ( aAdd( ::aAdministrativeCentres, aAdministrativeCentres ) )
-   METHOD addTax( oTax )                  INLINE ( ::nTotalTaxOutputs += oTax:nTaxAmount, aAdd( ::aTax, oTax ), ::aTax )
-   METHOD addDiscount( oDiscount )        INLINE ( ::nTotalGeneralDiscounts += oDiscount:nDiscountAmount, aAdd( ::aDiscount, oDiscount ), ::aDiscount )
+                                       INLINE ( aAdd( ::aAdministrativeCentres, aAdministrativeCentres ) )
+   METHOD addTax( oTax )               INLINE ( ::nTotalTaxOutputs += oTax:nTaxAmount, aAdd( ::aTax, oTax ), ::aTax )
+   METHOD addDiscount( oDiscount )     INLINE ( ::nTotalGeneralDiscounts += oDiscount:nDiscountAmount, aAdd( ::aDiscount, oDiscount ), ::aDiscount )
 
-   METHOD MailServerSend()                INLINE ( ::cMailServer + if( !empty( ::cMailServerPort ), ":" + alltrim( Str( ::cMailServerPort ) ), "" ) )
+   METHOD MailServerSend()             INLINE ( ::cMailServer + if( !empty( ::cMailServerPort ), ":" + alltrim( Str( ::cMailServerPort ) ), "" ) )
 
 ENDCLASS
 
@@ -288,10 +288,6 @@ RETURN ( nil )
 
 METHOD Generate()
 
-   ::cFicheroOrigen  := "c:\temp\andrew.xml"
-   ::cFicheroDestino := "c:\temp\andrew-signed.xml"
-   ::cNif            := "CALERO SOLIS MANUEL - 75541180A"
-
    if !::CreateDocument()
       RETURN ( nil )
    end if
@@ -308,8 +304,18 @@ METHOD Generate()
 
    ::destroyDocument()
 
-   // logwrite( fullcurdir() + "autofirma\autofirmacommandline sign -i " + ::cFicheroOrigen + " -o " + ::cFicheroDestino + " -format facturae -store windows -alias " + ::cNif )
-   // waitGenerate( fullcurdir() + "autofirma\autofirmacommandline sign -i " + ::cFicheroOrigen + " -o " + ::cFicheroDestino + " -format facturae -store windows -alias " + SELCERT() )
+   msgalert( "proceso finalizado" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD setInvoiceNumber( cInvoiceNumber )
+
+   ::cInvoiceNumber  := cInvoiceNumber
+
+   ::cXmlFile        := cPatXml() + ::cInvoiceNumber + ".xml"
+   ::cSignedXmlFile  := cPatXml() + ::cInvoiceNumber + "-signed.xml"
 
 RETURN ( nil )
 
@@ -1174,123 +1180,19 @@ RETURN ( nil )
 
 METHOD Firma()
 
-   local xRet
-   local hLib
-   local oNode
-   local oError
-   local oBlock
-
-   if !File( FullCurDir() + "\aeatfact.dll")
-      ::oTree:Add( "No existe el componente AeatFact.Dll" )
-      RETURN ( Self )
-   end if
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      ::oFirma    := CreateObject( "AEATFACT.AeatFactCtl" )
-
-   RECOVER USING oError
-
-      WaitGenerate( "regsvr32 /s " + FullcurDir() + "AeatFact.Dll" )
-
-      ::oFirma    := CreateObject( "AEATFACT.AeatFactCtl" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if !empty( ::oFirma )
-
-      xRet        := ::oFirma:FIRMA( ::cFicheroOrigen, ::cNif, ::cFicheroDestino )
-      xRet        := ::oFirma:VERIFICA( ::cFicheroOrigen, ::cFicheroDestino )
-
-      if Left( xRet, 2 ) == "00"
-
-         oNode := ::oTree:Add( "Firma digital realizada satisfactoriamente.", 1 )
-
-         oNode:Add( xRet, 1 )
-         oNode:Expand()
-
-      else
-
-         oNode := ::oTree:Add( "Error al realizar la firma digital." )
-
-         oNode:Add( xRet )
-         oNode:Expand()
-
-      end if
-
-   else
-
-      ::oTree:Add( "No se ha podido crear el objeto para la firma digital." )
-
-   end if
-
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD VerificaFirma()
 
-   local xRet
-   local oError
-   local oBlock
-
-   if !File( FullCurDir() + "\aeatfact.dll")
-      ::oTree:Add( "No existe el componente AeatFact.Dll" )
-      RETURN ( Self )
-   end if
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      ::oFirma    := CreateObject( "AEATFACT.AeatFactCtl" )
-
-   RECOVER USING oError
-
-      WaitGenerate( "regsvr32 /s " + FullcurDir() + "AeatFact.Dll" )
-
-      ::oFirma    := CreateObject( "AEATFACT.AeatFactCtl" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if !empty( ::oFirma )
-
-      xRet        := ::oFirma:VERIFICA( ::cFicheroOrigen, ::cFicheroDestino )
-
-      ::oTree:Add( xRet, if( Left( xRet, 2 ) == "00", 1, 0 ) )
-
-   end if
-
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD FirmaJava()
 
-   local oError
-   local oBlock
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      logwrite(   "java -jar " + fullcurdir() + "firma\firma.jar " + ::cFicheroOrigen + space(1) + ::cFicheroDestino + space( 1 ) + "Explorer 0" )
-      waitGenerate(    "java -jar " + fullcurdir() + "firma\firma.jar " + ::cFicheroOrigen + space(1) + ::cFicheroDestino + space( 1 ) + "Explorer 0", 6 )
-
-      ::oTree:Add( "Proceso de firma digital iniciado.", 1 )
-
-   RECOVER USING oError
-
-      ::oTree:Add( "No se ha podido realizar la firma digital." )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -1321,10 +1223,10 @@ RETURN ( self )
 
 METHOD startInWeb( oActiveX, oDlg )
 
-   if file( ::cFicheroDestino )
-      oActiveX:Do( "Navigate", ::cFicheroDestino )
+   if file( ::cSignedXmlFile )
+      oActiveX:Do( "Navigate", ::cSignedXmlFile )
    else
-      oActiveX:Do( "Navigate", ::cFicheroOrigen )
+      oActiveX:Do( "Navigate", ::cXmlFile )
    end if
 
    sysRefresh()

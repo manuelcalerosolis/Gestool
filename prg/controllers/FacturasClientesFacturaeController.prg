@@ -15,6 +15,12 @@ CLASS FacturasClientesFacturaeController
 
    METHOD Run( aSelectedRecno )
 
+   METHOD Generate( uuid ) 
+
+   METHOD getController()              INLINE ( ::oController )
+
+   METHOD getDocumentModel()           INLINE ( ::oController:getModel() )
+
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := FacturaeModel():New( self ), ), ::oModel )
 
 ENDCLASS
@@ -41,7 +47,7 @@ RETURN ( nil )
 
 METHOD Run( aSelectedRecno ) CLASS FacturasClientesFacturaeController
 
-   aeval( ::oController:getUuidFromRecno( aSelectedRecno ), {| uuid| ::Generate( uuid ) } ) )
+   aeval( ::oController:getUuidFromRecno( aSelectedRecno ), {| uuid| ::Generate( uuid ) } )
    
 RETURN ( nil )
 
@@ -49,12 +55,24 @@ RETURN ( nil )
 
 METHOD Generate( uuid ) CLASS FacturasClientesFacturaeController
    
+   local hTotal
+   local hDocument   
+
    ::getModel():Default()
-   
-   ::getModel():cInvoiceNumber   := uuid
-   ::cFicheroOrigen  := "c:\temp\andrew.xml"
-   ::cFicheroDestino := "c:\temp\andrew-signed.xml"
-   ::cNif            := "CALERO SOLIS MANUEL - 75541180A"
+
+   hDocument         := ::getDocumentModel():getHashWhere( 'uuid', uuid )
+   if empty( hDocument )
+      RETURN ( nil )
+   end if 
+
+   hTotal            := ::getController():getTotalesDocument( uuid )
+   if empty( hTotal )
+      RETURN ( nil )
+   end if 
+
+   msgalert( hb_valtoexp( hTotal ), "hTotal" )
+
+   ::getModel():setInvoiceNumber( hget( hDocument, "serie" ) + hb_ntos( hget( hDocument, "numero" ) ) )
 
    ::getModel():Generate()
 

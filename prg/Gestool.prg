@@ -132,7 +132,7 @@ FUNCTION appTest()
 
    // msgalert( hb_valtoexp( oCertificate ), valtype( oCertificate ) )
 
-   FacturaeController():New():Run()
+   // FacturaeController():New():Run()
 
 
 /*

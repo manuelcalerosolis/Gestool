@@ -319,7 +319,7 @@ ExportableController.prg													\
 SQLRowSet.prg 																	\
 RelacionesEntidadesController.prg 										\
 TransportistasModel.prg 													\
-FacturaeController.prg 														\
+FacturaeModel.prg 															\
 FacturasClientesFacturaeController.prg 								\
 SQLComboSelector.prg 														\
 CompanyManager.prg 															\
@@ -660,7 +660,7 @@ ExportableController.obj 													\
 SQLRowSet.obj 																	\
 PedidosProveedoresLineasModel.obj 										\
 RelacionesEntidadesController.obj 										\
-FacturaeController.obj 														\
+FacturaeModel.obj 															\
 FacturasClientesFacturaeController.obj 								\
 TransportistasModel.obj 													\
 SQLComboSelector.obj 														\
@@ -1000,7 +1000,7 @@ $(OBJ)\ExportableController.obj											+
 $(OBJ)\PedidosProveedoresLineasModel.obj 							   +
 $(OBJ)\RelacionesEntidadesController.obj 							   +
 $(OBJ)\TransportistasModel.obj 											+
-$(OBJ)\FacturaeController.obj												+
+$(OBJ)\FacturaeModel.obj													+
 $(OBJ)\FacturasClientesFacturaeController.obj 						+
 $(OBJ)\SQLComboSelector.obj 												+
 $(OBJ)\CompanyManager.obj 													+
