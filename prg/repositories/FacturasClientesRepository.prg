@@ -10,7 +10,9 @@ CLASS FacturasClientesRepository FROM SQLBaseRepository
    METHOD getSQLFunctions()               INLINE ( {  ::dropFunctionTotalSummaryWhereUuid(),;
                                                       ::createFunctionTotalSummaryWhereUuid(),;
                                                       ::dropFunctionRecargoEquivalenciaWhereUuid(),;
-                                                      ::createFunctionRecargoEquivalenciaWhereUuid() } )
+                                                      ::createFunctionRecargoEquivalenciaWhereUuid(),;
+                                                      ::dropFunctionDescuentoWhereUuid(),;
+                                                      ::createFunctionDescuentoWhereUuid() } )
 
    METHOD createFunctionTotalSummaryWhereUuid()
       METHOD dropFunctionTotalSummaryWhereUuid()
@@ -19,6 +21,10 @@ CLASS FacturasClientesRepository FROM SQLBaseRepository
    METHOD createFunctionRecargoEquivalenciaWhereUuid() 
       METHOD dropFunctionRecargoEquivalenciaWhereUuid()   
       METHOD selectRecargoEquivalenciaWhereUuid( uuidFacturaCliente ) 
+
+   METHOD createFunctionDescuentoWhereUuid() 
+      METHOD dropFunctionDescuentoWhereUuid()   
+      METHOD selectDescuentoWhereUuid( uuidFacturaCliente ) 
    
    METHOD getSentenceDescuento() 
    METHOD getSentenceLineas() 
@@ -54,12 +60,14 @@ METHOD getSentenceTotalesDocument( uuidFacturaCliente ) CLASS FacturasClientesRe
       SUM( totales.importeRecargo ) AS totalRecargo,
       SUM( totales.totalDescuento ) AS totalDescuento,
       SUM( totales.importeTotal ) AS totalDocumento
-
-      FROM ( %1$s ) totales
+   FROM ( %1$s ) AS totales
 
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getSentenceTotales( uuidFacturaCliente ) )
+
+   logwrite( "getSentenceTotalesDocument" )
+   logwrite( cSql )
 
 RETURN ( cSql )
 
@@ -73,8 +81,7 @@ METHOD getSentenceTotalDocument( uuidFacturaCliente ) CLASS FacturasClientesRepo
 
    SELECT
       SUM( totales.importeTotal ) AS totalDocumento
-
-      FROM ( %1$s ) totales
+   FROM ( %1$s ) AS totales
 
    ENDTEXT
 
@@ -88,7 +95,13 @@ METHOD getTotalesDocument( uuidFacturaCliente )
 
    local aTotal   
 
+   logwrite( "getTotalesDocument( uuidFacturaCliente )" ) 
+   logwrite( ::getSentenceTotalesDocument( uuidFacturaCliente ) ) 
+   msgalert( ::getSentenceTotalesDocument( uuidFacturaCliente ), "getTotalesDocument" ) 
+
    aTotal   := ::getDatabase():selectFetchHash( ::getSentenceTotalesDocument( uuidFacturaCliente ) ) 
+
+   msgalert( hb_valtoexp( aTotal ), "getTotalesDocument" )
 
 RETURN ( if( hb_isarray( aTotal ), atail( aTotal ), nil ) )
 
@@ -100,19 +113,19 @@ METHOD getClientMailWhereFacturaUuid( uuidFacturaCliente ) CLASS FacturasCliente
 
    TEXT INTO cSql
 
-      SELECT direcciones.email
+   SELECT direcciones.email
 
-         FROM %1$s AS facturas_clientes
+   FROM %1$s AS facturas_clientes
 
-         INNER JOIN %2$s AS clientes
-            ON clientes.codigo = facturas_clientes.cliente_codigo
-         
-         INNER JOIN %3$s AS direcciones
-            ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal = 0
+   INNER JOIN %2$s AS clientes
+      ON clientes.codigo = facturas_clientes.cliente_codigo
+   
+   INNER JOIN %3$s AS direcciones
+      ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal = 0
 
-         WHERE facturas_clientes.uuid = %4$s
+   WHERE facturas_clientes.uuid = %4$s
 
-      ENDTEXT
+   ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLDireccionesModel():getTableName(), quoted( uuidFacturaCliente ) ) 
 
@@ -229,14 +242,14 @@ METHOD createFunctionRecargoEquivalenciaWhereUuid() CLASS FacturasClientesReposi
 
    BEGIN
 
-      DECLARE RecargoEquivalencia TINYINT( 1 );
+   DECLARE RecargoEquivalencia TINYINT( 1 );
 
-      SELECT 
-         facturas_clientes.recargo_equivalencia INTO RecargoEquivalencia
-      FROM %2$s AS facturas_clientes 
-         WHERE facturas_clientes.uuid = uuid_factura_cliente;
+   SELECT 
+      facturas_clientes.recargo_equivalencia INTO RecargoEquivalencia
+   FROM %2$s AS facturas_clientes 
+      WHERE facturas_clientes.uuid = uuid_factura_cliente;
 
-      RETURN RecargoEquivalencia;
+   RETURN RecargoEquivalencia;
 
    END
 
@@ -245,9 +258,6 @@ METHOD createFunctionRecargoEquivalenciaWhereUuid() CLASS FacturasClientesReposi
    cSql  := hb_strformat(  cSql,;
                            Company():getTableName( 'FacturaClienteRecargoEquivalenciaWhereUuid' ),;
                            ::getTableName() )
-
-   msgalert( cSql, "cSql" )
-   logwrite( cSql )
 
 RETURN ( cSql )
 
@@ -282,6 +292,57 @@ METHOD getSentenceDescuento( uuidFacturaCliente ) CLASS FacturasClientesReposito
    cSql  := hb_strformat( cSql, SQLFacturasClientesDescuentosModel():getTableName(), if( empty( uuidFacturaCliente ), 'uuid_factura_cliente', quoted( uuidFacturaCliente ) ) )
 
 RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD createFunctionDescuentoWhereUuid() CLASS FacturasClientesRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   CREATE DEFINER=`root`@`localhost` 
+   FUNCTION %1$s ( `uuid_factura_cliente` CHAR( 40 ) )
+   RETURNS FLOAT( 19, 6 )
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
+
+   BEGIN
+
+   DECLARE Descuentos FLOAT( 19, 6 );
+
+   SELECT 
+      SUM( facturas_clientes_descuentos.descuento ) INTO Descuentos
+   FROM %2$s AS facturas_clientes_descuentos 
+      WHERE facturas_clientes_descuentos.parent_uuid = uuid_factura_cliente 
+         AND facturas_clientes_descuentos.deleted_at = 0 ;
+
+   RETURN Descuentos;
+
+   END
+
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql,;
+                           Company():getTableName( 'FacturaClienteDescuentoWhereUuid' ),;
+                           SQLFacturasClientesDescuentosModel():getTableName() )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD dropFunctionDescuentoWhereUuid() CLASS FacturasClientesRepository  
+
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'FacturaClienteDescuentoWhereUuid' ) + ";" )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectDescuentoWhereUuid( uuidFacturaCliente ) CLASS FacturasClientesRepository
+
+RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaClienteDescuentoWhereUuid' ) + "( " + quoted( uuidFacturaCliente ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -325,7 +386,8 @@ METHOD getSentenceTotales( uuidFacturaCliente ) CLASS FacturasClientesRepository
       lineas.iva AS porcentajeIVA, 
       lineas.recargo_equivalencia AS recargoEquivalencia,
       ( @iva := IF( lineas.iva IS NULL, 0, ROUND( @neto * lineas.iva / 100, 2 ) ) ) AS importeIVA,  
-      %3$s, 
+      ( @aplicarRecargo := %3$s ) AS isRecargo, 
+      ( @recargo := IF( @aplicarRecargo = 0 OR lineas.recargo_equivalencia IS NULL, 0, ROUND( @neto * lineas.recargo_equivalencia / 100, 2 ) ) ) AS importeRecargo,
       ROUND( ( @neto + @iva + @recargo ), 2 ) AS importeTotal
    FROM 
       ( %2$s ) AS lineas
@@ -348,14 +410,12 @@ METHOD getSentenceRecargoEquivalenciaAsSelect( uuidFacturaCliente ) CLASS Factur
    local cSql
 
    TEXT INTO cSql
-      ( @aplicarRecargo := (  SELECT 
-                                 recargo_equivalencia
-                              FROM %1$s AS facturas_clientes 
-                                 WHERE facturas_clientes.uuid = %2$s ) ) AS aplicarRecargo,
-      ( @recargo := IF( @aplicarRecargo = 0 OR lineas.recargo_equivalencia IS NULL, 0, ROUND( @neto * lineas.recargo_equivalencia / 100, 2 ) ) ) AS importeRecargo
+      ( SELECT( %1$s( %2$s ) ) )
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidFacturaCliente ) )
+   cSql  := hb_strformat(  cSql,; 
+                           Company():getTableName( 'FacturaClienteRecargoEquivalenciaWhereUuid' ),;
+                           quoted( uuidFacturaCliente ) )
 
 RETURN ( alltrim( cSql ) )
 
@@ -366,7 +426,7 @@ METHOD getSentenceRecargoEquivalenciaAsParam() CLASS FacturasClientesRepository
    local cSql
 
    TEXT INTO cSql
-      ( @recargo := IF( recargo_equivalencia_factura_cliente = 0 OR lineas.recargo_equivalencia IS NULL, 0, ROUND( @neto * lineas.recargo_equivalencia / 100, 2 ) ) ) AS importeRecargo
+      IF( recargo_equivalencia_factura_cliente = 0 OR lineas.recargo_equivalencia IS NULL, 0, ROUND( @neto * lineas.recargo_equivalencia / 100, 2 ) ) 
    ENDTEXT
 
 RETURN ( alltrim( cSql ) )

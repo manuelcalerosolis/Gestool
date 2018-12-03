@@ -435,6 +435,8 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
 
    hTotal               := ::getRepository():getTotalesDocument( uuidFactura )
 
+   msgalert( hb_valtoexp( hTotal ), "hTotal" )
+
    if empty( hTotal )
       RETURN ( nil )
    end if 

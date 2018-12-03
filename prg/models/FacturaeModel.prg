@@ -323,20 +323,6 @@ RETURN ( nil )
 
 METHOD GenerateXml()
 
-   ::oXml         := TXmlDocument():new( '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' )
-
-   ::oXmlNode     := ::createXmlNode( "fe:Facturae",;
-                                       {  "xmlns:ds" => "http://www.w3.org/2000/09/xmldsig#",;
-                                          "xmlns:fe" => "http://www.facturae.es/Facturae/2009/v3.2/Facturae" } )
-
-   ::HeaderXml()
-
-   ::PartiesXml()
-
-   ::InvoiceXml()
-
-   ::oXml:oRoot:appendChild( ::oXmlNode )
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
