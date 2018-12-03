@@ -121,6 +121,8 @@ METHOD calculatePayment( nImporte ) CLASS RecibosPagosTemporalController
 
    end 
 
+   ::getRowSet():goTop()
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

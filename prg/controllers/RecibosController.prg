@@ -398,7 +398,7 @@ METHOD addLinksToExplorerBar() CLASS RecibosView
 
       oPanel:AddLink(   "Pagos...",;
                         {|| msgInfo( "to-do" ) },;
-                           ::oController:getFacturasClientesController():getImage( "16" ) )
+                           ::oController:getPagosController():getImage( "16" ) )
 
    end if 
 
