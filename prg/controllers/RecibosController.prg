@@ -12,7 +12,12 @@ CLASS RecibosController FROM SQLNavigatorController
    METHOD addExtraButtons()
 
    METHOD pagosModelLoadedBlankBuffer()
+
    METHOD pagosModelAppend()
+
+   METHOD totalPayed()
+
+   METHOD getImporte()           INLINE ( ::getRowSet():fieldGet( 'diferencia' ) )
 
    //Construcciones tardias----------------------------------------------------
 
@@ -84,9 +89,23 @@ RETURN ( ::Super:End() )
 
 METHOD addExtraButtons() CLASS RecibosController
 
-   ::oNavigatorView:getMenuTreeView():AddButton( "Generar pago", "gc_hand_money_16", {|| ::getPagosController():Append() } ) 
+   ::oNavigatorView:getMenuTreeView():AddButton( "Generar pago", "gc_hand_money_16", {|| ::totalPayed() } ) 
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD totalPayed() CLASS RecibosController
+
+   if ::getRowSet():fieldGet( 'diferencia' ) > 0
+      
+      ::getPagosController():Append()
+      
+      RETURN ( nil )
+   
+   end if
+
+RETURN ( msgstop("El recibo seleccionado ya esta totalmente pagado") )
 
 //---------------------------------------------------------------------------//
 

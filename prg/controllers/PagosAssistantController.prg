@@ -57,7 +57,7 @@ METHOD New( oController ) CLASS PagosAssistantController
    ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentence() } )
 
    ::getClientesController():getSelector():setEvent( 'validated', {|| ::getRecibos() } )
-   ::setEvent( 'appended',     {|| ::getRecibosPagosController():getModel():InsertPagoRecibo( ::getModelBuffer( "uuid" ) ) } )
+   ::setEvent( 'appended',     {|| ::getRecibosPagosController():getModel():InsertPagoReciboAssistant( ::getModelBuffer( "uuid" ) ) } )
    ::setEvent( 'exitAppended', {|| ::getRecibosPagosTemporalController():getModel():dropTemporalTable(), ::resetImporteAndCliente() } )
 
 RETURN ( Self )

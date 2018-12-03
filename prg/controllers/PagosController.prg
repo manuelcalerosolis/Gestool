@@ -5,6 +5,8 @@
 
 CLASS PagosController FROM SQLNavigatorController
 
+   DATA nImporte                       INIT 0
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -15,7 +17,11 @@ CLASS PagosController FROM SQLNavigatorController
 
    METHOD getImporte()           INLINE( ::getDialogView():nImporte )
 
-   METHOD Append()
+   METHOD appendAssistant()
+
+   METHOD addExtraButtons()
+
+   METHOD maxImporte( nImporte )
 
    //Construcciones tardias----------------------------------------------------
 
@@ -51,6 +57,8 @@ METHOD New( oController ) CLASS PagosController
 
    ::getNavigatorView():getMenuTreeView():setEvent( 'addingDeleteButton', { || .f. } )
    ::getNavigatorView():getMenuTreeView():setEvent( 'addingDuplicateButton', { || .f. } )
+   ::getNavigatorView():getMenuTreeView():setEvent( 'addingAppendButton', { || .f. } )
+   ::getNavigatorView():getMenuTreeView():setEvent( 'addedRefreshButton', {|| ::addExtraButtons() } )
 
    ::getCuentasBancariasController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
    ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentence() } )
@@ -86,6 +94,14 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
+METHOD addExtraButtons() CLASS PagosController
+
+   ::oNavigatorView:getMenuTreeView():AddButton( "Asistente de pagos", "New16", {|| ::getPagosController():AppendAssistant() } ) 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD gettingSelectSentence() CLASS PagosController
 
    ::getCuentasBancariasController():getModel():setGeneralWhere( "parent_uuid = " + quoted( Company():Uuid() ) )
@@ -94,7 +110,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD Append() CLASS PagosController
+METHOD AppendAssistant() CLASS PagosController
 
    ::getRecibosPagosTemporalController():getModel():createTemporalTable()
  
@@ -104,17 +120,28 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertPagoRecibo()
+METHOD insertPagoRecibo() CLASS PagosController
 
-   ::getRecibosPagosController():getModel():insertPagoRecibo( ::getModelBuffer( "uuid" ), ::getImporte()  )
-
+   ::getRecibosPagosController():getModel():insertPagoRecibo( ::getModelBuffer( "uuid" ), ::oController:getRowSet:fieldget( 'uuid' ), ::getImporte()  )
+    
    ::getRowSet:Refresh()
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+
+METHOD maxImporte( nImporte ) CLASS PagosController
+   
+   if nImporte > ::oController:getImporte()
+      
+      msgstop("El importe no puede ser mayor que la cantidad adeudada")
+      
+      RETURN( .f. )
+   
+   end if 
+
+RETURN( .t. )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -250,8 +277,6 @@ END CLASS
 
 METHOD Activate() CLASS PagosView
 
-msgalert(hb_valtoexp( ::oController:getModel():hBuffer ) )
-
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_MEDIUM_EXTENDED" ;
       TITLE       ::LblTitle() + "cobro"
@@ -284,6 +309,7 @@ msgalert(hb_valtoexp( ::oController:getModel():hBuffer ) )
       VAR         ::nImporte ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:maxImporte( ::nImporte ) ) ;
       PICTURE     "@E 999999999999.99";
       OF          ::oFolder:aDialogs[1]
 
@@ -314,7 +340,7 @@ msgalert(hb_valtoexp( ::oController:getModel():hBuffer ) )
 
    // Botones------------------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
@@ -332,9 +358,17 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activating() CLASS PagosView  
+METHOD Activating() CLASS PagosView 
 
-   ::setImporte( SQLRecibosPagosModel():getImporte( ::getController():getModelBuffer( 'uuid' ) ) )
+   if !::oController:isAppendMode()
+      
+      ::setImporte( SQLRecibosPagosModel():getImporte( ::getController():getModelBuffer( 'uuid' ) ) )
+      
+      RETURN( nil )
+
+   end if 
+
+   ::setImporte( ::oController:oController:getImporte() )
 
 RETURN ( nil )
 
