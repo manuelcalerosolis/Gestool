@@ -271,19 +271,21 @@ RETURN ( ::fireEvent( 'painted', self ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getControl( nId )
+METHOD getControl( nId, oDialog )
 
    local nPos
 
-   if empty( ::oDialog ) 
+   DEFAULT oDialog   := ::oDialog
+
+   if empty( oDialog ) 
       RETURN ( nil )
    end if 
    
-   nPos  := ascan( ::oDialog:aControls, { | o | o:nId == nId } ) 
+   nPos  := ascan( oDialog:aControls, { | o | o:nId == nId } ) 
    if nPos == 0
       RETURN ( nil )
    end if 
 
-RETURN ( ::oDialog:aControls[ nPos ] )
+RETURN ( oDialog:aControls[ nPos ] )
 
 //---------------------------------------------------------------------------//

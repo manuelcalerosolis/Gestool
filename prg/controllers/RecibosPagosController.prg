@@ -164,6 +164,8 @@ CLASS RecibosPagosRepository FROM SQLBaseRepository
 
    METHOD createFunctionTotalDifferenceWhereUuid()
 
+   METHOD selectFunctionTotalPaidWhereUuid( uuidRecibo )   
+
    METHOD dropFunctionTotalDifferenceWhereUuid()
 
 END CLASS
@@ -262,6 +264,14 @@ RETURN ( cSql )
 METHOD dropFunctionTotalPaidWhereUuid() CLASS RecibosPagosRepository  
 
 RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'RecibosPagosTotalPaidWhereUuid' ) + ";" )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectFunctionTotalPaidWhereUuid( uuidRecibo ) CLASS RecibosPagosRepository  
+
+   local cSql  := "SELECT " + Company():getTableName( 'RecibosPagosTotalPaidWhereUuid' ) + "( " + quoted( uuidRecibo ) + " )"
+
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 

@@ -99,13 +99,15 @@ METHOD totalPayed() CLASS RecibosController
 
    if ::getRowSet():fieldGet( 'diferencia' ) > 0
       
+      ::getPagosController():setUuidRecibo( ::getRowset():fieldGet( 'uuid' ) )
+
       ::getPagosController():Append()
       
       RETURN ( nil )
    
    end if
 
-RETURN ( msgstop("El recibo seleccionado ya esta totalmente pagado") )
+RETURN ( msgstop( "El recibo seleccionado ya esta totalmente pagado" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -483,6 +485,10 @@ CLASS SQLRecibosModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
+   METHOD getDiferencia( uuidRecibo ) 
+
+   METHOD testCreateRecibo()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -492,11 +498,11 @@ METHOD getColumns() CLASS SQLRecibosModel
    hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
                                                       "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"                ,;                                  
+   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"              ,;                                  
                                                       "default"   => {|| win_uuidcreatestring() } }               )
 
    hset( ::hColumns, "parent_uuid",                {  "create"    => "VARCHAR( 40 )"                              ,;
-                                                      "default"   => {|| ::getControllerParentUuid() } }           )
+                                                      "default"   => {|| ::getControllerParentUuid() } }          )
 
    hset( ::hColumns, "parent_table",               {  "create"    => "VARCHAR( 200 )"                             ,;
                                                       "default"   => {|| space( 200 ) } }                         )
@@ -544,10 +550,10 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
    LEFT JOIN %3$s AS pagos
       ON pagos.uuid = pagos_recibos.pago_uuid
 
-   INNER JOIN %4$s AS facturas_clientes
+   LEFT JOIN %4$s AS facturas_clientes
       ON recibos.parent_uuid = facturas_clientes.uuid 
 
-   INNER JOIN %5$s AS clientes 
+   LEFT JOIN %5$s AS clientes 
       ON facturas_clientes.cliente_codigo = clientes.codigo AND clientes.deleted_at = 0
 
    ENDTEXT
@@ -562,6 +568,32 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
 
 RETURN ( cSql )
 
+//---------------------------------------------------------------------------//
+
+METHOD getDiferencia( uuidRecibo ) CLASS SQLRecibosModel
+   
+   local nImporte    := ::getColumnWhereUuid( uuidRecibo, "importe" )
+
+   nImporte          -= RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( uuidRecibo )
+
+RETURN ( nImporte )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateRecibo( uuid ) CLASS SQLRecibosModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "uuid", uuid )
+   hset( hBuffer, "importe", 100 )
+   hset( hBuffer, "concepto", "Recibo test" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 CLASS SQLRecibosAssistantModel FROM SQLRecibosModel

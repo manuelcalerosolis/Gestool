@@ -62,6 +62,8 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
 
    METHOD countLinesWhereUuidParent( uuidParent )  INLINE ( getSQLDatabase():getValue( ::getSentenceCountLineas( uuidParent ), 0 ) )
 
+   METHOD testCreateFacturaLinea( uuid )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -422,3 +424,16 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------// 
 
+METHOD testCreateFacturaLinea( uuid ) CLASS SQLFacturasClientesLineasModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "articulo_codigo", "0" )
+   hset( hBuffer, "articulo_nombre", "Test" )
+   hset( hBuffer, "articulo_unidades", 1 )
+   hset( hBuffer, "articulo_precio", 100 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//

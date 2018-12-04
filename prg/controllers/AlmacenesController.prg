@@ -323,9 +323,9 @@ RETURN ( cSQLSentence )
 
 CLASS SQLAlmacenesModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "almacenes"
+   DATA cTableName                     INIT "almacenes"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( codigo, deleted_at )"
 
    METHOD getColumns()
 
@@ -333,7 +333,9 @@ CLASS SQLAlmacenesModel FROM SQLCompanyModel
 
    METHOD getInsertAlmacenSentence()
 
-   METHOD CountAlmacenWhereCodigo( cCodigoAlmacen)
+   METHOD CountAlmacenWhereCodigo( cCodigoAlmacen )
+
+   METHOD testCreateAlmacen()
 
 END CLASS
 
@@ -408,6 +410,17 @@ METHOD CountAlmacenWhereCodigo( cCodigoAlmacen ) CLASS SQLAlmacenesModel
 
 
 RETURN ( getSQLDatabase():getValue ( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateAlmacen() CLASS SQLAlmacenesModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "codigo", "0" )
+   hset( hBuffer, "nombre", "Almacen de test" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

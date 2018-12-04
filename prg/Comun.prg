@@ -3864,8 +3864,8 @@ FUNCTION ApoloWaitSeconds( nSecs )
    local n
 
    for n := 1 to nSecs
-      WaitSeconds( 1 )
-      SysRefresh()
+      waitSeconds( 1 )
+      sysRefresh()
    next
 
 RETURN nil

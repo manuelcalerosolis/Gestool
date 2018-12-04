@@ -13,6 +13,8 @@ CLASS SQLArticulosModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
+   METHOD testCreatePrecioConDescuentos() 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -160,6 +162,16 @@ METHOD getInitialSelect() CLASS SQLArticulosModel
 RETURN ( cSql )                                      
 
 //---------------------------------------------------------------------------//
+
+METHOD testCreatePrecioConDescuentos() CLASS SQLArticulosModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "codigo", "0" )
+   hset( hBuffer, "nombre", "Articulo con descuentos" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
