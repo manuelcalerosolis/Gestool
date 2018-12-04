@@ -41,7 +41,7 @@ CLASS GetSelector
    
    METHOD cText( value )                        INLINE ( if( !empty( ::oGet ), ::oGet:cText( value ), ) )
 
-   METHOD getView()                             INLINE ( ::oController:getView() )
+   METHOD getView()                             INLINE ( ::oController:oController:getDialogView() )
 
    METHOD Build( hBuilder )
 
@@ -299,7 +299,7 @@ METHOD showMessage( lSilenceMode ) CLASS GetSelector
       RETURN ( nil )
    end if 
 
-   if empty( ::getView() ) .or. empty( ::getView():oMessage )
+   if empty( ::getView() )
       msgStop( ::oController:cTitle + " no encontrado" )
    else
       ::getView():showMessage( ::oController:cTitle + " no encontrado" )

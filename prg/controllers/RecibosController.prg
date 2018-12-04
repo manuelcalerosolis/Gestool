@@ -570,7 +570,7 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDiferencia( uuidRecibo ) CLASS SQLRecibosModel
+METHOD getDiferencia( uuidRecibo ) CLASS SQLRecibosModel 
    
    local nImporte    := ::getColumnWhereUuid( uuidRecibo, "importe" )
 

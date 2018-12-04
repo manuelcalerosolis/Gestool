@@ -605,6 +605,8 @@ CLASS TestPagosController FROM TestCase
 
    METHOD testDialogAppendClienteInexistente()
 
+   METHOD testDialogAppendMedioPagoInexistente()
+
 //   METHOD testDialogEmptyNombre()
 
 END CLASS
@@ -851,7 +853,44 @@ METHOD testDialogAppendClienteInexistente() CLASS TestPagosController
          apoloWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
          apoloWaitSeconds( 1 ),;
-         self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 500 ),;
+         self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 50 ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDCANCEL ):Click() } )
+
+   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testDialogAppendMedioPagoInexistente() CLASS TestPagosController
+
+   local oController 
+   local uuidRecibo        := win_uuidcreatestring()
+
+   SQLPagosModel():truncateTable()
+   SQLRecibosModel():truncateTable() 
+   SQLClientesModel():truncateTable()
+   SQLMediosPagoModel():truncateTable()
+   SQLRecibosPagosModel():truncateTable() 
+
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateRecibo( uuidRecibo ), "test create recibo" )
+
+   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" )
+
+   oController             := PagosController():New()
+   oController:setUuidRecibo( uuidRecibo )
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 50 ),;
          apoloWaitSeconds( 1 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
          apoloWaitSeconds( 1 ),;
