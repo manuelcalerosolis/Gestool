@@ -27,23 +27,34 @@ CLASS FacturasClientesRepository FROM SQLBaseRepository
       METHOD selectDescuentoWhereUuid( uuidFacturaCliente ) 
    
    METHOD getSentenceDescuento() 
+   
    METHOD getSentenceLineas() 
+
    METHOD getSentenceTotales()
+
    METHOD getSentenceRecargoEquivalenciaAsSelect()
    METHOD getSentenceRecargoEquivalenciaAsParam()
-
-   METHOD createTriggerDeleted()
+   METHOD getSentenceDescuentosAsSelect( uuidFactura ) 
 
    METHOD getSentenceTotalDocument( uuidFactura )
-   METHOD getSentenceTotalesDocument( uuidFactura )
 
    METHOD getTotalesDocument( uuidFactura )         
+   METHOD getSentenceTotalesDocument( uuidFactura )
+
+   METHOD getTotalesDocumentGroupByIVA( uuidFactura )
+   METHOD getSentenceTotalesDocumentGroupByIVA( uuidFactura )
 
    //Envio de emails-----------------------------------------------------------
 
    METHOD getClientMailWhereFacturaUuid( uuidFactura ) 
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceTotalesDocumentGroupByIVA( uuidFacturaCliente ) CLASS FacturasClientesRepository
+
+RETURN ( ::getSentenceTotalesDocument( uuidFacturaCliente ) + " GROUP BY totales.porcentajeIVA" )
 
 //---------------------------------------------------------------------------//
 
@@ -88,13 +99,19 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTotalesDocument( uuidFacturaCliente )
+METHOD getTotalesDocument( uuidFacturaCliente ) CLASS FacturasClientesRepository
 
-   local aTotal   
-
-   aTotal   := ::getDatabase():selectFetchHash( ::getSentenceTotalesDocument( uuidFacturaCliente ) ) 
+   local aTotal   := ::getDatabase():selectFetchHash( ::getSentenceTotalesDocument( uuidFacturaCliente ) ) 
 
 RETURN ( if( hb_isarray( aTotal ), atail( aTotal ), nil ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTotalesDocumentGroupByIVA( uuidFacturaCliente ) CLASS FacturasClientesRepository
+
+   local aTotal   := ::getDatabase():selectFetchHash( ::getSentenceTotalesDocumentGroupByIVA( uuidFacturaCliente ) ) 
+
+RETURN ( if( hb_isarray( aTotal ), aTotal, nil ) )
 
 //---------------------------------------------------------------------------//
 
@@ -121,44 +138,6 @@ METHOD getClientMailWhereFacturaUuid( uuidFacturaCliente ) CLASS FacturasCliente
    cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLDireccionesModel():getTableName(), quoted( uuidFacturaCliente ) ) 
 
 RETURN ( getSQLDatabase():getValue( cSql, "" ) ) 
-
-//---------------------------------------------------------------------------//
-
-METHOD createTriggerDeleted() CLASS FacturasClientesRepository
-
-   local cSQL
-
-   TEXT INTO cSql
-      CREATE OR REPLACE TRIGGER %1$s
-      AFTER UPDATE ON %2$s
-      FOR EACH ROW 
-      BEGIN
-         UPDATE %3$s SET deleted_at = new.deleted_at
-            WHERE %3$s.parent_uuid = new.uuid;
-         
-         UPDATE %4$s SET deleted_at = new.deleted_at
-            WHERE %4$s.parent_uuid = new.uuid;
-
-         UPDATE %5$s SET deleted_at = new.deleted_at
-            WHERE %5$s.parent_uuid = new.uuid;
-
-         UPDATE %6$s SET deleted_at = new.deleted_at
-            WHERE %6$s.parent_uuid = new.uuid;
-
-         UPDATE %7$s SET deleted_at = new.deleted_at
-            WHERE %7$s.parent_uuid = new.uuid;
-      END;
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql,  Company():getTableName( 'FacturaClienteDeleted' ),;
-                                 ::getTableName(),;
-                                 SQLRecibosModel():getTableName(),;
-                                 SQLFacturasClientesLineasModel():getTableName(),;
-                                 SQLIncidenciasModel():getTableName(),;
-                                 SQLFacturasClientesDescuentosModel():getTableName(),;
-                                 SQLDireccionTipoDocumentoModel():getTableName() ) 
-
-RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -377,16 +356,19 @@ METHOD getSentenceTotales( uuidFacturaCliente ) CLASS FacturasClientesRepository
       lineas.iva AS porcentajeIVA, 
       lineas.recargo_equivalencia AS recargoEquivalencia,
       ( @iva := IF( lineas.iva IS NULL, 0, ROUND( @neto * lineas.iva / 100, 2 ) ) ) AS importeIVA,  
-      ( @aplicarRecargo := %3$s ) AS isRecargo, 
+      ( @aplicarRecargo := %3$s ) AS aplicarRecargo, 
       ( @recargo := IF( @aplicarRecargo = 0 OR lineas.recargo_equivalencia IS NULL, 0, ROUND( @neto * lineas.recargo_equivalencia / 100, 2 ) ) ) AS importeRecargo,
       ROUND( ( @neto + @iva + @recargo ), 2 ) AS importeTotal
+   
    FROM 
       ( %2$s ) AS lineas
+   
+   GROUP BY lineas.iva
 
    ENDTEXT
 
    cSql  := hb_strformat(  cSql,;
-                           ::getSentenceDescuento( uuidFacturaCliente ),;
+                           ::getSentenceDescuentosAsSelect( uuidFacturaCliente ),; // ::getSentenceDescuento( uuidFacturaCliente ),;
                            ::getSentenceLineas( uuidFacturaCliente ),;
                            if( empty( uuidFacturaCliente ),;
                               ::getSentenceRecargoEquivalenciaAsParam(),;
@@ -398,7 +380,7 @@ RETURN ( alltrim( cSql ) )
 
 METHOD getSentenceRecargoEquivalenciaAsSelect( uuidFacturaCliente ) CLASS FacturasClientesRepository 
 
-   local cSql
+   local cSql  
 
    TEXT INTO cSql
       ( SELECT( %1$s( %2$s ) ) )
@@ -406,6 +388,22 @@ METHOD getSentenceRecargoEquivalenciaAsSelect( uuidFacturaCliente ) CLASS Factur
 
    cSql  := hb_strformat(  cSql,; 
                            Company():getTableName( 'FacturaClienteRecargoEquivalenciaWhereUuid' ),;
+                           quoted( uuidFacturaCliente ) )
+
+RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceDescuentosAsSelect( uuidFacturaCliente ) CLASS FacturasClientesRepository 
+
+   local cSql
+
+   TEXT INTO cSql
+      ( SELECT( %1$s( %2$s ) ) )
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql,; 
+                           Company():getTableName( 'FacturaClienteDescuentoWhereUuid' ),;
                            quoted( uuidFacturaCliente ) )
 
 RETURN ( alltrim( cSql ) )

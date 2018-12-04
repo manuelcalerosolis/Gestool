@@ -72,14 +72,24 @@ CLASS FacturaeModel
    DATA  cSignedXmlFile
    DATA  cNif
 
-   DATA     cInvoiceNumber
-   DATA     cInvoiceSeriesCode
-   DATA     cInvoiceCurrencyCode
+   DATA cInvoiceNumber
+   DATA cInvoiceSeriesCode
+   DATA cInvoiceCurrencyCode
 
    DATA nInvoiceTotalAmount
-   METHOD setInvoiceTotalAmount( nInvoiceTotalAmount) ;
+   METHOD setInvoiceTotalAmount( nInvoiceTotalAmount ) ;
                                        INLINE ( ::nInvoiceTotalAmount := nInvoiceTotalAmount )
    ACCESS InvoiceTotalAmount           INLINE ( alltrim( Trans( ::nInvoiceTotalAmount, DoubleTwoDecimalPicture ) ) )
+   
+   DATA nTotalOutstandingAmount    
+   METHOD setTotalOutstandingAmount( nTotalOutstandingAmount ) ;
+                                       INLINE ( ::nTotalOutstandingAmount := nTotalOutstandingAmount )
+   ACCESS TotalOutstandingAmount       INLINE ( alltrim( Trans( ::nTotalOutstandingAmount, DoubleTwoDecimalPicture ) ) )
+   
+   DATA nTotalExecutableAmount         
+   METHOD setTotalExecutableAmount( nTotalExecutableAmount ) ;
+                                       INLINE ( ::nTotalExecutableAmount := nTotalExecutableAmount )
+   ACCESS TotalExecutableAmount        INLINE ( alltrim( Trans( ::nTotalExecutableAmount, DoubleTwoDecimalPicture ) ) )
 
    DATA     nTotalGrossAmount             INIT  0
    DATA     nTotalGrossAmountBeforeTaxes  INIT  0
@@ -88,13 +98,9 @@ CLASS FacturaeModel
    DATA     nTotalTaxOutputs              INIT  0
    DATA     nTotalTaxesWithheld           INIT  0
    DATA     nInvoiceTotal                 INIT  0
-   DATA     nTotalOutstandingAmount       INIT  0
-   DATA     nTotalExecutableAmount        INIT  0
    DATA     nTotalReimbursableExpenses    INIT  0
 
    ACCESS   TotalGrossAmount              INLINE ( alltrim( Trans( ::nTotalGrossAmount,            DoubleTwoDecimalPicture ) ) )
-   ACCESS   TotalOutstandingAmount        INLINE ( alltrim( Trans( ::nTotalOutstandingAmount,      DoubleTwoDecimalPicture ) ) )
-   ACCESS   TotalExecutableAmount         INLINE ( alltrim( Trans( ::nTotalExecutableAmount,       DoubleTwoDecimalPicture ) ) )
    ACCESS   TotalGeneralSurcharges        INLINE ( alltrim( Trans( ::nTotalGeneralSurcharges,      DoubleTwoDecimalPicture ) ) )
 
    ACCESS   TotalTaxOutputs               INLINE ( alltrim( Trans( ::nTotalTaxOutputs,             DoubleTwoDecimalPicture ) ) )
@@ -105,8 +111,6 @@ CLASS FacturaeModel
 
    ACCESS   TotalTaxesWithheld         INLINE ( alltrim( Trans( ::nTotalTaxesWithheld,          DoubleTwoDecimalPicture ) ) )
    ACCESS   InvoiceTotal               INLINE ( alltrim( Trans( ::nInvoiceTotal,                DoubleTwoDecimalPicture ) ) )
-   ACCESS   TotalOutstandingAmount     INLINE ( alltrim( Trans( ::nTotalOutstandingAmount,      DoubleTwoDecimalPicture ) ) )
-   ACCESS   TotalExecutableAmount      INLINE ( alltrim( Trans( ::nTotalExecutableAmount,       DoubleTwoDecimalPicture ) ) )
    ACCESS   TotalReimbursableExpenses  INLINE ( alltrim( Trans( ::nTotalReimbursableExpenses,   DoubleTwoDecimalPicture ) ) )
 
    DATA     cCorrectiveInvoiceNumber

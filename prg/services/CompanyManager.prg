@@ -8,14 +8,16 @@ static oCompany
 CLASS CompanyManager
 
    DATA id
+   DATA nif
    DATA uuid
    DATA nombre
    DATA codigo
+   DATA registroMercantil
    DATA delegacionUuid
 
    METHOD New() CONSTRUCTOR
 
-   METHOD Set( hCompany )                 INLINE ( ::guard( hCompany ) )
+   METHOD Set( hCompany )              INLINE ( ::guard( hCompany ) )
    METHOD Guard( hCompany )
 
    METHOD guardWhereUuid( uuid )
@@ -23,16 +25,26 @@ CLASS CompanyManager
 
    METHOD getDefaultDelegacion()
 
-   METHOD getDatabase()                   INLINE ( 'gestool' + '_' + ::codigo )
-   METHOD getTableName( cTableName )      INLINE ( ::getDatabase() + '.' + cTableName )
+   METHOD getDatabase()                INLINE ( 'gestool' + '_' + ::codigo )
+   METHOD getTableName( cTableName )   INLINE ( ::getDatabase() + '.' + cTableName )
 
-   METHOD getDefaultTarifa()              INLINE ( SQLAjustableModel():getEmpresaTarifaDefecto( ::uuid ) )
+   METHOD getDefaultTarifa()           INLINE ( SQLAjustableModel():getEmpresaTarifaDefecto( ::uuid ) )
    
-   METHOD getDefaultMetodoPago()          INLINE ( SQLAjustableModel():getMetodoPago( ::uuid ) )
+   METHOD getDefaultMetodoPago()       INLINE ( SQLAjustableModel():getMetodoPago( ::uuid ) )
 
    METHOD getPathDocuments( cDirectory )  INLINE ( cCompanyPathDocuments( ::codigo, cDirectory ) )
 
    METHOD getDocuments( cDirectory ) 
+
+   METHOD getId()                      INLINE ( ::id )
+   METHOD getNif()                     INLINE ( ::nif )
+   METHOD getUuid()                    INLINE ( ::uuid )
+   METHOD getNombre()                  INLINE ( ::nombre )
+   METHOD getCodigo()                  INLINE ( ::codigo )
+   METHOD getDelegacionUuid()          INLINE ( ::delegacionUuid )
+   METHOD getRegistroMercantil()       INLINE ( ::registroMercantil )
+
+   METHOD isPersonType()               INLINE ( val( left( ::nif, 1 ) ) != 0 )
 
    METHOD getTemplatesHTML()    
 
@@ -70,6 +82,14 @@ METHOD guard( hCompany )
 
    if hhaskey( hCompany, "codigo" )
       ::codigo          := hget( hCompany, "codigo" ) 
+   end if 
+
+   if hhaskey( hCompany, "nif" )
+      ::nif             := hget( hCompany, "nif" ) 
+   end if 
+
+   if hhaskey( hCompany, "registro_mercantil" )
+      ::registroMercantil  := hget( hCompany, "registro_mercantil" ) 
    end if 
 
 RETURN ( self )
