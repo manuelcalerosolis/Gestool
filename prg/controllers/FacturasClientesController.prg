@@ -84,7 +84,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
    
    METHOD generateReport( hReport )    INLINE ( ::getReport():Generate( hReport ) )
 
-   METHOD getSubject()                 INLINE ( "Factura de cliente nï¿½mero" )
+   METHOD getSubject()                 INLINE ( "Factura de cliente número" )
 
    // Contrucciones tardias----------------------------------------------------
 
@@ -531,15 +531,15 @@ END CLASS
 
 METHOD getValidators() CLASS FacturasClientesValidator
 
-   ::hValidators  := {  "cliente_codigo"     => {  "required"        => "El cï¿½digo del cliente es un dato requerido",;
-                                                   "clienteExist"    => "El cï¿½digo del cliente no existe" } ,;  
-                        "metodo_pago_codigo" => {  "required"        => "El cï¿½digo del mï¿½todo de pago es un dato requerido",;
-                                                   "formaPagoExist"  => "El cï¿½digo del mï¿½todo de pago no existe" } ,;  
-                        "almacen_codigo"     => {  "required"        => "El cï¿½digo del almacï¿½n es un dato requerido",;
-                                                   "almacenExist"    => "El cï¿½digo del almacï¿½n no existe" } ,;  
-                        "tarifa_codigo"      => {  "required"        => "El cï¿½digo de la tarifa es un dato requerido",; 
-                                                   "tarifaExist"     => "El cï¿½digo de la tarifa no existe" },;
-                        "formulario"         => {  "emptyLines"      => "Las lï¿½neas no pueden estar vacias",;
+   ::hValidators  := {  "cliente_codigo"     => {  "required"        => "El código del cliente es un dato requerido",;
+                                                   "clienteExist"    => "El código del cliente no existe" } ,;  
+                        "metodo_pago_codigo" => {  "required"        => "El código del método de pago es un dato requerido",;
+                                                   "formaPagoExist"  => "El código del método de pago no existe" } ,;  
+                        "almacen_codigo"     => {  "required"        => "El código del almacén es un dato requerido",;
+                                                   "almacenExist"    => "El código del almacén no existe" } ,;  
+                        "tarifa_codigo"      => {  "required"        => "El código de la tarifa es un dato requerido",; 
+                                                   "tarifaExist"     => "El código de la tarifa no existe" },;
+                        "formulario"         => {  "emptyLines"      => "Las líneas no pueden estar vacias",;
                                                    "validLine"       => "" } }  
 
 RETURN ( ::hValidators )

@@ -175,17 +175,16 @@ CLASS FacturaeModel
 
    METHOD setInvoiceNumber( cInvoiceNumber )
 
-   METHOD GenerateXml()
-      METHOD initialXML()
-      METHOD HeaderXml()
-      METHOD PartiesXml()
-      METHOD InvoiceXml()
-      METHOD TaxesXml()
-      METHOD TotalXml()
-      METHOD DiscountXml()
-      METHOD ItemsXml()
-      METHOD InstallmentXml()
-      METHOD AdministrativeCentresXml( oAdministrativeCentre )
+   METHOD initialXML()
+   METHOD headerXml()
+   METHOD partiesXml()
+   METHOD invoiceXml()
+   METHOD taxesXml()
+   METHOD totalXml()
+   METHOD discountXml()
+   METHOD itemsXml()
+   METHOD installmentXml()
+   METHOD administrativeCentresXml( oAdministrativeCentre )
 
    METHOD ShowInWeb()
       METHOD startInWeb( oActiveX, oDlg )
@@ -267,16 +266,7 @@ METHOD CreateDocument()
       END
    END
 
-   if hb_isobject( ::oXml )
-
-      ::oXml:async            := .f.
-      ::oXml:resolveExternals := .f.
-
-      RETURN ( .t. )
-
-   end if
-
-RETURN ( .f. )
+RETURN ( hb_isobject( ::oXml ) )
 
 //---------------------------------------------------------------------------//
 
@@ -308,8 +298,6 @@ METHOD Generate()
 
    ::destroyDocument()
 
-   msginfo( "proceso finalizado" )
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -320,12 +308,6 @@ METHOD setInvoiceNumber( cInvoiceNumber )
 
    ::cXmlFile        := cPatXml() + ::cInvoiceNumber + ".xml"
    ::cSignedXmlFile  := cPatXml() + ::cInvoiceNumber + "-signed.xml"
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD GenerateXml()
 
 RETURN ( nil )
 
@@ -413,153 +395,153 @@ METHOD PartiesXml()
             ::oXmlTaxIdentification:appendChild( ::createXmlNode( 'ResidenceTypeCode', ::oSellerParty:cResidenceTypeCode ) )
             ::oXmlTaxIdentification:appendChild( ::createXmlNode( 'TaxIdentificationNumber', ::oSellerParty:TaxIdentificationNumber() ) )
 
-         ::oXmlSellerParty:appendChild( ::oXmlTaxIdentification )
+      ::oXmlSellerParty:appendChild( ::oXmlTaxIdentification )
 
-         /*
-         Comienza el nodo LegalEntity------------------------------------------
-         */
+      /*
+      Comienza el nodo LegalEntity------------------------------------------
+      */
 
-         if !empty( ::oSellerParty:cCorporateName )
+      if !empty( ::oSellerParty:cCorporateName )
 
-            ::oXmlLegalEntity  := ::createXmlNode( 'LegalEntity' )
+         ::oXmlLegalEntity  := ::createXmlNode( 'LegalEntity' )
 
-               if !empty( ::oSellerParty:CorporateName() )
-                  ::oXmlLegalEntity:appendChild( ::createCDataXmlNode( 'CorporateName', ::oSellerParty:CorporateName() ) )
+            if !empty( ::oSellerParty:CorporateName() )
+               ::oXmlLegalEntity:appendChild( ::createCDataXmlNode( 'CorporateName', ::oSellerParty:CorporateName() ) )
+            end if
+
+            if !empty( ::oSellerParty:TradeName() )
+               ::oXmlLegalEntity:appendChild( ::createXmlNode( 'TradeName', ::oSellerParty:TradeName() ) )
+            end if
+
+            ::oXmlRegistrationData  := ::createXmlNode( 'RegistrationData' )
+
+               if !empty( ::oSellerParty:nBook )
+                  ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Book', ::oSellerParty:nBook ) )
                end if
 
-               if !empty( ::oSellerParty:TradeName() )
-                  ::oXmlLegalEntity:appendChild( ::createXmlNode( 'TradeName', ::oSellerParty:TradeName() ) )
+               if !empty( ::oSellerParty:cRegisterOfCompaniesLocation )
+                  ::oXmlRegistrationData:appendChild( ::createXmlNode( 'RegisterOfCompaniesLocation', ::oSellerParty:cRegisterOfCompaniesLocation ) )
                end if
 
-               ::oXmlRegistrationData  := ::createXmlNode( 'RegistrationData' )
-
-                  if !empty( ::oSellerParty:nBook )
-                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Book', ::oSellerParty:nBook ) )
-                  end if
-
-                  if !empty( ::oSellerParty:cRegisterOfCompaniesLocation )
-                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'RegisterOfCompaniesLocation', ::oSellerParty:cRegisterOfCompaniesLocation ) )
-                  end if
-
-                  if !empty( ::oSellerParty:nSheet )
-                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Sheet', ::oSellerParty:nSheet ) )
-                  end if
-
-                  if !empty( ::oSellerParty:nFolio )
-                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Folio', ::oSellerParty:nFolio ) )
-                  end if
-
-                  if !empty( ::oSellerParty:cSection )
-                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Section', ::oSellerParty:cSection ) )
-                  end if
-
-                  if !empty( ::oSellerParty:nVolume )
-                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Volume', ::oSellerParty:nVolume ) )
-                  end if
-
-                  if !empty( ::oSellerParty:AditionalRegistrationData() )
-                     ::oXmlRegistrationData:appendChild( ::createXmlNode( 'AditionalRegistrationData', ::oSellerParty:AditionalRegistrationData() ) )
-                  end if
-
-               ::oXmlLegalEntity:appendChild( ::oXmlRegistrationData )
-
-               /*
-               Comienza el nodo de direcciones------------------------------------
-               */
-
-               ::oXmlAddressInSpain  := ::createXmlNode( 'AddressInSpain' )
-                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Address', ::oSellerParty:Address() ) )
-                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'PostCode', ::oSellerParty:PostCode() ) )
-                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Town', ::oSellerParty:Town() ) )
-                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Province', ::oSellerParty:Province() ) )
-                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'CountryCode', ::oSellerParty:CountryCode() ) )
-
-               ::oXmlLegalEntity:appendChild( ::oXmlAddressInSpain )
-
-               ::oXmlContactDetails := ::createXmlNode( 'ContactDetails' )
-
-                  if !empty( ::oSellerParty:Telephone() )
-                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'Telephone',     ::oSellerParty:Telephone() ) )
-                  end if
-
-                  if !empty( ::oSellerParty:cTelFax )
-                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'TeleFax',       ::oSellerParty:cTelFax ) )
-                  end if
-
-                  if !empty( ::oSellerParty:cWebAddress )
-                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'WebAddress',    ::oSellerParty:cWebAddress ) )
-                  end if
-
-                  if !empty( ::oSellerParty:cElectronicMail )
-                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'ElectronicMail',::oSellerParty:cElectronicMail ) )
-                  end if
-
-                  ::oXmlLegalEntity:appendChild( ::oXmlContactDetails )
-
-               ::oXmlSellerParty:appendChild( ::oXmlLegalEntity )
-
-            ::oXmlParties:appendChild( ::oXmlSellerParty )
-
-         end if
-
-         /*
-         Comienza el nodo Individual------------------------------------------
-         */
-
-         if !empty( ::oSellerParty:cName )
-
-            ::oXmlLegalEntity  := ::createXmlNode( 'Individual' )
-
-               if !empty( ::oSellerParty:cName )
-                  ::oXmlLegalEntity:appendChild( ::createXmlNode( 'Name', ::oSellerParty:Name() ) )
+               if !empty( ::oSellerParty:nSheet )
+                  ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Sheet', ::oSellerParty:nSheet ) )
                end if
 
-               if !empty( ::oSellerParty:cName ) .or. !empty( ::oSellerParty:cFirstSurname )
-                  ::oXmlLegalEntity:appendChild( ::createXmlNode( 'FirstSurname', ::oSellerParty:FirstSurname() ) )
+               if !empty( ::oSellerParty:nFolio )
+                  ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Folio', ::oSellerParty:nFolio ) )
                end if
 
-               if !empty( ::oSellerParty:cSecondSurname )
-                  ::oXmlLegalEntity:appendChild( ::createXmlNode( 'SecondSurname', ::oSellerParty:SecondSurname() ) )
+               if !empty( ::oSellerParty:cSection )
+                  ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Section', ::oSellerParty:cSection ) )
                end if
 
-               /*
-               Comienza el nodo de direcciones------------------------------------
-               */
+               if !empty( ::oSellerParty:nVolume )
+                  ::oXmlRegistrationData:appendChild( ::createXmlNode( 'Volume', ::oSellerParty:nVolume ) )
+               end if
 
-               ::oXmlAddressInSpain  := ::createXmlNode( 'AddressInSpain' )
-                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Address',    ::oSellerParty:Address() ) )
-                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'PostCode',   ::oSellerParty:PostCode() ) )
-                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Town',       ::oSellerParty:Town() ) )
-                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Province',   ::oSellerParty:Province() ) )
-                  ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'CountryCode',::oSellerParty:CountryCode() ) )
+               if !empty( ::oSellerParty:AditionalRegistrationData() )
+                  ::oXmlRegistrationData:appendChild( ::createXmlNode( 'AditionalRegistrationData', ::oSellerParty:AditionalRegistrationData() ) )
+               end if
 
-               ::oXmlLegalEntity:appendChild( ::oXmlAddressInSpain )
+            ::oXmlLegalEntity:appendChild( ::oXmlRegistrationData )
 
-               ::oXmlContactDetails := ::createXmlNode( 'ContactDetails' )
+            /*
+            Comienza el nodo de direcciones------------------------------------
+            */
 
-                  if !empty( ::oSellerParty:Telephone() )
-                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'Telephone',     ::oSellerParty:Telephone() ) )
-                  end if
+            ::oXmlAddressInSpain  := ::createXmlNode( 'AddressInSpain' )
+               ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Address', ::oSellerParty:Address() ) )
+               ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'PostCode', ::oSellerParty:PostCode() ) )
+               ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Town', ::oSellerParty:Town() ) )
+               ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Province', ::oSellerParty:Province() ) )
+               ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'CountryCode', ::oSellerParty:CountryCode() ) )
 
-                  if !empty( ::oSellerParty:cTelFax )
-                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'TeleFax',       ::oSellerParty:cTelFax ) )
-                  end if
+            ::oXmlLegalEntity:appendChild( ::oXmlAddressInSpain )
 
-                  if !empty( ::oSellerParty:cWebAddress )
-                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'WebAddress',    ::oSellerParty:cWebAddress ) )
-                  end if
+            ::oXmlContactDetails := ::createXmlNode( 'ContactDetails' )
 
-                  if !empty( ::oSellerParty:cElectronicMail )
-                     ::oXmlContactDetails:appendChild( ::createXmlNode( 'ElectronicMail',::oSellerParty:cElectronicMail ) )
-                  end if
+               if !empty( ::oSellerParty:Telephone() )
+                  ::oXmlContactDetails:appendChild( ::createXmlNode( 'Telephone',     ::oSellerParty:Telephone() ) )
+               end if
 
-                  ::oXmlLegalEntity:appendChild( ::oXmlContactDetails )
+               if !empty( ::oSellerParty:cTelFax )
+                  ::oXmlContactDetails:appendChild( ::createXmlNode( 'TeleFax',       ::oSellerParty:cTelFax ) )
+               end if
 
-               ::oXmlSellerParty:appendChild( ::oXmlLegalEntity )
+               if !empty( ::oSellerParty:cWebAddress )
+                  ::oXmlContactDetails:appendChild( ::createXmlNode( 'WebAddress',    ::oSellerParty:cWebAddress ) )
+               end if
 
-            ::oXmlParties:appendChild( ::oXmlSellerParty )
+               if !empty( ::oSellerParty:cElectronicMail )
+                  ::oXmlContactDetails:appendChild( ::createXmlNode( 'ElectronicMail',::oSellerParty:cElectronicMail ) )
+               end if
 
-         end if
+               ::oXmlLegalEntity:appendChild( ::oXmlContactDetails )
+
+            ::oXmlSellerParty:appendChild( ::oXmlLegalEntity )
+
+         ::oXmlParties:appendChild( ::oXmlSellerParty )
+
+      end if
+
+      /*
+      Comienza el nodo Individual------------------------------------------
+      */
+
+      if !empty( ::oSellerParty:cName )
+
+         ::oXmlLegalEntity  := ::createXmlNode( 'Individual' )
+
+            if !empty( ::oSellerParty:cName )
+               ::oXmlLegalEntity:appendChild( ::createXmlNode( 'Name', ::oSellerParty:Name() ) )
+            end if
+
+            if !empty( ::oSellerParty:cName ) .or. !empty( ::oSellerParty:cFirstSurname )
+               ::oXmlLegalEntity:appendChild( ::createXmlNode( 'FirstSurname', ::oSellerParty:FirstSurname() ) )
+            end if
+
+            if !empty( ::oSellerParty:cSecondSurname )
+               ::oXmlLegalEntity:appendChild( ::createXmlNode( 'SecondSurname', ::oSellerParty:SecondSurname() ) )
+            end if
+
+            /*
+            Comienza el nodo de direcciones------------------------------------
+            */
+
+            ::oXmlAddressInSpain  := ::createXmlNode( 'AddressInSpain' )
+               ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Address',    ::oSellerParty:Address() ) )
+               ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'PostCode',   ::oSellerParty:PostCode() ) )
+               ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Town',       ::oSellerParty:Town() ) )
+               ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'Province',   ::oSellerParty:Province() ) )
+               ::oXmlAddressInSpain:appendChild( ::createXmlNode( 'CountryCode',::oSellerParty:CountryCode() ) )
+
+            ::oXmlLegalEntity:appendChild( ::oXmlAddressInSpain )
+
+            ::oXmlContactDetails := ::createXmlNode( 'ContactDetails' )
+
+               if !empty( ::oSellerParty:Telephone() )
+                  ::oXmlContactDetails:appendChild( ::createXmlNode( 'Telephone',     ::oSellerParty:Telephone() ) )
+               end if
+
+               if !empty( ::oSellerParty:cTelFax )
+                  ::oXmlContactDetails:appendChild( ::createXmlNode( 'TeleFax',       ::oSellerParty:cTelFax ) )
+               end if
+
+               if !empty( ::oSellerParty:cWebAddress )
+                  ::oXmlContactDetails:appendChild( ::createXmlNode( 'WebAddress',    ::oSellerParty:cWebAddress ) )
+               end if
+
+               if !empty( ::oSellerParty:cElectronicMail )
+                  ::oXmlContactDetails:appendChild( ::createXmlNode( 'ElectronicMail',::oSellerParty:cElectronicMail ) )
+               end if
+
+               ::oXmlLegalEntity:appendChild( ::oXmlContactDetails )
+
+            ::oXmlSellerParty:appendChild( ::oXmlLegalEntity )
+
+         ::oXmlParties:appendChild( ::oXmlSellerParty )
+
+      end if
 
       /*
       Comienza el nodo BuyerParty---------------------------------------------
@@ -576,7 +558,7 @@ METHOD PartiesXml()
             ::oXmlTaxIdentification:appendChild( ::createXmlNode( 'ResidenceTypeCode',      ::oBuyerParty:cResidenceTypeCode ) )
             ::oXmlTaxIdentification:appendChild( ::createXmlNode( 'TaxIdentificationNumber',::oBuyerParty:TaxIdentificationNumber() ) )
 
-         ::oXmlBuyerParty:appendChild( ::oXmlTaxIdentification )
+      ::oXmlBuyerParty:appendChild( ::oXmlTaxIdentification )
 
          /*
          Comienza el nodo AdministrativeCentres-------------------------------
@@ -1231,12 +1213,32 @@ RETURN ( self )
 
 CLASS Party FROM Address
 
-   DATA     cTaxIdentificationNumber      INIT ''
-   DATA     cCorporateName                INIT ''
-   DATA     cTradeName                    INIT ''
+   DATA cPersonTypeCode                INIT 'F'
+   METHOD setPersonTypeCode( cPersonTypeCode ) ;
+                                       INLINE ( ::cPersonTypeCode := cPersonTypeCode )
+   ACCESS PersonTypeCode               INLINE ( hb_strtoutf8( Rtrim( ::cPersonTypeCode ) ) )
+
+   DATA cTaxIdentificationNumber       INIT ''
+   METHOD setTaxIdentificationNumber( cTaxIdentificationNumber ) ;
+                                       INLINE ( ::cTaxIdentificationNumber := cTaxIdentificationNumber )
+   ACCESS TaxIdentificationNumber      INLINE ( hb_strtoutf8( Rtrim( Left( ::cTaxIdentificationNumber, 30 ) ) ) )
+
+   DATA cCorporateName                 INIT ''
+   METHOD setCorporateName( cCorporateName ) ;
+                                       INLINE ( ::cCorporateName := cCorporateName )
+   ACCESS CorporateName                INLINE ( hb_strtoutf8( Rtrim( Left( ::cCorporateName, 80 ) ) ) )
+   
+   DATA cTradeName                     INIT ''
+   METHOD setTradeName( cTradeName )   INLINE ( ::cTradeName := cTradeName )
+   ACCESS TradeName                    INLINE ( hb_strtoutf8( Rtrim( Left( ::cTradeName, 40 ) ) ) )
+   
+   DATA cRegisterOfCompaniesLocation   INIT ''
+   METHOD setRegisterOfCompaniesLocation( cRegisterOfCompaniesLocation ) ;
+                                       INLINE ( ::cRegisterOfCompaniesLocation := cRegisterOfCompaniesLocation )
+   ACCESS RegisterOfCompaniesLocation  INLINE ( hb_strtoutf8( Rtrim( Left( ::cRegisterOfCompaniesLocation, 40 ) ) ) )
+
    DATA     cRegistrationData             INIT ''
    DATA     nBook                         INIT ''
-   DATA     cRegisterOfCompaniesLocation  INIT ''
    DATA     nSheet                        INIT '-'
    DATA     nFolio                        INIT ''
    DATA     cSection                      INIT ''
@@ -1246,29 +1248,31 @@ CLASS Party FROM Address
    DATA     cTelFax                       INIT ''
    DATA     cWebAddress                   INIT ''
    DATA     cElectronicMail               INIT ''
-   DATA     cPersonTypeCode               INIT 'F'
    DATA     cResidenceTypeCode            INIT 'R'
 
-   DATA     cName                         INIT ''
-   DATA     cFirstSurname                 INIT ''
-   DATA     cSecondSurname                INIT ''
+   DATA cName                          INIT ''
+   METHOD setName( cName )             INLINE ( ::cName := cName )
+   ACCESS Name                         INLINE ( hb_strtoutf8( Rtrim( Left( ::cName, 40 ) ) ) )
 
-   ACCESS   TaxIdentificationNumber       INLINE ( hb_strtoutf8( Rtrim( Left( ::cTaxIdentificationNumber, 30 ) ) ) )
+   DATA cFirstSurname                  INIT ''
+   METHOD setFirstSurname( cFirstSurname ) ;
+                                       INLINE ( ::cFirstSurname := cFirstSurname )
+   ACCESS FirstSurname                 INLINE ( hb_strtoutf8( Rtrim( Left( ::cFirstSurname, 40 ) ) ) )
+
+   DATA cSecondSurname                 INIT ''
+   METHOD setSecondSurname( cSecondSurname ) ;
+                                       INLINE ( ::cSecondSurname := cSecondSurname )
+   ACCESS SecondSurname                INLINE ( hb_strtoutf8( Rtrim( Left( ::cSecondSurname, 40 ) ) ) )
+
 
    ACCESS   AditionalRegistrationData     INLINE ( hb_strtoutf8( Rtrim( ::cAditionalRegistrationData ) ) )
    ACCESS   Telephone                     INLINE ( hb_strtoutf8( Rtrim( ::cTelephone ) ) )
    ACCESS   TelFax                        INLINE ( hb_strtoutf8( Rtrim( ::cTelFax ) ) )
    ACCESS   WebAddress                    INLINE ( hb_strtoutf8( Rtrim( ::cWebAddress ) ) )
    ACCESS   ElectronicMail                INLINE ( hb_strtoutf8( Rtrim( ::cElectronicMail ) ) )
-   ACCESS   PersonTypeCode                INLINE ( hb_strtoutf8( Rtrim( ::cPersonTypeCode ) ) )
    ACCESS   ResidenceTypeCode             INLINE ( hb_strtoutf8( Rtrim( ::cResidenceTypeCode ) ) )
 
-   ACCESS   CorporateName                 INLINE ( hb_strtoutf8( Rtrim( Left( ::cCorporateName, 80 ) ) ) )
-   ACCESS   TradeName                     INLINE ( hb_strtoutf8( Rtrim( Left( ::cTradeName, 40 ) ) ) )
 
-   ACCESS   Name                          INLINE ( hb_strtoutf8( Rtrim( Left( ::cName, 40 ) ) ) )
-   ACCESS   FirstSurname                  INLINE ( hb_strtoutf8( Rtrim( Left( ::cFirstSurname, 40 ) ) ) )
-   ACCESS   SecondSurname                 INLINE ( hb_strtoutf8( Rtrim( Left( ::cSecondSurname, 40 ) ) ) )
 
 ENDCLASS
 
