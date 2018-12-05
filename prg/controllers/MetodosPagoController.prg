@@ -426,6 +426,8 @@ CLASS SQLMetodoPagoModel FROM SQLCompanyModel
 
    METHOD testCreateReposicion()
 
+   METHOD testCreateConPlazos()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -499,6 +501,23 @@ METHOD testCreateReposicion() CLASS SQLMetodoPagoModel
    hset( hBuffer, "nombre", "Reposición" )
    hset( hBuffer, "cobrado", 0 )
    hset( hBuffer, "codigo_medio_pago", "0" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateConPlazos() CLASS SQLMetodoPagoModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "codigo", 1 )
+   hset( hBuffer, "nombre", "30 60 90" )
+   hset( hBuffer, "cobrado", 0 )
+   hset( hBuffer, "codigo_medio_pago", "0" )
+   hset( hBuffer, "numero_plazos", 3)
+   hset( hBuffer, "primer_plazo", 15)
+   hset( hBuffer, "entre_plazo", 15)
+   hset( hBuffer, "ultimo_plazo", 20)
 
 RETURN ( ::insertBuffer( hBuffer ) )
 

@@ -89,11 +89,19 @@ METHOD calculatePayment( nImporte ) CLASS RecibosPagosTemporalController
 
    ::getRowSet():goTop() 
 
+
    while nImporteRestante > 0 
 
       if nImporteRestante < ::getRowSet():fieldGet( "diferencia" )
 
          ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "importe", nImporteRestante )
+         
+         while !::oRowSet:Eof()
+         
+         ::getRowSet():goDown()
+         ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "importe", 0 )
+
+         end 
 
          RETURN ( nil )
 
@@ -121,8 +129,6 @@ METHOD calculatePayment( nImporte ) CLASS RecibosPagosTemporalController
 
    end 
 
-   ::getRowSet():goTop()
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -138,6 +144,8 @@ CLASS RecibosPagosTemporalBrowseView FROM SQLBrowseView
    DATA lFooter            INIT .t.
 
    DATA nMarqueeStyle      INIT 3
+
+   DATA oColumImporte
 
    METHOD addColumns()
 
@@ -217,7 +225,7 @@ with object ( ::oBrowse:AddCol() )
       :cDataType           := "N"
    end with
 
-   with object ( ::oBrowse:AddCol() )
+   with object ( ::oColumImporte := ::oBrowse:AddCol() )
       :cHeader             := 'Importe a pagar'
       :cSortOrder          := 'importe_pagar'
       :cEditPicture        := "@E 99,999,999.99"

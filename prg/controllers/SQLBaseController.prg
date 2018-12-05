@@ -321,8 +321,10 @@ METHOD Append()
          else 
             ::refreshRowSet()
          end if 
-
-         ::refreshBrowseView()
+         
+         if !empty(::getBrowseView())
+            ::refreshBrowseView()
+         end if
 
          ::fireEvent( 'appended' ) 
 

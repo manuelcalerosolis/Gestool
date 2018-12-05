@@ -19,7 +19,9 @@ CLASS SQLFacturasClientesModel FROM SQLCompanyModel
 
    METHOD totalPaid( uuidFactura )
 
-   METHOD testCreateFactura()   
+   METHOD testCreateFactura() 
+
+   METHOD testCreateFacturaConPlazos( uuid )  
 
 END CLASS
 
@@ -220,6 +222,21 @@ METHOD testCreateFactura( uuid ) CLASS SQLFacturasClientesModel
    hset( hBuffer, "uuid", uuid )
    hset( hBuffer, "cliente_codigo", "0" )
    hset( hBuffer, "metodo_pago_codigo", "0" )
+   hset( hBuffer, "almacen_codigo", "0" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateFacturaConPlazos( uuid ) CLASS SQLFacturasClientesModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "serie", "TEST" )
+   hset( hBuffer, "numero", 1 )
+   hset( hBuffer, "uuid", uuid )
+   hset( hBuffer, "cliente_codigo", "0" )
+   hset( hBuffer, "metodo_pago_codigo", "1" )
    hset( hBuffer, "almacen_codigo", "0" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
