@@ -41,6 +41,7 @@ METHOD testCreateContado() CLASS SQLClientesModel
    hset( hBuffer, "uuid", uuid )
    hset( hBuffer, "codigo", 0 )
    hset( hBuffer, "nombre", "Clientes contado" )
+   hset( hBuffer, "dni", "75541180A" )
    hset( hBuffer, "metodo_pago_codigo", "0" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
