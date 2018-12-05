@@ -100,7 +100,7 @@ RETURN ( ::Super:End() )
 
 METHOD addExtraButtons() CLASS PagosController
 
-   ::oNavigatorView:getMenuTreeView():AddButton( "Asistente de pagos", "New16", {|| ::getPagosController():AppendAssistant() } ) 
+   ::oNavigatorView:getMenuTreeView():AddButton( "Asistente de pagos", "New16", {|| ::AppendAssistant() } ) 
 
 RETURN ( nil )
 
@@ -607,8 +607,6 @@ CLASS TestPagosController FROM TestCase
 
    METHOD testDialogAppendMedioPagoInexistente()
 
-//   METHOD testDialogEmptyNombre()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -776,7 +774,7 @@ METHOD testDialogAppend() CLASS TestPagosController
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         apoloWaitSeconds( 1 ),; 
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
          apoloWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 50 ),;

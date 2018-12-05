@@ -489,6 +489,8 @@ CLASS SQLRecibosModel FROM SQLCompanyModel
 
    METHOD testCreateRecibo()
 
+   METHOD testCreateReciboConParent( uuid, parent_uuid )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -586,6 +588,19 @@ METHOD testCreateRecibo( uuid ) CLASS SQLRecibosModel
 
    hset( hBuffer, "uuid", uuid )
    hset( hBuffer, "importe", 100 )
+   hset( hBuffer, "concepto", "Recibo test" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateReciboConParent( uuid, parent_uuid ) CLASS SQLRecibosModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "uuid", uuid )
+   hset( hBuffer, "importe", 100 )
+   hset( hBuffer, "parent_uuid", parent_uuid )
    hset( hBuffer, "concepto", "Recibo test" )
 
 RETURN ( ::insertBuffer( hBuffer ) )

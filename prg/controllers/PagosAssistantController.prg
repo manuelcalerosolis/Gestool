@@ -5,7 +5,7 @@
 
 CLASS PagosAssistantController FROM SQLNavigatorController
 
-   DATA nImporte                       INIT 0
+   DATA nImporte                       
 
    DATA cCodigoCliente                 INIT ""
 
@@ -27,13 +27,13 @@ CLASS PagosAssistantController FROM SQLNavigatorController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()              INLINE( ::oController:getBrowseView() )
+   METHOD getBrowseView()              INLINE ( if( !empty(::oController), ::oController:getBrowseView(), nil ) )
    
-   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := PagosAssistantView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := PagosAssistantView():New( self ), ), ::oDialogView )
    
-   METHOD getModel()                   INLINE( if( empty( ::oModel ), ::oModel := SQLPagosModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLPagosModel():New( self ), ), ::oModel )
    
-   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := PagosValidator():New( self  ), ), ::oValidator ) 
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := PagosValidator():New( self  ), ), ::oValidator ) 
 
 END CLASS
 
@@ -138,7 +138,7 @@ METHOD getImportePagar( nImporte )
       RETURN ( .t. )
    end if
 
-   if nImporte < 0
+   if nImporte <= 0 
       msgstop("Debe introducir un importe válido")
       RETURN ( .f. )
    end if
@@ -249,9 +249,9 @@ METHOD Activate() CLASS PagosAssistantView
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }
    end if
 
-   ::oDialog:bStart  := {|| ::startActivate() }
+   ::oDialog:bStart  := {|| ::startActivate(), ::paintedActivate() }
 
-   ACTIVATE DIALOG ::oDialog CENTER
+   ::oDialog:Activate( , , , .t. )
 
 RETURN ( ::oDialog:nResult )
 
@@ -311,6 +311,389 @@ METHOD defaultTitle() CLASS PagosAssistantView
 RETURN ( cTitle )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TestPagosAssistantController FROM TestCase
+
+/*METHOD testCreateAsistenteSinCliente()
+
+METHOD testCreateAsistenteSinMedeioPago() 
+
+METHOD testCreateAsistenteNoImporte()  
+
+METHOD testCreateAsistenteConPagoParcial() 
+ 
+
+METHOD testCreateAsistenteUnPagoCompleto()
+
+METHOD testCreateAsistenteCambioImporte()*/
+
+METHOD testCreateAsistentePagosParciales()
+
+METHOD testCreateAsistenteTodosPagosCambioImporte() VIRTUAL
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+/*METHOD testCreateAsistenteSinCliente() CLASS TestPagosAssistantController
+
+   local oController 
+   local uuidFactura                   := win_uuidcreatestring()
+   local uuidPrimerRecibo              := win_uuidcreatestring()
+   local uuidTercerRecibo              := win_uuidcreatestring()
+   local uuidSegundoRecibo             := win_uuidcreatestring()
+
+   SQLClientesModel():truncateTable()
+   SQLPagosModel():truncateTable()
+   SQLRecibosModel():truncateTable() 
+   SQLMediosPagoModel():truncateTable()
+   SQLMetodoPagoModel():truncateTable()
+   SQLRecibosPagosModel():truncateTable()
+   SQLFacturasClientesModel():truncateTable() 
+   SQLRecibosPagosTemporalModel():dropTemporalTable()
+
+   SQLRecibosPagosTemporalModel():createTemporalTable() 
+
+   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" ) 
+
+   ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
+
+   ::assert:notEquals( 0, SQLMetodoPagoModel():testCreateConPlazos(), "test de creacion de metodo de pago" )
+
+   ::assert:notEquals( 0, SQLFacturasClientesModel():testCreateFacturaConPlazos( uuidFactura ), "test creacion de factura" ) 
+
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidPrimerRecibo, uuidFactura ), "test create recibo1" )
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidSegundoRecibo, uuidFactura ), "test create recibo2" )
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidTercerRecibo, uuidFactura ), "test create recibo3" )
+
+   oController             := PagosAssistantController():New() 
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click(),; 
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDCANCEL ):Click() } )
+
+   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateAsistenteSinMedioPago() CLASS TestPagosAssistantController
+
+   local oController 
+   local uuidFactura                   := win_uuidcreatestring()
+   local uuidPrimerRecibo              := win_uuidcreatestring()
+   local uuidTercerRecibo              := win_uuidcreatestring()
+   local uuidSegundoRecibo             := win_uuidcreatestring()
+
+   SQLClientesModel():truncateTable()
+   SQLPagosModel():truncateTable()
+   SQLRecibosModel():truncateTable() 
+   SQLMediosPagoModel():truncateTable()
+   SQLMetodoPagoModel():truncateTable()
+   SQLRecibosPagosModel():truncateTable()
+   SQLFacturasClientesModel():truncateTable() 
+   SQLRecibosPagosTemporalModel():dropTemporalTable()
+
+   SQLRecibosPagosTemporalModel():createTemporalTable() 
+
+   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" ) 
+
+   ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
+
+   ::assert:notEquals( 0, SQLMetodoPagoModel():testCreateConPlazos(), "test de creacion de metodo de pago" )
+
+   ::assert:notEquals( 0, SQLFacturasClientesModel():testCreateFacturaConPlazos( uuidFactura ), "test creacion de factura" ) 
+
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidPrimerRecibo, uuidFactura ), "test create recibo1" )
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidSegundoRecibo, uuidFactura ), "test create recibo2" )
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidTercerRecibo, uuidFactura ), "test create recibo3" )
+
+   oController             := PagosAssistantController():New() 
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 20 ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click(),; 
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDCANCEL ):Click() } ) 
+
+   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateAsistenteNoImporte() CLASS TestPagosAssistantController
+
+   local oController 
+   local uuidFactura                   := win_uuidcreatestring()
+   local uuidPrimerRecibo              := win_uuidcreatestring()
+   local uuidTercerRecibo              := win_uuidcreatestring()
+   local uuidSegundoRecibo             := win_uuidcreatestring()
+
+   SQLClientesModel():truncateTable()
+   SQLPagosModel():truncateTable()
+   SQLRecibosModel():truncateTable() 
+   SQLMediosPagoModel():truncateTable()
+   SQLMetodoPagoModel():truncateTable()
+   SQLRecibosPagosModel():truncateTable()
+   SQLFacturasClientesModel():truncateTable() 
+   SQLRecibosPagosTemporalModel():dropTemporalTable()
+
+   SQLRecibosPagosTemporalModel():createTemporalTable() 
+
+   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" ) 
+
+   ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
+
+   ::assert:notEquals( 0, SQLMetodoPagoModel():testCreateConPlazos(), "test de creacion de metodo de pago" )
+
+   ::assert:notEquals( 0, SQLFacturasClientesModel():testCreateFacturaConPlazos( uuidFactura ), "test creacion de factura" ) 
+
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidPrimerRecibo, uuidFactura ), "test create recibo1" )
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidSegundoRecibo, uuidFactura ), "test create recibo2" )
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidTercerRecibo, uuidFactura ), "test create recibo3" )
+
+   oController             := PagosAssistantController():New() 
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "1" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click(),; 
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDCANCEL ):Click() } ) 
+
+   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateAsistenteConPagoParcial() CLASS TestPagosAssistantController
+
+   local oController 
+   local uuidFactura                   := win_uuidcreatestring()
+   local uuidPrimerRecibo              := win_uuidcreatestring()
+   local uuidTercerRecibo              := win_uuidcreatestring()
+   local uuidSegundoRecibo             := win_uuidcreatestring()
+
+   SQLClientesModel():truncateTable()
+   SQLPagosModel():truncateTable()
+   SQLRecibosModel():truncateTable() 
+   SQLMediosPagoModel():truncateTable()
+   SQLMetodoPagoModel():truncateTable()
+   SQLRecibosPagosModel():truncateTable()
+   SQLFacturasClientesModel():truncateTable() 
+   SQLRecibosPagosTemporalModel():dropTemporalTable()
+
+   SQLRecibosPagosTemporalModel():createTemporalTable() 
+
+   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" ) 
+
+   ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
+
+   ::assert:notEquals( 0, SQLMetodoPagoModel():testCreateConPlazos(), "test de creacion de metodo de pago" )
+
+   ::assert:notEquals( 0, SQLFacturasClientesModel():testCreateFacturaConPlazos( uuidFactura ), "test creacion de factura" ) 
+
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidPrimerRecibo, uuidFactura ), "test create recibo1" )
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidSegundoRecibo, uuidFactura ), "test create recibo2" )
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidTercerRecibo, uuidFactura ), "test create recibo3" )
+
+   oController             := PagosAssistantController():New() 
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 20 ),;
+         self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )   
+
+   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateAsistenteUnPagoCompleto() CLASS TestPagosAssistantController
+
+   local oController 
+   local uuidFactura                   := win_uuidcreatestring()
+   local uuidPrimerRecibo              := win_uuidcreatestring()
+   local uuidTercerRecibo              := win_uuidcreatestring()
+   local uuidSegundoRecibo             := win_uuidcreatestring()
+
+   SQLClientesModel():truncateTable()
+   SQLPagosModel():truncateTable()
+   SQLRecibosModel():truncateTable() 
+   SQLMediosPagoModel():truncateTable()
+   SQLMetodoPagoModel():truncateTable()
+   SQLRecibosPagosModel():truncateTable()
+   SQLFacturasClientesModel():truncateTable() 
+   SQLRecibosPagosTemporalModel():dropTemporalTable()
+
+   SQLRecibosPagosTemporalModel():createTemporalTable() 
+
+   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" ) 
+
+   ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
+
+   ::assert:notEquals( 0, SQLMetodoPagoModel():testCreateConPlazos(), "test de creacion de metodo de pago" )
+
+   ::assert:notEquals( 0, SQLFacturasClientesModel():testCreateFacturaConPlazos( uuidFactura ), "test creacion de factura" ) 
+
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidPrimerRecibo, uuidFactura ), "test create recibo1" )
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidSegundoRecibo, uuidFactura ), "test create recibo2" )
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidTercerRecibo, uuidFactura ), "test create recibo3" )
+
+   oController             := PagosAssistantController():New() 
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 100 ),;
+         self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "1" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )   
+
+   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateAsistenteCambioImporte() CLASS TestPagosAssistantController
+
+   local oController 
+   local uuidFactura                   := win_uuidcreatestring()
+   local uuidPrimerRecibo              := win_uuidcreatestring()
+   local uuidTercerRecibo              := win_uuidcreatestring()
+   local uuidSegundoRecibo             := win_uuidcreatestring()
+
+   SQLClientesModel():truncateTable()
+   SQLPagosModel():truncateTable()
+   SQLRecibosModel():truncateTable() 
+   SQLMediosPagoModel():truncateTable()
+   SQLMetodoPagoModel():truncateTable()
+   SQLRecibosPagosModel():truncateTable()
+   SQLFacturasClientesModel():truncateTable() 
+   SQLRecibosPagosTemporalModel():dropTemporalTable()
+
+   SQLRecibosPagosTemporalModel():createTemporalTable() 
+
+   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" ) 
+
+   ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
+
+   ::assert:notEquals( 0, SQLMetodoPagoModel():testCreateConPlazos(), "test de creacion de metodo de pago" )
+
+   ::assert:notEquals( 0, SQLFacturasClientesModel():testCreateFacturaConPlazos( uuidFactura ), "test creacion de factura" ) 
+
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidPrimerRecibo, uuidFactura ), "test create recibo1" )
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidSegundoRecibo, uuidFactura ), "test create recibo2" )
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidTercerRecibo, uuidFactura ), "test create recibo3" )
+
+   oController             := PagosAssistantController():New() 
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 175.36 ),;
+         self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 90 ),;
+         self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
+         apoloWaitSeconds( 4 ),;
+         self:getControl( IDOK ):Click() } )   
+
+   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )*/
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateAsistentePagosParciales() CLASS TestPagosAssistantController
+
+   local oController 
+   local uuidFactura                   := win_uuidcreatestring()
+   local uuidPrimerRecibo              := win_uuidcreatestring()
+   local uuidTercerRecibo              := win_uuidcreatestring()
+   local uuidSegundoRecibo             := win_uuidcreatestring()
+
+   SQLClientesModel():truncateTable()
+   SQLPagosModel():truncateTable()
+   SQLRecibosModel():truncateTable() 
+   SQLMediosPagoModel():truncateTable()
+   SQLMetodoPagoModel():truncateTable()
+   SQLRecibosPagosModel():truncateTable()
+   SQLFacturasClientesModel():truncateTable() 
+   SQLRecibosPagosTemporalModel():dropTemporalTable()
+
+   SQLRecibosPagosTemporalModel():createTemporalTable() 
+
+   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" ) 
+
+   ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
+
+   ::assert:notEquals( 0, SQLMetodoPagoModel():testCreateConPlazos(), "test de creacion de metodo de pago" )
+
+   ::assert:notEquals( 0, SQLFacturasClientesModel():testCreateFacturaConPlazos( uuidFactura ), "test creacion de factura" ) 
+
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidPrimerRecibo, uuidFactura ), "test create recibo1" )
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidSegundoRecibo, uuidFactura ), "test create recibo2" )
+   ::assert:notEquals( 0, SQLRecibosModel():testCreateReciboConParent( uuidTercerRecibo, uuidFactura ), "test create recibo3" )
+
+   oController             := PagosAssistantController():New() 
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         eval( self:getControl( 500, self:oFolder:aDialogs[ 1 ] ):aCols[8]:bEditValue, 90 ),;
+         oController:getRecibosPagosTemporalController():getRowSet():Refresh(),;
+         apoloWaitSeconds( 5 ) ,;
+         self:getControl( IDOK ):Click() } )   
+
+   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch" 
+#include "Factu.ch"
 
 //---------------------------------------------------------------------------//
 
@@ -13,15 +13,15 @@ CLASS SQLFacturasClientesModel FROM SQLCompanyModel
 
    METHOD getColumnsSelect()
 
-   METHOD getInitialSelect() 
+   METHOD getInitialSelect()
 
    METHOD getNumeroWhereUuid( uuid )
 
    METHOD totalPaid( uuidFactura )
 
-   METHOD testCreateFactura() 
+   METHOD testCreateFactura()
 
-   METHOD testCreateFacturaConRecargoDeEqivalencia( uuid )  
+   METHOD testCreateFacturaConRecargoDeEqivalencia( uuid )
 
 END CLASS
 
@@ -83,7 +83,7 @@ METHOD getColumns() CLASS SQLFacturasClientesModel
    ::getTimeStampColumns()
 
    ::getClosedColumns()
-   
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
@@ -114,10 +114,10 @@ METHOD getColumnsSelect()
       direcciones.movil AS direccion_movil,
       direcciones.email AS direccion_email,
       tarifas.codigo AS tarifa_codigo,
-      tarifas.nombre AS tarifa_nombre, 
+      tarifas.nombre AS tarifa_nombre,
       ( %1$s( facturas_clientes.uuid, facturas_clientes.recargo_equivalencia ) ) AS total
    ENDTEXT
-      
+
    cColumns    := hb_strformat( cColumns, Company():getTableName( 'FacturaClienteTotalSummaryWhereUuid' ) )
 
 RETURN ( cColumns )
@@ -134,15 +134,15 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesModel
       %5$s
 
    FROM %1$s AS facturas_clientes
-   
-      LEFT JOIN %2$s clientes  
-         ON facturas_clientes.cliente_codigo = clientes.codigo AND clientes.deleted_at = 0 
 
-      LEFT JOIN %3$s direcciones  
+      LEFT JOIN %2$s clientes
+         ON facturas_clientes.cliente_codigo = clientes.codigo AND clientes.deleted_at = 0
+
+      LEFT JOIN %3$s direcciones
          ON clientes.uuid = direcciones.parent_uuid AND direcciones.codigo = 0
 
-      LEFT JOIN %4$s tarifas 
-         ON facturas_clientes.tarifa_codigo = tarifas.codigo 
+      LEFT JOIN %4$s tarifas
+         ON facturas_clientes.tarifa_codigo = tarifas.codigo
 
    ENDTEXT
 
@@ -163,10 +163,10 @@ METHOD getNumeroWhereUuid( uuid ) CLASS SQLFacturasClientesModel
 
    TEXT INTO cSql
 
-   SELECT 
+   SELECT
       CONCAT( serie, '-', numero ) AS numero
 
-      FROM %1$s  
+      FROM %1$s
 
       WHERE uuid = %2$s
 
@@ -185,9 +185,9 @@ METHOD totalPaid( uuidFactura ) CLASS SQLFacturasClientesModel
    TEXT INTO cSql
 
    SELECT SUM( pagos.importe ) AS total_pagado
-      
+
       FROM %1$s AS facturas_clientes
-      
+
       INNER JOIN %2$s AS recibos
          ON facturas_clientes.uuid = recibos.parent_uuid
 
