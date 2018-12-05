@@ -62,7 +62,11 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
 
    METHOD countLinesWhereUuidParent( uuidParent )  INLINE ( getSQLDatabase():getValue( ::getSentenceCountLineas( uuidParent ), 0 ) )
 
-   METHOD testCreateFacturaLinea( uuid )
+   METHOD testCreateFacturaLineaIVAal0( uuid )
+
+   METHOD testCreateFacturaLineaIVAal10( uuid )
+
+   METHOD testCreateFacturaLineaIVAal21( uuid )
 
 END CLASS
 
@@ -404,13 +408,13 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceCountLineas( UuidParent ) CLASS SQLFacturasClientesLineasModel
+METHOD getSentenceCountLineas( uuidParent ) CLASS SQLFacturasClientesLineasModel
 
    local cSql
 
    TEXT INTO cSql
 
-      SELECT COUNT(*)
+   SELECT COUNT(*)
 
       FROM %1$s AS facturas_clientes_lineas
 
@@ -418,13 +422,13 @@ METHOD getSentenceCountLineas( UuidParent ) CLASS SQLFacturasClientesLineasModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( UuidParent ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------// 
 
-METHOD testCreateFacturaLinea( uuid ) CLASS SQLFacturasClientesLineasModel
+METHOD testCreateFacturaLineaIVAal0( uuid ) CLASS SQLFacturasClientesLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -433,6 +437,36 @@ METHOD testCreateFacturaLinea( uuid ) CLASS SQLFacturasClientesLineasModel
    hset( hBuffer, "articulo_nombre", "Test" )
    hset( hBuffer, "articulo_unidades", 1 )
    hset( hBuffer, "articulo_precio", 100 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateFacturaLineaIVAal10( uuid ) CLASS SQLFacturasClientesLineasModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "articulo_codigo", "0" )
+   hset( hBuffer, "articulo_nombre", "Test" )
+   hset( hBuffer, "articulo_unidades", 1 )
+   hset( hBuffer, "articulo_precio", 100 )
+   hset( hBuffer, "iva", 10 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateFacturaLineaIVAal21( uuid ) CLASS SQLFacturasClientesLineasModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "articulo_codigo", "0" )
+   hset( hBuffer, "articulo_nombre", "Test" )
+   hset( hBuffer, "articulo_unidades", 1 )
+   hset( hBuffer, "articulo_precio", 100 )
+   hset( hBuffer, "iva", 21 )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 

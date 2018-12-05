@@ -67,6 +67,8 @@ METHOD getSentenceTotalesDocument( uuidFacturaCliente ) CLASS FacturasClientesRe
    SELECT
       SUM( totales.importeBruto ) AS totalBruto,
       SUM( totales.importeNeto ) AS totalNeto,
+      SUM( totales.porcentajeIVA ) AS porcentajeIVA,
+      SUM( totales.recargoEquivalencia ) AS recargoEquivalencia,
       SUM( totales.importeIVA ) AS totalIVA,
       SUM( totales.importeRecargo ) AS totalRecargo,
       SUM( totales.totalDescuento ) AS totalDescuento,

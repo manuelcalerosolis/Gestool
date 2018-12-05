@@ -1,6 +1,12 @@
 #include "FiveWin.Ch"
 #include "Factu.ch"
 
+#xcommand TEST CLASS <className> FROM <classParent> => ;
+#ifdef __TEST__;; CLASS <className> FROM <classParent>
+
+#xcommand TEST END CLASS => ;
+#endif ;; END CLASS  
+
 //---------------------------------------------------------------------------//
 
 CLASS FacturasClientesFacturaeController
@@ -39,6 +45,8 @@ CLASS FacturasClientesFacturaeController
    METHOD setSellerParty()
 
    METHOD setBuyerParty()
+
+   METHOD setTax()
 
 ENDCLASS
 
@@ -80,6 +88,8 @@ METHOD Generate( uuid ) CLASS FacturasClientesFacturaeController
 
       ::setBuyerParty()
 
+      ::setTax()
+
       ::getModel():Generate()
 
    end if
@@ -108,9 +118,11 @@ METHOD isInformationLoaded( uuid ) CLASS FacturasClientesFacturaeController
    end if 
 
    ::hTotales        := ::getController():getTotalesDocumentGroupByIVA( uuid )
-   if empty( ::hTotal )
+   if empty( ::hTotales )
       ::cError       += "No se puede calcular el total por tipos de IVA"
    end if 
+
+   msgalert( hb_valtoexp( ::hTotales ) )
 
    ::hClient         := SQLClientesModel():getHashWhere( 'codigo', hget( ::hDocument, "cliente_codigo" ) )
    if empty( ::hClient )
@@ -134,6 +146,13 @@ METHOD setDocumentsAndTotals() CLASS FacturasClientesFacturaeController
    ::getModel():setTotalOutstandingAmount( hget( ::hTotal, "totalDocumento" ) ) 
    ::getModel():setTotalExecutableAmount( hget( ::hTotal, "totalDocumento" ) ) 
 
+   ::getModel():dOperationDate                  := hget( ::hDocument, "fecha" )
+   ::getModel():dIssueDate                      := hget( ::hDocument, "fecha" )
+
+   ::getModel():nInvoiceTotal                   := hget( ::hTotal, "totalDocumento" )
+   ::getModel():nTotalGrossAmount               := hget( ::hTotal, "totalBruto" )
+   ::getModel():nTotalGrossAmountBeforeTaxes    := hget( ::hTotal, "totalNeto" )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -141,6 +160,9 @@ RETURN ( nil )
 METHOD setSellerParty() CLASS FacturasClientesFacturaeController
 
    ::getModel():oSellerParty:setTaxIdentificationNumber( 'ES' + hget( ::hClient, "dni" ) )
+
+   ::getModel():cPlaceOfIssuePostCode           := hget( ::hCompanyDirection, "codigo_postal" ) 
+   ::getModel():cPlaceOfIssueDescription        := hget( ::hCompanyDirection, "poblacion" )
 
    if Company():isPersonType()
       ::getModel():oSellerParty:setPersonTypeCode( 'F' )
@@ -190,10 +212,34 @@ METHOD setBuyerParty() CLASS FacturasClientesFacturaeController
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD setTax()  CLASS FacturasClientesFacturaeController
+
+   local oTax
+   local hTotal
+
+   for each hTotal in ::hTotales
+
+      oTax                                      := Tax()
+      oTax:nTaxBase                             := hget( hTotal, "totalBruto" )
+      oTax:nTaxRate                             := hget( hTotal, "porcentajeIVA" )
+      oTax:nTaxAmount                           := hget( hTotal, "totalIVA" )
+      oTax:nEquivalenceSurcharge                := hget( hTotal, "recargoEquivalencia" )
+      oTax:nEquivalenceSurchargeAmount          := hget( hTotal, "totalRecargo" )
+
+      ::getModel():addTax( oTax )
+
+   next
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+#ifdef __TEST__
 
 CLASS TestFacturasClientesFacturaeController FROM TestCase
 
@@ -216,7 +262,9 @@ METHOD testGenerateXml() CLASS TestFacturasClientesFacturaeController
 
    SQLFacturasClientesModel():testCreateFactura( uuid ) 
 
-   SQLFacturasClientesLineasModel():testCreateFacturaLinea( uuid ) 
+   SQLFacturasClientesLineasModel():testCreateFacturaLineaIVAal0( uuid ) 
+   SQLFacturasClientesLineasModel():testCreateFacturaLineaIVAal10( uuid ) 
+   SQLFacturasClientesLineasModel():testCreateFacturaLineaIVAal21( uuid ) 
 
    SQLClientesModel():testCreateContado()
 
@@ -231,3 +279,5 @@ METHOD testGenerateXml() CLASS TestFacturasClientesFacturaeController
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+#endif

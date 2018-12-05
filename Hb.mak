@@ -709,7 +709,7 @@ TestAssert.obj                                                 \
 TestAllSuite.obj                                               \
 
 .PRG.OBJ:
-  	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /d /w /es2 /gc0 /i$(FWINCLUDE) /i$(HBINCLUDE) /o$(OBJ)\$&.c
+  	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /d__TEST__ /w /es2 /gc0 /i$(FWINCLUDE) /i$(HBINCLUDE) /o$(OBJ)\$&.c
   	$(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
 
 $(EXE)                  : $( PRG:.PRG=.OBJ )
