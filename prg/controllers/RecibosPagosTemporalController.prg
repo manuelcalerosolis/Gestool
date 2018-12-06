@@ -17,9 +17,9 @@ CLASS RecibosPagosTemporalController FROM SQLNavigatorController
 
    //Construcciones tardias----------------------------------------------------
    
-   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLRecibosPagosTemporalModel():New( self ), ), ::oModel ) 
+   METHOD getModel()                   INLINE( if( empty( ::oModel ), ::oModel := SQLRecibosPagosTemporalModel():New( self ), ), ::oModel ) 
 
-   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := RecibosPagosTemporalBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := RecibosPagosTemporalBrowseView():New( self ), ), ::oBrowseView ) 
 
 END CLASS
 
@@ -88,7 +88,6 @@ METHOD calculatePayment( nImporte ) CLASS RecibosPagosTemporalController
    local nImporteRestante  := nImporte
 
    ::getRowSet():goTop() 
-
 
    while nImporteRestante > 0 
 

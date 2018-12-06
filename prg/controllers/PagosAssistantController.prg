@@ -685,9 +685,12 @@ METHOD testCreateAsistentePagosParciales() CLASS TestPagosAssistantController
          apoloWaitSeconds( 1 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
          apoloWaitSeconds( 1 ),;
-         eval( self:getControl( 500, self:oFolder:aDialogs[ 1 ] ):aCols[8]:bEditValue, 90 ),;
+         eval( oController:getRecibosPagosTemporalController():getBrowseView():oColumImporte:bOnPostEdit, , 90 ),;
+         apoloWaitSeconds( 1 ),;
          oController:getRecibosPagosTemporalController():getRowSet():Refresh(),;
-         apoloWaitSeconds( 5 ) ,;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 500, self:oFolder:aDialogs[ 1 ] ):Refresh(),;
+         apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )   
 
    ::assert:true( oController:Append(), "test ::assert:true with .t." )
