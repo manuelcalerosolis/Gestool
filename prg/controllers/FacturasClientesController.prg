@@ -562,3 +562,52 @@ RETURN ( ::getController():getFacturasClientesLineasController():validLine() )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
+
+#ifdef __TEST__
+
+CLASS TestFacturasClientesController FROM TestCase
+
+   METHOD testCalculoFacturaConDescuento()
+   
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD testCalculoFacturaConDescuento() CLASS TestFacturasClientesController
+
+   local uuid  
+   local oController
+
+   uuid        := win_uuidcreatestring()
+
+   SQLClientesModel():truncateTable()
+   SQLFacturasClientesModel():truncateTable() 
+   SQLFacturasClientesLineasModel():truncateTable() 
+   SQLFacturasClientesDescuentosModel():truncateTable()
+
+   SQLClientesModel():testCreateContado()
+
+   SQLFacturasClientesModel():testCreateFactura( uuid ) 
+
+   SQLFacturasClientesLineasModel():testCreateIVAal0( uuid ) 
+   SQLFacturasClientesLineasModel():testCreateIVAal10( uuid ) 
+   SQLFacturasClientesLineasModel():testCreateIVAal21( uuid ) 
+
+   SQLFacturasClientesDescuentosModel():testCreatel0PorCiento( uuid )   
+   SQLFacturasClientesDescuentosModel():testCreate20PorCiento( uuid )   
+   SQLFacturasClientesDescuentosModel():testCreate30PorCiento( uuid )   
+
+   oController := FacturasClientesController():New()
+
+   msgalert( hb_valtoexp( oController:getRepository():getTotalesDocument( uuid ) ) )
+
+   // oController:assert:true( file( cPatXml() + "TEST1.xml" ), "test creacion de XML" )
+
+   oController:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+#endif
+
