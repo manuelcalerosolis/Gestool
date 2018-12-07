@@ -66,7 +66,7 @@ METHOD validateAmount( uValue ) CLASS RecibosPagosTemporalController
    if uValue > ::getRowSet():fieldGet( "diferencia" )
       msgstop("Importe introducido incorrecto")
       RETURN ( nil )
-   end if
+   end if 
 
    ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "importe", uValue )
 
@@ -453,6 +453,7 @@ METHOD getSumImporte() CLASS SQLRecibosPagosTemporalModel
    cSql  := hb_strformat(  cSql, ::getTableName() )
 
 RETURN ( getSQLDatabase():getValue( cSql ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -185,6 +185,9 @@ ArticulosView.prg 															\
 ArticulosValidator.prg 														\
 SQLArticulosModel.prg 														\
 ArticulosPreciosController.prg 											\
+CaracteristicasController.prg 											\
+CaracteristicasLineasController.prg 									\
+CaracteristicasValoresArticulosController.prg 						\
 ArticulosPreciosView.prg 													\
 ArticulosPreciosBrowseView.prg											\
 SQLArticulosPreciosModel.prg												\
@@ -534,6 +537,9 @@ ArticulosView.obj 															\
 ArticulosValidator.obj 														\
 SQLArticulosModel.obj 														\
 ArticulosPreciosController.obj       									\
+CaracteristicasController.obj       									\
+CaracteristicasLineasController.obj       							\
+CaracteristicasValoresArticulosController.obj    					\
 ArticulosPreciosView.obj 													\
 ArticulosPreciosBrowseView.obj											\
 SQLArticulosPreciosModel.obj												\
@@ -880,6 +886,9 @@ $(OBJ)\ArticulosView.obj    												+
 $(OBJ)\ArticulosValidator.obj												+
 $(OBJ)\SQLArticulosModel.obj												+
 $(OBJ)\ArticulosPreciosController.obj    								+
+$(OBJ)\CaracteristicasController.obj    								+
+$(OBJ)\CaracteristicasLineasController.obj    						+
+$(OBJ)\CaracteristicasValoresArticulosController.obj    			+
 $(OBJ)\ArticulosPreciosView.obj    										+
 $(OBJ)\ArticulosPreciosBrowseView.obj    								+
 $(OBJ)\SQLArticulosPreciosModel.obj    								+

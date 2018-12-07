@@ -328,6 +328,12 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLArticulosPreciosModel():New() )
 
+   aadd( ::aModels, SQLCaracteristicasModel():New() )
+
+   aadd( ::aModels, SQLCaracteristicasLineasModel():New() ) 
+
+   aadd( ::aModels, SQLCaracteristicasValoresArticulosModel():New() ) 
+
    aadd( ::aModels, SQLContactosModel():New() )
 
    aadd( ::aModels, SQLArticulosFamiliaModel():New() )

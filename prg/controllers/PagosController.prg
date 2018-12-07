@@ -429,10 +429,10 @@ END CLASS
 
 METHOD getValidators() CLASS PagosValidator
 
-   ::hValidators  := {  "cliente_codigo"     =>   {  "required"   => "El código del cliente es un dato requerido" },;
-                        "importe"            =>   {  "required"   => "El importe es un dato requerido" },;
-                        "fecha"              =>   {  "required"   => "La fecha es un dato requerido" },;
-                        "medio_pago_codigo"  =>   {  "required"   => "El medio de pago es un dato requerido" },;
+   ::hValidators  := {  "cliente_codigo"     =>   {  "required"               => "El código del cliente es un dato requerido" },;
+                        "importe"            =>   {  "required"               => "El importe es un dato requerido" },;
+                        "fecha"              =>   {  "required"               => "La fecha es un dato requerido" },;
+                        "medio_pago_codigo"  =>   {  "required"               => "El medio de pago es un dato requerido" },;
                         "importe_maximo"     =>   {  "validateImporteMaximo"  => "El importe no puede ser mayor que la cantidad adeudada" } }
 
 RETURN ( ::hValidators )
@@ -447,8 +447,6 @@ METHOD validateImporteMaximo( nImporte ) CLASS PagosValidator
 
 RETURN ( ::getSuperController():getImporte() >= nImporte )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

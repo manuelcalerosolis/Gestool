@@ -177,6 +177,10 @@ CLASS SQLApplicationController FROM SQLBaseController
    
    DATA oRolesController 
 
+   DATA oCaracteristicasController
+
+   DATA oCaracteristicasLineasController
+
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
    METHOD getCodigosPostalesController();
@@ -412,6 +416,11 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getPermisosController()   INLINE ( if( empty( ::oPermisosController ), ::oPermisosController := PermisosController():New( self ), ), ::oPermisosController )
 
    METHOD getRolesController()      INLINE ( if( empty( ::oRolesController ), ::oRolesController := RolesController():New( self ), ), ::oRolesController )
+
+   METHOD getCaracteristicasController();
+                                    INLINE ( if( empty( ::oCaracteristicasController ), ::oCaracteristicasController := CaracteristicasController():New( self ), ), ::oCaracteristicasController ) 
+   METHOD getCaracteristicasLineasController();
+                                    INLINE ( if( empty( ::oCaracteristicasLineasController ), ::oCaracteristicasLineasController := CaracteristicasLineasController():New( self ), ), ::oCaracteristicasLineasController )
 
    METHOD loadDocuments()
 
@@ -756,6 +765,14 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oRolesController )
       ::oRolesController:End()
+   end if
+
+   if !empty( ::oCaracteristicasController )
+      ::oCaracteristicasController:End()
+   end if
+
+   if !empty( ::oCaracteristicasLineasController )
+      ::oCaracteristicasLineasController:End()
    end if
 
 RETURN ( ::Super:End() )
