@@ -1018,6 +1018,17 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Caracteristicas'
+   oItem:cMessage       := 'Caracteristicas'
+   oItem:bAction        := {|| CaracteristicasController():New():ActivateNavigatorView() }
+   oItem:cId            := "caracteristicas"
+   oItem:cBmp           := "gc_tags_16"
+   oItem:cBmpBig        := "gc_tags_32"
+   oItem:lShow          := .f.
+   oItem:lLittle        := .t.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Unidades de medición'
    oItem:cMessage       := 'Unidades de medición'
    oItem:bAction        := {|| UnidadesMedicionController():New():ActivateNavigatorView() }
