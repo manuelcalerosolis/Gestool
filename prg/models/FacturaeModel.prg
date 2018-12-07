@@ -1299,7 +1299,7 @@ ENDCLASS
 
 CLASS Discount
 
-   DATA     cDiscountReason               INIT '-'
+   DATA     cDiscountReason               INIT ''
    DATA     nDiscountRate                 INIT 0.00
    DATA     nDiscountAmount               INIT 0.000000
 

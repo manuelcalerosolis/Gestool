@@ -277,6 +277,12 @@ CLASS SQLFacturasClientesDescuentosModel FROM SQLCompanyModel
 
    METHOD CountNombreWhereFacturaUuid( cNombre )
 
+   METHOD testCreatel0PorCiento( uuid ) 
+
+   METHOD testCreate20PorCiento( uuid ) 
+
+   METHOD testCreate30PorCiento( uuid ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -295,7 +301,7 @@ METHOD getColumns() CLASS SQLFacturasClientesDescuentosModel
    hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
                                           "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "descuento",      {  "create"    => "FLOAT(7,4)"                              ,;
+   hset( ::hColumns, "descuento",      {  "create"    => "FLOAT( 7, 4 )"                           ,;
                                           "default"   => {|| 0 } }                                 )
 
    ::getDeletedStampColumn()
@@ -358,6 +364,41 @@ METHOD CountNombreWhereFacturaUuid( cNombre ) CLASS SQLFacturasClientesDescuento
 RETURN ( getSQLDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD testCreatel0PorCiento( uuid ) CLASS SQLFacturasClientesDescuentosModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "nombre", "Test 10" )
+   hset( hBuffer, "descuento", 10 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreate20PorCiento( uuid ) CLASS SQLFacturasClientesDescuentosModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "nombre", "Test 20" )
+   hset( hBuffer, "descuento", 20 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreate30PorCiento( uuid ) CLASS SQLFacturasClientesDescuentosModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "nombre", "Test 30" )
+   hset( hBuffer, "descuento", 30 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

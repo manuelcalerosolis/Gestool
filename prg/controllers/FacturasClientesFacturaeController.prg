@@ -48,6 +48,8 @@ CLASS FacturasClientesFacturaeController
 
    METHOD setTax()
 
+   METHOD setDiscount()
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -89,6 +91,8 @@ METHOD Generate( uuid ) CLASS FacturasClientesFacturaeController
       ::setBuyerParty()
 
       ::setTax()
+
+      ::setDiscount()
 
       ::getModel():Generate()
 
@@ -234,6 +238,26 @@ METHOD setTax()  CLASS FacturasClientesFacturaeController
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD setDiscount() CLASS FacturasClientesFacturaeController
+
+   local oDiscount
+   local hDiscount
+
+   for each hDiscount in ::hDiscounts
+
+      oDiscount                                 := Discount()
+      oDiscount:cDiscountReason                 := hget( hDiscount, "totalBruto" )
+      oDiscount:nDiscountRate                   := hget( hDiscount, "porcentajeIVA" )
+      oDiscount:nDiscountAmount                 := hget( hDiscount, "totalIVA" )
+
+      ::getModel():addDiscount( oDiscount )
+
+   next
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -259,14 +283,19 @@ METHOD testGenerateXml() CLASS TestFacturasClientesFacturaeController
    SQLClientesModel():truncateTable()
    SQLFacturasClientesModel():truncateTable() 
    SQLFacturasClientesLineasModel():truncateTable() 
+   SQLFacturasClientesDescuentosModel():truncateTable()
+
+   SQLClientesModel():testCreateContado()
 
    SQLFacturasClientesModel():testCreateFactura( uuid ) 
 
-   SQLFacturasClientesLineasModel():testCreateFacturaLineaIVAal0( uuid ) 
-   SQLFacturasClientesLineasModel():testCreateFacturaLineaIVAal10( uuid ) 
-   SQLFacturasClientesLineasModel():testCreateFacturaLineaIVAal21( uuid ) 
+   SQLFacturasClientesLineasModel():testCreateIVAal0( uuid ) 
+   SQLFacturasClientesLineasModel():testCreateIVAal10( uuid ) 
+   SQLFacturasClientesLineasModel():testCreateIVAal21( uuid ) 
 
-   SQLClientesModel():testCreateContado()
+   SQLFacturasClientesDescuentosModel():testCreatel0PorCiento( uuid )   
+   SQLFacturasClientesDescuentosModel():testCreate20PorCiento( uuid )   
+   SQLFacturasClientesDescuentosModel():testCreate30PorCiento( uuid )   
 
    oController := FacturasClientesController():New()
 

@@ -12,7 +12,9 @@ CLASS FacturasClientesRepository FROM SQLBaseRepository
                                                       ::dropFunctionRecargoEquivalenciaWhereUuid(),;
                                                       ::createFunctionRecargoEquivalenciaWhereUuid(),;
                                                       ::dropFunctionDescuentoWhereUuid(),;
-                                                      ::createFunctionDescuentoWhereUuid() } )
+                                                      ::createFunctionDescuentoWhereUuid(),;
+                                                      ::createFunctionTotalDescuentoWhereUuid(),;
+                                                      ::dropFunctionTotalDescuentoWhereUuid() } )
 
    METHOD createFunctionTotalSummaryWhereUuid()
       METHOD dropFunctionTotalSummaryWhereUuid()
@@ -25,6 +27,10 @@ CLASS FacturasClientesRepository FROM SQLBaseRepository
    METHOD createFunctionDescuentoWhereUuid() 
       METHOD dropFunctionDescuentoWhereUuid()   
       METHOD selectDescuentoWhereUuid( uuidFacturaCliente ) 
+
+   METHOD createFunctionTotalDescuentoWhereUuid()
+      METHOD dropFunctionTotalDescuentoWhereUuid()
+      METHOD selectTotalDescuentoWhereUuid( uuidFacturaCliente, importeBruto )
    
    METHOD getSentenceDescuento() 
    
@@ -66,12 +72,12 @@ METHOD getSentenceTotalesDocument( uuidFacturaCliente ) CLASS FacturasClientesRe
 
    SELECT
       SUM( totales.importeBruto ) AS totalBruto,
+      SUM( totales.totalDescuento ) AS totalDescuento,
       SUM( totales.importeNeto ) AS totalNeto,
       SUM( totales.porcentajeIVA ) AS porcentajeIVA,
       SUM( totales.recargoEquivalencia ) AS recargoEquivalencia,
       SUM( totales.importeIVA ) AS totalIVA,
       SUM( totales.importeRecargo ) AS totalRecargo,
-      SUM( totales.totalDescuento ) AS totalDescuento,
       SUM( totales.importeTotal ) AS totalDocumento
    FROM ( %1$s ) AS totales
 
@@ -145,6 +151,71 @@ RETURN ( getSQLDatabase():getValue( cSql, "" ) )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD createFunctionTotalDescuentoWhereUuid() CLASS FacturasClientesRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   CREATE DEFINER=`root`@`localhost` 
+   FUNCTION %1$s ( `uuid_factura_cliente` CHAR( 40 ), `importe_bruto` DECIMAL( 19, 6 ) )
+   RETURNS DECIMAL( 19, 6 )
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
+
+   BEGIN
+
+   DECLARE Descuentos FLOAT( 19, 6 );
+
+   SELECT 
+      SUM( facturas_clientes_descuentos.descuento ) INTO Descuentos
+   FROM %2$s AS facturas_clientes_descuentos 
+      WHERE facturas_clientes_descuentos.parent_uuid = uuid_factura_cliente 
+         AND facturas_clientes_descuentos.deleted_at = 0 ;
+
+   RETURN Descuentos;
+
+   END
+
+   ENDTEXT
+
+/*
+      DECLARE totalDescuento DECIMAL( 19, 6 );
+
+      SELECT 
+         SUM( ROUND( facturas_clientes_descuentos.descuento * importe_bruto / 100, 2 ) ) INTO totalDescuento
+      FROM %2$s AS facturas_clientes_descuentos 
+         WHERE facturas_clientes_descuentos.parent_uuid = uuid_factura_cliente 
+            AND facturas_clientes_descuentos.deleted_at = 0; 
+
+      RETURN totalDescuento;
+*/
+
+   cSql  := hb_strformat(  cSql,;
+                           Company():getTableName( 'FacturaClienteTotalDescuentoWhereUuid' ),;
+                           SQLFacturasClientesDescuentosModel():getTableName() )
+
+   logwrite( cSql )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD dropFunctionTotalDescuentoWhereUuid() CLASS FacturasClientesRepository  
+
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'FacturaClienteTotalDescuentoWhereUuid' ) + ";" )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectTotalDescuentoWhereUuid( uuidFacturaCliente, importeBruto ) CLASS FacturasClientesRepository
+
+RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaClienteTotalDescuentoWhereUuid' ) + "( " + quoted( uuidFacturaCliente ) + ", " + toSqlString( importeBruto ) + " )" ) )
+
 //---------------------------------------------------------------------------//
 
 METHOD createFunctionTotalSummaryWhereUuid() CLASS FacturasClientesRepository

@@ -1,6 +1,7 @@
 #include "fiveWin.ch"
 #include "hdo.ch"
 #include "hdomysql.ch"
+#include "hdocommon.ch"
 
 //----------------------------------------------------------------------------//
 
@@ -121,7 +122,7 @@ METHOD New( cDatabaseMySQL )
 
    ::oConexion:setAttribute( MYSQL_OPT_RECONNECT, .t. )
 
-   ::oConexion:setAttribute( HDO_ATTR_DEFAULT_TINY_AS_BOOL, .t. )
+   ::oConexion:setAttribute( HDO_ATTR_DEFAULT_TINY_AS_BOOL, .t. )    
    
 RETURN ( Self )
 
@@ -443,7 +444,7 @@ METHOD checkModel( oModel )
       ::Execs( oModel:getAlterTableSentences( aSchemaColumns ) )
    end if 
   
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -555,7 +556,7 @@ METHOD Export( cFileName )
 
    fclose( hFileName )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -594,7 +595,7 @@ METHOD showError( e )
          msgstop( e:SubSystem + ";" + padl( e:SubCode, 4 ) + ";" + e:Operation + ";" + e:Description, "Error en sentencia" )  
    end case
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

@@ -62,11 +62,11 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
 
    METHOD countLinesWhereUuidParent( uuidParent )  INLINE ( getSQLDatabase():getValue( ::getSentenceCountLineas( uuidParent ), 0 ) )
 
-   METHOD testCreateFacturaLineaIVAal0( uuid )
+   METHOD testCreateIVAal0( uuid )
 
-   METHOD testCreateFacturaLineaIVAal10( uuid )
+   METHOD testCreateIVAal10( uuid )
 
-   METHOD testCreateFacturaLineaIVAal21( uuid )
+   METHOD testCreateIVAal21( uuid )
 
 END CLASS
 
@@ -428,13 +428,13 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------// 
 
-METHOD testCreateFacturaLineaIVAal0( uuid ) CLASS SQLFacturasClientesLineasModel
+METHOD testCreateIVAal0( uuid ) CLASS SQLFacturasClientesLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
    hset( hBuffer, "parent_uuid", uuid )
    hset( hBuffer, "articulo_codigo", "0" )
-   hset( hBuffer, "articulo_nombre", "Test" )
+   hset( hBuffer, "articulo_nombre", "Test al 0% IVA" )
    hset( hBuffer, "articulo_unidades", 1 )
    hset( hBuffer, "articulo_precio", 100 )
 
@@ -442,13 +442,13 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateFacturaLineaIVAal10( uuid ) CLASS SQLFacturasClientesLineasModel
+METHOD testCreateIVAal10( uuid ) CLASS SQLFacturasClientesLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
    hset( hBuffer, "parent_uuid", uuid )
    hset( hBuffer, "articulo_codigo", "0" )
-   hset( hBuffer, "articulo_nombre", "Test" )
+   hset( hBuffer, "articulo_nombre", "Test al 10% IVA" )
    hset( hBuffer, "articulo_unidades", 1 )
    hset( hBuffer, "articulo_precio", 100 )
    hset( hBuffer, "iva", 10 )
@@ -457,13 +457,13 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateFacturaLineaIVAal21( uuid ) CLASS SQLFacturasClientesLineasModel
+METHOD testCreateIVAal21( uuid ) CLASS SQLFacturasClientesLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
    hset( hBuffer, "parent_uuid", uuid )
    hset( hBuffer, "articulo_codigo", "0" )
-   hset( hBuffer, "articulo_nombre", "Test" )
+   hset( hBuffer, "articulo_nombre", "Test al 21% IVA" )
    hset( hBuffer, "articulo_unidades", 1 )
    hset( hBuffer, "articulo_precio", 100 )
    hset( hBuffer, "iva", 21 )
