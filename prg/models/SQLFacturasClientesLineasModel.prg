@@ -62,14 +62,18 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
 
    METHOD countLinesWhereUuidParent( uuidParent )  INLINE ( getSQLDatabase():getValue( ::getSentenceCountLineas( uuidParent ), 0 ) )
 
+#ifdef __TEST__
+
    METHOD testCreateIVAal0( uuid )
    METHOD testCreateIVAal0Con10PorcientoDescuento( uuid )
 
    METHOD testCreateIVAal10( uuid )
-   METHOD testCreateIVAal10Con10PorcientoDescuento( uuid )
+   METHOD testCreateIVAal10Con15PorcientoDescuento( uuid )
 
    METHOD testCreateIVAal21( uuid )
-   METHOD testCreateIVAal21Con10PorcientoDescuento( uuid )   
+   METHOD testCreateIVAal21Con20PorcientoDescuento( uuid )   
+
+#endif
 
 END CLASS
 
@@ -381,11 +385,7 @@ RETURN ( ::getDatabase():Exec( cSentence ) )
 
 METHOD dropTemporalTable() CLASS SQLFacturasClientesLineasModel
 
-   local cSentence
-
-   cSentence         := "DROP TABLE " + ::cTableTemporal           
-
-RETURN ( ::getDatabase():Exec( cSentence ) )
+RETURN ( ::getDatabase():Exec( "DROP TABLE " + ::cTableTemporal ) )
 
 //---------------------------------------------------------------------------//
 
@@ -431,6 +431,8 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------// 
 
+#ifdef __TEST__
+
 METHOD testCreateIVAal0( uuid ) CLASS SQLFacturasClientesLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
@@ -454,6 +456,7 @@ METHOD testCreateIVAal0Con10PorcientoDescuento( uuid ) CLASS SQLFacturasClientes
    hset( hBuffer, "articulo_nombre", "Test al 0% IVA con 10% descuento" )
    hset( hBuffer, "articulo_unidades", 1 )
    hset( hBuffer, "articulo_precio", 100 )
+   hset( hBuffer, "incremento_precio", 15 )
    hset( hBuffer, "descuento", 10 )
 
 RETURN ( ::insertBuffer( hBuffer ) )
@@ -475,17 +478,17 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal10Con10PorcientoDescuento( uuid ) CLASS SQLFacturasClientesLineasModel
+METHOD testCreateIVAal10Con15PorcientoDescuento( uuid ) CLASS SQLFacturasClientesLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
    hset( hBuffer, "parent_uuid", uuid )
    hset( hBuffer, "articulo_codigo", "0" )
-   hset( hBuffer, "articulo_nombre", "Test al 10% IVA con 10% descuento" )
+   hset( hBuffer, "articulo_nombre", "Test al 10% IVA con 15% descuento" )
    hset( hBuffer, "articulo_unidades", 1 )
    hset( hBuffer, "articulo_precio", 100 )
    hset( hBuffer, "iva", 10 )
-   hset( hBuffer, "descuento", 10 )
+   hset( hBuffer, "descuento", 15 )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 
@@ -506,18 +509,20 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal21Con10PorcientoDescuento( uuid ) CLASS SQLFacturasClientesLineasModel
+METHOD testCreateIVAal21Con20PorcientoDescuento( uuid ) CLASS SQLFacturasClientesLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
    hset( hBuffer, "parent_uuid", uuid )
    hset( hBuffer, "articulo_codigo", "0" )
-   hset( hBuffer, "articulo_nombre", "Test al 21% IVA con 10% descuento" )
+   hset( hBuffer, "articulo_nombre", "Test al 21% IVA con 20% descuento" )
    hset( hBuffer, "articulo_unidades", 1 )
    hset( hBuffer, "articulo_precio", 100 )
-   hset( hBuffer, "iva", 10 )
-   hset( hBuffer, "descuento", 10 )
+   hset( hBuffer, "iva", 21 )
+   hset( hBuffer, "descuento", 20 )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
+
+#endif

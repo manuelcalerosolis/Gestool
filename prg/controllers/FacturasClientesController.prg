@@ -576,6 +576,7 @@ END CLASS
 METHOD testCalculoFacturaConDescuento() CLASS TestFacturasClientesController
 
    local uuid  
+   local hTotal
    local oController
 
    uuid        := win_uuidcreatestring()
@@ -589,19 +590,19 @@ METHOD testCalculoFacturaConDescuento() CLASS TestFacturasClientesController
 
    SQLFacturasClientesModel():testCreateFactura( uuid ) 
 
-   SQLFacturasClientesLineasModel():testCreateIVAal0( uuid ) 
-   SQLFacturasClientesLineasModel():testCreateIVAal10( uuid ) 
-   SQLFacturasClientesLineasModel():testCreateIVAal21( uuid ) 
+   SQLFacturasClientesLineasModel():testCreateIVAal0Con10PorcientoDescuento( uuid ) 
+   SQLFacturasClientesLineasModel():testCreateIVAal10Con15PorcientoDescuento( uuid ) 
+   SQLFacturasClientesLineasModel():testCreateIVAal21Con20PorcientoDescuento( uuid ) 
 
    SQLFacturasClientesDescuentosModel():testCreatel0PorCiento( uuid )   
    SQLFacturasClientesDescuentosModel():testCreate20PorCiento( uuid )   
    SQLFacturasClientesDescuentosModel():testCreate30PorCiento( uuid )   
 
-   oController := FacturasClientesController():New()
+   oController := FacturasClientesController():New() 
 
-   msgalert( hb_valtoexp( oController:getRepository():getTotalesDocument( uuid ) ) )
+   hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
 
-   // oController:assert:true( file( cPatXml() + "TEST1.xml" ), "test creacion de XML" )
+   ::assert:equals( 117.520000, hget( hTotal, "totalDocumento" ), "test creacion de XML" )
 
    oController:End()
 
