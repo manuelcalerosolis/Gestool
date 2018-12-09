@@ -569,6 +569,8 @@ CLASS TestFacturasClientesController FROM TestCase
 
    METHOD testCalculoFacturaConDescuento()
    
+   METHOD testCalculoFacturaConIncremento()
+   
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -603,6 +605,37 @@ METHOD testCalculoFacturaConDescuento() CLASS TestFacturasClientesController
    hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
 
    ::assert:equals( 117.520000, hget( hTotal, "totalDocumento" ), "test creacion de XML" )
+
+   oController:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCalculoFacturaConIncremento() CLASS TestFacturasClientesController
+
+   local uuid  
+   local hTotal
+   local oController
+
+   uuid        := win_uuidcreatestring()
+
+   SQLClientesModel():truncateTable()
+   SQLFacturasClientesModel():truncateTable() 
+   SQLFacturasClientesLineasModel():truncateTable() 
+   SQLFacturasClientesDescuentosModel():truncateTable()
+
+   SQLClientesModel():testCreateContado()
+
+   SQLFacturasClientesModel():testCreateFactura( uuid ) 
+
+   SQLFacturasClientesLineasModel():testCreateIVAal21ConIncrememtoPrecio( uuid ) 
+
+   oController := FacturasClientesController():New() 
+
+   hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
+
+   ::assert:equals( 7.720000, hget( hTotal, "totalDocumento" ), "test creacion de XML" )
 
    oController:End()
 
