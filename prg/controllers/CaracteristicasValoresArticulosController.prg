@@ -254,6 +254,12 @@ CLASS SQLCaracteristicasValoresArticulosModel FROM SQLCompanyModel
 
    METHOD productCaracteristicaValuesUuidHashFromUuidArticulo( uuidProduct ) 
 
+   METHOD testCreateCaracteristicaValor( uuidArticulo, uuidCaracteristica, uuidLinea )
+
+   METHOD testCreateValorSinCaracteristica( uuidArticulo )
+
+   METHOD testCreateValorSinArticulo( uuidCaracteristica, uuidLinea )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -266,13 +272,13 @@ METHOD getColumns() CLASS SQLCaracteristicasValoresArticulosModel
    hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                                          "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "articulo_uuid",                 {  "create"    => "VARCHAR( 40 )"                           ,;
+   hset( ::hColumns, "articulo_uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                                          "default"   => {|| Space( 40 ) } }                       )
 
-   hset( ::hColumns, "caracteristica_uuid",           {  "create"    => "VARCHAR( 40 )"                           ,;
+   hset( ::hColumns, "caracteristica_uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                                          "default"   => {|| Space( 40 ) } }                       )
 
-   hset( ::hColumns, "caracteristica_valor_uuid",     {  "create"    => "VARCHAR( 40 )"                           ,;
+   hset( ::hColumns, "caracteristica_valor_uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                                          "default"   => {|| Space( 40 ) } }                       )
 
 RETURN ( ::hColumns )
@@ -371,6 +377,118 @@ METHOD productCaracteristicaValuesUuidHashFromUuidArticulo( uuidProduct )
    cSentence      += "WHERE articulo_uuid = " + quoted( uuidProduct )
 
 Return ( ::getDatabase():selectFetchHash( cSentence ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateCaracteristicaValor( uuidArticulo, uuidCaracteristica, uuidLinea )
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "articulo_uuid", uuidArticulo )
+   hset( hBuffer, "caracteristica_uuid", uuidCaracteristica )
+   hset( hBuffer, "caracteristica_valor_uuid", uuidLinea )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateValorSinCaracteristica( uuidArticulo )
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "articulo_uuid", uuidArticulo )
+   hset( hBuffer, "caracteristica_uuid",  )
+   hset( hBuffer, "caracteristica_valor_uuid",  )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateValorSinArticulo( uuidCaracteristica, uuidLinea )
+
+local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "articulo_uuid", )
+   hset( hBuffer, "caracteristica_uuid", uuidCaracteristica )
+   hset( hBuffer, "caracteristica_valor_uuid", uuidLinea )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TestCaracteristicasValoresArticulosController FROM TestCase
+
+   //METHOD testCreateCaracteristicaValor()
+
+   //METHOD testCreateCaracteristicaValorSinCaracteristica()
+
+   METHOD testCreateCaracteristicaValorSinCaracteristica()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+/*METHOD testCreateCaracteristicaValor() CLASS TestCaracteristicasValoresArticulosController
+
+   local uuidCaracteristica   := win_uuidcreatestring()
+   local uuidArticulo         := win_uuidcreatestring()
+   local uuidLinea            := win_uuidcreatestring()
+
+   SQLArticulosModel():truncateTable()
+   SQLCaracteristicasModel():truncateTable() 
+   SQLCaracteristicasLineasModel():truncateTable()
+   SQLCaracteristicasValoresArticulosModel():truncateTable()
+
+   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
+   
+   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
+
+   ::assert:notEquals( SQLArticulosModel():testCreateArticuloConUuid( uuidArticulo ), 0, "test articulo" )
+
+   ::assert:notEquals( SQLCaracteristicasValoresArticulosModel():testCreateCaracteristicaValor( uuidArticulo, uuidCaracteristica, uuidLinea ), 0, "test caracteristica valor" )
+
+RETURN ( nil ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateCaracteristicaValorSinCaracteristica() CLASS TestCaracteristicasValoresArticulosController
+
+   local uuidArticulo         := win_uuidcreatestring()
+
+   SQLArticulosModel():truncateTable()
+   SQLCaracteristicasModel():truncateTable() 
+   SQLCaracteristicasLineasModel():truncateTable()
+   SQLCaracteristicasValoresArticulosModel():truncateTable()
+
+   ::assert:notEquals( SQLArticulosModel():testCreateArticuloConUuid( uuidArticulo ), 0, "test articulo" )
+
+   ::assert:notEquals( SQLCaracteristicasValoresArticulosModel():testCreateValorSinCaracteristica( uuidArticulo ), 1, "test caracteristica valor" )
+
+RETURN ( nil )*/
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateCaracteristicaValorSinCaracteristica()
+
+   local uuidCaracteristica   := win_uuidcreatestring()
+   local uuidLinea            := win_uuidcreatestring()
+
+   SQLArticulosModel():truncateTable()
+   SQLCaracteristicasModel():truncateTable() 
+   SQLCaracteristicasLineasModel():truncateTable()
+   SQLCaracteristicasValoresArticulosModel():truncateTable()
+
+   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
+   
+   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
+
+   ::assert:notEquals( SQLCaracteristicasValoresArticulosModel():testCreateValorSinArticulo( uuidCaracteristica, uuidLinea ), 1, "test caracteristica valor" )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
