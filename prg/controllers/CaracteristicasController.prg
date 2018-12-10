@@ -210,21 +210,28 @@ METHOD Activate() CLASS CaracteristicasView
    ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
-   
+
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
+
    if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
-   else
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
+   
+      ::oDialog:bKeyDown   := <| nKey |  
+         do case         
+            case nKey == VK_F5
+               if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), )
+            case nKey == VK_F2
+               ::oController:getCaracteristicasLineasController():Append()
+            case nKey == VK_F3
+               ::oController:getCaracteristicasLineasController():Edit()
+            case nKey == VK_F4
+               ::oController:getCaracteristicasLineasController():Delete()
+         end 
+         RETURN ( 0 )
+         >
+
    end if
 
-   //if ::oController:isNotZoomMode() 
-      //::oDialog:AddFastKey( VK_F2, {|| ::oController:oCaracteristicasLineasController:Append() } )
-      //::oDialog:AddFastKey( VK_F3, {|| ::oController:oCaracteristicasLineasController:Edit() } )
-      //::oDialog:AddFastKey( VK_F4, {|| ::oController:oCaracteristicasLineasController:Delete() } )
-      //::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
-   //end if
-
-   ::oDialog:bStart  := {|| ::startActivate() }
+   ::oDialog:bStart  := {|| ::startActivate(), ::paintedActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
   
@@ -276,6 +283,8 @@ CLASS SQLCaracteristicasModel FROM SQLCompanyModel
 
    METHOD getNamesFromIdLanguagesPS( uuidCaracteristica, aIdsLanguages )
 
+   METHOD testCreateCaracteristica( uuid )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -318,6 +327,139 @@ METHOD getNamesFromIdLanguagesPS( uuidCaracteristica, aIdsLanguages ) CLASS SQLC
    aEval( aIdsLanguages, {|id| hSet( hNames, AllTrim( Str( id ) ), AllTrim( cName ) ) } )
 
 RETURN ( hNames )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateCaracteristica( uuid ) CLASS SQLCaracteristicasModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "uuid", uuid )
+   hset( hBuffer, "codigo", "001" )
+   hset( hBuffer, "nombre", "Caracteristica" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+CLASS TestCaracteristicasController FROM TestCase
+
+   METHOD testCreateCaracteristicaSincodigo()
+
+   METHOD testCreateCaracteristicaSinNombre()
+
+   METHOD testCreateCaracteristicaSinLinea()
+   
+   //METHOD testCreateCaracteristicaConLineaSinNombre()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD testCreateCaracteristicaSincodigo() CLASS TestCaracteristicasController
+
+   local oController
+   local uuidCaracteristica:= win_uuidcreatestring()
+
+   SQLCaracteristicasModel():truncateTable()  
+
+   oController             := CaracteristicasController():New()
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100, self:oDialog ):cText( "" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDCANCEL ):Click() } )
+
+   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateCaracteristicaSinNombre() CLASS TestCaracteristicasController
+
+   local oController
+   local uuidCaracteristica:= win_uuidcreatestring()
+
+   SQLCaracteristicasModel():truncateTable() 
+
+   oController             := CaracteristicasController():New()
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100, self:oDialog ):cText( "001" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110, self:oDialog ):cText( "" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDCANCEL ):Click() } )
+
+   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateCaracteristicaSinLinea() CLASS TestCaracteristicasController
+
+   local oController
+   local uuidCaracteristica:= win_uuidcreatestring()
+
+   SQLCaracteristicasModel():truncateTable()  
+
+   oController             := CaracteristicasController():New()
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100, self:oDialog ):cText( "001" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )
+
+   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+/*METHOD testCreateCaracteristicaConLineaSinNombre() CLASS TestCaracteristicasController
+
+   local oController
+   local uuidCaracteristica:= win_uuidcreatestring()
+
+   SQLCaracteristicasModel():truncateTable() 
+   SQLCaracteristicasLineasModel():truncateTable()  
+
+   oController             := CaracteristicasController():New()
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100, self:oDialog ):cText( "001" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 130 ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         oController:getCaracteristicasLineasController():getDialogView():getControl( 110  ):cText( "001" ),;
+         apoloWaitSeconds( 1 ),;
+         oController:getCaracteristicasLineasController():getDialogView():getControl( IDOK ):Click(),;
+         apoloWaitSeconds( 1 ) } )
+
+   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )*/
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

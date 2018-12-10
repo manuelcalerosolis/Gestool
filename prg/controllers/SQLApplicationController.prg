@@ -181,6 +181,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oCaracteristicasLineasController
 
+   DATA oCaracteristicasValoresArticulosController
+
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
    METHOD getCodigosPostalesController();
@@ -422,7 +424,10 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getCaracteristicasLineasController();
                                     INLINE ( if( empty( ::oCaracteristicasLineasController ), ::oCaracteristicasLineasController := CaracteristicasLineasController():New( self ), ), ::oCaracteristicasLineasController )
 
-   METHOD loadDocuments()
+   METHOD getCaracteristicasValoresArticulosController();
+                                    INLINE ( if( empty( ::oCaracteristicasValoresArticulosController ), ::oCaracteristicasValoresArticulosController := CaracteristicasValoresArticulosController():New( self ), ), ::oCaracteristicasValoresArticulosController )
+
+   METHOD loadDocuments() 
 
    METHOD loadTemplatesHTML()
 
@@ -773,6 +778,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oCaracteristicasLineasController )
       ::oCaracteristicasLineasController:End()
+   end if
+
+   if !empty( ::oCaracteristicasValoresArticulosController )
+      ::oCaracteristicasValoresArticulosController:End()
    end if
 
 RETURN ( ::Super:End() )

@@ -21,18 +21,24 @@ USER FUNCTION hbunit_test()
    local oSuite    := TestSuite():new()
 
    // oSuite:addTest( TestAssert():new() )
-   
+
    // oSuite:addTest( TestEmpresasController():new() )
-   
+
    // oSuite:addTest( TestArticulosController():new() )
 
-   // oSuite:addTest( TestPagosController():new() ) 
-   
+   // oSuite:addTest( TestPagosController():new() )
+
    // oSuite:addTest( TestPagosAssistantController():new() )
 
    // oSuite:addTest( TestFacturasClientesController():new() )
 
-   oSuite:addTest( TestFacturasClientesFacturaeController():new() )
+   //oSuite:addTest( TestFacturasClientesController():new() )
+
+   oSuite:addTest( TestCaracteristicasController():new() )
+
+   oSuite:addTest( TestCaracteristicasLineasController():new() )
+
+   oSuite:addTest( TestCaracteristicasValoresArticulosController():new() )
 
    oRunner:run( oSuite )
 
@@ -64,12 +70,12 @@ METHOD testAssertErrors() CLASS TestAssert
       ::fail( "division by zero not caught" )
    RECOVER USING oError
    END
-   
+
    BEGIN SEQUENCE
       ::assert( a, "test variable not found" )
       ::assert:fail( "unable to catch 'Variable not found'" )
    RECOVER
-   END 
+   END
 */
 
 RETURN ( nil )
@@ -144,4 +150,3 @@ METHOD testAssertNotNull() CLASS TestAssert
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-

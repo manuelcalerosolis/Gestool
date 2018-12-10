@@ -157,9 +157,11 @@ METHOD Activate() CLASS CaracteristicasLineasView
       CANCEL ;
       ACTION      ( ::oDialog:end() )
 
-   /*if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
-   end if*/
+   if ::oController:isNotZoomMode() 
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
+   else
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
+   end if
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -205,6 +207,15 @@ CLASS SQLCaracteristicasLineasModel FROM SQLCompanyModel
 
    METHOD getNamesFromIdLanguagesPS( uuidCaracteristica, aIdsLanguages )
 
+   METHOD testCreateCaracteristicaLineaSinParent( uuidParent )
+
+   METHOD testCreateCaracteristicaLineaConParent( uuidParent )
+
+   METHOD testCreateCaracteristicaLineaSinNombre( uuidParent )
+
+   METHOD testCreateCaracteristicaLineaConUuidAndParent( uuid, uuidParent )
+
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -217,10 +228,10 @@ METHOD getColumns() CLASS SQLCaracteristicasLineasModel
    hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 )"                           ,;
-                                          "default"   => {|| ::getSenderControllerParentUuid() } } )
+   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 ) NOT NULL"                           ,;
+                                          "default"   => {|| ::getControllerParentUuid() } }       )
 
-   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 ) NOT NULL"                          ,;
                                           "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "personalizado",  {  "create"    => "TINYINT ( 1 )"                           ,;
@@ -232,13 +243,21 @@ RETURN ( ::hColumns )
 
 METHOD getArrayNombreValoresFromUuid( uuid ) CLASS SQLCaracteristicasLineasModel
 
-   local cSentence   := ""
+local cSql
 
-   cSentence         := "SELECT nombre "
-   cSentence         += "FROM articulos_caracteristicas_lineas "
-   cSentence         += "WHERE parent_uuid = " + quoted( uuid ) + " AND personalizado = 0"
+   TEXT INTO cSql
 
-RETURN ( getSQLDatabase():selectFetchArrayOneColumn( cSentence ) )
+   SELECT nombre 
+
+   FROM %1$s AS articulos_caracteristicas_lineas
+      
+   WHERE parent_uuid = %2$s AND personalizado = 0
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(),quoted( uuid ) ) 
+
+RETURN ( getSQLDatabase():selectFetchArrayOneColumn( cSql ) )
 
 //---------------------------------------------------------------------------//
 
@@ -260,6 +279,113 @@ METHOD getNamesFromIdLanguagesPS( uuidCaracteristica, aIdsLanguages ) CLASS SQLC
    aEval( aIdsLanguages, {|id| hSet( hNames, AllTrim( Str( id ) ), AllTrim( cName ) ) } )
 
 RETURN ( hNames )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateCaracteristicaLineaSinParent() CLASS SQLCaracteristicasLineasModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "nombre", "linea 1" )
+   hset( hBuffer, "personalizado", "0" )
+   hset( hBuffer, "parent_uuid",  )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateCaracteristicaLineaConParent( uuidParent ) CLASS SQLCaracteristicasLineasModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "nombre", "linea 1" )
+   hset( hBuffer, "personalizado", "0" )
+   hset( hBuffer, "parent_uuid", uuidParent )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateCaracteristicaLineaSinNombre( uuidParent ) CLASS SQLCaracteristicasLineasModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "nombre",  )
+   hset( hBuffer, "personalizado", "0" )
+   hset( hBuffer, "parent_uuid", uuidParent )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateCaracteristicaLineaConUuidAndParent( uuid, uuidParent )
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "uuid", uuid)
+   hset( hBuffer, "nombre", "linea 1" )
+   hset( hBuffer, "personalizado", "0" )
+   hset( hBuffer, "parent_uuid", uuidParent )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TestCaracteristicasLineasController FROM TestCase
+
+   METHOD testCreateLineaSinPadre()
+
+   METHOD testCreateLineaConPadre()
+
+   METHOD testCreateLineaSinNombre()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateLineaSinPadre() CLASS TestCaracteristicasLineasController
+
+   local uuidParent  := win_uuidcreatestring()
+   
+   SQLCaracteristicasLineasModel():truncateTable()
+
+   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaSinParent(), 1, "test create linea" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateLineaConPadre() CLASS TestCaracteristicasLineasController
+
+   local uuidParent  := win_uuidcreatestring()
+   
+   SQLCaracteristicasModel():truncateTable() 
+   SQLCaracteristicasLineasModel():truncateTable()
+   
+   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidParent ), 0, "test create caracteristica" )
+
+   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConParent( uuidParent ), 0, "test create linea" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateLineaSinNombre() CLASS TestCaracteristicasLineasController
+
+   local uuidParent  := win_uuidcreatestring()
+   
+   SQLCaracteristicasModel():truncateTable() 
+   SQLCaracteristicasLineasModel():truncateTable()
+   
+   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidParent ), 0, "test create caracteristica" )
+
+   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaSinNombre( uuidParent ), 1, "test create linea" )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -15,6 +15,8 @@ CLASS SQLArticulosModel FROM SQLCompanyModel
 
    METHOD testCreatePrecioConDescuentos() 
 
+   METHOD testCreateArticuloConUuid( uuid )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -169,6 +171,18 @@ METHOD testCreatePrecioConDescuentos() CLASS SQLArticulosModel
 
    hset( hBuffer, "codigo", "0" )
    hset( hBuffer, "nombre", "Articulo con descuentos" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateArticuloConUuid( uuid ) CLASS SQLArticulosModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "uuid", uuid )
+   hset( hBuffer, "codigo", "0" )
+   hset( hBuffer, "nombre", "Articulo test" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 
