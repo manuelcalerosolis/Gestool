@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS CaracteristicasValoresArticulosController FROM SQLBrowseController
+CLASS CaracteristicasValoresArticulosController FROM SQLNavigatorController
 
    DATA  uuidArticulo
 
@@ -25,11 +25,15 @@ END CLASS
 
 METHOD New( oController ) CLASS CaracteristicasValoresArticulosController
 
-   ::Super:New( oController )
+   ::Super:New( oController ) 
 
    ::cTitle                      := "Características valores artículos"
 
    ::cName                       := "caracteristicas_valores_articulos"
+
+   ::hImage                            := {  "16" => "gc_tags_16",;
+                                             "32" => "gc_tags_32",;
+                                             "48" => "gc_tags_48" }
 
 RETURN ( Self )
 
@@ -55,11 +59,11 @@ METHOD Activate( uuidArticulo ) CLASS CaracteristicasValoresArticulosController
 
    ::uuidArticulo             := uuidArticulo
 
-   ::oModel:getSQLInsertCaracteristicaWhereArticulo()
+   ::getModel():getSQLInsertCaracteristicaWhereArticulo()
 
-   ::oRowSet:build( ::oModel:getSentenceRowSetValores() )
+   ::getRowSet():build( ::getModel():getSentenceRowSetValores() )
 
-   ::oDialogView:Resource()
+   ::getDialogView():Resource()
 
 RETURN ( .t. )
 
@@ -121,7 +125,7 @@ METHOD Resource() CLASS CaracteristicasValoresArticulosView
    ::oBrowse:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrowse:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 221, 221, 221 ) } }
 
-   ::oBrowse:setRowSet( ::oController:oRowSet )
+   ::oBrowse:setRowSet( ::oController:getRowSet() )
 
    ::oBrowse:setName( "Valores características artículos" )
 
@@ -132,13 +136,13 @@ METHOD Resource() CLASS CaracteristicasValoresArticulosView
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Caracteristica'
       :nWidth              := 245
-      :bEditValue          := {|| ::oController:oRowSet:fieldGet( 'nombre_caracteristica' ) }
+      :bEditValue          := {|| ::oController:getRowSet():fieldGet( 'nombre_caracteristica' ) }
    end with
 
    with object ( ::oCol    := ::oBrowse:AddCol() )
       :cHeader             := 'Valores'
       :nWidth              := 245
-      :bEditValue          := {|| if( ::oController:oRowSet:fieldGet( 'personalizado' ) == 0, ::oController:oRowSet:fieldGet( 'nombre_valor' ), "" ) }
+      :bEditValue          := {|| if( ::oController:getRowSet():fieldGet( 'personalizado' ) == 0, ::oController:getRowSet():fieldGet( 'nombre_valor' ), "" ) }
       :bOnPostEdit         := {| oCol, uNewValue, nKey | ::ChangeColValue( uNewValue ) }
    end with
 
@@ -146,11 +150,11 @@ METHOD Resource() CLASS CaracteristicasValoresArticulosView
       :cHeader             := 'Personalizado'
       :nWidth              := 245
       :nEditType           := EDIT_GET
-      :bEditValue          := {|| if( ::oController:oRowSet:fieldGet( 'personalizado' ) == 1, Padr( ::oController:oRowSet:fieldGet( 'nombre_valor' ), 200 ), Space( 200 ) ) }
+      :bEditValue          := {|| if( ::oController:getRowSet():fieldGet( 'personalizado' ) == 1, Padr( ::oController:getRowSet():fieldGet( 'nombre_valor' ), 200 ), Space( 200 ) ) }
       :bOnPostEdit         := {| oCol, uNewValue, nKey | ::ChangeColSeleccionado( uNewValue ) }
    end with
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
    
@@ -172,7 +176,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD ChangeBrowse() CLASS CaracteristicasValoresArticulosView
 
-   local aValores    := SQLCaracteristicasLineasModel():getArrayNombreValoresFromUuid( ::oController:oRowSet:fieldGet( 'caracteristica_uuid' ) )
+   local aValores    := SQLCaracteristicasLineasModel():getArrayNombreValoresFromUuid( ::oController:getRowSet():fieldGet( 'caracteristica_uuid' ) )
 
    if len( aValores ) > 0
       ::oCol:nEditType     := EDIT_LISTBOX
@@ -182,15 +186,15 @@ METHOD ChangeBrowse() CLASS CaracteristicasValoresArticulosView
       ::oCol:aEditListTxt  := {}
    end if
 
-RETURN ( .t. )
+RETURN ( .t. ) 
 
 //---------------------------------------------------------------------------//
 
 METHOD ChangeColValue( uNewValue ) CLASS CaracteristicasValoresArticulosView
 
-   ::oController:oModel:updateFieldWhereUuid( ::oController:oRowSet:fieldGet( 'uuid' ), "caracteristica_valor_uuid", SQLCaracteristicasLineasModel():getUuidWhereNombre( uNewValue ) )
+   ::oController:getModel():updateFieldWhereUuid( ::oController:getRowSet():fieldGet( 'uuid' ), "caracteristica_valor_uuid", SQLCaracteristicasLineasModel():getUuidWhereNombre( uNewValue ) )
 
-   ::oController:oRowSet:Refresh()
+   ::oController:getRowSet():Refresh()
 
    ::oBrowse:Refresh()
 
@@ -214,7 +218,7 @@ METHOD ChangeColSeleccionado( uNewValue )
 
       hBuffer     := SQLCaracteristicasLineasModel():loadBlankBuffer()
 
-      hset( hBuffer, "parent_uuid", ::oController:oRowSet:fieldGet( 'caracteristica_uuid' ) )
+      hset( hBuffer, "parent_uuid", ::oController:getRowSet():fieldGet( 'caracteristica_uuid' ) )
       hset( hBuffer, "nombre", AllTrim( uNewValue ) )
       hset( hBuffer, "personalizado", 1 )
 
@@ -275,7 +279,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLInsertCaracteristicaWhereArticulo CLASS SQLCaracteristicasValoresArticulosModel
+METHOD getSQLInsertCaracteristicaWhereArticulo() CLASS SQLCaracteristicasValoresArticulosModel
 
    local cSQL
 
@@ -291,21 +295,34 @@ Return ( getSQLDatabase():Exec( cSQL ) )
 
 METHOD getSentenceRowSetValores() CLASS SQLCaracteristicasValoresArticulosModel
 
-   local cSentence
+   local cSql
 
-   cSentence      := "SELECT caracteristicas_valores_articulos.uuid AS uuid, "
-   cSentence      +=    "caracteristicas_valores_articulos.articulo_uuid AS articulo_uuid, "
-   cSentence      +=    "caracteristicas_valores_articulos.caracteristica_uuid AS caracteristica_uuid, "
-   cSentence      +=    "caracteristicas_valores_articulos.caracteristica_valor_uuid AS caracteristica_valor_uuid, "
-   cSentence      +=    "articulos_caracteristicas.nombre AS nombre_caracteristica, "
-   cSentence      +=    "articulos_caracteristicas_lineas.nombre AS nombre_valor, "
-   cSentence      +=    "articulos_caracteristicas_lineas.personalizado AS personalizado "
-   cSentence      += "FROM caracteristicas_valores_articulos "
-   cSentence      += "INNER JOIN articulos_caracteristicas ON articulos_caracteristicas.uuid = caracteristicas_valores_articulos.caracteristica_uuid "
-   cSentence      += "LEFT JOIN articulos_caracteristicas_lineas ON articulos_caracteristicas_lineas.uuid = caracteristicas_valores_articulos.caracteristica_valor_uuid "
-   cSentence      +=    "WHERE caracteristicas_valores_articulos.articulo_uuid = " + quoted( ::oController:uuidArticulo )
-   
-Return ( cSentence )
+   TEXT INTO cSql
+
+   SELECT caracteristicas_valores_articulos.uuid AS uuid,
+      caracteristicas_valores_articulos.articulo_uuid AS articulo_uuid, 
+      caracteristicas_valores_articulos.caracteristica_uuid AS caracteristica_uuid, 
+      caracteristicas_valores_articulos.caracteristica_valor_uuid AS caracteristica_valor_uuid, 
+      articulos_caracteristicas.nombre AS nombre_caracteristica, 
+      articulos_caracteristicas_lineas.nombre AS nombre_valor, 
+      articulos_caracteristicas_lineas.personalizado AS personalizado 
+
+   FROM %1$s AS caracteristicas_valores_articulos
+ 
+   INNER JOIN %2$s AS  articulos_caracteristicas
+      ON articulos_caracteristicas.uuid = caracteristicas_valores_articulos.caracteristica_uuid 
+
+   LEFT JOIN %3$s AS articulos_caracteristicas_lineas
+      ON articulos_caracteristicas_lineas.uuid = caracteristicas_valores_articulos.caracteristica_valor_uuid 
+
+   WHERE caracteristicas_valores_articulos.articulo_uuid = %4$s
+      
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLCaracteristicasModel():getTableName(), SQLCaracteristicasLineasModel():getTableName(), quoted( ::oController:uuidArticulo ) ) 
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 

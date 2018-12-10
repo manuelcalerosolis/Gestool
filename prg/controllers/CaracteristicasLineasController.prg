@@ -205,6 +205,8 @@ CLASS SQLCaracteristicasLineasModel FROM SQLCompanyModel
 
    METHOD getNamesFromIdLanguagesPS( uuidCaracteristica, aIdsLanguages )
 
+   //METHOD getSenderControllerParentUuid() INLINE ( ::oController:oController:getModelBUffer( "uuid" ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -218,7 +220,7 @@ METHOD getColumns() CLASS SQLCaracteristicasLineasModel
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 )"                           ,;
-                                          "default"   => {|| ::getSenderControllerParentUuid() } } )
+                                          "default"   => {|| ::getControllerParentUuid() } }       )
 
    hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 )"                          ,;
                                           "default"   => {|| space( 200 ) } }                      )
@@ -232,13 +234,21 @@ RETURN ( ::hColumns )
 
 METHOD getArrayNombreValoresFromUuid( uuid ) CLASS SQLCaracteristicasLineasModel
 
-   local cSentence   := ""
+local cSql
 
-   cSentence         := "SELECT nombre "
-   cSentence         += "FROM articulos_caracteristicas_lineas "
-   cSentence         += "WHERE parent_uuid = " + quoted( uuid ) + " AND personalizado = 0"
+   TEXT INTO cSql
 
-RETURN ( getSQLDatabase():selectFetchArrayOneColumn( cSentence ) )
+   SELECT nombre 
+
+   FROM %1$s AS articulos_caracteristicas_lineas
+      
+   WHERE parent_uuid = %2$s AND personalizado = 0
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(),quoted( uuid ) ) 
+
+RETURN ( getSQLDatabase():selectFetchArrayOneColumn( cSql ) )
 
 //---------------------------------------------------------------------------//
 

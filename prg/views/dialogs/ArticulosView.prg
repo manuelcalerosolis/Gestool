@@ -288,6 +288,10 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
                      {||   ::editUnidadesMedicionOperaciones() },;
                            ::oController:getunidadesmedicionoperacionesController():getImage( "16" ) )
 
+   oPanel:AddLink(   "Caracteristicas...",;
+                     {||   ::oController:getCaracteristicasValoresArticulosController():Activate( ::oController:getModelBuffer( "uuid" ) ) },;
+                           ::oController:getCaracteristicasValoresArticulosController():getImage( "16" ) )
+
    oPanel            := ::oExplorerBar:AddPanel( "Otros", nil, 1 ) 
 
    oPanel:AddLink(   "Campos extra...",;
