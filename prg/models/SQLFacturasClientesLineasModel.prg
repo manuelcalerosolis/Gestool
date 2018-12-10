@@ -353,11 +353,7 @@ RETURN ( ::getDatabase():Exec( cSentence ) )
 
 METHOD alterTemporalTableWhereUuid() CLASS SQLFacturasClientesLineasModel
 
-   local cSentence
-
-   cSentence         := "ALTER TABLE " + ::cTableTemporal + " DROP id"
-
-RETURN ( ::getDatabase():Exec( cSentence ) )
+RETURN ( ::getDatabase():Exec( "ALTER TABLE " + ::cTableTemporal + " DROP id" ) )
 
 //---------------------------------------------------------------------------//
 

@@ -26,13 +26,13 @@ USER FUNCTION hbunit_test()
    
    // oSuite:addTest( TestArticulosController():new() )
 
-   //oSuite:addTest( TestPagosController():new() ) 
+   // oSuite:addTest( TestPagosController():new() ) 
    
-   // oSuite:addTest( TestFacturasClientesFacturaeController():new() )
+   // oSuite:addTest( TestPagosAssistantController():new() )
 
-   //oSuite:addTest( TestPagosAssistantController():new() )
+   // oSuite:addTest( TestFacturasClientesController():new() )
 
-   oSuite:addTest( TestFacturasClientesController():new() )
+   oSuite:addTest( TestFacturasClientesFacturaeController():new() )
 
    oRunner:run( oSuite )
 

@@ -68,6 +68,9 @@ CLASS FacturasClientesController FROM SQLNavigatorController
    METHOD getTotalesDocumentGroupByIVA( uuidFactura ) ;
                                        INLINE ( ::getRepository():getTotalesDocumentGroupByIVA( uuidFactura ) )
 
+   METHOD getHashSentenceLineas( uuidFactura ) ;
+                                       INLINE ( ::getRepository():getHashSentenceLineas( uuidFactura ) )
+
    METHOD hasNotPaid( uuidFactura )
 
    // Impresiones--------------------------------------------------------------
@@ -568,7 +571,7 @@ RETURN ( ::getController():getFacturasClientesLineasController():validLine() )
 CLASS TestFacturasClientesController FROM TestCase
 
    METHOD testCalculoFacturaConDescuento()
-   
+
    METHOD testCalculoFacturaConIncremento()
    
 END CLASS

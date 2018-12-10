@@ -275,13 +275,21 @@ CLASS SQLFacturasClientesDescuentosModel FROM SQLCompanyModel
 
    METHOD insertWhereClienteCodigo( cCodigoCliente )
 
-   METHOD CountNombreWhereFacturaUuid( cNombre )
+   METHOD countNombreWhereFacturaUuid( cNombre )
+
+   METHOD getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) 
+
+   METHOD selectDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) 
+
+#ifdef __TEST__   
 
    METHOD testCreatel0PorCiento( uuid ) 
 
    METHOD testCreate20PorCiento( uuid ) 
 
    METHOD testCreate30PorCiento( uuid ) 
+
+#endif
 
 END CLASS
 
@@ -365,6 +373,39 @@ RETURN ( getSQLDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) CLASS SQLFacturasClientesDescuentosModel 
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT 
+      facturas_clientes_descuentos.nombre AS nombreDescuento,
+      facturas_clientes_descuentos.descuento AS porcentajeDescuento, 
+      ROUND( facturas_clientes_descuentos.descuento * %3$d / 100, 2 ) AS importeDescuento
+   FROM %1$s AS facturas_clientes_descuentos 
+      WHERE facturas_clientes_descuentos.parent_uuid = %2$s 
+         AND facturas_clientes_descuentos.deleted_at = 0; 
+
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql,;
+                           SQLFacturasClientesDescuentosModel():getTableName(),;
+                           quoted( uuidFacturaCliente ),;
+                           toSqlString( importeBruto ) )
+
+RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) CLASS SQLFacturasClientesDescuentosModel
+
+RETURN ( ::getDatabase():selectTrimedFetchHash( ::getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) ) )
+
+//---------------------------------------------------------------------------//
+
+#ifdef __TEST__   
+
 METHOD testCreatel0PorCiento( uuid ) CLASS SQLFacturasClientesDescuentosModel
 
    local hBuffer  := ::loadBlankBuffer()
@@ -398,6 +439,8 @@ METHOD testCreate30PorCiento( uuid ) CLASS SQLFacturasClientesDescuentosModel
    hset( hBuffer, "descuento", 30 )
 
 RETURN ( ::insertBuffer( hBuffer ) )
+
+#endif
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

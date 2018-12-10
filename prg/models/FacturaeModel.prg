@@ -132,8 +132,8 @@ CLASS FacturaeModel
    DATA     cPlaceOfIssuePostCode
    DATA     cPlaceOfIssueDescription
 
-   ACCESS   PlaceOfIssuePostCode       INLINE ( Rtrim( Left( ::cPlaceOfIssuePostCode, 9 ) ) )
-   ACCESS   PlaceOfIssueDescription    INLINE ( Rtrim( Left( ::cPlaceOfIssueDescription, 20 ) ) )
+   ACCESS   PlaceOfIssuePostCode       INLINE ( Rtrim( left( ::cPlaceOfIssuePostCode, 9 ) ) )
+   ACCESS   PlaceOfIssueDescription    INLINE ( Rtrim( left( ::cPlaceOfIssueDescription, 20 ) ) )
 
    DATA     cTaxCurrencyCode
    DATA     cLanguageName
@@ -1221,21 +1221,21 @@ CLASS Party FROM Address
    DATA cTaxIdentificationNumber       INIT ''
    METHOD setTaxIdentificationNumber( cTaxIdentificationNumber ) ;
                                        INLINE ( ::cTaxIdentificationNumber := cTaxIdentificationNumber )
-   ACCESS TaxIdentificationNumber      INLINE ( hb_strtoutf8( Rtrim( Left( ::cTaxIdentificationNumber, 30 ) ) ) )
+   ACCESS TaxIdentificationNumber      INLINE ( hb_strtoutf8( Rtrim( left( ::cTaxIdentificationNumber, 30 ) ) ) )
 
    DATA cCorporateName                 INIT ''
    METHOD setCorporateName( cCorporateName ) ;
                                        INLINE ( ::cCorporateName := cCorporateName )
-   ACCESS CorporateName                INLINE ( hb_strtoutf8( Rtrim( Left( ::cCorporateName, 80 ) ) ) )
+   ACCESS CorporateName                INLINE ( hb_strtoutf8( Rtrim( left( ::cCorporateName, 80 ) ) ) )
    
    DATA cTradeName                     INIT ''
    METHOD setTradeName( cTradeName )   INLINE ( ::cTradeName := cTradeName )
-   ACCESS TradeName                    INLINE ( hb_strtoutf8( Rtrim( Left( ::cTradeName, 40 ) ) ) )
+   ACCESS TradeName                    INLINE ( hb_strtoutf8( Rtrim( left( ::cTradeName, 40 ) ) ) )
    
    DATA cRegisterOfCompaniesLocation   INIT ''
    METHOD setRegisterOfCompaniesLocation( cRegisterOfCompaniesLocation ) ;
                                        INLINE ( ::cRegisterOfCompaniesLocation := cRegisterOfCompaniesLocation )
-   ACCESS RegisterOfCompaniesLocation  INLINE ( hb_strtoutf8( Rtrim( Left( ::cRegisterOfCompaniesLocation, 40 ) ) ) )
+   ACCESS RegisterOfCompaniesLocation  INLINE ( hb_strtoutf8( Rtrim( left( ::cRegisterOfCompaniesLocation, 40 ) ) ) )
 
    DATA     cRegistrationData             INIT ''
    DATA     nBook                         INIT ''
@@ -1252,17 +1252,17 @@ CLASS Party FROM Address
 
    DATA cName                          INIT ''
    METHOD setName( cName )             INLINE ( ::cName := cName )
-   ACCESS Name                         INLINE ( hb_strtoutf8( Rtrim( Left( ::cName, 40 ) ) ) )
+   ACCESS Name                         INLINE ( hb_strtoutf8( Rtrim( left( ::cName, 40 ) ) ) )
 
    DATA cFirstSurname                  INIT ''
    METHOD setFirstSurname( cFirstSurname ) ;
                                        INLINE ( ::cFirstSurname := cFirstSurname )
-   ACCESS FirstSurname                 INLINE ( hb_strtoutf8( Rtrim( Left( ::cFirstSurname, 40 ) ) ) )
+   ACCESS FirstSurname                 INLINE ( hb_strtoutf8( Rtrim( left( ::cFirstSurname, 40 ) ) ) )
 
    DATA cSecondSurname                 INIT ''
    METHOD setSecondSurname( cSecondSurname ) ;
                                        INLINE ( ::cSecondSurname := cSecondSurname )
-   ACCESS SecondSurname                INLINE ( hb_strtoutf8( Rtrim( Left( ::cSecondSurname, 40 ) ) ) )
+   ACCESS SecondSurname                INLINE ( hb_strtoutf8( Rtrim( left( ::cSecondSurname, 40 ) ) ) )
 
 
    ACCESS   AditionalRegistrationData     INLINE ( hb_strtoutf8( Rtrim( ::cAditionalRegistrationData ) ) )
@@ -1304,16 +1304,14 @@ CLASS Discount
    DATA     nDiscountAmount               INIT 0.000000
 
    ACCESS   DiscountReason                INLINE ( ::cDiscountReason )
-   ACCESS   DiscountRate                  INLINE ( alltrim( Trans( ::nDiscountRate,    DoubleFourDecimalPicture ) ) )
-   ACCESS   DiscountAmount                INLINE ( alltrim( Trans( ::nDiscountAmount,  DoubleSixDecimalPicture  ) ) )
+   ACCESS   DiscountRate                  INLINE ( alltrim( Trans( ::nDiscountRate, DoubleFourDecimalPicture ) ) )
+   ACCESS   DiscountAmount                INLINE ( alltrim( Trans( ::nDiscountAmount, DoubleSixDecimalPicture  ) ) )
 
 ENDCLASS
 
 //---------------------------------------------------------------------------//
 
 CLASS ItemLine
-
-   DATA     oFacturaElectronica
 
    DATA     cItemDescription              INIT ''
    DATA     nQuantity                     INIT 0.00
@@ -1322,36 +1320,23 @@ CLASS ItemLine
    DATA     nUnitPriceWithoutTax          INIT 0.000000
    DATA     nTotalCost                    INIT 0.00
    DATA     nIva                          INIT 0
-   DATA     lIvaInc                       INIT .f.
    DATA     aDiscount                     INIT {}
    DATA     nGrossAmount                  INIT 0.00
    DATA     aTax                          INIT {}
 
    ACCESS   ItemDescription               INLINE ( hb_strtoutf8( rtrim( ::cItemDescription ) ) )
    ACCESS   UnitOfMeasure                 INLINE ( ::cUnitOfMeasure )
-   ACCESS   Quantity                      INLINE ( alltrim( Trans( ::nQuantity,                                      DoubleTwoDecimalPicture ) ) )
-   ACCESS   UnitPriceWithoutTax           INLINE ( alltrim( Trans( ::nUnitPriceWithoutTax,                           DoubleSixDecimalPicture ) ) )
-
-   METHOD New( oFacturaElectronica )      CONSTRUCTOR
+   ACCESS   Quantity                      INLINE ( alltrim( Trans( ::nQuantity, DoubleTwoDecimalPicture ) ) )
+   ACCESS   UnitPriceWithoutTax           INLINE ( alltrim( Trans( ::nUnitPriceWithoutTax, DoubleSixDecimalPicture ) ) )
 
    METHOD addDiscount( oDiscount )
    METHOD GrossAmount()
 
    METHOD TotalCost()
 
-   METHOD addTax( oTax )                  INLINE aAdd( ::aTax, oTax )
+   METHOD addTax( oTax )                  INLINE aadd( ::aTax, oTax )
 
 ENDCLASS
-
-//---------------------------------------------------------------------------//
-
-//---------------------------------------------------------------------------//
-
-METHOD New( oFacturaElectronica ) CLASS ItemLine
-
-   ::oFacturaElectronica               := oFacturaElectronica 
-
-RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -1383,39 +1368,29 @@ METHOD GrossAmount() CLASS ItemLine
 
    ::nGrossAmount       := Round( ::nGrossAmount, 6 )
 
-   if ::lIvaInc
-
-      ::nGrossAmount    := ::nGrossAmount / ( 1 + ( ::nIva / 100 ) )
-      ::nGrossAmount    := Round( ::nGrossAmount, 6 )
-
-   end if 
-
 RETURN ( alltrim( Trans( ::nGrossAmount, DoubleSixDecimalPicture ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD TotalCost() CLASS ItemLine
 
+   local nTotal 
    local oDiscount
-   local nTotal         := 0
 
-   nTotal       := ::nQuantity * ::nUnitPriceWithTax
+   nTotal               := ::nQuantity * ::nUnitPriceWithTax
 
    for each oDiscount in ::aDiscount
-      nTotal    -= oDiscount:nDiscountAmount
+      nTotal            -= oDiscount:nDiscountAmount
    next
 
-   nTotal       := Round( nTotal, 6 )
-
-   if ::lIvaInc
-
-      nTotal    := nTotal / ( 1 + ( ::nIva / 100 ) )
-      nTotal    := Round( nTotal, 6 )
-
-   end if 
+   nTotal               := Round( nTotal, 6 )
 
 RETURN ( alltrim( Trans( nTotal, DoubleSixDecimalPicture ) ) )
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 CLASS Installment
@@ -1432,6 +1407,10 @@ CLASS Installment
 
 ENDCLASS
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 CLASS Address
@@ -1451,6 +1430,10 @@ CLASS Address
 ENDCLASS
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 CLASS Account FROM Address
 
@@ -1458,12 +1441,16 @@ CLASS Account FROM Address
    DATA     cBankCode               INIT ''
    DATA     cBranchCode             INIT ''
 
-   ACCESS   IBAN                    INLINE ( alltrim( Left( ::cIBAN, 30 ) ) )
-   ACCESS   BankCode                INLINE ( alltrim( Left( ::cBankCode, 60 ) ) )
-   ACCESS   BranchCode              INLINE ( alltrim( Left( ::cBranchCode, 60 ) ) )
+   ACCESS   IBAN                    INLINE ( alltrim( left( ::cIBAN, 30 ) ) )
+   ACCESS   BankCode                INLINE ( alltrim( left( ::cBankCode, 60 ) ) )
+   ACCESS   BranchCode              INLINE ( alltrim( left( ::cBranchCode, 60 ) ) )
 
 ENDCLASS
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 CLASS AdministrativeCentres FROM Address

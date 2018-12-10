@@ -590,9 +590,7 @@ RETURN ( cSQL )
 
 METHOD getHashCampoExtraValoresWhereEntidad( cEntidad ) CLASS SQLCamposExtraValoresModel
 
-   local cSQL        := ::getSentenceCampoExtraValoresWhereEntidad( cEntidad ) 
-
-RETURN ( getSQLDataBase():selectFetchHash( cSQL ) )
+RETURN ( getSQLDataBase():selectFetchHash( ::getSentenceCampoExtraValoresWhereEntidad( cEntidad ) ) )
 
 //---------------------------------------------------------------------------//
 
