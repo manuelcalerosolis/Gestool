@@ -380,9 +380,9 @@ METHOD getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) CLASS 
    TEXT INTO cSql
 
    SELECT 
-      facturas_clientes_descuentos.nombre AS nombreDescuento,
-      facturas_clientes_descuentos.descuento AS porcentajeDescuento, 
-      ROUND( facturas_clientes_descuentos.descuento * %3$d / 100, 2 ) AS importeDescuento
+      facturas_clientes_descuentos.nombre AS nombre_descuento,
+      facturas_clientes_descuentos.descuento AS porcentaje_descuento, 
+      ROUND( facturas_clientes_descuentos.descuento * %3$d / 100, 2 ) AS importe_descuento
    FROM %1$s AS facturas_clientes_descuentos 
       WHERE facturas_clientes_descuentos.parent_uuid = %2$s 
          AND facturas_clientes_descuentos.deleted_at = 0; 

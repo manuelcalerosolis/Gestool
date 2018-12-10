@@ -66,7 +66,7 @@ END CLASS
 
 METHOD getSentenceTotalesDocumentGroupByIVA( uuidFacturaCliente ) CLASS FacturasClientesRepository
 
-RETURN ( ::getSentenceTotalesDocument( uuidFacturaCliente ) + " GROUP BY totales.porcentajeIVA" )
+RETURN ( ::getSentenceTotalesDocument( uuidFacturaCliente ) + " GROUP BY totales.porcentaje_iva" )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -108,7 +108,7 @@ METHOD createFunctionTotalSummaryWhereUuid() CLASS FacturasClientesRepository
                            Company():getTableName( 'FacturaClienteTotalSummaryWhereUuid' ),;
                            ::getSentenceTotales() )
 
-RETURN ( cSql )
+RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
@@ -158,7 +158,7 @@ METHOD createFunctionRecargoEquivalenciaWhereUuid() CLASS FacturasClientesReposi
                            Company():getTableName( 'FacturaClienteRecargoEquivalenciaWhereUuid' ),;
                            ::getTableName() )
 
-RETURN ( cSql )
+RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
@@ -229,7 +229,7 @@ METHOD createFunctionDescuentoWhereUuid() CLASS FacturasClientesRepository
                            Company():getTableName( 'FacturaClienteDescuentoWhereUuid' ),;
                            SQLFacturasClientesDescuentosModel():getTableName() )
 
-RETURN ( cSql )
+RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
@@ -280,7 +280,7 @@ METHOD createFunctionTotalDescuentoWhereUuid() CLASS FacturasClientesRepository
                            Company():getTableName( 'FacturaClienteTotalDescuentoWhereUuid' ),;
                            SQLFacturasClientesDescuentosModel():getTableName() )
 
-RETURN ( cSql )
+RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
@@ -345,7 +345,7 @@ METHOD getSentenceImporteBrutoLineas() CLASS FacturasClientesRepository
 
    cSql  := hb_strformat(  cSql, ::getSentenceUnidadesLineas() )
 
-RETURN ( cSql )
+RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
@@ -357,7 +357,7 @@ METHOD getSentenceUnidadesLineas() CLASS FacturasClientesRepository
       IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades
    ENDTEXT
 
-RETURN ( cSql )
+RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
@@ -421,7 +421,9 @@ METHOD getSentenceTotalesDocument( uuidFacturaCliente ) CLASS FacturasClientesRe
                            Company():getTableName( 'FacturaClienteTotalDescuentoWhereUuid' ),;
                            quoted( uuidFacturaCliente ) )
 
-RETURN ( cSql )
+   logwrite( alltrim( cSql ) )
+
+RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
@@ -439,7 +441,7 @@ METHOD getSentenceTotalDocument( uuidFacturaCliente ) CLASS FacturasClientesRepo
 
    cSql  := hb_strformat( cSql, ::getSentenceTotales( uuidFacturaCliente ) )
 
-RETURN ( cSql )
+RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 

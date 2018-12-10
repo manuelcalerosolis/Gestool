@@ -143,7 +143,7 @@ CLASS FacturaeModel
 
    DATA     aTax
    DATA     aDiscount
-   DATA     aItemLine
+   DATA     aItemLines
    DATA     aInstallment
    DATA     aAdministrativeCentres
 
@@ -196,13 +196,19 @@ CLASS FacturaeModel
 
    METHOD Enviar()
 
-   METHOD addItemLine( oItemLine )     INLINE ( aAdd( ::aItemLine, oItemLine ) )
+   METHOD addItemLine( oItemLine )     INLINE ( aadd( ::aItemLines, oItemLine ) )
+
    METHOD addInstallment( oInstallment );
-                                       INLINE ( aAdd( ::aInstallment, oInstallment ) )
+                                       INLINE ( aadd( ::aInstallment, oInstallment ) )
+
    METHOD addAdministrativeCentres( aAdministrativeCentres ) ;
-                                       INLINE ( aAdd( ::aAdministrativeCentres, aAdministrativeCentres ) )
-   METHOD addTax( oTax )               INLINE ( ::nTotalTaxOutputs += oTax:nTaxAmount, aAdd( ::aTax, oTax ), ::aTax )
-   METHOD addDiscount( oDiscount )     INLINE ( ::nTotalGeneralDiscounts += oDiscount:nDiscountAmount, aAdd( ::aDiscount, oDiscount ), ::aDiscount )
+                                       INLINE ( aadd( ::aAdministrativeCentres, aAdministrativeCentres ) )
+   
+   METHOD addTax( oTax )               INLINE ( ::nTotalTaxOutputs += oTax:nTaxAmount,;
+                                                aadd( ::aTax, oTax ), ::aTax )
+   
+   METHOD addDiscount( oDiscount )     INLINE ( ::nTotalGeneralDiscounts += oDiscount:nDiscountAmount,;
+                                                aadd( ::aDiscount, oDiscount ), ::aDiscount )
 
    METHOD MailServerSend()             INLINE ( ::cMailServer + if( !empty( ::cMailServerPort ), ":" + alltrim( Str( ::cMailServerPort ) ), "" ) )
 
@@ -244,7 +250,7 @@ METHOD Default()
 
    ::aTax                              := {}
    ::aDiscount                         := {}
-   ::aItemLine                         := {}
+   ::aItemLines                        := {}
    ::aInstallment                      := {}
    ::aAdministrativeCentres            := {}
 
@@ -824,11 +830,13 @@ METHOD InvoiceXml()
          Comenzamos las lineas-------------------------------------------------
          */
 
-         if !empty( ::aItemLine )
+         msgalert( hb_valtoexp( ::aItemLines ), "aItemLines" )
+
+         if !empty( ::aItemLines )
 
             ::oXmlItems := ::createXmlNode( 'Items' )
 
-               for each oItem in ::aItemLine
+               for each oItem in ::aItemLines
 
                   ::ItemsXml( oItem )
 
@@ -1070,7 +1078,7 @@ METHOD ItemsXml( oItemLine )
 
    end if
 
-   ::oXmlInvoiceLine:appendChild( ::createXmlNode( 'GrossAmount',oItemLine:GrossAmount() ) )
+   ::oXmlInvoiceLine:appendChild( ::createXmlNode( 'GrossAmount', oItemLine:GrossAmount() ) )
 
    /*
    Comenzamos los Taxes--------------------------------------------------
@@ -1287,11 +1295,11 @@ CLASS Tax
    DATA     nEquivalenceSurcharge         INIT 0.00
    DATA     nEquivalenceSurchargeAmount   INIT 0.00
 
-   ACCESS   TaxRate                       INLINE ( alltrim( Trans( ::nTaxRate,                     DoubleTwoDecimalPicture ) ) )
-   ACCESS   TaxBase                       INLINE ( alltrim( Trans( ::nTaxBase,                     DoubleTwoDecimalPicture ) ) )
-   ACCESS   TaxAmount                     INLINE ( alltrim( Trans( ::nTaxAmount,                   DoubleTwoDecimalPicture ) ) )
-   ACCESS   EquivalenceSurcharge          INLINE ( alltrim( Trans( ::nEquivalenceSurcharge,        DoubleTwoDecimalPicture ) ) )
-   ACCESS   EquivalenceSurchargeAmount    INLINE ( alltrim( Trans( ::nEquivalenceSurchargeAmount,  DoubleTwoDecimalPicture ) ) )
+   ACCESS   TaxRate                       INLINE ( alltrim( Trans( ::nTaxRate, DoubleTwoDecimalPicture ) ) )
+   ACCESS   TaxBase                       INLINE ( alltrim( Trans( ::nTaxBase, DoubleTwoDecimalPicture ) ) )
+   ACCESS   TaxAmount                     INLINE ( alltrim( Trans( ::nTaxAmount, DoubleTwoDecimalPicture ) ) )
+   ACCESS   EquivalenceSurcharge          INLINE ( alltrim( Trans( ::nEquivalenceSurcharge, DoubleTwoDecimalPicture ) ) )
+   ACCESS   EquivalenceSurchargeAmount    INLINE ( alltrim( Trans( ::nEquivalenceSurchargeAmount, DoubleTwoDecimalPicture ) ) )
 
 ENDCLASS
 
@@ -1313,28 +1321,28 @@ ENDCLASS
 
 CLASS ItemLine
 
-   DATA     cItemDescription              INIT ''
-   DATA     nQuantity                     INIT 0.00
-   DATA     cUnitOfMeasure                INIT '01'
-   DATA     nUnitPriceWithTax             INIT 0.000000
-   DATA     nUnitPriceWithoutTax          INIT 0.000000
-   DATA     nTotalCost                    INIT 0.00
-   DATA     nIva                          INIT 0
-   DATA     aDiscount                     INIT {}
-   DATA     nGrossAmount                  INIT 0.00
-   DATA     aTax                          INIT {}
+   DATA     cItemDescription           INIT ''
+   DATA     nQuantity                  INIT 0.00
+   DATA     cUnitOfMeasure             INIT '01'
+   DATA     nUnitPriceWithTax          INIT 0.000000
+   DATA     nUnitPriceWithOutTax       INIT 0.000000
+   DATA     nTotalCost                 INIT 0.00
+   DATA     nIva                       INIT 0
+   DATA     aDiscount                  INIT {}
+   DATA     nGrossAmount               INIT 0.00
+   DATA     aTax                       INIT {}
 
-   ACCESS   ItemDescription               INLINE ( hb_strtoutf8( rtrim( ::cItemDescription ) ) )
-   ACCESS   UnitOfMeasure                 INLINE ( ::cUnitOfMeasure )
-   ACCESS   Quantity                      INLINE ( alltrim( Trans( ::nQuantity, DoubleTwoDecimalPicture ) ) )
-   ACCESS   UnitPriceWithoutTax           INLINE ( alltrim( Trans( ::nUnitPriceWithoutTax, DoubleSixDecimalPicture ) ) )
+   ACCESS   ItemDescription            INLINE ( hb_strtoutf8( rtrim( ::cItemDescription ) ) )
+   ACCESS   UnitOfMeasure              INLINE ( ::cUnitOfMeasure )
+   ACCESS   Quantity                   INLINE ( alltrim( Trans( ::nQuantity, DoubleTwoDecimalPicture ) ) )
+   ACCESS   UnitPriceWithoutTax        INLINE ( alltrim( Trans( ::nUnitPriceWithOutTax, DoubleSixDecimalPicture ) ) )
 
    METHOD addDiscount( oDiscount )
    METHOD GrossAmount()
 
    METHOD TotalCost()
 
-   METHOD addTax( oTax )                  INLINE aadd( ::aTax, oTax )
+   METHOD addTax( oTax )               INLINE aadd( ::aTax, oTax )
 
 ENDCLASS
 
@@ -1342,12 +1350,10 @@ ENDCLASS
 
 METHOD addDiscount( oDiscount ) CLASS ItemLine
 
-   if Empty( ::nTotalCost )
-      ::nTotalCost                     := ::nQuantity * ::nUnitPriceWithoutTax
-   end if
+   ::nTotalCost                  := ::nQuantity * ::nUnitPriceWithOutTax
 
    if oDiscount:nDiscountRate != 0
-      oDiscount:nDiscountAmount       := Round( ::nTotalCost * oDiscount:nDiscountRate / 100, 2 )
+      oDiscount:nDiscountAmount  := Round( ::nTotalCost * oDiscount:nDiscountRate / 100, 2 )
    end if
 
    aAdd( ::aDiscount, oDiscount )
@@ -1360,7 +1366,7 @@ METHOD GrossAmount() CLASS ItemLine
 
    local oDiscount
 
-   ::nGrossAmount       := ::nQuantity * ::nUnitPriceWithTax
+   ::nGrossAmount       := ::nQuantity * ::nUnitPriceWithOutTax
 
    for each oDiscount in ::aDiscount
       ::nGrossAmount    -= oDiscount:nDiscountAmount
@@ -1374,18 +1380,7 @@ RETURN ( alltrim( Trans( ::nGrossAmount, DoubleSixDecimalPicture ) ) )
 
 METHOD TotalCost() CLASS ItemLine
 
-   local nTotal 
-   local oDiscount
-
-   nTotal               := ::nQuantity * ::nUnitPriceWithTax
-
-   for each oDiscount in ::aDiscount
-      nTotal            -= oDiscount:nDiscountAmount
-   next
-
-   nTotal               := Round( nTotal, 6 )
-
-RETURN ( alltrim( Trans( nTotal, DoubleSixDecimalPicture ) ) )
+RETURN ( alltrim( trans( round( ::nQuantity * ::nUnitPriceWithOutTax, 6 ), DoubleSixDecimalPicture ) ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

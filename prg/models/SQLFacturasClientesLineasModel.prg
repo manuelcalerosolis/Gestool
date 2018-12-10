@@ -68,9 +68,13 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
    METHOD testCreateIVAal0Con10PorcientoDescuento( uuid )
 
    METHOD testCreateIVAal10( uuid )
+   METHOD testCreateIVAal10ConRecargoEquivalencia( uuid )
+   
    METHOD testCreateIVAal10Con15PorcientoDescuento( uuid )
 
    METHOD testCreateIVAal21( uuid )
+   METHOD testCreateIVAal21ConRecargoEquivalencia( uuid )
+   
    METHOD testCreateIVAal21Con20PorcientoDescuento( uuid )   
 
    METHOD testCreateIVAal21ConIncrememtoPrecio( uuid ) 
@@ -476,6 +480,22 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD testCreateIVAal10ConRecargoEquivalencia( uuid ) CLASS SQLFacturasClientesLineasModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "articulo_codigo", "0" )
+   hset( hBuffer, "articulo_nombre", "Test al 10% IVA" )
+   hset( hBuffer, "articulo_unidades", 1 )
+   hset( hBuffer, "articulo_precio", 100 )
+   hset( hBuffer, "iva", 10 )
+   hset( hBuffer, "recargo_equivalencia", 1.4 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD testCreateIVAal10Con15PorcientoDescuento( uuid ) CLASS SQLFacturasClientesLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
@@ -502,6 +522,22 @@ METHOD testCreateIVAal21( uuid ) CLASS SQLFacturasClientesLineasModel
    hset( hBuffer, "articulo_unidades", 1 )
    hset( hBuffer, "articulo_precio", 100 )
    hset( hBuffer, "iva", 21 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateIVAal21ConRecargoEquivalencia( uuid ) CLASS SQLFacturasClientesLineasModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "articulo_codigo", "0" )
+   hset( hBuffer, "articulo_nombre", "Test al 21% IVA" )
+   hset( hBuffer, "articulo_unidades", 1 )
+   hset( hBuffer, "articulo_precio", 100 )
+   hset( hBuffer, "iva", 21 )
+   hset( hBuffer, "recargo_equivalencia", 5.2 )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 

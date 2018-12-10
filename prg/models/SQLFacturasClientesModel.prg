@@ -242,6 +242,7 @@ METHOD testCreateFacturaConRecargoDeEqivalencia( uuid ) CLASS SQLFacturasCliente
    hset( hBuffer, "cliente_codigo", "0" )
    hset( hBuffer, "metodo_pago_codigo", "0" )
    hset( hBuffer, "almacen_codigo", "0" )
+   hset( hBuffer, "recargo_equivalencia", 1 )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 

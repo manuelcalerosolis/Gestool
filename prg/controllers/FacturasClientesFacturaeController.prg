@@ -78,25 +78,26 @@ RETURN ( aeval( ::oController:getUuidFromRecno( aSelectedRecno ), {| uuid| ::Gen
 
 METHOD Generate( uuid ) CLASS FacturasClientesFacturaeController
    
-   if ::isInformationLoaded( uuid )
+   if !( ::isInformationLoaded( uuid ) )
+      msgalert( ::cError, "Error al cargar los datos" )
+      RETURN ( nil )
+   end if 
 
-      ::getModel():Default()
+   ::getModel():Default()
 
-      ::setDocumentsAndTotals()
+   ::setDocumentsAndTotals()
 
-      ::setSellerParty()
+   ::setSellerParty()
 
-      ::setBuyerParty()
+   ::setBuyerParty()
 
-      ::setItems()
+   ::setItems()
 
-      ::setTax()
+   ::setTax()
 
-      ::setDiscount()
+   ::setDiscount()
 
-      ::getModel():Generate()
-
-   end if
+   ::getModel():Generate()
 
 RETURN ( nil )
 
@@ -110,6 +111,8 @@ METHOD isInformationLoaded( uuid ) CLASS FacturasClientesFacturaeController
    if empty( ::hDocument )
       ::cError       += "No se encuentra el documento"
    end if 
+
+   msgalert( hb_valtoexp( ::hDocument ), "hDocument" )
 
    ::hCompanyDirection    := SQLDireccionesGestoolModel():getHashWhere( 'parent_uuid', Company():getUuid() )
    if empty( ::hCompanyDirection )
@@ -228,33 +231,50 @@ RETURN ( nil )
 
 METHOD setItems() CLASS FacturasClientesFacturaeController
 
+   local oTax
    local hLine
+   local oDiscount
    local oItemLine
 
    for each hLine in ::hLines
 
-      oItemLine                           := ItemLine()
+      oItemLine                        := ItemLine()
+      oItemLine:nQuantity              := hget( hLine, "total_unidades" )
+      oItemLine:cItemDescription       := hget( hLine, "articulo_nombre" )
+      oItemLine:nUnitPriceWithoutTax   := hget( hLine, "importe_bruto" )
+      oItemLine:nIva                   := hget( hLine, "iva" )
 
-      oItemLine:cItemDescription          := hget( hLine, "articulo_nombre" )
-      oItemLine:nQuantity                 := hget( hLine, "total_unidades" )
-      oItemLine:nUnitPriceWithoutTax      := ''
-      oItemLine:nUnitPriceWithTax         := ''
+      // Descuento lineal------------------------------------------------------
 
-      oItemLine:nIva                      := 0
+      if hget( hLine, "descuento" ) != 0
+
+         oDiscount                     := Discount()
+         oDiscount:cDiscountReason     := 'Descuento'
+         oDiscount:nDiscountRate       := hget( hLine, "descuento" )
+         oDiscount:nDiscountAmount     := hget( hLine, "importe_descuento" )
+
+         oItemLine:addDiscount( oDiscount )
+
+      end if
+
+      // Impuestos-------------------------------------------------------------
+      
+      oTax                                := Tax()
+      oTax:nTaxRate                       := hget( hLine, "iva" )
+      oTax:nTaxBase                       := hget( hLine, "importe_neto" )
+      oTax:nTaxAmount                     := round( hget( hLine, "importe_neto" ) * hget( hLine, "iva" ) / 100, 2 )
+
+      if hget( ::hDocument, "recargo_equivalencia" )
+         oTax:nEquivalenceSurcharge       := hget( hLine, "recargo_equivalencia" )
+         oTax:nEquivalenceSurchargeAmount := round( hget( hLine, "importe_neto" ) * hget( hLine, "recargo_equivalencia" ) / 100, 2 )
+      end if
+
+      oItemLine:addTax( oTax )
+
+      ::getModel():addItemLine( oItemLine )
 
    next 
 
-   // Descuento lineal---------------------------------------------
-/*
-   if ( D():FacturasClientesLineas( nView ) )->nDtoDiv != 0               
-
-      oDiscount                        := Discount()
-      oDiscount:nDiscountAmount        := nDescuentoLinealFacCli( D():FacturasClientesLineas( nView ), nDouDiv ) * nTotNFacCli( D():FacturasClientesLineas( nView ) )
-
-      oItemLine:addDiscount( oDiscount )
-
-   end if
-*/
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -265,7 +285,6 @@ METHOD setTax()  CLASS FacturasClientesFacturaeController
    local hTotal
 
    for each hTotal in ::hTotales
-
       oTax                                      := Tax()
       oTax:nTaxBase                             := hget( hTotal, "total_bruto" )
       oTax:nTaxRate                             := hget( hTotal, "porcentaje_iva" )
@@ -274,7 +293,6 @@ METHOD setTax()  CLASS FacturasClientesFacturaeController
       oTax:nEquivalenceSurchargeAmount          := hget( hTotal, "total_recargo" )
 
       ::getModel():addTax( oTax )
-
    next
 
 RETURN ( nil )
@@ -329,11 +347,11 @@ METHOD testGenerateXml() CLASS TestFacturasClientesFacturaeController
 
    SQLClientesModel():testCreateContado()
 
-   SQLFacturasClientesModel():testCreateFactura( uuid ) 
+   SQLFacturasClientesModel():testCreateFacturaConRecargoDeEqivalencia( uuid ) 
 
    SQLFacturasClientesLineasModel():testCreateIVAal0Con10PorcientoDescuento( uuid ) 
-   SQLFacturasClientesLineasModel():testCreateIVAal10( uuid ) 
-   SQLFacturasClientesLineasModel():testCreateIVAal21( uuid ) 
+   SQLFacturasClientesLineasModel():testCreateIVAal10ConRecargoEquivalencia( uuid ) 
+   SQLFacturasClientesLineasModel():testCreateIVAal21ConRecargoEquivalencia( uuid ) 
 
    SQLFacturasClientesDescuentosModel():testCreatel0PorCiento( uuid )   
    SQLFacturasClientesDescuentosModel():testCreate20PorCiento( uuid )   
