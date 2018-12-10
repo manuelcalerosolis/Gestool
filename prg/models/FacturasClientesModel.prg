@@ -23,10 +23,10 @@ METHOD UltimoDocumento( cCodigoCliente )
                      "WHERE cCodCli = " + quoted( cCodigoCliente ) + " ORDER BY dFecFac DESC"
 
    if ::ExecuteSqlStatement( cSql, @cStm )
-      Return ( ( cStm )->dFecFac )
+      RETURN ( ( cStm )->dFecFac )
    end if 
 
-Return ( ctod( "" ) )
+RETURN ( ctod( "" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -37,7 +37,7 @@ METHOD defaultSufijo()
                      " SET cSufFac = '00'" + ;
                      " WHERE cSufFac = ''"
 
-Return ( ::ExecuteSqlStatement( cSql, @cStm ) )
+RETURN ( ::ExecuteSqlStatement( cSql, @cStm ) )
 
 //---------------------------------------------------------------------------//
 

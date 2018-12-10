@@ -127,13 +127,7 @@ RETURN ( self )
 
 CLASS CaracteristicasView FROM SQLBaseView
 
-   DATA oSayCamposExtra
-
-   DATA oGetTipo
-  
    METHOD Activate()
-
-   METHOD startActivate()
 
 END CLASS
 
@@ -146,7 +140,6 @@ END CLASS
 
 METHOD Activate() CLASS CaracteristicasView
 
-   local oSayCamposExtra
    local oBtnEdit
    local oBtnAppend
    local oBtnDelete
@@ -231,19 +224,13 @@ METHOD Activate() CLASS CaracteristicasView
 
    end if
 
-   ::oDialog:bStart  := {|| ::startActivate(), ::paintedActivate() }
+   ::oDialog:bStart  := {|| ::paintedActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
   
    ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD startActivate()
-
-RETURN ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -345,6 +332,9 @@ RETURN ( ::insertBuffer( hBuffer ) )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
 CLASS TestCaracteristicasController FROM TestCase
 
    METHOD testCreateCaracteristicaSincodigo()
@@ -352,8 +342,8 @@ CLASS TestCaracteristicasController FROM TestCase
    METHOD testCreateCaracteristicaSinNombre()
 
    METHOD testCreateCaracteristicaSinLinea()
-   
-   //METHOD testCreateCaracteristicaConLineaSinNombre()
+
+   METHOD testCreateCaracteristicaConLineaSinNombre()
 
 END CLASS
 
@@ -366,11 +356,12 @@ END CLASS
 METHOD testCreateCaracteristicaSincodigo() CLASS TestCaracteristicasController
 
    local oController
-   local uuidCaracteristica:= win_uuidcreatestring()
+   local uuidCaracteristica   := win_uuidcreatestring()
 
    SQLCaracteristicasModel():truncateTable()  
 
-   oController             := CaracteristicasController():New()
+   oController                := CaracteristicasController():New()
+
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          apoloWaitSeconds( 1 ),;
@@ -389,7 +380,6 @@ RETURN ( nil )
 METHOD testCreateCaracteristicaSinNombre() CLASS TestCaracteristicasController
 
    local oController
-   local uuidCaracteristica:= win_uuidcreatestring()
 
    SQLCaracteristicasModel():truncateTable() 
 
@@ -414,7 +404,6 @@ RETURN ( nil )
 METHOD testCreateCaracteristicaSinLinea() CLASS TestCaracteristicasController
 
    local oController
-   local uuidCaracteristica:= win_uuidcreatestring()
 
    SQLCaracteristicasModel():truncateTable()  
 
@@ -434,15 +423,16 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-/*METHOD testCreateCaracteristicaConLineaSinNombre() CLASS TestCaracteristicasController
+METHOD testCreateCaracteristicaConLineaSinNombre() CLASS TestCaracteristicasController
 
    local oController
-   local uuidCaracteristica:= win_uuidcreatestring()
 
    SQLCaracteristicasModel():truncateTable() 
+
    SQLCaracteristicasLineasModel():truncateTable()  
 
    oController             := CaracteristicasController():New()
+
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          apoloWaitSeconds( 1 ),;
@@ -450,16 +440,21 @@ RETURN ( nil )
          apoloWaitSeconds( 1 ),;
          self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
          apoloWaitSeconds( 1 ),;
-         self:getControl( 130 ):Click(),;
+         oController:getCaracteristicasLineasController():Append(),;
          apoloWaitSeconds( 1 ),;
-         oController:getCaracteristicasLineasController():getDialogView():getControl( 110  ):cText( "001" ),;
+         self:getControl( IDOK ):Click() } )
+
+   oController:getCaracteristicasLineasController():getDialogView():setEvent( 'painted',;
+      {| self | ;
+         self:getControl( 110 ):cText( "Caracteristica línea" ),;
          apoloWaitSeconds( 1 ),;
-         oController:getCaracteristicasLineasController():getDialogView():getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ) } )
+         self:getControl( IDOK ):Click() } )
 
-   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+   ::assert:true( oController:Append(), "test ::assert:true with .t." )
 
-RETURN ( nil )*/
+RETURN ( nil )
+
+#endif
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

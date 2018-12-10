@@ -163,9 +163,9 @@ METHOD Activate() CLASS CaracteristicasLineasView
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
    end if
 
-   ACTIVATE DIALOG ::oDialog CENTER
+   ::oDialog:bStart  := {|| ::paintedActivate() }
 
-   ::oBitmap:end()
+   ACTIVATE DIALOG ::oDialog CENTER
 
 RETURN ( ::oDialog:nResult )
 

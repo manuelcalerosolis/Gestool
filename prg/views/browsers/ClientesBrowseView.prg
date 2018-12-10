@@ -174,10 +174,10 @@ METHOD addColumns() CLASS ClientesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre_forma_pago'
+      :cSortOrder          := 'nombre_metodo_pago'
       :cHeader             := 'Forma pago'
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_forma_pago' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_metodo_pago' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with

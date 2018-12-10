@@ -14,11 +14,11 @@ CLASS SQLTercerosModel FROM SQLCompanyModel
    METHOD getSentenceClienteDireccionPrincipal( cBy, cId )
 
    METHOD getClienteDireccionPrincipal( cBy, cId ) ;
-                                 INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentenceClienteDireccionPrincipal( cBy, cId ) ) ) )
+                                       INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentenceClienteDireccionPrincipal( cBy, cId ) ) ) )
 
    METHOD getSentencePaymentDays( cId )
 
-   METHOD getPaymentDays( cId )  INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentencePaymentDays( cId ) ) ) )
+   METHOD getPaymentDays( cId )        INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentencePaymentDays( cId ) ) ) )
 
 END CLASS
 
@@ -151,7 +151,7 @@ METHOD getInitialSelect() CLASS SQLTercerosModel
       %2$s.fecha_ultima_llamada AS fecha_ultima_llamada,
       %2$s.metodo_pago_codigo AS metodo_pago_codigo,
       %2$s.recargo_equivalencia AS recargo_equivalencia,
-      metodos_pago.nombre AS nombre_forma_pago,                                                         
+      metodos_pago.nombre AS nombre_metodo_pago,                                                         
       %2$s.agente_codigo AS agente_codigo,                                                       
       agentes.nombre AS nombre_agente,
       %2$s.cliente_grupo_codigo AS cliente_grupo_codigo,

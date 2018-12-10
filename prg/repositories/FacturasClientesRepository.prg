@@ -5,16 +5,16 @@
 
 CLASS FacturasClientesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLFacturasClientesModel():getTableName() ) 
+   METHOD getTableName()               INLINE ( SQLFacturasClientesModel():getTableName() ) 
 
-   METHOD getSQLFunctions()               INLINE ( {  ::dropFunctionTotalSummaryWhereUuid(),;
-                                                      ::createFunctionTotalSummaryWhereUuid(),;
-                                                      ::dropFunctionRecargoEquivalenciaWhereUuid(),;
-                                                      ::createFunctionRecargoEquivalenciaWhereUuid(),;
-                                                      ::dropFunctionDescuentoWhereUuid(),;
-                                                      ::createFunctionDescuentoWhereUuid(),;
-                                                      ::dropFunctionTotalDescuentoWhereUuid(),;
-                                                      ::createFunctionTotalDescuentoWhereUuid() } )
+   METHOD getSQLFunctions()            INLINE ( {  ::dropFunctionTotalSummaryWhereUuid(),;
+                                                   ::createFunctionTotalSummaryWhereUuid(),;
+                                                   ::dropFunctionRecargoEquivalenciaWhereUuid(),;
+                                                   ::createFunctionRecargoEquivalenciaWhereUuid(),;
+                                                   ::dropFunctionDescuentoWhereUuid(),;
+                                                   ::createFunctionDescuentoWhereUuid(),;
+                                                   ::dropFunctionTotalDescuentoWhereUuid(),;
+                                                   ::createFunctionTotalDescuentoWhereUuid() } )
 
    METHOD createFunctionTotalSummaryWhereUuid()
       METHOD dropFunctionTotalSummaryWhereUuid()
@@ -94,7 +94,7 @@ METHOD createFunctionTotalSummaryWhereUuid() CLASS FacturasClientesRepository
       DECLARE TotalSummary DECIMAL( 19, 6 );
 
       SELECT
-         SUM( totales.importeTotal ) INTO TotalSummary
+         SUM( totales.importe_total ) INTO TotalSummary
       FROM 
          ( %2$s ) AS totales;
       
@@ -370,8 +370,8 @@ METHOD getSentenceTotales( uuidFacturaCliente ) CLASS FacturasClientesRepository
    SELECT
       ROUND( lineas.importe_bruto, 2 ) AS importe_bruto,
       ( @descuento := ( %1$s ) ) AS total_descuentos_pie,
-      ( @totalDescuento := IF( @descuento IS NULL, 0, ( lineas.importeNeto * @descuento / 100 ) ) ) AS total_descuento,
-      ( @neto := ROUND( lineas.importeNeto - @totalDescuento, 2 ) ) AS importe_neto,
+      ( @totalDescuento := IF( @descuento IS NULL, 0, ( lineas.importe_neto * @descuento / 100 ) ) ) AS total_descuento,
+      ( @neto := ROUND( lineas.importe_neto - @totalDescuento, 2 ) ) AS importe_neto,
       lineas.iva AS porcentaje_iva, 
       lineas.recargo_equivalencia AS recargo_equivalencia,
       ( @iva := IF( lineas.iva IS NULL, 0, ROUND( @neto * lineas.iva / 100, 2 ) ) ) AS importe_iva,  
@@ -432,7 +432,7 @@ METHOD getSentenceTotalDocument( uuidFacturaCliente ) CLASS FacturasClientesRepo
    TEXT INTO cSql
 
    SELECT
-      SUM( totales.importeTotal ) AS totalDocumento
+      SUM( totales.importe_total ) AS total_documento
    FROM ( %1$s ) AS totales
 
    ENDTEXT

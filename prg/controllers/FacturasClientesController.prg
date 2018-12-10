@@ -409,7 +409,7 @@ METHOD clientSetRecargo() CLASS FacturasClientesController
       RETURN ( nil )
    end if 
 
-   ::getDialogView():oRecargoEquivalencia:SetCheck( hget( ::getClientesController():getSelector():uFields, "recargo_equivalencia" ) )
+   ::getDialogView():oRecargoEquivalencia:setCheck( hget( ::getClientesController():getSelector():uFields, "recargo_equivalencia" ) )
 
 RETURN ( nil )
 
@@ -445,17 +445,17 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
       RETURN ( nil )
    end if 
 
-   ::getDialogView():oTotalBruto:setText( hget( hTotal, "totalBruto" ) )
+   ::getDialogView():oTotalBruto:setText( hget( hTotal, "total_bruto" ) )
    
-   ::getDialogView():oTotalBase:setText( hget( hTotal, "totalNeto" ) )
+   ::getDialogView():oTotalBase:setText( hget( hTotal, "total_neto" ) )
 
-   ::getDialogView():oTotalDescuento:setText( hget( hTotal, "totalDescuento" ) )
+   ::getDialogView():oTotalDescuento:setText( hget( hTotal, "total_descuento" ) )
 
-   ::getDialogView():oTotalIva:setText( hget( hTotal, "totalIVA" ) )
+   ::getDialogView():oTotalIva:setText( hget( hTotal, "total_iva" ) )
 
-   ::getDialogView():oTotalRecargo:setText( hget( hTotal, "totalRecargo" ) )
+   ::getDialogView():oTotalRecargo:setText( hget( hTotal, "total_recargo" ) )
 
-   ::getDialogView():oTotalImporte:setText( hget( hTotal, "totalDocumento" ) )
+   ::getDialogView():oTotalImporte:setText( hget( hTotal, "total_documento" ) )
 
 RETURN ( nil )
 
@@ -607,7 +607,7 @@ METHOD testCalculoFacturaConDescuento() CLASS TestFacturasClientesController
 
    hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
 
-   ::assert:equals( 117.520000, hget( hTotal, "totalDocumento" ), "test creacion de XML" )
+   ::assert:equals( 117.520000, hget( hTotal, "total_documento" ), "test creacion de XML" )
 
    oController:End()
 
@@ -638,7 +638,7 @@ METHOD testCalculoFacturaConIncremento() CLASS TestFacturasClientesController
 
    hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
 
-   ::assert:equals( 7.720000, hget( hTotal, "totalDocumento" ), "test creacion de XML" )
+   ::assert:equals( 7.720000, hget( hTotal, "total_documento" ), "test creacion de XML" )
 
    oController:End()
 

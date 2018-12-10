@@ -281,7 +281,7 @@ METHOD getControl( nId, oDialog )
       RETURN ( nil )
    end if 
    
-   nPos  := ascan( oDialog:aControls, { | o | o:nId == nId } ) 
+   nPos              := ascan( oDialog:aControls, { | o | o:nId == nId } ) 
    if nPos == 0
       RETURN ( nil )
    end if 

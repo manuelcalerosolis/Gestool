@@ -84,7 +84,7 @@ METHOD addColumns() CLASS ProveedoresBrowseView
       :cSortOrder          := 'forma_pago.nombre'
       :cHeader             := 'Forma pago'
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_forma_pago' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_metodo_pago' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with*/

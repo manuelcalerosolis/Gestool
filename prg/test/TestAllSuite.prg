@@ -36,9 +36,9 @@ USER FUNCTION hbunit_test()
 
    oSuite:addTest( TestCaracteristicasController():new() )
 
-   oSuite:addTest( TestCaracteristicasLineasController():new() )
+   // oSuite:addTest( TestCaracteristicasLineasController():new() )
 
-   oSuite:addTest( TestCaracteristicasValoresArticulosController():new() )
+   // oSuite:addTest( TestCaracteristicasValoresArticulosController():new() )
 
    oRunner:run( oSuite )
 
