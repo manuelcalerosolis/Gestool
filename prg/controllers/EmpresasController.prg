@@ -202,7 +202,7 @@ METHOD startingActivate()
    ::getUnidadesMedicionController():getSelector():Bind( bSETGET( ::cUnidadesDefecto ) )
    ::getUnidadesMedicionController():getSelector():addGetSelector( "Grupos unidades", oPanel ) 
 
-   oGetCertificado      := oPanel:addGetAction( "Certificado", ::cCertificadoDefecto, {|| ::selectCertificado( oGetCertificado ) } ) 
+   oGetCertificado      := oPanel:addGetAction( "Certificado", bSETGET( ::cCertificadoDefecto ), {|| ::selectCertificado( oGetCertificado ) } ) 
 
 RETURN ( nil )
 
@@ -210,14 +210,10 @@ RETURN ( nil )
 
 METHOD selectCertificado( oGetCertificado )
 
-   local cCertificado         := selCert()
+   local cCertificado   := selCert()
 
    if !empty( cCertificado )
-
       oGetCertificado:cText( cCertificado )
-
-      ::cCertificadoDefecto   := cCertificado
-
    end if 
 
 RETURN ( nil )
@@ -906,7 +902,7 @@ HB_FUNC(SELCERT)
 
    HCERTSTORE hStore;
    PCCERT_CONTEXT PrevContext, CurContext;
-   PCHAR sNombre;
+   PCHAR sNombre = NULL;
    DWORD cbSize;
    PHB_ITEM pArray;
    PHB_ITEM pItem;

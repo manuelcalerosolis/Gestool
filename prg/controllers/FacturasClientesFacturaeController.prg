@@ -36,7 +36,9 @@ CLASS FacturasClientesFacturaeController
 
    METHOD isInformationLoaded( uuid ) 
 
-   METHOD setDocumentsAndTotals()
+   METHOD setDocuments()
+
+   METHOD setTotals()
 
    METHOD setSellerParty()
 
@@ -85,7 +87,9 @@ METHOD Generate( uuid ) CLASS FacturasClientesFacturaeController
 
    ::getModel():Default()
 
-   ::setDocumentsAndTotals()
+   ::setDocuments()
+
+   ::setTotals()
 
    ::setSellerParty()
 
@@ -98,6 +102,8 @@ METHOD Generate( uuid ) CLASS FacturasClientesFacturaeController
    ::setDiscount()
 
    ::getModel():Generate()
+
+   ::getModel():Sign()
 
 RETURN ( nil )
 
@@ -114,8 +120,6 @@ METHOD isInformationLoaded( uuid ) CLASS FacturasClientesFacturaeController
       ::cError             += "No se encuentra el documento"
    end if 
 
-   msgalert( hb_valtoexp( ::hDocument ), "hDocument" )
-
    ::hCompanyDirection    := SQLDireccionesGestoolModel():getHashWhere( 'parent_uuid', Company():getUuid() )
    if empty( ::hCompanyDirection )
       ::cError             += "No se encontraron datos de la dirección del vendedor"
@@ -131,18 +135,12 @@ METHOD isInformationLoaded( uuid ) CLASS FacturasClientesFacturaeController
       ::cError             += "No se puede calcular el total"
    end if 
 
-   msgalert( hb_valtoexp( ::hTotal ), "hTotal" )
-
    ::hTotales              := ::getController():getTotalesDocumentGroupByIVA( uuid )
    if empty( ::hTotales )
       ::cError             += "No se puede calcular el total por tipos de IVA"
    end if 
 
-   aeval( ::hTotales, {|hTotal| msgalert( hb_valtoexp( hTotal ) ) } )
-
    aeval( ::hTotales, {|hTotal| nTotalBrutoLineas += hget( hTotal, "total_bruto_lineas" ) } )
-
-   msgalert( nTotalBrutoLineas, "nTotalBrutoLineas" )
 
    ::hDiscounts            := SQLFacturasClientesDescuentosModel():selectDescuentosWhereUuid( uuid, nTotalBrutoLineas )
 
@@ -160,16 +158,22 @@ RETURN ( empty( ::cError ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD setDocumentsAndTotals() CLASS FacturasClientesFacturaeController
+METHOD setDocuments() CLASS FacturasClientesFacturaeController
 
    ::getModel():setInvoiceNumber( hget( ::hDocument, "serie" ) + hb_ntos( hget( ::hDocument, "numero" ) ) )
    
+   ::getModel():dOperationDate                  := hget( ::hDocument, "fecha" )
+   ::getModel():dIssueDate                      := hget( ::hDocument, "fecha" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD setTotals() CLASS FacturasClientesFacturaeController
+
    ::getModel():setInvoiceTotalAmount( hget( ::hTotal, "total_documento" ) ) 
    ::getModel():setTotalOutstandingAmount( hget( ::hTotal, "total_documento" ) ) 
    ::getModel():setTotalExecutableAmount( hget( ::hTotal, "total_documento" ) ) 
-
-   ::getModel():dOperationDate                  := hget( ::hDocument, "fecha" )
-   ::getModel():dIssueDate                      := hget( ::hDocument, "fecha" )
 
    ::getModel():nInvoiceTotal                   := hget( ::hTotal, "total_documento" )
    ::getModel():nTotalGrossAmount               := hget( ::hTotal, "total_bruto" )
@@ -311,16 +315,12 @@ METHOD setDiscount() CLASS FacturasClientesFacturaeController
    local hDiscount
 
    for each hDiscount in ::hDiscounts
-
-      msgalert( hb_valtoexp( hDiscount ), "hDiscount" )
-
       oDiscount                                 := Discount()
       oDiscount:cDiscountReason                 := hget( hDiscount, "nombre_descuento" )
       oDiscount:nDiscountRate                   := hget( hDiscount, "porcentaje_descuento" )
       oDiscount:nDiscountAmount                 := hget( hDiscount, "importe_descuento" )
 
       ::getModel():addDiscount( oDiscount )
-
    next
 
 RETURN ( nil )
@@ -370,6 +370,8 @@ METHOD testGenerateXml() CLASS TestFacturasClientesFacturaeController
    oController:getFacturasClientesFacturaeController():Generate( uuid )   
 
    ::assert:true( file( cPatXml() + "TEST1.xml" ), "test creacion de XML" )
+
+   ::assert:true( file( cPatXml() + "TEST1-signed.xml" ), "test creacion de XML firmado" )
 
    oController:End()
 

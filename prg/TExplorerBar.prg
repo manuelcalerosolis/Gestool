@@ -490,7 +490,7 @@ RETURN nil
 
 //----------------------------------------------------------------------------//
 
-METHOD AddGetAction( cPrompt, cGet, bAction ) CLASS TTaskPanel
+METHOD addGetAction( cPrompt, bSetGet, bAction ) CLASS TTaskPanel
 
    local oSay
    local oGet
@@ -501,7 +501,7 @@ METHOD AddGetAction( cPrompt, cGet, bAction ) CLASS TTaskPanel
    oSay:lWantClick   := .t.
    oSay:OnClick      := bAction
 
-   @ nTop, 120 GET oGet VAR cGet SIZE 460, 20 OF Self PIXEL ACTION bAction BITMAP "Lupa" 
+   oGet              := TGet():New( nTop, 120, bSetGet, Self, 460, 20,,,,,, .f.,, .t.,, .f.,, .f., .f.,, .f., .f.,,,,,,,, bAction, "Lupa", "oGet" )
 
    ::setHeight( oGet:nTop, oGet:nHeight )
 
@@ -509,7 +509,7 @@ RETURN ( oGet )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddGetSelector( cPrompt, cGet ) CLASS TTaskPanel
+METHOD addGetSelector( cPrompt, cGet ) CLASS TTaskPanel
 
    local oGet
    local cHelp

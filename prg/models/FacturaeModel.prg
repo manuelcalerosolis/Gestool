@@ -23,54 +23,56 @@ CLASS FacturaeModel
 
    DATA oController
 
-   DATA  oXml
-   DATA  oXmlNode
-   DATA  oXmlHeader
-   DATA  oXmlBatch
-   DATA  oXmlTotalInvoicesAmount
-   DATA  oXmlTotalOutstandingAmount
-   DATA  oXmlTotalExecutableAmount
-   DATA  oXmlParties
-   DATA  oXmlSellerParty
-   DATA  oXmlTaxIdentification
-   DATA  oXmlLegalEntity
-   DATA  oXmlRegistrationData
-   DATA  oXmlAddressInSpain
-   DATA  oXmlLegalEntity
-   DATA  oXmlContactDetails
-   DATA  oXmlBuyerParty
-   DATA  oXmlTaxIdentification
-   DATA  oXmlLegalEntity
-   DATA  oXmlInvoices
-   DATA  oXmlInvoice
-   DATA  oXmlInvoiceHeader
-   DATA  oXmlCorrective
-   DATA  oXmlTaxPeriod
-   DATA  oXmlInvoiceIssueData
-   DATA  oXmlPlaceOfIssue
-   DATA  oXmlInvoiceCurrencyCode
-   DATA  oXmlTaxesOutputs
-   DATA  oXmlTax
-   DATA  oXmlTaxableBase
-   DATA  oXmlTaxAmount
-   DATA  oXmlEquivalenceSurcharge
-   DATA  oXmlInvoiceTotals
-   DATA  oXmlGeneralDiscounts
-   DATA  oXmlDiscount
-   DATA  oXmlInvoiceLine
-   DATA  oXmlItems
-   DATA  oXmlDiscountsAndRebates
-   DATA  oXmlPaymentDetails
-   DATA  oXmlInstallment
-   DATA  oXmlAccountToBeCredited
-   DATA  oXmlAccountToBeDebited
+   DATA oXml
+   DATA oXmlNode
+   DATA oXmlHeader
+   DATA oXmlBatch
+   DATA oXmlTotalInvoicesAmount
+   DATA oXmlTotalOutstandingAmount
+   DATA oXmlTotalExecutableAmount
+   DATA oXmlParties
+   DATA oXmlSellerParty
+   DATA oXmlTaxIdentification
+   DATA oXmlLegalEntity
+   DATA oXmlRegistrationData
+   DATA oXmlAddressInSpain
+   DATA oXmlLegalEntity
+   DATA oXmlContactDetails
+   DATA oXmlBuyerParty
+   DATA oXmlTaxIdentification
+   DATA oXmlLegalEntity
+   DATA oXmlInvoices
+   DATA oXmlInvoice
+   DATA oXmlInvoiceHeader
+   DATA oXmlCorrective
+   DATA oXmlTaxPeriod
+   DATA oXmlInvoiceIssueData
+   DATA oXmlPlaceOfIssue
+   DATA oXmlInvoiceCurrencyCode
+   DATA oXmlTaxesOutputs
+   DATA oXmlTax
+   DATA oXmlTaxableBase
+   DATA oXmlTaxAmount
+   DATA oXmlEquivalenceSurcharge
+   DATA oXmlInvoiceTotals
+   DATA oXmlGeneralDiscounts
+   DATA oXmlDiscount
+   DATA oXmlInvoiceLine
+   DATA oXmlItems
+   DATA oXmlDiscountsAndRebates
+   DATA oXmlPaymentDetails
+   DATA oXmlInstallment
+   DATA oXmlAccountToBeCredited
+   DATA oXmlAccountToBeDebited
 
-   DATA  oXmlAdministrativeCentres
-   DATA  oXmlAdministrativeCentre
+   DATA oXmlAdministrativeCentres
+   DATA oXmlAdministrativeCentre
 
-   DATA  cXmlFile
-   DATA  cSignedXmlFile
-   DATA  cNif
+   DATA cXmlFile
+   DATA cSignedXmlFile
+   DATA cCertificado
+
+   DATA cSignedError
 
    DATA cInvoiceNumber
    DATA cInvoiceSeriesCode
@@ -91,72 +93,61 @@ CLASS FacturaeModel
                                        INLINE ( ::nTotalExecutableAmount := nTotalExecutableAmount )
    ACCESS TotalExecutableAmount        INLINE ( alltrim( Trans( ::nTotalExecutableAmount, DoubleTwoDecimalPicture ) ) )
 
-   DATA     nTotalGrossAmount             INIT  0
-   DATA     nTotalGrossAmountBeforeTaxes  INIT  0
-   DATA     nTotalGeneralDiscounts        INIT  0
-   DATA     nTotalGeneralSurcharges       INIT  0
-   DATA     nTotalTaxOutputs              INIT  0
-   DATA     nTotalTaxesWithheld           INIT  0
-   DATA     nInvoiceTotal                 INIT  0
-   DATA     nTotalReimbursableExpenses    INIT  0
+   DATA nTotalGrossAmount              INIT  0
+   DATA nTotalGrossAmountBeforeTaxes   INIT  0
+   DATA nTotalGeneralDiscounts         INIT  0
+   DATA nTotalGeneralSurcharges        INIT  0
+   DATA nTotalTaxOutputs               INIT  0
+   DATA nTotalTaxesWithheld            INIT  0
+   DATA nInvoiceTotal                  INIT  0
+   DATA nTotalReimbursableExpenses     INIT  0
 
-   ACCESS   TotalGrossAmount              INLINE ( alltrim( Trans( ::nTotalGrossAmount,            DoubleTwoDecimalPicture ) ) )
-   ACCESS   TotalGeneralSurcharges        INLINE ( alltrim( Trans( ::nTotalGeneralSurcharges,      DoubleTwoDecimalPicture ) ) )
+   ACCESS TotalGrossAmount             INLINE ( alltrim( Trans( ::nTotalGrossAmount,            DoubleTwoDecimalPicture ) ) )
+   ACCESS TotalGeneralSurcharges       INLINE ( alltrim( Trans( ::nTotalGeneralSurcharges,      DoubleTwoDecimalPicture ) ) )
 
-   ACCESS   TotalTaxOutputs               INLINE ( alltrim( Trans( ::nTotalTaxOutputs,             DoubleTwoDecimalPicture ) ) )
+   ACCESS TotalTaxOutputs              INLINE ( alltrim( Trans( ::nTotalTaxOutputs,             DoubleTwoDecimalPicture ) ) )
 
-   ACCESS   TotalGrossAmountBeforeTaxes   INLINE ( alltrim( Trans( ::nTotalGrossAmountBeforeTaxes, DoubleTwoDecimalPicture ) ) )
+   ACCESS TotalGrossAmountBeforeTaxes  INLINE ( alltrim( Trans( ::nTotalGrossAmountBeforeTaxes, DoubleTwoDecimalPicture ) ) )
 
-   ACCESS   TotalGeneralDiscounts      INLINE ( alltrim( Trans( ::nTotalGeneralDiscounts,       DoubleTwoDecimalPicture ) ) )
+   ACCESS TotalGeneralDiscounts        INLINE ( alltrim( Trans( ::nTotalGeneralDiscounts,       DoubleTwoDecimalPicture ) ) )
 
-   ACCESS   TotalTaxesWithheld         INLINE ( alltrim( Trans( ::nTotalTaxesWithheld,          DoubleTwoDecimalPicture ) ) )
-   ACCESS   InvoiceTotal               INLINE ( alltrim( Trans( ::nInvoiceTotal,                DoubleTwoDecimalPicture ) ) )
-   ACCESS   TotalReimbursableExpenses  INLINE ( alltrim( Trans( ::nTotalReimbursableExpenses,   DoubleTwoDecimalPicture ) ) )
+   ACCESS TotalTaxesWithheld           INLINE ( alltrim( Trans( ::nTotalTaxesWithheld,          DoubleTwoDecimalPicture ) ) )
+   ACCESS InvoiceTotal                 INLINE ( alltrim( Trans( ::nInvoiceTotal,                DoubleTwoDecimalPicture ) ) )
+   ACCESS TotalReimbursableExpenses    INLINE ( alltrim( Trans( ::nTotalReimbursableExpenses,   DoubleTwoDecimalPicture ) ) )
 
-   DATA     cCorrectiveInvoiceNumber
-   DATA     cCorrectiveReasonCode
-   DATA     cCorrectiveReasonDescription
-   DATA     cCorrectiveCorrectionMethod
-   DATA     cCorrectiveCorrectionMethodDescription
+   DATA cCorrectiveInvoiceNumber
+   DATA cCorrectiveReasonCode
+   DATA cCorrectiveReasonDescription
+   DATA cCorrectiveCorrectionMethod
+   DATA cCorrectiveCorrectionMethodDescription
 
-   DATA     dCorrectiveStartDate
-   DATA     dCorrectiveEndDate
-   DATA     dIssueDate
-   DATA     dOperationDate
+   DATA dCorrectiveStartDate
+   DATA dCorrectiveEndDate
+   DATA dIssueDate
+   DATA dOperationDate
 
-   ACCESS   IssueDate                  INLINE ( dToIso( ::dIssueDate ) )
-   ACCESS   OperationDate              INLINE ( dToIso( ::dOperationDate ) )
-   ACCESS   CorrectiveStartDate        INLINE ( dToIso( ::dCorrectiveStartDate ) )
-   ACCESS   CorrectiveEndDate          INLINE ( dToIso( ::dCorrectiveEndDate ) )
+   ACCESS IssueDate                    INLINE ( dToIso( ::dIssueDate ) )
+   ACCESS OperationDate                INLINE ( dToIso( ::dOperationDate ) )
+   ACCESS CorrectiveStartDate          INLINE ( dToIso( ::dCorrectiveStartDate ) )
+   ACCESS CorrectiveEndDate            INLINE ( dToIso( ::dCorrectiveEndDate ) )
 
-   DATA     cPlaceOfIssuePostCode
-   DATA     cPlaceOfIssueDescription
+   DATA cPlaceOfIssuePostCode
+   DATA cPlaceOfIssueDescription
 
-   ACCESS   PlaceOfIssuePostCode       INLINE ( Rtrim( left( ::cPlaceOfIssuePostCode, 9 ) ) )
-   ACCESS   PlaceOfIssueDescription    INLINE ( Rtrim( left( ::cPlaceOfIssueDescription, 20 ) ) )
+   ACCESS PlaceOfIssuePostCode         INLINE ( Rtrim( left( ::cPlaceOfIssuePostCode, 9 ) ) )
+   ACCESS PlaceOfIssueDescription      INLINE ( Rtrim( left( ::cPlaceOfIssueDescription, 20 ) ) )
 
-   DATA     cTaxCurrencyCode
-   DATA     cLanguageName
+   DATA cTaxCurrencyCode
+   DATA cLanguageName
 
-   DATA     oSellerParty
-   DATA     oBuyerParty
+   DATA oSellerParty
+   DATA oBuyerParty
 
-   DATA     aTax
-   DATA     aDiscount
-   DATA     aItemLines
-   DATA     aInstallment
-   DATA     aAdministrativeCentres
-
-   DATA     lError
-
-   DATA     oMail
-   DATA     cMailServer
-   DATA     cMailServerPort
-   DATA     cMailServerUserName
-   DATA     cMailServerPassword
-   DATA     cMailSubject
-   DATA     cMailBody
-   DATA     cMailRecipient
+   DATA aTax
+   DATA aDiscount
+   DATA aItemLines
+   DATA aInstallment
+   DATA aAdministrativeCentres
 
    METHOD New() CONSTRUCTOR
 
@@ -165,6 +156,12 @@ CLASS FacturaeModel
    METHOD Default()
 
    METHOD Generate()
+
+   METHOD Sign()
+
+   METHOD getCertificado()
+
+   METHOD isAutofirma()                INLINE ( file( fullcurdir() + 'autofirma\autofirmacommandline.exe' ) )
 
    METHOD CreateDocument()
    METHOD DestroyDocument()            INLINE ( ::oXml := nil )
@@ -188,13 +185,6 @@ CLASS FacturaeModel
 
    METHOD ShowInWeb()
       METHOD startInWeb( oActiveX, oDlg )
-
-   METHOD Firma()
-   METHOD VerificaFirma()
-
-   METHOD FirmaJava()
-
-   METHOD Enviar()
 
    METHOD addItemLine( oItemLine )     INLINE ( aadd( ::aItemLines, oItemLine ) )
 
@@ -313,6 +303,7 @@ METHOD setInvoiceNumber( cInvoiceNumber )
    ::cInvoiceNumber  := cInvoiceNumber
 
    ::cXmlFile        := cPatXml() + ::cInvoiceNumber + ".xml"
+
    ::cSignedXmlFile  := cPatXml() + ::cInvoiceNumber + "-signed.xml"
 
 RETURN ( nil )
@@ -744,10 +735,10 @@ METHOD InvoiceXml()
          */
 
          ::oXmlInvoiceHeader  := ::createXmlNode( 'InvoiceHeader' )
-            ::oXmlInvoiceHeader:appendChild( ::createXmlNode( 'InvoiceNumber',        ::cInvoiceNumber ) )
-            ::oXmlInvoiceHeader:appendChild( ::createXmlNode( 'InvoiceSeriesCode',    ::cInvoiceSeriesCode ) )
-            ::oXmlInvoiceHeader:appendChild( ::createXmlNode( 'InvoiceDocumentType',  INVOICEDOCUMENTTYPE ) )
-            ::oXmlInvoiceHeader:appendChild( ::createXmlNode( 'InvoiceClass',         INVOICECLASS ) )
+            ::oXmlInvoiceHeader:appendChild( ::createXmlNode( 'InvoiceNumber', ::cInvoiceNumber ) )
+            ::oXmlInvoiceHeader:appendChild( ::createXmlNode( 'InvoiceSeriesCode', ::cInvoiceSeriesCode ) )
+            ::oXmlInvoiceHeader:appendChild( ::createXmlNode( 'InvoiceDocumentType', INVOICEDOCUMENTTYPE ) )
+            ::oXmlInvoiceHeader:appendChild( ::createXmlNode( 'InvoiceClass', INVOICECLASS ) )
 
             /*
             Inicio de factura rectificativa rellenar solo si es el caso--------
@@ -756,18 +747,18 @@ METHOD InvoiceXml()
             if !empty( ::cCorrectiveInvoiceNumber )
 
                ::oXmlCorrective  := ::createXmlNode( 'Corrective' )
-                  ::oXmlCorrective:appendChild( ::createXmlNode( 'InvoiceNumber',     ::cCorrectiveInvoiceNumber ) )
-                  ::oXmlCorrective:appendChild( ::createXmlNode( 'ReasonCode',        ::cCorrectiveReasonCode ) )
+                  ::oXmlCorrective:appendChild( ::createXmlNode( 'InvoiceNumber', ::cCorrectiveInvoiceNumber ) )
+                  ::oXmlCorrective:appendChild( ::createXmlNode( 'ReasonCode', ::cCorrectiveReasonCode ) )
                   ::oXmlCorrective:appendChild( ::createXmlNode( 'ReasonDescription', ::cCorrectiveReasonDescription ) )
 
                   ::oXmlTaxPeriod   := ::createXmlNode( 'TaxPeriod' )
                      ::oXmlTaxPeriod:appendChild( ::createXmlNode( 'StartDate', ::CorrectiveStartDate() ) )
-                     ::oXmlTaxPeriod:appendChild( ::createXmlNode( 'EndDate',   ::CorrectiveEndDate() ) )
+                     ::oXmlTaxPeriod:appendChild( ::createXmlNode( 'EndDate', ::CorrectiveEndDate() ) )
 
                   ::oXmlCorrective:appendChild( ::oXmlTaxPeriod )
 
-                  ::oXmlCorrective:appendChild( ::createXmlNode( 'CorrectionMethod',           ::cCorrectiveCorrectionMethod ) )
-                  ::oXmlCorrective:appendChild( ::createXmlNode( 'CorrectionMethodDescription',::cCorrectiveCorrectionMethodDescription ) )
+                  ::oXmlCorrective:appendChild( ::createXmlNode( 'CorrectionMethod', ::cCorrectiveCorrectionMethod ) )
+                  ::oXmlCorrective:appendChild( ::createXmlNode( 'CorrectionMethodDescription', ::cCorrectiveCorrectionMethodDescription ) )
 
                ::oXmlInvoiceHeader:appendChild( ::oXmlCorrective )
 
@@ -1150,27 +1141,41 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD Firma()
+METHOD getCertificado()
 
-RETURN ( nil )
+   local cCertificado   := Company():getDefaultCertificado() 
 
-//---------------------------------------------------------------------------//
+   if empty( cCertificado )
+      cCertificado      := selCert()
+   end if 
 
-METHOD VerificaFirma()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD FirmaJava()
-
-RETURN ( nil )
+   ::cCertificado       := alltrim( cCertificado )
+   
+RETURN ( ::cCertificado )
 
 //---------------------------------------------------------------------------//
 
-METHOD Enviar()
+METHOD Sign()
 
-RETURN ( .t. )
+   if !file( ::cXmlFile )
+      ::cSignedError    := "No existe el fichero " + ::cXmlFile 
+   end if 
+
+   if empty( ::getCertificado() )
+      ::cSignedError    := "No se ha proporcionado un certificado valido"
+   end if 
+
+   if !( ::isAutofirma() )
+      ::cSignedError    := "No se encuentra el programa Autofirma"
+   end if 
+
+   if file( ::cSignedXmlFile )
+      ferase( ::cSignedXmlFile )
+   end if
+
+   waitRun( fullcurdir() + 'autofirma\autofirmacommandline sign -i "' + ::cXmlFile + '" -o "' + ::cSignedXmlFile + '" -format facturae -store windows -alias "' + ::cCertificado + '"', 0 )
+
+RETURN ( file( ::cSignedXmlFile ) )
 
 //---------------------------------------------------------------------------//
 

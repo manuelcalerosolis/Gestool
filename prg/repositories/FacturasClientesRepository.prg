@@ -423,9 +423,6 @@ METHOD getSentenceTotalesDocument( uuidFacturaCliente ) CLASS FacturasClientesRe
                            Company():getTableName( 'FacturaClienteTotalDescuentoWhereUuid' ),;
                            quoted( uuidFacturaCliente ) )
 
-   logwrite( alltrim( cSql ) )
-   msgalert( cSql )
-
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//

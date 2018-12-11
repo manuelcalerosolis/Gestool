@@ -176,9 +176,8 @@ METHOD addColumns() CLASS FacturasClientesDescuentosBrowseView
 
    ::getColumnDeletedAt()
 
-RETURN ( self )
+RETURN ( nil )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -256,9 +255,6 @@ METHOD getValidators() CLASS FacturasClientesDescuentosValidator
 
 RETURN ( ::hValidators )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -377,8 +373,6 @@ METHOD getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) CLASS 
 
    local cSql
 
-   msgalert( importeBruto, "importeBruto" )
-
    TEXT INTO cSql
 
    SELECT 
@@ -396,15 +390,11 @@ METHOD getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) CLASS 
                            quoted( uuidFacturaCliente ),;
                            toSqlString( importeBruto ) )
 
-   logwrite( cSql )
-
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD selectDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) CLASS SQLFacturasClientesDescuentosModel
-
-   msgalert( importeBruto, "selectDescuentosWhereUuid" )
 
 RETURN ( ::getDatabase():selectTrimedFetchHash( ::getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) ) )
 
