@@ -176,13 +176,13 @@ CLASS SQLAjustableModel FROM SQLCompanyModel
 
    DATA oAjusteModel
 
-   DATA cTableName               INIT "ajustables"
+   DATA cTableName                     INIT "ajustables"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( ajuste_uuid, ajustable_tipo, ajustable_uuid )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( id ), UNIQUE KEY ( ajuste_uuid, ajustable_tipo, ajustable_uuid )"
 
-   METHOD getAjusteModel()       INLINE ( iif( empty( ::oAjusteModel ), ::oAjusteModel := SQLAjustesModel():New(), ), ::oAjusteModel )
+   METHOD getAjusteModel()             INLINE ( iif( empty( ::oAjusteModel ), ::oAjusteModel := SQLAjustesModel():New(), ), ::oAjusteModel )
 
-   METHOD getAjusteTableName()   INLINE ( ::getAjusteModel():getTableName() )
+   METHOD getAjusteTableName()         INLINE ( ::getAjusteModel():getTableName() )
 
    METHOD getColumns()
 
@@ -195,24 +195,29 @@ CLASS SQLAjustableModel FROM SQLCompanyModel
    METHOD setLogic( cAjusteUuid, lAjusteValue, cAjustableTipo, cAjustableUuid )
 
    METHOD setMetodoPago( uAjusteValue, cAjustableUuid ) ;
-                                 INLINE ( ::setValue( 'metodo_pago_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
+                                       INLINE ( ::setValue( 'metodo_pago_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
    METHOD getMetodoPago( uuidEmpresa );
-                                 INLINE ( padr( ::getValue( uuidEmpresa, 'empresas', 'metodo_pago_defecto', space( 20 ) ), 20 ) )   
+                                       INLINE ( padr( ::getValue( uuidEmpresa, 'empresas', 'metodo_pago_defecto', space( 20 ) ), 20 ) )   
 
    METHOD setAlmacen( uAjusteValue, cAjustableUuid ) ;
-                                 INLINE ( ::setValue( 'almacen_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
+                                       INLINE ( ::setValue( 'almacen_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
    METHOD getAlmacen( uuidEmpresa );
-                                 INLINE ( padr( ::getValue( uuidEmpresa, 'empresas', 'almacen_defecto', space( 20 ) ), 20 ) )   
+                                       INLINE ( padr( ::getValue( uuidEmpresa, 'empresas', 'almacen_defecto', space( 20 ) ), 20 ) )   
 
    METHOD setUnidadesGrupo( uAjusteValue, cAjustableUuid );
-                                 INLINE ( ::setValue( 'unidades_grupo_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
+                                       INLINE ( ::setValue( 'unidades_grupo_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
    METHOD getUnidadesGrupo( uuidEmpresa );
-                                 INLINE ( padr( ::getValue( uuidEmpresa, 'empresas', 'unidades_grupo_defecto', space( 20 ) ), 20 ) )   
+                                       INLINE ( padr( ::getValue( uuidEmpresa, 'empresas', 'unidades_grupo_defecto', space( 20 ) ), 20 ) )   
 
    METHOD setEmpresaTarifaDefecto( uAjusteValue, cAjustableUuid );
-                                 INLINE ( ::setValue( 'tarifas_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
+                                       INLINE ( ::setValue( 'tarifas_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
    METHOD getEmpresaTarifaDefecto( cCodigo );
-                                 INLINE ( padr( ::getValue( cCodigo, 'empresas', 'tarifas_defecto', __tarifa_base__ ), 20 ) )   
+                                       INLINE ( padr( ::getValue( cCodigo, 'empresas', 'tarifas_defecto', __tarifa_base__ ), 20 ) )   
+
+   METHOD setCertificado( uAjusteValue, cAjustableUuid );
+                                       INLINE ( ::setValue( 'certificado_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
+   METHOD getCertificado( uuidEmpresa );
+                                       INLINE ( padr( ::getValue( uuidEmpresa, 'empresas', 'certificado_defecto', space( 200 ) ), 200 ) )   
 
 END CLASS
 

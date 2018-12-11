@@ -362,24 +362,29 @@ CLASS TTaskPanel FROM TControl
 
    METHOD addLink( cPrompt, bAction, cBitmap )
 
-   METHOD addGet( cPrompt, bAction, cBitmap )
    METHOD addGetSelector( cPrompt, cGet ) 
+
+   METHOD addGetAction( cPrompt, cGet, bAction )
 
    METHOD addComboBox( cPrompt, cItem, aItems )
 
    METHOD addCheckBox( cPrompt, lCheckBox )
-   METHOD addLeftCheckBox( cPrompt, lCheckBox )                INLINE ( ::addCheckBox( cPrompt, lCheckBox, 10 ) )
+
+   METHOD addLeftCheckBox( cPrompt, lCheckBox ) ;
+                                       INLINE ( ::addCheckBox( cPrompt, lCheckBox, 10 ) )
    
    METHOD addColorCheckBox( cPrompt, lCheckBox, nColor )
-   METHOD addLeftColorCheckBox( cPrompt, lCheckBox, nColor )   INLINE ( ::addColorCheckBox( cPrompt, lCheckBox, nColor, 10 )  )
 
-   METHOD Display() INLINE ::BeginPaint(), ::Paint(), ::EndPaint(), 0
+   METHOD addLeftColorCheckBox( cPrompt, lCheckBox, nColor ) ;
+                                       INLINE ( ::addColorCheckBox( cPrompt, lCheckBox, nColor, 10 )  )
+
+   METHOD Display()                    INLINE ::BeginPaint(), ::Paint(), ::EndPaint(), 0
    METHOD Destroy()
-   METHOD End()       INLINE ::Destroy()
-   METHOD EraseBkGnd( hDC ) INLINE 1
+   METHOD End()                        INLINE ::Destroy()
+   METHOD EraseBkGnd( hDC )            INLINE 1
    METHOD Paint()
    METHOD HandleEvent()
-   METHOD nTotalHeight() INLINE ::nTitleHeight + ::nBodyHeight
+   METHOD nTotalHeight()               INLINE ::nTitleHeight + ::nBodyHeight
    METHOD KeyDown( nKey, nFlags )
    METHOD LButtonUp( nRow, nCol, nFlags )
    METHOD LoadBitmaps()
@@ -485,15 +490,18 @@ RETURN nil
 
 //----------------------------------------------------------------------------//
 
-METHOD AddGet( cPrompt, cGet ) CLASS TTaskPanel
+METHOD AddGetAction( cPrompt, cGet, bAction ) CLASS TTaskPanel
 
    local oSay
    local oGet
    local nTop        := ::getTopControl()
 
-   @ nTop + 3, 10 SAY oSay PROMPT cPrompt OF Self PIXEL COLOR RGB( 0, 0, 0 ), RGB( 255, 255, 255 )
+   @ nTop + 3, 10 SAY oSay PROMPT cPrompt OF Self PIXEL COLOR Rgb( 10, 152, 234 ), Rgb( 255, 255, 255 )
 
-   @ nTop, 120 GET oGet VAR cGet SIZE 400, 20 OF Self PIXEL
+   oSay:lWantClick   := .t.
+   oSay:OnClick      := bAction
+
+   @ nTop, 120 GET oGet VAR cGet SIZE 460, 20 OF Self PIXEL ACTION bAction BITMAP "Lupa" 
 
    ::setHeight( oGet:nTop, oGet:nHeight )
 

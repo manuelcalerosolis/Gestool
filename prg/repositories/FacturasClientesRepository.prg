@@ -369,6 +369,7 @@ METHOD getSentenceTotales( uuidFacturaCliente ) CLASS FacturasClientesRepository
 
    SELECT
       ROUND( lineas.importe_bruto, 2 ) AS importe_bruto,
+      ROUND( lineas.importe_bruto, 2 ) - ROUND( lineas.importe_descuento, 2 ) AS importe_bruto_lineas,
       ( @descuento := ( %1$s ) ) AS total_descuentos_pie,
       ( @totalDescuento := IF( @descuento IS NULL, 0, ( lineas.importe_neto * @descuento / 100 ) ) ) AS total_descuento,
       ( @neto := ROUND( lineas.importe_neto - @totalDescuento, 2 ) ) AS importe_neto,
@@ -405,6 +406,7 @@ METHOD getSentenceTotalesDocument( uuidFacturaCliente ) CLASS FacturasClientesRe
 
    SELECT
       SUM( totales.importe_bruto ) AS total_bruto,
+      SUM( totales.importe_bruto_lineas ) AS total_bruto_lineas,
       SUM( totales.total_descuento ) AS total_descuento,
       SUM( totales.importe_neto ) AS total_neto,
       SUM( totales.recargo_equivalencia ) AS recargo_equivalencia,
@@ -422,6 +424,7 @@ METHOD getSentenceTotalesDocument( uuidFacturaCliente ) CLASS FacturasClientesRe
                            quoted( uuidFacturaCliente ) )
 
    logwrite( alltrim( cSql ) )
+   msgalert( cSql )
 
 RETURN ( alltrim( cSql ) )
 

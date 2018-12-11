@@ -79,7 +79,7 @@ RETURN ( aeval( ::oController:getUuidFromRecno( aSelectedRecno ), {| uuid| ::Gen
 METHOD Generate( uuid ) CLASS FacturasClientesFacturaeController
    
    if !( ::isInformationLoaded( uuid ) )
-      msgalert( ::cError, "Error al cargar los datos" )
+      msgStop( ::cError, "Error al cargar los datos" )
       RETURN ( nil )
    end if 
 
@@ -105,49 +105,55 @@ RETURN ( nil )
 
 METHOD isInformationLoaded( uuid ) CLASS FacturasClientesFacturaeController
 
-   ::cError          := ""
+   local nTotalBrutoLineas := 0
 
-   ::hDocument       := ::getDocumentModel():getHashWhere( 'uuid', uuid )
+   ::cError                := ""
+
+   ::hDocument             := ::getDocumentModel():getHashWhere( 'uuid', uuid )
    if empty( ::hDocument )
-      ::cError       += "No se encuentra el documento"
+      ::cError             += "No se encuentra el documento"
    end if 
 
    msgalert( hb_valtoexp( ::hDocument ), "hDocument" )
 
    ::hCompanyDirection    := SQLDireccionesGestoolModel():getHashWhere( 'parent_uuid', Company():getUuid() )
    if empty( ::hCompanyDirection )
-      ::cError       += "No se encontraron datos de la dirección del vendedor"
+      ::cError             += "No se encontraron datos de la dirección del vendedor"
    end if 
 
-   ::hLines          := ::getController():getHashSentenceLineas( uuid )
+   ::hLines                := ::getController():getHashSentenceLineas( uuid )
    if empty( ::hLines )
-      ::cError       += "No se encontraron líneas en la factura"
+      ::cError             += "No se encontraron líneas en la factura"
    end if 
 
-   msgalert( hb_valtoexp( ::hLines ), "hLines" )
-
-   ::hTotal          := ::getController():getTotalesDocument( uuid )
+   ::hTotal                := ::getController():getTotalesDocument( uuid )
    if empty( ::hTotal )
-      ::cError       += "No se puede calcular el total"
+      ::cError             += "No se puede calcular el total"
    end if 
 
-   ::hTotales        := ::getController():getTotalesDocumentGroupByIVA( uuid )
+   msgalert( hb_valtoexp( ::hTotal ), "hTotal" )
+
+   ::hTotales              := ::getController():getTotalesDocumentGroupByIVA( uuid )
    if empty( ::hTotales )
-      ::cError       += "No se puede calcular el total por tipos de IVA"
+      ::cError             += "No se puede calcular el total por tipos de IVA"
    end if 
 
-   ::hDiscounts      := SQLFacturasClientesDescuentosModel():selectDescuentosWhereUuid( uuid, 0 )
+   aeval( ::hTotales, {|hTotal| msgalert( hb_valtoexp( hTotal ) ) } )
 
-   msgalert( hb_valtoexp( ::hDiscounts ) )
+   aeval( ::hTotales, {|hTotal| nTotalBrutoLineas += hget( hTotal, "total_bruto_lineas" ) } )
 
-   ::hClient         := SQLClientesModel():getHashWhere( 'codigo', hget( ::hDocument, "cliente_codigo" ) )
+   msgalert( nTotalBrutoLineas, "nTotalBrutoLineas" )
+
+   ::hDiscounts            := SQLFacturasClientesDescuentosModel():selectDescuentosWhereUuid( uuid, nTotalBrutoLineas )
+
+   ::hClient               := SQLClientesModel():getHashWhere( 'codigo', hget( ::hDocument, "cliente_codigo" ) )
    if empty( ::hClient )
-      ::cError       += "No se encontraron datos del cliente"
+      ::cError             += "No se encontraron datos del cliente"
    end if 
 
-   ::hClientDirection   := SQLDireccionesModel():getHashWhere( 'parent_uuid', hget( ::hClient, "uuid" ) )
+   ::hClientDirection      := SQLDireccionesModel():getHashWhere( 'parent_uuid', hget( ::hClient, "uuid" ) )
    if empty( ::hClientDirection )
-      ::cError       += "No se encontraron datos de la dirección del cliente"
+      ::cError             += "No se encontraron datos de la dirección del cliente"
    end if 
 
 RETURN ( empty( ::cError ) )
@@ -305,6 +311,8 @@ METHOD setDiscount() CLASS FacturasClientesFacturaeController
    local hDiscount
 
    for each hDiscount in ::hDiscounts
+
+      msgalert( hb_valtoexp( hDiscount ), "hDiscount" )
 
       oDiscount                                 := Discount()
       oDiscount:cDiscountReason                 := hget( hDiscount, "nombre_descuento" )

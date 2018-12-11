@@ -377,12 +377,14 @@ METHOD getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) CLASS 
 
    local cSql
 
+   msgalert( importeBruto, "importeBruto" )
+
    TEXT INTO cSql
 
    SELECT 
       facturas_clientes_descuentos.nombre AS nombre_descuento,
       facturas_clientes_descuentos.descuento AS porcentaje_descuento, 
-      ROUND( facturas_clientes_descuentos.descuento * %3$d / 100, 2 ) AS importe_descuento
+      ROUND( facturas_clientes_descuentos.descuento * %3$s / 100, 2 ) AS importe_descuento
    FROM %1$s AS facturas_clientes_descuentos 
       WHERE facturas_clientes_descuentos.parent_uuid = %2$s 
          AND facturas_clientes_descuentos.deleted_at = 0; 
@@ -394,11 +396,15 @@ METHOD getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) CLASS 
                            quoted( uuidFacturaCliente ),;
                            toSqlString( importeBruto ) )
 
+   logwrite( cSql )
+
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD selectDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) CLASS SQLFacturasClientesDescuentosModel
+
+   msgalert( importeBruto, "selectDescuentosWhereUuid" )
 
 RETURN ( ::getDatabase():selectTrimedFetchHash( ::getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) ) )
 

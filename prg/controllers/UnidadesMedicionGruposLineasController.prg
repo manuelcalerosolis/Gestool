@@ -390,7 +390,7 @@ RETURN ( getSQLDatabase():Exec( ::getSentenceInserLineaUnidadBase( uuidParent, c
 
 CLASS UnidadesMedicionGruposLineasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLUnidadesMedicionGruposLineasModel():getTableName() ) 
+   METHOD getTableName()               INLINE ( SQLUnidadesMedicionGruposLineasModel():getTableName() ) 
 
    METHOD getSentenceWhereGrupoSistema( cCodigoGrupo )
 
