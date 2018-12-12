@@ -231,8 +231,6 @@ METHOD validAction() CLASS GetSelector
       RETURN ( .f. )
    end if 
 
-   ::fireEvent( 'validated' )
-
    ::oGet:oWnd:nLastKey    := 0
 
    if !( ::isChangeGet() )
@@ -240,8 +238,13 @@ METHOD validAction() CLASS GetSelector
    end if 
 
    if ::loadHelpText()
+      
       ::setOriginal( ::varGet() )
+      
+      ::fireEvent( 'validated' )
+      
       RETURN ( .t. )
+   
    end if  
 
 RETURN ( .f. )
@@ -273,8 +276,6 @@ METHOD loadHelpText( lSilenceMode ) CLASS GetSelector
    end if
 
    ::getFields()
-
-   msgalert( hb_valtoexp( ::uFields ), "uFields" )
 
    if empty( ::uFields )
 

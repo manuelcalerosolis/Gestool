@@ -162,10 +162,6 @@ RETURN ( nil )
 
 FUNCTION appTest()
 
-   // msgalert( getSqlDatabase():escapeStr( '' ) )
-
-   // msgalert( quoted( '880f2364-2787-468a-85a8-a085f2340605' ) )
-
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//

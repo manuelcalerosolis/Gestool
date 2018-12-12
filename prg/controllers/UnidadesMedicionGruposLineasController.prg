@@ -205,15 +205,16 @@ METHOD Activate() CLASS UnidadesMedicionGruposLineasView
 
       // unidad alternativa-------------------------------------------------------------------------------------------------------//
 
-      ::oController:getUnidadesMedicioncontroller():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "unidad_alternativa_codigo" ] ) )
-      ::oController:getUnidadesMedicioncontroller():getSelector():Activate( 120, 122, ::oDialog )
-
-      REDEFINE GET   ::getController():getModel():hBuffer[ "cantidad_alternativa" ] ;
+     REDEFINE GET   ::getController():getModel():hBuffer[ "cantidad_alternativa" ] ;
          ID          130 ;
          SPINNER ;
-         MIN 1;
+         MIN         1 ;
          WHEN        ( .f. ) ;
          OF          ::oDialog ;
+
+      ::getController():getUnidadesMedicioncontroller():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "unidad_alternativa_codigo" ] ) )
+      ::getController():getUnidadesMedicioncontroller():getSelector():setValid( {|| ::getController():validate( "unidad_alternativa_codigo" ) } )
+      ::getController():getUnidadesMedicioncontroller():getSelector():Activate( 120, 122, ::oDialog )
 
       // unidad base--------------------------------------------------------------------------------------------------------------//
 
@@ -238,7 +239,7 @@ METHOD Activate() CLASS UnidadesMedicionGruposLineasView
       ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
       ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
-
+ 
       if ::oController:isNotZoomMode() 
          ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
       else
@@ -255,7 +256,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD StartActivate() CLASS UnidadesMedicionGruposLineasView
 
-   ::oController:getUnidadesMedicioncontroller():getSelector():Start()
+   ::getController():getUnidadesMedicioncontroller():getSelector():Start()
 
 RETURN ( nil )
 
@@ -274,10 +275,8 @@ END CLASS
 
 METHOD getValidators() CLASS UnidadesMedicionGruposLineasValidator
 
-   ::hValidators  := {  "nombre" =>       {  "required"  => "La descripción es un dato requerido",;
-                                             "unique"    => "La descripción introducida ya existe" },;
-                        "codigo" =>       {  "required"  => "El código es un dato requerido" ,;
-                                             "unique"    => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "unidad_alternativa_codigo" => { "required"  => "La unidad alternativa es un dato requerido" } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -288,17 +287,19 @@ RETURN ( ::hValidators )
 
 CLASS SQLUnidadesMedicionGruposLineasModel FROM SQLCompanyModel
 
-   DATA cTableName                                 INIT "unidades_medicion_grupos_lineas"
+   DATA cTableName                     INIT "unidades_medicion_grupos_lineas"
 
-   DATA cConstraints                               INIT "FOREIGN KEY (parent_uuid) REFERENCES " + SQLUnidadesMedicionGruposModel():getTableName() + " (uuid) ON DELETE CASCADE"
+   DATA cConstraints                   INIT "FOREIGN KEY (parent_uuid) REFERENCES " + SQLUnidadesMedicionGruposModel():getTableName() + " (uuid) ON DELETE CASCADE"
 
    METHOD getColumns()
 
    METHOD getGeneralSelect()
 
-   METHOD getUnidadesMedicionTableName()           INLINE ( SQLUnidadesMedicionModel():getTableName() )
+   METHOD getUnidadesMedicionTableName() ;
+                                       INLINE ( SQLUnidadesMedicionModel():getTableName() )
    
-   METHOD getUnidadesMedicionGruposTableName()     INLINE ( SQLUnidadesMedicionGruposModel():getTableName() )
+   METHOD getUnidadesMedicionGruposTableName() ;
+                                       INLINE ( SQLUnidadesMedicionGruposModel():getTableName() )
 
    METHOD getSentenceInserLineaUnidadBase( uuidParent, cCodigoBaseUnidad )
 
