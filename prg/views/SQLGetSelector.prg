@@ -62,7 +62,7 @@ CLASS GetSelector
       METHOD cleanHelpText()                    
       METHOD setHelpText( value )               
 
-   METHOD getFields()                           INLINE ( ::uFields   := ::oController:getModel():getField( "nombre", ::getKey(), ::oGet:varGet() ) )
+   METHOD getFields()                           INLINE ( ::uFields := ::oController:getModel():getField( "nombre", ::getKey(), ::oGet:varGet() ) )
    
    METHOD start()                               INLINE ( ::loadHelpText( .t. ) )
 
@@ -235,15 +235,16 @@ METHOD validAction() CLASS GetSelector
 
    ::oGet:oWnd:nLastKey    := 0
 
-   if ::isChangeGet()
+   if !( ::isChangeGet() )
+      RETURN ( .t. )
+   end if 
 
-      ::loadHelpText()
-
+   if ::loadHelpText()
       ::setOriginal( ::varGet() )
-
+      RETURN ( .t. )
    end if  
 
-RETURN ( .t. )
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
@@ -272,6 +273,8 @@ METHOD loadHelpText( lSilenceMode ) CLASS GetSelector
    end if
 
    ::getFields()
+
+   msgalert( hb_valtoexp( ::uFields ), "uFields" )
 
    if empty( ::uFields )
 

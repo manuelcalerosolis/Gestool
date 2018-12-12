@@ -89,6 +89,8 @@ RETURN ( nil )
 
 CLASS UnidadesMedicionGruposBrowseView FROM SQLBrowseView
 
+   DATA lDeletedColored    INIT .f.
+
    METHOD addColumns()                       
 
 ENDCLASS
@@ -147,6 +149,8 @@ METHOD addColumns() CLASS UnidadesMedicionGruposBrowseView
       :lHide               := .t.
    end with
 
+   ::getColumnsCreatedUpdatedAt()
+   
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -199,10 +203,10 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   ::oController:getUnidadesMedicioncontroller():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) )
-   ::oController:getUnidadesMedicioncontroller():getSelector():setEvent( 'validated', {|| ::validatedUnidadesMedicioncontroller() } )
-   ::oController:getUnidadesMedicioncontroller():getSelector():setWhen( {|| Empty( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) .AND. ::oController:isNotZoomMode() } )
-   ::oController:getUnidadesMedicioncontroller():getSelector():Build( { "idGet" => 120, "idText" => 121,"idLink" => 122, "oDialog" => ::oDialog } )
+   ::oController:getUnidadesMedicionController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) )
+   ::oController:getUnidadesMedicionController():getSelector():setWhen( {|| empty( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() } )
+   ::oController:getUnidadesMedicionController():getSelector():Build( { "idGet" => 120, "idText" => 121,"idLink" => 122, "oDialog" => ::oDialog } )
+   ::oController:getUnidadesMedicionController():getSelector():setEvent( 'validated', {|| ::validatedUnidadesMedicioncontroller() } )
 
    // Unidades equivalencia--------------------------------------------------------------------
 
@@ -248,7 +252,7 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
    end if
    
-   ::oDialog:bStart        := {|| ::startActivate() }
+   ::oDialog:bStart        := {|| ::startActivate(), ::paintedActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -258,7 +262,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startActivate() CLASS UnidadesMedicionGruposView
 
-   ::oController:getUnidadesMedicioncontroller():getSelector():Start()
+   ::oController:getUnidadesMedicionController():getSelector():Start()
 
 RETURN ( nil )
 
@@ -304,13 +308,15 @@ RETURN ( ::hValidators )
 
 CLASS SQLUnidadesMedicionGruposModel FROM SQLCompanyModel
 
-   DATA cTableName                        INIT "unidades_medicion_grupos"
+   DATA cTableName                     INIT "unidades_medicion_grupos"
+
+   DATA cConstraints                   INIT "PRIMARY KEY ( codigo, deleted_at )"
 
    METHOD getColumns()
  
    METHOD getInitialSelect() 
 
-   METHOD getUnidadesMedicionModel()      INLINE ( SQLUnidadesMedicionModel():getTableName() )
+   METHOD getUnidadesMedicionModel()   INLINE ( SQLUnidadesMedicionModel():getTableName() )
 
    METHOD countUnidadesWhereUnidadAndGrupo( cCodigoUnidad, cCodigoGrupo )
    
@@ -324,23 +330,25 @@ END CLASS
 
 METHOD getColumns() CLASS SQLUnidadesMedicionGruposModel
 
-   hset( ::hColumns, "id",                            {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                                         "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                                "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
-                                                         "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
+                                                "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",                        {  "create"    => "VARCHAR( 20 ) NOT NULL UNIQUE"           ,;
-                                                         "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 20 ) NOT NULL UNIQUE"           ,;
+                                                "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",                        {  "create"    => "VARCHAR( 200 )"                          ,;
-                                                         "default"   => {|| space( 200 ) } }                      )
+   hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 200 )"                          ,;
+                                                "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "unidad_base_codigo",            {  "create"    => "VARCHAR( 20 )"                           ,;
-                                                         "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "unidad_base_codigo",   {  "create"    => "VARCHAR( 20 )"                           ,;
+                                                "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "sistema",                       {  "create"    => "TINYINT( 1 )"                            ,;
-                                                         "default"   => {|| "0" } }                               )
+   hset( ::hColumns, "sistema",              {  "create"    => "TINYINT( 1 )"                            ,;
+                                                "default"   => {|| "0" } }                               )
+
+   ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 
@@ -352,18 +360,20 @@ METHOD getInitialSelect() CLASS SQLUnidadesMedicionGruposModel
 
    TEXT INTO cSql
 
-      SELECT grupos.id,
-         grupos.uuid,
-         grupos.codigo,
-         grupos.nombre,
-         grupos.unidad_base_codigo,
-         grupos.sistema,
-         unidad.nombre AS unidad_base_nombre
+      SELECT unidades_medicion_grupos.id,
+         unidades_medicion_grupos.uuid,
+         unidades_medicion_grupos.codigo,
+         unidades_medicion_grupos.nombre,
+         unidades_medicion_grupos.unidad_base_codigo,
+         unidades_medicion_grupos.sistema,
+         unidades_medicion_grupos.created_at,
+         unidades_medicion_grupos.updated_at,
+         unidades_medicion.nombre AS unidad_base_nombre
 
-      FROM %1$s AS grupos
+      FROM %1$s AS unidades_medicion_grupos
 
-      INNER JOIN %2$s AS unidad 
-         ON grupos.unidad_base_codigo = unidad.codigo 
+      LEFT JOIN %2$s AS unidades_medicion 
+         ON unidades_medicion_grupos.unidad_base_codigo = unidades_medicion.codigo 
 
    ENDTEXT
 
@@ -444,3 +454,155 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+CLASS TestUnidadesMedicionGruposController FROM TestCase
+
+   METHOD initModels()
+
+   METHOD testAppend()
+
+   METHOD testDialogAppend()
+
+   METHOD testDialogEmptyUnidades()   
+
+   /*   
+   METHOD testDialogEmptyNombre()
+
+   METHOD testDialogEmptyISO()
+   */
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD initModels()
+
+   SQLUnidadesMedicionModel():truncateTable()
+   SQLUnidadesMedicionGruposModel():truncateTable() 
+   SQLUnidadesMedicionGruposLineasModel():truncateTable() 
+
+   SQLUnidadesMedicionModel():testCreateUnidades()
+   SQLUnidadesMedicionModel():testCreateCajas()
+   SQLUnidadesMedicionModel():testCreatePalets()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testAppend() CLASS TestUnidadesMedicionGruposController
+
+   local uuid     := win_uuidcreatestring()
+   local hBuffer  := {  'uuid' => uuid,;
+                        'codigo' => '0',;
+                        'nombre' => 'Test unidad de medición grupo',;
+                        'unidad_base_codigo' => 'UDS' }
+
+   ::initModels()
+
+   SQLUnidadesMedicionGruposLineasModel():testCreateUnidades( uuid )
+   SQLUnidadesMedicionGruposLineasModel():testCreateCajas( uuid )
+   SQLUnidadesMedicionGruposLineasModel():testCreatePalets( uuid )
+
+   ::assert:notEquals( 0, SQLUnidadesMedicionGruposModel():insertBuffer( hBuffer ), "test id UnidadesMedicionGrupos distinto de cero" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testDialogAppend() CLASS TestUnidadesMedicionGruposController
+
+   local oController 
+
+   ::initModels()
+
+   oController    := UnidadesMedicionGruposController():New()
+
+   oController:getUnidadesMedicionGruposLineasController():getDialogView():setEvent( 'painted',;
+      {| self | ;
+         self:getControl( 120 ):cText( 'CAJAS' ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 130 ):cText( 10 ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         self:getControl( 100 ):cText( '0' ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110 ):cText( 'Test unidad de medición grupo' ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 120 ):cText( 'UDS' ),;
+         self:getControl( 120 ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 130 ):Click(),;         
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )
+
+   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testDialogEmptyUnidades() CLASS TestUnidadesMedicionGruposController
+
+   local oController 
+
+   ::initModels()
+
+   oController    := UnidadesMedicionGruposController():New()
+
+   oController:getUnidadesMedicionGruposLineasController():getDialogView():setEvent( 'painted',;
+      {| self | ;
+         self:getControl( 120 ):cText( 'CAJAS' ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDCANCEL ):Click() } )
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         self:getControl( 100 ):cText( '0' ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110 ):cText( 'Test unidad de medición grupo' ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 120 ):cText( 'UDS' ),;
+         self:getControl( 120 ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 130 ):Click(),;         
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )
+
+   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+/*
+METHOD testDialogEmptyISO() CLASS TestUnidadesMedicionGruposController
+
+   local oController 
+
+   SQLUnidadesMedicionGruposModel():truncateTable() 
+
+   oController    := UnidadesMedicionGruposController():New()
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         self:getControl( 100 ):cText( '0' ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110 ):cText( 'Test uniades de medición' ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDCANCEL ):Click() } )
+
+   ::assert:false( oController:Append(), "test creación unidad de medición sin codigo ISO" )
+
+RETURN ( nil )
+*/
+//---------------------------------------------------------------------------//
+
+#endif

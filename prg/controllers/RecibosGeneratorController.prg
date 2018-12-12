@@ -67,7 +67,6 @@ CLASS RecibosGeneratorController
 
    METHOD adjustFreeMonth( hPaymentDays )
 
-
    //Construcciones tardias----------------------------------------------------
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLRecibosModel():New( self ), ), ::oModel ) 
@@ -243,7 +242,7 @@ METHOD getTermAmount( nTerm ) CLASS RecibosGeneratorController
    
    local nTotalDocument
 
-   nTotalDocument          := hget( ::hTotalDocument, "totalDocumento" )
+   nTotalDocument          := hget( ::hTotalDocument, "total_documento" )
 
    if nTerm != ::getTerms()
 
@@ -263,7 +262,7 @@ RETURN ( ::nTermAmount )
 
 METHOD Insert( nTermAmount ) CLASS RecibosGeneratorController
 
-   DEFAULT nTermAmount      := Round( hget( ::hTotalDocument, "totalDocumento" ), 2 )
+   DEFAULT nTermAmount      := Round( hget( ::hTotalDocument, "total_documento" ), 2 )
 
    ::getModel():loadBlankBuffer()
 
@@ -293,7 +292,7 @@ METHOD insertPago() CLASS RecibosGeneratorController
 
       :setBuffer( "medio_pago_codigo", ::getMetodoPagoModel():getMedioPagoCodigo( ::oController:getModelBuffer( 'metodo_pago_codigo' ) ) )
 
-      :setBuffer( "importe", Round( hget( ::hTotalDocument, "totalDocumento" ), 2 ) )
+      :setBuffer( "importe", Round( hget( ::hTotalDocument, "total_documento" ), 2 ) )
 
       :setBuffer( "comentario", ::getConcept() )
 
@@ -317,7 +316,7 @@ METHOD insertReciboPago() CLASS RecibosGeneratorController
 
       :setBuffer( "pago_uuid", ::uuidPago )
 
-      :setBuffer( "importe", Round( hget( ::hTotalDocument, "totalDocumento" ), 2 ) ) 
+      :setBuffer( "importe", Round( hget( ::hTotalDocument, "total_documento" ), 2 ) ) 
 
       :insertBuffer()
 

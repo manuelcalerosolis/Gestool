@@ -120,7 +120,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'FacturaClienteTot
 
 METHOD selectTotalSummaryWhereUuid( uuidFacturaCliente, aplicarRecargo ) CLASS FacturasClientesRepository
 
-RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaClienteTotalSummaryWhereUuid' ) + "( " + quoted( uuidFacturaCliente ) + ", " + toSqlString( aplicarRecargo ) + " )" ) )
+RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaClienteTotalSummaryWhereUuid' ) + "( " + quotedUuid( uuidFacturaCliente ) + ", " + toSqlString( aplicarRecargo ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -170,7 +170,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'FacturaClienteRec
 
 METHOD selectRecargoEquivalenciaWhereUuid( uuidFacturaCliente ) CLASS FacturasClientesRepository
 
-RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaClienteRecargoEquivalenciaWhereUuid' ) + "( " + quoted( uuidFacturaCliente ) + " )" ) )
+RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaClienteRecargoEquivalenciaWhereUuid' ) + "( " + quotedUuid( uuidFacturaCliente ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -188,7 +188,7 @@ METHOD getSentenceDescuento( uuidFacturaCliente ) CLASS FacturasClientesReposito
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, SQLFacturasClientesDescuentosModel():getTableName(), if( empty( uuidFacturaCliente ), 'uuid_factura_cliente', quoted( uuidFacturaCliente ) ) )
+   cSql  := hb_strformat( cSql, SQLFacturasClientesDescuentosModel():getTableName(), if( empty( uuidFacturaCliente ), 'uuid_factura_cliente', quotedUuid( uuidFacturaCliente ) ) )
 
 RETURN ( alltrim( cSql ) )
 
@@ -241,7 +241,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'FacturaClienteDes
 
 METHOD selectDescuentoWhereUuid( uuidFacturaCliente ) CLASS FacturasClientesRepository
 
-RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaClienteDescuentoWhereUuid' ) + "( " + quoted( uuidFacturaCliente ) + " )" ) )
+RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaClienteDescuentoWhereUuid' ) + "( " + quotedUuid( uuidFacturaCliente ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -292,7 +292,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'FacturaClienteTot
 
 METHOD selectTotalDescuentoWhereUuid( uuidFacturaCliente, importeBruto ) CLASS FacturasClientesRepository
 
-RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaClienteTotalDescuentoWhereUuid' ) + "( " + quoted( uuidFacturaCliente ) + ", " + toSqlString( importeBruto ) + " )" ) )
+RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaClienteTotalDescuentoWhereUuid' ) + "( " + quotedUuid( uuidFacturaCliente ) + ", " + toSqlString( importeBruto ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -323,7 +323,7 @@ METHOD getSentenceLineas( uuidFacturaCliente ) CLASS FacturasClientesRepository
                            SQLFacturasClientesLineasModel():getTableName(),;
                            ::getSentenceImporteBrutoLineas(),;
                            ::getSentenceUnidadesLineas(),;
-                           if( empty( uuidFacturaCliente ), 'uuid_factura_cliente', quoted( uuidFacturaCliente ) ) )
+                           if( empty( uuidFacturaCliente ), 'uuid_factura_cliente', quotedUuid( uuidFacturaCliente ) ) )
 
 RETURN ( alltrim( cSql ) )
 
@@ -421,7 +421,7 @@ METHOD getSentenceTotalesDocument( uuidFacturaCliente ) CLASS FacturasClientesRe
    cSql  := hb_strformat(  cSql,;
                            ::getSentenceTotales( uuidFacturaCliente ),;
                            Company():getTableName( 'FacturaClienteTotalDescuentoWhereUuid' ),;
-                           quoted( uuidFacturaCliente ) )
+                           quotedUuid( uuidFacturaCliente ) )
 
 RETURN ( alltrim( cSql ) )
 
@@ -480,7 +480,7 @@ METHOD getClientMailWhereFacturaUuid( uuidFacturaCliente ) CLASS FacturasCliente
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLDireccionesModel():getTableName(), quoted( uuidFacturaCliente ) ) 
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLDireccionesModel():getTableName(), quotedUuid( uuidFacturaCliente ) ) 
 
 RETURN ( getSQLDatabase():getValue( cSql, "" ) ) 
 
@@ -496,7 +496,7 @@ METHOD getSentenceRecargoEquivalenciaAsSelect( uuidFacturaCliente ) CLASS Factur
 
    cSql  := hb_strformat(  cSql,; 
                            Company():getTableName( 'FacturaClienteRecargoEquivalenciaWhereUuid' ),;
-                           quoted( uuidFacturaCliente ) )
+                           quotedUuid( uuidFacturaCliente ) )
 
 RETURN ( alltrim( cSql ) )
 
@@ -512,7 +512,7 @@ METHOD getSentenceDescuentosAsSelect( uuidFacturaCliente ) CLASS FacturasCliente
 
    cSql  := hb_strformat(  cSql,; 
                            Company():getTableName( 'FacturaClienteDescuentoWhereUuid' ),;
-                           quoted( uuidFacturaCliente ) )
+                           quotedUuid( uuidFacturaCliente ) )
 
 RETURN ( alltrim( cSql ) )
 

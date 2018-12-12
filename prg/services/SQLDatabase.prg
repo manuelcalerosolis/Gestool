@@ -24,6 +24,8 @@ CLASS SQLDatabase
    DATA cPasswordMySQL
    DATA nPortMySQL
 
+   DATA cBackUpFileName                   INIT ""
+
    DATA aModels                           INIT {}
 
    METHOD New()                           CONSTRUCTOR
@@ -81,7 +83,7 @@ CLASS SQLDatabase
 
    METHOD errorInfo()                     INLINE ( if( !empty( ::oConexion ), ::oConexion:errorInfo(), ) )
 
-   METHOD Export( cFileName )
+   METHOD Export( cBackUpFileName )
       METHOD exportTable( hFileName, cTable )
 
    METHOD checkModels()   
@@ -122,7 +124,7 @@ METHOD New( cDatabaseMySQL )
 
    ::oConexion:setAttribute( MYSQL_OPT_RECONNECT, .t. )
 
-   ::oConexion:setAttribute( HDO_ATTR_DEFAULT_TINY_AS_BOOL, .t. )    
+   ::oConexion:setAttribute( HDO_ATTR_DEF_TINY_AS_BOOL, .t. )     
    
 RETURN ( Self )
 
@@ -521,26 +523,28 @@ RETURN ( aListTables )
 
 //---------------------------------------------------------------------------//
 
-METHOD Export( cFileName )
+METHOD Export( cBackUpFileName )
 
    local cString     
    local hFileName   
    local aListTables 
 
-   DEFAULT cFileName := cPatSafe() + ::cDatabaseMySQL + dtos( date() ) + ".sql"
+   DEFAULT cBackUpFileName := cPatSafe() + ::cDatabaseMySQL + dtos( date() ) + ".sql"
 
-   hFileName         := fcreate( cFileName )
+   ::cBackUpFileName       := cBackUpFileName
+
+   hFileName               := fcreate( ::cBackUpFileName )
    if ferror() <> 0
-      msgStop( "Error creando fichero de backup : " + cFileName + ", error " + alltrim( str( ferror() ) ), "Error" )
+      msgStop( "Error creando fichero de backup : " + ::cBackUpFileName + ", error " + alltrim( str( ferror() ) ), "Error" )
       RETURN ( .f. )
    endif
 
-   aListTables       := ::getListTables()
+   aListTables             := ::getListTables()
    if empty( aListTables )
       RETURN ( .f. )
    endif
 
-   cString           := "USE `" + ::cDatabaseMySQL + "`;" + hb_osnewline() + hb_osnewline()
+   cString                 := "USE `" + ::cDatabaseMySQL + "`;" + hb_osnewline() + hb_osnewline()
 
    fwrite( hFileName, cString )
 
@@ -548,15 +552,15 @@ METHOD Export( cFileName )
       {|aTables| aeval( aTables,;
          {|cTable| ::exportTable( hFileName, cTable ) } ) } )
 
-   cString           := "--  " + hb_osnewline()
-   cString           += "--  Fin del procesado de la base de datos " + ::cDatabaseMySQL + hb_osnewline()
-   cString           += "--  " + hb_osnewline() + hb_osnewline()
+   cString                 := "--  " + hb_osnewline()
+   cString                 += "--  Fin del procesado de la base de datos " + ::cDatabaseMySQL + hb_osnewline()
+   cString                 += "--  " + hb_osnewline() + hb_osnewline()
 
    fwrite( hFileName, cString )
 
    fclose( hFileName )
 
-RETURN ( nil )
+RETURN ( file( ::cBackUpFileName ) )
 
 //---------------------------------------------------------------------------//
 
@@ -571,14 +575,14 @@ METHOD exportTable( hFileName, cTable )
       RETURN ( nil )
    end if 
 
-   cString        := "--  Datos de la tabla " + cTable + hb_osnewline()
-   cString        += "INSERT INTO `" + cTable + "` VALUES " + hb_osnewline()
+   cString        := "-- Datos de la tabla " + cTable + hb_osnewline()
+   cString        += "INSERT IGNORE INTO `" + cTable + "` VALUES " + hb_osnewline()
 
    fwrite( hFileName, cString )
 
    hdo_rowprocess( ::oConexion:getHandle(), hFileName, cTable )  // Hacerlo en lenguaje C
    
-   cString        :=  hb_osnewline() + "--  Fin de datos de la tabla " + cTable + hb_osnewline() + hb_osnewline()
+   cString        :=  hb_osnewline() + "-- Fin de datos de la tabla " + cTable + hb_osnewline() + hb_osnewline()
 
    fwrite( hFileName, cString )
 

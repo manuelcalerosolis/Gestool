@@ -160,6 +160,8 @@ RETURN ( nil )
 
 CLASS RecibosBrowseView FROM SQLBrowseView
 
+   DATA lDeletedColored    INIT .f.
+
    METHOD addColumns() 
 
    METHOD Paid()  
@@ -520,6 +522,10 @@ METHOD getColumns() CLASS SQLRecibosModel
 
    hset( ::hColumns, "concepto",                   {  "create"    => "VARCHAR( 200 )"                              ,;
                                                       "default"   => {|| space( 200 ) } }                          )
+
+   ::getTimeStampColumns()
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

@@ -3253,7 +3253,7 @@ FUNCTION Quoted( uValue )
       RETURN ( hb_ntos( uValue ) )
    end if 
 
-   if ( hb_ischar( uValue ) .or. hb_ismemo( uValue ) )
+   if ( hb_ischar( uValue ) .or. hb_ismemo( uValue ) ) .and. !empty( uValue )
       RETURN ( "'" + alltrim( getSqlDatabase():escapeStr( uValue ) ) + "'" )
    end if 
 
@@ -3261,7 +3261,7 @@ RETURN ( "''" )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION quotedNotEscaped( uValue )
+FUNCTION quotedUuid( uValue )
 
    if ( hb_isnumeric( uValue ) )
       RETURN ( hb_ntos( uValue ) )

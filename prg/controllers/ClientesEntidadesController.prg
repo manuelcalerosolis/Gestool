@@ -133,6 +133,7 @@ METHOD UpdateBuffer( uuidEntidad ) CLASS ClientesEntidadesController
    local idDocumento     
 
    idDocumento          := ::getModel():getIdWhereParentUuid( uuidEntidad )
+   
    if empty( idDocumento )
       ::getModel():insertBuffer()
       RETURN ( nil )

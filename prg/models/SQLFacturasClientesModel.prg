@@ -84,6 +84,8 @@ METHOD getColumns() CLASS SQLFacturasClientesModel
 
    ::getTimeStampColumns()
 
+   ::getDeletedStampColumn()
+
    ::getClosedColumns()
 
 RETURN ( ::hColumns )

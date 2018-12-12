@@ -573,6 +573,8 @@ CLASS TestFacturasClientesController FROM TestCase
    METHOD testCalculoFacturaConDescuento()
 
    METHOD testCalculoFacturaConIncremento()
+
+   METHOD testFacturaConUnidadesDeMedicion()
    
 END CLASS
 
@@ -607,7 +609,7 @@ METHOD testCalculoFacturaConDescuento() CLASS TestFacturasClientesController
 
    hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
 
-   ::assert:equals( 117.520000, hget( hTotal, "total_documento" ), "test creacion de XML" )
+   ::assert:equals( 117.520000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
 
    oController:End()
 
@@ -638,7 +640,43 @@ METHOD testCalculoFacturaConIncremento() CLASS TestFacturasClientesController
 
    hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
 
-   ::assert:equals( 7.720000, hget( hTotal, "total_documento" ), "test creacion de XML" )
+   ::assert:equals( 7.720000, hget( hTotal, "total_documento" ), "test creacion de factura con incremento" )
+
+   oController:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testFacturaConUnidadesDeMedicion() CLASS TestFacturasClientesController
+
+   local uuid  
+   local hTotal
+   local oController
+
+   uuid        := win_uuidcreatestring()
+
+   SQLClientesModel():truncateTable()
+   SQLFacturasClientesModel():truncateTable() 
+   SQLFacturasClientesLineasModel():truncateTable() 
+   SQLFacturasClientesDescuentosModel():truncateTable()
+   SQLArticulosModel():truncateTable()
+
+   // Creacion de registros para el test---------------------------------------
+
+   SQLClientesModel():testCreateContado()
+
+   SQLFacturasClientesModel():testCreateFactura( uuid ) 
+
+   SQLFacturasClientesLineasModel():testCreateIVAal0Con10PorcientoDescuento( uuid ) 
+
+
+
+   oController := FacturasClientesController():New() 
+
+   hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
+
+   ::assert:equals( 117.520000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
 
    oController:End()
 

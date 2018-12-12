@@ -38,6 +38,8 @@ CLASS SQLBrowseView
 
    DATA oEvents
 
+   DATA lDeletedColored                      INIT .t.
+
    METHOD New( oController ) CONSTRUCTOR
    METHOD End()
 
@@ -808,19 +810,31 @@ RETURN ( nil )
 
 METHOD getStdColors()
 
-RETURN ( { CLR_BLACK, if( empty( ::getRowSet():fieldget( 'deleted_at' ) ), CLR_WHITE, rgb( 255, 235, 238 ) ) } )
+   if ::lDeletedColored
+      RETURN ( { CLR_BLACK, if( empty( ::getRowSet():fieldget( 'deleted_at' ) ), CLR_WHITE, rgb( 255, 235, 238 ) ) } )
+   end if 
+
+RETURN ( { CLR_BLACK, CLR_WHITE } )
 
 //----------------------------------------------------------------------------//
 
 METHOD getSelColors()
 
-RETURN ( { CLR_BLACK, if( empty( ::getRowSet():fieldget( 'deleted_at' ) ), Rgb( 229, 229, 229 ), rgb( 255, 235, 238 ) ) } )
+   if ::lDeletedColored
+      RETURN ( { CLR_BLACK, if( empty( ::getRowSet():fieldget( 'deleted_at' ) ), Rgb( 229, 229, 229 ), rgb( 255, 235, 238 ) ) } )
+   end if 
+
+RETURN ( { CLR_BLACK, Rgb( 229, 229, 229 ) } )
 
 //----------------------------------------------------------------------------//
 
 METHOD getSelFocusColors()
 
-RETURN ( { CLR_BLACK, if( empty( ::getRowSet():fieldget( 'deleted_at' ) ), Rgb( 229, 229, 229 ), rgb( 239, 154, 154 ) ) } )
+   if ::lDeletedColored
+      RETURN ( { CLR_BLACK, if( empty( ::getRowSet():fieldget( 'deleted_at' ) ), Rgb( 229, 229, 229 ), rgb( 239, 154, 154 ) ) } )
+   end if 
+
+RETURN ( { CLR_BLACK, Rgb( 229, 229, 229 ) } )
 
 //----------------------------------------------------------------------------//
 

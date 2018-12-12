@@ -255,11 +255,18 @@ RETURN ( nil )
 
 METHOD BackUp()
 
+   local lExport
    local oDialogWait
 
-   oDialogWait          := TWaitMeter():New( "Copia de seguridad", "Creando copia de seguridad..." )
-   oDialogWait:setStart( {|| getSQLDatabase():Export(), oDialogWait:End() } )
+   oDialogWait          := TWaitMeter():New( "Espere por favor", "Creando copia de seguridad..." )
+   oDialogWait:setStart( {|| lExport := getSQLDatabase():Export(), oDialogWait:End() } )
    oDialogWait:Run()
+
+   if lExport
+      msgInfo( "Copia de seguridad realizada con exito en : " + hb_osnewline() + hb_osnewline() + getSQLDatabase():cBackUpFileName )
+   else 
+      msgStop( "Error al realizar la copia de seguridad." )
+   end if 
 
 RETURN ( nil )
 
@@ -270,6 +277,8 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 CLASS EmpresasBrowseView FROM SQLBrowseView
+
+   DATA lDeletedColored    INIT .f.
 
    METHOD addColumns()                       
 

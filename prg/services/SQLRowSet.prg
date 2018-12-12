@@ -22,6 +22,7 @@ CLASS SQLRowSet
    METHOD Get()                                       INLINE ( ::oRowSet )
 
    METHOD fieldGet( uField )                          INLINE ( if( !empty( ::oRowSet ), ::oRowSet:fieldget( uField ), ) )
+   METHOD fieldpos( uField )                          INLINE ( if( !empty( ::oRowSet ), ::oRowSet:fieldpos( uField ), ) )
    METHOD fieldGetDeteletedAt()                       INLINE ( if( !empty( ::oRowSet ), ::oRowSet:fieldget( 'deleted_at' ), ) )
    
    METHOD fieldValueByName( cColumn )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:getValueByName( cColumn ), ) )
@@ -128,7 +129,7 @@ METHOD Build( cSentence, lPad )
 
       ::oRowSet      := getSQLDatabase():RowSet( cSentence )
 
-      ::oRowSet:setAttribute( STMT_ATTR_STR_PAD, lPad ) 
+      ::oRowSet:setAttribute( STMT_ATTR_STR_PAD, lPad )  
       
       ::oRowSet:Load()
 

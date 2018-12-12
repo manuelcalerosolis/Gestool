@@ -8,6 +8,8 @@ CLASS FacturasClientesBrowseView FROM SQLBrowseView
 
    DATA lFastEdit          INIT .t.
 
+   DATA lDeletedColored    INIT .f.
+
    METHOD addColumns()                       
 
 ENDCLASS

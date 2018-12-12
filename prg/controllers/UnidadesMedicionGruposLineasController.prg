@@ -11,15 +11,15 @@ CLASS UnidadesMedicionGruposLineasController FROM SQLBrowseController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := UnidadesMedicionGruposLineasBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := UnidadesMedicionGruposLineasBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := UnidadesMedicionGruposLineasView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := UnidadesMedicionGruposLineasView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionGruposLineasValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionGruposLineasValidator():New( self ), ), ::oValidator )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := UnidadesMedicionGruposLineasRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := UnidadesMedicionGruposLineasRepository():New( self ), ), ::oRepository )
    
-   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLUnidadesMedicionGruposLineasModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLUnidadesMedicionGruposLineasModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -29,15 +29,15 @@ METHOD New( oController ) CLASS UnidadesMedicionGruposLineasController
 
    ::Super:New( oController )
 
-   ::cTitle                         := "Equivalencia de unidades de medición"
+   ::cTitle                            := "Equivalencia de unidades de medición"
 
-   ::cName                          := "unidades_medicion_grupos"
+   ::cName                             := "unidades_medicion_grupos"
 
-   ::hImage                         := {  "16" => "gc_tape_measure2_16",;
-                                          "32" => "gc_tape_measure2_32",;
-                                          "48" => "gc_tape_measure2_48" }
+   ::hImage                            := {  "16" => "gc_tape_measure2_16",;
+                                             "32" => "gc_tape_measure2_32",;
+                                             "48" => "gc_tape_measure2_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                            := Auth():Level( ::cName )
 
    ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
@@ -76,6 +76,8 @@ RETURN ( ::Super:End() )
 //---------------------------------------------------------------------------//
 
 CLASS UnidadesMedicionGruposLineasBrowseView FROM SQLBrowseView
+
+   DATA lDeletedColored    INIT .f.
 
    METHOD addColumns()                       
 
@@ -204,7 +206,6 @@ METHOD Activate() CLASS UnidadesMedicionGruposLineasView
       // unidad alternativa-------------------------------------------------------------------------------------------------------//
 
       ::oController:getUnidadesMedicioncontroller():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "unidad_alternativa_codigo" ] ) )
-      
       ::oController:getUnidadesMedicioncontroller():getSelector():Activate( 120, 122, ::oDialog )
 
       REDEFINE GET   ::getController():getModel():hBuffer[ "cantidad_alternativa" ] ;
@@ -238,13 +239,13 @@ METHOD Activate() CLASS UnidadesMedicionGruposLineasView
 
       ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-      
       if ::oController:isNotZoomMode() 
          ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
+      else
+         ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
       end if
 
-      ::oDialog:bStart  := {|| ::StartActivate() }
+      ::oDialog:bStart        := {|| ::startActivate(), ::paintedActivate() }
    
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -302,6 +303,16 @@ CLASS SQLUnidadesMedicionGruposLineasModel FROM SQLCompanyModel
    METHOD getSentenceInserLineaUnidadBase( uuidParent, cCodigoBaseUnidad )
 
    METHOD insertLineaUnidadBase( uuidParent, cCodigoBaseUnidad )
+
+#ifdef __TEST__
+
+   METHOD testCreateUnidades( uuidParent )
+
+   METHOD testCreateCajas( uuidParent ) 
+
+   METHOD testCreatePalets( uuidParent ) 
+
+#endif
 
 END CLASS
 
@@ -381,6 +392,51 @@ RETURN ( cSql )
 METHOD insertLineaUnidadBase( uuidParent, cCodigoBaseUnidad ) CLASS SQLUnidadesMedicionGruposLineasModel
 
 RETURN ( getSQLDatabase():Exec( ::getSentenceInserLineaUnidadBase( uuidParent, cCodigoBaseUnidad ) ) )
+
+//---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+METHOD testCreateUnidades( uuidParent ) CLASS SQLUnidadesMedicionGruposLineasModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuidParent )
+   hset( hBuffer, "unidad_alternativa_codigo", "UDS" )
+   hset( hBuffer, "cantidad_alternativa", 1 )
+   hset( hBuffer, "cantidad_base", 1 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateCajas( uuidParent ) CLASS SQLUnidadesMedicionGruposLineasModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuidParent )
+   hset( hBuffer, "unidad_alternativa_codigo", "CAJAS" )
+   hset( hBuffer, "cantidad_alternativa", 1 )
+   hset( hBuffer, "cantidad_base", 10 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreatePalets( uuidParent ) CLASS SQLUnidadesMedicionGruposLineasModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuidParent )
+   hset( hBuffer, "unidad_alternativa_codigo", "PALETS" )
+   hset( hBuffer, "cantidad_alternativa", 1 )
+   hset( hBuffer, "cantidad_base", 100 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+#endif
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

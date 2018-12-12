@@ -85,40 +85,17 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    xbrNumFormat( "E", .t. )
 
-   // Administracion SQL-------------------------------------------------------
+   do case
+      case ( "ADMINSQL" $ appParamsMain() ) 
+         mainAdminSQL()
 
-   if ( "ADMINSQL" $ appParamsMain() ) 
+      case ( "TEST" $ appParamsMain() ) 
+         mainTest()
 
-      getSQLDatabase():ConnectWithoutDataBase()
+      otherwise
+         mainApplication()
 
-      if AccessController():New( .f. ):isLoginSuperAdmin()
-         CreateAdminSQLWindow()
-      end if
-
-      RETURN ( nil )
-
-   end if 
-
-   // Conexión con MySQL------------------------------------------------------
-
-   if !( getSQLDatabase():Connect() )
-      msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
-      RETURN ( nil )
-   end if 
-
-   if ( "TEST" $ appParamsMain() ) 
-   
-      testMain()
-
-   else
-
-      if AccessController():isLogin()
-         CreateMainSQLWindow()
-      end if
-
-   end if 
-
-   getSQLDatabase():Disconnect() 
+   end case
 
    destroyIconApp()
 
@@ -126,41 +103,68 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
+STATIC FUNCTION mainAdminSQL()
+
+   getSQLDatabase():ConnectWithoutDataBase()
+
+   if AccessController():New():isLoginSuperAdmin()
+      CreateAdminSQLWindow()
+   end if
+
+   getSQLDatabase():Disconnect() 
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+STATIC FUNCTION MainTest()
+
+   local hEmpresa 
+
+   if !( getSQLDatabase():Connect() )
+      msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
+      RETURN ( nil )
+   end if 
+
+   hEmpresa          := SQLEmpresasModel():getWhereCodigo( '0001' ) 
+   
+   if empty( hEmpresa )
+      msgStop( "No se ha podido seleccionar la empresa de pruebas" )
+      RETURN ( nil )
+   end if  
+
+   Company( hEmpresa )
+
+   hbunit_test()
+
+   getSQLDatabase():Disconnect() 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION mainApplication()
+
+   if !( getSQLDatabase():Connect() )
+      msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
+      RETURN ( nil )
+   end if 
+
+   if AccessController():isLogin()
+      CreateMainSQLWindow()
+   end if 
+
+   getSQLDatabase():Disconnect() 
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
 FUNCTION appTest()
 
-   // local oCertificate   := SELCERT()
+   // msgalert( getSqlDatabase():escapeStr( '' ) )
 
-   // FacturaeController():New():Run()
-
-/*
-   local oRootElement
-   local oMemberElement
-   local oMemberAttribute
-   local oMemberName   
-   local oDOMDocument   := CreateObject( "MSXML2.DOMDocument.6.0" )
-   
-   oRootElement         := oDOMDocument:createElement("Familia")
-   oDOMDocument:appendChild( oRootElement )
-   
-   oMemberElement       := oDOMDocument:createElement("Miembro")
-   oRootElement:appendChild( oMemberElement )
-   
-   //' Creates Attribute to the Member Element
-   oMemberAttribute     := oDOMDocument:createAttribute("Relationship")
-   oMemberAttribute:nodeValue    := "Padre"
-   oMemberElement:setAttributeNode( oMemberAttribute )
-   
-   // Create element under Member element, and
-   // gives value "some guy"
-   oMemberName          := oDOMDocument:createCDATASection("<Name>")
-   oMemberElement:appendChild( oMemberName )
-   oMemberName:Text     := "Some Guy"
-
-   //' Saves XML data to disk:
-   oDOMDocument:save( "c:\temp\andrew.xml" )
-
-   oDOMDocument         := nil
-*/
+   // msgalert( quoted( '880f2364-2787-468a-85a8-a085f2340605' ) )
 
 RETURN ( nil )
 
@@ -184,23 +188,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-FUNCTION testMain()
-
-   local hEmpresa := SQLEmpresasModel():getWhereCodigo( '0001' ) 
-   
-   if empty( hEmpresa )
-      msgStop( "No se ha podido seleccionar la empresa de pruebas" )
-      RETURN ( .f. )
-   end if  
-
-   Company( hEmpresa )
-
-   hbunit_test()
-
-RETURN ( .f. )
-
 //---------------------------------------------------------------------------//
 
 FUNCTION logwriteSeconds( cText )

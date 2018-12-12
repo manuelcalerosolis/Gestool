@@ -13,9 +13,15 @@ CLASS SQLArticulosModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
+#ifdef __TEST__   
+
    METHOD testCreatePrecioConDescuentos() 
 
    METHOD testCreateArticuloConUuid( uuid )
+
+   METHOD testCreateArticuloConUnidadeDeMedicionPalets( uuid )
+
+#endif
 
 END CLASS
 
@@ -165,6 +171,8 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
+#ifdef __TEST__
+
 METHOD testCreatePrecioConDescuentos() CLASS SQLArticulosModel
 
    local hBuffer  := ::loadBlankBuffer()
@@ -185,6 +193,19 @@ METHOD testCreateArticuloConUuid( uuid ) CLASS SQLArticulosModel
    hset( hBuffer, "nombre", "Articulo test" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateArticuloConUnidadeDeMedicionPalets() CLASS SQLArticulosModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "codigo", "0" )
+   hset( hBuffer, "nombre", "Articulo con venta como palets" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+#endif
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
