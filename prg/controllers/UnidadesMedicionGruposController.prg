@@ -13,15 +13,15 @@ CLASS UnidadesMedicionGruposController FROM SQLNavigatorController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := UnidadesMedicionGruposBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := UnidadesMedicionGruposBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := UnidadesMedicionGruposView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := UnidadesMedicionGruposView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionGruposValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionGruposValidator():New( self ), ), ::oValidator )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := UnidadesMedicionGruposRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := UnidadesMedicionGruposRepository():New( self ), ), ::oRepository )
    
-   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLUnidadesMedicionGruposModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLUnidadesMedicionGruposModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -31,15 +31,15 @@ METHOD New( oController ) CLASS UnidadesMedicionGruposController
 
    ::Super:New( oController )
 
-   ::cTitle                                  := "Grupos de unidades de medición"
+   ::cTitle                            := "Grupos de unidades de medición"
 
-   ::cName                                   := "unidades_medicion_grupos"
+   ::cName                             := "unidades_medicion_grupos"
 
-   ::hImage                                  := {  "16" => "tab_pane_tape_measure2_16",;
-                                                   "32" => "tab_pane_tape_measure2_32",;
-                                                   "48" => "tab_pane_tape_measure2_48" }
+   ::hImage                            := {  "16" => "tab_pane_tape_measure2_16",;
+                                             "32" => "tab_pane_tape_measure2_32",;
+                                             "48" => "tab_pane_tape_measure2_48" }
 
-   ::nLevel                                  := Auth():Level( ::cName )
+   ::nLevel                            := Auth():Level( ::cName )
 
    ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
@@ -181,7 +181,7 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    ::oController:getImage( "48" ) ;
+      RESOURCE    ::getController():getImage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog ;
 
@@ -190,45 +190,46 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       FONT        oFontBold() ;
       OF          ::oDialog ;
    
-   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::getController():getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
-      VALID       ( ::oController:validate( "codigo" ) ) ;
-      WHEN        ( ::oController:isAppendOrDuplicateMode() );
+      VALID       ( ::getController():validate( "codigo" ) ) ;
+      WHEN        ( ::getController():isAppendOrDuplicateMode() );
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::getController():getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::getController():validate( "nombre" ) ) ;
+      WHEN        ( ::getController():isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   ::oController:getUnidadesMedicionController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) )
-   ::oController:getUnidadesMedicionController():getSelector():setWhen( {|| empty( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() } )
-   ::oController:getUnidadesMedicionController():getSelector():Build( { "idGet" => 120, "idText" => 121,"idLink" => 122, "oDialog" => ::oDialog } )
-   ::oController:getUnidadesMedicionController():getSelector():setEvent( 'validated', {|| ::validatedUnidadesMedicioncontroller() } )
+   ::getController():getUnidadesMedicionController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "unidad_base_codigo" ] ) )
+   ::getController():getUnidadesMedicionController():getSelector():Build( { "idGet" => 120, "idText" => 121,"idLink" => 122, "oDialog" => ::oDialog } )
+   ::getController():getUnidadesMedicionController():getSelector():setWhen( {|| empty( ::getController():getModel():hBuffer[ "unidad_base_codigo" ] ) .and. ::getController():isNotZoomMode() } )
+   ::getController():getUnidadesMedicionController():getSelector():setValid( {|| ::getController():validate( "unidad_base_codigo" ) } )
+   ::getController():getUnidadesMedicionController():getSelector():setEvent( 'validated', {|| ::validatedUnidadesMedicioncontroller() } )
 
    // Unidades equivalencia--------------------------------------------------------------------
 
    REDEFINE BUTTON  ;
       ID          130 ;
       OF          ::oDialog ;
-      ACTION      ( ::oController:getUnidadesMedicionGruposLineasController():Append() ) ;
-      WHEN        ( !empty( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
+      ACTION      ( ::getController():getUnidadesMedicionGruposLineasController():Append() ) ;
+      WHEN        ( ::getController():isNotZoomMode() ) ;
 
    REDEFINE BUTTON ;
       ID          140 ;
       OF          ::oDialog ;
-      ACTION      ( ::oController:getUnidadesMedicionGruposLineasController():Edit() ) ;
-      WHEN        ( !empty( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
+      ACTION      ( ::getController():getUnidadesMedicionGruposLineasController():Edit() ) ;
+      WHEN        ( ::getController():isNotZoomMode() ) ;
 
    REDEFINE BUTTON  ;
       ID          150 ;
       OF          ::oDialog ;
-      ACTION      ( ::oController:getUnidadesMedicionGruposLineasController():Delete() ) ;
-      WHEN        ( !empty( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
+      ACTION      ( ::getController():getUnidadesMedicionGruposLineasController():Delete() ) ;
+      WHEN        ( ::getController():isNotZoomMode() ) ;
 
-   ::oController:getUnidadesMedicionGruposLineasController():Activate( 160, ::oDialog ) 
+   ::getController():getUnidadesMedicionGruposLineasController():Activate( 160, ::oDialog ) 
 
    // campos extra-------------------------------------------------------------
 
@@ -240,7 +241,7 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::getController():getCamposExtraValoresController():Edit( ::getController():getUuid() ) }
 
    // botones------------------------------------------------------------------
 
@@ -248,7 +249,7 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   if ::oController:isNotZoomMode() 
+   if ::getController():isNotZoomMode() 
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
    end if
    
@@ -262,7 +263,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startActivate() CLASS UnidadesMedicionGruposView
 
-   ::oController:getUnidadesMedicionController():getSelector():Start()
+   ::getController():getUnidadesMedicionController():getSelector():Start()
 
 RETURN ( nil )
 
@@ -270,11 +271,13 @@ RETURN ( nil )
 
 METHOD validatedUnidadesMedicioncontroller() CLASS UnidadesMedicionGruposView
 
-   ::oController:insertLineaUnidadBase()
+   ::getController():getUnidadesMedicionController():getSelector():Disable()
+
+   ::getController():insertLineaUnidadBase()
    
-   ::oController:getUnidadesMedicionGruposLineasController():RefreshRowSetAndGoTop()
+   ::getController():getUnidadesMedicionGruposLineasController():RefreshRowSetAndGoTop()
    
-   ::oController:getUnidadesMedicionGruposLineasController():RefreshBrowseView()
+   ::getController():getUnidadesMedicionGruposLineasController():RefreshBrowseView()
 
 RETURN ( nil )
 
@@ -294,10 +297,12 @@ END CLASS
 
 METHOD getValidators() CLASS UnidadesMedicionGruposValidator
 
-   ::hValidators  := {  "nombre" =>    {  "required"  => "La descripción es un dato requerido",;
-                                          "unique"    => "La descripción introducida ya existe" },;
-                        "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
-                                          "unique"    => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "nombre" =>             {  "required"  => "La descripción es un dato requerido",;
+                                                   "unique"    => "La descripción introducida ya existe" },;
+                        "codigo" =>             {  "required"  => "El código es un dato requerido" ,;
+                                                   "unique"    => "EL código introducido ya existe" },;
+                        "unidad_base_codigo" => {  "required"  => "El código de la unidad base es un dato requerido" } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -323,6 +328,12 @@ CLASS SQLUnidadesMedicionGruposModel FROM SQLCompanyModel
    METHOD getSentenceUnidadesWhereUnidadAndGrupo( cCodigoUnidad, cCodigoGrupo )
 
    METHOD getInsertUnidadesMedicionGruposSentence()
+
+#ifdef __TEST__
+
+   METHOD testCreate()
+
+#endif
 
 END CLASS
 
@@ -438,6 +449,41 @@ METHOD getInsertUnidadesMedicionGruposSentence() CLASS SQLUnidadesMedicionGrupos
 RETURN ( aSentence )
 
 //---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+METHOD testCreate() CLASS SQLUnidadesMedicionGruposModel
+
+   local uuid 
+   local hBuffer
+
+   SQLUnidadesMedicionModel():truncateTable()
+
+   SQLUnidadesMedicionGruposModel():truncateTable()
+
+   SQLUnidadesMedicionGruposLineasModel():truncateTable()
+
+   SQLUnidadesMedicionModel():testCreateUnidades()
+   SQLUnidadesMedicionModel():testCreateCajas() 
+   SQLUnidadesMedicionModel():testCreatePalets() 
+
+   uuid           := win_uuidcreatestring()
+
+   SQLUnidadesMedicionGruposLineasModel():testCreateUnidades( uuid )
+   SQLUnidadesMedicionGruposLineasModel():testCreateCajas( uuid )
+   SQLUnidadesMedicionGruposLineasModel():testCreatePalets( uuid )
+
+   hBuffer        := ::loadBlankBuffer()
+
+   hset( hBuffer, "uuid", uuid )
+   hset( hBuffer, "codigo", "0" )
+   hset( hBuffer, "nombre", "Cajas y palets" )
+   hset( hBuffer, "unidad_base_codigo", "UDS" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+#endif
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -465,13 +511,9 @@ CLASS TestUnidadesMedicionGruposController FROM TestCase
 
    METHOD testDialogAppend()
 
-   METHOD testDialogEmptyUnidades()   
+   METHOD testDialogEmptyUnidades() 
 
-   /*   
-   METHOD testDialogEmptyNombre()
-
-   METHOD testDialogEmptyISO()
-   */
+   METHOD testDialogCodigoUnidadesErroneo()  
 
 END CLASS
 
@@ -573,36 +615,50 @@ METHOD testDialogEmptyUnidades() CLASS TestUnidadesMedicionGruposController
          apoloWaitSeconds( 1 ),;
          self:getControl( 130 ):Click(),;         
          apoloWaitSeconds( 1 ),;
-         self:getControl( IDOK ):Click() } )
+         self:getControl( IDCANCEL ):Click() } )
 
    ::assert:false( oController:Append(), "test ::assert:true with .t." )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-/*
-METHOD testDialogEmptyISO() CLASS TestUnidadesMedicionGruposController
+
+METHOD testDialogCodigoUnidadesErroneo() CLASS TestUnidadesMedicionGruposController
 
    local oController 
 
-   SQLUnidadesMedicionGruposModel():truncateTable() 
+   ::initModels()
 
    oController    := UnidadesMedicionGruposController():New()
+
+   oController:getUnidadesMedicionGruposLineasController():getDialogView():setEvent( 'painted',;
+      {| self | ;
+         self:getControl( 120 ):cText( 'CAJAS' ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 130 ):cText( 10 ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 100 ):cText( '0' ),;
          apoloWaitSeconds( 1 ),;
-         self:getControl( 110 ):cText( 'Test uniades de medición' ),;
+         self:getControl( 110 ):cText( 'Test unidad de medición grupo' ),;
          apoloWaitSeconds( 1 ),;
-         self:getControl( IDOK ):Click(),;
+         self:getControl( 120 ):cText( '123' ),;
+         self:getControl( 120 ):lValid(),;
          apoloWaitSeconds( 1 ),;
-         self:getControl( IDCANCEL ):Click() } )
+         self:getControl( 120 ):cText( 'UDS' ),;
+         self:getControl( 120 ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 130 ):Click(),;         
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )
 
-   ::assert:false( oController:Append(), "test creación unidad de medición sin codigo ISO" )
+   ::assert:true( oController:Append(), "test ::assert:true with .t." )
 
 RETURN ( nil )
-*/
+
 //---------------------------------------------------------------------------//
 
 #endif

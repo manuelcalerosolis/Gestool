@@ -264,6 +264,8 @@ CLASS TestArticulosController FROM TestCase
 
    METHOD testDialogEmptyNombre()
 
+   METHOD testDialogAppendConUnidadDeMedicion() 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -286,7 +288,11 @@ RETURN ( nil )
 
 METHOD testDialogAppend() CLASS TestArticulosController
 
-   local oController := ArticulosController():New()
+   local oController
+
+   SQLArticulosModel():truncateTable() 
+
+   oController := ArticulosController():New()
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
@@ -304,7 +310,11 @@ RETURN ( nil )
 
 METHOD testDialogEmptyNombre() CLASS TestArticulosController
 
-   local oController := ArticulosController():New()
+   local oController
+
+   SQLArticulosModel():truncateTable() 
+
+   oController := ArticulosController():New()
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
@@ -319,3 +329,30 @@ METHOD testDialogEmptyNombre() CLASS TestArticulosController
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD testDialogAppendConUnidadDeMedicion() CLASS TestArticulosController
+
+   local oController
+
+   SQLArticulosModel():truncateTable() 
+
+   SQLUnidadesMedicionGruposModel():testCreate()
+
+   oController := ArticulosController():New()
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         self:oGetCodigo:cText( '001' ),;
+         apoloWaitSeconds( 1 ),;
+         self:oGetNombre:cText( 'Test producto venta con caja y palets' ),;
+         apoloWaitSeconds( 1 ),;
+         ::getController():getUnidadesMedicionGruposController():getSelector():cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:oBtnAceptar:Click() } )
+
+   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+

@@ -570,13 +570,32 @@ RETURN ( ::getController():getFacturasClientesLineasController():validLine() )
 
 CLASS TestFacturasClientesController FROM TestCase
 
+   METHOD initModels()
+
    METHOD testCalculoFacturaConDescuento()
 
    METHOD testCalculoFacturaConIncremento()
 
    METHOD testFacturaConUnidadesDeMedicion()
-   
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD initModels() CLASS TestFacturasClientesController
+
+   SQLClientesModel():truncateTable()
+   SQLAlmacenesModel():truncateTable()
+   SQLMetodoPagoModel():truncateTable()
+   SQLFacturasClientesModel():truncateTable() 
+   SQLFacturasClientesLineasModel():truncateTable() 
+   SQLFacturasClientesDescuentosModel():truncateTable()
+
+   SQLClientesModel():testCreateContado()
+   SQLAlmacenesModel():testCreate()
+   SQLMetodoPagoModel():testCreateContado()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -586,14 +605,9 @@ METHOD testCalculoFacturaConDescuento() CLASS TestFacturasClientesController
    local hTotal
    local oController
 
+   ::initModels()
+
    uuid        := win_uuidcreatestring()
-
-   SQLClientesModel():truncateTable()
-   SQLFacturasClientesModel():truncateTable() 
-   SQLFacturasClientesLineasModel():truncateTable() 
-   SQLFacturasClientesDescuentosModel():truncateTable()
-
-   SQLClientesModel():testCreateContado()
 
    SQLFacturasClientesModel():testCreateFactura( uuid ) 
 
@@ -609,7 +623,7 @@ METHOD testCalculoFacturaConDescuento() CLASS TestFacturasClientesController
 
    hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
 
-   ::assert:equals( 117.520000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
+   ::assert:equals( 112.120000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
 
    oController:End()
 
@@ -623,14 +637,9 @@ METHOD testCalculoFacturaConIncremento() CLASS TestFacturasClientesController
    local hTotal
    local oController
 
+   ::initModels()
+
    uuid        := win_uuidcreatestring()
-
-   SQLClientesModel():truncateTable()
-   SQLFacturasClientesModel():truncateTable() 
-   SQLFacturasClientesLineasModel():truncateTable() 
-   SQLFacturasClientesDescuentosModel():truncateTable()
-
-   SQLClientesModel():testCreateContado()
 
    SQLFacturasClientesModel():testCreateFactura( uuid ) 
 
@@ -654,23 +663,13 @@ METHOD testFacturaConUnidadesDeMedicion() CLASS TestFacturasClientesController
    local hTotal
    local oController
 
+   ::initModels()
+
    uuid        := win_uuidcreatestring()
-
-   SQLClientesModel():truncateTable()
-   SQLFacturasClientesModel():truncateTable() 
-   SQLFacturasClientesLineasModel():truncateTable() 
-   SQLFacturasClientesDescuentosModel():truncateTable()
-   SQLArticulosModel():truncateTable()
-
-   // Creacion de registros para el test---------------------------------------
-
-   SQLClientesModel():testCreateContado()
 
    SQLFacturasClientesModel():testCreateFactura( uuid ) 
 
-   SQLFacturasClientesLineasModel():testCreateIVAal0Con10PorcientoDescuento( uuid ) 
-
-
+   SQLFacturasClientesLineasModel():testCreate10PorCientoDescuento15Incremento( uuid ) 
 
    oController := FacturasClientesController():New() 
 

@@ -38,12 +38,12 @@ USER FUNCTION hbunit_test()
    
    // oSuite:addTest( TestUnidadesMedicionController():new() )
 
-   oSuite:addTest( TestUnidadesMedicionGruposController():new() )
+   // oSuite:addTest( TestUnidadesMedicionGruposController():new() )
 
-   // oSuite:addTest( TestFacturasClientesController():new() )
+   oSuite:addTest( TestFacturasClientesController():new() )
    
    // oSuite:addTest( TestFacturasClientesFacturaeController():new() )
-
+   
    oRunner:run( oSuite )
 
 RETURN ( nil )

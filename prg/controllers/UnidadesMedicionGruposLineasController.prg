@@ -5,9 +5,15 @@
 
 CLASS UnidadesMedicionGruposLineasController FROM SQLBrowseController
 
+   DATA cUnidadBaseCodigo
+
+   DATA cUnidadBaseNombre
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   METHOD appending()
 
    //Construcciones tardias----------------------------------------------------
 
@@ -37,7 +43,7 @@ METHOD New( oController ) CLASS UnidadesMedicionGruposLineasController
                                              "32" => "gc_tape_measure2_32",;
                                              "48" => "gc_tape_measure2_48" }
 
-   ::nLevel                            := Auth():Level( ::cName )
+   ::setEvent( 'appending', {|| ::appending() } )
 
    ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
@@ -68,6 +74,20 @@ METHOD End() CLASS UnidadesMedicionGruposLineasController
    end if 
 
 RETURN ( ::Super:End() )
+
+//---------------------------------------------------------------------------//
+
+METHOD appending() CLASS UnidadesMedicionGruposLineasController
+
+   if empty( ::oController:getModelBuffer( 'unidad_base_codigo' ) )
+      RETURN ( .f. )
+   end if 
+
+   ::cUnidadBaseCodigo     := ::oController:getModelBuffer( 'unidad_base_codigo' )
+
+   ::cUnidadBaseNombre     := SQLUnidadesMedicionModel():getField( 'nombre', 'codigo', ::cUnidadBaseCodigo )
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -185,8 +205,6 @@ END CLASS
 
 METHOD Activate() CLASS UnidadesMedicionGruposLineasView
 
-   local cUnidadBaseCodigo := ::oController:oController:getModelBuffer( 'unidad_base_codigo' )
-   local cUnidadBaseNombre := SQLUnidadesMedicionModel():getField( 'nombre', 'codigo', cUnidadBaseCodigo )
 
    DEFINE DIALOG     ::oDialog ;
       RESOURCE       "LINEA_GRUPO_UNIDAD_MEDICION" ;
@@ -218,12 +236,12 @@ METHOD Activate() CLASS UnidadesMedicionGruposLineasView
 
       // unidad base--------------------------------------------------------------------------------------------------------------//
 
-      REDEFINE GET   cUnidadBaseCodigo ;
+      REDEFINE GET   ::getController():cUnidadBaseCodigo ;
          ID          140 ;
          WHEN        ( .f. ) ;
          OF          ::oDialog ;
 
-      REDEFINE GET   cUnidadBaseNombre ;
+      REDEFINE GET   ::getController():cUnidadBaseNombre ;
          ID          142 ;
          WHEN        ( .f. ) ;
          OF          ::oDialog ;

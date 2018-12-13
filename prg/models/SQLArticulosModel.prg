@@ -19,7 +19,7 @@ CLASS SQLArticulosModel FROM SQLCompanyModel
 
    METHOD testCreateArticuloConUuid( uuid )
 
-   METHOD testCreateArticuloConUnidadeDeMedicionPalets( uuid )
+   METHOD testCreateArticuloConUnidadeDeMedicionCajasPalets( uuid )
 
 #endif
 
@@ -196,12 +196,17 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateArticuloConUnidadeDeMedicionPalets() CLASS SQLArticulosModel
+METHOD testCreateArticuloConUnidadeDeMedicionCajasPalets() CLASS SQLArticulosModel
 
-   local hBuffer  := ::loadBlankBuffer()
+   local hBuffer
+
+   SQLUnidadesMedicionGruposModel():testCreate()
+
+   hBuffer  := ::loadBlankBuffer()
 
    hset( hBuffer, "codigo", "0" )
-   hset( hBuffer, "nombre", "Articulo con venta como palets" )
+   hset( hBuffer, "nombre", "Artículo con unidade de venta como cajas y palets" )
+   hset( hBuffer, "unidades_medicion_grupos_codigo", "0" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 

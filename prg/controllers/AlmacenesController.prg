@@ -49,20 +49,20 @@ METHOD New( oController ) CLASS AlmacenesController
 
    ::oProvinciasController          := ProvinciasController():New( self )
 
-   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadMainBlankBuffer() } )
-   ::getModel():setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',           {|| ::getDireccionesController():loadMainBlankBuffer() } )
+   ::getModel():setEvent( 'insertedBuffer',              {|| ::getDireccionesController():insertBuffer() } )
    
-   ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
-   ::getModel():setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedCurrentBuffer',         {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'updatedBuffer',               {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
 
-   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::getModel():setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer',   {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateBuffer',          {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::getModel():setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
+   ::getModel():setEvent( 'deletedSelection',            {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
 
-   ::getModel():setEvent( 'gettingSelectSentence',        {|| ::gettingSelectSentence() } ) 
+   ::getModel():setEvent( 'gettingSelectSentence',       {|| ::gettingSelectSentence() } ) 
 
-   ::setEvents( { 'editing', 'deleting' },            {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
+   ::setEvents( { 'editing', 'deleting' },               {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
 
@@ -335,7 +335,11 @@ CLASS SQLAlmacenesModel FROM SQLCompanyModel
 
    METHOD CountAlmacenWhereCodigo( cCodigoAlmacen )
 
-   METHOD testCreateAlmacen()
+#ifdef __TEST__
+
+   METHOD testCreate()
+
+#endif
 
 END CLASS
 
@@ -343,23 +347,23 @@ END CLASS
 
 METHOD getColumns() CLASS SQLAlmacenesModel
    
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                          "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+                                          "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "almacen_uuid",      {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
-                                             "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "almacen_uuid",   {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+                                          "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
-                                             "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
+                                          "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
-                                             "default"   => {|| space( 200 ) } }                      )
+   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
+                                          "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "sistema",           {  "create"    => "TINYINT( 1 )"                            ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "sistema",        {  "create"    => "TINYINT( 1 )"                            ,;
+                                          "default"   => {|| 0 } }                                 )
 
    ::getDeletedStampColumn()
 
@@ -399,28 +403,31 @@ METHOD CountAlmacenWhereCodigo( cCodigoAlmacen ) CLASS SQLAlmacenesModel
    TEXT INTO cSql
 
    SELECT COUNT(*)
-
-   FROM %1$s AS almacenes
-    
-   WHERE almacenes.codigo = %2$s
+   
+      FROM %1$s AS almacenes
+   
+      WHERE almacenes.codigo = %2$s
 
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( cCodigoAlmacen ) )
 
-
-RETURN ( getSQLDatabase():getValue ( cSql ) )
+RETURN ( getSQLDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateAlmacen() CLASS SQLAlmacenesModel
+#ifdef __TEST__
+
+METHOD testCreate() CLASS SQLAlmacenesModel
 
    local hBuffer  := ::loadBlankBuffer()
 
    hset( hBuffer, "codigo", "0" )
-   hset( hBuffer, "nombre", "Almacen de test" )
+   hset( hBuffer, "nombre", "Test de almacen" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
+
+#endif
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

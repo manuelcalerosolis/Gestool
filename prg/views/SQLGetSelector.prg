@@ -40,6 +40,9 @@ CLASS GetSelector
    METHOD getPrompt()                           INLINE ( if( empty( ::cPrompt ), ::getKey(), ::cPrompt ) )
    
    METHOD cText( value )                        INLINE ( if( !empty( ::oGet ), ::oGet:cText( value ), ) )
+   
+   METHOD Disable()                             INLINE ( if( !empty( ::oGet ), ::oGet:Disable(), ) )
+   METHOD Enable()                              INLINE ( if( !empty( ::oGet ), ::oGet:Enable(), ) )
 
    METHOD getView()                             INLINE ( ::oController:oController:getDialogView() )
 
