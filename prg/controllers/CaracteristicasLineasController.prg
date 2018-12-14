@@ -19,8 +19,6 @@ CLASS CaracteristicasLineasController FROM SQLBrowseController
 
    METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := CaracteristicasLineasBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := CaracteristicasLineasView():New( self ), ), ::oDialogView )
-
    METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := CaracteristicasLineasValidator():New( self  ), ), ::oValidator ) 
    
    METHOD getModel()                   INLINE( if( empty( ::oModel ), ::oModel := SQLCaracteristicasLineasModel():New( self ), ), ::oModel ) 
@@ -52,10 +50,6 @@ METHOD End() CLASS CaracteristicasLineasController
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
    end if 
-
-   if !empty( ::oDialogView )
-      ::oDialogView:End()
-   end if
 
    if !empty( ::oValidator )
       ::oValidator:End()
@@ -137,7 +131,7 @@ METHOD addColumns() CLASS CaracteristicasLineasBrowseView
    with object ( ::oColumnNombre := ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
-      :nWidth              := 300
+      :nWidth              := 590
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := ::getEditGet()
@@ -145,75 +139,9 @@ METHOD addColumns() CLASS CaracteristicasLineasBrowseView
       :bOnPostEdit         := {|oCol, uNewValue| ::getController():updateField( uNewValue )  }
    end with
 
+   ::getColumnDeletedAt()
+
 RETURN ( self )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS CaracteristicasLineasView FROM SQLBaseView
-
-   METHOD Activate()
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-METHOD Activate() CLASS CaracteristicasLineasView
-
-   DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "CARACTERISTICAS_LINEAS" ;
-      TITLE       ::LblTitle() + "lineas de caracterísicas"
-
-   REDEFINE BITMAP ::oBitmap ;
-      ID          900 ;
-      RESOURCE    "gc_tags_48" ;
-      TRANSPARENT ;
-      OF          ::oDialog
-
-   REDEFINE SAY   ::oMessage ;
-      PROMPT      "Lineas de características" ;
-      ID          800 ;
-      FONT        oFontBold() ; 
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
-      ID          110 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          ::oDialog
-
-   // Botones PropiedadesLineas -------------------------------------------------------
-
-   REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
-
-   REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDialog ;
-      CANCEL ;
-      ACTION      ( ::oDialog:end() )
-
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
-   else
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-   end if
-
-   ::oDialog:bStart  := {|| ::paintedActivate() }
-
-   ACTIVATE DIALOG ::oDialog CENTER
-
-RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -233,7 +161,8 @@ END CLASS
 
 METHOD getValidators() CLASS CaracteristicasLineasValidator
 
-   ::hValidators  := {  "nombre" =>    {  "required"  => "El valor de la caracteristica es un dato requerido" } }
+   ::hValidators  := {  "nombre" =>    {  "required"  => "El valor de la caracteristica es un dato requerido" ,;
+                                          "unique"    => "El valor introducido ya existe" } }
 
 RETURN ( ::hValidators )
 

@@ -37,6 +37,8 @@ METHOD New( oSenderController ) CLASS CaracteristicasController
 
    ::nLevel                            := Auth():Level( ::cName )
 
+   ::lTransactional                    := .t.
+
    //::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
@@ -208,9 +210,7 @@ METHOD Activate() CLASS CaracteristicasView
             case nKey == VK_F5
                if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), )
             case nKey == VK_F2
-               ::oController:getCaracteristicasLineasController():AppendLineal()
-            case nKey == VK_F3
-               ::oController:getCaracteristicasLineasController():Edit()
+               ::lineaAppend()
             case nKey == VK_F4
                ::oController:getCaracteristicasLineasController():Delete()
          end 
