@@ -69,13 +69,7 @@ RETURN ( Self )
 
 METHOD validateNombre( oGet ) CLASS CaracteristicasLineasController
 
-   if empty( alltrim( oGet:varGet() ) )
-
-      msgstop("Debe seleccionar un nombre válido")
-      RETURN ( .f. )
-   end if
-
-RETURN ( .t. )
+RETURN ( ::validate( 'nombre', alltrim( oGet:varGet() ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -229,14 +223,16 @@ CLASS CaracteristicasLineasValidator FROM SQLParentValidator
 
    METHOD getValidators()
  
+   METHOD getDialogView()              INLINE ( ::getController():getController():getDialogView() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD getValidators() CLASS CaracteristicasLineasValidator
 
-   ::hValidators  := {  "nombre" =>    {  "required"  => "El nombre es un dato requerido",;
-                                          "unique"    => "El nombre introducido ya existe" } }
+   ::hValidators  := {  "nombre" =>    {  "required"  => "El valor de la caracteristica es un dato requerido" } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
