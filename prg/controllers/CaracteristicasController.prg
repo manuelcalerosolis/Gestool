@@ -127,7 +127,15 @@ RETURN ( self )
 
 CLASS CaracteristicasView FROM SQLBaseView
 
+   DATA oBtnDeleted
+
    METHOD Activate()
+
+   METHOD lineaAppend()
+
+    METHOD setShowDeleted()            INLINE ( ::getController():getCaracteristicasLineasController():setShowDeleted(),;
+                                                ::oBtnDeleted:Toggle(),;
+                                                ::oBtnDeleted:cTooltip := if( ::oBtnDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
 END CLASS
 
@@ -175,28 +183,15 @@ METHOD Activate() CLASS CaracteristicasView
 
    // Lineas de propiedades -------------------------------------------------------
 
-   REDEFINE BUTTON oBtnAppend ;
-      ID          130 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+   TBtnBmp():ReDefine( 130, "new16", , , , , {|| ::lineaAppend() }, ::oDialog, .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
 
-   oBtnAppend:bAction   := {|| ::oController:getCaracteristicasLineasController():Append() }
+   TBtnBmp():ReDefine( 140, "del16",,,,, {|| ::getController():getCaracteristicasLineasController():Delete() }, ::oDialog, .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
 
-   REDEFINE BUTTON oBtnEdit ;
-      ID          140 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+   TBtnBmp():ReDefine( 150, "refresh16",,,,, {|| ::getController():getCaracteristicasLineasController():refreshRowSet() }, ::oDialog, .f., , .f., "Recargar líneas" )
 
-   oBtnEdit:bAction   := {|| ::oController:getCaracteristicasLineasController():Edit() }
+   ::oBtnDeleted := TBtnBmp():ReDefine( 160, "gc_deleted_16",,,,, {|| ::setShowDeleted() }, ::oDialog, .f., , .f., "Mostrar/Ocultar borrados" )
 
-   REDEFINE BUTTON oBtnDelete ;
-      ID          150 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnDelete:bAction   := {|| ::oController:getCaracteristicasLineasController():Delete() }
-
-   ::oController:getCaracteristicasLineasController():Activate( 160, ::oDialog )
+   ::oController:getCaracteristicasLineasController():Activate( 170, ::oDialog )
 
    // Botones------------------------------------------------------------------
 
@@ -213,7 +208,7 @@ METHOD Activate() CLASS CaracteristicasView
             case nKey == VK_F5
                if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), )
             case nKey == VK_F2
-               ::oController:getCaracteristicasLineasController():Append()
+               ::oController:getCaracteristicasLineasController():AppendLineal()
             case nKey == VK_F3
                ::oController:getCaracteristicasLineasController():Edit()
             case nKey == VK_F4
@@ -231,6 +226,16 @@ METHOD Activate() CLASS CaracteristicasView
    ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD lineaAppend() CLASS CaracteristicasView
+
+ if !::oController():getCaracteristicasLineasController():validLine()
+      RETURN( nil )
+   end if
+
+RETURN ( ::oController():getCaracteristicasLineasController():AppendLineal() ) 
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -264,6 +269,8 @@ CLASS SQLCaracteristicasModel FROM SQLCompanyModel
 
    DATA cTableName                        INIT "articulos_caracteristicas"
 
+   DATA cConstraints                      INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getNombreWhereUuid( uuid )      INLINE ( ::getField( 'nombre', 'uuid', uuid ) )
@@ -291,6 +298,8 @@ METHOD getColumns() CLASS SQLCaracteristicasModel
                                     "default"   => {|| space( 200 ) } }                      )
 
    ::getTimeStampColumns()
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

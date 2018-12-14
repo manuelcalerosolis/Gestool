@@ -9,6 +9,12 @@ CLASS CaracteristicasLineasController FROM SQLBrowseController
 
    METHOD End()
 
+   METHOD validateNombre( uValue )
+
+   METHOD updateField( cField, uValue )
+
+   METHOD validLine()
+
     //Contrucciones tardias---------------------------------------------------//
 
    METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := CaracteristicasLineasBrowseView():New( self ), ), ::oBrowseView ) 
@@ -30,6 +36,8 @@ METHOD New( oController ) CLASS CaracteristicasLineasController
    ::cTitle                      := "Características lineas"
 
    ::cName                       := "articulos_caracteristicas_lineas" 
+
+   ::lTransactional              := .t.
 
 RETURN ( Self )
 
@@ -58,7 +66,43 @@ METHOD End() CLASS CaracteristicasLineasController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD validateNombre( oGet ) CLASS CaracteristicasLineasController
+
+   if empty( alltrim( oGet:varGet() ) )
+
+      msgstop("Debe seleccionar un nombre válido")
+      RETURN ( .f. )
+   end if
+
+RETURN ( .t. )
+
 //---------------------------------------------------------------------------//
+
+METHOD updateField( uValue ) CLASS CaracteristicasLineasController
+
+   ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "nombre", uValue )
+   
+   ::getRowSet():Refresh()
+   
+   ::getBrowseView():Refresh()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD validLine() CLASS CaracteristicasLineasController
+
+   if ::getRowSet():recCount == 0
+      RETURN ( .t. )
+   end if 
+
+   if empty( ::getRowSet():fieldget( 'nombre' ) )
+      RETURN ( .f. )
+   end if 
+
+RETURN ( .t. )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -67,7 +111,9 @@ RETURN ( Self )
 
 CLASS CaracteristicasLineasBrowseView FROM SQLBrowseView
 
-   METHOD addColumns()                       
+   METHOD addColumns()
+
+   METHOD getEditGet()     INLINE ( if( ::getSuperController():isNotZoomMode(), EDIT_GET, 0 ) )                       
 
 ENDCLASS
 
@@ -81,6 +127,7 @@ METHOD addColumns() CLASS CaracteristicasLineasBrowseView
       :nWidth              := 60
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -97,6 +144,9 @@ METHOD addColumns() CLASS CaracteristicasLineasBrowseView
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nEditType           := ::getEditGet()
+      :bEditValid          := {| oGet, oCol | ::oController:validateNombre( oGet ) }
+      :bOnPostEdit         := {|oCol, uNewValue| ::getController():updateField( uNewValue )  }
    end with
 
 RETURN ( self )
@@ -197,7 +247,9 @@ RETURN ( ::hValidators )
 
 CLASS SQLCaracteristicasLineasModel FROM SQLCompanyModel
 
-   DATA cTableName                        INIT "articulos_caracteristicas_lineas"
+   DATA cTableName                        INIT "articulos_caracteristicas_lineas" 
+
+   DATA cConstraints                      INIT "PRIMARY KEY ( nombre, parent_uuid, deleted_at )"
 
    METHOD getColumns()
 
@@ -236,6 +288,8 @@ METHOD getColumns() CLASS SQLCaracteristicasLineasModel
 
    hset( ::hColumns, "personalizado",  {  "create"    => "TINYINT ( 1 )"                           ,;
                                           "default"   => {|| 0 } }                                 )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

@@ -23,7 +23,7 @@ CLASS SQLFacturasClientesModel FROM SQLCompanyModel
 
    METHOD testCreateFacturaConRecargoDeEqivalencia( uuid )
 
-   METHOD testCreateFacturaConPlazos( uuid ) 
+   METHOD testCreateFacturaConPlazos( uuid )
 
 END CLASS
 
@@ -83,8 +83,6 @@ METHOD getColumns() CLASS SQLFacturasClientesModel
                                                          "default"   => {|| space( 20 ) } }                    )
 
    ::getTimeStampColumns()
-
-   ::getDeletedStampColumn()
 
    ::getClosedColumns()
 
