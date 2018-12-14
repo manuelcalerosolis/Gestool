@@ -61,9 +61,7 @@ METHOD End() CLASS CaracteristicasLineasController
       ::oValidator:End()
    end if
    
-   ::Super:End()
-
-RETURN ( Self )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
