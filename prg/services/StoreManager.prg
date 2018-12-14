@@ -7,23 +7,23 @@ static oStore
 
 CLASS StoreManager
 
-   DATA id                       INIT 0
-   DATA uuid                     INIT ""
-   DATA codigo                   INIT ""
-   DATA nombre                   INIT ""
-   DATA almacenUuid              INIT ""
-   DATA sistema                  INIT 0
+   DATA id                             INIT 0
+   DATA uuid                           INIT ""
+   DATA codigo                         INIT ""
+   DATA nombre                         INIT ""
+   DATA almacenUuid                    INIT ""
+   DATA sistema                        INIT 0
 
    METHOD New()
 
-   METHOD Set( hStore )          INLINE ( ::guard( hStore ) )
+   METHOD Set( hStore )                INLINE ( ::guard( hStore ) )
    METHOD Guard( hStore )
 
    METHOD guardWhereUuid( uuid )
    
    METHOD guardWhereNombre( cNombre )
 
-   METHOD getCodigo()            INLINE ( padr( ::codigo, 20 ) )
+   METHOD getCodigo()                  INLINE ( padr( ::codigo, 20 ) )
 
 END CLASS
 
@@ -71,31 +71,31 @@ METHOD guard( hStore )
 
    setAlmacenMessageBar( ::nombre )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD guardWhereUuid( uuid )
 
-   local hStore    := SQLCajasModel():getWhereUuid( Uuid )
+   local hStore    := SQLAlmacenesModel():getWhereUuid( Uuid )
 
    if hb_ishash( hStore )
       ::guard( hStore )
    endif 
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD guardWhereNombre( cNombre )
 
-   local hStore    := SQLCajasModel():getWhereNombre( cNombre )
+   local hStore    := SQLAlmacenesModel():getWhereNombre( cNombre )
 
    if hb_ishash( hStore )
       ::guard( hStore )
    endif 
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

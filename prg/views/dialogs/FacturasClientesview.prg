@@ -235,7 +235,7 @@ METHOD Activate() CLASS FacturasClientesView
 
    end if
 
-   ::oDialog:bStart := {|| ::startActivate() }
+   ::oDialog:bStart := {|| ::startActivate(), ::paintedActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 

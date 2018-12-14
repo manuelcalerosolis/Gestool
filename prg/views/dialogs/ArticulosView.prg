@@ -286,7 +286,7 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
 
    oPanel:AddLink(   "Unidad por operación...",;
                      {||   ::editUnidadesMedicionOperaciones() },;
-                           ::oController:getunidadesmedicionoperacionesController():getImage( "16" ) )
+                           ::oController:getUnidadesMedicionOperacionesController():getImage( "16" ) )
 
    oPanel:AddLink(   "Caracteristicas...",;
                      {||   ::oController:getCaracteristicasValoresArticulosController():Activate( ::oController:getModelBuffer( "uuid" ) ) },;

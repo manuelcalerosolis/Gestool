@@ -53,8 +53,7 @@ CLASS EnviromentController FROM SQLApplicationController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := EnviromentView():New( self ), ), ::oDialogView )
-
+   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := EnviromentView():New( self ), ), ::oDialogView )
 
 END CLASS
 

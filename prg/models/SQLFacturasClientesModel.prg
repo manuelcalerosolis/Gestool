@@ -5,9 +5,9 @@
 
 CLASS SQLFacturasClientesModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "facturas_clientes"
+   DATA cTableName                     INIT "facturas_clientes"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( numero, serie )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( numero, serie )"
 
    METHOD getColumns()
 
@@ -229,6 +229,7 @@ METHOD testCreateFactura( uuid ) CLASS SQLFacturasClientesModel
    hset( hBuffer, "cliente_codigo", "0" )
    hset( hBuffer, "metodo_pago_codigo", "0" )
    hset( hBuffer, "almacen_codigo", "0" )
+   hset( hBuffer, "tarifa_codigo", "0" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 
@@ -245,6 +246,7 @@ METHOD testCreateFacturaConRecargoDeEqivalencia( uuid ) CLASS SQLFacturasCliente
    hset( hBuffer, "metodo_pago_codigo", "0" )
    hset( hBuffer, "almacen_codigo", "0" )
    hset( hBuffer, "recargo_equivalencia", 1 )
+   hset( hBuffer, "tarifa_codigo", "0" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 
@@ -260,6 +262,7 @@ METHOD testCreateFacturaConPlazos( uuid ) CLASS SQLFacturasClientesModel
    hset( hBuffer, "cliente_codigo", "0" )
    hset( hBuffer, "metodo_pago_codigo", "1" )
    hset( hBuffer, "almacen_codigo", "0" )
+   hset( hBuffer, "tarifa_codigo", "0" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 

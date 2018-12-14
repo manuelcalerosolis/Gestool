@@ -327,6 +327,9 @@ METHOD postValidateArticuloCodigo( oCol, uValue, nKey )
    local hArticulo 
 
    if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
+
+      msgalert( "postValidateArticuloCodigo salida temprana" )
+
       RETURN ( .t. )
    end if
 

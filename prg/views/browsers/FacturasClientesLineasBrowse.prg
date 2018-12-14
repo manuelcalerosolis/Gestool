@@ -24,6 +24,8 @@ CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
 
    DATA oColumnPropiedades
 
+   DATA oColumnArticuloPrecio
+
    METHOD Create( oWindow )
 
    METHOD addColumns()
@@ -204,7 +206,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :lHide               := .t.
    end with
 
-   with object ( ::oBrowse:AddCol() )
+   with object ( ::oColumnArticuloPrecio := ::oBrowse:AddCol() )
       :cSortOrder          := 'articulo_precio'
       :cHeader             := 'Precio'
       :nWidth              := 80

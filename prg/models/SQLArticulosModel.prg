@@ -198,14 +198,25 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 METHOD testCreateArticuloConUnidadeDeMedicionCajasPalets() CLASS SQLArticulosModel
 
+   local uuid
    local hBuffer
 
+   uuid     := win_uuidcreatestring()
+
+   SQLArticulosModel():truncateTable()
+   SQLUnidadesMedicionGruposModel():truncateTable()
+   SQLUnidadesMedicionOperacionesModel():truncateTable()
+
    SQLUnidadesMedicionGruposModel():testCreate()
+   SQLUnidadesMedicionOperacionesModel():testCreateVentasPorCajas( uuid )
+   SQLUnidadesMedicionOperacionesModel():testCreateComprasPorPalets( uuid )
+   SQLUnidadesMedicionOperacionesModel():testCreateInventarioPorUnidades( uuid )
 
    hBuffer  := ::loadBlankBuffer()
 
+   hset( hBuffer, "uuid", uuid )
    hset( hBuffer, "codigo", "0" )
-   hset( hBuffer, "nombre", "Artículo con unidade de venta como cajas y palets" )
+   hset( hBuffer, "nombre", "Artículo con unidad de venta como cajas y palets" )
    hset( hBuffer, "unidades_medicion_grupos_codigo", "0" )
 
 RETURN ( ::insertBuffer( hBuffer ) )

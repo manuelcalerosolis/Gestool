@@ -356,7 +356,6 @@ END CLASS
 METHOD testCreateCaracteristicaSincodigo() CLASS TestCaracteristicasController
 
    local oController
-   local uuidCaracteristica   := win_uuidcreatestring()
 
    SQLCaracteristicasModel():truncateTable()  
 

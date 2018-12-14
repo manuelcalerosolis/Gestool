@@ -15,22 +15,17 @@ CLASS UnidadesMedicionOperacionesController FROM SQLNavigatorController
 
    METHOD deleteBuffer( aUuidEntidades )
 
-   /*METHOD Edit( cCodigoGrupo )
-
-   METHOD setCodigoGrupo( cCodigoGrupo ) ;
-                                       INLINE ( ::cCodigoGrupo := cCodigoGrupo )*/
-
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()           INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := UnidadesMedicionOperacionesBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := UnidadesMedicionOperacionesBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()           INLINE ( if( empty( ::oDialogView ), ::oDialogView := UnidadesMedicionOperacionesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := UnidadesMedicionOperacionesView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()            INLINE ( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionOperacionesValidator():New( self  ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionOperacionesValidator():New( self  ), ), ::oValidator )
 
-   METHOD getRepository()           INLINE ( if( empty( ::oRepository ), ::oRepository := UnidadesMedicionOperacionesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := UnidadesMedicionOperacionesRepository():New( self ), ), ::oRepository )
    
-   METHOD getModel()                INLINE ( if( empty( ::oModel ), ::oModel := SQLUnidadesMedicionOperacionesModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLUnidadesMedicionOperacionesModel():New( self ), ), ::oModel )
 
    METHOD UnidadesMedicionHelping( cCodigoGrupo )
 
@@ -42,19 +37,15 @@ METHOD New( oController ) CLASS UnidadesMedicionOperacionesController
 
    ::Super:New( oController )
 
-   ::cTitle                         := "Unidades operación"
+   ::cTitle                            := "Unidades operación"
 
-   ::cName                          := "unidades_medicion_operacion"
+   ::cName                             := "unidades_medicion_operacion"
 
-   ::lTransactional                 := .t.
+   ::lTransactional                    := .t.
 
-   ::hImage                         := {  "16" => "gc_tape_measure2_16",;
-                                          "32" => "gc_tape_measure2_32",;
-                                          "48" => "gc_tape_measure2_48" }
-
-   ::nLevel                         := Auth():Level( ::cName )
-
-   ::getUnidadesMedicionController()
+   ::hImage                            := {  "16" => "gc_tape_measure2_16",;
+                                             "32" => "gc_tape_measure2_32",;
+                                             "48" => "gc_tape_measure2_48" }
 
 RETURN ( Self )
 
@@ -103,7 +94,7 @@ METHOD UnidadesMedicionHelping() CLASS UnidadesMedicionOperacionesController
    local cCodigoGrupo 
    local cCodigoUnidades   
 
-   cCodigoGrupo   := ::oController:getModelBuffer( 'unidades_medicion_grupos_codigo' )
+   cCodigoGrupo            := ::oController:getModelBuffer( 'unidades_medicion_grupos_codigo' )
 
    ::oController:getModelBuffer( 'unidades_medicion_grupos_codigo' )
 
@@ -150,7 +141,7 @@ METHOD addColumns() CLASS UnidadesMedicionOperacionesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'unidad_medicion_nombre'
       :cHeader             := 'Nombre unidad'
-      :nWidth              := 200
+      :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_medicion_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -169,7 +160,7 @@ CLASS UnidadesMedicionOperacionesView FROM SQLBaseView
 
    DATA oComboTipoOperaciones
 
-   DATA aTiposOperaciones  INIT ( {  "Compras", "Ventas", "Inventarios" } )
+   DATA aTiposOperaciones              INIT ( {  "Compras", "Ventas", "Inventarios" } )
 
    METHOD Activate()
 
@@ -208,7 +199,7 @@ METHOD Activate() CLASS UnidadesMedicionOperacionesView
 
       ::oController:getUnidadesMedicionController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "unidad_medicion_codigo" ] ) )
       ::oController:getUnidadesMedicionController():getSelector():Build( { "idGet" => 110, "idText" => 111, "idLink" => 112, "oDialog" => ::oDialog } )
-      ::oController:getUnidadesMedicionController():getSelector():bValid  := {|| ::oController:validate( "unidad_medicion_codigo" ) }
+      ::oController:getUnidadesMedicionController():getSelector():setValid( {|| ::oController:validate( "unidad_medicion_codigo" ) } )
       ::oController:getUnidadesMedicionController():getSelector():setEvent( 'helping', {|| ::oController:UnidadesMedicionHelping() } )
 
       apoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
@@ -255,6 +246,8 @@ CLASS UnidadesMedicionOperacionesValidator FROM SQLBaseValidator
 
    METHOD inUnidades( cCodigoUnidad )
 
+   METHOD inOperacion()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -263,7 +256,8 @@ METHOD getValidators() CLASS UnidadesMedicionOperacionesValidator
 
    ::hValidators  := {  "unidad_medicion_codigo"   => {  "required"     => "La unidad es un dato requerido",;
                                                          "inUnidades"   => "La unidad de medicón no esta dentro del grupo de unidades" },;
-                        "operacion"                => {  "required"     => "La operación es un dato requerido" } }
+                        "operacion"                => {  "required"     => "La operación es un dato requerido",;
+                                                         "inOperacion"  => "La operación ya está incluida" } }
 
 RETURN ( ::hValidators )
 
@@ -271,13 +265,19 @@ RETURN ( ::hValidators )
 
 METHOD inUnidades( cCodigoUnidad ) CLASS UnidadesMedicionOperacionesValidator
 
-   local cCodigoGrupo  := ::oController:oController:getModelBuffer( 'unidades_medicion_grupos_codigo' )
+   local cCodigoGrupo   := ::oController:oController:getModelBuffer( 'unidades_medicion_grupos_codigo' )
 
    if empty( cCodigoGrupo )
       RETURN ( .f. )
    end if 
 
 RETURN ( SQLUnidadesMedicionGruposModel():countUnidadesWhereUnidadAndGrupo( cCodigoUnidad, cCodigoGrupo ) > 0 )
+
+//---------------------------------------------------------------------------//
+
+METHOD inOperacion() CLASS UnidadesMedicionOperacionesValidator
+
+RETURN ( ::getController():getModel():countOperacionWhereUuidParent( ::getController():getModelBuffer( 'operacion' ), ::getController():getModel():getControllerParentUuid() ) == 0 )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -287,24 +287,24 @@ RETURN ( SQLUnidadesMedicionGruposModel():countUnidadesWhereUnidadAndGrupo( cCod
 
 CLASS SQLUnidadesMedicionOperacionesModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "unidades_medicion_operacion"
+   DATA cTableName                     INIT "unidades_medicion_operacion"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( parent_uuid, operacion, unidad_medicion_codigo, deleted_at )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( parent_uuid, operacion, unidad_medicion_codigo, deleted_at )"
 
-   DATA aConsulta                INIT {}
+   DATA aConsulta                      INIT {}
 
    METHOD getSentenceUnidadesWhereGrupo( cCodigoGrupo )
 
    METHOD getUnidadesWhereGrupo( cCodigoGrupo )
 
    METHOD getSerializeUnidadesWhereGrupo( cCodigoGrupo ) ;
-                                 INLINE ( serializeQuotedArray( ::getUnidadesWhereGrupo( cCodigoGrupo ), "," ) )
+                                       INLINE ( serializeQuotedArray( ::getUnidadesWhereGrupo( cCodigoGrupo ), "," ) )
 
    METHOD setUuidUnidadAttribute( value ) ;
-                                 INLINE ( SQLUnidadesMedicionModel():getUuidWhereColumn( Value, "nombre" ) )
+                                       INLINE ( SQLUnidadesMedicionModel():getUuidWhereColumn( Value, "nombre" ) )
 
    METHOD getUuidUnidadAttribute( uuid ) ;
-                                 INLINE ( SQLUnidadesMedicionModel():getColumnWhereUuid( uuid, "nombre" ) )
+                                       INLINE ( SQLUnidadesMedicionModel():getColumnWhereUuid( uuid, "nombre" ) )
 
    METHOD getInitialSelect() 
 
@@ -312,9 +312,21 @@ CLASS SQLUnidadesMedicionOperacionesModel FROM SQLCompanyModel
 
    METHOD getUnidad() 
 
-   METHOD getNumeroOperacionesWhereArticulo( cCodigoArticulo )                            
+   METHOD getNumeroOperacionesWhereArticulo( cCodigoArticulo )  
+
+   METHOD countOperacionWhereUuidParent( cOperacion, uuidParent )                             
 
    METHOD getColumns()
+
+#ifdef __TEST__
+   
+   METHOD testCreateVentasPorCajas( uuidParent )
+
+   METHOD testCreateComprasPorPalets( uuidParent )
+
+   METHOD testCreateInventarioPorUnidades( uuidParent )   
+
+#endif
 
 END CLASS
 
@@ -452,9 +464,7 @@ METHOD getUnidad() CLASS SQLUnidadesMedicionOperacionesModel
 
       SELECT 
          unidades_medicion.codigo
-
       FROM %1$s AS unidades_medicion
-
          WHERE unidades_medicion.sistema = 1
 
    ENDTEXT
@@ -486,6 +496,70 @@ METHOD getNumeroOperacionesWhereArticulo( cCodigoArticulo ) CLASS SQLUnidadesMed
 RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
    
 //---------------------------------------------------------------------------//
+
+METHOD countOperacionWhereUuidParent( cOperacion, uuidParent ) CLASS SQLUnidadesMedicionOperacionesModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+      SELECT 
+         COUNT(*) 
+
+      FROM %1$s AS unidades_medicion_operacion
+
+      WHERE 
+         operacion = %2$s AND parent_uuid = %3$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( cOperacion ), quoted( uuidParent ) )
+
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
+
+//---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+METHOD testCreateVentasPorCajas( uuidParent ) CLASS SQLUnidadesMedicionOperacionesModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuidParent )
+   hset( hBuffer, "operacion", "Ventas" )
+   hset( hBuffer, "unidad_medicion_codigo", "CAJAS" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateComprasPorPalets( uuidParent ) CLASS SQLUnidadesMedicionOperacionesModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuidParent )
+   hset( hBuffer, "operacion", "Compras" )
+   hset( hBuffer, "unidad_medicion_codigo", "PALETS" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateInventarioPorUnidades( uuidParent ) CLASS SQLUnidadesMedicionOperacionesModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuidParent )
+   hset( hBuffer, "operacion", "Inventarios" )
+   hset( hBuffer, "unidad_medicion_codigo", "UDS" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+#endif
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -493,7 +567,7 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 CLASS UnidadesMedicionOperacionesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLUnidadesMedicionOperacionesModel():getTableName() ) 
+   METHOD getTableName()               INLINE ( SQLUnidadesMedicionOperacionesModel():getTableName() ) 
 
 END CLASS
 

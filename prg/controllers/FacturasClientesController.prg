@@ -578,6 +578,10 @@ CLASS TestFacturasClientesController FROM TestCase
 
    METHOD testFacturaConUnidadesDeMedicion()
 
+   METHOD testDialogoWithNoLines() 
+
+   METHOD testDialogoVentasPorCajas() 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -590,10 +594,16 @@ METHOD initModels() CLASS TestFacturasClientesController
    SQLFacturasClientesModel():truncateTable() 
    SQLFacturasClientesLineasModel():truncateTable() 
    SQLFacturasClientesDescuentosModel():truncateTable()
+   SQLArticulosModel():truncateTable()
+   
+   SQLArticulosTarifasModel():truncateTable() 
 
    SQLClientesModel():testCreateContado()
    SQLAlmacenesModel():testCreate()
    SQLMetodoPagoModel():testCreateContado()
+   SQLArticulosModel():testCreateArticuloConUnidadeDeMedicionCajasPalets()
+
+   SQLArticulosTarifasModel():insertArticulosTarifasBase() 
 
 RETURN ( nil )
 
@@ -675,13 +685,80 @@ METHOD testFacturaConUnidadesDeMedicion() CLASS TestFacturasClientesController
 
    hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
 
-   ::assert:equals( 117.520000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
+   ::assert:equals( 103.500000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
 
    oController:End()
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD testDialogoWithNoLines() CLASS TestFacturasClientesController
+
+   local oController
+
+   ::initModels()
+
+   oController             := FacturasClientesController():New()
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 170, self:oFolder:aDialogs[1] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 170, self:oFolder:aDialogs[1] ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 240, self:oFolder:aDialogs[1] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 240, self:oFolder:aDialogs[1] ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDCANCEL ):Click() } )
+
+   ::assert:false( oController:Append(), "test creación de factura sin lineas" )
+
+   oController:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testDialogoVentasPorCajas() CLASS TestFacturasClientesController
+
+   local oController
+
+   ::initModels()
+
+   oController             := FacturasClientesController():New()
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 170, self:oFolder:aDialogs[1] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 170, self:oFolder:aDialogs[1] ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 240, self:oFolder:aDialogs[1] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 240, self:oFolder:aDialogs[1] ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 501, self:oFolder:aDialogs[1] ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         eval( oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "0", 0 ),;
+         apoloWaitSeconds( 1 ),;
+         oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )
+
+   ::assert:true( oController:Append(), "test creación de factura con ventas por cajas" )
+
+   oController:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 
 #endif
 

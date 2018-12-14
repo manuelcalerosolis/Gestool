@@ -965,7 +965,7 @@ FUNCTION CreateMainSQLAcceso()
    // Articulos----------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 2
+   oGrupo:nBigItems     := 3
    oGrupo:nLittleItems  := 3
    oGrupo:cPrompt       := 'Artículos'
    oGrupo:cLittleBitmap := "gc_object_cube_16"
@@ -990,6 +990,16 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cBmp           := "gc_object_cube_16"
    oItem:cBmpBig        := "gc_object_cube_32"
    oItem:lShow          := .t.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Categorias de artículo'
+   oItem:cMessage       := 'Categorias de artículo'
+   oItem:bAction        := {|| ArticulosCategoriasController():New():ActivateNavigatorView() }
+   oItem:cId            := "categorias"
+   oItem:cBmp           := "gc_photographic_filters_16"
+   oItem:cBmpBig        := "gc_photographic_filters_32"
+   oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -1044,8 +1054,8 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cBmpBig        := "gc_tape_measure2_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
-/*unidades de medicion grupos*/
-      oItem                := oItemArchivo:Add()
+
+   oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Grupos de unidades de medición'
    oItem:cMessage       := 'Grupos de unidades de medición'
@@ -1086,17 +1096,6 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cId            := "envasado_articulo"
    oItem:cBmp           := "gc_box_closed_16"
    oItem:cBmpBig        := "gc_box_closed_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Categorias de artículo'
-   oItem:cMessage       := 'Categorias de artículo'
-   oItem:bAction        := {|| ArticulosCategoriasController():New():ActivateNavigatorView() }
-   oItem:cId            := "categorias"
-   oItem:cBmp           := "gc_photographic_filters_16"
-   oItem:cBmpBig        := "gc_photographic_filters_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 

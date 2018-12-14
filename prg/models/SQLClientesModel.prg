@@ -19,7 +19,7 @@ METHOD testCreateContado() CLASS SQLClientesModel
    local hBuffer     
    local hDireccion  
 
-   uuid              := win_uuidcreatestring()
+   uuid              := win_uuidcreatestring() 
 
    hDireccion        := SQLDireccionesModel():loadBlankBuffer()
 
@@ -43,6 +43,7 @@ METHOD testCreateContado() CLASS SQLClientesModel
    hset( hBuffer, "nombre", "Clientes contado" )
    hset( hBuffer, "dni", "75541180A" )
    hset( hBuffer, "metodo_pago_codigo", "0" )
+   hset( hBuffer, "tarifa_codigo", "0" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 

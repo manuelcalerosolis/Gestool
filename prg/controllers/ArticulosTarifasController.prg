@@ -41,23 +41,23 @@ METHOD New( oController ) CLASS ArticulosTarifasController
 
    ::Super:New( oController )
 
-   ::cTitle                         := "Tarifas"
+   ::cTitle                            := "Tarifas"
 
-   ::cName                          := "tarifas"
+   ::cName                             := "tarifas"
 
-   ::lMultiDelete                   := .f.
+   ::lMultiDelete                      := .f.
 
-   ::hImage                         := {  "16" => "gc_money_interest_16",;
-                                          "32" => "gc_money_interest_32",;
-                                          "48" => "gc_money_interest_48" }
+   ::hImage                            := {  "16" => "gc_money_interest_16",;
+                                             "32" => "gc_money_interest_32",;
+                                             "48" => "gc_money_interest_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                            := Auth():Level( ::cName )
 
    ::setEvents( { 'appended', 'duplicated' }, {|| ::endAppendedTarifa() } )
 
-   ::setEvent( 'edited',            {|| ::endEditedTarifa() } )
+   ::setEvent( 'edited', {|| ::endEditedTarifa() } )
 
-   ::setEvent( 'deleting',          {|| ::Deleting() } )
+   ::setEvent( 'deleting', {|| ::Deleting() } )
    
    ::setEvent( 'deletingSelection', {|| ::deletingSelection() } )
 
@@ -361,10 +361,10 @@ METHOD Activate() CLASS ArticulosTarifasView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-   
    if ::oController:isNotZoomMode() 
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
+   else
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
    end if
 
    ::oDialog:bStart  := {|| ::startActivate() }
@@ -498,7 +498,7 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
 
    METHOD isParentUuidColumn()               INLINE ( .f. )
 
-   METHOD getInsertArticulosTarifasSentence()
+   METHOD insertArticulosTarifasBase()
 
    METHOD getParentUuidAttribute( uuid )     INLINE ( if( empty( uuid ), __tarifa_costo__, SQLArticulosTarifasModel():getNombreWhereUuid( uuid ) ) )
 
@@ -509,7 +509,7 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
    METHOD getTarifaWhereTarifaParent( uuidTarifaParent ) ;
                                              INLINE ( ::getField( "uuid", "parent_uuid", uuidTarifaParent ) )
 
-   METHOD getNombres()                       
+   METHOD getNombres()      
 
 END CLASS
 
@@ -604,19 +604,17 @@ RETURN ( SQLArticulosTarifasModel():getUuidWhereNombre( nombre ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertArticulosTarifasSentence() CLASS SQLArticulosTarifasModel
+METHOD insertArticulosTarifasBase() CLASS SQLArticulosTarifasModel
 
-   local uuid 
-   local cSentence 
+   local uuid     := win_uuidcreatestring()
+   local hBuffer  := ::loadBlankBuffer()
 
-   uuid        := win_uuidcreatestring()
+   hset( hBuffer, "uuid", uuid )
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "codigo", "0" )
+   hset( hBuffer, "nombre", __tarifa_base__ )
 
-   cSentence   := "INSERT IGNORE INTO " + ::getTableName() + " "
-   cSentence   +=    "( uuid, parent_uuid, codigo, nombre, margen, activa, sistema ) "
-   cSentence   += "VALUES "
-   cSentence   +=    "( '" + uuid + "', '" + uuid + "', '1', '" + __tarifa_base__ + "', 0, 1, 1 )"
-
-RETURN ( cSentence )
+RETURN ( ::insertIgnoreBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
