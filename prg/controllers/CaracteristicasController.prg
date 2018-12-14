@@ -231,8 +231,8 @@ RETURN ( ::oDialog:nResult )
 
 METHOD lineaAppend() CLASS CaracteristicasView
 
- if !::oController():getCaracteristicasLineasController():validLine()
-      RETURN( nil )
+   if !::oController():getCaracteristicasLineasController():validLine()
+      RETURN ( nil )
    end if
 
 RETURN ( ::oController():getCaracteristicasLineasController():AppendLineal() ) 

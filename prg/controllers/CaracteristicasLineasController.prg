@@ -37,7 +37,7 @@ METHOD New( oController ) CLASS CaracteristicasLineasController
 
    ::cName                       := "articulos_caracteristicas_lineas" 
 
-   ::lTransactional              := .t.
+   ::setEvent( 'exitAppended', {|| ::getBrowseView():setFocusColumnNombre() } )
 
 RETURN ( Self )
 
@@ -105,9 +105,13 @@ RETURN ( .t. )
 
 CLASS CaracteristicasLineasBrowseView FROM SQLBrowseView
 
+   DATA oColumnNombre
+
    METHOD addColumns()
 
-   METHOD getEditGet()     INLINE ( if( ::getSuperController():isNotZoomMode(), EDIT_GET, 0 ) )                       
+   METHOD getEditGet()                 INLINE ( if( ::getSuperController():isNotZoomMode(), EDIT_GET, 0 ) )                       
+
+   METHOD setFocusColumnNombre()       INLINE ( ::oBrowse:setFocus(), ::oBrowse:goToCol( ::oColumnNombre ) )
 
 ENDCLASS
 
@@ -132,7 +136,7 @@ METHOD addColumns() CLASS CaracteristicasLineasBrowseView
       :lHide               := .t.
    end with
 
-   with object ( ::oBrowse:AddCol() )
+   with object ( ::oColumnNombre := ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
       :nWidth              := 300
