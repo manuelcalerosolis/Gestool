@@ -134,11 +134,11 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD deleteLines( uuid )
 
-   METHOD getUuid()                       INLINE ( iif(  !empty( ::getModel() ) .and. !empty( ::getModel():hBuffer ),;
-                                                         hget( ::getModel():hBuffer, "uuid" ),;
-                                                         nil ) )
+   METHOD getUuid()                    INLINE ( iif(  !empty( ::getModel() ) .and. !empty( ::getModel():hBuffer ),;
+                                                      hget( ::getModel():hBuffer, "uuid" ),;
+                                                      nil ) )
 
-   METHOD refreshBrowse()                 INLINE ( iif(  !empty( ::getBrowseView() ), ::getBrowseView():Refresh(), ) )
+   METHOD refreshBrowse()              INLINE ( iif(  !empty( ::getBrowseView() ), ::getBrowseView():Refresh(), ) )
 
    METHOD loadUnidadesMedicion()
 
@@ -146,19 +146,19 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesLineasBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesLineasBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE ( iif( empty( ::oDialogView ), ::oDialogView := FacturasClientesLineasView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := FacturasClientesLineasView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                  INLINE ( iif( empty( ::oValidator ), ::oValidator := FacturasClientesLineasValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( iif( empty( ::oValidator ), ::oValidator := FacturasClientesLineasValidator():New( self ), ), ::oValidator )
 
-   METHOD getHistoryManager()             INLINE ( iif( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
+   METHOD getHistoryManager()          INLINE ( iif( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
 
-   METHOD getSearchView()                 INLINE ( iif( empty( ::oSearchView ), ::oSearchView := SQLSearchView():New( self ), ), ::oSearchView )  
+   METHOD getSearchView()              INLINE ( iif( empty( ::oSearchView ), ::oSearchView := SQLSearchView():New( self ), ), ::oSearchView )  
 
-   METHOD getSeriesControler()            INLINE ( iif( empty( ::oSeriesControler ), ::oSeriesControler := NumerosSeriesController():New( self ), ), ::oSeriesControler )  
+   METHOD getSeriesControler()         INLINE ( iif( empty( ::oSeriesControler ), ::oSeriesControler := NumerosSeriesController():New( self ), ), ::oSeriesControler )  
    
-   METHOD getModel()                      INLINE ( iif( empty( ::oModel ), ::oModel := SQLFacturasClientesLineasModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLFacturasClientesLineasModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -168,17 +168,17 @@ METHOD New( oController )
 
    ::Super:New( oController )
 
-   ::lTransactional                          := .t.
+   ::lTransactional                    := .t.
 
-   ::cTitle                                  := "Facturas clientes líneas"
+   ::cTitle                            := "Facturas clientes líneas"
 
-   ::cName                                   := "lineas_facturas_clientes" 
+   ::cName                             := "lineas_facturas_clientes" 
 
-   ::setEvent( 'activating',                 {|| ::getModel():setOrderBy( "id" ), ::getModel():setOrientation( "D" ) } )
+   ::setEvent( 'activating',  {|| ::getModel():setOrderBy( "id" ), ::getModel():setOrientation( "D" ) } )
 
-   ::setEvent( 'deletingLines',              {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )
+   ::setEvent( 'deletingLines', {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )
 
-   ::setEvent( 'exitAppended',               {|| ::getBrowseView():setFocusColumnCodigoArticulo() } )
+   ::setEvent( 'exitAppended', {|| ::getBrowseView():setFocusColumnCodigoArticulo() } )
 
    ::getModel():setEvent( 'loadedBlankBuffer',  {|| ::loadedBlankBuffer() } )
 
