@@ -94,7 +94,7 @@ RETURN ( nil )
 METHOD validateDescuento() CLASS FacturasClientesDescuentosController
 
    if empty( ::getRowSet:fieldGet( 'nombre' ) )
-      msgstop( "Debes introducir un nombre valido para el descuento" )
+      msgstop( "Debes introducir un nombre válido para el descuento" )
       RETURN ( .f. )
    end if 
 

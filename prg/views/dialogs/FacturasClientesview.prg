@@ -195,7 +195,7 @@ METHOD Activate() CLASS FacturasClientesView
    
    ::oBtnLineasDeleted := TBtnBmp():ReDefine( 504, "gc_deleted_16",,,,, {|| ::setLineasShowDeleted()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
    
-   TBtnBmp():ReDefine( 505, "gc_object_cube_16",,,,, {|| ::getController():getFacturasClientesLineasController():Edit()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
+   TBtnBmp():ReDefine( 505, "gc_object_cube_16",,,,, {|| ::getController():getFacturasClientesLineasController():Edit()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar ficha de artículo" )
 
    ::getController():getFacturasClientesLineasController():Activate( 500, ::oFolder:aDialogs[1] )
 

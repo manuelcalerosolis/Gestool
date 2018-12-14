@@ -7,8 +7,6 @@ CLASS SQLFacturasClientesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "facturas_clientes"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( numero, serie )"
-
    METHOD getColumns()
 
    METHOD getColumnsSelect()
@@ -83,8 +81,6 @@ METHOD getColumns() CLASS SQLFacturasClientesModel
                                                          "default"   => {|| space( 20 ) } }                    )
 
    ::getTimeStampColumns()
-
-   ::getDeletedStampColumn()
 
    ::getClosedColumns()
 
