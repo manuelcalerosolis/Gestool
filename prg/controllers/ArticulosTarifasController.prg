@@ -113,14 +113,11 @@ RETURN ( SQLArticulosPreciosModel():deletePrecioWhereUuidTarifa( ::uuidToDelete 
 METHOD endAppendedTarifa() CLASS ArticulosTarifasController
 
    local oWaitMessage
-   local uuidTarifaActualizar  
 
    oWaitMessage         := TWaitMeter():New( "Actualizando tarifa", "Espere por favor..." )
    oWaitMessage:Run()
 
-   uuidTarifaActualizar := hget( ::getModel():hBuffer, "uuid" )
-
-   ::getArticulosPreciosController():getModel():insertPrecioWhereTarifa( uuidTarifaActualizar )
+   ::getArticulosPreciosController():getModel():insertPrecioWhereTarifa( hget( ::getModel():hBuffer, "uuid" ) )
 
    oWaitMessage:End()
 
@@ -131,14 +128,11 @@ RETURN ( nil )
 METHOD endEditedTarifa() CLASS ArticulosTarifasController
 
    local oWaitMessage
-   local uuidTarifaActualizar  
 
    oWaitMessage         := TWaitMeter():New( "Actualizando tarifa", "Espere por favor..." )
    oWaitMessage:Run()
 
-   uuidTarifaActualizar := hget( ::getModel():hBuffer, "uuid" )
-
-   ::getArticulosPreciosController():getModel():updatePrecioWhereTarifa( uuidTarifaActualizar )
+   ::getArticulosPreciosController():getModel():updatePrecioWhereTarifa( hget( ::getModel():hBuffer, "uuid" ) )
 
    oWaitMessage:End()
 
@@ -157,9 +151,7 @@ METHOD updatedTarifa( uuidTarifaActualizar, lCosto ) CLASS ArticulosTarifasContr
    cTarifaParent        := ::getModel():getTarifaWhereTarifaParent( uuidTarifaActualizar )
 
    if !empty( cTarifaParent ) .and. ( uuidTarifaActualizar != cTarifaParent )
-
       ::updatedTarifa( cTarifaParent )
-   
    end if 
 
 RETURN ( nil )
@@ -357,17 +349,17 @@ METHOD Activate() CLASS ArticulosTarifasView
 
    // Botones------------------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs[1] ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oFolder:aDialogs[1] ), ::oDialog:end( IDOK ), ) }
    else
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
    end if
 
-   ::oDialog:bStart  := {|| ::startActivate() }
+   ::oDialog:bStart  := {|| ::startActivate(), ::paintedActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -473,7 +465,8 @@ END CLASS
 
 METHOD getValidators() CLASS ArticulosTarifasValidator
 
-   ::hValidators  := {  "nombre" =>       {  "required"     => "El nombre es un dato requerido",;
+   ::hValidators  := {  "margen" =>       {  "positive"     => "El margen tiene que ser mayor o igual que cero" },;
+                        "nombre" =>       {  "required"     => "El nombre es un dato requerido",;
                                              "unique"       => "El nombre introducido ya existe",;
                                              "notNameCosto" => "El nombre de la tarifa no puede ser '" + __tarifa_costo__ + "'" },;
                         "codigo" =>       {  "required"     => "El código es un dato requerido" ,;
@@ -657,3 +650,47 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+CLASS TestArticulosTarifasController FROM TestCase
+
+   METHOD initModels()
+
+   METHOD testDialogoCambioPorcentajeTarifaBase() 
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD initModels() CLASS TestArticulosTarifasController
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testDialogoCambioPorcentajeTarifaBase() CLASS TestArticulosTarifasController
+
+   local oController
+
+   ::initModels()
+
+   oController             := ArticulosTarifasController():New()
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:oGetMargen():cText( 50 ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )
+
+   ::assert:true( oController:Edit( 1 ), "test modificación porcentaje tarifa base" )
+
+   oController:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+#endif
+

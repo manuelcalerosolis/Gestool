@@ -43,7 +43,7 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
    METHOD insertPrecioWhereTarifa( uuidTarifa ) ;
                                        INLINE ( ::getDatabase():Exec( ::getSQLInsertPrecioWhereTarifa( uuidTarifa ) ) )
 
-   METHOD getSQLUpdatePrecioWhereTarifa( uuidTarifa, lCosto )
+   METHOD getSQLUpdatePrecioWhereTarifa( uuidTarifa )
 
    METHOD updatePrecioWhereTarifa( uuidTarifa ) ;
                                        INLINE ( ::getDatabase():Exec( ::getSQLUpdatePrecioWhereTarifa( uuidTarifa ) ) )
@@ -55,7 +55,7 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
 
    METHOD insertUpdatePrecioWhereTarifa( uuidTarifa, lCosto ) ;
                                        INLINE ( ::getDatabase():Exec( ::getSQLInsertPrecioWhereTarifa( uuidTarifa, lCosto ) ),;
-                                                ::getDatabase():Exec( ::getSQLUpdatePrecioWhereTarifa( uuidTarifa, lCosto ) ) )
+                                                ::getDatabase():Exec( ::getSQLUpdatePrecioWhereTarifa( uuidTarifa ) ) )
 
    METHOD updatePrecioWhereTarifaAndArticulo( idPrecio, nPrecioCosto ) ;
                                        INLINE ( ::getDatabase():Exec( ::getSQLUpdatePrecioWhereTarifaAndArticulo( idPrecio, nPrecioCosto ) ) )
@@ -228,12 +228,12 @@ METHOD getSQLUpdatePrecioWhereTarifa( uuidTarifa ) CLASS SQLArticulosPreciosMode
       INNER JOIN %4$s AS articulos_tarifas  
          ON articulos_tarifas.uuid = %1$s
 
+      INNER JOIN %3$s AS articulos 
+        ON articulos.uuid = articulos_precios.articulo_uuid 
+
       LEFT JOIN %2$s AS articulos_precios_parent 
          ON articulos_precios_parent.tarifa_uuid = articulos_tarifas.parent_uuid
          AND articulos_precios_parent.articulo_uuid = articulos_precios.articulo_uuid
-
-      LEFT JOIN %3$s AS articulos 
-        ON articulos.uuid = articulos_precios.articulo_uuid 
 
       LEFT JOIN %5$s AS tipos_iva
          ON tipos_iva.codigo = articulos.tipo_iva_codigo
@@ -242,12 +242,17 @@ METHOD getSQLUpdatePrecioWhereTarifa( uuidTarifa ) CLASS SQLArticulosPreciosMode
          articulos_precios.margen = articulos_tarifas.margen, 
 
          articulos_precios.precio_base = 
-            @precioBase :=             
-            ( ( @precioSobre :=                
-               IF( articulos_tarifas.parent_uuid = '', articulos.precio_costo, articulos_precios_parent.precio_base )                
-               * articulos_tarifas.margen / 100 ) + @precioSobre ),
+         (  @precio_base := 
+            (
+            IF( articulos_tarifas.parent_uuid = '', 
+               IFNULL( articulos.precio_costo, 0 ), 
+               IFNULL( articulos_precios_parent.precio_base, 0 ) ) * IFNULL( articulos_tarifas.margen, 0 ) / 100 ) + 
+            IF( articulos_tarifas.parent_uuid = '',
+               IFNULL( articulos.precio_costo, 0 ),
+               IFNULL( articulos_precios_parent.precio_base, 0 ) )
+         ),
 
-         articulos_precios.precio_iva_incluido = ( ( @precioBase * tipos_iva.porcentaje / 100 ) + @precioBase )
+         articulos_precios.precio_iva_incluido = ( ( @precio_base * IFNULL( tipos_iva.porcentaje, 0 ) / 100 ) + @precio_base )
 
       WHERE 
          (  articulos_precios.manual IS NULL OR articulos_precios.manual != 1 )
@@ -256,6 +261,8 @@ METHOD getSQLUpdatePrecioWhereTarifa( uuidTarifa ) CLASS SQLArticulosPreciosMode
    ENDTEXT
 
    cSql  := hb_strformat( cSql, quoted( uuidTarifa ), ::getTableName(), SQLArticulosModel():getTableName(), SQLArticulosTarifasModel():getTableName(), SQLTiposIvaModel():getTableName() )
+
+   logwrite( cSql )
 
 RETURN ( cSql )
 

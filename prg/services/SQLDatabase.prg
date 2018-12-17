@@ -196,8 +196,6 @@ METHOD isParseError( cSentence )
 
    catch e
       
-      logwrite( cSentence )
-
       ::showError( e )
 
       RETURN ( .t. )

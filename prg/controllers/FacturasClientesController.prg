@@ -565,7 +565,6 @@ RETURN ( ::getController():getFacturasClientesLineasController():validLine() )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-
 #ifdef __TEST__
 
 CLASS TestFacturasClientesController FROM TestCase
@@ -746,6 +745,10 @@ METHOD testDialogoVentasPorCajas() CLASS TestFacturasClientesController
          self:getControl( 501, self:oFolder:aDialogs[1] ):Click(),;
          apoloWaitSeconds( 1 ),;
          eval( oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "0", 0 ),;
+         apoloWaitSeconds( 1 ),;
+         oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
+         apoloWaitSeconds( 1 ),;
+         eval( oController:getFacturasClientesLineasController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , 100, 0 ),;
          apoloWaitSeconds( 1 ),;
          oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
          apoloWaitSeconds( 1 ),;
