@@ -142,7 +142,7 @@ METHOD Resource() CLASS CaracteristicasValoresArticulosView
    with object ( ::oCol    := ::oBrowse:AddCol() )
       :cHeader             := 'Valores'
       :nWidth              := 245
-      :bEditValue          := {|| if( ::oController:getRowSet():fieldGet( 'personalizado' ) == 0, ::oController:getRowSet():fieldGet( 'nombre_valor' ), "" ) }
+      :bEditValue          := {|| if( ::oController:getRowSet():fieldGet( 'personalizado' ) == .f., ::oController:getRowSet():fieldGet( 'nombre_valor' ),"" )  }
       :bOnPostEdit         := {| oCol, uNewValue, nKey | ::ChangeColValue( uNewValue ) }
    end with
 
@@ -150,7 +150,7 @@ METHOD Resource() CLASS CaracteristicasValoresArticulosView
       :cHeader             := 'Personalizado'
       :nWidth              := 245
       :nEditType           := EDIT_GET
-      :bEditValue          := {|| if( ::oController:getRowSet():fieldGet( 'personalizado' ) == 1, Padr( ::oController:getRowSet():fieldGet( 'nombre_valor' ), 200 ), Space( 200 ) ) }
+      :bEditValue          := {|| if( ::oController:getRowSet():fieldGet( 'personalizado' ) == .t., Padr( ::oController:getRowSet():fieldGet( 'nombre_valor' ), 200 ), Space( 200 ) ) }
       :bOnPostEdit         := {| oCol, uNewValue, nKey | ::ChangeColSeleccionado( uNewValue ) }
    end with
 
@@ -260,6 +260,8 @@ CLASS SQLCaracteristicasValoresArticulosModel FROM SQLCompanyModel
 
    METHOD testCreateValorSinArticulo( uuidCaracteristica, uuidLinea )
 
+   METHOD testCreateSinValor( uuidArticulo, uuidCaracteristica )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -316,7 +318,7 @@ METHOD getSentenceRowSetValores() CLASS SQLCaracteristicasValoresArticulosModel
    FROM %1$s AS caracteristicas_valores_articulos
  
    INNER JOIN %2$s AS  articulos_caracteristicas
-      ON articulos_caracteristicas.uuid = caracteristicas_valores_articulos.caracteristica_uuid 
+      ON articulos_caracteristicas.uuid = caracteristicas_valores_articulos.caracteristica_uuid AND articulos_caracteristicas.deleted_at = 0
 
    LEFT JOIN %3$s AS articulos_caracteristicas_lineas
       ON articulos_caracteristicas_lineas.uuid = caracteristicas_valores_articulos.caracteristica_valor_uuid 
@@ -332,7 +334,7 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD caracteristicaUuidListFromUuidArticulo( uuidProduct ) 
+METHOD caracteristicaUuidListFromUuidArticulo( uuidProduct ) CLASS SQLCaracteristicasValoresArticulosModel
 
    local aIds     := {}
    local aResult
@@ -350,7 +352,7 @@ Return ( aIds )
 
 //---------------------------------------------------------------------------//
 
-METHOD caracteristicaValuesUuidListFromUuidArticulo( uuidProduct ) 
+METHOD caracteristicaValuesUuidListFromUuidArticulo( uuidProduct ) CLASS SQLCaracteristicasValoresArticulosModel
 
    local aIds     := {}
    local aResult
@@ -368,7 +370,7 @@ Return ( aIds )
 
 //---------------------------------------------------------------------------//
 
-METHOD productCaracteristicaValuesUuidHashFromUuidArticulo( uuidProduct ) 
+METHOD productCaracteristicaValuesUuidHashFromUuidArticulo( uuidProduct ) CLASS SQLCaracteristicasValoresArticulosModel
 
    local cSentence
 
@@ -380,7 +382,7 @@ Return ( ::getDatabase():selectFetchHash( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateCaracteristicaValor( uuidArticulo, uuidCaracteristica, uuidLinea )
+METHOD testCreateCaracteristicaValor( uuidArticulo, uuidCaracteristica, uuidLinea ) CLASS SQLCaracteristicasValoresArticulosModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -392,7 +394,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateValorSinCaracteristica( uuidArticulo )
+METHOD testCreateValorSinCaracteristica( uuidArticulo ) CLASS SQLCaracteristicasValoresArticulosModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -404,13 +406,25 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateValorSinArticulo( uuidCaracteristica, uuidLinea )
+METHOD testCreateValorSinArticulo( uuidCaracteristica, uuidLinea ) CLASS SQLCaracteristicasValoresArticulosModel
 
 local hBuffer  := ::loadBlankBuffer()
 
    hset( hBuffer, "articulo_uuid", )
    hset( hBuffer, "caracteristica_uuid", uuidCaracteristica )
    hset( hBuffer, "caracteristica_valor_uuid", uuidLinea )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateSinValor( uuidArticulo, uuidCaracteristica ) CLASS SQLCaracteristicasValoresArticulosModel
+
+local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "articulo_uuid", uuidArticulo )
+   hset( hBuffer, "caracteristica_uuid", uuidCaracteristica )
+   hset( hBuffer, "caracteristica_valor_uuid", )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 
@@ -422,17 +436,19 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 CLASS TestCaracteristicasValoresArticulosController FROM TestCase
 
-   //METHOD testCreateCaracteristicaValor()
+   METHOD testCreateCaracteristicaValor()
 
-   //METHOD testCreateCaracteristicaValorSinCaracteristica()
+   METHOD testCreateSinCaracteristica()
 
-   METHOD testCreateCaracteristicaValorSinCaracteristica()
+   METHOD testCreateSinArticulo()
+
+   METHOD testCreateSinValor()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-/*METHOD testCreateCaracteristicaValor() CLASS TestCaracteristicasValoresArticulosController
+METHOD testCreateCaracteristicaValor() CLASS TestCaracteristicasValoresArticulosController
 
    local uuidCaracteristica   := win_uuidcreatestring()
    local uuidArticulo         := win_uuidcreatestring()
@@ -455,9 +471,10 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateCaracteristicaValorSinCaracteristica() CLASS TestCaracteristicasValoresArticulosController
+METHOD testCreateSinCaracteristica() CLASS TestCaracteristicasValoresArticulosController
 
    local uuidArticulo         := win_uuidcreatestring()
+   local uuidLinea            := win_uuidcreatestring()
 
    SQLArticulosModel():truncateTable()
    SQLCaracteristicasModel():truncateTable() 
@@ -468,11 +485,11 @@ METHOD testCreateCaracteristicaValorSinCaracteristica() CLASS TestCaracteristica
 
    ::assert:notEquals( SQLCaracteristicasValoresArticulosModel():testCreateValorSinCaracteristica( uuidArticulo ), 1, "test caracteristica valor" )
 
-RETURN ( nil )*/
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateCaracteristicaValorSinCaracteristica()
+METHOD testCreateSinArticulo() CLASS TestCaracteristicasValoresArticulosController
 
    local uuidCaracteristica   := win_uuidcreatestring()
    local uuidLinea            := win_uuidcreatestring()
@@ -489,6 +506,25 @@ METHOD testCreateCaracteristicaValorSinCaracteristica()
    ::assert:notEquals( SQLCaracteristicasValoresArticulosModel():testCreateValorSinArticulo( uuidCaracteristica, uuidLinea ), 1, "test caracteristica valor" )
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateSinValor() CLASS TestCaracteristicasValoresArticulosController
+   
+   local uuidCaracteristica   := win_uuidcreatestring()
+   local uuidArticulo         := win_uuidcreatestring()
+
+   SQLArticulosModel():truncateTable()
+   SQLCaracteristicasModel():truncateTable() 
+   SQLCaracteristicasLineasModel():truncateTable()
+   SQLCaracteristicasValoresArticulosModel():truncateTable()
+
+   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
+
+   ::assert:notEquals( SQLCaracteristicasValoresArticulosModel():testCreateSinValor( uuidArticulo, uuidCaracteristica ), 1, "test caracteristica valor" )
+
+RETURN ( nil )
+
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

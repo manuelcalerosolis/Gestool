@@ -41,6 +41,8 @@ METHOD New( oSenderController ) CLASS CaracteristicasController
 
    //::oFilterController:setTableToFilter( ::oModel:cTableName )
 
+   ::setEvent( 'appended',     {|| ::getCaracteristicasLineasController():getModel():deleteBlank( ::getModelBuffer( "uuid" ) ) } )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -135,7 +137,7 @@ CLASS CaracteristicasView FROM SQLBaseView
 
    METHOD lineaAppend()
 
-    METHOD setShowDeleted()            INLINE ( ::getController():getCaracteristicasLineasController():setShowDeleted(),;
+   METHOD setShowDeleted()            INLINE ( ::getController():getCaracteristicasLineasController():setShowDeleted(),;
                                                 ::oBtnDeleted:Toggle(),;
                                                 ::oBtnDeleted:cTooltip := if( ::oBtnDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
@@ -346,13 +348,19 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 CLASS TestCaracteristicasController FROM TestCase
 
-   METHOD testCreateCaracteristicaSincodigo()
+   /*METHOD testCreateCaracteristicaSincodigo()
 
    METHOD testCreateCaracteristicaSinNombre()
 
-   METHOD testCreateCaracteristicaSinLinea()
+   METHOD testCreateCaracteristicaSinLinea()*/
 
-   METHOD testCreateCaracteristicaConLineaSinNombre()
+   /*METHOD testCreateCaracteristicaConLineaSinNombre()*/
+
+   /*METHOD testCreateCaracteristicaConLineaBlanco()
+
+   METHOD testCreateCaracteristicaCambiaLinea()*/
+
+   METHOD testCreateCaracteristicaLineasIguales()
 
 END CLASS
 
@@ -362,7 +370,7 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD testCreateCaracteristicaSincodigo() CLASS TestCaracteristicasController
+/*METHOD testCreateCaracteristicaSincodigo() CLASS TestCaracteristicasController
 
    local oController
 
@@ -427,11 +435,11 @@ METHOD testCreateCaracteristicaSinLinea() CLASS TestCaracteristicasController
 
    ::assert:true( oController:Append(), "test ::assert:true with .t." )
 
-RETURN ( nil )
+RETURN ( nil )*/
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateCaracteristicaConLineaSinNombre() CLASS TestCaracteristicasController
+/*METHOD testCreateCaracteristicaConLineaSinNombre() CLASS TestCaracteristicasController
 
    local oController
 
@@ -460,7 +468,103 @@ METHOD testCreateCaracteristicaConLineaSinNombre() CLASS TestCaracteristicasCont
 
    ::assert:true( oController:Append(), "test ::assert:true with .t." )
 
+RETURN ( nil )*/
+
+//---------------------------------------------------------------------------//
+
+/*METHOD testCreateCaracteristicaConLineaBlanco() CLASS TestCaracteristicasController
+
+local oController
+
+   SQLCaracteristicasModel():truncateTable()  
+   SQLCaracteristicasLineasModel():truncateTable()  
+
+   oController             := CaracteristicasController():New()
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100, self:oDialog ):cText( "001" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
+         apoloWaitSeconds( 1 ),;
+         self:lineaAppend(),;
+         apoloWaitSeconds( 1 ),;
+         eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
+         apoloWaitSeconds( 1 ),;
+         self:lineaAppend(),;
+         apoloWaitSeconds( 3 ),;
+         self:getControl( IDOK ):Click() } ) 
+
+   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateCaracteristicaCambiaLinea() CLASS TestCaracteristicasController
+
+local oController
+
+   SQLCaracteristicasModel():truncateTable()  
+   SQLCaracteristicasLineasModel():truncateTable()  
+
+   oController             := CaracteristicasController():New()
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100, self:oDialog ):cText( "001" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
+         apoloWaitSeconds( 1 ),;
+         self:lineaAppend(),;
+         apoloWaitSeconds( 1 ),;
+         eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
+         apoloWaitSeconds( 1 ),;
+         self:lineaAppend(),;
+         apoloWaitSeconds( 1 ),;
+         eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 2" ),;
+         oController:getCaracteristicasLineasController():getRowSet():goTop(),;
+         eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "" ),;
+         apoloWaitSeconds( 3 ),;
+         self:getControl( IDOK ):Click() } ) 
+
+   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )*/
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateCaracteristicaLineasIguales() CLASS TestCaracteristicasController
+
+local oController
+
+   SQLCaracteristicasModel():truncateTable()  
+   SQLCaracteristicasLineasModel():truncateTable()  
+
+   oController             := CaracteristicasController():New()
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100, self:oDialog ):cText( "001" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
+         apoloWaitSeconds( 1 ),;
+         self:lineaAppend(),;
+         apoloWaitSeconds( 1 ),;
+         eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
+         apoloWaitSeconds( 1 ),;
+         self:lineaAppend(),;
+         apoloWaitSeconds( 1 ),;
+         eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
+         apoloWaitSeconds( 1 ),;
+         self:lineaAppend(),;
+         apoloWaitSeconds( 3 ),;
+         self:getControl( IDOK ):Click() } ) 
+          
+   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
 
 #endif
 

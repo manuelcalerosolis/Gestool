@@ -77,7 +77,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD validLine() CLASS CaracteristicasLineasController
+METHOD validLine( uuidParent ) CLASS CaracteristicasLineasController
 
    if ::getRowSet():recCount == 0
       RETURN ( .t. )
@@ -85,7 +85,7 @@ METHOD validLine() CLASS CaracteristicasLineasController
 
    if empty( ::getRowSet():fieldget( 'nombre' ) )
       RETURN ( .f. )
-   end if 
+   end if
 
 RETURN ( .t. )
 
@@ -193,6 +193,10 @@ CLASS SQLCaracteristicasLineasModel FROM SQLCompanyModel
    METHOD testCreateCaracteristicaLineaSinNombre( uuidParent )
 
    METHOD testCreateCaracteristicaLineaConUuidAndParent( uuid, uuidParent )
+
+   METHOD detectDuplicate( uuidParent )
+
+   METHOD deleteBlank( uuidParent )
 
 
 END CLASS
@@ -309,6 +313,53 @@ METHOD testCreateCaracteristicaLineaConUuidAndParent( uuid, uuidParent )
    hset( hBuffer, "parent_uuid", uuidParent )
 
 RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteBlank( uuidParent )
+
+local cSql
+
+   TEXT INTO cSql
+
+   DELETE 
+
+   FROM %1$s
+      
+   WHERE parent_uuid = %2$s AND nombre = ""
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(),quoted( uuidParent ) ) 
+
+RETURN ( getSQLDatabase():Exec( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD detectDuplicate( uuidParent )
+
+local cSql
+
+   TEXT INTO cSql
+
+   SELECT 
+      COUNT(*) AS recuento
+
+   FROM %1$s AS articulos_caracteristicas_lineas
+
+   WHERE articulos_caracteristicas_lineas.parent_uuid = %2$s
+   
+   GROUP BY nombre
+   
+   HAVING COUNT(*) > 1
+
+   ORDER BY nombre
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) ) 
+ 
+RETURN ( getSQLDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
