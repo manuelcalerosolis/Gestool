@@ -9,8 +9,6 @@ CLASS CaracteristicasLineasController FROM SQLBrowseController
 
    METHOD End()
 
-   METHOD validateNombre( uValue )
-
    METHOD updateField( cField, uValue )
 
    METHOD validLine()
@@ -59,12 +57,6 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD validateNombre( oGet ) CLASS CaracteristicasLineasController
-
-RETURN ( ::validate( 'nombre', alltrim( oGet:varGet() ) ) )
-
-//---------------------------------------------------------------------------//
-
 METHOD updateField( uValue ) CLASS CaracteristicasLineasController
 
    ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "nombre", uValue )
@@ -79,7 +71,7 @@ RETURN ( nil )
 
 METHOD validLine( uuidParent ) CLASS CaracteristicasLineasController
 
-   if ::getRowSet():recCount == 0
+   if ::getRowSet():recCount() == 0
       RETURN ( .t. )
    end if 
 
@@ -135,7 +127,7 @@ METHOD addColumns() CLASS CaracteristicasLineasBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := ::getEditGet()
-      :bEditValid          := {| oGet, oCol | ::oController:validateNombre( oGet ) }
+      :bEditValid          := {| oGet, oCol | ::oController:validate( 'nombre', alltrim( oGet:varGet() ) ) }
       :bOnPostEdit         := {|oCol, uNewValue| ::getController():updateField( uNewValue )  }
    end with
 
@@ -155,16 +147,24 @@ CLASS CaracteristicasLineasValidator FROM SQLParentValidator
  
    METHOD getDialogView()              INLINE ( ::getController():getController():getDialogView() )
 
+   METHOD duplicated()              
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD getValidators() CLASS CaracteristicasLineasValidator
 
-   ::hValidators  := {  "nombre" =>    {  "required"  => "El valor de la caracteristica es un dato requerido" ,;
-                                          "unique"    => "El valor introducido ya existe" } }
+   ::hValidators  := {  "nombre" =>    {  "required"     => "El valor de la caracteristica es un dato requerido",;
+                                          "duplicated"   => "El valor de la caracteristica ya está introducido" } }
 
 RETURN ( ::hValidators )
+
+//---------------------------------------------------------------------------//
+
+METHOD duplicated( cNombre )              
+
+RETURN ( ::getModel():isDuplicateName( ::getController():getControllerParentUuid(), cNombre ) > 1 )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -186,6 +186,12 @@ CLASS SQLCaracteristicasLineasModel FROM SQLCompanyModel
 
    METHOD getNamesFromIdLanguagesPS( uuidCaracteristica, aIdsLanguages )
 
+   METHOD isDuplicateName( uuidParent, cNombre )
+
+   METHOD deleteBlank( uuidParent )
+
+#ifdef __TEST__
+
    METHOD testCreateCaracteristicaLineaSinParent( uuidParent )
 
    METHOD testCreateCaracteristicaLineaConParent( uuidParent )
@@ -194,10 +200,7 @@ CLASS SQLCaracteristicasLineasModel FROM SQLCompanyModel
 
    METHOD testCreateCaracteristicaLineaConUuidAndParent( uuid, uuidParent )
 
-   METHOD detectDuplicate( uuidParent )
-
-   METHOD deleteBlank( uuidParent )
-
+#endif
 
 END CLASS
 
@@ -266,6 +269,49 @@ METHOD getNamesFromIdLanguagesPS( uuidCaracteristica, aIdsLanguages ) CLASS SQLC
 RETURN ( hNames )
 
 //---------------------------------------------------------------------------//
+METHOD deleteBlank( uuidParent )
+
+local cSql
+
+   TEXT INTO cSql
+
+   DELETE 
+
+   FROM %1$s
+      
+   WHERE parent_uuid = %2$s AND nombre = ""
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(),quoted( uuidParent ) ) 
+
+RETURN ( getSQLDatabase():Exec( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD isDuplicateName( uuidParent, cNombre )
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT 
+      COUNT(*) 
+
+   FROM %1$s AS articulos_caracteristicas_lineas
+
+      WHERE articulos_caracteristicas_lineas.parent_uuid = %2$s 
+         AND articulos_caracteristicas_lineas.nombre = %3$s
+   
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ), quoted( cNombre ) ) 
+ 
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
+
+//---------------------------------------------------------------------------//
+
+#ifdef __TEST__
 
 METHOD testCreateCaracteristicaLineaSinParent() CLASS SQLCaracteristicasLineasModel
 
@@ -314,52 +360,7 @@ METHOD testCreateCaracteristicaLineaConUuidAndParent( uuid, uuidParent )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 
-//---------------------------------------------------------------------------//
-
-METHOD deleteBlank( uuidParent )
-
-local cSql
-
-   TEXT INTO cSql
-
-   DELETE 
-
-   FROM %1$s
-      
-   WHERE parent_uuid = %2$s AND nombre = ""
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(),quoted( uuidParent ) ) 
-
-RETURN ( getSQLDatabase():Exec( cSql ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD detectDuplicate( uuidParent )
-
-local cSql
-
-   TEXT INTO cSql
-
-   SELECT 
-      COUNT(*) AS recuento
-
-   FROM %1$s AS articulos_caracteristicas_lineas
-
-   WHERE articulos_caracteristicas_lineas.parent_uuid = %2$s
-   
-   GROUP BY nombre
-   
-   HAVING COUNT(*) > 1
-
-   ORDER BY nombre
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) ) 
- 
-RETURN ( getSQLDatabase():getValue( cSql ) )
+#endif
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

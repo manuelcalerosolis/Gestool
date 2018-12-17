@@ -39,9 +39,7 @@ METHOD New( oSenderController ) CLASS CaracteristicasController
 
    ::lTransactional                    := .t.
 
-   //::oFilterController:setTableToFilter( ::oModel:cTableName )
-
-   ::setEvent( 'appended',     {|| ::getCaracteristicasLineasController():getModel():deleteBlank( ::getModelBuffer( "uuid" ) ) } )
+   ::setEvents( { 'appended', 'edited' }, {|| ::getCaracteristicasLineasController():getModel():deleteBlank( ::getModelBuffer( "uuid" ) ) } )
 
 RETURN ( Self )
 
@@ -65,9 +63,7 @@ METHOD End() CLASS CaracteristicasController
       ::oValidator:End()
    end if
 
-   //::Super:End()
-
-RETURN ( Self )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -137,7 +133,7 @@ CLASS CaracteristicasView FROM SQLBaseView
 
    METHOD lineaAppend()
 
-   METHOD setShowDeleted()            INLINE ( ::getController():getCaracteristicasLineasController():setShowDeleted(),;
+   METHOD setShowDeleted()             INLINE ( ::getController():getCaracteristicasLineasController():setShowDeleted(),;
                                                 ::oBtnDeleted:Toggle(),;
                                                 ::oBtnDeleted:cTooltip := if( ::oBtnDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
@@ -175,7 +171,7 @@ METHOD Activate() CLASS CaracteristicasView
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNN" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
@@ -225,8 +221,6 @@ METHOD Activate() CLASS CaracteristicasView
 
    ACTIVATE DIALOG ::oDialog CENTER
   
-   ::oBitmap:end()
-
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
@@ -259,6 +253,7 @@ METHOD getValidators() CLASS CaracteristicasValidator
                                           "unique"             => "El nombre introducido ya existe" },;
                         "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
                                           "unique"             => "El código introducido ya existe" } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -269,17 +264,21 @@ RETURN ( ::hValidators )
 
 CLASS SQLCaracteristicasModel FROM SQLCompanyModel
 
-   DATA cTableName                        INIT "articulos_caracteristicas"
+   DATA cTableName                     INIT "articulos_caracteristicas"
 
-   DATA cConstraints                      INIT "PRIMARY KEY ( codigo, deleted_at )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( codigo, deleted_at )"
 
    METHOD getColumns()
 
-   METHOD getNombreWhereUuid( uuid )      INLINE ( ::getField( 'nombre', 'uuid', uuid ) )
+   METHOD getNombreWhereUuid( uuid )   INLINE ( ::getField( 'nombre', 'uuid', uuid ) )
 
    METHOD getNamesFromIdLanguagesPS( uuidCaracteristica, aIdsLanguages )
 
+#ifdef __TEST__
+
    METHOD testCreateCaracteristica( uuid )
+
+#endif
 
 END CLASS
 
@@ -313,13 +312,13 @@ METHOD getNamesFromIdLanguagesPS( uuidCaracteristica, aIdsLanguages ) CLASS SQLC
    local hNames   := {=>}
 
    if Len( aIdsLanguages ) == 0
-      Return ( hNames )
+      RETURN ( hNames )
    end if
 
-   cName    := ::getNombreWhereUuid( uuidCaracteristica )
+   cName          := ::getNombreWhereUuid( uuidCaracteristica )
 
-   if Empty( cName )
-      Return ( hNames )
+   if empty( cName )
+      RETURN ( hNames )
    end if
 
    aEval( aIdsLanguages, {|id| hSet( hNames, AllTrim( Str( id ) ), AllTrim( cName ) ) } )
@@ -327,6 +326,8 @@ METHOD getNamesFromIdLanguagesPS( uuidCaracteristica, aIdsLanguages ) CLASS SQLC
 RETURN ( hNames )
 
 //---------------------------------------------------------------------------//
+
+#ifdef __TEST__
 
 METHOD testCreateCaracteristica( uuid ) CLASS SQLCaracteristicasModel
 
@@ -337,6 +338,8 @@ METHOD testCreateCaracteristica( uuid ) CLASS SQLCaracteristicasModel
    hset( hBuffer, "nombre", "Caracteristica" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
+
+#endif
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -564,7 +567,6 @@ local oController
    ::assert:true( oController:Append(), "test ::assert:true with .t." )
 
 RETURN ( nil )
-
 
 #endif
 
