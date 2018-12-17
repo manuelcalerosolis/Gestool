@@ -27,9 +27,9 @@ METHOD New( oController ) CLASS CaracteristicasValoresArticulosController
 
    ::Super:New( oController ) 
 
-   ::cTitle                      := "Características valores artículos"
+   ::cTitle                            := "Características valores artículos"
 
-   ::cName                       := "caracteristicas_valores_articulos"
+   ::cName                             := "caracteristicas_valores_articulos"
 
    ::hImage                            := {  "16" => "gc_tags_16",;
                                              "32" => "gc_tags_32",;
@@ -49,9 +49,7 @@ METHOD End() CLASS CaracteristicasValoresArticulosController
       ::oDialogView:End()
    end if
 
-   ::Super:End()
-
-RETURN ( Self )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
@@ -206,15 +204,15 @@ METHOD ChangeColSeleccionado( uNewValue )
 
    local hBuffer
 
-   if Empty( uNewValue )
-      Return ( .t. )
+   if empty( uNewValue )
+      RETURN ( .t. )
    end if
 
    /*
    Inserto en la tabla de valores
    */
 
-   if Empty( SQLCaracteristicasLineasModel():getUuidWhereNombre( uNewValue ) )
+   if empty( SQLCaracteristicasLineasModel():getUuidWhereNombre( uNewValue ) )
 
       hBuffer     := SQLCaracteristicasLineasModel():loadBlankBuffer()
 
@@ -297,7 +295,7 @@ METHOD getSQLInsertCaracteristicaWhereArticulo() CLASS SQLCaracteristicasValores
    cSQL           +=    "FROM " + SQLCaracteristicasModel():getTableName() + " AS caracteristicas"       + " "
    cSQL           +=    "ORDER BY id"
 
-Return ( getSQLDatabase():Exec( cSQL ) )
+RETURN ( getSQLDatabase():Exec( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
@@ -346,9 +344,9 @@ METHOD caracteristicaUuidListFromUuidArticulo( uuidProduct ) CLASS SQLCaracteris
 
    aResult     := ::getDatabase():selectFetchArray( cSentence )
 
-   aEval( aResult, {|a| aAdd( aIds, a[1] ) } )
+   aeval( aResult, {|a| aadd( aIds, a[1] ) } )
 
-Return ( aIds )
+RETURN ( aIds )
 
 //---------------------------------------------------------------------------//
 
@@ -364,9 +362,9 @@ METHOD caracteristicaValuesUuidListFromUuidArticulo( uuidProduct ) CLASS SQLCara
 
    aResult     := ::getDatabase():selectFetchArray( cSentence )
 
-   aEval( aResult, {|a| aAdd( aIds, a[1] ) } )
+   aeval( aResult, {|a| aadd( aIds, a[1] ) } )
 
-Return ( aIds )
+RETURN ( aIds )
 
 //---------------------------------------------------------------------------//
 
@@ -378,7 +376,7 @@ METHOD productCaracteristicaValuesUuidHashFromUuidArticulo( uuidProduct ) CLASS 
    cSentence      += "FROM caracteristicas_valores_articulos "
    cSentence      += "WHERE articulo_uuid = " + quoted( uuidProduct )
 
-Return ( ::getDatabase():selectFetchHash( cSentence ) )
+RETURN ( ::getDatabase():selectFetchHash( cSentence ) )
 
 //---------------------------------------------------------------------------//
 

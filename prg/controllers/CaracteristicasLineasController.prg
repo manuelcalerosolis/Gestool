@@ -133,7 +133,7 @@ METHOD addColumns() CLASS CaracteristicasLineasBrowseView
 
    ::getColumnDeletedAt()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -162,9 +162,9 @@ RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
 
-METHOD duplicated( cNombre )              
+METHOD duplicated( cNombre ) 
 
-RETURN ( ::getModel():isDuplicateName( ::getController():getControllerParentUuid(), cNombre ) > 1 )
+RETURN ( ::getController():getModel():isDuplicateName( ::getController():getControllerParentUuid(), cNombre ) < 2 )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -231,15 +231,15 @@ RETURN ( ::hColumns )
 
 METHOD getArrayNombreValoresFromUuid( uuid ) CLASS SQLCaracteristicasLineasModel
 
-local cSql
+   local cSql
 
    TEXT INTO cSql
 
    SELECT nombre 
 
-   FROM %1$s AS articulos_caracteristicas_lineas
+      FROM %1$s AS articulos_caracteristicas_lineas
       
-   WHERE parent_uuid = %2$s AND personalizado = 0
+      WHERE parent_uuid = %2$s AND personalizado = 0
 
    ENDTEXT
 
@@ -254,21 +254,22 @@ METHOD getNamesFromIdLanguagesPS( uuidCaracteristica, aIdsLanguages ) CLASS SQLC
    local cName
    local hNames   := {=>}
 
-   if Len( aIdsLanguages ) == 0
-      Return ( hNames )
+   if len( aIdsLanguages ) == 0
+      RETURN ( hNames )
    end if
 
-   cName    := ::getNombreWhereUuid( uuidCaracteristica )
+   cName          := ::getNombreWhereUuid( uuidCaracteristica )
 
-   if Empty( cName )
-      Return ( hNames )
+   if empty( cName )
+      RETURN ( hNames )
    end if
 
-   aEval( aIdsLanguages, {|id| hSet( hNames, AllTrim( Str( id ) ), AllTrim( cName ) ) } )
+   aeval( aIdsLanguages, {|id| hset( hNames, alltrim( str( id ) ), alltrim( cName ) ) } )
 
 RETURN ( hNames )
 
 //---------------------------------------------------------------------------//
+
 METHOD deleteBlank( uuidParent )
 
 local cSql
@@ -277,9 +278,9 @@ local cSql
 
    DELETE 
 
-   FROM %1$s
+      FROM %1$s
       
-   WHERE parent_uuid = %2$s AND nombre = ""
+      WHERE parent_uuid = %2$s AND nombre = ""
 
    ENDTEXT
 

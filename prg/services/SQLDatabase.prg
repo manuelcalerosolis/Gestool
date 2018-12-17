@@ -24,48 +24,53 @@ CLASS SQLDatabase
    DATA cPasswordMySQL
    DATA nPortMySQL
 
-   DATA cBackUpFileName                   INIT ""
+   DATA cBackUpFileName                INIT ""
 
-   DATA aModels                           INIT {}
+   DATA aModels                        INIT {}
 
-   METHOD New()                           CONSTRUCTOR
+   METHOD New()                        CONSTRUCTOR
    
-   METHOD Conexion()                      INLINE ( ::oConexion )
+   METHOD Conexion()                   INLINE ( ::oConexion )
    METHOD Connect() 
    METHOD ConnectWithoutDataBase()
-   METHOD Disconnect()                    INLINE ( if( !empty( ::oConexion ), ::oConexion:disconnect(), ) )
+   METHOD Disconnect()                 INLINE ( if( !empty( ::oConexion ), ::oConexion:disconnect(), ) )
    
-   METHOD RowSet( cSql )                  INLINE ( if( !empty( ::oConexion ), ::oConexion:RowSet( cSql ), ) )
+   METHOD RowSet( cSql )               INLINE ( if( !empty( ::oConexion ), ::oConexion:RowSet( cSql ), ) )
 
-   METHOD Ping()                          INLINE ( if( !empty( ::oConexion ), ::oConexion:Ping(), ) )
+   METHOD Ping()                       INLINE ( if( !empty( ::oConexion ), ::oConexion:Ping(), ) )
 
    METHOD isParseError()
 
    METHOD Exec( cSql )        
-   METHOD ExecWithOutParse( cSql )        INLINE ( ::Exec( cSql, .f. ) )     
+   METHOD ExecWithOutParse( cSql )     INLINE ( ::Exec( cSql, .f. ) )     
    
    METHOD Execs( aSql ) 
-   METHOD ExecsWithOutParse( aSql )       INLINE ( ::Execs( aSql, .f. ) )
+   METHOD ExecsWithOutParse( aSql )    INLINE ( ::Execs( aSql, .f. ) )
 
-   METHOD TransactionalExec( cSql )       INLINE ( ::BeginTransaction(), ::Exec( cSql ), ::Commit() )            
+   METHOD TransactionalExec( cSql )    INLINE ( ::BeginTransaction(), ::Exec( cSql ), ::Commit() )            
    
-   METHOD Query( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Query( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
-   METHOD Prepare( cSql )                 INLINE ( if( !empty( ::oConexion ), ::oConexion:Prepare( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
-   METHOD Parse( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Parse( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD Query( cSql )                INLINE ( if( !empty( ::oConexion ), ::oConexion:Query( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD Prepare( cSql )              INLINE ( if( !empty( ::oConexion ), ::oConexion:Prepare( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD Parse( cSql )                INLINE ( if( !empty( ::oConexion ), ::oConexion:Parse( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
 
-   METHOD escapeStr( cEscape )            INLINE ( if( !empty( ::oConexion ), ::oConexion:escapeStr( cEscape ), cEscape ) ) 
+   METHOD escapeStr( cEscape )         INLINE ( if( !empty( ::oConexion ), ::oConexion:escapeStr( cEscape ), cEscape ) ) 
 
    METHOD genStatement( cStatement )
 
    METHOD selectFetch( cSql )
 
-   METHOD selectFetchHash( cSentence, attributePad )  INLINE ::selectFetch( cSentence, FETCH_HASH, attributePad )
-   METHOD selectTrimedFetchHash( cSentence )          INLINE ::selectFetchHash( cSentence, .f. )
-   METHOD selectPadedFetchHash( cSentence )           INLINE ::selectFetchHash( cSentence, .t. )
+   METHOD selectFetchHash( cSentence, attributePad );
+                                       INLINE ::selectFetch( cSentence, FETCH_HASH, attributePad )
+   METHOD selectTrimedFetchHash( cSentence );
+                                       INLINE ::selectFetchHash( cSentence, .f. )
+   METHOD selectPadedFetchHash( cSentence );
+                                       INLINE ::selectFetchHash( cSentence, .t. )
    METHOD firstTrimedFetchHash( cSentence )           
 
-   METHOD selectFetchArray( cSentence, attributePad ) INLINE ::selectFetch( cSentence, FETCH_ARRAY, attributePad )
-   METHOD selectTrimedFetchArray( cSentence )         INLINE ::selectFetchArray( cSentence, .f. )
+   METHOD selectFetchArray( cSentence, attributePad ) ;
+                                       INLINE ::selectFetch( cSentence, FETCH_ARRAY, attributePad )
+   METHOD selectTrimedFetchArray( cSentence ) ;
+                                       INLINE ::selectFetchArray( cSentence, .f. )
 
    METHOD selectFetchToJson( cSentence )
    
@@ -75,13 +80,13 @@ CLASS SQLDatabase
 
    METHOD getValue( cSql, nColumn )       
 
-   METHOD lastInsertId()                  INLINE ( if( !empty( ::oConexion ), ::oConexion:lastInsertId(), msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD lastInsertId()               INLINE ( if( !empty( ::oConexion ), ::oConexion:lastInsertId(), msgstop( "No ha conexiones disponibles" ) ) )
 
-   METHOD beginTransaction()              INLINE ( if( !empty( ::oConexion ), ::oConexion:beginTransaction(),  msgstop( "No ha conexiones disponibles" ) ) )
-   METHOD Commit()                        INLINE ( if( !empty( ::oConexion ), ::oConexion:commit(), msgstop( "No ha conexiones disponibles" ) ) )
-   METHOD rollBack()                      INLINE ( if( !empty( ::oConexion ), ::oConexion:rollBack(),  msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD beginTransaction()           INLINE ( if( !empty( ::oConexion ), ::oConexion:beginTransaction(),  msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD Commit()                     INLINE ( if( !empty( ::oConexion ), ::oConexion:commit(), msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD rollBack()                   INLINE ( if( !empty( ::oConexion ), ::oConexion:rollBack(),  msgstop( "No ha conexiones disponibles" ) ) )
 
-   METHOD errorInfo()                     INLINE ( if( !empty( ::oConexion ), ::oConexion:errorInfo(), ) )
+   METHOD errorInfo()                  INLINE ( if( !empty( ::oConexion ), ::oConexion:errorInfo(), ) )
 
    METHOD Export( cBackUpFileName )
       METHOD exportTable( hFileName, cTable )
@@ -93,11 +98,11 @@ CLASS SQLDatabase
 
    METHOD getListTables()
 
-   METHOD sayConexionInfo()               INLINE ( "Database : " + ::cDatabaseMySQL + CRLF + ;
-                                                   "IP : " + ::cIpMySQL             + CRLF + ;
-                                                   "User : " + ::cUserMySQL         + CRLF + ;
-                                                   "Password : " + ::cPasswordMySQL + CRLF + ;
-                                                   "Port : " + alltrim( str( ::nPortMySQL ) ) )
+   METHOD sayConexionInfo()            INLINE ( "Database : " + ::cDatabaseMySQL + CRLF + ;
+                                                "IP : " + ::cIpMySQL             + CRLF + ;
+                                                "User : " + ::cUserMySQL         + CRLF + ;
+                                                "Password : " + ::cPasswordMySQL + CRLF + ;
+                                                "Port : " + alltrim( str( ::nPortMySQL ) ) )
 
    METHOD showError( e )
 
