@@ -5,7 +5,7 @@
 
 CLASS SQLFacturasClientesModel FROM SQLOperacionesComercialesModel
 
-   DATA cTableName                     INIT "facturas_clientes"
+   DATA cTableName                     INIT "facturas_proveedores"
 
 END CLASS
 

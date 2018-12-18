@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesController FROM OperacionesComercialesController
+CLASS FacturasProveedoresController FROM OperacionesComercialesController
 
    METHOD New() CONSTRUCTOR
 
@@ -11,11 +11,11 @@ CLASS FacturasClientesController FROM OperacionesComercialesController
 
    // Impresiones--------------------------------------------------------------
 
-   METHOD getSubject()                 INLINE ( "Factura de cliente número" )
+   METHOD getSubject()                 INLINE ( "Factura de proveedor número" )
 
    // Contrucciones tardias----------------------------------------------------
 
-   METHOD getName()                    INLINE ( "facturas_clientes" )
+   METHOD getName()                    INLINE ( "facturas_proveedor" )
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasClientesModel():New( self ), ), ::oModel )
 
@@ -31,13 +31,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS FacturasClientesController
+METHOD New( oController ) CLASS FacturasProveedoresController
 
    ::Super:New( oController )
 
-   ::cTitle                            := "Facturas de clientes"
+   ::cTitle                            := "Facturas de proveedores"
 
-   ::cName                             := "facturas_clientes" 
+   ::cName                             := "facturas_proveedores" 
 
    ::hImage                            := {  "16" => "gc_document_text_user_16",;
                                              "32" => "gc_document_text_user_32",;
@@ -47,7 +47,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS FacturasClientesController
+METHOD End() CLASS FacturasProveedoresController
 
    if !empty( ::oModel )
       ::oModel:End()
@@ -79,7 +79,7 @@ RETURN ( ::Super:End() )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesValidator FROM SQLBaseValidator 
+CLASS FacturasProveedoresValidator FROM SQLBaseValidator 
 
    METHOD getValidators()
 
@@ -91,7 +91,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS FacturasClientesValidator
+METHOD getValidators() CLASS FacturasProveedoresValidator
 
    ::hValidators  := {  "cliente_codigo"     => {  "required"        => "El código del cliente es un dato requerido",;
                                                    "clienteExist"    => "El código del cliente no existe" } ,;  
@@ -108,13 +108,13 @@ RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
 
-METHOD emptyLines() CLASS FacturasClientesValidator     
+METHOD emptyLines() CLASS FacturasProveedoresValidator     
 
 RETURN ( ::getController():hasLines() )
 
 //---------------------------------------------------------------------------//
 
-METHOD validLine() CLASS FacturasClientesValidator     
+METHOD validLine() CLASS FacturasProveedoresValidator     
 
 RETURN ( ::getController():getFacturasClientesLineasController():validLine() )
 
@@ -126,7 +126,7 @@ RETURN ( ::getController():getFacturasClientesLineasController():validLine() )
 
 #ifdef __TEST__
 
-CLASS TestFacturasClientesController FROM TestCase
+CLASS TestFacturasProveedoresController FROM TestCase
 
    METHOD initModels()
 
@@ -144,7 +144,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD initModels() CLASS TestFacturasClientesController
+METHOD initModels() CLASS TestFacturasProveedoresController
 
    SQLClientesModel():truncateTable()
    SQLAlmacenesModel():truncateTable()
@@ -167,7 +167,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCalculoFacturaConDescuento() CLASS TestFacturasClientesController
+METHOD testCalculoFacturaConDescuento() CLASS TestFacturasProveedoresController
 
    local uuid  
    local hTotal
@@ -199,7 +199,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCalculoFacturaConIncremento() CLASS TestFacturasClientesController
+METHOD testCalculoFacturaConIncremento() CLASS TestFacturasProveedoresController
 
    local uuid  
    local hTotal
@@ -225,7 +225,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testFacturaConUnidadesDeMedicion() CLASS TestFacturasClientesController
+METHOD testFacturaConUnidadesDeMedicion() CLASS TestFacturasProveedoresController
 
    local uuid  
    local hTotal
@@ -251,7 +251,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testDialogoWithNoLines() CLASS TestFacturasClientesController
+METHOD testDialogoWithNoLines() CLASS TestFacturasProveedoresController
 
    local oController
 
@@ -282,7 +282,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testDialogoVentasPorCajas() CLASS TestFacturasClientesController
+METHOD testDialogoVentasPorCajas() CLASS TestFacturasProveedoresController
 
    local oController
 

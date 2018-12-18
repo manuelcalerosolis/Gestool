@@ -1302,7 +1302,7 @@ FUNCTION CreateMainSQLAcceso()
    // Proveedores--------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 1
+   oGrupo:nBigItems     := 2
    oGrupo:cPrompt       := 'Proveedores'
    oGrupo:cLittleBitmap := "gc_businessmen2_16"
    oGrupo:cBigBitmap    := "gc_businessmen2_32"
@@ -1315,6 +1315,16 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cId            := "proveedores"
    oItem:cBmp           := "gc_businessman_16"
    oItem:cBmpBig        := "gc_businessman_32"
+   oItem:lShow          := .t.
+
+   oItem                := oItemCompras:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Facturas de proveedores'
+   oItem:cMessage       := 'Facturas de proveedores'
+   oItem:bAction        := {|| FacturasProveedoresController():New():ActivateNavigatorView() }
+   oItem:cId            := "facturas_proveedores"
+   oItem:cBmp           := "gc_document_text_user_16"
+   oItem:cBmpBig        := "gc_document_text_user_32"
    oItem:lShow          := .t.
 
    oItemAlmacen         := oAcceso:Add()
