@@ -30,11 +30,11 @@ USER FUNCTION hbunit_test()
 
    // oSuite:addTest( TestPagosAssistantController():new() )
 
-   // oSuite:addTest( TestCaracteristicasController():new() )
+   //oSuite:addTest( TestCaracteristicasController():new() )
 
-   // oSuite:addTest( TestCaracteristicasLineasController():new() )
+  //oSuite:addTest( TestCaracteristicasLineasController():new() )
 
-   // oSuite:addTest( TestCaracteristicasValoresArticulosController():new() )
+   oSuite:addTest( TestCaracteristicasValoresArticulosController():new() )
 
    // oSuite:addTest( TestUnidadesMedicionController():new() )
 
@@ -46,7 +46,7 @@ USER FUNCTION hbunit_test()
 
    // oSuite:addTest( TestFacturasClientesFacturaeController():new() )
 
-   oSuite:addTest( TestFacturasClientesController():new() )
+   //oSuite:addTest( TestFacturasClientesController():new() )
    
    oRunner:run( oSuite )
 

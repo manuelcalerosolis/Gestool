@@ -351,17 +351,17 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 CLASS TestCaracteristicasController FROM TestCase
 
-   /*METHOD testCreateCaracteristicaSincodigo()
+   METHOD testCreateCaracteristicaSincodigo()
 
    METHOD testCreateCaracteristicaSinNombre()
 
-   METHOD testCreateCaracteristicaSinLinea()*/
+   METHOD testCreateCaracteristicaSinLinea()
 
    /*METHOD testCreateCaracteristicaConLineaSinNombre()*/
 
-   /*METHOD testCreateCaracteristicaConLineaBlanco()
+   METHOD testCreateCaracteristicaConLineaBlanco()
 
-   METHOD testCreateCaracteristicaCambiaLinea()*/
+   METHOD testCreateCaracteristicaCambiaLinea()
 
    METHOD testCreateCaracteristicaLineasIguales()
 
@@ -373,7 +373,7 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-/*METHOD testCreateCaracteristicaSincodigo() CLASS TestCaracteristicasController
+METHOD testCreateCaracteristicaSincodigo() CLASS TestCaracteristicasController
 
    local oController
 
@@ -438,7 +438,7 @@ METHOD testCreateCaracteristicaSinLinea() CLASS TestCaracteristicasController
 
    ::assert:true( oController:Append(), "test ::assert:true with .t." )
 
-RETURN ( nil )*/
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -475,7 +475,7 @@ RETURN ( nil )*/
 
 //---------------------------------------------------------------------------//
 
-/*METHOD testCreateCaracteristicaConLineaBlanco() CLASS TestCaracteristicasController
+METHOD testCreateCaracteristicaConLineaBlanco() CLASS TestCaracteristicasController
 
 local oController
 
@@ -533,7 +533,7 @@ local oController
 
    ::assert:true( oController:Append(), "test ::assert:true with .t." )
 
-RETURN ( nil )*/
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
