@@ -18,6 +18,8 @@ CLASS FacturasClientesReport FROM SQLBaseReport
 
    DATA hTotal
 
+   DATA hTotalByIVA
+
    METHOD New( oController ) CONSTRUCTOR
 
    METHOD End()
@@ -41,6 +43,8 @@ CLASS FacturasClientesReport FROM SQLBaseReport
    METHOD getFacturasClientesLineasRowSet()  INLINE ( if( empty( ::oFacturasClientesLineasRowSet ), ::oFacturasClientesLineasRowSet := SQLRowSet():New(), ), ::oFacturasClientesLineasRowSet )
 
    METHOD getTotalesDocument( uuid )         INLINE ( ::hTotal  := ::getController():getRepository():getTotalesDocument( uuid ) )
+   
+   METHOD getTotalesDocumentByIVA( uuid )    INLINE ( ::hTotalByIVA  := ::getController():getRepository():getTotalesDocumentGroupByIVA( uuid ) ) 
 
 END CLASS
 
@@ -75,7 +79,7 @@ METHOD buidSentenceAndRowsetFacturasClientes( uuid )
    if empty( uuid )
       ::getFacturasClientesModel():setLimit( 1 )
    else
-      ::getFacturasClientesModel():setGeneralWhere( "facturas_clientes.uuid = " + quoted( uuid ) )
+      ::getFacturasClientesModel():setGeneralWhere( "operaciones_comerciales.uuid = " + quoted( uuid ) )
    end if 
 
    ::getFacturasClientesRowSet():Build( ::getFacturasClientesModel():getGeneralSelect() )
@@ -106,6 +110,8 @@ METHOD buildRowSet( uuid )
 
    ::getTotalesDocument( uuid )
 
+   ::getTotalesDocumentByIVA( uuid )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -126,9 +132,11 @@ RETURN ( nil )
 
 METHOD setUserDataSet() 
 
+   local nRow
+
    ::oFastReport:ClearDataSets()
 
-   ::oFastReport:setUserDataSet(    "Facturas de clientes",;
+   ::oFastReport:setUserDataSet(    "Factura",;
                                     ::getFacturasClientesModel():getSerializeColumnsSelect(),;
                                     {|| ::oFacturasClientesRowSet:gotop() },;
                                     {|| ::oFacturasClientesRowSet:skip( 1 ) },;
@@ -136,7 +144,7 @@ METHOD setUserDataSet()
                                     {|| ::oFacturasClientesRowSet:eof() },;
                                     {|cField| ::oFacturasClientesRowSet:fieldGet( cField ) } )
 
-   ::oFastReport:setUserDataSet(   "Líneas de facturas de clientes",;
+   ::oFastReport:setUserDataSet(   "Líneas",;
                                     ::getFacturasClientesLineasModel():getSerializeColumnsSelect(),;
                                     {|| ::oFacturasClientesLineasRowSet:gotop() },;
                                     {|| ::oFacturasClientesLineasRowSet:skip( 1 ) },;
@@ -144,13 +152,24 @@ METHOD setUserDataSet()
                                     {|| ::oFacturasClientesLineasRowSet:eof() },;
                                     {|cField| ::oFacturasClientesLineasRowSet:fieldGet( cField ) } )
 
-   ::oFastReport:setUserDataSet(   "Totales de facturas de clientes",;
+   ::oFastReport:setUserDataSet(   "Totales",;
                                     serializeArray( hgetKeys( ::hTotal ), ";" ),;
                                     {|| nil },;
                                     {|| nil },;
                                     {|| nil },;
                                     {|| nil },;
                                     {|cField| hget( ::hTotal, cField ) } )
+
+   msgalert( valtype( ::hTotalByIVA ), "hTotalByIVA" )
+
+   ::oFastReport:setUserDataSet(   "Totales por impuestos ",;
+                                    serializeArray( hgetKeys( ::hTotal ), ";" ),;
+                                    {|| nRow := 1 },;
+                                    {|| nRow++ },;
+                                    {|| nRow-- },;
+                                    {|| nRow > len( ::hTotalByIVA ) },;
+                                    {|cField| hget( ::hTotalByIVA[ nRow ], cField ) } )
+
 
 RETURN ( nil )
 

@@ -14,6 +14,7 @@ CLASS SQLContadoresModel FROM SQLCompanyModel
 
    METHOD isSerie( cDocument, cSerial )
    METHOD insertSerie( cDocument, cSerial, nCounter )
+   
    METHOD getLastSerie( cDocument )
    METHOD getDocumentSerie( cDocument )                          
 
@@ -22,14 +23,11 @@ CLASS SQLContadoresModel FROM SQLCompanyModel
    METHOD getLastCounter()                          
    METHOD getDocumentCounter()    
 
-   METHOD getCounter( cDocument, cSerial )
+   METHOD getCounterWhereNameAndSerie( cDocument, cSerial )
 
    METHOD incrementalDocument( cDocument, cSerial )
 
-   METHOD getPosibleNext( cDocument, cSerial ) ;
-                                       INLINE ( ::getCounter( cDocument, cSerial ) + 1 )
-
-   METHOD getNext( cDocument, cSerial )
+   METHOD getAndIncremental( cDocument, cSerial )
    
 END CLASS
 
@@ -141,10 +139,9 @@ RETURN ( nCounter + 1 )
 
 //---------------------------------------------------------------------------//
 
-METHOD getCounter( cDocument, cSerial )
+METHOD getCounterWhereNameAndSerie( cDocument, cSerial )
 
-RETURN ( ::getFieldWhere(  'contador',;
-                           { 'documento' => cDocument, 'serie' => cSerial }, , 1 ) )
+RETURN ( ::getFieldWhere(  'contador', { 'documento' => cDocument, 'serie' => cSerial }, , 1 ) )
 
 //---------------------------------------------------------------------------//
 
@@ -155,10 +152,12 @@ RETURN ( ::updateFieldsWhereTransactional(   { 'contador' => 'contador + 1', 'up
 
 //---------------------------------------------------------------------------//
 
-METHOD getNext( cDocument, cSerial )
+METHOD getAndIncremental( cDocument, cSerial )
+
+   local nCounter    := ::getCounterWhereNameAndSerie( cDocument, cSerial )
 
    ::incrementalDocument( cDocument, cSerial )
 
-RETURN ( ::getCounter( cDocument, cSerial ) )
+RETURN ( nCounter )
 
 //---------------------------------------------------------------------------//

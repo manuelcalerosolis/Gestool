@@ -326,7 +326,7 @@ CLASS SQLBaseModel
 
    METHOD getControllerParentUuid()
 
-   METHOD Count( oController )
+   METHOD Count()
 
    // Duplicates----------------------------------------------------------------
 
@@ -1515,11 +1515,11 @@ METHOD insertBuffer( hBuffer )
 
    DEFAULT hBuffer   := ::hBuffer
 
-   logwrite( 'insertingBuffer' )
-
    ::fireEvent( 'insertingBuffer' )
 
    ::getInsertSentence( hBuffer )
+
+   logwrite( hb_valtoexp( hBuffer ) )
 
    logwrite( ::cSQLInsert )
 
@@ -1744,6 +1744,8 @@ METHOD updateFieldsWhere( hFields, hWhere, lTransactional )
    hEval( hWhere,; 
       {|k,v| cSql += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v ) + " " } )
 
+   msgalert( cSql, "cSql" )
+
    if lTransactional
       RETURN ( ::getDatabase():TransactionalExec( cSql ) )
    end if 
@@ -1843,11 +1845,13 @@ METHOD getFieldWhere( cField, hWhere, hOrderBy, uDefault )
 
    cSql              +=    "LIMIT 1"
 
+   // msgalert( cSql, "getFieldWhere" )
+
 RETURN ( ::getDatabase():getValue( cSql, uDefault ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD Count( oController )
+METHOD Count()
 
    local cSql  := "SELECT COUNT(*) FROM " + ::getTableName()    
 

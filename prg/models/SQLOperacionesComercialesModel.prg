@@ -17,6 +17,10 @@ CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
 
    METHOD getNumeroWhereUuid( uuid )
 
+   METHOD maxNumberWhereSerie( cSerie )
+
+#ifdef __TEST__
+
    METHOD totalPaid( uuidFactura )
 
    METHOD testCreateFactura( uuid )
@@ -24,6 +28,8 @@ CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
    METHOD testCreateFacturaConRecargoDeEqivalencia( uuid )
 
    METHOD testCreateFacturaConPlazos( uuid )
+
+#endif
 
 END CLASS
 
@@ -95,18 +101,18 @@ METHOD getColumnsSelect() CLASS SQLOperacionesComercialesModel
    local cColumns
 
    TEXT INTO cColumns
-      facturas.id AS id,
-      facturas.uuid AS uuid,
-      CONCAT( facturas.serie, '-', facturas.numero ) AS numero,
-      facturas.fecha AS fecha,
-      facturas.delegacion_uuid AS delegacion_uuid,
-      facturas.sesion_uuid AS sesion_uuid,
-      facturas.recargo_equivalencia AS recargo_equivalencia,
-      facturas.cliente_codigo AS cliente_codigo,
-      facturas.created_at AS created_at,
-      facturas.updated_at AS updated_at,
-      clientes.nombre AS cliente_nombre,
-      clientes.dni AS cliente_dni,
+      operaciones_comerciales.id AS id,
+      operaciones_comerciales.uuid AS uuid,
+      CONCAT( operaciones_comerciales.serie, '-', operaciones_comerciales.numero ) AS numero,
+      operaciones_comerciales.fecha AS fecha,
+      operaciones_comerciales.delegacion_uuid AS delegacion_uuid,
+      operaciones_comerciales.sesion_uuid AS sesion_uuid,
+      operaciones_comerciales.recargo_equivalencia AS recargo_equivalencia,
+      operaciones_comerciales.cliente_codigo AS cliente_codigo,
+      operaciones_comerciales.created_at AS created_at,
+      operaciones_comerciales.updated_at AS updated_at,
+      terceros.nombre AS cliente_nombre,
+      terceros.dni AS cliente_dni,
       direcciones.direccion AS direccion_direccion,
       direcciones.poblacion AS direccion_poblacion,
       direcciones.codigo_provincia AS direccion_codigo_provincia,
@@ -117,7 +123,7 @@ METHOD getColumnsSelect() CLASS SQLOperacionesComercialesModel
       direcciones.email AS direccion_email,
       tarifas.codigo AS tarifa_codigo,
       tarifas.nombre AS tarifa_nombre,
-      ( %1$s( facturas.uuid, facturas.recargo_equivalencia ) ) AS total
+      ( %1$s( operaciones_comerciales.uuid, operaciones_comerciales.recargo_equivalencia ) ) AS total
    ENDTEXT
 
    cColumns    := hb_strformat( cColumns, Company():getTableName( 'FacturaClienteTotalSummaryWhereUuid' ) )
@@ -135,16 +141,16 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesModel
    SELECT
       %5$s
 
-   FROM %1$s AS facturas
+   FROM %1$s AS operaciones_comerciales
 
-      LEFT JOIN %2$s clientes
-         ON facturas.cliente_codigo = clientes.codigo AND clientes.deleted_at = 0
+      LEFT JOIN %2$s terceros
+         ON operaciones_comerciales.cliente_codigo = terceros.codigo AND terceros.deleted_at = 0
 
       LEFT JOIN %3$s direcciones
-         ON clientes.uuid = direcciones.parent_uuid AND direcciones.codigo = 0
+         ON terceros.uuid = direcciones.parent_uuid AND direcciones.codigo = 0
 
       LEFT JOIN %4$s tarifas
-         ON facturas.tarifa_codigo = tarifas.codigo
+         ON operaciones_comerciales.tarifa_codigo = tarifas.codigo
 
    ENDTEXT
 
@@ -189,7 +195,6 @@ METHOD totalPaid( uuidFactura ) CLASS SQLOperacionesComercialesModel
    TEXT INTO cSql
 
    SELECT SUM( pagos.importe ) AS total_pagado
-
       FROM %1$s AS facturas_clientes
 
       INNER JOIN %2$s AS recibos
@@ -216,6 +221,19 @@ METHOD totalPaid( uuidFactura ) CLASS SQLOperacionesComercialesModel
 RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD maxNumberWhereSerie( cSerie ) CLASS SQLOperacionesComercialesModel
+
+   local cSql 
+
+   cSql        := "SELECT MAX( numero ) FROM " + ::getTableName() + " "   
+   cSql        +=    "WHERE serie = " + quoted( cSerie )
+
+RETURN ( ::getDatabase():getValue( cSql, 0 ) + 1 )
+
+//---------------------------------------------------------------------------//
+
+#ifdef __TEST__
 
 METHOD testCreateFactura( uuid ) CLASS SQLOperacionesComercialesModel
 
@@ -263,6 +281,8 @@ METHOD testCreateFacturaConPlazos( uuid ) CLASS SQLOperacionesComercialesModel
    hset( hBuffer, "tarifa_codigo", "0" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
+
+#endif
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -152,7 +152,7 @@ METHOD Activate( idGet, idText, oDlg, idSay, idLink ) CLASS GetSelector
 
    if !empty( idLink )   
 
-   ::oLink              := TSay():ReDefine( idLink, {|| ::getLinkText() }, oDlg, , rgb( 10, 152, 234 ), , .f., oFontBold(), .f., .f. )
+   ::oLink              := TSay():ReDefine( idLink, ::getLinkText(), oDlg, , rgb( 10, 152, 234 ), , .f., oFontBold(), .f., .f. )
 
    ::oLink:lWantClick   := .t.
    ::oLink:OnClick      := {|| ::oController:Edit( ::oController:getModel():getIdWhereCodigo( eval( ::bValue ) ) ) }
