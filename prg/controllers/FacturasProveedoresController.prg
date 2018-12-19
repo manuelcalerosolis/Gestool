@@ -9,6 +9,8 @@ CLASS FacturasProveedoresController FROM OperacionesComercialesController
 
    METHOD End()
 
+   METHOD getTercerosController()         INLINE( ::getProveedoresController() )
+
    // Impresiones--------------------------------------------------------------
 
    METHOD getSubject()                 INLINE ( "Factura de proveedor número" )
@@ -17,15 +19,13 @@ CLASS FacturasProveedoresController FROM OperacionesComercialesController
 
    METHOD getName()                    INLINE ( "facturas_proveedor" )
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasClientesModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasProveedoresModel():New( self ), ), ::oModel )
 
    METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasClientesValidator():New( self ), ), ::oValidator ) 
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasProveedoresBrowseView():New( self ), ), ::oBrowseView )
 
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasClientesRepository():New( self ), ), ::oRepository )
-   
-   
 
 END CLASS
 
@@ -39,11 +39,11 @@ METHOD New( oController ) CLASS FacturasProveedoresController
 
    ::cName                             := "facturas_proveedores" 
 
-   ::hImage                            := {  "16" => "gc_document_text_user_16",;
-                                             "32" => "gc_document_text_user_32",;
-                                             "48" => "gc_document_text_user_48" }
+   ::hImage                            := {  "16" => "gc_document_text_businessman_16",;
+                                             "32" => "gc_document_text_businessman_32",;
+                                             "48" => "gc_document_text_businessman_48" }
 
-RETURN ( Self )
+RETURN ( Self ) 
 
 //---------------------------------------------------------------------------//
 

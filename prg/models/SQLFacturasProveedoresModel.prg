@@ -3,9 +3,11 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLFacturasClientesModel FROM SQLOperacionesComercialesModel
+CLASS SQLFacturasProveedoresModel FROM SQLOperacionesComercialesModel
 
    DATA cTableName                     INIT "facturas_proveedores"
+
+   METHOD getTercerosModel()           INLINE ( SQLProveedoresModel() )
 
 END CLASS
 

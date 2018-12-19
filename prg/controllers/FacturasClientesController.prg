@@ -9,6 +9,8 @@ CLASS FacturasClientesController FROM OperacionesComercialesController
 
    METHOD End()
 
+   METHOD getTercerosController()         INLINE ( ::getClientesController() )
+
    // Impresiones--------------------------------------------------------------
 
    METHOD getSubject()                 INLINE ( "Factura de cliente número" )
@@ -26,7 +28,6 @@ CLASS FacturasClientesController FROM OperacionesComercialesController
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasClientesRepository():New( self ), ), ::oRepository )
    
    
-
 END CLASS
 
 //---------------------------------------------------------------------------//

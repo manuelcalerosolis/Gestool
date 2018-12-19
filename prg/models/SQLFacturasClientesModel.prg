@@ -7,6 +7,8 @@ CLASS SQLFacturasClientesModel FROM SQLOperacionesComercialesModel
 
    DATA cTableName                     INIT "facturas_clientes"
 
+   METHOD getTercerosModel()           INLINE ( SQLClientesModel() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

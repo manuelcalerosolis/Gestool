@@ -1323,8 +1323,8 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cMessage       := 'Facturas de proveedores'
    oItem:bAction        := {|| FacturasProveedoresController():New():ActivateNavigatorView() }
    oItem:cId            := "facturas_proveedores"
-   oItem:cBmp           := "gc_document_text_user_16"
-   oItem:cBmpBig        := "gc_document_text_user_32"
+   oItem:cBmp           := "gc_document_text_businessman_16"
+   oItem:cBmpBig        := "gc_document_text_businessman_32"
    oItem:lShow          := .t.
 
    oItemAlmacen         := oAcceso:Add()

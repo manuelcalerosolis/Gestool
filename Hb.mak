@@ -347,6 +347,7 @@ ProveedoresBrowseView.prg 													\
 TercerosBrowseView.prg 														\
 SQLOperacionesComercialesModel.prg 										\
 SqlFacturasClientesModel.prg 												\
+SqlFacturasProveedoresModel.prg 											\
 SqlFacturasClientesLineasModel.prg										\
 OperacionesComercialesController.prg 									\
 FacturasClientesController.prg 											\
@@ -355,8 +356,10 @@ FacturasClientesLineasController.prg									\
 FacturasClientesDescuentosController.prg								\
 FacturasClientesLineasBrowse.prg											\
 FacturasClientesBrowseView.prg 											\
+FacturasProveedoresBrowseView.prg 										\
+OperacionesComercialesBrowseView.prg 									\
 FacturasClientesLineasView.prg											\
-FacturasClientesView.prg 													\
+OperacionesComercialesView.prg 											\
 ClientesTarifasController.prg 											\
 Server.prg 																		\
 BaseHttpService.prg 															\
@@ -695,6 +698,7 @@ ProveedoresBrowseView.obj 													\
 TercerosBrowseView.obj 														\
 SQLOperacionesComercialesModel.obj 										\
 SQLFacturasClientesModel.obj 												\
+SQLFacturasProveedoresModel.obj 											\
 FacturasClientesRepository.obj 											\
 SQLFacturasClientesLineasModel.obj 										\
 OperacionesComercialesController.obj 									\
@@ -704,8 +708,10 @@ FacturasClientesLineasController.obj 									\
 FacturasClientesDescuentosController.obj 								\
 FacturasClientesLineasBrowse.obj 										\
 FacturasClientesBrowseView.obj 											\
+FacturasProveedoresBrowseView.obj 										\
+OperacionesComercialesBrowseView.obj 									\
 FacturasClientesLineasView.obj 											\
-FacturasClientesView.obj 													\
+OperacionesComercialesView.obj 											\
 ClientesTarifasController.obj 											\
 Server.obj 																		\
 BaseHttpService.obj 															\
@@ -1040,6 +1046,7 @@ $(OBJ)\ProveedoresBrowseView.obj 										+
 $(OBJ)\TercerosBrowseView.obj 											+
 $(OBJ)\SQLOperacionesComercialesModel.obj 							+
 $(OBJ)\SqlFacturasClientesModel.obj 				    				+
+$(OBJ)\SqlFacturasProveedoresModel.obj 				  				+
 $(OBJ)\FacturasClientesRepository.obj 				    				+
 $(OBJ)\FacturasClientesLineasRepository.obj 				    		+
 $(OBJ)\SqlFacturasClientesLineasModel.obj 	    					+
@@ -1050,8 +1057,10 @@ $(OBJ)\FacturasClientesLineasController.obj 							+
 $(OBJ)\FacturasClientesDescuentosController.obj 					+
 $(OBJ)\FacturasClientesLineasBrowse.obj 								+
 $(OBJ)\FacturasClientesBrowseView.obj 									+
+$(OBJ)\FacturasProveedoresBrowseView.obj 								+
+$(OBJ)\OperacionesComercialesBrowseView.obj 							+
 $(OBJ)\FacturasClientesLineasView.obj 									+
-$(OBJ)\FacturasClientesView.obj 											+
+$(OBJ)\OperacionesComercialesView.obj 									+
 $(OBJ)\ClientesTarifasController.obj 									+
 $(OBJ)\Server.obj 															+
 $(OBJ)\BaseHttpService.obj													+

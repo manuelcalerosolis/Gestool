@@ -5,15 +5,15 @@
 
 CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
 
-   //DATA cTableName                     INIT "facturas_clientes"
-
    DATA cConstraints                   INIT "PRIMARY KEY ( numero, serie )"
 
    METHOD getColumns()
 
-   METHOD getColumnsSelect()
+   METHOD getColumnsSelect()    
 
    METHOD getInitialSelect()
+
+   METHOD getTercerosModel()              VIRTUAL
 
    METHOD getNumeroWhereUuid( uuid )
 
@@ -95,16 +95,16 @@ METHOD getColumnsSelect() CLASS SQLOperacionesComercialesModel
    local cColumns
 
    TEXT INTO cColumns
-      facturas_clientes.id AS id,
-      facturas_clientes.uuid AS uuid,
-      CONCAT( facturas_clientes.serie, '-', facturas_clientes.numero ) AS numero,
-      facturas_clientes.fecha AS fecha,
-      facturas_clientes.delegacion_uuid AS delegacion_uuid,
-      facturas_clientes.sesion_uuid AS sesion_uuid,
-      facturas_clientes.recargo_equivalencia AS recargo_equivalencia,
-      facturas_clientes.cliente_codigo AS cliente_codigo,
-      facturas_clientes.created_at AS created_at,
-      facturas_clientes.updated_at AS updated_at,
+      facturas.id AS id,
+      facturas.uuid AS uuid,
+      CONCAT( facturas.serie, '-', facturas.numero ) AS numero,
+      facturas.fecha AS fecha,
+      facturas.delegacion_uuid AS delegacion_uuid,
+      facturas.sesion_uuid AS sesion_uuid,
+      facturas.recargo_equivalencia AS recargo_equivalencia,
+      facturas.cliente_codigo AS cliente_codigo,
+      facturas.created_at AS created_at,
+      facturas.updated_at AS updated_at,
       clientes.nombre AS cliente_nombre,
       clientes.dni AS cliente_dni,
       direcciones.direccion AS direccion_direccion,
@@ -117,7 +117,7 @@ METHOD getColumnsSelect() CLASS SQLOperacionesComercialesModel
       direcciones.email AS direccion_email,
       tarifas.codigo AS tarifa_codigo,
       tarifas.nombre AS tarifa_nombre,
-      ( %1$s( facturas_clientes.uuid, facturas_clientes.recargo_equivalencia ) ) AS total
+      ( %1$s( facturas.uuid, facturas.recargo_equivalencia ) ) AS total
    ENDTEXT
 
    cColumns    := hb_strformat( cColumns, Company():getTableName( 'FacturaClienteTotalSummaryWhereUuid' ) )
@@ -135,22 +135,22 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesModel
    SELECT
       %5$s
 
-   FROM %1$s AS facturas_clientes
+   FROM %1$s AS facturas
 
       LEFT JOIN %2$s clientes
-         ON facturas_clientes.cliente_codigo = clientes.codigo AND clientes.deleted_at = 0
+         ON facturas.cliente_codigo = clientes.codigo AND clientes.deleted_at = 0
 
       LEFT JOIN %3$s direcciones
          ON clientes.uuid = direcciones.parent_uuid AND direcciones.codigo = 0
 
       LEFT JOIN %4$s tarifas
-         ON facturas_clientes.tarifa_codigo = tarifas.codigo
+         ON facturas.tarifa_codigo = tarifas.codigo
 
    ENDTEXT
 
    cSql  := hb_strformat(  cSql,;
                            ::getTableName(),;
-                           SQLClientesModel():getTableName(),;
+                           ::getTercerosModel():getTableName(),;
                            SQLDireccionesModel():getTableName(),;
                            SQLArticulosTarifasModel():getTableName(),;
                            ::getColumnsSelect() )
@@ -229,7 +229,7 @@ METHOD testCreateFactura( uuid ) CLASS SQLOperacionesComercialesModel
    hset( hBuffer, "almacen_codigo", "0" )
    hset( hBuffer, "tarifa_codigo", "0" )
 
-RETURN ( ::insertBuffer( hBuffer ) )
+RETURN ( ::insertBuffer( hBuffer ) ) 
 
 //---------------------------------------------------------------------------//
 

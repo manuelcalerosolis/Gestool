@@ -95,7 +95,7 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
    
    METHOD getContadoresModel()         INLINE ( if( empty( ::oContadoresModel ), ::oContadoresModel := SQLContadoresModel():New( self ), ), ::oContadoresModel )
 
-   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := FacturasClientesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesView():New( self ), ), ::oDialogView )
 
    METHOD getModel()                   VIRTUAL
 
@@ -103,7 +103,7 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD getBrowseView()              VIRTUAL
 
-   METHOD getRepository()              VIRTUAL 
+   METHOD getRepository()              VIRTUAL  
    
    METHOD getHistoryManager()          INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
    
@@ -116,6 +116,8 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD getFacturasClientesFacturaeController() ;
                                        INLINE ( if( empty( ::oFacturasClientesFacturaeController ), ::oFacturasClientesFacturaeController := FacturasClientesFacturaeController():New( self ), ), ::oFacturasClientesFacturaeController )
+
+   METHOD getTercerosController()      VIRTUAL
 
 END CLASS
 
