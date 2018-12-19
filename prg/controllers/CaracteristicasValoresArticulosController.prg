@@ -11,7 +11,7 @@ CLASS CaracteristicasValoresArticulosController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD Activate( uuidArticulo )
+   METHOD Edit( uuidArticulo )
 
    //Contrucciones tardias---------------------------------------------------//
 
@@ -53,15 +53,31 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate( uuidArticulo ) CLASS CaracteristicasValoresArticulosController
+METHOD Edit( uuidArticulo ) CLASS CaracteristicasValoresArticulosController
+
+   if empty( uuidArticulo )
+      RETURN .f.
+   end if 
 
    ::uuidArticulo             := uuidArticulo
+
+   ::setEditMode()
 
    ::getModel():getSQLInsertCaracteristicaWhereArticulo()
 
    ::getRowSet():build( ::getModel():getSentenceRowSetValores() )
 
-   ::getDialogView():Resource()
+   ::beginTransactionalMode()
+
+   if ::DialogViewActivate()
+      
+      ::commitTransactionalMode()
+
+   else
+
+      ::rollbackTransactionalMode()
+
+   end if 
 
 RETURN ( .t. )
 
@@ -73,10 +89,14 @@ RETURN ( .t. )
 
 CLASS CaracteristicasValoresArticulosView FROM SQLBaseView
 
-   DATA oCol
    DATA oBrowse
 
-   METHOD Resource()
+   DATA oColumnValores
+   
+   DATA oColumnPersonalizado
+
+   METHOD Activate()
+      METHOD startActivate() 
 
    METHOD ChangeBrowse()
 
@@ -88,7 +108,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Resource() CLASS CaracteristicasValoresArticulosView
+METHOD Activate() CLASS CaracteristicasValoresArticulosView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CARACTERISTICAS_VAL_ART" ;
@@ -137,14 +157,14 @@ METHOD Resource() CLASS CaracteristicasValoresArticulosView
       :bEditValue          := {|| ::oController:getRowSet():fieldGet( 'nombre_caracteristica' ) }
    end with
 
-   with object ( ::oCol    := ::oBrowse:AddCol() )
+   with object ( ::oColumnValores := ::oBrowse:AddCol() )
       :cHeader             := 'Valores'
       :nWidth              := 245
       :bEditValue          := {|| if( ::oController:getRowSet():fieldGet( 'personalizado' ) == .f., ::oController:getRowSet():fieldGet( 'nombre_valor' ),"" )  }
       :bOnPostEdit         := {| oCol, uNewValue, nKey | ::ChangeColValue( uNewValue ) }
    end with
 
-   with object ( ::oBrowse:AddCol() )
+   with object ( ::oColumnPersonalizado := ::oBrowse:AddCol() )
       :cHeader             := 'Personalizado'
       :nWidth              := 245
       :nEditType           := EDIT_GET
@@ -162,13 +182,23 @@ METHOD Resource() CLASS CaracteristicasValoresArticulosView
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
    end if
 
-   ::oDialog:bStart := {|| ::oBrowse:SetFocus(), ::ChangeBrowse() }
+   ::oDialog:bStart := {|| ::startActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-   ::oBitmap:end()
-
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD startActivate() CLASS CaracteristicasValoresArticulosView
+
+   ::oBrowse:SetFocus()
+
+   ::changeBrowse()
+
+   ::paintedActivate()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -177,11 +207,11 @@ METHOD ChangeBrowse() CLASS CaracteristicasValoresArticulosView
    local aValores    := SQLCaracteristicasLineasModel():getArrayNombreValoresFromUuid( ::oController:getRowSet():fieldGet( 'caracteristica_uuid' ) )
 
    if len( aValores ) > 0
-      ::oCol:nEditType     := EDIT_LISTBOX
-      ::oCol:aEditListTxt  := aValores
+      ::oColumnValores:nEditType     := EDIT_LISTBOX
+      ::oColumnValores:aEditListTxt  := aValores
    else
-      ::oCol:nEditType     := 0
-      ::oCol:aEditListTxt  := {}
+      ::oColumnValores:nEditType     := 0
+      ::oColumnValores:aEditListTxt  := {}
    end if
 
 RETURN ( .t. ) 
@@ -252,6 +282,8 @@ CLASS SQLCaracteristicasValoresArticulosModel FROM SQLCompanyModel
 
    METHOD productCaracteristicaValuesUuidHashFromUuidArticulo( uuidProduct ) 
 
+   #ifdef __TEST__
+
    METHOD testCreateCaracteristicaValor( uuidArticulo, uuidCaracteristica, uuidLinea )
 
    METHOD testCreateValorSinCaracteristica( uuidArticulo )
@@ -259,6 +291,8 @@ CLASS SQLCaracteristicasValoresArticulosModel FROM SQLCompanyModel
    METHOD testCreateValorSinArticulo( uuidCaracteristica, uuidLinea )
 
    METHOD testCreateSinValor( uuidArticulo, uuidCaracteristica )
+
+   #endif
 
 END CLASS
 
@@ -380,6 +414,8 @@ RETURN ( ::getDatabase():selectFetchHash( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
+#ifdef __TEST__
+
 METHOD testCreateCaracteristicaValor( uuidArticulo, uuidCaracteristica, uuidLinea ) CLASS SQLCaracteristicasValoresArticulosModel
 
    local hBuffer  := ::loadBlankBuffer()
@@ -434,7 +470,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 CLASS TestCaracteristicasValoresArticulosController FROM TestCase
 
-   METHOD testCreateCaracteristicaValor()
+   METHOD testCreateValor()
 
    METHOD testCreateSinCaracteristica()
 
@@ -442,11 +478,19 @@ CLASS TestCaracteristicasValoresArticulosController FROM TestCase
 
    METHOD testCreateSinValor()
 
+   METHOD testCreatePersonlizado()
+
+   METHOD testCreateCaracteristicaCombo()
+
+   METHOD testCreateComboCambio()
+
+   METHOD testCreatePersonalizadoCambio()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateCaracteristicaValor() CLASS TestCaracteristicasValoresArticulosController
+METHOD testCreateValor() CLASS TestCaracteristicasValoresArticulosController
 
    local uuidCaracteristica   := win_uuidcreatestring()
    local uuidArticulo         := win_uuidcreatestring()
@@ -523,7 +567,149 @@ METHOD testCreateSinValor() CLASS TestCaracteristicasValoresArticulosController
 
 RETURN ( nil )
 
+//---------------------------------------------------------------------------//
 
+METHOD testCreatePersonlizado() CLASS TestCaracteristicasValoresArticulosController
+
+   local oController
+
+   local uuidCaracteristica   := win_uuidcreatestring()
+   local uuidArticulo         := win_uuidcreatestring()
+   local uuidLinea            := win_uuidcreatestring()
+
+   SQLArticulosModel():truncateTable()
+   SQLCaracteristicasModel():truncateTable() 
+   SQLCaracteristicasLineasModel():truncateTable()
+   SQLCaracteristicasValoresArticulosModel():truncateTable()
+
+   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
+   
+   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
+
+   ::assert:notEquals( SQLArticulosModel():testCreateArticuloConUuid( uuidArticulo ), 0, "test articulo" )
+
+   oController             := CaracteristicasValoresArticulosController():New()
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         eval( oController:getDialogView():oColumnPersonalizado:bOnPostEdit, , "Personalizado" ),;
+         apoloWaitSeconds( 3 ),;
+         self:getControl( IDOK ):Click() } ) 
+          
+   ::assert:true( oController:Edit( uuidArticulo ), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateCaracteristicaCombo() CLASS TestCaracteristicasValoresArticulosController
+
+   local oController
+
+   local uuidCaracteristica   := win_uuidcreatestring()
+   local uuidArticulo         := win_uuidcreatestring()
+   local uuidLinea            := win_uuidcreatestring()
+
+   SQLArticulosModel():truncateTable()
+   SQLCaracteristicasModel():truncateTable() 
+   SQLCaracteristicasLineasModel():truncateTable()
+   SQLCaracteristicasValoresArticulosModel():truncateTable()
+
+   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
+   
+   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
+
+   ::assert:notEquals( SQLArticulosModel():testCreateArticuloConUuid( uuidArticulo ), 0, "test articulo" )
+
+   oController             := CaracteristicasValoresArticulosController():New()
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         eval( oController:getDialogView():oColumnValores:bOnPostEdit, , "linea 1" ),;
+         apoloWaitSeconds( 3 ),;
+         self:getControl( IDOK ):Click() } ) 
+          
+   ::assert:true( oController:Edit( uuidArticulo ), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateComboCambio() CLASS TestCaracteristicasValoresArticulosController
+
+   local oController
+
+   local uuidCaracteristica   := win_uuidcreatestring()
+   local uuidArticulo         := win_uuidcreatestring()
+   local uuidLinea            := win_uuidcreatestring()
+
+   SQLArticulosModel():truncateTable()
+   SQLCaracteristicasModel():truncateTable() 
+   SQLCaracteristicasLineasModel():truncateTable()
+   SQLCaracteristicasValoresArticulosModel():truncateTable()
+
+   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
+   
+   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
+
+   ::assert:notEquals( SQLArticulosModel():testCreateArticuloConUuid( uuidArticulo ), 0, "test articulo" )
+
+   oController             := CaracteristicasValoresArticulosController():New()
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         eval( oController:getDialogView():oColumnValores:bOnPostEdit, , "linea 1" ),;
+         apoloWaitSeconds( 3 ),;
+         eval( oController:getDialogView():oColumnPersonalizado:bOnPostEdit, , "Personalizado" ),;
+         apoloWaitSeconds( 3 ),;
+         self:getControl( IDOK ):Click() } ) 
+          
+   ::assert:true( oController:Edit( uuidArticulo ), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreatePersonalizadoCambio() CLASS TestCaracteristicasValoresArticulosController
+
+   local oController
+
+   local uuidCaracteristica   := win_uuidcreatestring()
+   local uuidArticulo         := win_uuidcreatestring()
+   local uuidLinea            := win_uuidcreatestring()
+
+   SQLArticulosModel():truncateTable()
+   SQLCaracteristicasModel():truncateTable() 
+   SQLCaracteristicasLineasModel():truncateTable()
+   SQLCaracteristicasValoresArticulosModel():truncateTable()
+
+   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
+   
+   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
+
+   ::assert:notEquals( SQLArticulosModel():testCreateArticuloConUuid( uuidArticulo ), 0, "test articulo" )
+
+   oController             := CaracteristicasValoresArticulosController():New()
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         eval( oController:getDialogView():oColumnPersonalizado:bOnPostEdit, , "Personalizado" ),;
+         apoloWaitSeconds( 3 ),;
+         eval( oController:getDialogView():oColumnValores:bOnPostEdit, , "linea 1" ),;
+         apoloWaitSeconds( 3 ),;
+         self:getControl( IDOK ):Click() } ) 
+          
+   ::assert:true( oController:Edit( uuidArticulo ), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+#endif
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

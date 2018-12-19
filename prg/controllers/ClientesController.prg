@@ -16,6 +16,7 @@ CLASS ClientesController FROM TercerosController
 
    METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLClientesModel():New( self ), ), ::oModel )
 
+
 END CLASS
 
 //---------------------------------------------------------------------------//

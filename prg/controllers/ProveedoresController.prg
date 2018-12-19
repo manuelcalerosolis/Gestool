@@ -11,7 +11,8 @@ CLASS ProveedoresController FROM TercerosController
 
    METHOD getModel()             INLINE (  if( empty( ::oModel ), ::oModel := SQLProveedoresModel():New( self ), ), ::oModel )
 
-END CLASS
+
+END CLASS 
 
 //---------------------------------------------------------------------------//
 

@@ -4,11 +4,11 @@
 
 //----------------------------------------------------------------------------//
 
-CLASS FacturasClientesBrowseView FROM OperacionesComercialesBrowseView 
-      
-   METHOD addTercerosNombreLabel()     INLINE ( "Nombre cliente" )
+CLASS FacturasProveedoresBrowseView FROM OperacionesComercialesBrowseView 
 
-   METHOD addTercerosCodigoLabel()     INLINE ( "Código cliente")
+   METHOD addTercerosNombreLabel()     INLINE ( "Nombre proveedor" )
+
+   METHOD addTercerosCodigoLabel()     INLINE ( "Código proveedor")            
 
 ENDCLASS
 
@@ -17,4 +17,3 @@ ENDCLASS
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
-

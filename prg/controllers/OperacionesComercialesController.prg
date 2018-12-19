@@ -3,79 +3,207 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesController FROM OperacionesComercialesController
+CLASS OperacionesComercialesController FROM SQLNavigatorController
+
+   DATA oHistoryManager
+
+   DATA oContadoresModel
+   
+   DATA oSerieDocumentoComponent
+
+   DATA oNumeroDocumentoComponent
+
+   DATA oFacturasClientesFacturaeController
 
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
-   METHOD getTercerosController()         INLINE ( ::getClientesController() )
+   METHOD addExtraButtons()
+
+   METHOD editConfig()
+
+   METHOD loadedBlankBuffer() 
+
+   METHOD loadedDuplicateBuffer() 
+
+   METHOD loadedBuffer()               INLINE ( ::getHistoryManager():Set( ::getModel():hBuffer ) )
+
+   METHOD updatingBuffer()
+
+   METHOD updatedBuffer()
+
+   METHOD getClientUuid() 
+
+   METHOD isClientFilled()             INLINE ( !empty( ::getModelBuffer( "cliente_codigo" ) ) )
+
+   METHOD clientesSettedHelpText()
+
+   METHOD clientSetMetodoPago()   
+
+   METHOD clientSetTarifa()
+
+   METHOD clientSetRuta()
+
+   METHOD clientSetAgente()
+
+   METHOD clientSetRecargo()
+
+   METHOD clientChangeRecargo( lRecargo )
+
+   METHOD changedSerie()  
+
+   METHOD clientSetDescuentos()
+
+   METHOD hasLines()
+   METHOD hasNotLines()                INLINE ( !::hasLines() )
+
+   METHOD getConfigItems()
+
+   METHOD calculateTotals( uuidFactura )  
+
+   METHOD getTotalesDocument( uuidFactura ) ;
+                                       INLINE ( ::getRepository():getTotalesDocument( uuidFactura ) )
+   
+   METHOD getTotalesDocumentGroupByIVA( uuidFactura ) ;
+                                       INLINE ( ::getRepository():getTotalesDocumentGroupByIVA( uuidFactura ) )
+
+   METHOD getHashSentenceLineas( uuidFactura ) ;
+                                       INLINE ( ::getRepository():getHashSentenceLineas( uuidFactura ) )
+
+   METHOD hasNotPaid( uuidFactura )
 
    // Impresiones--------------------------------------------------------------
 
-   METHOD getSubject()                 INLINE ( "Factura de cliente número" )
+   METHOD getDocumentPrint()           INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_impresion', '' ) )
+
+   METHOD getDocumentPdf()             INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_pdf', '' ) )
+
+   METHOD getDocumentPreview()         INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_previsulizacion', '' ) )
+
+   METHOD getCopyPrint()               INLINE ( ::getConfiguracionesController():getModelNumeric( ::getName(), 'copias_impresion', 1 ) )
+
+   METHOD getTemplateMails()           INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'plantilla_para_mails', '' ) )
+   
+   METHOD generateReport( hReport )    INLINE ( ::getReport():Generate( hReport ) )
+
+   METHOD getSubject()                 VIRTUAL
 
    // Contrucciones tardias----------------------------------------------------
 
-   METHOD getName()                    INLINE ( "facturas_clientes" )
-
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasClientesModel():New( self ), ), ::oModel )
-
-   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasClientesValidator():New( self ), ), ::oValidator ) 
-
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesBrowseView():New( self ), ), ::oBrowseView )
-
-   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasClientesRepository():New( self ), ), ::oRepository )
+   METHOD getName()                    VIRTUAL
    
+   METHOD getContadoresModel()         INLINE ( if( empty( ::oContadoresModel ), ::oContadoresModel := SQLContadoresModel():New( self ), ), ::oContadoresModel )
+
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesView():New( self ), ), ::oDialogView )
+
+   METHOD getModel()                   VIRTUAL
+
+   METHOD getValidator()               VIRTUAL  
+
+   METHOD getBrowseView()              VIRTUAL
+
+   METHOD getRepository()              VIRTUAL  
    
+   METHOD getHistoryManager()          INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
+   
+   METHOD getReport()                  INLINE ( if( empty( ::oReport ), ::oReport := FacturasClientesReport():New( self ), ), ::oReport )
+
+   METHOD getSerieDocumentoComponent() INLINE ( if( empty( ::oSerieDocumentoComponent ), ::oSerieDocumentoComponent := SerieDocumentoComponent():New( self ), ), ::oSerieDocumentoComponent )
+
+   METHOD getNumeroDocumentoComponent() ;
+                                       INLINE ( if( empty( ::oNumeroDocumentoComponent ), ::oNumeroDocumentoComponent := NumeroDocumentoComponent():New( self ), ), ::oNumeroDocumentoComponent )
+
+   METHOD getFacturasClientesFacturaeController() ;
+                                       INLINE ( if( empty( ::oFacturasClientesFacturaeController ), ::oFacturasClientesFacturaeController := FacturasClientesFacturaeController():New( self ), ), ::oFacturasClientesFacturaeController )
+
+   METHOD getTercerosController()      VIRTUAL
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS FacturasClientesController
+METHOD New( oController ) CLASS OperacionesComercialesController
 
    ::Super:New( oController )
 
-   ::cTitle                            := "Facturas de clientes"
+   ::lTransactional                    := .t.
 
-   ::cName                             := "facturas_clientes" 
+   ::lInsertable                       := .t.
 
-   ::hImage                            := {  "16" => "gc_document_text_user_16",;
-                                             "32" => "gc_document_text_user_32",;
-                                             "48" => "gc_document_text_user_48" }
+   ::lConfig                           := .t.
+
+   ::lDocuments                        := .t.
+
+   ::lMail                             := .t.
+
+   ::lOthers                           := .t.
+
+   ::getNavigatorView():getMenuTreeView():setEvent( 'addingDeleteButton', { || .f. } )
+   ::getNavigatorView():getMenuTreeView():setEvent( 'addedPdfButton', {|| ::addExtraButtons() } )
+
+   ::getModel():setEvent( 'loadedBuffer',          {|| ::loadedBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )
+   ::getModel():setEvent( 'loadedDuplicateBuffer', {|| ::loadedDuplicateBuffer() } )
+
+   ::getModel():setEvent( 'updatedBuffer',                           {|| ::updatedBuffer() } )
+   ::getModel():setEvents( { 'updatingBuffer', 'insertingBuffer' },  {|| ::updatingBuffer() } )
+
+   ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',              {|| ::isClientFilled() } ) 
+   ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence',  {|| ::getClientUuid() } )
+
+   ::getFacturasClientesLineasController():setEvent( 'appending',          {|| ::isClientFilled() } )
+   ::getFacturasClientesLineasController():setEvent( 'deletedSelection',   {|| ::calculateTotals() } ) 
+
+   ::getFacturasClientesDescuentosController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
+
+   ::getClientesController():getSelector():setEvent( 'settedHelpText', {|| ::clientesSettedHelpText() } )
+
+   ::getSerieDocumentoComponent():setEvents( { 'inserted', 'changedAndExist' }, {|| ::changedSerie() } )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS FacturasClientesController
+METHOD End() CLASS OperacionesComercialesController
 
-   if !empty( ::oModel )
-      ::oModel:End()
+   if !empty( ::oContadoresModel )
+      ::oContadoresModel:End()
    end if 
 
    if !empty( ::oDialogView )
       ::oDialogView:End()
    end if 
 
-   if !empty( ::oValidator )
-      ::oValidator:End()
+   if !empty( ::oHistoryManager )
+      ::oHistoryManager:End()
    end if 
 
-   if !empty( ::oRepository )
-      ::oRepository:End()
-   end if
+   if !empty( ::oReport )
+      ::oReport:End()
+   end if 
 
-   if !empty( ::oBrowseView )
-      ::oBrowseView:End()
+   if !empty( ::oConfiguracionesModel )
+      ::oConfiguracionesModel:End()
+   end if 
+
+   if !empty( ::oNumeroDocumentoComponent )
+      ::oNumeroDocumentoComponent:End()
+   end if 
+
+   if !empty( ::oSerieDocumentoComponent )
+      ::oSerieDocumentoComponent:End()
+   end if 
+
+   if !empty( ::oFacturasClientesFacturaeController )
+      ::oFacturasClientesFacturaeController:End()
    end if 
 
 RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
-<<<<<<< HEAD
 
-METHOD addExtraButtons() CLASS FacturasClientesController
+METHOD addExtraButtons() CLASS OperacionesComercialesController
 
    ::oNavigatorView:getMenuTreeView():addButton( "Generar facturae 3.2", "gc_document_text_earth_16", {|| ::getFacturasClientesFacturaeController():Run( ::getBrowseView():getBrowseSelected() ) } ) 
 
@@ -83,13 +211,13 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD editConfig()
+METHOD editConfig() CLASS OperacionesComercialesController
 
 RETURN ( ::getConfiguracionesController():Edit() )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedBlankBuffer() CLASS FacturasClientesController 
+METHOD loadedBlankBuffer() CLASS OperacionesComercialesController 
 
    ::setModelBuffer( "serie", SQLContadoresModel():getDocumentSerie( ::getName() ) )
 
@@ -101,13 +229,13 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedDuplicateBuffer() CLASS FacturasClientesController 
+METHOD loadedDuplicateBuffer() CLASS OperacionesComercialesController 
 
 RETURN ( ::setModelBuffer( "numero", SQLContadoresModel():getPosibleNext( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD updatingBuffer() CLASS FacturasClientesController 
+METHOD updatingBuffer() CLASS OperacionesComercialesController 
 
    if ::isAppendOrDuplicateMode()
       ::setModelBuffer( "numero", SQLContadoresModel():getNext( ::getName(), ::getModelBuffer( "serie" ) ) )
@@ -117,19 +245,19 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD updatedBuffer() CLASS FacturasClientesController 
+METHOD updatedBuffer() CLASS OperacionesComercialesController 
 
 RETURN ( ::getRecibosGeneratorController():generate() )
 
 //---------------------------------------------------------------------------//
 
-METHOD getClientUuid() CLASS FacturasClientesController 
+METHOD getClientUuid() CLASS OperacionesComercialesController 
 
-RETURN ( ::getClientesController():oModel:getUuidWhereCodigo( ::getModelBuffer( "cliente_codigo" ) ) )
+RETURN ( ::getClientesController():getModel():getUuidWhereCodigo( ::getModelBuffer( "cliente_codigo" ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientesSettedHelpText() CLASS FacturasClientesController
+METHOD clientesSettedHelpText() CLASS OperacionesComercialesController
 
    if ::getHistoryManager():isEqual( "cliente_codigo", ::getModelBuffer( "cliente_codigo" ) )
       RETURN ( nil )
@@ -143,7 +271,7 @@ METHOD clientesSettedHelpText() CLASS FacturasClientesController
 
    ::clientSetAgente()
 
-   ::clientSetDescuentos()
+   ::clientSetDescuentos() 
 
    ::clientSetRecargo()
 
@@ -153,7 +281,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetMetodoPago() CLASS FacturasClientesController
+METHOD clientSetMetodoPago() CLASS OperacionesComercialesController
 
    local cCodigoMetodoPago
 
@@ -177,7 +305,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetTarifa() CLASS FacturasClientesController
+METHOD clientSetTarifa() CLASS OperacionesComercialesController
 
    local cCodigoTarifa
 
@@ -201,7 +329,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetRuta() CLASS FacturasClientesController
+METHOD clientSetRuta() CLASS OperacionesComercialesController
 
    local cCodigoRuta
 
@@ -221,9 +349,9 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetAgente() CLASS FacturasClientesController
+METHOD clientSetAgente() CLASS OperacionesComercialesController
 
-   local cCodigoAgente
+   local cCodigoAgente 
 
    if empty( ::getClientesController():getSelector():uFields )
       RETURN ( nil )
@@ -239,7 +367,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetDescuentos() CLASS FacturasClientesController
+METHOD clientSetDescuentos() CLASS OperacionesComercialesController
 
    ::getFacturasClientesDescuentosController():getModel():deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
 
@@ -253,7 +381,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetRecargo() CLASS FacturasClientesController
+METHOD clientSetRecargo() CLASS OperacionesComercialesController
 
    if empty( ::getClientesController():getSelector():uFields )
       RETURN ( nil )
@@ -265,7 +393,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientChangeRecargo() CLASS FacturasClientesController
+METHOD clientChangeRecargo() CLASS OperacionesComercialesController
 
    ::getModel():updateFieldWhereId( ::getModel():getBufferColumnKey(), "recargo_equivalencia", ::getModelBuffer( "recargo_equivalencia" ) )
 
@@ -275,13 +403,15 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD changedSerie() CLASS FacturasClientesController 
+METHOD changedSerie() CLASS OperacionesComercialesController 
 
-RETURN ( ::getNumeroDocumentoComponent():setValue( SQLContadoresModel():getPosibleNext( ::getName(), ::getModelBuffer( "serie" ) ) ) )
+   ::getNumeroDocumentoComponent():setValue( SQLContadoresModel():getPosibleNext( ::getName(), ::getModelBuffer( "serie" ) ) )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
+METHOD calculateTotals( uuidFactura ) CLASS OperacionesComercialesController
 
    local hTotal
 
@@ -309,13 +439,13 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD hasLines() CLASS FacturasClientesController
+METHOD hasLines() CLASS OperacionesComercialesController
 
 RETURN ( ::getFacturasClientesLineasController():getModel():countLinesWhereUuidParent( ::getModelBuffer( 'uuid' ) ) > 0 )
 
 //---------------------------------------------------------------------------//
 
-METHOD hasNotPaid( uuidFactura ) CLASS FacturasClientesController 
+METHOD hasNotPaid( uuidFactura ) CLASS OperacionesComercialesController 
 
    if ::getModel():totalPaid( uuidFactura ) > 0
       msgstop( "No puede eliminar facturas con pagos efectuados" )
@@ -326,7 +456,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD getConfigItems() CLASS FacturasClientesController
+METHOD getConfigItems() CLASS OperacionesComercialesController
 
    local aItems   := {}
 
@@ -361,8 +491,6 @@ METHOD getConfigItems() CLASS FacturasClientesController
 
 RETURN ( aItems )
 
-=======
->>>>>>> 001e026ed906d2fab245e753da0a493b71a9f562
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -370,7 +498,7 @@ RETURN ( aItems )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesValidator FROM SQLBaseValidator 
+CLASS OperacionesComercialesValidator FROM SQLBaseValidator 
 
    METHOD getValidators()
 
@@ -382,7 +510,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS FacturasClientesValidator
+METHOD getValidators() CLASS OperacionesComercialesValidator
 
    ::hValidators  := {  "cliente_codigo"     => {  "required"        => "El código del cliente es un dato requerido",;
                                                    "clienteExist"    => "El código del cliente no existe" } ,;  
@@ -399,13 +527,13 @@ RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
 
-METHOD emptyLines() CLASS FacturasClientesValidator     
+METHOD emptyLines() CLASS OperacionesComercialesValidator     
 
 RETURN ( ::getController():hasLines() )
 
 //---------------------------------------------------------------------------//
 
-METHOD validLine() CLASS FacturasClientesValidator     
+METHOD validLine() CLASS OperacionesComercialesValidator     
 
 RETURN ( ::getController():getFacturasClientesLineasController():validLine() )
 
@@ -431,8 +559,6 @@ CLASS TestFacturasClientesController FROM TestCase
 
    METHOD testDialogoVentasPorCajas() 
 
-   METHOD testDialogoTarifaMayorista()    
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -440,7 +566,6 @@ END CLASS
 METHOD initModels() CLASS TestFacturasClientesController
 
    SQLClientesModel():truncateTable()
-   SQLDireccionesModel():truncateTable()
    SQLAlmacenesModel():truncateTable()
    SQLMetodoPagoModel():truncateTable()
    SQLFacturasClientesModel():truncateTable() 
@@ -451,14 +576,11 @@ METHOD initModels() CLASS TestFacturasClientesController
    SQLArticulosTarifasModel():truncateTable() 
 
    SQLClientesModel():testCreateContado()
-   SQLClientesModel():testCreateTarifaMayorista()
-
    SQLAlmacenesModel():testCreate()
    SQLMetodoPagoModel():testCreateContado()
    SQLArticulosModel():testCreateArticuloConUnidadeDeMedicionCajasPalets()
-   SQLArticulosModel():testCreateArticuloConTarifaMayorista()
 
-   SQLArticulosTarifasModel():insertTarifaBase() 
+   SQLArticulosTarifasModel():insertArticulosTarifasBase() 
 
 RETURN ( nil )
 
@@ -618,44 +740,6 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testDialogoTarifaMayorista() CLASS TestFacturasClientesController
-
-   local oController
-
-   ::initModels()
-
-   oController             := FacturasClientesController():New()
-
-   oController:getDialogView():setEvent( 'painted',;
-      {| self | ;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 170, self:oFolder:aDialogs[1] ):cText( "1" ),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 170, self:oFolder:aDialogs[1] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 240, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 240, self:oFolder:aDialogs[1] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 501, self:oFolder:aDialogs[1] ):Click(),;
-         apoloWaitSeconds( 1 ),;
-         eval( oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "1", 0 ),;
-         apoloWaitSeconds( 1 ),;
-         oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
-         apoloWaitSeconds( 1 ),;
-         eval( oController:getFacturasClientesLineasController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , 100, 0 ),;
-         apoloWaitSeconds( 1 ),;
-         oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( IDOK ):Click() } )
-
-   ::assert:true( oController:Append(), "test creación de factura con ventas por cajas" )
-
-   oController:End()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
 
 #endif
 

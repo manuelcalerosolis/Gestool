@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesView FROM SQLBaseView
+CLASS OperacionesComercialesView FROM SQLBaseView
   
    DATA oExplorerBar
 
@@ -43,13 +43,13 @@ CLASS FacturasClientesView FROM SQLBaseView
                                                 ::oBtnDescuentosDeleted:Toggle(),;
                                                 ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
-METHOD defaultTitle()
+   METHOD defaultTitle()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS FacturasClientesView
+METHOD Activate() CLASS OperacionesComercialesView
    
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "TRANSACION_COMERCIAL" ;
@@ -79,10 +79,10 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Cliente------------------------------------------------------------------
 
-   ::getController():getClientesController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "cliente_codigo" ] ) )
-   ::getController():getClientesController():getSelector():Build( { "idGet" => 170, "idLink" => 171, "idText" => 180, "idNif" => 181, "idDireccion" => 183, "idCodigoPostal" => 184, "idPoblacion" => 185, "idProvincia" => 186, "idTelefono" => 187, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::getController():getClientesController():getSelector():setWhen( {|| ::getController():hasNotLines() .or. empty( ::getController():getModel():hBuffer[ "cliente_codigo" ] ) } )
-   ::getController():getClientesController():getSelector():setValid( {|| ::getController():validate( "cliente_codigo" ) } )
+   ::getController():getTercerosController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "cliente_codigo" ] ) )
+   ::getController():getTercerosController():getSelector():Build( { "idGet" => 170, "idLink" => 171, "idText" => 180, "idNif" => 181, "idDireccion" => 183, "idCodigoPostal" => 184, "idPoblacion" => 185, "idProvincia" => 186, "idTelefono" => 187, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::getController():getTercerosController():getSelector():setWhen( {|| ::getController():hasNotLines() .or. empty( ::getController():getModel():hBuffer[ "cliente_codigo" ] ) } )
+   ::getController():getTercerosController():getSelector():setValid( {|| ::getController():validate( "cliente_codigo" ) } )
 
    // Serie-------------------------------------------------------------------
 
@@ -243,11 +243,11 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD startActivate() CLASS FacturasClientesView
+METHOD startActivate() CLASS OperacionesComercialesView
 
    ::addLinksToExplorerBar()
 
-   ::getController():getClientesController():getSelector():Start()
+   ::getController():getTercerosController():getSelector():Start()
 
    ::getController():getMetodosPagosController():getSelector():Start()
 
@@ -265,13 +265,13 @@ METHOD startActivate() CLASS FacturasClientesView
 
    ::getController():calculateTotals()
 
-   ::getController():getClientesController():getSelector():setFocus()
+   ::getController():getTercerosController():getSelector():setFocus()
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD validActivate() CLASS FacturasClientesView
+METHOD validActivate() CLASS OperacionesComercialesView
 
    if notValidateDialog( ::oFolder:aDialogs )
       RETURN ( nil )
@@ -289,7 +289,7 @@ RETURN ( ::oDialog:end( IDOK ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD addLinksToExplorerBar() CLASS FacturasClientesView
+METHOD addLinksToExplorerBar() CLASS OperacionesComercialesView
 
    local oPanel
 
@@ -321,7 +321,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD lineaAppend() CLASS FacturasClientesView
+METHOD lineaAppend() CLASS OperacionesComercialesView
 
    if !::getController():getFacturasClientesLineasController():validLine()
       RETURN( nil )
