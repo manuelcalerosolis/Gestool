@@ -32,7 +32,7 @@ USER FUNCTION hbunit_test()
 
    //oSuite:addTest( TestCaracteristicasController():new() )
 
-  //oSuite:addTest( TestCaracteristicasLineasController():new() )
+   // oSuite:addTest( TestCaracteristicasLineasController():new() )
 
    //oSuite:addTest( TestCaracteristicasValoresArticulosController():new() )
 
@@ -40,21 +40,15 @@ USER FUNCTION hbunit_test()
 
    // oSuite:addTest( TestUnidadesMedicionGruposController():new() )
 
-<<<<<<< HEAD
    // oSuite:addTest( TestFacturasClientesFacturaeController():new() )
 
    // oSuite:addTest( TestArticulosTarifasController():new() )
+
+   // oSuite:addTest( TestArticulosTarifasController():new() )
+
+   // oSuite:addTest( TestFacturasClientesFacturaeController():new() )
 
    oSuite:addTest( TestFacturasClientesController():new() )
-=======
-   //oSuite:addTest( TestFacturasClientesController():new() )
-
-   // oSuite:addTest( TestArticulosTarifasController():new() )
-
-   // oSuite:addTest( TestFacturasClientesFacturaeController():new() )
-
-   //oSuite:addTest( TestFacturasClientesController():new() )
->>>>>>> 001e026ed906d2fab245e753da0a493b71a9f562
    
    oRunner:run( oSuite )
 

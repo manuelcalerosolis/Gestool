@@ -65,7 +65,7 @@ CLASS TercerosController FROM SQLNavigatorController
 
    METHOD getValidator()                                       INLINE( if( empty( ::oValidator ), ::oValidator := TercerosValidator():New( self ), ), ::oValidator )
 
-   METHOD getSelector()                                        INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := ClientGetSelector():New( self ), ), ::oGetSelector )
+   METHOD getSelector()                                        VIRTUAL
 
    METHOD getModel()                                           VIRTUAL
 

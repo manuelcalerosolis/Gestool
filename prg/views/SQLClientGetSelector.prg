@@ -46,7 +46,9 @@ CLASS ClientGetSelector FROM GetSelector
 
    METHOD cleanHelpText()    
 
-   METHOD setHelpText( value )      
+   METHOD setHelpText( value )    
+
+   METHOD getLinkText()                INLINE ( "Cliente" )
 
 END CLASS
 
@@ -196,4 +198,10 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+CLASS ProveedorGetSelector FROM  ClientGetSelector 
 
+   METHOD getLinkText()                INLINE ( "Proveedor" )
+
+END CLASS
+
+//---------------------------------------------------------------------------//

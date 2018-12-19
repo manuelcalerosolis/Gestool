@@ -506,6 +506,8 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
 
 #ifdef __TEST__
 
+   METHOD testCreateTarifaBase() 
+
    METHOD testCreateTarifaMayorista()    
 
 #endif
@@ -642,6 +644,20 @@ RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSql ) )
 //---------------------------------------------------------------------------//
 
 #ifdef __TEST__
+
+METHOD testCreateTarifaBase() CLASS SQLArticulosTarifasModel
+
+   local uuid     := ::getFieldWhere( "uuid", { "nombre" => __tarifa_base__ } )
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "codigo", "0" )
+   hset( hBuffer, "nombre", "Base" )
+   hset( hBuffer, "margen", 30 )
+
+RETURN ( ::insertIgnoreBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
 
 METHOD testCreateTarifaMayorista() CLASS SQLArticulosTarifasModel
 

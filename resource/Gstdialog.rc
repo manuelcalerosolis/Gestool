@@ -23269,7 +23269,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 500, "SQLXBrowse", WS_TABSTOP|0x00300000, 3, 125, 633, 144
   CONTROL "", 600, "SQLXBrowse", WS_GROUP|0x00200000, 4, 287, 245, 66
   CONTROL "Número", -1, "Static", WS_GROUP, 344, 21, 52, 8
-  CONTROL "Cliente", 171, "Static", WS_GROUP, 4, 7, 52, 8
+  CONTROL "Terceros", 171, "Static", WS_GROUP, 4, 7, 52, 8
   CONTROL "Nombre", -1, "Static", WS_GROUP, 4, 21, 52, 8
   CONTROL "N.I.F.", -1, "Static", WS_GROUP, 4, 33, 52, 8
   CONTROL "Domicilio", -1, "Static", WS_GROUP, 4, 46, 52, 8

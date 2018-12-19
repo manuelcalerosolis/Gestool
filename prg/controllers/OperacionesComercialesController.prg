@@ -19,7 +19,7 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD addExtraButtons()
+   METHOD addExtraButtons()            VIRTUAL
 
    METHOD editConfig()
 
@@ -200,14 +200,6 @@ METHOD End() CLASS OperacionesComercialesController
    end if 
 
 RETURN ( ::Super:End() )
-
-//---------------------------------------------------------------------------//
-
-METHOD addExtraButtons() CLASS OperacionesComercialesController
-
-   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturae 3.2", "gc_document_text_earth_16", {|| ::getFacturasClientesFacturaeController():Run( ::getBrowseView():getBrowseSelected() ) } ) 
-
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -512,9 +504,7 @@ END CLASS
 
 METHOD getValidators() CLASS OperacionesComercialesValidator
 
-   ::hValidators  := {  "cliente_codigo"     => {  "required"        => "El código del cliente es un dato requerido",;
-                                                   "clienteExist"    => "El código del cliente no existe" } ,;  
-                        "metodo_pago_codigo" => {  "required"        => "El código del método de pago es un dato requerido",;
+   ::hValidators  := {  "metodo_pago_codigo" => {  "required"        => "El código del método de pago es un dato requerido",;
                                                    "formaPagoExist"  => "El código del método de pago no existe" } ,;  
                         "almacen_codigo"     => {  "required"        => "El código del almacén es un dato requerido",;
                                                    "almacenExist"    => "El código del almacén no existe" } ,;  
@@ -542,204 +532,4 @@ RETURN ( ::getController():getFacturasClientesLineasController():validLine() )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-
-#ifdef __TEST__
-
-CLASS TestFacturasClientesController FROM TestCase
-
-   METHOD initModels()
-
-   METHOD testCalculoFacturaConDescuento()
-
-   METHOD testCalculoFacturaConIncremento()
-
-   METHOD testFacturaConUnidadesDeMedicion()
-
-   METHOD testDialogoWithNoLines() 
-
-   METHOD testDialogoVentasPorCajas() 
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD initModels() CLASS TestFacturasClientesController
-
-   SQLClientesModel():truncateTable()
-   SQLAlmacenesModel():truncateTable()
-   SQLMetodoPagoModel():truncateTable()
-   SQLFacturasClientesModel():truncateTable() 
-   SQLFacturasClientesLineasModel():truncateTable() 
-   SQLFacturasClientesDescuentosModel():truncateTable()
-   SQLArticulosModel():truncateTable()
-   
-   SQLArticulosTarifasModel():truncateTable() 
-
-   SQLClientesModel():testCreateContado()
-   SQLAlmacenesModel():testCreate()
-   SQLMetodoPagoModel():testCreateContado()
-   SQLArticulosModel():testCreateArticuloConUnidadeDeMedicionCajasPalets()
-
-   SQLArticulosTarifasModel():insertArticulosTarifasBase() 
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD testCalculoFacturaConDescuento() CLASS TestFacturasClientesController
-
-   local uuid  
-   local hTotal
-   local oController
-
-   ::initModels()
-
-   uuid        := win_uuidcreatestring()
-
-   SQLFacturasClientesModel():testCreateFactura( uuid ) 
-
-   SQLFacturasClientesLineasModel():testCreateIVAal0Con10PorcientoDescuento( uuid ) 
-   SQLFacturasClientesLineasModel():testCreateIVAal10Con15PorcientoDescuento( uuid ) 
-   SQLFacturasClientesLineasModel():testCreateIVAal21Con20PorcientoDescuento( uuid ) 
-
-   SQLFacturasClientesDescuentosModel():testCreatel0PorCiento( uuid )   
-   SQLFacturasClientesDescuentosModel():testCreate20PorCiento( uuid )   
-   SQLFacturasClientesDescuentosModel():testCreate30PorCiento( uuid )   
-
-   oController := FacturasClientesController():New() 
-
-   hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
-
-   ::assert:equals( 112.120000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
-
-   oController:End()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD testCalculoFacturaConIncremento() CLASS TestFacturasClientesController
-
-   local uuid  
-   local hTotal
-   local oController
-
-   ::initModels()
-
-   uuid        := win_uuidcreatestring()
-
-   SQLFacturasClientesModel():testCreateFactura( uuid ) 
-
-   SQLFacturasClientesLineasModel():testCreateIVAal21ConIncrememtoPrecio( uuid ) 
-
-   oController := FacturasClientesController():New() 
-
-   hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
-
-   ::assert:equals( 7.720000, hget( hTotal, "total_documento" ), "test creacion de factura con incremento" )
-
-   oController:End()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD testFacturaConUnidadesDeMedicion() CLASS TestFacturasClientesController
-
-   local uuid  
-   local hTotal
-   local oController
-
-   ::initModels()
-
-   uuid        := win_uuidcreatestring()
-
-   SQLFacturasClientesModel():testCreateFactura( uuid ) 
-
-   SQLFacturasClientesLineasModel():testCreate10PorCientoDescuento15Incremento( uuid ) 
-
-   oController := FacturasClientesController():New() 
-
-   hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
-
-   ::assert:equals( 103.500000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
-
-   oController:End()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD testDialogoWithNoLines() CLASS TestFacturasClientesController
-
-   local oController
-
-   ::initModels()
-
-   oController             := FacturasClientesController():New()
-
-   oController:getDialogView():setEvent( 'painted',;
-      {| self | ;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 170, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 170, self:oFolder:aDialogs[1] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 240, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 240, self:oFolder:aDialogs[1] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( IDCANCEL ):Click() } )
-
-   ::assert:false( oController:Append(), "test creación de factura sin lineas" )
-
-   oController:End()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD testDialogoVentasPorCajas() CLASS TestFacturasClientesController
-
-   local oController
-
-   ::initModels()
-
-   oController             := FacturasClientesController():New()
-
-   oController:getDialogView():setEvent( 'painted',;
-      {| self | ;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 170, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 170, self:oFolder:aDialogs[1] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 240, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 240, self:oFolder:aDialogs[1] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 501, self:oFolder:aDialogs[1] ):Click(),;
-         apoloWaitSeconds( 1 ),;
-         eval( oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "0", 0 ),;
-         apoloWaitSeconds( 1 ),;
-         oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
-         apoloWaitSeconds( 1 ),;
-         eval( oController:getFacturasClientesLineasController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , 100, 0 ),;
-         apoloWaitSeconds( 1 ),;
-         oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( IDOK ):Click() } )
-
-   ::assert:true( oController:Append(), "test creación de factura con ventas por cajas" )
-
-   oController:End()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-
-#endif
 

@@ -9,11 +9,13 @@ CLASS FacturasClientesController FROM OperacionesComercialesController
 
    METHOD End()
 
-   METHOD getTercerosController()         INLINE ( ::getClientesController() )
+   METHOD getTercerosController()      INLINE ( ::getClientesController() )
 
    // Impresiones--------------------------------------------------------------
 
    METHOD getSubject()                 INLINE ( "Factura de cliente número" )
+
+   METHOD addExtraButtons()
 
    // Contrucciones tardias----------------------------------------------------
 
@@ -26,7 +28,6 @@ CLASS FacturasClientesController FROM OperacionesComercialesController
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesBrowseView():New( self ), ), ::oBrowseView )
 
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasClientesRepository():New( self ), ), ::oRepository )
-   
    
 END CLASS
 
@@ -73,7 +74,6 @@ METHOD End() CLASS FacturasClientesController
 RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
-<<<<<<< HEAD
 
 METHOD addExtraButtons() CLASS FacturasClientesController
 
@@ -82,332 +82,33 @@ METHOD addExtraButtons() CLASS FacturasClientesController
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
-METHOD editConfig()
-
-RETURN ( ::getConfiguracionesController():Edit() )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadedBlankBuffer() CLASS FacturasClientesController 
-
-   ::setModelBuffer( "serie", SQLContadoresModel():getDocumentSerie( ::getName() ) )
-
-   ::setModelBuffer( "numero", SQLContadoresModel():getPosibleNext( ::getName(), ::getModelBuffer( "serie" ) ) )
-
-   ::setModelBuffer( "almacen_codigo", Store():getCodigo() )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadedDuplicateBuffer() CLASS FacturasClientesController 
-
-RETURN ( ::setModelBuffer( "numero", SQLContadoresModel():getPosibleNext( ::getName(), ::getModelBuffer( "serie" ) ) ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD updatingBuffer() CLASS FacturasClientesController 
-
-   if ::isAppendOrDuplicateMode()
-      ::setModelBuffer( "numero", SQLContadoresModel():getNext( ::getName(), ::getModelBuffer( "serie" ) ) )
-   end if 
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD updatedBuffer() CLASS FacturasClientesController 
-
-RETURN ( ::getRecibosGeneratorController():generate() )
-
-//---------------------------------------------------------------------------//
-
-METHOD getClientUuid() CLASS FacturasClientesController 
-
-RETURN ( ::getClientesController():oModel:getUuidWhereCodigo( ::getModelBuffer( "cliente_codigo" ) ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD clientesSettedHelpText() CLASS FacturasClientesController
-
-   if ::getHistoryManager():isEqual( "cliente_codigo", ::getModelBuffer( "cliente_codigo" ) )
-      RETURN ( nil )
-   end if         
-
-   ::clientSetMetodoPago()
-
-   ::clientSetTarifa()
-   
-   ::clientSetRuta()
-
-   ::clientSetAgente()
-
-   ::clientSetDescuentos()
-
-   ::clientSetRecargo()
-
-   ::getHistoryManager():setkey( "cliente_codigo", ::getModelBuffer( "cliente_codigo" ) )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD clientSetMetodoPago() CLASS FacturasClientesController
-
-   local cCodigoMetodoPago
-
-   cCodigoMetodoPago    := space( 20 )
-
-   if empty( ::getClientesController():getSelector():uFields )
-      RETURN ( nil )
-   end if 
-
-   cCodigoMetodoPago    := hget( ::getClientesController():getSelector():uFields, "metodo_pago_codigo" )
-
-   if empty( cCodigoMetodoPago )
-      cCodigoMetodoPago := Company():getDefaultMetodoPago()
-   end if
-
-   ::getMetodosPagosController():getSelector():cText( cCodigoMetodoPago )
-   
-   ::getMetodosPagosController():getSelector():lValid()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD clientSetTarifa() CLASS FacturasClientesController
-
-   local cCodigoTarifa
-
-   cCodigoTarifa     := space( 20 )
-
-   if empty( ::getClientesController():getSelector():uFields )
-      RETURN ( nil )
-   end if 
-
-   cCodigoTarifa     := hget( ::getClientesController():getSelector():uFields, "tarifa_codigo" )
-
-   if empty( cCodigoTarifa )
-      cCodigoTarifa  := Company():getDefaultTarifa()
-   end if
-
-   ::getArticulosTarifasController():getSelector():cText( cCodigoTarifa )
-   
-   ::getArticulosTarifasController():getSelector():lValid()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD clientSetRuta() CLASS FacturasClientesController
-
-   local cCodigoRuta
-
-   cCodigoRuta       := space( 20 )
-
-   if empty( ::getClientesController():getSelector():uFields )
-      RETURN ( nil )
-   end if 
-
-   cCodigoRuta       := hget( ::getClientesController():getSelector():uFields, "ruta_codigo" )
-
-   ::getRutasController():getSelector():cText( cCodigoRuta )
-   
-   ::getRutasController():getSelector():lValid()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD clientSetAgente() CLASS FacturasClientesController
-
-   local cCodigoAgente
-
-   if empty( ::getClientesController():getSelector():uFields )
-      RETURN ( nil )
-   end if 
-
-   cCodigoAgente     := hget( ::getClientesController():getSelector():uFields, "agente_codigo" )
-
-   ::getAgentesController():getSelector():cText( cCodigoAgente )
-   
-   ::getAgentesController():getSelector():lValid()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD clientSetDescuentos() CLASS FacturasClientesController
-
-   ::getFacturasClientesDescuentosController():getModel():deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
-
-   ::getFacturasClientesDescuentosController():getModel():insertWhereClienteCodigo( ::getModelBuffer( "cliente_codigo" ) )
-
-   ::getFacturasClientesDescuentosController():refreshRowSetAndGoTop()
-
-   ::getFacturasClientesDescuentosController():refreshBrowseView()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD clientSetRecargo() CLASS FacturasClientesController
-
-   if empty( ::getClientesController():getSelector():uFields )
-      RETURN ( nil )
-   end if 
-
-   ::getDialogView():oRecargoEquivalencia:setCheck( hget( ::getClientesController():getSelector():uFields, "recargo_equivalencia" ) )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD clientChangeRecargo() CLASS FacturasClientesController
-
-   ::getModel():updateFieldWhereId( ::getModel():getBufferColumnKey(), "recargo_equivalencia", ::getModelBuffer( "recargo_equivalencia" ) )
-
-   ::calculateTotals()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD changedSerie() CLASS FacturasClientesController 
-
-RETURN ( ::getNumeroDocumentoComponent():setValue( SQLContadoresModel():getPosibleNext( ::getName(), ::getModelBuffer( "serie" ) ) ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
-
-   local hTotal
-
-   DEFAULT uuidFactura  := ::getUuid()
-
-   hTotal               := ::getRepository():getTotalesDocument( uuidFactura )
-
-   if empty( hTotal )
-      RETURN ( nil )
-   end if 
-
-   ::getDialogView():oTotalBruto:setText( hget( hTotal, "total_bruto" ) )
-   
-   ::getDialogView():oTotalBase:setText( hget( hTotal, "total_neto" ) )
-
-   ::getDialogView():oTotalDescuento:setText( hget( hTotal, "total_descuento" ) )
-
-   ::getDialogView():oTotalIva:setText( hget( hTotal, "total_iva" ) )
-
-   ::getDialogView():oTotalRecargo:setText( hget( hTotal, "total_recargo" ) )
-
-   ::getDialogView():oTotalImporte:setText( hget( hTotal, "total_documento" ) )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD hasLines() CLASS FacturasClientesController
-
-RETURN ( ::getFacturasClientesLineasController():getModel():countLinesWhereUuidParent( ::getModelBuffer( 'uuid' ) ) > 0 )
-
-//---------------------------------------------------------------------------//
-
-METHOD hasNotPaid( uuidFactura ) CLASS FacturasClientesController 
-
-   if ::getModel():totalPaid( uuidFactura ) > 0
-      msgstop( "No puede eliminar facturas con pagos efectuados" )
-      RETURN ( .f. )
-   end if
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD getConfigItems() CLASS FacturasClientesController
-
-   local aItems   := {}
-
-   aadd( aItems,  {  'texto'  => 'Documento impresión',;
-                     'clave'  => 'documento_impresion',;
-                     'valor'  => ::getDocumentPrint(),;
-                     'tipo'   => "B",;
-                     'lista'  =>  ::loadDocuments() } )
-
-   aadd( aItems,  {  'texto'  => 'Copias impresión',;
-                     'clave'  => 'copias_impresion',;
-                     'valor'  => ::getCopyPrint(),;
-                     'tipo'   => "N" } )
-
-   aadd( aItems,  {  'texto'  => 'Documento pdf',;
-                     'clave'  => 'documento_pdf',;
-                     'valor'  => ::getDocumentPdf(),;
-                     'tipo'   => "B",;
-                     'lista'  =>  ::loadDocuments() } )
-
-   aadd( aItems,  {  'texto'  => 'Documento previsulización',;
-                     'clave'  => 'documento_previsulizacion',;
-                     'valor'  => ::getDocumentPreview(),;
-                     'tipo'   => "B",;
-                     'lista'  =>  ::loadDocuments() } )
-
-   aadd( aItems,  {  'texto'  => 'Plantilla para mails',;
-                     'clave'  => 'plantilla_para_mails',;
-                     'valor'  => ::getTemplateMails(),;
-                     'tipo'   => "B",;
-                     'lista'  =>  ::loadTemplatesHTML() } )
-
-RETURN ( aItems )
-
-=======
->>>>>>> 001e026ed906d2fab245e753da0a493b71a9f562
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesValidator FROM SQLBaseValidator 
+CLASS FacturasClientesValidator FROM OperacionesComercialesValidator 
+
+   METHOD New( oController )
 
    METHOD getValidators()
-
-   METHOD emptyLines()     
-
-   METHOD validLine()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
+METHOD New( oController ) CLASS FacturasClientesValidator
+
+RETURN ( ::Super:New( oController ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD getValidators() CLASS FacturasClientesValidator
 
-   ::hValidators  := {  "cliente_codigo"     => {  "required"        => "El código del cliente es un dato requerido",;
-                                                   "clienteExist"    => "El código del cliente no existe" } ,;  
-                        "metodo_pago_codigo" => {  "required"        => "El código del método de pago es un dato requerido",;
-                                                   "formaPagoExist"  => "El código del método de pago no existe" } ,;  
-                        "almacen_codigo"     => {  "required"        => "El código del almacén es un dato requerido",;
-                                                   "almacenExist"    => "El código del almacén no existe" } ,;  
-                        "tarifa_codigo"      => {  "required"        => "El código de la tarifa es un dato requerido",; 
-                                                   "tarifaExist"     => "El código de la tarifa no existe" },;
-                        "formulario"         => {  "emptyLines"      => "Las líneas no pueden estar vacias",;
-                                                   "validLine"       => "" } }  
+   hset( ::Super:getValidators(), "cliente_codigo",   {  "required"        => "El código del cliente es un dato requerido",;
+                                                         "clienteExist"    => "El código del cliente no existe" } )
 
 RETURN ( ::hValidators )
-
-//---------------------------------------------------------------------------//
-
-METHOD emptyLines() CLASS FacturasClientesValidator     
-
-RETURN ( ::getController():hasLines() )
-
-//---------------------------------------------------------------------------//
-
-METHOD validLine() CLASS FacturasClientesValidator     
-
-RETURN ( ::getController():getFacturasClientesLineasController():validLine() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -458,7 +159,8 @@ METHOD initModels() CLASS TestFacturasClientesController
    SQLArticulosModel():testCreateArticuloConUnidadeDeMedicionCajasPalets()
    SQLArticulosModel():testCreateArticuloConTarifaMayorista()
 
-   SQLArticulosTarifasModel():insertTarifaBase() 
+   SQLArticulosTarifasModel():testCreateTarifaBase() 
+   SQLArticulosTarifasModel():testCreateTarifaMayorista() 
 
 RETURN ( nil )
 
