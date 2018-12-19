@@ -25,41 +25,41 @@ END CLASS
 
 CLASS DireccionesController FROM SQLNavigatorController
 
-   DATA lMain                             INIT .f.                       
+   DATA lMain                          INIT .f.                       
 
    METHOD New() CONSTRUCTOR
    METHOD End()
 
    METHOD gettingSelectSentence()
 
-   METHOD loadBlankBuffer()               INLINE ( ::getModel():loadBlankBuffer() )
-   METHOD loadMainBlankBuffer()           INLINE ( ::getModel():loadMainBlankBuffer() )
-   METHOD insertBuffer()                  INLINE ( ::getModel():insertBuffer() )
+   METHOD loadBlankBuffer()            INLINE ( ::getModel():loadBlankBuffer() )
+   METHOD loadMainBlankBuffer()        INLINE ( ::getModel():loadMainBlankBuffer() )
+   METHOD insertBuffer()               INLINE ( ::getModel():insertBuffer() )
 
    METHOD loadedCurrentBuffer( uuidEntidad ) 
    METHOD updateBuffer( uuidEntidad ) 
 
    METHOD deleteBuffer( aUuidEntidades )
 
-   METHOD getUuidParent()                 INLINE ( ::oController:getUuid() )
+   METHOD getUuidParent()              INLINE ( ::oController:getUuid() )
 
-   METHOD includeMain()                   INLINE ( ::lMain := .t. )
-   METHOD excludeMain()                   INLINE ( ::lMain := .f. )
-   METHOD getMain()                       INLINE ( ::lMain )
+   METHOD includeMain()                INLINE ( ::lMain := .t. )
+   METHOD excludeMain()                INLINE ( ::lMain := .f. )
+   METHOD getMain()                    INLINE ( ::lMain )
 
    // Creaciones tardias-------------------------------------------------------
    
-   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLDireccionesModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLDireccionesModel():New( self ), ), ::oModel )
    
-   METHOD getBrowseView()                 INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := DireccionesBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := DireccionesBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getDialogView()                 INLINE ( if( empty( ::oDialogView ), ::oDialogView := DireccionesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := DireccionesView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                  INLINE ( if( empty( ::oValidator ), ::oValidator := DireccionesValidator():New( self, ::getDialogView() ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := DireccionesValidator():New( self, ::getDialogView() ), ), ::oValidator )
    
-   METHOD getSelector()                   INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := DireccionesGetSelector():New( self ), ), ::oGetSelector )
+   METHOD getSelector()                INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := DireccionesGetSelector():New( self ), ), ::oGetSelector )
 
-   METHOD externalStartDialog()           INLINE ( ::getDialogView():StartDialog() )
+   METHOD externalStartDialog()        INLINE ( ::getDialogView():StartDialog() )
 
 END CLASS
 
@@ -580,7 +580,7 @@ RETURN ( ::hValidators )
 
 CLASS SQLDireccionesGestoolModel FROM SQLDireccionesModel
 
-   METHOD getTableName()   INLINE ( "gestool." + ::cTableName )
+   METHOD getTableName()               INLINE ( "gestool." + ::cTableName )
 
 END CLASS
 
@@ -592,30 +592,31 @@ END CLASS
 
 CLASS SQLDireccionesModel FROM SQLCompanyModel
 
-   DATA cTableName                        INIT "direcciones"
+   DATA cTableName                     INIT "direcciones"
 
-   DATA cConstraints                      INIT "PRIMARY KEY ( parent_uuid, codigo, deleted_at )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( parent_uuid, codigo, deleted_at )"
 
-   METHOD loadMainBlankBuffer()           INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "codigo", "0" ) )
+   METHOD loadMainBlankBuffer()        INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "codigo", "0" ) )
 
-   METHOD insertMainBlankBuffer()         INLINE ( ::loadMainBlankBuffer(), ::insertBuffer() ) 
+   METHOD insertMainBlankBuffer()      INLINE ( ::loadMainBlankBuffer(), ::insertBuffer() ) 
 
    METHOD getColumns()
 
    METHOD getIdMainWhereParentUuid( uuidParent ) ;
-                                             INLINE ( ::getFieldWhere( 'id', { 'parent_uuid' => uuidParent, 'codigo' => '0' } ) )
+                                       INLINE ( ::getFieldWhere( 'id', { 'parent_uuid' => uuidParent, 'codigo' => '0' } ) )
 
    METHOD getSentenceOthersWhereParentUuid( uuidParent )
 
 
-   METHOD getIdWhereParentUuid( uuid )       INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
+   METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
    METHOD getParentUuidAttribute( value )
 
-   METHOD addParentUuidWhere( cSQLSelect )   INLINE ( cSQLSelect )
+   METHOD addParentUuidWhere( cSQLSelect ) ;
+                                       INLINE ( cSQLSelect )
 
    METHOD getClienteDireccion( cBy, cCodigo, uuidParent ) ;
-                                             INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentenceClienteDireccion( cBy, cCodigo, uuidParent ) ) ) )
+                                       INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentenceClienteDireccion( cBy, cCodigo, uuidParent ) ) ) )
 
    METHOD getSentenceClienteDireccion( cBy, cCodigo, uuidParent )
 
@@ -725,9 +726,7 @@ METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLDireccionesModel
    TEXT INTO cSql
 
    SELECT *
-
       FROM %1$s
-
       WHERE parent_uuid = %2$s AND codigo <> '0'
 
    ENDTEXT
@@ -768,7 +767,7 @@ RETURN ( nil )
 
 CLASS DireccionesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( SQLDireccionesModel():getTableName() ) 
+   METHOD getTableName()               INLINE ( SQLDireccionesModel():getTableName() ) 
 
 END CLASS
 

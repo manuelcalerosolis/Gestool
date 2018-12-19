@@ -15,22 +15,22 @@
 
 CLASS TAssert
 
-  DATA oResult
+   DATA oResult
 
-  METHOD new( oResult ) CONSTRUCTOR
+   METHOD new( oResult ) CONSTRUCTOR
 
-  METHOD equals( xExp, xAct, cMsg )
-  METHOD notEquals( xExp, xAct, cMsg )
-  METHOD true( xAct, cMsg )
-  METHOD false( xAct, cMsg )
-  METHOD null( xAct, cMsg )
-  METHOD notNull( xAct, cMsg )
+   METHOD equals( xExp, xAct, cMsg )
+   METHOD notEquals( xExp, xAct, cMsg )
+   METHOD true( xAct, cMsg )
+   METHOD false( xAct, cMsg )
+   METHOD null( xAct, cMsg )
+   METHOD notNull( xAct, cMsg )
 
 PROTECTED:
-  METHOD isEqual( xExp, xAct )
-  METHOD assert( xExp, xAct, cMsg, lInvert )
-  METHOD fail( cMsg )
-  METHOD toStr (xVal, lUseQuote )
+   METHOD isEqual( xExp, xAct )
+   METHOD assert( xExp, xAct, cMsg, lInvert )
+   METHOD fail( cMsg )
+   METHOD toStr (xVal, lUseQuote )
 
 ENDCLASS
 
@@ -108,7 +108,7 @@ METHOD assert( xExp, xAct, cMsg, lInvert ) CLASS TAssert
 
    local oError
 
-   cMsg := Procfile(2) + ":" + LTRIM(STR(ProcLine(2))) + ":" + ProcName(2) + " => " + cMsg
+   cMsg := procfile( 2 ) + ":" + ltrim( str( procline( 2 ) ) ) + ":" + procname( 2 ) + " => " + cMsg
 
    if( lInvert == nil, lInvert := .f., )
 
@@ -117,11 +117,11 @@ METHOD assert( xExp, xAct, cMsg, lInvert ) CLASS TAssert
 
       if ( ( lInvert .and. ::isEqual( xExp, xAct )) .or. ( !( lInvert ) .and. ( !( ::isEqual( xExp, xAct ) ) ) ) )
 
-      oError := ErrorNew()
-      oError:description  := cMsg
-      oError:filename     := Procfile(2)
+         oError               := ErrorNew()
+         oError:description   := cMsg
+         oError:filename      := Procfile(2)
 
-      ::oResult:oData:addFailure( oError )
+         ::oResult:oData:addFailure( oError )
 
       endif
 
@@ -135,20 +135,20 @@ RETURN ( nil )
 
 METHOD isEqual( xExp, xAct ) CLASS TAssert
 
-   local lResult := .F.
+   local lResult := .f.
 
    do case
       case ValType( xExp ) != ValType( xAct )
       case ( !( xExp == xAct ))
       otherwise
-      lResult := .T.
+         lResult := .t.
    endcase
 
 RETURN ( lResult )
 
 // #TODO - see where to put these util methods
 
-METHOD toStr (xVal, lUseQuote ) CLASS TAssert
+METHOD toStr( xVal, lUseQuote ) CLASS TAssert
 
    local cStr, i
 

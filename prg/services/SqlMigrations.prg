@@ -450,7 +450,7 @@ METHOD checkValues() CLASS SQLCompanyMigrations
 
    getSQLDatabase():Execs( SQLUnidadesMedicionGruposModel():getInsertUnidadesMedicionGruposSentence() )
 
-   SQLArticulosTarifasModel():insertArticulosTarifasBase()
+   SQLArticulosTarifasModel():insertTarifaBase()
 
 RETURN ( nil )
 

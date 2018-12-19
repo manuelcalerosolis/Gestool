@@ -80,7 +80,7 @@ METHOD createFunctionUpdatePrecioBaseWhereUuid() CLASS ArticulosPreciosRepositor
 
       SET 
          articulos_precios.precio_base = precio_base, 
-         articulos_precios.precio_iva_incluido = ( precio_base * tipos_iva.porcentaje / 100 ) + precio_base, 
+         articulos_precios.precio_iva_incluido = ( precio_base * IFNULL( tipos_iva.porcentaje, 0 ) / 100 ) + precio_base, 
          margen = ( articulos_precios.precio_base - articulos.precio_costo ) / precio_costo * 100, 
          margen_real = ( articulos_precios.precio_base - articulos.precio_costo ) / precio_base * 100, 
          manual = 1 
@@ -140,7 +140,7 @@ METHOD createFunctionUpdatePrecioIvaIncluidoWhereUuid() CLASS ArticulosPreciosRe
 
          SET 
             articulos_precios.precio_iva_incluido = precio_iva_incluido, 
-            articulos_precios.precio_base = ( precio_iva_incluido / ( 1 + ( tipos_iva.porcentaje / 100 ) ) ), 
+            articulos_precios.precio_base = ( precio_iva_incluido / ( 1 + ( IFNULL( tipos_iva.porcentaje, 0 ) / 100 ) ) ), 
             margen = ( articulos_precios.precio_base - articulos.precio_costo ) / precio_costo * 100, 
             margen_real = ( articulos_precios.precio_base - articulos.precio_costo ) / precio_base * 100, 
             manual = 1 
@@ -179,73 +179,73 @@ METHOD createFunctionUpdatePrecioWhereIdPrecio() CLASS ArticulosPreciosRepositor
 
    TEXT INTO cSql
 
-      CREATE DEFINER=`root`@`localhost` PROCEDURE %1$s ( IN `id_articulo_precio` INT ) 
-         LANGUAGE SQL
-         NOT DETERMINISTIC
-         CONTAINS SQL
-         SQL SECURITY DEFINER
-         COMMENT ''
+   CREATE DEFINER=`root`@`localhost` PROCEDURE %1$s ( IN `id_articulo_precio` INT ) 
+      LANGUAGE SQL
+      NOT DETERMINISTIC
+      CONTAINS SQL
+      SQL SECURITY DEFINER
+      COMMENT ''
 
-         BEGIN
+      BEGIN
 
-         DECLARE margen FLOAT;
-         DECLARE margen_real FLOAT;
-         DECLARE precio_costo FLOAT;
-         DECLARE porcentaje_iva FLOAT;
-         DECLARE precio_base FLOAT;
-         DECLARE precio_iva_incluido FLOAT;
+      DECLARE margen FLOAT;
+      DECLARE margen_real FLOAT;
+      DECLARE precio_costo FLOAT;
+      DECLARE porcentaje_iva FLOAT;
+      DECLARE precio_base FLOAT;
+      DECLARE precio_iva_incluido FLOAT;
 
-         SELECT 
-            articulos_tarifas.margen, 
-            IF( articulos_tarifas.parent_uuid = '', articulos.precio_costo, articulos_precios_parent.precio_base ),
-            tipos_iva.porcentaje
-         INTO 
-            margen, 
-            precio_costo, 
-            porcentaje_iva 
+      SELECT 
+         articulos_tarifas.margen, 
+         IF( articulos_tarifas.parent_uuid = '', articulos.precio_costo, articulos_precios_parent.precio_base ),
+         IFNULL( tipos_iva.porcentaje, 0 )
+      INTO 
+         margen, 
+         precio_costo, 
+         porcentaje_iva 
 
-         FROM %2$s AS articulos_precios   
+      FROM %2$s AS articulos_precios   
 
-            INNER JOIN %3$s AS articulos_tarifas 
-               ON articulos_tarifas.uuid = articulos_precios.tarifa_uuid 
+         INNER JOIN %3$s AS articulos_tarifas 
+            ON articulos_tarifas.uuid = articulos_precios.tarifa_uuid 
 
-            LEFT JOIN %4$s AS articulos
-               ON articulos.uuid = articulos_precios.articulo_uuid 
+         LEFT JOIN %4$s AS articulos
+            ON articulos.uuid = articulos_precios.articulo_uuid 
 
-            LEFT JOIN %5$s AS tipos_iva 
-               ON tipos_iva.codigo = articulos.tipo_iva_codigo 
+         LEFT JOIN %5$s AS tipos_iva 
+            ON tipos_iva.codigo = articulos.tipo_iva_codigo 
 
-            LEFT JOIN %2$s AS articulos_precios_parent     
-               ON articulos_precios_parent.tarifa_uuid = articulos_tarifas.parent_uuid 
-               AND articulos_precios_parent.articulo_uuid = articulos_precios.articulo_uuid 
+         LEFT JOIN %2$s AS articulos_precios_parent     
+            ON articulos_precios_parent.tarifa_uuid = articulos_tarifas.parent_uuid 
+            AND articulos_precios_parent.articulo_uuid = articulos_precios.articulo_uuid 
 
-         WHERE 
-            ( ( articulos_precios.manual IS NULL OR articulos_precios.manual != 1 ) AND articulos_precios.id = id_articulo_precio ) 
-            AND 
-            ( articulos_tarifas.activa = 1 
-               AND ( articulos_tarifas.valido_desde IS NULL OR articulos_tarifas.valido_desde >= CURDATE() )
-               AND ( articulos_tarifas.valido_hasta IS NULL OR articulos_tarifas.valido_hasta <= CURDATE() ) 
-            ); 
+      WHERE 
+         ( ( articulos_precios.manual IS NULL OR articulos_precios.manual != 1 ) AND articulos_precios.id = id_articulo_precio ) 
+         AND 
+         ( articulos_tarifas.activa = 1 
+            AND ( articulos_tarifas.valido_desde IS NULL OR articulos_tarifas.valido_desde >= CURDATE() )
+            AND ( articulos_tarifas.valido_hasta IS NULL OR articulos_tarifas.valido_hasta <= CURDATE() ) 
+         ); 
 
-         SET precio_base         = ( precio_costo * margen / 100 ) + ( precio_costo );
-         SET precio_iva_incluido = ( precio_base ) + ( precio_base * IFNULL( porcentaje_iva, 0 ) / 100 );
+      SET precio_base         = ( precio_costo * margen / 100 ) + ( precio_costo );
+      SET precio_iva_incluido = ( precio_base ) + ( precio_base * IFNULL( porcentaje_iva, 0 ) / 100 );
 
-         IF precio_base > 0 THEN 
-            SET margen_real      = ( ( precio_base - precio_costo ) / precio_base * 100 );
-         ELSE 
-            SET margen_real      = 0;
-         END IF;
+      IF precio_base > 0 THEN 
+         SET margen_real      = ( ( precio_base - precio_costo ) / precio_base * 100 );
+      ELSE 
+         SET margen_real      = 0;
+      END IF;
 
-         UPDATE %2$s AS articulos_precios 
-            SET 
-               articulos_precios.margen = margen,
-               articulos_precios.margen_real = margen_real,
-               articulos_precios.precio_base = precio_base,
-               articulos_precios.precio_iva_incluido = precio_iva_incluido
-         WHERE 
-            ( ( articulos_precios.manual IS NULL OR articulos_precios.manual != 1 ) AND articulos_precios.id = id_articulo_precio );
+      UPDATE %2$s AS articulos_precios 
+         SET 
+            articulos_precios.margen = margen,
+            articulos_precios.margen_real = margen_real,
+            articulos_precios.precio_base = precio_base,
+            articulos_precios.precio_iva_incluido = precio_iva_incluido
+      WHERE 
+         ( ( articulos_precios.manual IS NULL OR articulos_precios.manual != 1 ) AND articulos_precios.id = id_articulo_precio );
 
-         END
+      END
 
    ENDTEXT
 

@@ -21,6 +21,8 @@ CLASS SQLArticulosModel FROM SQLCompanyModel
 
    METHOD testCreateArticuloConUnidadeDeMedicionCajasPalets( uuid )
 
+   METHOD testCreateArticuloConTarifaMayorista() 
+
 #endif
 
 END CLASS
@@ -218,8 +220,37 @@ METHOD testCreateArticuloConUnidadeDeMedicionCajasPalets() CLASS SQLArticulosMod
    hset( hBuffer, "codigo", "0" )
    hset( hBuffer, "nombre", "Artículo con unidad de venta como cajas y palets" )
    hset( hBuffer, "unidades_medicion_grupos_codigo", "0" )
+   hset( hBuffer, "precio_costo", 50 )
 
 RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateArticuloConTarifaMayorista() CLASS SQLArticulosModel
+
+   local uuid
+   local hBuffer
+
+   uuid     := win_uuidcreatestring()
+
+   SQLArticulosModel():truncateTable()
+   SQLArticulosTarifasModel():truncateTable() 
+   SQLUnidadesMedicionGruposModel():truncateTable()
+   SQLUnidadesMedicionOperacionesModel():truncateTable()
+
+   SQLArticulosTarifasModel():insertTarifaBase() 
+   SQLArticulosTarifasModel():testCreateTarifaMayorista() 
+
+   hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "uuid", uuid )
+   hset( hBuffer, "codigo", "1" )
+   hset( hBuffer, "nombre", "Artículo con tarifa mayorista" )
+   hset( hBuffer, "precio_costo", 50 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
 
 #endif
 

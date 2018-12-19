@@ -427,9 +427,7 @@ RETURN ( nil )
 
 METHOD changedSerie() CLASS FacturasClientesController 
 
-   ::getNumeroDocumentoComponent():setValue( SQLContadoresModel():getPosibleNext( ::getName(), ::getModelBuffer( "serie" ) ) )
-
-RETURN ( nil )
+RETURN ( ::getNumeroDocumentoComponent():setValue( SQLContadoresModel():getPosibleNext( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -581,6 +579,8 @@ CLASS TestFacturasClientesController FROM TestCase
 
    METHOD testDialogoVentasPorCajas() 
 
+   METHOD testDialogoTarifaMayorista()    
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -588,6 +588,7 @@ END CLASS
 METHOD initModels() CLASS TestFacturasClientesController
 
    SQLClientesModel():truncateTable()
+   SQLDireccionesModel():truncateTable()
    SQLAlmacenesModel():truncateTable()
    SQLMetodoPagoModel():truncateTable()
    SQLFacturasClientesModel():truncateTable() 
@@ -598,11 +599,14 @@ METHOD initModels() CLASS TestFacturasClientesController
    SQLArticulosTarifasModel():truncateTable() 
 
    SQLClientesModel():testCreateContado()
+   SQLClientesModel():testCreateTarifaMayorista()
+
    SQLAlmacenesModel():testCreate()
    SQLMetodoPagoModel():testCreateContado()
    SQLArticulosModel():testCreateArticuloConUnidadeDeMedicionCajasPalets()
+   SQLArticulosModel():testCreateArticuloConTarifaMayorista()
 
-   SQLArticulosTarifasModel():insertArticulosTarifasBase() 
+   SQLArticulosTarifasModel():insertTarifaBase() 
 
 RETURN ( nil )
 
@@ -762,6 +766,44 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD testDialogoTarifaMayorista() CLASS TestFacturasClientesController
+
+   local oController
+
+   ::initModels()
+
+   oController             := FacturasClientesController():New()
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 170, self:oFolder:aDialogs[1] ):cText( "1" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 170, self:oFolder:aDialogs[1] ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 240, self:oFolder:aDialogs[1] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 240, self:oFolder:aDialogs[1] ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 501, self:oFolder:aDialogs[1] ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         eval( oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "1", 0 ),;
+         apoloWaitSeconds( 1 ),;
+         oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
+         apoloWaitSeconds( 1 ),;
+         eval( oController:getFacturasClientesLineasController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , 100, 0 ),;
+         apoloWaitSeconds( 1 ),;
+         oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )
+
+   ::assert:true( oController:Append(), "test creación de factura con ventas por cajas" )
+
+   oController:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 
 #endif
 

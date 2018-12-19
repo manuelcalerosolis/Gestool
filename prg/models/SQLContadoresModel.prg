@@ -17,6 +17,8 @@ CLASS SQLContadoresModel FROM SQLCompanyModel
    METHOD getLastSerie( cDocument )
    METHOD getDocumentSerie( cDocument )                          
 
+   METHOD assertSerie( cDocument )
+
    METHOD getLastCounter()                          
    METHOD getDocumentCounter()    
 
@@ -60,11 +62,12 @@ METHOD insertSerie( cDocument, cSerial, nCounter )
 
    local hBuffer        := ::loadBlankBuffer()
 
-   DEFAULT nCounter     := 0
+   DEFAULT cSerial      := 'A'
+   DEFAULT nCounter     := 1
 
-   hset( hBuffer, "documento",   cDocument   )
-   hset( hBuffer, "serie",       cSerial     )
-   hset( hBuffer, "contador",    nCounter    )
+   hset( hBuffer, "documento", cDocument )
+   hset( hBuffer, "serie", cSerial )
+   hset( hBuffer, "contador", nCounter )
 
 RETURN ( ::insertOnDuplicateTransactional( hBuffer ) )   
 
@@ -78,9 +81,31 @@ RETURN ( !empty( ::getFieldWhere( 'id', { 'documento' => ( cDocument ), 'serie' 
 
 METHOD getLastSerie( cDocument )
 
-RETURN ( ::getFieldWhere( 'serie',;
-            {  'documento' => cDocument, 'usuario_codigo' => Auth():Codigo() },;
-            {  'updated_at' => 'DESC' } ) ) 
+   local cSerie
+
+   ::assertSerie( cDocument )
+
+   cSerie      := ::getFieldWhere( 'serie',;
+                                    {  'documento' => cDocument, 'usuario_codigo' => Auth():Codigo() },;
+                                    {  'updated_at' => 'DESC' } )
+
+   if empty( cSerie )   
+      cSerie   := ::getFieldWhere( 'serie',;
+                                    {  'documento' => cDocument },;
+                                    {  'updated_at' => 'DESC' } )
+   end if 
+
+RETURN ( cSerie )
+
+//---------------------------------------------------------------------------//
+
+METHOD assertSerie( cDocument )
+
+   if empty( ::getFieldWhere( 'serie', { 'documento' => cDocument } ) )
+      RETURN ( ::insertSerie( cDocument ) )
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -125,8 +150,8 @@ RETURN ( ::getFieldWhere(  'contador',;
 
 METHOD incrementalDocument( cDocument, cSerial )
 
-RETURN ( ::updateFieldsWhere( { 'contador' => 'contador + 1', 'updated_at' => 'NOW()' },;
-                              { 'documento' => cDocument, 'serie' => cSerial } ) )
+RETURN ( ::updateFieldsWhereTransactional(   { 'contador' => 'contador + 1', 'updated_at' => 'NOW()' },;
+                                             { 'documento' => cDocument, 'serie' => cSerial } ) )
 
 //---------------------------------------------------------------------------//
 

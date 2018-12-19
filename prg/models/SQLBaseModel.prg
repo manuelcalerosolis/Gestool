@@ -255,6 +255,7 @@ CLASS SQLBaseModel
    METHOD deleteById( uId )
    METHOD deleteByUuid( uUuid )
    METHOD deleteWhereParentUuid( uUuid )
+   METHOD deleteWhere( hWhere )
 
    METHOD loadBlankBuffer()
    METHOD loadDuplicateBuffer() 
@@ -271,7 +272,9 @@ CLASS SQLBaseModel
 
    // Updates------------------------------------------------------------------
 
-   METHOD updateFieldsWhere( id, hFields, hWhere )
+   METHOD updateFieldsWhere( hFields, hWhere )
+   METHOD updateFieldsWhereTransactional( hFields, hWhere ) ;
+                                       INLINE ( ::updateFieldsWhere( hFields, hWhere, .t. ) )   
 
    METHOD updateFieldWhereId( id, cField, uValue )
    METHOD updateBufferWhereId( id, hBuffer )
@@ -941,30 +944,52 @@ METHOD getInsertSentence( hBuffer, lIgnore )
 
    DEFAULT hBuffer   := ::hBuffer
    DEFAULT lIgnore   := .f.
+
+   logwrite( 'getInsertSentence' )   
    
    if !hb_ishash( hBuffer )
       RETURN ( nil )
    end if 
 
+   logwrite( 'getingInsertSentence' )   
+
    ::fireEvent( 'getingInsertSentence' )   
+   
+   logwrite( 'setCreatedTimeStamp' )   
 
    hBuffer           := ::setCreatedTimeStamp( hBuffer )
 
+   logwrite( 'hBuffer := ::setCreatedTimeStamp( hBuffer )' )   
+
    ::cSQLInsert      := "INSERT " 
+
+   logwrite( ::cSQLInsert )   
 
    if lIgnore
       ::cSQLInsert   += "IGNORE "
    end if 
 
+   logwrite( ::cSQLInsert )   
+
    ::cSQLInsert      += "INTO " + ::getTableName() + " ( "
 
+   logwrite( ::cSQLInsert )   
+   
    hEval( hBuffer, {| k, v | if( k != ::cColumnKey, ::cSQLInsert += k + ", ", ) } )
 
+   logwrite( ::cSQLInsert )   
+   
    ::cSQLInsert      := chgAtEnd( ::cSQLInsert, ' ) VALUES ( ', 2 )
+   
+   logwrite( ::cSQLInsert )   
 
    hEval( hBuffer, {| k, v | if( k != ::cColumnKey, ::cSQLInsert += toSQLString( ::setAttribute( k, v ) ) + ", ", ) } )
 
+   logwrite( ::cSQLInsert )   
+   
    ::cSQLInsert      := chgAtEnd( ::cSQLInsert, ' )', 2 )
+
+   logwrite( ::cSQLInsert )   
 
    ::fireEvent( 'gotInsertSentence' ) 
 
@@ -1490,13 +1515,21 @@ METHOD insertBuffer( hBuffer )
 
    DEFAULT hBuffer   := ::hBuffer
 
+   logwrite( 'insertingBuffer' )
+
    ::fireEvent( 'insertingBuffer' )
 
    ::getInsertSentence( hBuffer )
 
+   logwrite( ::cSQLInsert )
+
    ::getDatabase():Execs( ::cSQLInsert )
 
+   logwrite( "::getDatabase():Execs( ::cSQLInsert )" )
+
    nId               := ::getDatabase():LastInsertId()
+
+   logwrite( "::getDatabase():LastInsertId()" )
 
    hset( hBuffer, ::cColumnKey, nId )
 
@@ -1616,6 +1649,17 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD deleteWhere( hWhere )
+
+   local cSql        := "DELETE FROM " + ::getTableName() + " "
+
+   hEval( hWhere,; 
+      {|k,v| cSql    += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v ) + " " } )
+
+RETURN ( ::getDatabase():Exec( cSql ) )
+
+//----------------------------------------------------------------------------//
+
 METHOD getBuffer( cColumn )
 
    if empty( ::hBuffer )
@@ -1675,37 +1719,45 @@ METHOD updateFieldWhereId( id, cField, uValue )
       RETURN ( nil )
    end if 
 
-   cSql        := "UPDATE " + ::getTableName() + " "
-   cSql        +=    "SET " + cField + " = " + toSqlString( uValue ) + " "
-   cSql        +=    "WHERE id = " + toSqlString( id )
+   cSql           := "UPDATE " + ::getTableName() + " "
+   cSql           +=    "SET " + cField + " = " + toSqlString( uValue ) + " "
+   cSql           +=    "WHERE id = " + toSqlString( id )
 
 RETURN ( ::getDatabase():Exec( cSql ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD updateFieldsWhere( hFields, hWhere )
+METHOD updateFieldsWhere( hFields, hWhere, lTransactional )
 
    local cSql  
 
-   cSql           := "UPDATE " + ::getTableName() + " "
-   cSql           +=    "SET " 
+   DEFAULT lTransactional  := .f.
+
+   cSql                    := "UPDATE " + ::getTableName() + " "
+   cSql                    +=    "SET " 
 
    hEval( hFields,; 
       {|k,v| cSql += k + " = " + v + ", " } )
    
-   cSql           := chgAtEnd( cSql, '', 2 ) + " "
+   cSql                    := chgAtEnd( cSql, '', 2 ) + " "
 
    hEval( hWhere,; 
       {|k,v| cSql += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v ) + " " } )
+
+   if lTransactional
+      RETURN ( ::getDatabase():TransactionalExec( cSql ) )
+   end if 
 
 RETURN ( ::getDatabase():Exec( cSql ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD updateBufferWhereId( id, hBuffer )
+METHOD updateBufferWhereId( id, hBuffer, lTransactional )
 
    local cSql 
    local uValue
+
+   DEFAULT lTransactional  := .f.
 
    if !hb_isnumeric( id ) .or. empty( id )
       RETURN ( nil )
@@ -1715,15 +1767,19 @@ METHOD updateBufferWhereId( id, hBuffer )
       RETURN ( nil )
    end if 
    
-   cSQL        := "UPDATE " + ::getTableName() + " SET "
+   cSQL                    := "UPDATE " + ::getTableName() + " SET "
 
    for each uValue in hBuffer
-      cSql     += uValue:__enumKey() + " = " + toSQLString( ::setAttribute( uValue:__enumKey(), uValue ) ) + ", "
+      cSql                 += uValue:__enumKey() + " = " + toSQLString( ::setAttribute( uValue:__enumKey(), uValue ) ) + ", "
    next
 
-   cSql        := chgAtEnd( cSql, '', 2 ) + " "
+   cSql                    := chgAtEnd( cSql, '', 2 ) + " "
 
-   cSql        +=    "WHERE id = " + toSqlString( id )
+   cSql                    +=    "WHERE id = " + toSqlString( id )
+
+   if lTransactional 
+      RETURN ( ::getDatabase():TransactionalExec( cSql ) )
+   end  if 
 
 RETURN ( ::getDatabase():Exec( cSql ) )
 
@@ -1934,8 +1990,10 @@ RETURN ( ::getDatabase():getValue( cSQL ) )
 
 METHOD getColumn( cColumn ) 
 
-   local cSQL     := "SELECT " + cColumn + "  FROM " + ::getTableName()
-   
+   local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()
+
+   cSQL           := ::addDeletedAtWhere( cSQL )
+
 RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSQL ) )
 
 //---------------------------------------------------------------------------//

@@ -183,35 +183,16 @@ METHOD getSQLInsertPrecioWhereTarifa( uuidTarifa ) CLASS SQLArticulosPreciosMode
    INSERT IGNORE INTO %2$s 
       (  uuid,
          articulo_uuid,
-         tarifa_uuid,
-         margen,
-         precio_base,
-         precio_iva_incluido )
+         tarifa_uuid )
       SELECT 
          UUID(),
          articulos.uuid,
-         %1$s,
-         articulos_tarifas.margen,
-         @precioBase :=             
-         ( ( @precioSobre :=                
-            IF( articulos_tarifas.parent_uuid = '', articulos.precio_costo, articulos_precios_parent.precio_base )                
-            * articulos_tarifas.margen / 100 ) + @precioSobre ),
-         @precioIVA := ( ( @precioBase * tipos_iva.porcentaje / 100 ) + @precioBase )
+         %1$s
       FROM %3$s AS articulos
-
-      INNER JOIN %4$s AS articulos_tarifas  
-         ON articulos_tarifas.uuid = %1$s
-
-      LEFT JOIN %2$s AS articulos_precios_parent 
-         ON articulos_precios_parent.articulo_uuid = articulos.uuid 
-         AND articulos_precios_parent.tarifa_uuid = articulos_tarifas.uuid
-
-      LEFT JOIN %5$s AS tipos_iva
-         ON tipos_iva.codigo = articulos.tipo_iva_codigo
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, quoted( uuidTarifa ), ::getTableName(), SQLArticulosModel():getTableName(), SQLArticulosTarifasModel():getTableName(), SQLTiposIvaModel():getTableName() )
+   cSql  := hb_strformat( cSql, quoted( uuidTarifa ), ::getTableName(), SQLArticulosModel():getTableName() )
 
 RETURN ( cSql )
 
@@ -261,8 +242,6 @@ METHOD getSQLUpdatePrecioWhereTarifa( uuidTarifa ) CLASS SQLArticulosPreciosMode
    ENDTEXT
 
    cSql  := hb_strformat( cSql, quoted( uuidTarifa ), ::getTableName(), SQLArticulosModel():getTableName(), SQLArticulosTarifasModel():getTableName(), SQLTiposIvaModel():getTableName() )
-
-   logwrite( cSql )
 
 RETURN ( cSql )
 
