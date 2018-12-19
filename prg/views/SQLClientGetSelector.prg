@@ -197,11 +197,3 @@ METHOD setHelpText( value )
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
-CLASS ProveedorGetSelector FROM  ClientGetSelector 
-
-   METHOD getLinkText()                INLINE ( "Proveedor" )
-
-END CLASS
-
-//---------------------------------------------------------------------------//

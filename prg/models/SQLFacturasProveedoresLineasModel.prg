@@ -4,11 +4,11 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLFacturasClientesLineasModel FROM SQLOperacionesComercialesLineasModel
+CLASS SQLFacturasProveedoresLineasModel FROM SQLOperacionesComercialesLineasModel
 
-   DATA cTableName            INIT  "facturas_clientes_lineas"
+   DATA cTableName            INIT  "facturas_proveedores_lineas"
 
-   DATA cGroupBy              INIT  "facturas_clientes_lineas.id" 
+   DATA cGroupBy              INIT  "facturas_proveedores_lineas.id" 
 
 #ifdef __TEST__
 
@@ -37,7 +37,7 @@ END CLASS
 
 #ifdef __TEST__
 
-METHOD testCreateIVAal0( uuid ) CLASS SQLFacturasClientesLineasModel
+METHOD testCreateIVAal0( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -52,7 +52,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal0Con10PorcientoDescuento( uuid ) CLASS SQLFacturasClientesLineasModel
+METHOD testCreateIVAal0Con10PorcientoDescuento( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -68,7 +68,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreate10PorCientoDescuento15Incremento( uuid ) CLASS SQLFacturasClientesLineasModel
+METHOD testCreate10PorCientoDescuento15Incremento( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -86,7 +86,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 //---------------------------------------------------------------------------//
 
 
-METHOD testCreateIVAal10( uuid ) CLASS SQLFacturasClientesLineasModel
+METHOD testCreateIVAal10( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -102,7 +102,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal10ConRecargoEquivalencia( uuid ) CLASS SQLFacturasClientesLineasModel
+METHOD testCreateIVAal10ConRecargoEquivalencia( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -119,7 +119,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal10Con15PorcientoDescuento( uuid ) CLASS SQLFacturasClientesLineasModel
+METHOD testCreateIVAal10Con15PorcientoDescuento( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -136,7 +136,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal21( uuid ) CLASS SQLFacturasClientesLineasModel
+METHOD testCreateIVAal21( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -152,7 +152,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal21ConRecargoEquivalencia( uuid ) CLASS SQLFacturasClientesLineasModel
+METHOD testCreateIVAal21ConRecargoEquivalencia( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -169,7 +169,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal21Con20PorcientoDescuento( uuid ) CLASS SQLFacturasClientesLineasModel
+METHOD testCreateIVAal21Con20PorcientoDescuento( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -186,7 +186,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal21ConIncrememtoPrecio( uuid ) CLASS SQLFacturasClientesLineasModel
+METHOD testCreateIVAal21ConIncrememtoPrecio( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 

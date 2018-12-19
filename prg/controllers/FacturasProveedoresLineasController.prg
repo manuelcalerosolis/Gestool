@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesLineasController FROM OperacionesComercialesLineasController
+CLASS FacturasProveedoresLineasController FROM OperacionesComercialesLineasController
 
    METHOD New() CONSTRUCTOR
 
@@ -15,7 +15,7 @@ CLASS FacturasClientesLineasController FROM OperacionesComercialesLineasControll
 
    //Contrucciones tardias---------------------------------------------------//
 
-   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLFacturasClientesLineasModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLFacturasProveedoresLineasModel():New( self ), ), ::oModel )
 
 
 END CLASS
@@ -26,9 +26,9 @@ METHOD New( oController )
 
    ::Super:New( oController )
 
-   ::cTitle                            := "Facturas clientes líneas"
+   ::cTitle                            := "Facturas proveedores líneas"
 
-   ::cName                             := "lineas_facturas_clientes" 
+   ::cName                             := "lineas_facturas_proveedores" 
 
 RETURN ( Self )
 
@@ -54,7 +54,7 @@ RETURN ( ::oController:calculateTotals() )
 
 //----------------------------------------------------------------------------//
 
-METHOD stampArticuloUnidadMedicionFactor()
+/*METHOD stampArticuloUnidadMedicionFactor()
       
    local nFactor  := UnidadesMedicionGruposLineasRepository():getFactorWhereUnidadMedicion( ::getRowSet():fieldGet( 'articulo_codigo' ), ::getRowSet():fieldGet( 'unidad_medicion_codigo' ) ) 
 
@@ -63,7 +63,7 @@ METHOD stampArticuloUnidadMedicionFactor()
       ::stampArticuloDescuento()
    end if 
 
-RETURN ( nil )
+RETURN ( nil )*/
 
 //----------------------------------------------------------------------------//
 
