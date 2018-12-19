@@ -1,19 +1,19 @@
 #include "FiveWin.Ch"
-#include "Factu.ch" 
+#include "Factu.ch"
 
 CLASS ClientGetSelector FROM GetSelector
 
-   DATA idGet          
-   DATA idText         
-   DATA idSay          
-   DATA idNif          
-   DATA idDireccion    
-   DATA idCodigoPostal 
-   DATA idPoblacion    
-   DATA idProvincia    
-   DATA idPais    
-   DATA idTelefono     
-   DATA idLink         
+   DATA idGet
+   DATA idText
+   DATA idSay
+   DATA idNif
+   DATA idDireccion
+   DATA idCodigoPostal
+   DATA idPoblacion
+   DATA idProvincia
+   DATA idPais
+   DATA idTelefono
+   DATA idLink
 
    DATA oDlg
 
@@ -38,15 +38,15 @@ CLASS ClientGetSelector FROM GetSelector
    DATA oGetTelefono
    DATA cGetTelefono                INIT ""
 
-   METHOD Build( hBuilder ) 
+   METHOD Build( hBuilder )
 
    METHOD Activate()
 
    METHOD getFields()               INLINE ( ::uFields   := ::oController:getModel():getClienteDireccionPrincipal( ::getKey(), ::oGet:varGet() ) )
 
-   METHOD cleanHelpText()    
+   METHOD cleanHelpText()
 
-   METHOD setHelpText( value )    
+   METHOD setHelpText( value )
 
    METHOD getLinkText()                INLINE ( {|| "Cliente" } )
 
@@ -85,7 +85,7 @@ METHOD Activate() CLASS ClientGetSelector
          WHEN        ( .f. ) ;
          OF          ::oDlg
 
-   end if 
+   end if
 
    if !empty( ::idDireccion )
 
@@ -95,7 +95,7 @@ METHOD Activate() CLASS ClientGetSelector
          WHEN        ( .f. ) ;
          OF          ::oDlg
 
-   end if 
+   end if
 
    if !empty( ::idCodigoPostal )
 
@@ -105,7 +105,7 @@ METHOD Activate() CLASS ClientGetSelector
          WHEN        ( .f. ) ;
          OF          ::oDlg
 
-   end if 
+   end if
 
    if !empty( ::idPoblacion )
 
@@ -115,7 +115,7 @@ METHOD Activate() CLASS ClientGetSelector
          WHEN        ( .f. ) ;
          OF          ::oDlg
 
-   end if 
+   end if
 
    if !empty( ::idProvincia )
 
@@ -125,7 +125,7 @@ METHOD Activate() CLASS ClientGetSelector
          WHEN        ( .f. ) ;
          OF          ::oDlg
 
-   end if 
+   end if
 
    if !empty( ::idPais )
 
@@ -135,7 +135,7 @@ METHOD Activate() CLASS ClientGetSelector
          WHEN        ( .f. ) ;
          OF          ::oDlg
 
-   end if 
+   end if
 
    if !empty( ::idTelefono )
 
@@ -145,7 +145,7 @@ METHOD Activate() CLASS ClientGetSelector
          WHEN        ( .f. ) ;
          OF          ::oDlg
 
-   end if 
+   end if
 
 RETURN ( ::oGet )
 
@@ -155,7 +155,7 @@ METHOD cleanHelpText()
 
    ::Super():cleanHelpText()
 
-   if( !empty( ::oGetNif ),            ::oGetNif:cText( "" ), ) 
+   if( !empty( ::oGetNif ),            ::oGetNif:cText( "" ), )
 
    if( !empty( ::oGetDireccion ),      ::oGetDireccion:cText( "" ), )
 
@@ -177,28 +177,28 @@ METHOD setHelpText( value )
 
    if !( hb_ishash( value ) )
       RETURN ( nil )
-   end if 
+   end if
 
    ::Super():setHelpText( value[ "nombre" ] )
 
-   if( !empty( ::oGetNif ),            ::oGetNif:cText( value[ "dni" ] ), ) 
+   if( !empty( ::oGetNif ),            ::oGetNif:cText( value[ "dni" ] ), )
 
-   if( !empty( ::oGetDireccion ),      ::oGetDireccion:cText( value[ "direccion" ] ), ) 
+   if( !empty( ::oGetDireccion ),      ::oGetDireccion:cText( value[ "direccion" ] ), )
 
-   if( !empty( ::oGetCodigoPostal ),   ::oGetCodigoPostal:cText( value[ "codigo_postal" ] ), ) 
+   if( !empty( ::oGetCodigoPostal ),   ::oGetCodigoPostal:cText( value[ "codigo_postal" ] ), )
 
-   if( !empty( ::oGetPoblacion ),      ::oGetPoblacion:cText( value[ "poblacion" ] ), ) 
+   if( !empty( ::oGetPoblacion ),      ::oGetPoblacion:cText( value[ "poblacion" ] ), )
 
    if( !empty( ::oGetProvincia ),      ::oGetProvincia:cText( value[ "provincia" ] ), )
 
-   if( !empty( ::oGetTelefono ),       ::oGetTelefono:cText( value[ "telefono" ] ), ) 
+   if( !empty( ::oGetTelefono ),       ::oGetTelefono:cText( value[ "telefono" ] ), )
 
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-CLASS ProveedorGetSelector FROM  ClientGetSelector 
+CLASS ProveedorGetSelector FROM  ClientGetSelector
 
    METHOD getLinkText()                INLINE ( {|| "Proveedor" } )
 

@@ -21,7 +21,7 @@ CLASS FacturasProveedoresController FROM OperacionesComercialesController
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasProveedoresModel():New( self ), ), ::oModel )
 
-   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasClientesValidator():New( self ), ), ::oValidator ) 
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasProveedorValidator():New( self ), ), ::oValidator ) 
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasProveedoresBrowseView():New( self ), ), ::oBrowseView )
 
@@ -79,44 +79,29 @@ RETURN ( ::Super:End() )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FacturasProveedoresValidator FROM SQLBaseValidator 
+CLASS FacturasProveedorValidator FROM OperacionesComercialesValidator 
+
+   METHOD New( oController )
 
    METHOD getValidators()
-
-   METHOD emptyLines()     
-
-   METHOD validLine()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS FacturasProveedoresValidator
+METHOD New( oController ) CLASS FacturasProveedorValidator
 
-   ::hValidators  := {  "cliente_codigo"     => {  "required"        => "El código del cliente es un dato requerido",;
-                                                   "clienteExist"    => "El código del cliente no existe" } ,;  
-                        "metodo_pago_codigo" => {  "required"        => "El código del método de pago es un dato requerido",;
-                                                   "formaPagoExist"  => "El código del método de pago no existe" } ,;  
-                        "almacen_codigo"     => {  "required"        => "El código del almacén es un dato requerido",;
-                                                   "almacenExist"    => "El código del almacén no existe" } ,;  
-                        "tarifa_codigo"      => {  "required"        => "El código de la tarifa es un dato requerido",; 
-                                                   "tarifaExist"     => "El código de la tarifa no existe" },;
-                        "formulario"         => {  "emptyLines"      => "Las líneas no pueden estar vacias",;
-                                                   "validLine"       => "" } }  
+RETURN ( ::Super:New( oController ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getValidators() CLASS FacturasProveedorValidator
+
+   hset( ::Super:getValidators(), "cliente_codigo",   {  "required"        => "El código del proveedor es un dato requerido",;
+                                                         "clienteExist"    => "El código del proveedor no existe" } )
 
 RETURN ( ::hValidators )
 
-//---------------------------------------------------------------------------//
-
-METHOD emptyLines() CLASS FacturasProveedoresValidator     
-
-RETURN ( ::getController():hasLines() )
-
-//---------------------------------------------------------------------------//
-
-METHOD validLine() CLASS FacturasProveedoresValidator     
-
-RETURN ( ::getController():getFacturasClientesLineasController():validLine() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
