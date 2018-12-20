@@ -160,7 +160,7 @@ METHOD insertIgnoreCamposExtraValores( hValor ) CLASS CamposExtraValoresControll
    hset( hBuffer, "campo_extra_entidad_uuid", hget( hValor, "uuid" ) ) 
    hset( hBuffer, "entidad_uuid", ::uuidEntidad )
    
-   ::oModel:insertIgnoreBuffer( hBuffer )
+   ::oModel:insertIgnore( hBuffer )
 
 RETURN ( nil )
 

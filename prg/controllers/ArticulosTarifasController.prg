@@ -615,7 +615,7 @@ METHOD insertTarifaBase() CLASS SQLArticulosTarifasModel
    hset( hBuffer, "codigo", "0" )
    hset( hBuffer, "nombre", __tarifa_base__ )
 
-RETURN ( ::insertIgnoreBuffer( hBuffer ) )
+RETURN ( ::insertIgnore( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
@@ -655,7 +655,7 @@ METHOD testCreateTarifaBase() CLASS SQLArticulosTarifasModel
    hset( hBuffer, "nombre", "Base" )
    hset( hBuffer, "margen", 30 )
 
-RETURN ( ::insertIgnoreBuffer( hBuffer ) )
+RETURN ( ::insertIgnore( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
@@ -669,7 +669,7 @@ METHOD testCreateTarifaMayorista() CLASS SQLArticulosTarifasModel
    hset( hBuffer, "nombre", "Mayorista" )
    hset( hBuffer, "margen", 50 )
 
-RETURN ( ::insertIgnoreBuffer( hBuffer ) )
+RETURN ( ::insertIgnore( hBuffer ) )
 
 #endif
 

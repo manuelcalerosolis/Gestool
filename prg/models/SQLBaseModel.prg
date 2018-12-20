@@ -246,10 +246,13 @@ CLASS SQLBaseModel
    METHOD setBufferPadr( cColumn, uValue )
    
    METHOD insertBuffer( hBuffer ) 
-   METHOD insertIgnoreBuffer( hBuffer )                    
+   METHOD insertIgnore( hBuffer )  
+      METHOD insertIgnoreTransactional( hBuffer ) ;
+                                       INLINE ( ::insertIgnore( hBuffer, .t. ) )
+
    METHOD updateBuffer( hBuffer )
    METHOD insertOnDuplicate( hBuffer )
-   METHOD insertOnDuplicateTransactional( hBuffer ) ;
+      METHOD insertOnDuplicateTransactional( hBuffer ) ;
                                        INLINE ( ::insertOnDuplicate( hBuffer, .t. ) )
    METHOD deleteSelection( aIds )
    METHOD deleteById( uId )
@@ -1539,21 +1542,28 @@ RETURN ( nId )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertIgnoreBuffer( hBuffer )
+METHOD insertIgnore( hBuffer, lTransactional )
 
    local nId
    
-   DEFAULT hBuffer   := ::hBuffer
+   DEFAULT hBuffer         := ::hBuffer
+   DEFAULT lTransactional  := .f.
 
    ::fireEvent( 'insertingBuffer' )
 
    ::getInsertIgnoreSentence( hBuffer )
 
-   if !empty( ::cSQLInsert )
+   if empty( ::cSQLInsert )
+      RETURN ( nId )
+   end if 
+
+   if lTransactional 
+      ::getDatabase():TransactionalExec( ::cSQLInsert )
+   else
       ::getDatabase():Execs( ::cSQLInsert )
    end if 
 
-   nId         := ::getDatabase():LastInsertId()
+   nId                     := ::getDatabase():LastInsertId()
 
    ::fireEvent( 'insertedBuffer' )
 
@@ -1562,6 +1572,8 @@ RETURN ( nId )
 //---------------------------------------------------------------------------//
 
 METHOD updateBuffer( hBuffer )
+
+   msgalert( "SQLBaseModel updateBuffer" )
 
    ::fireEvent( 'updatingBuffer' )
 
@@ -1744,8 +1756,6 @@ METHOD updateFieldsWhere( hFields, hWhere, lTransactional )
    hEval( hWhere,; 
       {|k,v| cSql += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v ) + " " } )
 
-   msgalert( cSql, "cSql" )
-
    if lTransactional
       RETURN ( ::getDatabase():TransactionalExec( cSql ) )
    end if 
@@ -1844,8 +1854,6 @@ METHOD getFieldWhere( cField, hWhere, hOrderBy, uDefault )
    end if 
 
    cSql              +=    "LIMIT 1"
-
-   // msgalert( cSql, "getFieldWhere" )
 
 RETURN ( ::getDatabase():getValue( cSql, uDefault ) )
 

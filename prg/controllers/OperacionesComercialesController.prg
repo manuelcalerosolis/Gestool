@@ -29,7 +29,7 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD loadedBuffer()               INLINE ( ::getHistoryManager():Set( ::getModel():hBuffer ) )
 
-   METHOD updatingBuffer()
+   METHOD insertingBuffer()
 
    METHOD updatedBuffer()
 
@@ -129,7 +129,7 @@ METHOD New( oController ) CLASS OperacionesComercialesController
 
    ::lTransactional                    := .t.
 
-   ::lInsertable                       := .t.
+   // ::lInsertable                       := .t.
 
    ::lConfig                           := .t.
 
@@ -146,7 +146,7 @@ METHOD New( oController ) CLASS OperacionesComercialesController
    ::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )
    ::getModel():setEvent( 'loadedDuplicateBuffer', {|| ::loadedDuplicateBuffer() } )
    ::getModel():setEvent( 'updatedBuffer',         {|| ::updatedBuffer() } )
-   ::getModel():setEvent( 'updatingBuffer',        {|| ::updatingBuffer() } )
+   ::getModel():setEvent( 'insertingBuffer',       {|| ::insertingBuffer(), ::updatedBuffer() } )
 
    ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',              {|| ::isClientFilled() } ) 
    ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence',  {|| ::getClientUuid() } )
@@ -210,15 +210,11 @@ RETURN ( ::getConfiguracionesController():Edit() )
 
 METHOD loadedBlankBuffer() CLASS OperacionesComercialesController 
 
-   ::setModelBuffer( "serie", ::getContadoresModel():getDocumentSerie( ::getName() ) )
+   ::setModelBuffer( "serie", ::getContadoresModel():getLastSerie( ::getName() ) )
 
-   ::setModelBuffer( "numero", ::getModel():maxNumberWhereSerie( ::getModelBuffer( "serie" ) ) )
+   ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) )
 
    ::setModelBuffer( "almacen_codigo", Store():getCodigo() )
-
-   // msgalert( ::getModelBuffer( "serie" ), "serie" )
-
-   // msgalert( ::getModelBuffer( "numero" ), "numero" )
 
 RETURN ( nil )
 
@@ -226,16 +222,21 @@ RETURN ( nil )
 
 METHOD loadedDuplicateBuffer() CLASS OperacionesComercialesController 
 
-   // RETURN ( ::setModelBuffer( "numero", ::getModel():maxNumberWhereSerie( ::getModelBuffer( "serie" ) )
+   ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD updatingBuffer() CLASS OperacionesComercialesController 
+METHOD insertingBuffer() CLASS OperacionesComercialesController 
+
+   msgalert( "entrada en insertingBuffer" )
 
    if ::isAppendOrDuplicateMode()
-      ::setModelBuffer( "numero", ::getModel():maxNumberWhereSerie( ::getModelBuffer( "serie" ) ) )
+
+      msgalert( "insertingBuffer" )
+
+      ::setModelBuffer( "numero", ::getContadoresModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) )
    end if 
 
 RETURN ( nil )
@@ -394,17 +395,13 @@ METHOD clientChangeRecargo() CLASS OperacionesComercialesController
 
    ::getModel():updateFieldWhereId( ::getModel():getBufferColumnKey(), "recargo_equivalencia", ::getModelBuffer( "recargo_equivalencia" ) )
 
-   ::calculateTotals()
-
-RETURN ( nil )
+RETURN ( ::calculateTotals() )
 
 //---------------------------------------------------------------------------//
 
 METHOD changedSerie() CLASS OperacionesComercialesController 
 
-   ::getNumeroDocumentoComponent():setValue( ::getModel():maxNumberWhereSerie( ::getModelBuffer( "serie" ) ) )
-
-RETURN ( nil )
+RETURN ( ::getNumeroDocumentoComponent():setValue( ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 

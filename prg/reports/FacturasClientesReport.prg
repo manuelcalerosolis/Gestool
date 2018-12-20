@@ -18,7 +18,7 @@ CLASS FacturasClientesReport FROM SQLBaseReport
 
    DATA hTotal
 
-   DATA hTotalByIVA
+   DATA aTotalsByIVA
 
    METHOD New( oController ) CONSTRUCTOR
 
@@ -42,9 +42,9 @@ CLASS FacturasClientesReport FROM SQLBaseReport
 
    METHOD getFacturasClientesLineasRowSet()  INLINE ( if( empty( ::oFacturasClientesLineasRowSet ), ::oFacturasClientesLineasRowSet := SQLRowSet():New(), ), ::oFacturasClientesLineasRowSet )
 
-   METHOD getTotalesDocument( uuid )         INLINE ( ::hTotal  := ::getController():getRepository():getTotalesDocument( uuid ) )
+   METHOD getTotalesDocument( uuid )         INLINE ( ::hTotal := ::getController():getRepository():getTotalesDocument( uuid ) )
    
-   METHOD getTotalesDocumentByIVA( uuid )    INLINE ( ::hTotalByIVA  := ::getController():getRepository():getTotalesDocumentGroupByIVA( uuid ) ) 
+   METHOD getTotalesDocumentByIVA( uuid )    INLINE ( ::aTotalsByIVA := ::getController():getRepository():getTotalesDocumentGroupByIVA( uuid ) ) 
 
 END CLASS
 
@@ -160,16 +160,13 @@ METHOD setUserDataSet()
                                     {|| nil },;
                                     {|cField| hget( ::hTotal, cField ) } )
 
-   msgalert( valtype( ::hTotalByIVA ), "hTotalByIVA" )
-
    ::oFastReport:setUserDataSet(   "Totales por impuestos ",;
                                     serializeArray( hgetKeys( ::hTotal ), ";" ),;
                                     {|| nRow := 1 },;
                                     {|| nRow++ },;
                                     {|| nRow-- },;
-                                    {|| nRow > len( ::hTotalByIVA ) },;
-                                    {|cField| hget( ::hTotalByIVA[ nRow ], cField ) } )
-
+                                    {|| nRow > len( ::aTotalsByIVA ) },;
+                                    {|cField| hget( ::aTotalsByIVA[ nRow ], cField ) } )
 
 RETURN ( nil )
 

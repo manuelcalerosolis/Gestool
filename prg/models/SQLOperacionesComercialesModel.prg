@@ -5,7 +5,7 @@
 
 CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
 
-   DATA cConstraints                   INIT "PRIMARY KEY ( numero, serie )"
+   DATA cConstraints                   // INIT "PRIMARY KEY ( numero, serie )"
 
    METHOD getColumns()
 
@@ -13,7 +13,7 @@ CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
-   METHOD getTercerosModel()              VIRTUAL
+   METHOD getTercerosModel()           VIRTUAL
 
    METHOD getNumeroWhereUuid( uuid )
 

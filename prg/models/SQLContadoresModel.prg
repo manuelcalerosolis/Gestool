@@ -13,21 +13,15 @@ CLASS SQLContadoresModel FROM SQLCompanyModel
    METHOD getColumns()
 
    METHOD isSerie( cDocument, cSerial )
-   METHOD insertSerie( cDocument, cSerial, nCounter )
-   
-   METHOD getLastSerie( cDocument )
-   METHOD getDocumentSerie( cDocument )                          
-
    METHOD assertSerie( cDocument )
+   METHOD insertSerie( cDocument, cSerial, nCounter )
 
-   METHOD getLastCounter()                          
-   METHOD getDocumentCounter()    
+   METHOD getLastSerie( cDocument )
+   METHOD getLastCounter( cDocument )                          
 
-   METHOD getCounterWhereNameAndSerie( cDocument, cSerial )
+   METHOD incrementCounter( cDocument, cSerial )
 
-   METHOD incrementalDocument( cDocument, cSerial )
-
-   METHOD getAndIncremental( cDocument, cSerial )
+   METHOD getCounterAndIncrement( cDocument, cSerial )
    
 END CLASS
 
@@ -67,13 +61,23 @@ METHOD insertSerie( cDocument, cSerial, nCounter )
    hset( hBuffer, "serie", cSerial )
    hset( hBuffer, "contador", nCounter )
 
-RETURN ( ::insertOnDuplicateTransactional( hBuffer ) )   
+RETURN ( ::insertIgnoreTransactional( hBuffer ) )   
 
 //---------------------------------------------------------------------------//
 
 METHOD isSerie( cDocument, cSerial )
 
-RETURN ( !empty( ::getFieldWhere( 'id', { 'documento' => ( cDocument ), 'serie' => ( cSerial ) } ) ) ) 
+RETURN ( !empty( ::getFieldWhere( 'id', { 'documento' => cDocument, 'serie' => cSerial } ) ) ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD assertSerie( cDocument )
+
+   if empty( ::getFieldWhere( 'serie', { 'documento' => cDocument } ) )
+      RETURN ( ::insertSerie( cDocument ) )
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -97,66 +101,26 @@ RETURN ( cSerie )
 
 //---------------------------------------------------------------------------//
 
-METHOD assertSerie( cDocument )
+METHOD getLastCounter( cDocument, cSerial )
 
-   if empty( ::getFieldWhere( 'serie', { 'documento' => cDocument } ) )
-      RETURN ( ::insertSerie( cDocument ) )
-   end if 
+   ::assertSerie( cDocument )
 
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD getLastCounter( cDocument )
-
-RETURN ( ::getFieldWhere( 'contador',;
-            {  'documento' => cDocument, 'usuario_codigo' => Auth():Codigo() },;
-            {  'updated_at' => 'DESC' } ) ) 
-
-//---------------------------------------------------------------------------//
-
-METHOD getDocumentSerie( cDocument )                          
-
-   local cSerial     := ::getLastSerie( cDocument )
-
-   if empty( cSerial )
-      RETURN ( padr( "A", 20 ) )
-   end if
-
-RETURN ( padr( cSerial, 20 ) )
+RETURN ( ::getFieldWhere( 'contador', { 'documento' => cDocument, 'serie' => cSerial }, { 'updated_at' => 'DESC' }, 1 ) ) 
 
 //---------------------------------------------------------------------------//
    
-METHOD getDocumentCounter( cDocument )                          
-
-   local nCounter    := ::getLastCounter( cDocument )
-
-   if empty( nCounter )
-      RETURN ( 1 )
-   end if
-
-RETURN ( nCounter + 1 )
-
-//---------------------------------------------------------------------------//
-
-METHOD getCounterWhereNameAndSerie( cDocument, cSerial )
-
-RETURN ( ::getFieldWhere(  'contador', { 'documento' => cDocument, 'serie' => cSerial }, , 1 ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD incrementalDocument( cDocument, cSerial )
+METHOD incrementCounter( cDocument, cSerial )
 
 RETURN ( ::updateFieldsWhereTransactional(   { 'contador' => 'contador + 1', 'updated_at' => 'NOW()' },;
                                              { 'documento' => cDocument, 'serie' => cSerial } ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getAndIncremental( cDocument, cSerial )
+METHOD getCounterAndIncrement( cDocument, cSerial )
 
-   local nCounter    := ::getCounterWhereNameAndSerie( cDocument, cSerial )
+   local nCounter    := ::getLastCounter( cDocument, cSerial )
 
-   ::incrementalDocument( cDocument, cSerial )
+   ::incrementCounter( cDocument, cSerial )
 
 RETURN ( nCounter )
 
