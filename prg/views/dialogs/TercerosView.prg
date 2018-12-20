@@ -2,6 +2,10 @@
 #include "Factu.ch" 
 
 CLASS TercerosView FROM SQLBaseView
+
+   DATA oTipo
+
+   DATA aTipo INIT { "Cliente", "Proveedor", "Ambos" }
   
    DATA oExplorerBar
 
@@ -156,20 +160,27 @@ METHOD redefineGeneral() CLASS TercerosView
       VALID       ( CheckCif( ::oGetDni ) );
       OF          ::oFolder:aDialogs[1]
 
+      REDEFINE COMBOBOX ::oTipo ;
+      VAR         ::oController:getModel():hBuffer[ "tipo" ] ;
+      ID          130 ;
+      ITEMS       ::aTipo;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oFolder:aDialogs[1]
+
    ::getController():getDireccionesController():getDialogView():ExternalRedefine( ::oFolder:aDialogs[1] )
 
    REDEFINE GET   ::getController():oModel:hBuffer[ "web" ] ;
-      ID          130 ;
-      WHEN        ( ::getController():isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[1]
-
-   REDEFINE GET   ::getController():oModel:hBuffer[ "establecimiento" ] ;
       ID          140 ;
       WHEN        ( ::getController():isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
+   REDEFINE GET   ::getController():oModel:hBuffer[ "establecimiento" ] ;
+      ID          150 ;
+      WHEN        ( ::getController():isNotZoomMode() ) ;
+      OF          ::oFolder:aDialogs[1]
+
    ::getController():getArticulosTarifasController():getSelector():Bind( bSETGET( ::getController():oModel:hBuffer[ "tarifa_codigo" ] ) )
-   ::getController():getArticulosTarifasController():getSelector():Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::getController():getArticulosTarifasController():getSelector():Build( { "idGet" => 160, "idText" => 161, "idLink" => 162, "oDialog" => ::oFolder:aDialogs[1] } )
 
 RETURN ( nil )
 
