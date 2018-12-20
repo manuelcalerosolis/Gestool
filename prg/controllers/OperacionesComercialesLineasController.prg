@@ -116,9 +116,9 @@ CLASS OperacionesComercialesLineasController FROM SQLBrowseController
 
    METHOD getHashAgenteWhereCodigo( cCodigo )
 
-   /*METHOD stampArticuloUnidadMedicion( uValue )
+   METHOD stampArticuloUnidadMed( uValue )
 
-   METHOD stampArticuloUnidadMedicionFactor()*/
+   METHOD stampArticuloUnidadMedFac()
 
    METHOD stampArticuloIva()
 
@@ -442,7 +442,7 @@ METHOD postValidateUnidadMedicion( oCol, uValue, nKey )
       RETURN ( .t. )
    end if          
    
-   ::stampArticuloUnidadMedicion( uValue )
+   ::stampArticuloUnidadMed( uValue )
 
 RETURN ( .f. )
 
@@ -579,7 +579,7 @@ METHOD stampArticuloUnidadMedicionVentas()
    local cUnidadMedicion   := ::getArticuloUnidadMedicionVentas()
 
    if !empty( cUnidadMedicion )
-      RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
+      RETURN ( ::stampArticuloUnidadMed( cUnidadMedicion ) )
    end if 
 
 RETURN ( nil )
@@ -636,17 +636,17 @@ RETURN ( ::oController:calculateTotals() )
 
 //---------------------------------------------------------------------------//
 
-/*METHOD stampArticuloUnidadMedicion( uValue )
+METHOD stampArticuloUnidadMed( uValue )
 
    ::updateField( 'unidad_medicion_codigo', uValue )
 
-   ::stampArticuloUnidadMedicionFactor()
+   ::stampArticuloUnidadMedFac()
 
 RETURN ( ::oController:calculateTotals() )
 
 //----------------------------------------------------------------------------//
 
-METHOD stampArticuloUnidadMedicionFactor()
+METHOD stampArticuloUnidadMedFac()
       
    local nFactor  := UnidadesMedicionGruposLineasRepository():getFactorWhereUnidadMedicion( ::getRowSet():fieldGet( 'articulo_codigo' ), ::getRowSet():fieldGet( 'unidad_medicion_codigo' ) ) 
 
@@ -655,7 +655,7 @@ METHOD stampArticuloUnidadMedicionFactor()
       ::stampArticuloDescuento()
    end if 
 
-RETURN ( nil )*/
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 

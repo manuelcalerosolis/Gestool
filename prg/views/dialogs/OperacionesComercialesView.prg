@@ -35,7 +35,7 @@ CLASS OperacionesComercialesView FROM SQLBaseView
 
    METHOD lineaAppend()
 
-   METHOD setLineasShowDeleted()       INLINE ( ::getController():getFacturasClientesLineasController():setShowDeleted(),;
+   METHOD setLineasShowDeleted()       INLINE ( ::getController():getTercerosLineasController():setShowDeleted(),;
                                                 ::oBtnLineasDeleted:Toggle(),;
                                                 ::oBtnLineasDeleted:cTooltip := if( ::oBtnLineasDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
@@ -189,15 +189,15 @@ METHOD Activate() CLASS OperacionesComercialesView
 
    TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::lineaAppend() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
 
-   TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::getController():getFacturasClientesLineasController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
+   TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::getController():getTercerosLineasController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
 
-   TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| ::getController():getFacturasClientesLineasController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
+   TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| ::getController():getTercerosLineasController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
    
    ::oBtnLineasDeleted := TBtnBmp():ReDefine( 504, "gc_deleted_16",,,,, {|| ::setLineasShowDeleted()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
    
-   TBtnBmp():ReDefine( 505, "gc_object_cube_16",,,,, {|| ::getController():getFacturasClientesLineasController():Edit()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar ficha de artículo" )
+   TBtnBmp():ReDefine( 505, "gc_object_cube_16",,,,, {|| ::getController():getTercerosLineasController():Edit()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar ficha de artículo" )
 
-   ::getController():getFacturasClientesLineasController():Activate( 500, ::oFolder:aDialogs[1] )
+   ::getController():getTercerosLineasController():Activate( 500, ::oFolder:aDialogs[1] )
 
    // Descuentos---------------------------------------------------------------
 
@@ -226,9 +226,9 @@ METHOD Activate() CLASS OperacionesComercialesView
             case nKey == VK_F5
                ::validActivate()
             case nKey == VK_F2
-               ::getController():getFacturasClientesLineasController():AppendLineal()
+               ::getController():getTercerosLineasController():AppendLineal()
             case nKey == VK_F4
-               ::getController():getFacturasClientesLineasController():Delete()
+               ::getController():getTercerosLineasController():Delete()
          end 
          RETURN ( 0 )
          >
@@ -259,7 +259,7 @@ METHOD startActivate() CLASS OperacionesComercialesView
 
    ::getController():getAlmacenesController():getSelector():Start()
 
-   ::getController():getFacturasClientesLineasController():getBrowseView():Refresh()
+   ::getController():getTercerosLineasController():getBrowseView():Refresh()
    
    ::getController():getFacturasClientesDescuentosController():getBrowseView():Refresh()
 
@@ -281,7 +281,7 @@ METHOD validActivate() CLASS OperacionesComercialesView
       RETURN ( nil )
    end if 
 
-   if !::getController():getFacturasClientesLineasController():validLine()
+   if !::getController():getTercerosLineasController():validLine()
       RETURN( nil )
    end if
 
@@ -327,11 +327,11 @@ RETURN ( nil )
 
 METHOD lineaAppend() CLASS OperacionesComercialesView
 
-   if !::getController():getFacturasClientesLineasController():validLine()
+   if !::getController():getTercerosLineasController():validLine()
       RETURN( nil )
    end if
 
-RETURN ( ::getController():getFacturasClientesLineasController():AppendLineal() ) 
+RETURN ( ::getController():getTercerosLineasController():AppendLineal() ) 
 
 //---------------------------------------------------------------------------//
 

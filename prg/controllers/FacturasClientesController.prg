@@ -9,25 +9,27 @@ CLASS FacturasClientesController FROM OperacionesComercialesController
 
    METHOD End()
 
-   METHOD getTercerosController()      INLINE ( ::getClientesController() )
+   METHOD getTercerosController()         INLINE ( ::getClientesController() )
+
+   METHOD getTercerosLineasController()   INLINE ( ::getFacturasClientesLineasController() )
 
    // Impresiones--------------------------------------------------------------
 
-   METHOD getSubject()                 INLINE ( "Factura de cliente número" )
+   METHOD getSubject()                    INLINE ( "Factura de cliente número" )
 
    METHOD addExtraButtons()
 
    // Contrucciones tardias----------------------------------------------------
 
-   METHOD getName()                    INLINE ( "facturas_clientes" )
+   METHOD getName()                       INLINE ( "facturas_clientes" )
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasClientesModel():New( self ), ), ::oModel )
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasClientesModel():New( self ), ), ::oModel )
 
-   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasClientesValidator():New( self ), ), ::oValidator ) 
+   METHOD getValidator()                  INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasClientesValidator():New( self ), ), ::oValidator ) 
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()                 INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasClientesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasClientesRepository():New( self ), ), ::oRepository )
    
 END CLASS
 

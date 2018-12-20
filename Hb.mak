@@ -261,6 +261,7 @@ RectificativasProveedoresLineasModel.prg 								\
 TransaccionesComercialesLineasModel.prg 								\
 FacturasClientesModel.prg 													\
 FacturasClientesRepository.prg 											\
+FacturasProveedoresRepository.prg 										\
 FacturasClientesLineasRepository.prg									\
 TicketsClientesLineasModel.prg 											\
 TicketsClientesPagosModel.prg 											\
@@ -628,6 +629,7 @@ FacturasProveedoresLineasModel.obj 										\
 RectificativasProveedoresLineasModel.obj 								\
 FacturasClientesModel.obj 													\
 FacturasClientesRepository.obj											\
+FacturasProveedoresRepository.obj										\
 FacturasClientesLineasRepository.obj									\
 TicketsClientesLineasModel.obj 											\
 TicketsClientesPagosModel.obj 											\
@@ -706,6 +708,7 @@ SQLOperacionesComercialesModel.obj 										\
 SQLFacturasClientesModel.obj 												\
 SQLFacturasProveedoresModel.obj 											\
 FacturasClientesRepository.obj 											\
+FacturasProveedoresRepository.obj 										\
 SQLOperacionesComercialesLineasModel.obj 								\
 SQLFacturasClientesLineasModel.obj 										\
 SQLFacturasProveedoresLineasModel.obj 									\
@@ -1059,6 +1062,7 @@ $(OBJ)\SQLOperacionesComercialesModel.obj 							+
 $(OBJ)\SqlFacturasClientesModel.obj 				    				+
 $(OBJ)\SqlFacturasProveedoresModel.obj 				  				+
 $(OBJ)\FacturasClientesRepository.obj 				    				+
+$(OBJ)\FacturasProveedoresRepository.obj 				  				+
 $(OBJ)\FacturasClientesLineasRepository.obj 				    		+
 $(OBJ)\SQLOperacionesComercialesLineasModel.obj 	    			+
 $(OBJ)\SqlFacturasClientesLineasModel.obj 	    					+

@@ -121,6 +121,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oFacturasClientesLineasController
 
+   DATA oFacturasProveedoresLineasController
+
    DATA oFacturasClientesController
 
    DATA oAlmacenesController
@@ -352,6 +354,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getFacturasClientesLineasController();
                                     INLINE ( if( empty( ::oFacturasClientesLineasController ), ::oFacturasClientesLineasController := FacturasClientesLineasController():New( self ), ), ::oFacturasClientesLineasController )
+
+   METHOD getFacturasProveedoresLineasController();
+                                    INLINE ( if( empty( ::oFacturasProveedoresLineasController ), ::oFacturasProveedoresLineasController := FacturasProveedoresLineasController():New( self ), ), ::oFacturasProveedoresLineasController )
 
    METHOD getFacturasClientesController();
                                     INLINE ( if( empty( ::oFacturasClientesController ), ::oFacturasClientesController := FacturasClientesController():New( self ), ), ::oFacturasClientesController )
@@ -676,6 +681,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oFacturasClientesLineasController )   
       ::oFacturasClientesLineasController:End()
+   end if
+
+   if !empty( ::oFacturasProveedoresLineasController )   
+      ::oFacturasProveedoresLineasController:End()
    end if   
 
    if !empty( ::oFacturasClientesController )   

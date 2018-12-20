@@ -133,33 +133,36 @@ METHOD getColumnsSelect() CLASS SQLOperacionesComercialesLineasModel
    local cColumns
 
    TEXT INTO cColumns
-      facturas_clientes_lineas.id AS id,
-      facturas_clientes_lineas.uuid AS uuid,
-      facturas_clientes_lineas.parent_uuid AS parent_uuid,
-      facturas_clientes_lineas.articulo_codigo AS articulo_codigo,
-      facturas_clientes_lineas.articulo_nombre AS articulo_nombre,
-      facturas_clientes_lineas.fecha_caducidad AS fecha_caducidad,
-      facturas_clientes_lineas.lote AS lote,
-      facturas_clientes_lineas.articulo_unidades AS articulo_unidades,
-      facturas_clientes_lineas.unidad_medicion_factor AS unidad_medicion_factor,
+      %1$s.id AS id,
+      %1$s.uuid AS uuid,
+      %1$s.parent_uuid AS parent_uuid,
+      %1$s.articulo_codigo AS articulo_codigo,
+      %1$s.articulo_nombre AS articulo_nombre,
+      %1$s.fecha_caducidad AS fecha_caducidad,
+      %1$s.lote AS lote,
+      %1$s.articulo_unidades AS articulo_unidades,
+      %1$s.unidad_medicion_factor AS unidad_medicion_factor,
       ( @total_unidades := articulo_unidades * unidad_medicion_factor ) AS total_unidades,
-      facturas_clientes_lineas.articulo_precio AS articulo_precio,
-      facturas_clientes_lineas.incremento_precio AS incremento_precio,
+      %1$s.articulo_precio AS articulo_precio,
+      %1$s.incremento_precio AS incremento_precio,
       ( @total_bruto := ROUND( @total_unidades * ( articulo_precio + incremento_precio ), 2 ) ) AS total_bruto,
-      facturas_clientes_lineas.unidad_medicion_codigo AS unidad_medicion_codigo,
-      facturas_clientes_lineas.descuento AS descuento,
+      %1$s.unidad_medicion_codigo AS unidad_medicion_codigo,
+      %1$s.descuento AS descuento,
       ( @importe_descuento := IF( descuento IS NULL OR descuento = 0, 0, @total_bruto * descuento / 100 ) ) AS importe_descuento,
       ( @total_bruto - @importe_descuento ) AS total_precio,
-      facturas_clientes_lineas.iva AS iva,
-      facturas_clientes_lineas.recargo_equivalencia AS recargo_equivalencia,
-      facturas_clientes_lineas.almacen_codigo AS almacen_codigo,
+      %1$s.iva AS iva,
+      %1$s.recargo_equivalencia AS recargo_equivalencia,
+      %1$s.almacen_codigo AS almacen_codigo,
       almacenes.nombre AS almacen_nombre,
-      facturas_clientes_lineas.agente_codigo AS agente_codigo,
-      facturas_clientes_lineas.agente_comision AS agente_comision, 
+      %1$s.agente_codigo AS agente_codigo,
+      %1$s.agente_comision AS agente_comision, 
       agentes.nombre AS agente_nombre, 
       RTRIM( GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) ) AS articulos_propiedades_nombre,
-      facturas_clientes_lineas.deleted_at AS deleted_at
+      %1$s.deleted_at AS deleted_at
+   
    ENDTEXT
+
+   cColumns  := hb_strformat(  cColumns, ::cTableName )
       
 RETURN ( cColumns )
 
@@ -172,26 +175,27 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesLineasModel
    TEXT INTO cSql
 
       SELECT 
-         %6$s
+         %7$s
          
-      FROM %1$s AS facturas_clientes_lineas
+      FROM %1$s AS %2$s
 
-      LEFT JOIN %2$s AS almacenes
-         ON almacenes.codigo = facturas_clientes_lineas.almacen_codigo
+      LEFT JOIN %3$s AS almacenes
+         ON almacenes.codigo = %2$s.almacen_codigo
 
-      LEFT JOIN %3$s AS agentes
-         ON agentes.codigo = facturas_clientes_lineas.agente_codigo
+      LEFT JOIN %4$s AS agentes
+         ON agentes.codigo = %2$s.agente_codigo
   
-      LEFT JOIN %4$s AS combinaciones_propiedades
-         ON combinaciones_propiedades.parent_uuid = facturas_clientes_lineas.combinaciones_uuid
+      LEFT JOIN %5$s AS combinaciones_propiedades
+         ON combinaciones_propiedades.parent_uuid = %2$s.combinaciones_uuid
 
-      LEFT JOIN %5$s AS articulos_propiedades_lineas
+      LEFT JOIN %6$s AS articulos_propiedades_lineas
          ON articulos_propiedades_lineas.uuid = combinaciones_propiedades.propiedad_uuid
        
    ENDTEXT
 
    cSql  := hb_strformat(  cSql,;
                            ::getTableName(),;
+                           ::cTableName,;
                            SQLAlmacenesModel():getTableName(),;
                            SQLAgentesModel():getTableName(),;
                            SQLCombinacionesPropiedadesModel():getTableName(),;
