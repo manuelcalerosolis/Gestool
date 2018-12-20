@@ -79,10 +79,10 @@ METHOD Activate() CLASS OperacionesComercialesView
 
    // Terceros------------------------------------------------------------------
 
-   ::getController():getTercerosController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "cliente_codigo" ] ) )
+   ::getController():getTercerosController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "tercero_codigo" ] ) )
    ::getController():getTercerosController():getSelector():Build( { "idGet" => 170, "idLink" => 171, "idText" => 180, "idNif" => 181, "idDireccion" => 183, "idCodigoPostal" => 184, "idPoblacion" => 185, "idProvincia" => 186, "idTelefono" => 187, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::getController():getTercerosController():getSelector():setWhen( {|| ::getController():hasNotLines() .or. empty( ::getController():getModel():hBuffer[ "cliente_codigo" ] ) } )
-   ::getController():getTercerosController():getSelector():setValid( {|| ::getController():validate( "cliente_codigo" ) } )
+   ::getController():getTercerosController():getSelector():setWhen( {|| ::getController():hasNotLines() .or. empty( ::getController():getModel():hBuffer[ "tercero_codigo" ] ) } )
+   ::getController():getTercerosController():getSelector():setValid( {|| ::getController():validate( "tercero_codigo" ) } )
 
    // Serie-------------------------------------------------------------------
 

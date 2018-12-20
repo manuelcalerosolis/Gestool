@@ -63,18 +63,18 @@ METHOD addColumns() CLASS OperacionesComercialesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := "cliente_cliente"
+      :cSortOrder          := "tercero_codigo"
       :cHeader             := ::addTercerosCodigoLabel()
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( "cliente_codigo" ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "tercero_codigo" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := "cliente_nombre"
+      :cSortOrder          := "tercero_nombre"
       :cHeader             := ::addTercerosNombreLabel()
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( "cliente_nombre" ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "tercero_nombre" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 

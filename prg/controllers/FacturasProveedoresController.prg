@@ -95,11 +95,10 @@ RETURN ( ::Super:New( oController ) )
 
 METHOD getValidators() CLASS FacturasProveedorValidator
 
-   hset( ::Super:getValidators(), "cliente_codigo",   {  "required"        => "El código del proveedor es un dato requerido",;
-                                                         "clienteExist"    => "El código del proveedor no existe" } )
+   hset( ::Super:getValidators(), "tercero_codigo",   {  "required"        => "El código del proveedor es un dato requerido",;
+                                                         "proveedorExist"  => "El código del proveedor no existe" } )
 
 RETURN ( ::hValidators )
-
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

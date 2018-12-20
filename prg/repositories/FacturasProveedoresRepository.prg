@@ -471,7 +471,7 @@ METHOD getClientMailWhereFacturaUuid( uuidFacturaCliente ) CLASS FacturasProveed
          FROM %1$s AS facturas_proveedores
 
       INNER JOIN %2$s AS clientes
-         ON clientes.codigo = facturas_proveedores.cliente_codigo
+         ON clientes.codigo = facturas_proveedores.tercero_codigo
       
       INNER JOIN %3$s AS direcciones
          ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal = 0

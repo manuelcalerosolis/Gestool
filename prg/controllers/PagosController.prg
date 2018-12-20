@@ -171,10 +171,10 @@ METHOD addColumns() CLASS PagosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'cliente_codigo'
+      :cSortOrder          := 'tercero_codigo'
       :cHeader             := 'Código cliente'
       :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'cliente_codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'tercero_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -285,10 +285,10 @@ METHOD Activate() CLASS PagosView
       PROMPT      "&General" ;
       DIALOGS     "PAGO_LIBRE_SQL" 
 
-   ::oController:getClientesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_codigo" ] ) )
+   ::oController:getClientesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "tercero_codigo" ] ) )
    ::oController:getClientesController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oFolder:aDialogs[1] } )
    ::oController:getClientesController():getSelector():setWhen( {|| ::oController:isAppendMode() } )
-   ::oController:getClientesController():getSelector():setValid( {|| ::oController:validate( "cliente_codigo" ) } )
+   ::oController:getClientesController():getSelector():setValid( {|| ::oController:validate( "tercero_codigo" ) } )
 
   REDEFINE GET    ::oImporte ;
       VAR         ::nImporte ;
@@ -429,7 +429,7 @@ END CLASS
 
 METHOD getValidators() CLASS PagosValidator
 
-   ::hValidators  := {  "cliente_codigo"     =>   {  "required"               => "El código del cliente es un dato requerido" },;
+   ::hValidators  := {  "tercero_codigo"     =>   {  "required"               => "El código del cliente es un dato requerido" },;
                         "importe"            =>   {  "required"               => "El importe es un dato requerido" },;
                         "fecha"              =>   {  "required"               => "La fecha es un dato requerido" },;
                         "medio_pago_codigo"  =>   {  "required"               => "El medio de pago es un dato requerido" },;
@@ -481,7 +481,7 @@ METHOD getColumns() CLASS SQLPagosModel
    hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"                ,;                                  
                                                       "default"   => {|| win_uuidcreatestring() } }               )
 
-   hset( ::hColumns, "cliente_codigo",             {  "create"    => "VARCHAR( 20 )"                              ,;
+   hset( ::hColumns, "tercero_codigo",             {  "create"    => "VARCHAR( 20 )"                              ,;
                                                       "default"   => {|| space( 20 ) } }                          )
 
    hset( ::hColumns, "medio_pago_codigo",          {  "create"    => "VARCHAR( 20 )"                              ,;
@@ -511,7 +511,7 @@ METHOD getInitialSelect() CLASS SQLPagosModel
 
    SELECT pagos.id AS id,
       pagos.uuid AS uuid,
-      pagos.cliente_codigo AS cliente_codigo,
+      pagos.tercero_codigo AS tercero_codigo,
       pagos.fecha AS fecha,
       pagos.medio_pago_codigo AS medio_pago_codigo,
       pagos.cuenta_bancaria_codigo AS cuenta_bancaria_codigo,
@@ -525,7 +525,7 @@ METHOD getInitialSelect() CLASS SQLPagosModel
    FROM %1$s AS pagos
 
    LEFT JOIN %2$s AS clientes
-      ON pagos.cliente_codigo = clientes.codigo AND clientes.deleted_at = 0
+      ON pagos.tercero_codigo = clientes.codigo AND clientes.deleted_at = 0
 
    LEFT JOIN %3$s AS medio_pago
       ON pagos.medio_pago_codigo = medio_pago.codigo AND medio_pago.deleted_at = 0

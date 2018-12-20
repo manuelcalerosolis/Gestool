@@ -27,7 +27,7 @@ METHOD getColumnsSelect() CLASS SQLFacturasProveedoresModel
       operaciones_comerciales.delegacion_uuid AS delegacion_uuid,
       operaciones_comerciales.sesion_uuid AS sesion_uuid,
       operaciones_comerciales.recargo_equivalencia AS recargo_equivalencia,
-      operaciones_comerciales.cliente_codigo AS cliente_codigo,
+      operaciones_comerciales.tercero_codigo AS tercero_codigo,
       operaciones_comerciales.created_at AS created_at,
       operaciones_comerciales.updated_at AS updated_at,
       terceros.nombre AS cliente_nombre,

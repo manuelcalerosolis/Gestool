@@ -35,7 +35,7 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD getClientUuid() 
 
-   METHOD isClientFilled()                INLINE ( !empty( ::getModelBuffer( "cliente_codigo" ) ) )
+   METHOD isClientFilled()                INLINE ( !empty( ::getModelBuffer( "tercero_codigo" ) ) )
 
    METHOD clientesSettedHelpText()
 
@@ -253,13 +253,13 @@ RETURN ( ::getRecibosGeneratorController():generate() )
 
 METHOD getClientUuid() CLASS OperacionesComercialesController 
 
-RETURN ( ::getClientesController():getModel():getUuidWhereCodigo( ::getModelBuffer( "cliente_codigo" ) ) )
+RETURN ( ::getClientesController():getModel():getUuidWhereCodigo( ::getModelBuffer( "tercero_codigo" ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD clientesSettedHelpText() CLASS OperacionesComercialesController
 
-   if ::getHistoryManager():isEqual( "cliente_codigo", ::getModelBuffer( "cliente_codigo" ) )
+   if ::getHistoryManager():isEqual( "tercero_codigo", ::getModelBuffer( "tercero_codigo" ) )
       RETURN ( nil )
    end if         
 
@@ -275,7 +275,7 @@ METHOD clientesSettedHelpText() CLASS OperacionesComercialesController
 
    ::clientSetRecargo()
 
-   ::getHistoryManager():setkey( "cliente_codigo", ::getModelBuffer( "cliente_codigo" ) )
+   ::getHistoryManager():setkey( "tercero_codigo", ::getModelBuffer( "tercero_codigo" ) )
 
 RETURN ( nil )
 
@@ -371,7 +371,7 @@ METHOD clientSetDescuentos() CLASS OperacionesComercialesController
 
    ::getFacturasClientesDescuentosController():getModel():deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
 
-   ::getFacturasClientesDescuentosController():getModel():insertWhereClienteCodigo( ::getModelBuffer( "cliente_codigo" ) )
+   ::getFacturasClientesDescuentosController():getModel():insertWhereClienteCodigo( ::getModelBuffer( "tercero_codigo" ) )
 
    ::getFacturasClientesDescuentosController():refreshRowSetAndGoTop()
 

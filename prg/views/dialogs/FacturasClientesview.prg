@@ -79,10 +79,10 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Cliente------------------------------------------------------------------
 
-   ::getController():getClientesController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "cliente_codigo" ] ) )
+   ::getController():getClientesController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "tercero_codigo" ] ) )
    ::getController():getClientesController():getSelector():Build( { "idGet" => 170, "idLink" => 171, "idText" => 180, "idNif" => 181, "idDireccion" => 183, "idCodigoPostal" => 184, "idPoblacion" => 185, "idProvincia" => 186, "idTelefono" => 187, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::getController():getClientesController():getSelector():setWhen( {|| ::getController():hasNotLines() .or. empty( ::getController():getModel():hBuffer[ "cliente_codigo" ] ) } )
-   ::getController():getClientesController():getSelector():setValid( {|| ::getController():validate( "cliente_codigo" ) } )
+   ::getController():getClientesController():getSelector():setWhen( {|| ::getController():hasNotLines() .or. empty( ::getController():getModel():hBuffer[ "tercero_codigo" ] ) } )
+   ::getController():getClientesController():getSelector():setValid( {|| ::getController():validate( "tercero_codigo" ) } )
 
    // Serie-------------------------------------------------------------------
 

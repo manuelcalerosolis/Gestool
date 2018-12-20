@@ -300,6 +300,8 @@ CLASS SQLBaseModel
    METHOD getWhereCodigo( cCodigo )
 
    METHOD isWhereCodigo( cCodigo )
+   METHOD isWhereCodigoNotDeleted( cCodigo ) ;
+                                       INLINE ( ::isWhereCodigo( cCodigo, .t. ) )
 
    METHOD getWhereNombre( uValue )               
    METHOD getColumnWhereNombre( uValue, cColumn, uDefault ) 
@@ -1956,13 +1958,21 @@ RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD isWhereCodigo( cCodigo )
+METHOD isWhereCodigo( cCodigo, lDeleted )
 
    local cSQL
    local nCount 
 
-   cSQL        := "SELECT COUNT(*) FROM " + ::getTableName()                  + " "    
-   cSQL        +=    "WHERE codigo = " + quoted( cCodigo )                    
+   DEFAULT lDeleted  := ::isDeletedAtColumn()
+
+   cSQL              := "SELECT COUNT(*) FROM " + ::getTableName()                  + " "    
+   cSQL              +=    "WHERE codigo = " + quoted( cCodigo )                    
+
+   if lDeleted
+      cSQL           +=    ::getWhereOrAnd( cSQL ) + "deleted_at = 0" 
+   end if 
+
+   msgalert( cSQL, "cSQL" )
 
    nCount      := ::getDatabase():getValue( cSQL )
 

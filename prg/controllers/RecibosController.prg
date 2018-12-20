@@ -122,7 +122,7 @@ METHOD pagosModelLoadedBlankBuffer() CLASS RecibosController
    
    ::getPagosController():setModelBuffer( 'importe', ::getRowSet():fieldGet( 'diferencia' ) )
    
-   ::getPagosController():setModelBuffer( 'cliente_codigo', SQLFacturasClientesModel():getField( "cliente_codigo", "uuid", ::getRowSet():fieldGet( 'parent_uuid' ) ) )
+   ::getPagosController():setModelBuffer( 'tercero_codigo', SQLFacturasClientesModel():getField( "tercero_codigo", "uuid", ::getRowSet():fieldGet( 'parent_uuid' ) ) )
 
    ::getPagosController():setModelBuffer( 'medio_pago_codigo', cMedioPagoCodigo )
 
@@ -221,10 +221,10 @@ METHOD addColumns() CLASS RecibosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'cliente_codigo'
+      :cSortOrder          := 'tercero_codigo'
       :cHeader             := 'Código cliente'
       :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'cliente_codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'tercero_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -546,7 +546,7 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
       recibos.vencimiento AS vencimiento,
       recibos.importe AS importe,
       recibos.concepto AS concepto,
-      clientes.codigo AS cliente_codigo,
+      clientes.codigo AS tercero_codigo,
       clientes.nombre AS cliente_nombre,
       @total_pagado:=( SELECT %6$s(recibos.uuid) ) AS total_pagado,
       ( recibos.importe - @total_pagado ) AS diferencia
@@ -562,7 +562,7 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
       ON recibos.parent_uuid = facturas_clientes.uuid 
 
    LEFT JOIN %5$s AS clientes 
-      ON facturas_clientes.cliente_codigo = clientes.codigo AND clientes.deleted_at = 0
+      ON facturas_clientes.tercero_codigo = clientes.codigo AND clientes.deleted_at = 0
 
    ENDTEXT
 
@@ -631,7 +631,7 @@ METHOD getInitialSelect() CLASS SQLRecibosAssistantModel
 
    local cSql
 
-   local cliente_codigo := ::oController:oController:getModelBuffer( "cliente_codigo" )
+   local tercero_codigo := ::oController:oController:getModelBuffer( "tercero_codigo" )
 
    TEXT INTO cSql
 
@@ -651,7 +651,7 @@ METHOD getInitialSelect() CLASS SQLRecibosAssistantModel
    FROM %1$s AS recibos
    
    INNER JOIN %2$s AS facturas_clientes
-      ON recibos.parent_uuid = facturas_clientes.uuid AND facturas_clientes.cliente_codigo = %5$s 
+      ON recibos.parent_uuid = facturas_clientes.uuid AND facturas_clientes.tercero_codigo = %5$s 
    
    LEFT JOIN %3$s AS pagos_recibos
       ON recibos.uuid = pagos_recibos.recibo_uuid
@@ -665,7 +665,7 @@ METHOD getInitialSelect() CLASS SQLRecibosAssistantModel
                                  SQLFacturasClientesModel():getTableName(),;
                                  SQLRecibosPagosModel():getTableName(),;
                                  SQLPagosModel():getTableName(),;
-                                 quoted( cliente_codigo ) )
+                                 quoted( tercero_codigo ) )
 
 RETURN ( cSql )
 

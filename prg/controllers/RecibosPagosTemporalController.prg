@@ -327,7 +327,7 @@ METHOD InsertPagoReciboTemporal( uuidPago, cClienteCodigo ) CLASS SQLRecibosPago
       FROM %2$s AS recibos
       
       INNER JOIN %3$s AS facturas_clientes
-         ON recibos.parent_uuid = facturas_clientes.uuid AND facturas_clientes.cliente_codigo = %9$s
+         ON recibos.parent_uuid = facturas_clientes.uuid AND facturas_clientes.tercero_codigo = %9$s
       
       LEFT JOIN %1$s AS pagos_recibos
          ON recibos.uuid = pagos_recibos.recibo_uuid

@@ -194,7 +194,7 @@ METHOD getExpirationDate( nTerm ) CLASS RecibosGeneratorController
    local hPaymentDays
    local aPaymentDays := {}
 
-   hPaymentDays         := SQLClientesModel():getPaymentDays( ::oController:getModelBuffer( 'cliente_codigo' ) )
+   hPaymentDays         := SQLClientesModel():getPaymentDays( ::oController:getModelBuffer( 'tercero_codigo' ) )
 
    aPaymentDays         := { hget( hPaymentDays, "primer_dia_pago" ), hget( hPaymentDays, "segundo_dia_pago" ), hget( hPaymentDays, "tercer_dia_pago" ) }
 
@@ -288,7 +288,7 @@ METHOD insertPago() CLASS RecibosGeneratorController
 
       :loadBlankBuffer()
 
-      :setBuffer( "cliente_codigo", ::oController:getModelBuffer( 'cliente_codigo' ) )
+      :setBuffer( "tercero_codigo", ::oController:getModelBuffer( 'tercero_codigo' ) )
 
       :setBuffer( "medio_pago_codigo", ::getMetodoPagoModel():getMedioPagoCodigo( ::oController:getModelBuffer( 'metodo_pago_codigo' ) ) )
 

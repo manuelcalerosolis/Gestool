@@ -83,19 +83,21 @@ CLASS SQLBaseValidator
 
    METHOD numeroDocumento( value )
 
-   METHOD getDialogView()                 INLINE ( ::oController:getDialogView() )
+   METHOD getDialogView()              INLINE ( ::oController:getDialogView() )
 
    METHOD notPrincipal( value )          
 
    // Busquedas comnues en la aplicacion---------------------------------------
 
-   METHOD clienteExist( cCodigo )         INLINE ( SQLClientesModel():isWhereCodigo( cCodigo ) )
+   METHOD clienteExist( cCodigo )      INLINE ( SQLClientesModel():isWhereCodigoNotDeleted( cCodigo ) )
 
-   METHOD formaPagoExist( cCodigo )       INLINE ( SQLMetodoPagoModel():isWhereCodigo( cCodigo ) )
+   METHOD proveedorExist( cCodigo )    INLINE ( SQLProveedoresModel():isWhereCodigoNotDeleted( cCodigo ) )
 
-   METHOD almacenExist( cCodigo )         INLINE ( SQLAlmacenesModel():isWhereCodigo( cCodigo ) )
+   METHOD formaPagoExist( cCodigo )    INLINE ( SQLMetodoPagoModel():isWhereCodigoNotDeleted( cCodigo ) )
 
-   METHOD tarifaExist( cCodigo )          INLINE ( SQLArticulosTarifasModel():isWhereCodigo( cCodigo ) )
+   METHOD almacenExist( cCodigo )      INLINE ( SQLAlmacenesModel():isWhereCodigoNotDeleted( cCodigo ) )
+
+   METHOD tarifaExist( cCodigo )       INLINE ( SQLArticulosTarifasModel():isWhereCodigoNotDeleted( cCodigo ) )
 
 END CLASS
 

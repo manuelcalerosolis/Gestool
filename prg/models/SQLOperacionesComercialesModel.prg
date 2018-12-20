@@ -9,7 +9,9 @@ CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getColumnsSelect()              VIRTUAL
+   METHOD getColumnsSelect()           VIRTUAL
+   
+   METHOD getTercerosCodigo()          VIRTUAL
 
    METHOD getInitialSelect()
 
@@ -61,7 +63,7 @@ METHOD getColumns() CLASS SQLOperacionesComercialesModel
    hset( ::hColumns, "fecha_valor_stock",             {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"   ,;
                                                          "default"   => {|| hb_datetime() } }                  )
 
-   hset( ::hColumns, "cliente_codigo",                {  "create"    => "VARCHAR( 20 )"                        ,;
+   hset( ::hColumns, "tercero_codigo",                {  "create"    => "VARCHAR( 20 )"                        ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "recargo_equivalencia",          {  "create"    => "TINYINT( 1 )"                         ,;
@@ -108,7 +110,7 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesModel
    FROM %1$s AS operaciones_comerciales
 
       LEFT JOIN %2$s terceros
-         ON operaciones_comerciales.cliente_codigo = terceros.codigo AND terceros.deleted_at = 0
+         ON operaciones_comerciales.tercero_codigo = terceros.codigo AND terceros.deleted_at = 0
 
       LEFT JOIN %3$s direcciones
          ON terceros.uuid = direcciones.parent_uuid AND direcciones.codigo = 0
@@ -206,7 +208,7 @@ METHOD testCreateFactura( uuid ) CLASS SQLOperacionesComercialesModel
    hset( hBuffer, "serie", "TEST" )
    hset( hBuffer, "numero", 1 )
    hset( hBuffer, "uuid", uuid )
-   hset( hBuffer, "cliente_codigo", "0" )
+   hset( hBuffer, "tercero_codigo", "0" )
    hset( hBuffer, "metodo_pago_codigo", "0" )
    hset( hBuffer, "almacen_codigo", "0" )
    hset( hBuffer, "tarifa_codigo", "0" )
@@ -222,7 +224,7 @@ METHOD testCreateFacturaConRecargoDeEqivalencia( uuid ) CLASS SQLOperacionesCome
    hset( hBuffer, "serie", "TEST" )
    hset( hBuffer, "numero", 1 )
    hset( hBuffer, "uuid", uuid )
-   hset( hBuffer, "cliente_codigo", "0" )
+   hset( hBuffer, "tercero_codigo", "0" )
    hset( hBuffer, "metodo_pago_codigo", "0" )
    hset( hBuffer, "almacen_codigo", "0" )
    hset( hBuffer, "recargo_equivalencia", 1 )
@@ -239,7 +241,7 @@ METHOD testCreateFacturaConPlazos( uuid ) CLASS SQLOperacionesComercialesModel
    hset( hBuffer, "serie", "TEST" )
    hset( hBuffer, "numero", 1 )
    hset( hBuffer, "uuid", uuid )
-   hset( hBuffer, "cliente_codigo", "0" )
+   hset( hBuffer, "tercero_codigo", "0" )
    hset( hBuffer, "metodo_pago_codigo", "1" )
    hset( hBuffer, "almacen_codigo", "0" )
    hset( hBuffer, "tarifa_codigo", "0" )

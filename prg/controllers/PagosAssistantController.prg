@@ -102,7 +102,7 @@ METHOD OtherClient( cCodigoCliente ) CLASS PagosAssistantController
 
    ::insertRecibosPago()
 
-   ::getRecibosPagosTemporalController():getRowset():buildPad( ::getRecibosPagosTemporalController():getModel():getGeneralSelect( ::getModelBuffer( "uuid" ), ::getModelBuffer( "cliente_codigo" ) ) )
+   ::getRecibosPagosTemporalController():getRowset():buildPad( ::getRecibosPagosTemporalController():getModel():getGeneralSelect( ::getModelBuffer( "uuid" ), ::getModelBuffer( "tercero_codigo" ) ) )
 
    ::getRecibosPagosTemporalController():getBrowseView():Refresh()
 
@@ -112,11 +112,11 @@ RETURN ( nil )
 
 METHOD getRecibos() CLASS PagosAssistantController
 
-   if ::cCodigoCliente == ::getModelBuffer("cliente_codigo")
+   if ::cCodigoCliente == ::getModelBuffer("tercero_codigo")
       RETURN ( nil )
    end if
 
-   ::cCodigoCliente := ::getModelBuffer("cliente_codigo")
+   ::cCodigoCliente := ::getModelBuffer("tercero_codigo")
 
    ::OtherClient()
 
@@ -126,7 +126,7 @@ RETURN ( nil )
 
 METHOD insertRecibosPago() CLASS PagosAssistantController
 
-   ::getRecibosPagosTemporalController():getModel():InsertPagoReciboTemporal( ::getModelBuffer( "uuid" ), ::getModelBuffer('cliente_codigo') )
+   ::getRecibosPagosTemporalController():getModel():InsertPagoReciboTemporal( ::getModelBuffer( "uuid" ), ::getModelBuffer('tercero_codigo') )
 
 RETURN ( nil )
 
@@ -200,9 +200,9 @@ METHOD Activate() CLASS PagosAssistantView
       PROMPT      "&General" ;
       DIALOGS     "PAGO_ASISTENTE_SQL" 
 
-   ::oController:getClientesController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "cliente_codigo" ] ) )
+   ::oController:getClientesController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "tercero_codigo" ] ) )
    ::oController:getClientesController():getSelector():Build( { "idGet" => 100, "idLink" => 102, "idText" => 101, "idNif" => 103, "idDireccion" => 104, "idCodigoPostal" => 105, "idPoblacion" => 106, "idProvincia" => 107, "idTelefono" => 108, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::oController:getClientesController():getSelector():setValid( {|| ::oController:validate( "cliente_codigo" ) } )
+   ::oController:getClientesController():getSelector():setValid( {|| ::oController:validate( "tercero_codigo" ) } )
 
    ::getController():getRecibosPagosTemporalController():Activate( 500, ::oFolder:aDialogs[1] )
 
@@ -322,7 +322,7 @@ END CLASS
 
 METHOD getValidators() CLASS PagosAssistantValidator
 
-   ::hValidators  := {  "cliente_codigo"     =>   {  "required"               => "El código del cliente es un dato requerido" },;
+   ::hValidators  := {  "tercero_codigo"     =>   {  "required"               => "El código del cliente es un dato requerido" },;
                         "importe"            =>   {  "required"               => "El importe es un dato requerido" },;
                         "fecha"              =>   {  "required"               => "La fecha es un dato requerido" },;
                         "medio_pago_codigo"  =>   {  "required"               => "El medio de pago es un dato requerido" },;

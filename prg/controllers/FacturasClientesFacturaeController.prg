@@ -144,7 +144,7 @@ METHOD isInformationLoaded( uuid ) CLASS FacturasClientesFacturaeController
 
    ::hDiscounts            := SQLFacturasClientesDescuentosModel():selectDescuentosWhereUuid( uuid, nTotalBrutoLineas )
 
-   ::hClient               := SQLClientesModel():getHashWhere( 'codigo', hget( ::hDocument, "cliente_codigo" ) )
+   ::hClient               := SQLClientesModel():getHashWhere( 'codigo', hget( ::hDocument, "tercero_codigo" ) )
    if empty( ::hClient )
       ::cError             += "No se encontraron datos del cliente"
    end if 
