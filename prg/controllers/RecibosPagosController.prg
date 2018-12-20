@@ -160,18 +160,18 @@ CLASS RecibosPagosRepository FROM SQLBaseRepository
                                                       ::dropFunctionTotalPaidWhereFacturaUuid(),;
                                                       ::createFunctionTotalPaidWhereFacturaUuid() } )
 
-   METHOD createFunctionTotalPaidWhereUuid()
-
    METHOD dropFunctionTotalPaidWhereUuid()
 
-   METHOD createFunctionTotalDifferenceWhereUuid()
+   METHOD createFunctionTotalPaidWhereUuid()
 
    METHOD dropFunctionTotalDifferenceWhereUuid()
 
-   METHOD createFunctionTotalPaidWhereFacturaUuid() 
+   METHOD createFunctionTotalDifferenceWhereUuid()
 
    METHOD dropFunctionTotalPaidWhereFacturaUuid() 
-   
+
+   METHOD createFunctionTotalPaidWhereFacturaUuid() 
+
    METHOD selectFunctionTotalPaidWhereUuid( uuidRecibo )   
 
    METHOD selectFunctionTotalPaidWhereFacturaUuid( uuidFactura )
@@ -275,8 +275,6 @@ METHOD createFunctionTotalPaidWhereFacturaUuid() CLASS RecibosPagosRepository
                            ::getTableName(),;
                            SQLRecibosModel():getTableName(),;
                            SQLPagosModel():getTableName() )
-
-   logwrite( cSql )
 
 RETURN ( cSql )
 

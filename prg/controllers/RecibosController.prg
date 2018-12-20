@@ -487,6 +487,7 @@ CLASS SQLRecibosModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
+
    METHOD getDiferencia( uuidRecibo ) 
 
    METHOD testCreateRecibo()
@@ -636,17 +637,17 @@ METHOD getInitialSelect() CLASS SQLRecibosAssistantModel
    TEXT INTO cSql
 
    SELECT 
-         recibos.id AS id,
-         recibos.uuid AS uuid,
-         recibos.parent_uuid AS parent_uuid,
-         recibos.parent_table AS parent_table,
-         recibos.expedicion AS expedicion,
-         recibos.vencimiento AS vencimiento,
-         recibos.importe AS importe,
-         recibos.concepto AS concepto,
-         pagos.estado AS estado,
-         SUM( pagos_recibos.importe ) AS total_pagado,
-         ( recibos.importe - SUM( pagos_recibos.importe ) ) AS diferencia
+      recibos.id AS id,
+      recibos.uuid AS uuid,
+      recibos.parent_uuid AS parent_uuid,
+      recibos.parent_table AS parent_table,
+      recibos.expedicion AS expedicion,
+      recibos.vencimiento AS vencimiento,
+      recibos.importe AS importe,
+      recibos.concepto AS concepto,
+      pagos.estado AS estado,
+      SUM( pagos_recibos.importe ) AS total_pagado,
+      ( recibos.importe - SUM( pagos_recibos.importe ) ) AS diferencia
    
    FROM %1$s AS recibos
    
@@ -677,9 +678,35 @@ RETURN ( cSql )
 
 CLASS RecibosRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLRecibosModel():getTableName() ) 
+   METHOD getTableName()               INLINE ( SQLRecibosModel():getTableName() ) 
+
+   METHOD getSentenceImporteWhereFacturaUuid( uuidFactura ) 
+
+   METHOD getImporteWhereFacturaUuid( uuidFactura ) ;
+                                       INLINE ( ::getDatabase():getValue( ::getSentenceImporteWhereFacturaUuid( uuidFactura ), 0 ) )
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceImporteWhereFacturaUuid( uuidFactura ) CLASS RecibosRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT 
+      SUM( recibos.importe ) 
+
+   FROM %1$s AS recibos
+
+   WHERE recibos.parent_uuid = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql, ::getTableName(), quoted( uuidFactura ) )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

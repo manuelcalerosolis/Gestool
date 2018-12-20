@@ -64,6 +64,8 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD calculateTotals( uuidFactura )  
 
+   METHOD getTotalDocument( uuidFactura ) INLINE ( ::getRepository():getTotalDocument( uuidFactura ) )
+
    METHOD getTotalesDocument( uuidFactura ) ;
                                           INLINE ( ::getRepository():getTotalesDocument( uuidFactura ) )
    
@@ -214,17 +216,17 @@ RETURN ( ::getConfiguracionesController():Edit() )
 
 //---------------------------------------------------------------------------//
 
-METHOD editing() CLASS OperacionesComercialesController
+METHOD Editing( nId ) CLASS OperacionesComercialesController
 
    local nRecibosPagados   
 
-   ? ::getModelBuffer( "uuid" )
+   nRecibosPagados         := RecibosPagosRepository():selectFunctionTotalPaidWhereFacturaUuid( ::getUuidFromRowSet() )
 
-   nRecibosPagados         := RecibosPagosRepository():selectFunctionTotalPaidWhereFacturaUuid( ::getUuid() )
-
-   msgalert( nRecibosPagados, "la factura contiene recibos pagados")
+   if nRecibosPagados > 0
+      msgstop( nRecibosPagados, "La factura contiene recibos pagados" )
+   end if 
    
-RETURN ( .f. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 

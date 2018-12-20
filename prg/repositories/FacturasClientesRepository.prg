@@ -49,6 +49,7 @@ CLASS FacturasClientesRepository FROM SQLBaseRepository
    METHOD getSentenceDescuentosAsSelect( uuidFactura ) 
 
    METHOD getSentenceTotalDocument( uuidFactura )
+   METHOD getTotalDocument( uuidFactura )
 
    METHOD getTotalesDocument( uuidFactura )         
    METHOD getSentenceTotalesDocument( uuidFactura )
@@ -442,6 +443,14 @@ METHOD getSentenceTotalDocument( uuidFacturaCliente ) CLASS FacturasClientesRepo
    cSql  := hb_strformat( cSql, ::getSentenceTotales( uuidFacturaCliente ) )
 
 RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTotalDocument( uuidFacturaCliente ) CLASS FacturasClientesRepository
+
+   local nTotal   := ::getDatabase():getValue( ::getSentenceTotalDocument( uuidFacturaCliente ) ) 
+
+RETURN ( if( empty( nTotal ), 0, nTotal ) )
 
 //---------------------------------------------------------------------------//
 

@@ -93,6 +93,7 @@ CLASS SQLBaseController
    METHOD getUuidFromRecno( aSelected )               INLINE ( ::getRowSet():UuidFromRecno( aSelected ) )
 
    METHOD getIdFromRowSet()                           INLINE ( ::getRowSet():fieldGet( ::getModel():cColumnKey ) )
+   METHOD getUuidFromRowSet()                         INLINE ( ::getRowSet():fieldGet( "uuid" ) )
 
    METHOD isRowSetSystemRegister()                          
    METHOD isNotRowSetSystemRegister()                 INLINE ( !( ::isRowSetSystemRegister() ) )
@@ -530,7 +531,7 @@ METHOD Edit( nId )
       RETURN ( .f. )
    end if 
 
-   if isFalse( ::fireEvent( 'editing' ) )
+   if isFalse( ::fireEvent( 'editing', nId ) )
       RETURN ( .f. )
    end if
 
