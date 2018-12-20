@@ -156,7 +156,9 @@ CLASS RecibosPagosRepository FROM SQLBaseRepository
    METHOD getSQLFunctions()               INLINE ( {  ::dropFunctionTotalPaidWhereUuid(),;
                                                       ::createFunctionTotalPaidWhereUuid(),;
                                                       ::dropFunctionTotalDifferenceWhereUuid(),;
-                                                      ::createFunctionTotalDifferenceWhereUuid() } )
+                                                      ::createFunctionTotalDifferenceWhereUuid(),;
+                                                      ::dropFunctionTotalPaidWhereFacturaUuid(),;
+                                                      ::createFunctionTotalPaidWhereFacturaUuid() } )
 
    METHOD createFunctionTotalPaidWhereUuid()
 
@@ -164,9 +166,15 @@ CLASS RecibosPagosRepository FROM SQLBaseRepository
 
    METHOD createFunctionTotalDifferenceWhereUuid()
 
+   METHOD dropFunctionTotalDifferenceWhereUuid()
+
+   METHOD createFunctionTotalPaidWhereFacturaUuid() 
+
+   METHOD dropFunctionTotalPaidWhereFacturaUuid() 
+   
    METHOD selectFunctionTotalPaidWhereUuid( uuidRecibo )   
 
-   METHOD dropFunctionTotalDifferenceWhereUuid()
+   METHOD selectFunctionTotalPaidWhereFacturaUuid( uuidFactura )
 
 END CLASS
 
@@ -179,7 +187,7 @@ METHOD createFunctionTotalPaidWhereUuid() CLASS RecibosPagosRepository
    TEXT INTO cSql
 
    CREATE DEFINER=`root`@`localhost` 
-   FUNCTION %1$s ( `uuid_recibo_cliente` CHAR( 40 ) )
+   FUNCTION %1$s( `uuid_recibo_cliente` CHAR( 40 ) )
    RETURNS DECIMAL(19,6)
    LANGUAGE SQL
    NOT DETERMINISTIC
@@ -220,7 +228,67 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
- METHOD createFunctionTotalDifferenceWhereUuid()
+METHOD createFunctionTotalPaidWhereFacturaUuid() CLASS RecibosPagosRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   CREATE DEFINER=`root`@`localhost` 
+   FUNCTION %1$s( `uuid_factura_cliente` CHAR( 40 ) )
+   RETURNS DECIMAL(19,6)
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
+
+   BEGIN
+
+      DECLARE totalPaid DECIMAL( 19,6 );
+
+      SELECT 
+         SUM( recibos_pagos.importe ) INTO totalPaid
+      
+         FROM %2$s AS recibos_pagos
+
+         LEFT JOIN %3$s AS recibos
+            ON recibos.uuid = recibos_pagos.recibo_uuid
+
+         LEFT JOIN %4$s AS pagos
+            ON pagos.uuid = recibos_pagos.pago_uuid
+
+         WHERE recibos.parent_uuid = uuid_factura_cliente         
+         
+         GROUP BY pagos.estado 
+         
+         HAVING pagos.estado = "Presentado";  
+
+      RETURN IFNULL( totalPaid, 0 );
+
+   END
+
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql,; 
+                           Company():getTableName( 'RecibosPagosTotalPaidWhereFacturaUuid' ),;
+                           ::getTableName(),;
+                           SQLRecibosModel():getTableName(),;
+                           SQLPagosModel():getTableName() )
+
+   logwrite( cSql )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD dropFunctionTotalPaidWhereFacturaUuid() CLASS RecibosPagosRepository  
+
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'RecibosPagosTotalPaidWhereFacturaUuid' ) + ";" )
+
+//---------------------------------------------------------------------------//
+
+METHOD createFunctionTotalDifferenceWhereUuid()
 
  local cSql
 
@@ -281,4 +349,11 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'RecibosPagosTotal
 
 //---------------------------------------------------------------------------//
 
+METHOD selectFunctionTotalPaidWhereFacturaUuid( uuidFactura ) CLASS RecibosPagosRepository  
+
+   local cSql  := "SELECT " + Company():getTableName( 'RecibosPagosTotalPaidWhereFacturaUuid' ) + "( " + quoted( uuidFactura ) + " )"
+
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
+
+//---------------------------------------------------------------------------//
 

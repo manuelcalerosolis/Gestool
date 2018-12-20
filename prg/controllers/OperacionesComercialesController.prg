@@ -23,6 +23,8 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD editConfig()
 
+   METHOD Editing()
+
    METHOD loadedBlankBuffer() 
 
    METHOD loadedDuplicateBuffer() 
@@ -141,6 +143,8 @@ METHOD New( oController ) CLASS OperacionesComercialesController
 
    ::lOthers                           := .t.
 
+   ::setEvent( 'editing', {|| ::Editing() } )
+
    ::getNavigatorView():getMenuTreeView():setEvent( 'addingDeleteButton', { || .f. } )
    ::getNavigatorView():getMenuTreeView():setEvent( 'addedPdfButton', {|| ::addExtraButtons() } )
 
@@ -210,6 +214,20 @@ RETURN ( ::getConfiguracionesController():Edit() )
 
 //---------------------------------------------------------------------------//
 
+METHOD editing() CLASS OperacionesComercialesController
+
+   local nRecibosPagados   
+
+   ? ::getModelBuffer( "uuid" )
+
+   nRecibosPagados         := RecibosPagosRepository():selectFunctionTotalPaidWhereFacturaUuid( ::getUuid() )
+
+   msgalert( nRecibosPagados, "la factura contiene recibos pagados")
+   
+RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
+
 METHOD loadedBlankBuffer() CLASS OperacionesComercialesController 
 
    ::setModelBuffer( "serie", ::getContadoresModel():getLastSerie( ::getName() ) )
@@ -224,24 +242,13 @@ RETURN ( nil )
 
 METHOD loadedDuplicateBuffer() CLASS OperacionesComercialesController 
 
-   ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) )
-
-RETURN ( nil )
+RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD insertingBuffer() CLASS OperacionesComercialesController 
 
-   msgalert( "entrada en insertingBuffer" )
-
-   if ::isAppendOrDuplicateMode()
-
-      msgalert( "insertingBuffer" )
-
-      ::setModelBuffer( "numero", ::getContadoresModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) )
-   end if 
-
-RETURN ( nil )
+RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 

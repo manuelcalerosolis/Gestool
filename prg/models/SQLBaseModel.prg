@@ -1524,17 +1524,9 @@ METHOD insertBuffer( hBuffer )
 
    ::getInsertSentence( hBuffer )
 
-   logwrite( hb_valtoexp( hBuffer ) )
-
-   logwrite( ::cSQLInsert )
-
    ::getDatabase():Execs( ::cSQLInsert )
 
-   logwrite( "::getDatabase():Execs( ::cSQLInsert )" )
-
    nId               := ::getDatabase():LastInsertId()
-
-   logwrite( "::getDatabase():LastInsertId()" )
 
    hset( hBuffer, ::cColumnKey, nId )
 
@@ -1574,8 +1566,6 @@ RETURN ( nId )
 //---------------------------------------------------------------------------//
 
 METHOD updateBuffer( hBuffer )
-
-   msgalert( "SQLBaseModel updateBuffer" )
 
    ::fireEvent( 'updatingBuffer' )
 
@@ -1971,8 +1961,6 @@ METHOD isWhereCodigo( cCodigo, lDeleted )
    if lDeleted
       cSQL           +=    ::getWhereOrAnd( cSQL ) + "deleted_at = 0" 
    end if 
-
-   msgalert( cSQL, "cSQL" )
 
    nCount      := ::getDatabase():getValue( cSQL )
 

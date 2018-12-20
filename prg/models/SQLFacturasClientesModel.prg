@@ -42,10 +42,13 @@ METHOD getColumnsSelect() CLASS SQLFacturasClientesModel
       direcciones.email AS direccion_email,
       tarifas.codigo AS tarifa_codigo,
       tarifas.nombre AS tarifa_nombre,
-      ( %1$s( operaciones_comerciales.uuid, operaciones_comerciales.recargo_equivalencia ) ) AS total
+      ( %1$s( operaciones_comerciales.uuid, operaciones_comerciales.recargo_equivalencia ) ) AS total,
+      ( %2$s( operaciones_comerciales.uuid ) ) AS cobrado
    ENDTEXT
 
-   cColumns    := hb_strformat( cColumns, Company():getTableName( 'FacturaClienteTotalSummaryWhereUuid' ) )
+   cColumns    := hb_strformat(  cColumns,;
+                                 Company():getTableName( 'FacturaClienteTotalSummaryWhereUuid' ),;
+                                 Company():getTableName( 'RecibosPagosTotalPaidWhereFacturaUuid' ) )
 
 RETURN ( cColumns )
 

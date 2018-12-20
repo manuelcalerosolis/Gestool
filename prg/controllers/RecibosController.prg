@@ -107,7 +107,7 @@ METHOD totalPayed() CLASS RecibosController
    
    end if
 
-RETURN ( msgstop( "El recibo seleccionado ya esta totalmente pagado" ) )
+RETURN ( msgstop( "El recibo seleccionado ya está totalmente pagado" ) )
 
 //---------------------------------------------------------------------------//
 

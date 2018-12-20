@@ -162,6 +162,29 @@ METHOD addColumns() CLASS OperacionesComercialesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'cobrado'
+      :cHeader             := 'Cobrado'
+      :nWidth              := 100
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'cobrado' ) }
+      :cEditPicture        := "@E 9999.9999"
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Pendiente'
+      :nWidth              := 100
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'total' ) - ::getRowSet():fieldGet( 'cobrado' ) }
+      :cEditPicture        := "@E 9999.9999"
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := "tarifa_codigo"
       :cHeader             := "Código tarifa"
       :nWidth              := 100
