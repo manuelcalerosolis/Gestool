@@ -11,6 +11,8 @@ CLASS FacturasProveedoresController FROM OperacionesComercialesController
 
    METHOD getTercerosController()         INLINE( ::getProveedoresController() )
 
+   METHOD getTercerosLineasController()   INLINE ( ::getFacturasProveedoresLineasController() )
+
    // Impresiones--------------------------------------------------------------
 
    METHOD getSubject()                 INLINE ( "Factura de proveedor número" )
@@ -25,7 +27,7 @@ CLASS FacturasProveedoresController FROM OperacionesComercialesController
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasProveedoresBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasClientesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasProveedoresRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -51,10 +53,6 @@ METHOD End() CLASS FacturasProveedoresController
 
    if !empty( ::oModel )
       ::oModel:End()
-   end if 
-
-   if !empty( ::oDialogView )
-      ::oDialogView:End()
    end if 
 
    if !empty( ::oValidator )

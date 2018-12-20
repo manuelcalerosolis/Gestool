@@ -468,6 +468,8 @@ METHOD addRepositories() CLASS SQLCompanyMigrations
    
    aadd( ::aRepositories, FacturasClientesRepository():New() )
 
+   aadd( ::aRepositories, FacturasProveedoresRepository():New() )
+
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
