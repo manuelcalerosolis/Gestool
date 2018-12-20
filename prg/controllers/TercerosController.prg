@@ -51,6 +51,8 @@ CLASS TercerosController FROM SQLNavigatorController
 
    METHOD validColumnCuentasRemesasBrowse( uValue, nKey )      INLINE ( ::validColumnBrowse( uValue, nKey, ::getCuentasRemesasController():oModel, "cuenta_remesa_uuid" ) )
 
+   METHOD validColumnAgentesBrowse( uValue, nKey )             INLINE ( ::validColumnBrowse( uValue, nKey, ::getAgentesController():oModel, "agente_uuid" ) )
+
    METHOD setUuidOldersParents()
 
    METHOD getDuplicateOthers()
@@ -65,9 +67,9 @@ CLASS TercerosController FROM SQLNavigatorController
 
    METHOD getValidator()                                       INLINE( if( empty( ::oValidator ), ::oValidator := TercerosValidator():New( self ), ), ::oValidator )
 
-   METHOD getSelector()                                        VIRTUAL
+   METHOD getModel()                                           INLINE ( if( empty( ::oModel ), ::oModel := SQLTercerosModel():New( self ), ), ::oModel )
 
-   METHOD getModel()                                           VIRTUAL
+   METHOD getSelector()                                        INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := ClientGetSelector():New( self ), ), ::oGetSelector )
 
 END CLASS
 
@@ -78,6 +80,19 @@ METHOD New( oController) CLASS TercerosController
    ::Super:New( oController )
 
    ::lTransactional     := .f.
+
+   ::cTitle                            := "Clientes"
+
+   ::cMessage                          := "Cliente"
+
+   ::cName                             := "clientes_sql"
+
+   ::isClient                          := .t.
+
+   ::hImage                            := {  "16" => "gc_user_16",;
+                                             "32" => "gc_user_32",;
+                                             "48" => "gc_user2_48" }
+
 
    ::getModel():setEvent( 'loadedBlankBuffer',              {|| ::getDireccionesController():loadMainBlankBuffer() } )
    ::getModel():setEvent( 'insertedBuffer',                 {|| ::getDireccionesController():insertBuffer() } )
@@ -110,6 +125,10 @@ METHOD End() CLASS TercerosController
 
    if !empty(::oGetSelector)
       ::oGetSelector:End()
+   end if 
+
+    if !empty( ::oModel )
+      ::oModel:End()
    end if 
 
 RETURN ( ::Super:End() )

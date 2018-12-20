@@ -12,8 +12,6 @@ CLASS ClientesController FROM TercerosController
    METHOD validColumnAgentesBrowse( uValue, nKey ) ;
                                        INLINE ( ::validColumnBrowse( uValue, nKey, ::getAgentesController():oModel, "agente_uuid" ) )
 
-   METHOD getBrowseView()              INLINE ( iIf( empty( ::oBrowseView ), ::oBrowseView := ClientesBrowseView():New( self ), ), ::oBrowseView )
-
    METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLClientesModel():New( self ), ), ::oModel )
 
    METHOD getSelector()                INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := ClientGetSelector():New( self ), ), ::oGetSelector )
@@ -35,8 +33,6 @@ METHOD New( oController ) CLASS ClientesController
    ::hImage                            := {  "16" => "gc_user_16",;
                                              "32" => "gc_user_32",;
                                              "48" => "gc_user2_48" }
-
-   ::Super:New( oController )
 
 RETURN ( Self )
 
