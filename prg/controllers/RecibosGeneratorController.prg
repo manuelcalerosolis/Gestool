@@ -141,6 +141,8 @@ RETURN ( nil )
 
    ::hPaymentDays       := SQLClientesModel():getPaymentDays( ::oController:getModelBuffer( 'tercero_codigo' ) )
 
+   msgalert( hb_valtoexp( ::hPaymentDays ), "hPaymentDays" )
+
    ::aPaymentDays       := { hget( ::hPaymentDays, "primer_dia_pago" ), hget( ::hPaymentDays, "segundo_dia_pago" ), hget( ::hPaymentDays, "tercer_dia_pago" ) }
    
    ::processPaids()

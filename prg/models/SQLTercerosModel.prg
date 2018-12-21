@@ -3,9 +3,9 @@
 
 CLASS SQLTercerosModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "terceros"
+   DATA cTableName                     INIT "terceros"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( codigo, deleted_at )"
 
    METHOD getColumns()
 
@@ -246,24 +246,30 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLTercerosModel
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
-METHOD getSentencePaymentDays( cId ) CLASS SQLTercerosModel
+
+METHOD getSentencePaymentDays( cCodigoTercero ) CLASS SQLTercerosModel
 
    local cSql
 
    TEXT INTO cSql
 
-      SELECT %2$s.primer_dia_pago AS primer_dia_pago,
-         %2$s.segundo_dia_pago AS segundo_dia_pago,
-         %2$s.tercer_dia_pago AS tercer_dia_pago,
-         %2$s.mes_vacaciones AS mes_vacaciones 
+   SELECT 
+      primer_dia_pago AS primer_dia_pago,
+      segundo_dia_pago AS segundo_dia_pago,
+      tercer_dia_pago AS tercer_dia_pago,
+      mes_vacaciones AS mes_vacaciones 
 
-      FROM %1$s AS %2$s
+   FROM %1$s
 
-      WHERE %2$s.codigo = %3$s  
+   WHERE codigo = %2$s  
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), ::cTableName, quoted( cId ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( cCodigoTercero ) )
+
+   logwrite( cSql )
+   msgalert( cSql )
 
 RETURN ( cSql )
+
 //---------------------------------------------------------------------------//
