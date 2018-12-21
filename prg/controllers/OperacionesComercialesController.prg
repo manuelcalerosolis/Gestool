@@ -23,6 +23,8 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD editConfig()
 
+   METHOD Editing()
+
    METHOD loadedBlankBuffer() 
 
    METHOD loadedDuplicateBuffer() 
@@ -61,6 +63,8 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
    METHOD getConfigItems()
 
    METHOD calculateTotals( uuidFactura )  
+
+   METHOD getTotalDocument( uuidFactura ) INLINE ( ::getRepository():getTotalDocument( uuidFactura ) )
 
    METHOD getTotalesDocument( uuidFactura ) ;
                                           INLINE ( ::getRepository():getTotalesDocument( uuidFactura ) )
@@ -139,6 +143,8 @@ METHOD New( oController ) CLASS OperacionesComercialesController
 
    ::lOthers                           := .t.
 
+   ::setEvent( 'editing', {|| ::Editing() } )
+
    ::getNavigatorView():getMenuTreeView():setEvent( 'addingDeleteButton', { || .f. } )
    ::getNavigatorView():getMenuTreeView():setEvent( 'addedPdfButton', {|| ::addExtraButtons() } )
 
@@ -208,6 +214,20 @@ RETURN ( ::getConfiguracionesController():Edit() )
 
 //---------------------------------------------------------------------------//
 
+METHOD Editing( nId ) CLASS OperacionesComercialesController
+
+   local nRecibosPagados   
+
+   nRecibosPagados         := RecibosPagosRepository():selectFunctionTotalPaidWhereFacturaUuid( ::getUuidFromRowSet() )
+
+   if nRecibosPagados > 0
+      msgstop( nRecibosPagados, "La factura contiene recibos pagados" )
+   end if 
+   
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
 METHOD loadedBlankBuffer() CLASS OperacionesComercialesController 
 
    ::setModelBuffer( "serie", ::getContadoresModel():getLastSerie( ::getName() ) )
@@ -222,24 +242,13 @@ RETURN ( nil )
 
 METHOD loadedDuplicateBuffer() CLASS OperacionesComercialesController 
 
-   ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) )
-
-RETURN ( nil )
+RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD insertingBuffer() CLASS OperacionesComercialesController 
 
-   msgalert( "entrada en insertingBuffer" )
-
-   if ::isAppendOrDuplicateMode()
-
-      msgalert( "insertingBuffer" )
-
-      ::setModelBuffer( "numero", ::getContadoresModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) )
-   end if 
-
-RETURN ( nil )
+RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
