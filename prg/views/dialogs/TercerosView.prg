@@ -5,7 +5,7 @@ CLASS TercerosView FROM SQLBaseView
 
    DATA oTipo
 
-   DATA aTipo INIT { "Cliente", "Proveedor", "Ambos" }
+   DATA aTipo INIT { "Cliente", "Proveedor", "Cliente y Proveedor" }
   
    DATA oExplorerBar
 

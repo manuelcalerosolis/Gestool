@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch" 
+#include "Factu.ch"
 
 CLASS SQLTercerosModel FROM SQLCompanyModel
 
@@ -11,7 +11,7 @@ CLASS SQLTercerosModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
-   METHOD getByUuid( uuid ) 
+   METHOD getByUuid( uuid )
 
    METHOD getSentenceClienteDireccionPrincipal( cBy, cId )
 
@@ -21,6 +21,10 @@ CLASS SQLTercerosModel FROM SQLCompanyModel
    METHOD getSentencePaymentDays( cId )
 
    METHOD getPaymentDays( cId )        INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentencePaymentDays( cId ) ) ) )
+
+   METHOD isWhereCodigoNotDeletedAndClient( cCodigo, lDeleted )
+
+   METHOD isWhereCodigoNotDeletedAndProveedor( cCodigo, lDeleted )
 
 END CLASS
 
@@ -43,7 +47,7 @@ METHOD getColumns() CLASS SQLTercerosModel
    hset( ::hColumns, "dni",                        {  "create"    => "VARCHAR( 20 )"                              ,;
                                                       "default"   => {|| space( 20 ) } }                          )
 
-   hset( ::hColumns, "tipo",                       {  "create"     => "ENUM( 'Cliente', 'Proveedor', 'Ambos' )"  ,;
+   hset( ::hColumns, "tipo",                       {  "create"     => "ENUM( 'Cliente', 'Proveedor', 'Cliente y Proveedor' )"  ,;
                                                       "default"    => {|| 'Cliente' }  }                          )
 
    hset( ::hColumns, "metodo_pago_codigo",         {  "create"    => "VARCHAR( 20 )"                              ,;
@@ -116,7 +120,7 @@ METHOD getColumns() CLASS SQLTercerosModel
                                                       "default"   => {|| .f. } }                                  )
 
    hset( ::hColumns, "fecha_peticion_riesgo",      {  "create"    => "DATE"                                       ,;
-                                                      "default"   => {|| ctod( "" ) } }                           ) 
+                                                      "default"   => {|| ctod( "" ) } }                           )
 
    hset( ::hColumns, "fecha_concesion_riesgo",     {  "create"    => "DATE"                                       ,;
                                                       "default"   => {|| ctod( "" ) } }                           )
@@ -136,7 +140,7 @@ METHOD getColumns() CLASS SQLTercerosModel
    ::getTimeStampColumns()
 
    ::getDeletedStampColumn()
-   
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
@@ -157,8 +161,8 @@ METHOD getInitialSelect() CLASS SQLTercerosModel
       terceros.fecha_ultima_llamada AS fecha_ultima_llamada,
       terceros.metodo_pago_codigo AS metodo_pago_codigo,
       terceros.recargo_equivalencia AS recargo_equivalencia,
-      metodos_pago.nombre AS nombre_metodo_pago,                                                         
-      terceros.agente_codigo AS agente_codigo,                                                       
+      metodos_pago.nombre AS nombre_metodo_pago,
+      terceros.agente_codigo AS agente_codigo,
       agentes.nombre AS nombre_agente,
       terceros.cliente_grupo_codigo AS cliente_grupo_codigo,
       clientes_grupos.nombre AS nombre_grupo_cliente,
@@ -174,13 +178,13 @@ METHOD getInitialSelect() CLASS SQLTercerosModel
       direcciones.movil AS movil,
       tarifas.codigo AS tarifa_codigo,
       tarifas.nombre AS tarifa_nombre,
-      terceros.deleted_at 
+      terceros.deleted_at
    FROM %1$s AS terceros
-      LEFT JOIN %2$s AS direcciones 
-         ON terceros.uuid = direcciones.parent_uuid AND direcciones.codigo = 0  
-      LEFT JOIN %3$s AS metodos_pago  
+      LEFT JOIN %2$s AS direcciones
+         ON terceros.uuid = direcciones.parent_uuid AND direcciones.codigo = 0
+      LEFT JOIN %3$s AS metodos_pago
          ON terceros.metodo_pago_codigo = metodos_pago.codigo
-      LEFT JOIN %4$s AS agentes   
+      LEFT JOIN %4$s AS agentes
          ON terceros.agente_codigo = agentes.codigo
       LEFT JOIN %5$s AS rutas
          ON terceros.ruta_codigo = rutas.codigo
@@ -188,7 +192,7 @@ METHOD getInitialSelect() CLASS SQLTercerosModel
          ON terceros.cliente_grupo_codigo = clientes_grupos.codigo
       LEFT JOIN %7$s AS cuentas_remesa
          ON terceros.cuenta_remesa_codigo = cuentas_remesa.codigo
-      LEFT JOIN %8$s AS tarifas 
+      LEFT JOIN %8$s AS tarifas
          ON terceros.tarifa_codigo = tarifas.codigo
 
    ENDTEXT
@@ -229,15 +233,15 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLTercerosModel
          direcciones.poblacion AS poblacion,
          direcciones.provincia AS provincia,
          direcciones.codigo_postal AS codigo_postal,
-         direcciones.telefono AS telefono,         
-         direcciones.movil AS movil,               
-         direcciones.email AS email                
+         direcciones.telefono AS telefono,
+         direcciones.movil AS movil,
+         direcciones.email AS email
       FROM %1$s AS %2$s
          LEFT JOIN %3$s direcciones
             ON %2$s.uuid = direcciones.parent_uuid AND direcciones.codigo = 0
          LEFT JOIN %4$s tarifas
             ON %2$s.tarifa_codigo = tarifas.codigo
-      WHERE %2$s.%5$s = %6$s  
+      WHERE %2$s.%5$s = %6$s
 
    ENDTEXT
 
@@ -253,15 +257,15 @@ METHOD getSentencePaymentDays( cCodigoTercero ) CLASS SQLTercerosModel
 
    TEXT INTO cSql
 
-   SELECT 
+   SELECT
       primer_dia_pago AS primer_dia_pago,
       segundo_dia_pago AS segundo_dia_pago,
       tercer_dia_pago AS tercer_dia_pago,
-      mes_vacaciones AS mes_vacaciones 
+      mes_vacaciones AS mes_vacaciones
 
    FROM %1$s
 
-   WHERE codigo = %2$s  
+   WHERE codigo = %2$s
 
    ENDTEXT
 
