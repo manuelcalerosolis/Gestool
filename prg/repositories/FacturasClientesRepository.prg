@@ -436,6 +436,7 @@ METHOD getSentenceTotalDocument( uuidFacturaCliente ) CLASS FacturasClientesRepo
 
    SELECT
       SUM( totales.importe_total ) AS total_documento
+      
    FROM ( %1$s ) AS totales
 
    ENDTEXT
