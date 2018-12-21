@@ -43,7 +43,9 @@ CLASS RecibosGeneratorController
 
    METHOD getMetodoPago()
 
-   METHOD generate()
+   METHOD Generate()
+
+   METHOD Update()
 
    METHOD insertRecibo( nTermAmount )
 
@@ -51,7 +53,9 @@ CLASS RecibosGeneratorController
 
    METHOD insertReciboPago()
 
-   METHOD processPaids()
+   METHOD generatePaids()
+
+   METHOD updatePaid()
 
    METHOD getController()              INLINE ( ::oController ) 
    
@@ -119,7 +123,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
- METHOD generate() CLASS RecibosGeneratorController
+ METHOD Generate() CLASS RecibosGeneratorController
    
    ::nReceiptNumber     := 1
 
@@ -141,13 +145,23 @@ RETURN ( nil )
 
    ::hPaymentDays       := SQLTercerosModel():getPaymentDays( ::oController:getModelBuffer( 'tercero_codigo' ) )
 
-   msgalert( hb_valtoexp( ::hPaymentDays ), "hPaymentDays" )
-
    ::aPaymentDays       := { hget( ::hPaymentDays, "primer_dia_pago" ), hget( ::hPaymentDays, "segundo_dia_pago" ), hget( ::hPaymentDays, "tercer_dia_pago" ) }
    
-   ::processPaids()
+   ::generatePaids()
    
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD Update() CLASS RecibosGeneratorController
+   
+   ::nTotalToPaid       := ::getTotalToPay()
+
+   if empty( ::nTotalToPaid )
+      RETURN ( nil )
+   end if 
+   
+RETURN ( ::updatePaid() )
 
 //---------------------------------------------------------------------------//
 
@@ -326,7 +340,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD processPaids() CLASS RecibosGeneratorController
+METHOD generatePaids() CLASS RecibosGeneratorController
 
    local nTerm
    local nTotalTerm
@@ -348,6 +362,18 @@ METHOD processPaids() CLASS RecibosGeneratorController
       ::nReceiptNumber++
 
    next
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD updatePaid() CLASS RecibosGeneratorController
+   
+   local uuidRecibo     := RecibosRepository():getLastNoPaidWhereFacturaUuid( ::getController():getuuid() )
+
+   if !empty( uuidRecibo )
+      ::getModel():updateFieldsWhere( { 'importe' => 'importe + ' + toSQLString( ::nTotalToPaid ) }, { 'uuid' => uuidRecibo } )
+   end if 
 
 RETURN ( nil )
 

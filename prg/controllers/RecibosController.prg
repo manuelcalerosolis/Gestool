@@ -725,6 +725,11 @@ CLASS RecibosRepository FROM SQLBaseRepository
    METHOD getImporteWhereFacturaUuid( uuidFactura ) ;
                                        INLINE ( ::getDatabase():getValue( ::getSentenceImporteWhereFacturaUuid( uuidFactura ), 0 ) )
 
+   METHOD getSentenceLastNoPaidWhereFacturaUuid( uuidFactura )
+
+   METHOD getLastNoPaidWhereFacturaUuid( uuidFactura ) ;
+                                       INLINE ( ::getDatabase():getValue( ::getSentenceLastNoPaidWhereFacturaUuid( uuidFactura ) ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -745,6 +750,37 @@ METHOD getSentenceImporteWhereFacturaUuid( uuidFactura ) CLASS RecibosRepository
    ENDTEXT
 
    cSql  := hb_strformat(  cSql, ::getTableName(), quoted( uuidFactura ) )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceLastNoPaidWhereFacturaUuid( uuidFactura ) CLASS RecibosRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT 
+      recibos.uuid 
+
+   FROM %1$s AS recibos
+
+   LEFT JOIN %2$s AS recibos_pagos
+      ON recibos_pagos.recibo_uuid = recibos.uuid
+
+   LEFT JOIN %3$s AS pagos
+      ON pagos.uuid = recibos_pagos.pago_uuid
+
+   WHERE recibos.parent_uuid = %4$s
+      AND IFNULL( recibos_pagos.importe, 0 ) = 0 
+      AND IFNULL( pagos.estado, '' ) <> 'Presentado'
+
+   ORDER BY recibos.id DESC LIMIT 1
+
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql, ::getTableName(), SQLRecibosPagosModel():getTableName(), SQLPagosModel():getTableName(), quoted( uuidFactura ) )
 
 RETURN ( cSql )
 

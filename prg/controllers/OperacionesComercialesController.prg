@@ -19,6 +19,7 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD End()
 
+
    METHOD addExtraButtons()                  VIRTUAL
 
    METHOD editConfig()
@@ -29,7 +30,9 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD loadedDuplicateBuffer() 
 
-   METHOD loadedBuffer()                     INLINE ( ::getHistoryManager():Set( ::getModel():hBuffer ) )
+
+   METHOD loadedBuffer()               INLINE ( ::getHistoryManager():Set( ::getModel():hBuffer ) )
+
 
    METHOD insertingBuffer()
 
@@ -37,7 +40,9 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD getClientUuid() 
 
-   METHOD isClientFilled()                   INLINE ( !empty( ::getModelBuffer( "tercero_codigo" ) ) )
+
+   METHOD isClientFilled()             INLINE ( !empty( ::getModelBuffer( "tercero_codigo" ) ) )
+
 
    METHOD clientesSettedHelpText()
 
@@ -58,6 +63,7 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
    METHOD clientSetDescuentos()
 
    METHOD hasLines()
+
    METHOD hasNotLines()                      INLINE ( !::hasLines() )
 
    METHOD getConfigItems()
@@ -74,10 +80,10 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD getHashSentenceLineas( uuidFactura ) ;
                                              INLINE ( ::getRepository():getHashSentenceLineas( uuidFactura ) )
-
    METHOD hasNotPaid( uuidFactura )
 
    // Impresiones--------------------------------------------------------------
+
 
    METHOD getDocumentPrint()                 INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_impresion', '' ) )
 
@@ -135,7 +141,7 @@ METHOD New( oController ) CLASS OperacionesComercialesController
 
    ::lTransactional                    := .t.
 
-   // ::lInsertable                       := .t.
+   ::lInsertable                       := .t.
 
    ::lConfig                           := .t.
 
@@ -154,7 +160,7 @@ METHOD New( oController ) CLASS OperacionesComercialesController
    ::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )
    ::getModel():setEvent( 'loadedDuplicateBuffer', {|| ::loadedDuplicateBuffer() } )
    ::getModel():setEvent( 'updatedBuffer',         {|| ::updatedBuffer() } )
-   ::getModel():setEvent( 'insertingBuffer',       {|| ::insertingBuffer(), ::updatedBuffer() } )
+   ::getModel():setEvent( 'insertingBuffer',       {|| ::insertingBuffer() } )
 
    ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',              {|| ::isClientFilled() } ) 
    ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence',  {|| ::getClientUuid() } )
@@ -218,12 +224,16 @@ RETURN ( ::getConfiguracionesController():Edit() )
 
 METHOD Editing( nId ) CLASS OperacionesComercialesController
 
+   local nTotalDocumento
    local nRecibosPagados   
 
    nRecibosPagados         := RecibosPagosRepository():selectFunctionTotalPaidWhereFacturaUuid( ::getUuidFromRowSet() )
 
-   if nRecibosPagados > 0
-      msgstop( nRecibosPagados, "La factura contiene recibos pagados" )
+   nTotalDocumento         := ::getTotalDocument( ::getUuidFromRowSet() )
+
+   if nRecibosPagados >= nTotalDocumento
+      msgstop( "La factura esta completamete pagada", "No esta permitida la edición" )
+      RETURN ( .f. )
    end if 
    
 RETURN ( .t. )
@@ -250,13 +260,17 @@ RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::ge
 
 METHOD insertingBuffer() CLASS OperacionesComercialesController 
 
-RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) ) )
+   ::setModelBuffer( "numero", ::getContadoresModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) )
+
+   ::getRecibosGeneratorController():generate()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD updatedBuffer() CLASS OperacionesComercialesController 
 
-RETURN ( ::getRecibosGeneratorController():generate() )
+RETURN ( ::getRecibosGeneratorController():Update() )
 
 //---------------------------------------------------------------------------//
 

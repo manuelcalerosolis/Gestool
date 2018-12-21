@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch" 
+#include "Factu.ch"
 
 //---------------------------------------------------------------------------//
 
@@ -23,16 +23,16 @@ CLASS FacturasClientesController FROM OperacionesComercialesController
 
    // Contrucciones tardias----------------------------------------------------
 
-   METHOD getName()                       INLINE ( "facturas_clientes" )
+   METHOD getName()                    INLINE ( "facturas_clientes" )
 
-   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasClientesModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasClientesModel():New( self ), ), ::oModel )
 
-   METHOD getValidator()                  INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasClientesValidator():New( self ), ), ::oValidator ) 
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasClientesValidator():New( self ), ), ::oValidator )
 
-   METHOD getBrowseView()                 INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasClientesRepository():New( self ), ), ::oRepository )
-   
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasClientesRepository():New( self ), ), ::oRepository )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -43,7 +43,7 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::cTitle                            := "Facturas de ventas"
 
-   ::cName                             := "facturas_clientes" 
+   ::cName                             := "facturas_clientes"
 
    ::hImage                            := {  "16" => "gc_document_text_user_16",;
                                              "32" => "gc_document_text_user_32",;
@@ -57,15 +57,15 @@ METHOD End() CLASS FacturasClientesController
 
    if !empty( ::oModel )
       ::oModel:End()
-   end if 
+   end if
 
    if !empty( ::oDialogView )
       ::oDialogView:End()
-   end if 
+   end if
 
    if !empty( ::oValidator )
       ::oValidator:End()
-   end if 
+   end if
 
    if !empty( ::oRepository )
       ::oRepository:End()
@@ -73,7 +73,7 @@ METHOD End() CLASS FacturasClientesController
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
-   end if 
+   end if
 
 RETURN ( ::Super:End() )
 
@@ -81,7 +81,7 @@ RETURN ( ::Super:End() )
 
 METHOD addExtraButtons() CLASS FacturasClientesController
 
-   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturae 3.2", "gc_document_text_earth_16", {|| ::getFacturasClientesFacturaeController():Run( ::getBrowseView():getBrowseSelected() ) } ) 
+   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturae 3.2", "gc_document_text_earth_16", {|| ::getFacturasClientesFacturaeController():Run( ::getBrowseView():getBrowseSelected() ) } )
 
 RETURN ( nil )
 
@@ -91,7 +91,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesValidator FROM OperacionesComercialesValidator 
+CLASS FacturasClientesValidator FROM OperacionesComercialesValidator
 
    METHOD New( oController )
 
@@ -109,8 +109,8 @@ RETURN ( ::Super:New( oController ) )
 
 METHOD getValidators() CLASS FacturasClientesValidator
 
-   hset( ::Super:getValidators(), "tercero_codigo",   {  "required"        => "El código del cliente es un dato requerido",;
-                                                         "clienteExist"    => "El código del cliente no existe" } )
+   hset( ::Super:getValidators(), "tercero_codigo",   {  "required"        => "El cï¿½digo del cliente es un dato requerido",;
+                                                         "clienteExist"    => "El cï¿½digo del cliente no existe" } )
 
 RETURN ( ::hValidators )
 
@@ -132,11 +132,11 @@ CLASS TestFacturasClientesController FROM TestCase
 
    METHOD testFacturaConUnidadesDeMedicion()
 
-   METHOD testDialogoWithNoLines() 
+   METHOD testDialogoWithNoLines()
 
-   METHOD testDialogoVentasPorCajas() 
+   METHOD testDialogoVentasPorCajas()
 
-   METHOD testDialogoTarifaMayorista()    
+   METHOD testDialogoTarifaMayorista()
 
 END CLASS
 
@@ -148,12 +148,12 @@ METHOD initModels() CLASS TestFacturasClientesController
    SQLDireccionesModel():truncateTable()
    SQLAlmacenesModel():truncateTable()
    SQLMetodoPagoModel():truncateTable()
-   SQLFacturasClientesModel():truncateTable() 
-   SQLFacturasClientesLineasModel():truncateTable() 
+   SQLFacturasClientesModel():truncateTable()
+   SQLFacturasClientesLineasModel():truncateTable()
    SQLFacturasClientesDescuentosModel():truncateTable()
    SQLArticulosModel():truncateTable()
-   
-   SQLArticulosTarifasModel():truncateTable() 
+
+   SQLArticulosTarifasModel():truncateTable()
 
    SQLTercerosModel():testCreateContado()
    SQLTercerosModel():testCreateTarifaMayorista()
@@ -163,8 +163,8 @@ METHOD initModels() CLASS TestFacturasClientesController
    SQLArticulosModel():testCreateArticuloConUnidadeDeMedicionCajasPalets()
    SQLArticulosModel():testCreateArticuloConTarifaMayorista()
 
-   SQLArticulosTarifasModel():testCreateTarifaBase() 
-   SQLArticulosTarifasModel():testCreateTarifaMayorista() 
+   SQLArticulosTarifasModel():testCreateTarifaBase()
+   SQLArticulosTarifasModel():testCreateTarifaMayorista()
 
 RETURN ( nil )
 
@@ -172,7 +172,7 @@ RETURN ( nil )
 
 METHOD testCalculoFacturaConDescuento() CLASS TestFacturasClientesController
 
-   local uuid  
+   local uuid
    local hTotal
    local oController
 
@@ -180,19 +180,19 @@ METHOD testCalculoFacturaConDescuento() CLASS TestFacturasClientesController
 
    uuid        := win_uuidcreatestring()
 
-   SQLFacturasClientesModel():testCreateFactura( uuid ) 
+   SQLFacturasClientesModel():testCreateFactura( uuid )
 
-   SQLFacturasClientesLineasModel():testCreateIVAal0Con10PorcientoDescuento( uuid ) 
-   SQLFacturasClientesLineasModel():testCreateIVAal10Con15PorcientoDescuento( uuid ) 
-   SQLFacturasClientesLineasModel():testCreateIVAal21Con20PorcientoDescuento( uuid ) 
+   SQLFacturasClientesLineasModel():testCreateIVAal0Con10PorcientoDescuento( uuid )
+   SQLFacturasClientesLineasModel():testCreateIVAal10Con15PorcientoDescuento( uuid )
+   SQLFacturasClientesLineasModel():testCreateIVAal21Con20PorcientoDescuento( uuid )
 
-   SQLFacturasClientesDescuentosModel():testCreatel0PorCiento( uuid )   
-   SQLFacturasClientesDescuentosModel():testCreate20PorCiento( uuid )   
-   SQLFacturasClientesDescuentosModel():testCreate30PorCiento( uuid )   
+   SQLFacturasClientesDescuentosModel():testCreatel0PorCiento( uuid )
+   SQLFacturasClientesDescuentosModel():testCreate20PorCiento( uuid )
+   SQLFacturasClientesDescuentosModel():testCreate30PorCiento( uuid )
 
-   oController := FacturasClientesController():New() 
+   oController := FacturasClientesController():New()
 
-   hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
+   hTotal      := oController:getRepository():getTotalesDocument( uuid )
 
    ::assert:equals( 112.120000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
 
@@ -204,7 +204,7 @@ RETURN ( nil )
 
 METHOD testCalculoFacturaConIncremento() CLASS TestFacturasClientesController
 
-   local uuid  
+   local uuid
    local hTotal
    local oController
 
@@ -212,13 +212,13 @@ METHOD testCalculoFacturaConIncremento() CLASS TestFacturasClientesController
 
    uuid        := win_uuidcreatestring()
 
-   SQLFacturasClientesModel():testCreateFactura( uuid ) 
+   SQLFacturasClientesModel():testCreateFactura( uuid )
 
-   SQLFacturasClientesLineasModel():testCreateIVAal21ConIncrememtoPrecio( uuid ) 
+   SQLFacturasClientesLineasModel():testCreateIVAal21ConIncrememtoPrecio( uuid )
 
-   oController := FacturasClientesController():New() 
+   oController := FacturasClientesController():New()
 
-   hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
+   hTotal      := oController:getRepository():getTotalesDocument( uuid )
 
    ::assert:equals( 7.720000, hget( hTotal, "total_documento" ), "test creacion de factura con incremento" )
 
@@ -230,7 +230,7 @@ RETURN ( nil )
 
 METHOD testFacturaConUnidadesDeMedicion() CLASS TestFacturasClientesController
 
-   local uuid  
+   local uuid
    local hTotal
    local oController
 
@@ -238,13 +238,13 @@ METHOD testFacturaConUnidadesDeMedicion() CLASS TestFacturasClientesController
 
    uuid        := win_uuidcreatestring()
 
-   SQLFacturasClientesModel():testCreateFactura( uuid ) 
+   SQLFacturasClientesModel():testCreateFactura( uuid )
 
-   SQLFacturasClientesLineasModel():testCreate10PorCientoDescuento15Incremento( uuid ) 
+   SQLFacturasClientesLineasModel():testCreate10PorCientoDescuento15Incremento( uuid )
 
-   oController := FacturasClientesController():New() 
+   oController := FacturasClientesController():New()
 
-   hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
+   hTotal      := oController:getRepository():getTotalesDocument( uuid )
 
    ::assert:equals( 103.500000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
 
@@ -277,7 +277,7 @@ METHOD testDialogoWithNoLines() CLASS TestFacturasClientesController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( oController:Append(), "test creación de factura sin lineas" )
+   ::assert:false( oController:Append(), "test creaciï¿½n de factura sin lineas" )
 
    oController:End()
 
@@ -316,7 +316,7 @@ METHOD testDialogoVentasPorCajas() CLASS TestFacturasClientesController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( oController:Append(), "test creación de factura con ventas por cajas" )
+   ::assert:true( oController:Append(), "test creaciï¿½n de factura con ventas por cajas" )
 
    oController:End()
 
@@ -355,7 +355,7 @@ METHOD testDialogoTarifaMayorista() CLASS TestFacturasClientesController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( oController:Append(), "test creación de factura con ventas por cajas" )
+   ::assert:true( oController:Append(), "test creaciï¿½n de factura con ventas por cajas" )
 
    oController:End()
 
@@ -364,4 +364,3 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 #endif
-
