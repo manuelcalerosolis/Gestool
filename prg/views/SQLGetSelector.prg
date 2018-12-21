@@ -197,7 +197,7 @@ RETURN ( ::oGet )
 METHOD helpAction() CLASS GetSelector
 
    local hResult
-
+  
    if isFalse( ::fireEvent( 'helping' ) )
       RETURN ( .f. )
    end if

@@ -206,7 +206,7 @@ METHOD activateSelectorView( lCenter )
    end if
 
    ::buildRowSetSentence()   
-
+   
    if empty( ::getRowSet():get() )
       RETURN ( nil )
    end if

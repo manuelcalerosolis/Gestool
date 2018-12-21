@@ -181,7 +181,7 @@ METHOD buildRowSetSentence( cType )
       cColumnOrientation      := ::getBrowseView():getColumnOrientationView( cType, ::getName() )
 
    end if 
-
+   
    ::getRowSet():Build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
 
 RETURN ( nil )
