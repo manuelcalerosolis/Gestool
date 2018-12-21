@@ -37,7 +37,7 @@ METHOD New( oController ) CLASS FacturasProveedoresController
 
    ::Super:New( oController )
 
-   ::cTitle                            := "Facturas de proveedores"
+   ::cTitle                            := "Facturas de compras"
 
    ::cName                             := "facturas_proveedores" 
 

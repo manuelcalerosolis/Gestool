@@ -45,6 +45,8 @@ CLASS OperacionesComercialesView FROM SQLBaseView
 
    METHOD defaultTitle()
 
+   METHOD getPrompt()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -62,7 +64,7 @@ METHOD Activate() CLASS OperacionesComercialesView
       OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
-      PROMPT      "Facturas de clientes" ;
+      PROMPT      ::getPrompt() ;
       ID          800 ;
       FONT        oFontBold() ;
       OF          ::oDialog
@@ -335,7 +337,7 @@ RETURN ( ::getController():getTercerosLineasController():AppendLineal() )
 
 //---------------------------------------------------------------------------//
 
-METHOD defaultTitle()
+METHOD defaultTitle() CLASS OperacionesComercialesView
 
    local cTitle  := ::oController:getTitle() + " : " 
 
@@ -357,6 +359,17 @@ METHOD defaultTitle()
 
 RETURN ( cTitle )
 
+//---------------------------------------------------------------------------//
+
+METHOD getPrompt() CLASS OperacionesComercialesView
+
+if ::oController:isClient()
+   RETURN ( "Factura de venta"  )
+end if 
+
+RETURN ( "Factura de compra"  )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
