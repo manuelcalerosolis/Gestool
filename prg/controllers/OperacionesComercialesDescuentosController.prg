@@ -1,0 +1,453 @@
+#include "FiveWin.Ch"
+#include "Factu.ch" 
+
+//---------------------------------------------------------------------------//
+
+CLASS OperacionesComercialesDescuentosController FROM SQLBrowseController
+
+   METHOD New() CONSTRUCTOR
+
+   METHOD End()
+
+   METHOD updateField( cField, uValue )
+
+   METHOD validateNombre( uValue )
+
+   METHOD validateDescuento( uValue )
+
+   //Construcciones tardias----------------------------------------------------
+   
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesDescuentosBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesDescuentosView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := OperacionesComercialesDescuentosValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := OperacionesComercialesDescuentosRepository():New( self ), ), ::oRepository )
+
+   //METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasClientesDescuentosModel():New( self ), ), ::oModel )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( oController ) CLASS OperacionesComercialesDescuentosController
+
+   ::Super:New( oController )
+
+   ::cTitle                      := "Facturas clientes descuentos"
+
+   ::cName                       := "facturas_clientes_descuentos"
+
+   ::hImage                      := {  "16" => "gc_symbol_percent_16",;
+                                       "32" => "gc_symbol_percent_32",;
+                                       "48" => "gc_symbol_percent_48" }
+
+   ::lTransactional              := .t.
+
+   ::setEvent( 'exitAppended',   {|| ::getBrowseView():selectCol( ::getBrowseView():oColumnNombre:nPos ) } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End() CLASS OperacionesComercialesDescuentosController
+
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
+
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
+
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
+
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
+
+RETURN ( ::Super:End() )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateField( cField, uValue ) CLASS OperacionesComercialesDescuentosController
+
+   ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cField, uValue )
+   
+   ::getRowSet():Refresh()
+   
+   ::getBrowseView():Refresh()
+   
+   ::oController:calculateTotals() 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD validateDescuento() CLASS OperacionesComercialesDescuentosController
+
+   if empty( ::getRowSet:fieldGet( 'nombre' ) )
+      msgstop( "Debes introducir un nombre válido para el descuento" )
+      RETURN ( .f. )
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD validateNombre( oGet ) CLASS OperacionesComercialesDescuentosController
+
+   local cNombre  := oGet:varGet()
+
+   if empty( cNombre )
+      msgstop( "Debes introducir un nombre valido para el descuento" )
+      RETURN ( .f. )
+   end if
+ 
+   if !empty( ::getModel():CountNombreWhereFacturaUuid( cNombre ) )
+      msgstop( "El nombre del descuento introducido ya existe" )
+      RETURN ( .f. )
+   end if
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS OperacionesComercialesDescuentosBrowseView FROM SQLBrowseView
+
+   DATA lFastEdit          INIT .t.
+
+   DATA lFooter            INIT .t.
+
+   DATA nFreeze            INIT 1
+
+   DATA nMarqueeStyle      INIT 3
+
+   DATA oColumnNombre
+
+   METHOD addColumns()                       
+
+ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD addColumns() CLASS OperacionesComercialesDescuentosBrowseView
+
+   ::getColumnIdAndUuid()
+
+   with object ( ::oColumnNombre := ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Nombre'
+      :nWidth              := 130
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nEditType           := EDIT_GET
+      :bEditValid          := {| oGet, oCol | ::oController:validateNombre( oGet ) }
+      :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'nombre', uNewValue ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'descuento'
+      :cHeader             := 'Descuento %'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'descuento' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nFootStyle          := :nDataStrAlign               
+      :nFooterType         := AGGR_SUM
+      :cEditPicture        := "@E 999.9999"
+      :cFooterPicture      := :cEditPicture
+      :oFooterFont         := oFontBold()
+      :cDataType           := "N"
+      :nEditType           := EDIT_GET
+      :bEditValid          := {|| ::oController:validateDescuento() }
+      :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'descuento', uNewValue ) }
+   end with
+
+   ::getColumnDeletedAt()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS OperacionesComercialesDescuentosView FROM SQLBaseView
+  
+   METHOD Activate()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS OperacionesComercialesDescuentosView
+
+   DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "DESCUENTOS" ;
+      TITLE       ::LblTitle() + "descuento"
+
+   REDEFINE BITMAP ::oBitmap ;
+      ID          900 ;
+      RESOURCE    ::oController:getImage( "48" ) ;
+      TRANSPARENT ;
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      ID          800 ;
+      FONT        oFontBold() ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+      ID          110 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "descuento" ] ;
+      ID          100 ;
+      SPINNER ;
+      PICTURE     "@E 999.9999" ;
+      VALID       ( ::oController:validate( "descuento" ) ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+
+   if ::oController:isNotZoomMode() 
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
+   end if
+
+   ACTIVATE DIALOG ::oDialog CENTER
+
+RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS OperacionesComercialesDescuentosValidator FROM SQLBaseValidator
+
+   METHOD getValidators()
+ 
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getValidators() CLASS OperacionesComercialesDescuentosValidator
+
+   ::hValidators  := {  "descuento" =>           {  "required"              => "El porcentaje de descuento es un dato requerido" } }
+
+RETURN ( ::hValidators )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS SQLOperacionesComercialesDescuentosModel FROM SQLCompanyModel
+
+   //DATA cTableName               INIT "facturas_clientes_descuentos"
+
+   DATA cConstraints             INIT "PRIMARY KEY ( nombre, deleted_at, parent_uuid )"
+
+   METHOD getColumns() 
+
+   METHOD insertWhereClienteCodigo( cCodigoCliente )
+
+   METHOD countNombreWhereFacturaUuid( cNombre )
+
+   METHOD getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) 
+
+   METHOD selectDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) 
+
+/*#ifdef __TEST__   
+
+   METHOD testCreatel0PorCiento( uuid ) 
+
+   METHOD testCreate20PorCiento( uuid ) 
+
+   METHOD testCreate30PorCiento( uuid ) 
+
+#endif*/
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getColumns() CLASS SQLOperacionesComercialesDescuentosModel
+
+   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                          "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
+                                          "default"   => {|| win_uuidcreatestring() } }            )
+
+   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+                                          "default"   => {|| ::getControllerParentUuid() } }       )
+
+   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
+                                          "default"   => {|| space( 200 ) } }                      )
+
+   hset( ::hColumns, "descuento",      {  "create"    => "FLOAT( 7, 4 )"                           ,;
+                                          "default"   => {|| 0 } }                                 )
+
+   ::getDeletedStampColumn()
+
+RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertWhereClienteCodigo( cCodigoCliente ) CLASS SQLOperacionesComercialesDescuentosModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+      INSERT IGNORE INTO %1$s 
+         ( uuid, parent_uuid, nombre, descuento )
+
+      SELECT 
+         UUID(), %4$s, descuentos.nombre, descuentos.descuento
+
+      FROM %2$s AS descuentos
+
+      INNER JOIN %3$s AS clientes 
+         ON clientes.codigo = %5$s    
+
+      WHERE 
+         descuentos.parent_uuid = clientes.uuid
+         AND ( descuentos.fecha_fin IS NULL 
+               OR descuentos.fecha_fin >= curdate() 
+               ) 
+         AND ( descuentos.fecha_inicio IS NULL
+               OR descuentos.fecha_inicio <= curdate() )
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(), SQLTercerosModel():getTableName(), quoted( ::getControllerParentUuid() ), quoted( cCodigoCliente ) )
+
+RETURN ( getSQLDatabase():Exec ( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD CountNombreWhereFacturaUuid( cNombre ) CLASS SQLOperacionesComercialesDescuentosModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+      SELECT COUNT( facturas_clientes_descuentos.nombre )
+
+      FROM %1$s AS facturas_clientes_descuentos
+      
+      WHERE parent_uuid = %2$s
+         AND facturas_clientes_descuentos.nombre = %3$s
+         AND facturas_clientes_descuentos.deleted_at = 0
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( ::getControllerParentUuid() ), quoted( cNombre ) )
+
+RETURN ( getSQLDatabase():getValue( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) CLASS SQLOperacionesComercialesDescuentosModel 
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT 
+      facturas_clientes_descuentos.nombre AS nombre_descuento,
+      facturas_clientes_descuentos.descuento AS porcentaje_descuento, 
+      ROUND( facturas_clientes_descuentos.descuento * %3$s / 100, 2 ) AS importe_descuento
+   FROM %1$s AS facturas_clientes_descuentos 
+      WHERE facturas_clientes_descuentos.parent_uuid = %2$s 
+         AND facturas_clientes_descuentos.deleted_at = 0; 
+
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql,;
+                           SQLFacturasClientesDescuentosModel():getTableName(),;
+                           quoted( uuidFacturaCliente ),;
+                           toSqlString( importeBruto ) )
+
+RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) CLASS SQLOperacionesComercialesDescuentosModel
+
+RETURN ( ::getDatabase():selectTrimedFetchHash( ::getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) ) )
+
+//---------------------------------------------------------------------------//
+
+/*#ifdef __TEST__   
+
+METHOD testCreatel0PorCiento( uuid ) CLASS SQLOperacionesComercialesDescuentosModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "nombre", "Test 10" )
+   hset( hBuffer, "descuento", 10 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreate20PorCiento( uuid ) CLASS SQLOperacionesComercialesDescuentosModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "nombre", "Test 20" )
+   hset( hBuffer, "descuento", 20 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreate30PorCiento( uuid ) CLASS SQLOperacionesComercialesDescuentosModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "nombre", "Test 30" )
+   hset( hBuffer, "descuento", 30 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+#endif*/
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS OperacionesComercialesDescuentosRepository FROM SQLBaseRepository
+
+   METHOD getTableName()                  INLINE ( SQLOperacionesComercialesDescuentosModel():getTableName() ) 
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//

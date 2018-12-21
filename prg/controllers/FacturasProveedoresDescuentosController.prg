@@ -3,11 +3,11 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesDescuentosController FROM OperacionesComercialesDescuentosController
+CLASS FacturasProveedoresDescuentosController FROM OperacionesComercialesDescuentosController
 
    METHOD New() CONSTRUCTOR
 
-   METHOD End()
+   METHOD End() 
 
    //Construcciones tardias----------------------------------------------------
 
@@ -17,13 +17,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS FacturasClientesDescuentosController
+METHOD New( oController ) CLASS FacturasProveedoresDescuentosController
 
    ::Super:New( oController )
 
-   ::cTitle                      := "Facturas clientes descuentos"
+   ::cTitle                      := "Facturas proveedores descuentos"
 
-   ::cName                       := "facturas_clientes_descuentos"
+   ::cName                       := "facturas_proveedores_descuentos"
 
    ::hImage                      := {  "16" => "gc_symbol_percent_16",;
                                        "32" => "gc_symbol_percent_32",;
@@ -33,7 +33,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS FacturasClientesDescuentosController
+METHOD End() CLASS FacturasProveedoresDescuentosController
 
    if !empty( ::oModel )
       ::oModel:End()
@@ -47,9 +47,9 @@ RETURN ( ::Super:End() )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLFacturasClientesDescuentosModel FROM SQLOperacionesComercialesDescuentosModel
+CLASS SQLFacturasProveedoresDescuentosModel FROM SQLOperacionesComercialesDescuentosModel
 
-   DATA cTableName               INIT "facturas_clientes_descuentos"
+   DATA cTableName               INIT "facturas_proveedores_descuentos"
 END CLASS
 
 //---------------------------------------------------------------------------//

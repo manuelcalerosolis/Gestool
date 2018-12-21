@@ -19,7 +19,7 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD addExtraButtons()               VIRTUAL
+   METHOD addExtraButtons()                  VIRTUAL
 
    METHOD editConfig()
 
@@ -29,7 +29,7 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD loadedDuplicateBuffer() 
 
-   METHOD loadedBuffer()                  INLINE ( ::getHistoryManager():Set( ::getModel():hBuffer ) )
+   METHOD loadedBuffer()                     INLINE ( ::getHistoryManager():Set( ::getModel():hBuffer ) )
 
    METHOD insertingBuffer()
 
@@ -37,7 +37,7 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD getClientUuid() 
 
-   METHOD isClientFilled()                INLINE ( !empty( ::getModelBuffer( "tercero_codigo" ) ) )
+   METHOD isClientFilled()                   INLINE ( !empty( ::getModelBuffer( "tercero_codigo" ) ) )
 
    METHOD clientesSettedHelpText()
 
@@ -58,70 +58,72 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
    METHOD clientSetDescuentos()
 
    METHOD hasLines()
-   METHOD hasNotLines()                   INLINE ( !::hasLines() )
+   METHOD hasNotLines()                      INLINE ( !::hasLines() )
 
    METHOD getConfigItems()
 
    METHOD calculateTotals( uuidFactura )  
 
-   METHOD getTotalDocument( uuidFactura ) INLINE ( ::getRepository():getTotalDocument( uuidFactura ) )
+   METHOD getTotalDocument( uuidFactura )    INLINE ( ::getRepository():getTotalDocument( uuidFactura ) )
 
    METHOD getTotalesDocument( uuidFactura ) ;
-                                          INLINE ( ::getRepository():getTotalesDocument( uuidFactura ) )
+                                             INLINE ( ::getRepository():getTotalesDocument( uuidFactura ) )
    
    METHOD getTotalesDocumentGroupByIVA( uuidFactura ) ;
-                                          INLINE ( ::getRepository():getTotalesDocumentGroupByIVA( uuidFactura ) )
+                                             INLINE ( ::getRepository():getTotalesDocumentGroupByIVA( uuidFactura ) )
 
    METHOD getHashSentenceLineas( uuidFactura ) ;
-                                          INLINE ( ::getRepository():getHashSentenceLineas( uuidFactura ) )
+                                             INLINE ( ::getRepository():getHashSentenceLineas( uuidFactura ) )
 
    METHOD hasNotPaid( uuidFactura )
 
    // Impresiones--------------------------------------------------------------
 
-   METHOD getDocumentPrint()              INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_impresion', '' ) )
+   METHOD getDocumentPrint()                 INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_impresion', '' ) )
 
-   METHOD getDocumentPdf()                INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_pdf', '' ) )
+   METHOD getDocumentPdf()                   INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_pdf', '' ) )
 
-   METHOD getDocumentPreview()            INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_previsulizacion', '' ) )
+   METHOD getDocumentPreview()               INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_previsulizacion', '' ) )
 
-   METHOD getCopyPrint()                  INLINE ( ::getConfiguracionesController():getModelNumeric( ::getName(), 'copias_impresion', 1 ) )
+   METHOD getCopyPrint()                     INLINE ( ::getConfiguracionesController():getModelNumeric( ::getName(), 'copias_impresion', 1 ) )
 
-   METHOD getTemplateMails()              INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'plantilla_para_mails', '' ) )
+   METHOD getTemplateMails()                 INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'plantilla_para_mails', '' ) )
    
-   METHOD generateReport( hReport )       INLINE ( ::getReport():Generate( hReport ) )
+   METHOD generateReport( hReport )          INLINE ( ::getReport():Generate( hReport ) )
 
-   METHOD getSubject()                    VIRTUAL
+   METHOD getSubject()                       VIRTUAL
 
    // Contrucciones tardias----------------------------------------------------
 
-   METHOD getName()                       VIRTUAL
+   METHOD getName()                          VIRTUAL
    
-   METHOD getContadoresModel()            INLINE ( if( empty( ::oContadoresModel ), ::oContadoresModel := SQLContadoresModel():New( self ), ), ::oContadoresModel )
+   METHOD getContadoresModel()               INLINE ( if( empty( ::oContadoresModel ), ::oContadoresModel := SQLContadoresModel():New( self ), ), ::oContadoresModel )
 
-   METHOD getDialogView()                 INLINE ( if( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()                    INLINE ( if( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesView():New( self ), ), ::oDialogView )
 
-   METHOD getModel()                      VIRTUAL
+   METHOD getModel()                         VIRTUAL
 
-   METHOD getValidator()                  VIRTUAL  
+   METHOD getValidator()                     VIRTUAL  
 
-   METHOD getBrowseView()                 VIRTUAL
+   METHOD getBrowseView()                    VIRTUAL
 
-   METHOD getRepository()                 VIRTUAL  
+   METHOD getRepository()                    VIRTUAL  
    
-   METHOD getHistoryManager()             INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
+   METHOD getHistoryManager()                INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
    
-   METHOD getReport()                     INLINE ( if( empty( ::oReport ), ::oReport := FacturasClientesReport():New( self ), ), ::oReport )
+   METHOD getReport()                        INLINE ( if( empty( ::oReport ), ::oReport := FacturasClientesReport():New( self ), ), ::oReport )
 
-   METHOD getSerieDocumentoComponent()    INLINE ( if( empty( ::oSerieDocumentoComponent ), ::oSerieDocumentoComponent := SerieDocumentoComponent():New( self ), ), ::oSerieDocumentoComponent )
+   METHOD getSerieDocumentoComponent()       INLINE ( if( empty( ::oSerieDocumentoComponent ), ::oSerieDocumentoComponent := SerieDocumentoComponent():New( self ), ), ::oSerieDocumentoComponent )
 
    METHOD getNumeroDocumentoComponent() ;
-                                          INLINE ( if( empty( ::oNumeroDocumentoComponent ), ::oNumeroDocumentoComponent := NumeroDocumentoComponent():New( self ), ), ::oNumeroDocumentoComponent )
+                                             INLINE ( if( empty( ::oNumeroDocumentoComponent ), ::oNumeroDocumentoComponent := NumeroDocumentoComponent():New( self ), ), ::oNumeroDocumentoComponent )
 
    METHOD getFacturasClientesFacturaeController() ;
-                                          INLINE ( if( empty( ::oFacturasClientesFacturaeController ), ::oFacturasClientesFacturaeController := FacturasClientesFacturaeController():New( self ), ), ::oFacturasClientesFacturaeController )
+                                             INLINE ( if( empty( ::oFacturasClientesFacturaeController ), ::oFacturasClientesFacturaeController := FacturasClientesFacturaeController():New( self ), ), ::oFacturasClientesFacturaeController )
 
-   METHOD getTercerosLineasController()   VIRTUAL
+   METHOD getTercerosLineasController()      VIRTUAL
+
+   METHOD getTercerosDescuentosController()  VIRTUAL
 
 END CLASS
 
