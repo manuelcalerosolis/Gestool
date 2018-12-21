@@ -9,10 +9,15 @@ CLASS FacturasClientesController FROM OperacionesComercialesController
 
    METHOD End()
 
-   METHOD getTercerosLineasController() ;
-                                       INLINE ( ::getFacturasClientesLineasController() )
+   METHOD getTercerosLineasController()      INLINE ( ::getFacturasClientesLineasController() )
 
-   METHOD getSubject()                 INLINE ( "Factura de cliente número" )
+   METHOD getTercerosDescuentosController()  INLINE ( ::getFacturasClientesDescuentosController() )
+
+   METHOD isClient()                         INLINE ( .t. )
+
+   // Impresiones--------------------------------------------------------------
+
+   METHOD getSubject()                    INLINE ( "Factura de cliente nï¿½mero" )
 
    METHOD addExtraButtons()
 
@@ -104,8 +109,8 @@ RETURN ( ::Super:New( oController ) )
 
 METHOD getValidators() CLASS FacturasClientesValidator
 
-   hset( ::Super:getValidators(), "tercero_codigo",   {  "required"        => "El código del cliente es un dato requerido",;
-                                                         "clienteExist"    => "El código del cliente no existe" } )
+   hset( ::Super:getValidators(), "tercero_codigo",   {  "required"        => "El cï¿½digo del cliente es un dato requerido",;
+                                                         "clienteExist"    => "El cï¿½digo del cliente no existe" } )
 
 RETURN ( ::hValidators )
 
@@ -278,7 +283,7 @@ METHOD testDialogoWithNoLines() CLASS TestFacturasClientesController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( oController:Append(), "test creación de factura sin lineas" )
+   ::assert:false( oController:Append(), "test creaciï¿½n de factura sin lineas" )
 
    oController:End()
 
@@ -317,7 +322,7 @@ METHOD testDialogoVentasPorCajas() CLASS TestFacturasClientesController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( oController:Append(), "test creación de factura con ventas por cajas" )
+   ::assert:true( oController:Append(), "test creaciï¿½n de factura con ventas por cajas" )
 
    oController:End()
 
@@ -356,7 +361,7 @@ METHOD testDialogoTarifaMayorista() CLASS TestFacturasClientesController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( oController:Append(), "test creación de factura con ventas por cajas" )
+   ::assert:true( oController:Append(), "test creaciï¿½n de factura con ventas por cajas" )
 
    oController:End()
 

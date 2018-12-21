@@ -359,7 +359,9 @@ FacturasProveedoresController.prg 										\
 OperacionesComercialesLineasController.prg							\
 FacturasClientesLineasController.prg									\
 FacturasProveedoresLineasController.prg								\
+OperacionesComercialesDescuentosController.prg						\
 FacturasClientesDescuentosController.prg								\
+FacturasProveedoresDescuentosController.prg							\
 FacturasClientesLineasBrowse.prg											\
 FacturasClientesBrowseView.prg 											\
 FacturasProveedoresBrowseView.prg 										\
@@ -718,7 +720,9 @@ FacturasProveedoresController.obj 										\
 OperacionesComercialesLineasController.obj 							\
 FacturasClientesLineasController.obj 									\
 FacturasProveedoresLineasController.obj 								\
+OperacionesComercialesDescuentosController.obj 						\
 FacturasClientesDescuentosController.obj 								\
+FacturasProveedoresDescuentosController.obj 							\
 FacturasClientesLineasBrowse.obj 										\
 FacturasClientesBrowseView.obj 											\
 FacturasProveedoresBrowseView.obj 										\
@@ -1073,7 +1077,9 @@ $(OBJ)\FacturasProveedoresController.obj 								+
 $(OBJ)\OperacionesComercialesLineasController.obj 					+
 $(OBJ)\FacturasClientesLineasController.obj 							+
 $(OBJ)\FacturasProveedoresLineasController.obj 						+
+$(OBJ)\OperacionesComercialesDescuentosController.obj 			+
 $(OBJ)\FacturasClientesDescuentosController.obj 					+
+$(OBJ)\FacturasProveedoresDescuentosController.obj 				+
 $(OBJ)\FacturasClientesLineasBrowse.obj 								+
 $(OBJ)\FacturasClientesBrowseView.obj 									+
 $(OBJ)\FacturasProveedoresBrowseView.obj 								+
