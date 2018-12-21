@@ -89,7 +89,7 @@ CLASS SQLBaseValidator
 
    // Busquedas comnues en la aplicacion---------------------------------------
 
-   METHOD clienteExist( cCodigo )      INLINE ( SQLClientesModel():isWhereCodigoNotDeleted( cCodigo ) )
+   METHOD clienteExist( cCodigo )      INLINE ( SQLTercerosModel():isWhereCodigoNotDeleted( cCodigo ) )
 
    METHOD proveedorExist( cCodigo )    INLINE ( SQLProveedoresModel():isWhereCodigoNotDeleted( cCodigo ) )
 

@@ -47,6 +47,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oClientesController
 
+   DATA oTercerosController
+
    DATA oProveedoresController
 
    DATA oClientesGruposController
@@ -245,6 +247,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getClientesController();
                                     INLINE ( if( empty( ::oClientesController ), ::oClientesController := ClientesController():New( self ), ), ::oClientesController )
+
+   METHOD getTercerosController();
+                                    INLINE ( if( empty( ::oTercerosController ), ::oTercerosController := TercerosController():New( self ), ), ::oTercerosController )
 
    METHOD getProveedoresController();
                                     INLINE ( if( empty( ::oProveedoresController ), ::oProveedoresController := ProveedoresController():New( self ), ), ::oProveedoresController )
@@ -533,6 +538,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oClientesController )   
       ::oClientesController:End()
+   end if
+
+   if !empty( ::oTercerosController )   
+      ::oTercerosController:End()
    end if
 
    if !empty( ::oProveedoresController )   

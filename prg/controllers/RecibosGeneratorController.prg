@@ -194,6 +194,8 @@ METHOD getExpirationDate( nTerm ) CLASS RecibosGeneratorController
    local hPaymentDays
    local aPaymentDays := {}
 
+   msgalert(nTerm, "nTerm")
+
    hPaymentDays         := SQLClientesModel():getPaymentDays( ::oController:getModelBuffer( 'tercero_codigo' ) )
 
    aPaymentDays         := { hget( hPaymentDays, "primer_dia_pago" ), hget( hPaymentDays, "segundo_dia_pago" ), hget( hPaymentDays, "tercer_dia_pago" ) }

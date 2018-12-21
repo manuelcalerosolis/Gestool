@@ -117,8 +117,6 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
    METHOD getFacturasClientesFacturaeController() ;
                                           INLINE ( if( empty( ::oFacturasClientesFacturaeController ), ::oFacturasClientesFacturaeController := FacturasClientesFacturaeController():New( self ), ), ::oFacturasClientesFacturaeController )
 
-   METHOD getTercerosController()         VIRTUAL
-
    METHOD getTercerosLineasController()   VIRTUAL
 
 END CLASS
