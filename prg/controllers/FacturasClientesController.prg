@@ -11,6 +11,8 @@ CLASS FacturasClientesController FROM OperacionesComercialesController
 
    METHOD getTercerosLineasController()   INLINE ( ::getFacturasClientesLineasController() )
 
+   METHOD isClient()                      INLINE ( .t. )
+
    // Impresiones--------------------------------------------------------------
 
    METHOD getSubject()                    INLINE ( "Factura de cliente número" )

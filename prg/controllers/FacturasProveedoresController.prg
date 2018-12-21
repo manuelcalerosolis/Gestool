@@ -11,6 +11,8 @@ CLASS FacturasProveedoresController FROM OperacionesComercialesController
 
    METHOD getTercerosLineasController()   INLINE ( ::getFacturasProveedoresLineasController() )
 
+   METHOD isClient()                      INLINE ( .f. )
+
    // Impresiones--------------------------------------------------------------
 
    METHOD getSubject()                 INLINE ( "Factura de proveedor número" )

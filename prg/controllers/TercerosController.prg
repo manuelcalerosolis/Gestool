@@ -59,6 +59,8 @@ CLASS TercerosController FROM SQLNavigatorController
 
    METHOD deletedOthersSelection()
 
+   METHOD buildRowSetSentence( cType )
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getDialogView()                                      INLINE ( if( empty( ::oDialogView ), ::oDialogView := TercerosView():New( self ), ), ::oDialogView )
@@ -199,6 +201,35 @@ METHOD deletedOthersSelection() CLASS TercerosController
 
 RETURN ( nil )
 
+//---------------------------------------------------------------------------//
+
+METHOD buildRowSetSentence( cType )
+
+   local cColumnOrder         
+   local cColumnOrientation   
+
+   if !empty( ::getBrowseView() )
+
+      cColumnOrder            := ::getBrowseView():getColumnOrderView( cType, ::getName() )
+      
+      cColumnOrientation      := ::getBrowseView():getColumnOrientationView( cType, ::getName() )
+
+   end if 
+
+   if empty(::oController)
+      ::getRowSet():Build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
+      RETURN ( nil )
+   end if
+   
+   if ::oController:isClient
+      ::getRowSet():Build( ::getModel():getSelectClient( cColumnOrder, cColumnOrientation ) )
+      RETURN ( nil )
+   end if
+
+   ::getRowSet():Build( ::getModel():getSelectProveedor( cColumnOrder, cColumnOrientation ) )
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

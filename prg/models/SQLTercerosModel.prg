@@ -26,6 +26,10 @@ CLASS SQLTercerosModel FROM SQLCompanyModel
 
    METHOD isWhereCodigoNotDeletedAndProveedor( cCodigo )
 
+   METHOD getSelectClient()
+
+   METHOD getSelectProveedor()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -197,7 +201,14 @@ METHOD getInitialSelect() CLASS SQLTercerosModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLDireccionesModel():getTableName(), SQLMetodoPagoModel():getTableName(), SQLAgentesModel():getTableName(), SQLRutasModel():getTableName(), SQLClientesGruposModel():getTableName(), SQLCuentasRemesaModel():getTableName(), SQLArticulosTarifasModel():getTableName() )
+   cSql  := hb_strformat( cSql, ::getTableName(),;
+                          SQLDireccionesModel():getTableName(),;
+                          SQLMetodoPagoModel():getTableName(),;
+                          SQLAgentesModel():getTableName(),;
+                          SQLRutasModel():getTableName(),;
+                          SQLClientesGruposModel():getTableName(),;
+                          SQLCuentasRemesaModel():getTableName(),;
+                          SQLArticulosTarifasModel():getTableName() )
 
 RETURN ( cSql )
 
@@ -324,4 +335,143 @@ METHOD isWhereCodigoNotDeletedAndProveedor( cCodigo )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount > 0 )
 
+//---------------------------------------------------------------------------//
+
+METHOD getSelectClient()
+
+  local cSql
+
+   TEXT INTO cSql
+
+   SELECT terceros.id AS id,
+      terceros.uuid AS uuid,
+      terceros.codigo AS codigo,
+      terceros.nombre AS nombre,
+      terceros.dni AS dni,
+      terceros.tipo AS tipo,
+      terceros.establecimiento AS establecimiento,
+      terceros.fecha_ultima_llamada AS fecha_ultima_llamada,
+      terceros.metodo_pago_codigo AS metodo_pago_codigo,
+      terceros.recargo_equivalencia AS recargo_equivalencia,
+      metodos_pago.nombre AS nombre_metodo_pago,
+      terceros.agente_codigo AS agente_codigo,
+      agentes.nombre AS nombre_agente,
+      terceros.cliente_grupo_codigo AS cliente_grupo_codigo,
+      clientes_grupos.nombre AS nombre_grupo_cliente,
+      terceros.cuenta_remesa_codigo AS cuenta_remesa_codigo,
+      cuentas_remesa.nombre AS nombre_remesa,
+      terceros.ruta_codigo AS ruta_codigo,
+      rutas.nombre AS nombre_ruta,
+      direcciones.direccion AS direccion,
+      direcciones.poblacion AS poblacion,
+      direcciones.provincia AS provincia,
+      direcciones.codigo_postal AS codigo_postal,
+      direcciones.telefono AS telefono,
+      direcciones.movil AS movil,
+      tarifas.codigo AS tarifa_codigo,
+      tarifas.nombre AS tarifa_nombre,
+      terceros.deleted_at
+   FROM %1$s AS terceros
+      LEFT JOIN %2$s AS direcciones
+         ON terceros.uuid = direcciones.parent_uuid AND direcciones.codigo = 0
+      LEFT JOIN %3$s AS metodos_pago
+         ON terceros.metodo_pago_codigo = metodos_pago.codigo
+      LEFT JOIN %4$s AS agentes
+         ON terceros.agente_codigo = agentes.codigo
+      LEFT JOIN %5$s AS rutas
+         ON terceros.ruta_codigo = rutas.codigo
+      LEFT JOIN %6$s AS clientes_grupos
+         ON terceros.cliente_grupo_codigo = clientes_grupos.codigo
+      LEFT JOIN %7$s AS cuentas_remesa
+         ON terceros.cuenta_remesa_codigo = cuentas_remesa.codigo
+      LEFT JOIN %8$s AS tarifas
+         ON terceros.tarifa_codigo = tarifas.codigo
+
+   WHERE terceros.tipo like '%Cliente%'
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(),;
+                          SQLDireccionesModel():getTableName(),;
+                          SQLMetodoPagoModel():getTableName(),;
+                          SQLAgentesModel():getTableName(),;
+                          SQLRutasModel():getTableName(),;
+                          SQLClientesGruposModel():getTableName(),;
+                          SQLCuentasRemesaModel():getTableName(),;
+                          SQLArticulosTarifasModel():getTableName() )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSelectProveedor()
+
+  local cSql
+
+   TEXT INTO cSql
+
+   SELECT terceros.id AS id,
+      terceros.uuid AS uuid,
+      terceros.codigo AS codigo,
+      terceros.nombre AS nombre,
+      terceros.dni AS dni,
+      terceros.tipo AS tipo,
+      terceros.establecimiento AS establecimiento,
+      terceros.fecha_ultima_llamada AS fecha_ultima_llamada,
+      terceros.metodo_pago_codigo AS metodo_pago_codigo,
+      terceros.recargo_equivalencia AS recargo_equivalencia,
+      metodos_pago.nombre AS nombre_metodo_pago,
+      terceros.agente_codigo AS agente_codigo,
+      agentes.nombre AS nombre_agente,
+      terceros.cliente_grupo_codigo AS cliente_grupo_codigo,
+      clientes_grupos.nombre AS nombre_grupo_cliente,
+      terceros.cuenta_remesa_codigo AS cuenta_remesa_codigo,
+      cuentas_remesa.nombre AS nombre_remesa,
+      terceros.ruta_codigo AS ruta_codigo,
+      rutas.nombre AS nombre_ruta,
+      direcciones.direccion AS direccion,
+      direcciones.poblacion AS poblacion,
+      direcciones.provincia AS provincia,
+      direcciones.codigo_postal AS codigo_postal,
+      direcciones.telefono AS telefono,
+      direcciones.movil AS movil,
+      tarifas.codigo AS tarifa_codigo,
+      tarifas.nombre AS tarifa_nombre,
+      terceros.deleted_at
+   FROM %1$s AS terceros
+      LEFT JOIN %2$s AS direcciones
+         ON terceros.uuid = direcciones.parent_uuid AND direcciones.codigo = 0
+      LEFT JOIN %3$s AS metodos_pago
+         ON terceros.metodo_pago_codigo = metodos_pago.codigo
+      LEFT JOIN %4$s AS agentes
+         ON terceros.agente_codigo = agentes.codigo
+      LEFT JOIN %5$s AS rutas
+         ON terceros.ruta_codigo = rutas.codigo
+      LEFT JOIN %6$s AS clientes_grupos
+         ON terceros.cliente_grupo_codigo = clientes_grupos.codigo
+      LEFT JOIN %7$s AS cuentas_remesa
+         ON terceros.cuenta_remesa_codigo = cuentas_remesa.codigo
+      LEFT JOIN %8$s AS tarifas
+         ON terceros.tarifa_codigo = tarifas.codigo
+
+   WHERE terceros.tipo like '%Proveedor%'
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(),;
+                          SQLDireccionesModel():getTableName(),;
+                          SQLMetodoPagoModel():getTableName(),;
+                          SQLAgentesModel():getTableName(),;
+                          SQLRutasModel():getTableName(),;
+                          SQLClientesGruposModel():getTableName(),;
+                          SQLCuentasRemesaModel():getTableName(),;
+                          SQLArticulosTarifasModel():getTableName() )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

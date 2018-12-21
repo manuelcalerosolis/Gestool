@@ -303,8 +303,6 @@ CLASS SQLBaseModel
    METHOD isWhereCodigoNotDeleted( cCodigo ) ;
                                        INLINE ( ::isWhereCodigo( cCodigo, .t. ) )
 
-   //METHOD isWhereCodigoNotDeletedAndClient( cCodigo )
-
    METHOD getWhereNombre( uValue )               
    METHOD getColumnWhereNombre( uValue, cColumn, uDefault ) 
    METHOD getCodigoWhereNombre( uValue )              INLINE ( ::getColumnWhereNombre( uValue, 'codigo', '' ) )

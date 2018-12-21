@@ -48,7 +48,7 @@ CLASS ClientGetSelector FROM GetSelector
 
    METHOD setHelpText( value )
 
-   METHOD getLinkText()                INLINE ( {|| "Cliente" } )
+   METHOD getLinkText()                
 
 END CLASS
 
@@ -198,10 +198,16 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-CLASS ProveedorGetSelector FROM  ClientGetSelector
+METHOD getLinkText()
 
-   METHOD getLinkText()                INLINE ( {|| "Proveedor" } )
+if ::oController:oController:isClient()
+   RETURN ( {|| "Cliente" } )
+end if 
 
-END CLASS
+RETURN ( {|| "Proveedor" } )
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

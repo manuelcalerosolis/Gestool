@@ -1309,20 +1309,20 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemCompras:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Proveedores'
-   oItem:cMessage       := 'Solicitar proveedor'
-   oItem:bAction        := {|| ProveedoresController():New():ActivateNavigatorView() }
-   oItem:cId            := "proveedores"
-   oItem:cBmp           := "gc_businessman_16"
-   oItem:cBmpBig        := "gc_businessman_32"
+   oItem:cPrompt        := 'Terceros'
+   oItem:cMessage       := 'Solicitar tercero'
+   oItem:bAction        := {|| TercerosController():New():ActivateNavigatorView() }
+   oItem:cId            := "terceros"
+   oItem:cBmp           := "gc_user_16"
+   oItem:cBmpBig        := "gc_user_32"
    oItem:lShow          := .t.
 
    oItem                := oItemCompras:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Facturas de proveedores'
-   oItem:cMessage       := 'Facturas de proveedores'
+   oItem:cPrompt        := 'Facturas de compras'
+   oItem:cMessage       := 'Facturas de compras'
    oItem:bAction        := {|| FacturasProveedoresController():New():ActivateNavigatorView() }
-   oItem:cId            := "facturas_proveedores"
+   oItem:cId            := "facturas_compras"
    oItem:cBmp           := "gc_document_text_businessman_16"
    oItem:cBmpBig        := "gc_document_text_businessman_32"
    oItem:lShow          := .t.
@@ -1425,11 +1425,11 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Facturas de clientes'
-   oItem:cMessage       := 'Facturas de clientes'
+   oItem:cPrompt        := 'Facturas de ventas'
+   oItem:cMessage       := 'Facturas de ventas'
    oItem:bAction        := {|| FacturasClientesController():New():ActivateNavigatorView() }
    // oItem:bAction        := {|| FacturasClientesController1000() }
-   oItem:cId            := "facturas_clientes"
+   oItem:cId            := "facturas_ventas"
    oItem:cBmp           := "gc_document_text_user_16"
    oItem:cBmpBig        := "gc_document_text_user_32"
    oItem:lShow          := .t.
