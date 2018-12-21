@@ -572,7 +572,7 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
                            SQLRecibosPagosModel():getTableName(),;
                            SQLPagosModel():getTableName(),;
                            SQLFacturasClientesModel():getTableName(),;
-                           SQLClientesModel():getTableName(),;
+                           SQLTercerosModel():getTableName(),;
                            Company():getTableName( 'RecibosPagosTotalPaidWhereUuid' ) )
 
 RETURN ( cSql )

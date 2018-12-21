@@ -406,7 +406,7 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLPropiedadesLineasModel():New() )
 
-   //aadd( ::aModels, SQLProveedoresModel():New() ) 
+   //aadd( ::aModels, SQLTercerosModel():New() ) 
 
    aadd( ::aModels, SQLTraduccionesModel():New() ) 
 

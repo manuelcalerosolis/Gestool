@@ -363,7 +363,7 @@ METHOD getInitialSelect() CLASS SQLClientesEntidadesModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLEntidadesModel():getTableName(), SQLClientesModel():getTableName() )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLEntidadesModel():getTableName(), SQLTercerosModel():getTableName() )
 
 RETURN ( cSql )
 

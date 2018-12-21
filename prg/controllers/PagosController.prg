@@ -539,7 +539,7 @@ METHOD getInitialSelect() CLASS SQLPagosModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLMediosPagoModel():getTableName(), SQLCuentasBancariasModel():getTableName(), SQLRecibosPagosModel():getTableName(), quoted( Company():Uuid() ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLTercerosModel():getTableName(), SQLMediosPagoModel():getTableName(), SQLCuentasBancariasModel():getTableName(), SQLRecibosPagosModel():getTableName(), quoted( Company():Uuid() ) )
 
 RETURN ( cSql )
 
@@ -757,13 +757,13 @@ METHOD testDialogAppend() CLASS TestPagosController
 
    SQLPagosModel():truncateTable()
    SQLRecibosModel():truncateTable() 
-   SQLClientesModel():truncateTable()
+   SQLTercerosModel():truncateTable()
    SQLMediosPagoModel():truncateTable()
    SQLRecibosPagosModel():truncateTable() 
 
    ::assert:notEquals( 0, SQLRecibosModel():testCreateRecibo( uuidRecibo ), "test create recibo" )
    
-   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" )
+   ::assert:notEquals( 0, SQLTercerosModel():testCreateContado(), "test creacion de cliente" )
 
    ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
 
@@ -794,13 +794,13 @@ METHOD testDialogAppendConImporteMayor() CLASS TestPagosController
 
    SQLPagosModel():truncateTable()
    SQLRecibosModel():truncateTable() 
-   SQLClientesModel():truncateTable()
+   SQLTercerosModel():truncateTable()
    SQLMediosPagoModel():truncateTable()
    SQLRecibosPagosModel():truncateTable() 
 
    ::assert:notEquals( 0, SQLRecibosModel():testCreateRecibo( uuidRecibo ), "test create recibo" )
    
-   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" )
+   ::assert:notEquals( 0, SQLTercerosModel():testCreateContado(), "test creacion de cliente" )
 
    ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
 
@@ -833,7 +833,7 @@ METHOD testDialogAppendClienteInexistente() CLASS TestPagosController
 
    SQLPagosModel():truncateTable()
    SQLRecibosModel():truncateTable() 
-   SQLClientesModel():truncateTable()
+   SQLTercerosModel():truncateTable()
    SQLMediosPagoModel():truncateTable()
    SQLRecibosPagosModel():truncateTable() 
 
@@ -870,13 +870,13 @@ METHOD testDialogAppendMedioPagoInexistente() CLASS TestPagosController
 
    SQLPagosModel():truncateTable()
    SQLRecibosModel():truncateTable() 
-   SQLClientesModel():truncateTable()
+   SQLTercerosModel():truncateTable()
    SQLMediosPagoModel():truncateTable()
    SQLRecibosPagosModel():truncateTable() 
 
    ::assert:notEquals( 0, SQLRecibosModel():testCreateRecibo( uuidRecibo ), "test create recibo" )
 
-   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" )
+   ::assert:notEquals( 0, SQLTercerosModel():testCreateContado(), "test creacion de cliente" )
 
    oController             := PagosController():New()
    oController:setUuidRecibo( uuidRecibo )

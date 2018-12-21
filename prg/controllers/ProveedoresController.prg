@@ -9,7 +9,7 @@ CLASS ProveedoresController FROM TercerosController
 
    //Consrucciones tardias-----------------------------------------------------
 
-   METHOD getModel()                   INLINE (  if( empty( ::oModel ), ::oModel := SQLProveedoresModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE (  if( empty( ::oModel ), ::oModel := SQLTercerosModel():New( self ), ), ::oModel )
 
    METHOD getSelector()                INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := ProveedorGetSelector():New( self ), ), ::oGetSelector )
 

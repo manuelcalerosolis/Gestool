@@ -489,7 +489,7 @@ METHOD getClientMailWhereFacturaUuid( uuidFacturaCliente ) CLASS FacturasCliente
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLDireccionesModel():getTableName(), quotedUuid( uuidFacturaCliente ) ) 
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLTercerosModel():getTableName(), SQLDireccionesModel():getTableName(), quotedUuid( uuidFacturaCliente ) ) 
 
 RETURN ( getSQLDatabase():getValue( cSql, "" ) ) 
 

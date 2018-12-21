@@ -86,7 +86,7 @@ END CLASS
 
 METHOD getByUuid( uuid ) CLASS ClientHttpService
 
-   ::uValue       := SQLClientesModel():getByUuid( uuid )
+   ::uValue       := SQLTercerosModel():getByUuid( uuid )
 
 RETURN ( ::uValue )
 
@@ -94,7 +94,7 @@ RETURN ( ::uValue )
 
 METHOD findAll() CLASS ClientHttpService
    
-   ::uValue       := SQLClientesModel():findAll()
+   ::uValue       := SQLTercerosModel():findAll()
 
 RETURN ( ::uValue )
 

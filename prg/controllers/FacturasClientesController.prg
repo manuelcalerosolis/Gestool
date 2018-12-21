@@ -140,7 +140,7 @@ END CLASS
 
 METHOD initModels() CLASS TestFacturasClientesController
 
-   SQLClientesModel():truncateTable()
+   SQLTercerosModel():truncateTable()
    SQLDireccionesModel():truncateTable()
    SQLAlmacenesModel():truncateTable()
    SQLMetodoPagoModel():truncateTable()
@@ -151,8 +151,8 @@ METHOD initModels() CLASS TestFacturasClientesController
    
    SQLArticulosTarifasModel():truncateTable() 
 
-   SQLClientesModel():testCreateContado()
-   SQLClientesModel():testCreateTarifaMayorista()
+   SQLTercerosModel():testCreateContado()
+   SQLTercerosModel():testCreateTarifaMayorista()
 
    SQLAlmacenesModel():testCreate()
    SQLMetodoPagoModel():testCreateContado()

@@ -22,9 +22,9 @@ CLASS SQLTercerosModel FROM SQLCompanyModel
 
    METHOD getPaymentDays( cId )        INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentencePaymentDays( cId ) ) ) )
 
-   METHOD isWhereCodigoNotDeletedAndClient( cCodigo, lDeleted )
+   METHOD isWhereCodigoNotDeletedAndClient( cCodigo )
 
-   METHOD isWhereCodigoNotDeletedAndProveedor( cCodigo, lDeleted )
+   METHOD isWhereCodigoNotDeletedAndProveedor( cCodigo )
 
 END CLASS
 
@@ -275,5 +275,53 @@ METHOD getSentencePaymentDays( cCodigoTercero ) CLASS SQLTercerosModel
    msgalert( cSql )
 
 RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD isWhereCodigoNotDeletedAndClient( cCodigo )
+
+   local cSql
+   local nCount 
+
+   TEXT INTO cSql
+
+   SELECT
+      COUNT(*)
+
+   FROM %1$s
+
+   WHERE codigo = %2$s AND deleted_at = 0 AND tipo LIKE '%Cliente%'
+
+   ENDTEXT
+
+   cSql     := hb_strformat( cSql, ::getTableName(), quoted( cCodigo ) )
+
+   nCount   := ::getDatabase():getValue( cSQL )
+
+RETURN ( hb_isnumeric( nCount ) .and. nCount > 0 )
+
+//---------------------------------------------------------------------------//
+
+METHOD isWhereCodigoNotDeletedAndProveedor( cCodigo )
+
+   local cSql
+   local nCount 
+
+   TEXT INTO cSql
+
+   SELECT
+      COUNT(*)
+
+   FROM %1$s
+
+   WHERE codigo = %2$s AND deleted_at = 0 AND tipo LIKE '%Proveedor%'
+
+   ENDTEXT
+
+   cSql     := hb_strformat( cSql, ::getTableName(), quoted( cCodigo ) )
+
+   nCount   := ::getDatabase():getValue( cSQL )
+
+RETURN ( hb_isnumeric( nCount ) .and. nCount > 0 )
 
 //---------------------------------------------------------------------------//

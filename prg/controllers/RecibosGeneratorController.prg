@@ -139,7 +139,7 @@ RETURN ( nil )
       RETURN ( nil )
    end if 
 
-   ::hPaymentDays       := SQLClientesModel():getPaymentDays( ::oController:getModelBuffer( 'tercero_codigo' ) )
+   ::hPaymentDays       := SQLTercerosModel():getPaymentDays( ::oController:getModelBuffer( 'tercero_codigo' ) )
 
    msgalert( hb_valtoexp( ::hPaymentDays ), "hPaymentDays" )
 
@@ -204,7 +204,7 @@ METHOD getExpirationDate( nTerm ) CLASS RecibosGeneratorController
    local hPaymentDays
    local aPaymentDays   := {}
 
-   hPaymentDays         := SQLClientesModel():getPaymentDays( ::oController:getModelBuffer( 'tercero_codigo' ) )
+   hPaymentDays         := SQLTercerosModel():getPaymentDays( ::oController:getModelBuffer( 'tercero_codigo' ) )
 
    aPaymentDays         := { hget( hPaymentDays, "primer_dia_pago" ), hget( hPaymentDays, "segundo_dia_pago" ), hget( hPaymentDays, "tercer_dia_pago" ) }
 

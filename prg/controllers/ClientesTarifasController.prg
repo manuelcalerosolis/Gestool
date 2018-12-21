@@ -162,7 +162,7 @@ METHOD getTarifasNombreWhereClienteCodigo( cCodigoCliente ) CLASS SQLClientesTar
                      "FROM " + ::getTableName() + " AS clientes_tarifas "                 +  ;   
                         "LEFT JOIN " + SQLArticulosTarifasModel():getTableName() + " "    +  ;
                            "ON clientes_tarifas.tarifa_uuid = articulos_tarifas.uuid "    +  ;
-                        "LEFT JOIN " + SQLClientesModel():getTableName() + " "            +  ;
+                        "LEFT JOIN " + SQLTercerosModel():getTableName() + " "            +  ;
                            "ON clientes_tarifas.parent_uuid = clientes.uuid "             +  ;
                      "WHERE clientes.codigo = " + quoted( cCodigoCliente )
 

@@ -144,7 +144,7 @@ METHOD isInformationLoaded( uuid ) CLASS FacturasClientesFacturaeController
 
    ::hDiscounts            := SQLFacturasClientesDescuentosModel():selectDescuentosWhereUuid( uuid, nTotalBrutoLineas )
 
-   ::hClient               := SQLClientesModel():getHashWhere( 'codigo', hget( ::hDocument, "tercero_codigo" ) )
+   ::hClient               := SQLTercerosModel():getHashWhere( 'codigo', hget( ::hDocument, "tercero_codigo" ) )
    if empty( ::hClient )
       ::cError             += "No se encontraron datos del cliente"
    end if 
@@ -348,12 +348,12 @@ METHOD testGenerateXml() CLASS TestFacturasClientesFacturaeController
 
    uuid        := win_uuidcreatestring()
 
-   SQLClientesModel():truncateTable()
+   SQLTercerosModel():truncateTable()
    SQLFacturasClientesModel():truncateTable() 
    SQLFacturasClientesLineasModel():truncateTable() 
    SQLFacturasClientesDescuentosModel():truncateTable()
 
-   SQLClientesModel():testCreateContado()
+   SQLTercerosModel():testCreateContado()
 
    SQLFacturasClientesModel():testCreateFacturaConRecargoDeEqivalencia( uuid ) 
 

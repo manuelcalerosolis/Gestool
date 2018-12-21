@@ -12,7 +12,7 @@ CLASS ClientesController FROM TercerosController
    METHOD validColumnAgentesBrowse( uValue, nKey ) ;
                                        INLINE ( ::validColumnBrowse( uValue, nKey, ::getAgentesController():oModel, "agente_uuid" ) )
 
-   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLClientesModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLTercerosModel():New( self ), ), ::oModel )
 
    METHOD getSelector()                INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := ClientGetSelector():New( self ), ), ::oGetSelector )
 

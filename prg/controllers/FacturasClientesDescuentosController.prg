@@ -341,7 +341,7 @@ METHOD insertWhereClienteCodigo( cCodigoCliente ) CLASS SQLFacturasClientesDescu
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(), SQLClientesModel():getTableName(), quoted( ::getControllerParentUuid() ), quoted( cCodigoCliente ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(), SQLTercerosModel():getTableName(), quoted( ::getControllerParentUuid() ), quoted( cCodigoCliente ) )
 
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 

@@ -379,7 +379,7 @@ METHOD testCreateAsistenteSinCliente() CLASS TestPagosAssistantController
    local uuidTercerRecibo              := win_uuidcreatestring()
    local uuidSegundoRecibo             := win_uuidcreatestring()
 
-   SQLClientesModel():truncateTable()
+   SQLTercerosModel():truncateTable()
    SQLPagosModel():truncateTable()
    SQLRecibosModel():truncateTable() 
    SQLMediosPagoModel():truncateTable()
@@ -390,7 +390,7 @@ METHOD testCreateAsistenteSinCliente() CLASS TestPagosAssistantController
 
    SQLRecibosPagosTemporalModel():createTemporalTable() 
 
-   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" ) 
+   ::assert:notEquals( 0, SQLTercerosModel():testCreateContado(), "test creacion de cliente" ) 
 
    ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
 
@@ -425,7 +425,7 @@ METHOD testCreateAsistenteSinMedioPago() CLASS TestPagosAssistantController
    local uuidTercerRecibo              := win_uuidcreatestring()
    local uuidSegundoRecibo             := win_uuidcreatestring()
 
-   SQLClientesModel():truncateTable()
+   SQLTercerosModel():truncateTable()
    SQLPagosModel():truncateTable()
    SQLRecibosModel():truncateTable() 
    SQLMediosPagoModel():truncateTable()
@@ -436,7 +436,7 @@ METHOD testCreateAsistenteSinMedioPago() CLASS TestPagosAssistantController
 
    SQLRecibosPagosTemporalModel():createTemporalTable() 
 
-   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" ) 
+   ::assert:notEquals( 0, SQLTercerosModel():testCreateContado(), "test creacion de cliente" ) 
 
    ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
 
@@ -477,7 +477,7 @@ METHOD testCreateAsistenteNoImporte() CLASS TestPagosAssistantController
    local uuidTercerRecibo              := win_uuidcreatestring()
    local uuidSegundoRecibo             := win_uuidcreatestring()
 
-   SQLClientesModel():truncateTable()
+   SQLTercerosModel():truncateTable()
    SQLPagosModel():truncateTable()
    SQLRecibosModel():truncateTable() 
    SQLMediosPagoModel():truncateTable()
@@ -488,7 +488,7 @@ METHOD testCreateAsistenteNoImporte() CLASS TestPagosAssistantController
 
    SQLRecibosPagosTemporalModel():createTemporalTable() 
 
-   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" ) 
+   ::assert:notEquals( 0, SQLTercerosModel():testCreateContado(), "test creacion de cliente" ) 
 
    ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
 
@@ -529,7 +529,7 @@ METHOD testCreateAsistenteConPagoParcial() CLASS TestPagosAssistantController
    local uuidTercerRecibo              := win_uuidcreatestring()
    local uuidSegundoRecibo             := win_uuidcreatestring()
 
-   SQLClientesModel():truncateTable()
+   SQLTercerosModel():truncateTable()
    SQLPagosModel():truncateTable()
    SQLRecibosModel():truncateTable() 
    SQLMediosPagoModel():truncateTable()
@@ -540,7 +540,7 @@ METHOD testCreateAsistenteConPagoParcial() CLASS TestPagosAssistantController
 
    SQLRecibosPagosTemporalModel():createTemporalTable() 
 
-   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" ) 
+   ::assert:notEquals( 0, SQLTercerosModel():testCreateContado(), "test creacion de cliente" ) 
 
    ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
 
@@ -581,7 +581,7 @@ METHOD testCreateAsistenteUnPagoCompleto() CLASS TestPagosAssistantController
    local uuidTercerRecibo              := win_uuidcreatestring()
    local uuidSegundoRecibo             := win_uuidcreatestring()
 
-   SQLClientesModel():truncateTable()
+   SQLTercerosModel():truncateTable()
    SQLPagosModel():truncateTable()
    SQLRecibosModel():truncateTable() 
    SQLMediosPagoModel():truncateTable()
@@ -592,7 +592,7 @@ METHOD testCreateAsistenteUnPagoCompleto() CLASS TestPagosAssistantController
 
    SQLRecibosPagosTemporalModel():createTemporalTable() 
 
-   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" ) 
+   ::assert:notEquals( 0, SQLTercerosModel():testCreateContado(), "test creacion de cliente" ) 
 
    ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
 
@@ -633,7 +633,7 @@ METHOD testCreateAsistenteCambioImporte() CLASS TestPagosAssistantController
    local uuidTercerRecibo              := win_uuidcreatestring()
    local uuidSegundoRecibo             := win_uuidcreatestring()
 
-   SQLClientesModel():truncateTable()
+   SQLTercerosModel():truncateTable()
    SQLPagosModel():truncateTable()
    SQLRecibosModel():truncateTable() 
    SQLMediosPagoModel():truncateTable()
@@ -644,7 +644,7 @@ METHOD testCreateAsistenteCambioImporte() CLASS TestPagosAssistantController
 
    SQLRecibosPagosTemporalModel():createTemporalTable() 
 
-   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" ) 
+   ::assert:notEquals( 0, SQLTercerosModel():testCreateContado(), "test creacion de cliente" ) 
 
    ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
 
@@ -688,7 +688,7 @@ METHOD testCreateAsistentePagosParciales() CLASS TestPagosAssistantController
    local uuidTercerRecibo              := win_uuidcreatestring()
    local uuidSegundoRecibo             := win_uuidcreatestring()
 
-   SQLClientesModel():truncateTable()
+   SQLTercerosModel():truncateTable()
    SQLPagosModel():truncateTable()
    SQLRecibosModel():truncateTable() 
    SQLMediosPagoModel():truncateTable()
@@ -699,7 +699,7 @@ METHOD testCreateAsistentePagosParciales() CLASS TestPagosAssistantController
 
    SQLRecibosPagosTemporalModel():createTemporalTable() 
 
-   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" ) 
+   ::assert:notEquals( 0, SQLTercerosModel():testCreateContado(), "test creacion de cliente" ) 
 
    ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
 
@@ -750,7 +750,7 @@ METHOD testCreateAsistenteTodosPagosCambioImporte() CLASS TestPagosAssistantCont
    local uuidTercerRecibo              := win_uuidcreatestring()
    local uuidSegundoRecibo             := win_uuidcreatestring()
 
-   SQLClientesModel():truncateTable()
+   SQLTercerosModel():truncateTable()
    SQLPagosModel():truncateTable()
    SQLRecibosModel():truncateTable() 
    SQLMediosPagoModel():truncateTable()
@@ -761,7 +761,7 @@ METHOD testCreateAsistenteTodosPagosCambioImporte() CLASS TestPagosAssistantCont
 
    SQLRecibosPagosTemporalModel():createTemporalTable() 
 
-   ::assert:notEquals( 0, SQLClientesModel():testCreateContado(), "test creacion de cliente" ) 
+   ::assert:notEquals( 0, SQLTercerosModel():testCreateContado(), "test creacion de cliente" ) 
 
    ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
 
