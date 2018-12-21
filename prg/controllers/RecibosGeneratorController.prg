@@ -15,6 +15,10 @@ CLASS RecibosGeneratorController
 
    DATA hPaymentMethod
 
+   DATA hPaymentDays
+
+   DATA aPaymentDays
+
    DATA oController
 
    DATA hTotalDocument
@@ -47,7 +51,7 @@ CLASS RecibosGeneratorController
 
    METHOD insertReciboPago()
 
-   METHOD processNoPaid()
+   METHOD processPaids()
 
    METHOD getController()              INLINE ( ::oController ) 
    
@@ -125,29 +129,21 @@ RETURN ( nil )
    
    ::nTotalToPaid       := ::getTotalToPay()
 
-   msgalert( ::nTotalToPaid, "nTotalToPaid" )
-
    if empty( ::nTotalToPaid )
       RETURN ( nil )
    end if 
 
-   if empty( ::getMetodoPago() )
+   ::hPaymentMethod     := ::getMetodoPago()
+
+   if empty( ::hPaymentMethod )
       RETURN ( nil )
    end if 
 
-   if ::isPaid() 
+   ::hPaymentDays       := SQLClientesModel():getPaymentDays( ::oController:getModelBuffer( 'tercero_codigo' ) )
 
-      ::uuidRecibo      := ::insertRecibo( ::nTotalToPaid )
-
-      ::insertPago( ::nTotalToPaid )
-
-      ::insertReciboPago( ::nTotalToPaid )
-
-      RETURN ( nil )
-
-   end if
+   ::aPaymentDays       := { hget( ::hPaymentDays, "primer_dia_pago" ), hget( ::hPaymentDays, "segundo_dia_pago" ), hget( ::hPaymentDays, "tercer_dia_pago" ) }
    
-   ::processNoPaid()
+   ::processPaids()
    
 RETURN ( nil )
 
@@ -171,9 +167,7 @@ METHOD getMetodoPago() CLASS RecibosGeneratorController
       RETURN ( nil )
    end if 
 
-   ::hPaymentMethod        := ::getMetodoPagoModel():getBufferByCodigo( ::oController:getModelBuffer( 'metodo_pago_codigo' ) )
-
-RETURN ( ::hPaymentMethod )
+RETURN ( ::getMetodoPagoModel():getBufferByCodigo( ::oController:getModelBuffer( 'metodo_pago_codigo' ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -208,17 +202,15 @@ METHOD getExpirationDate( nTerm ) CLASS RecibosGeneratorController
    local hPaymentDays
    local aPaymentDays   := {}
 
-   msgalert(nTerm, "nTerm")
-
    hPaymentDays         := SQLClientesModel():getPaymentDays( ::oController:getModelBuffer( 'tercero_codigo' ) )
 
    aPaymentDays         := { hget( hPaymentDays, "primer_dia_pago" ), hget( hPaymentDays, "segundo_dia_pago" ), hget( hPaymentDays, "tercer_dia_pago" ) }
 
    ::dExpirationDate    += ::getTermDays( nTerm ) 
 
-   ::dExpirationDate    := ::adjustExpirationDate( ::dExpirationDate, aPaymentDays )
+   ::dExpirationDate    := ::adjustExpirationDate( ::dExpirationDate, ::aPaymentDays )
 
-   ::adjustFreeMonth( hPaymentDays )
+   ::dExpirationDate    := ::adjustFreeMonth( ::dExpirationDate, ::hPaymentDays )
 
 RETURN ( ::dExpirationDate )
 
@@ -228,7 +220,7 @@ METHOD adjustExpirationDate( dExpirationDate, aPaymentDays ) CLASS RecibosGenera
 
    local nPaymentDay
 
-   if afirst(aPaymentDays) == 0
+   if afirst( aPaymentDays ) == 0
       RETURN ( dExpirationDate )
    end if 
 
@@ -242,15 +234,15 @@ RETURN ( ::adjustExpirationDate( bom( addMonth( dExpirationDate, 1 ) ), aPayment
 
 //---------------------------------------------------------------------------//
 
-METHOD adjustFreeMonth( hPaymentDays ) CLASS RecibosGeneratorController
+METHOD adjustFreeMonth( dExpirationDate, hPaymentDays ) CLASS RecibosGeneratorController
 
-   if cMonth( ::dExpirationDate ) == hget( hPaymentDays, "mes_vacaciones" )
+   if cMonth( dExpirationDate ) == hget( hPaymentDays, "mes_vacaciones" )
 
-      ::dExpirationDate := addMonth( ::dExpirationDate, 1 )
+      dExpirationDate := addMonth( dExpirationDate, 1 )
 
    end if
 
-RETURN ( nil )
+RETURN ( dExpirationDate )
 
 //---------------------------------------------------------------------------//
 
@@ -276,15 +268,15 @@ RETURN ( ::nTermAmount )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertRecibo( nTermAmount ) CLASS RecibosGeneratorController
+METHOD insertRecibo( nTotalToPaid, nTerm ) CLASS RecibosGeneratorController
 
    ::getModel():loadBlankBuffer()
 
-   ::getModel():setBuffer( "importe", nTermAmount )
+   ::getModel():setBuffer( "importe", nTotalToPaid )
 
    ::getModel():setBuffer( "concepto", ::getConcept() )
 
-   ::getModel():setBuffer( "vencimiento", ::getExpirationDate( 1 ) ) // nTermAmount ) )
+   ::getModel():setBuffer( "vencimiento", ::getExpirationDate( nTerm ) )
 
    ::getModel():setBuffer( "parent_table", ::oController:getName() )
 
@@ -296,25 +288,19 @@ RETURN ( ::getModel():getBuffer( "uuid" ) )
 
 METHOD insertPago( nTotalToPaid ) CLASS RecibosGeneratorController
 
-   with object ( ::getPagosModel() )
+   ::getPagosModel():loadBlankBuffer()
 
-      :loadBlankBuffer()
+   ::getPagosModel():setBuffer( "tercero_codigo", ::oController:getModelBuffer( 'tercero_codigo' ) )
 
-      :setBuffer( "tercero_codigo", ::oController:getModelBuffer( 'tercero_codigo' ) )
+   ::getPagosModel():setBuffer( "medio_pago_codigo", ::getMetodoPagoModel():getMedioPagoCodigo( ::oController:getModelBuffer( 'metodo_pago_codigo' ) ) )
 
-      :setBuffer( "medio_pago_codigo", ::getMetodoPagoModel():getMedioPagoCodigo( ::oController:getModelBuffer( 'metodo_pago_codigo' ) ) )
+   ::getPagosModel():setBuffer( "importe", nTotalToPaid )
 
-      :setBuffer( "importe", nTotalToPaid )
+   ::getPagosModel():setBuffer( "comentario", ::getConcept() )
 
-      :setBuffer( "comentario", ::getConcept() )
+   ::getPagosModel():insertBuffer()
 
-      :insertBuffer()
-
-      ::uuidPago               := :getBuffer( "uuid" )
-
-   end with
-
-RETURN ( nil )
+RETURN ( ::getPagosModel():getBuffer( "uuid" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -338,13 +324,24 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD processNoPaid() CLASS RecibosGeneratorController
+METHOD processPaids() CLASS RecibosGeneratorController
 
-   local n
+   local nTerm
+   local nTotalTerm
 
-   for n := 1 to ::getTerms()
+   for nTerm := 1 to ::getTerms()
 
-      ::insertRecibo( ::getTermAmount( ::nTotalToPaid, n ) )
+      nTotalTerm        := ::getTermAmount( ::nTotalToPaid, nTerm )
+
+      ::uuidRecibo      := ::insertRecibo( nTotalTerm, nTerm )
+
+      if ::isPaid() 
+
+         ::uuidPago     := ::insertPago( nTotalTerm )
+
+         ::insertReciboPago( nTotalTerm, ::uuidRecibo, ::uuidPago )
+
+      end if 
 
       ::nReceiptNumber++
 
