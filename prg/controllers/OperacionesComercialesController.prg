@@ -19,8 +19,7 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD End()
 
-
-   METHOD addExtraButtons()                  VIRTUAL
+   METHOD addExtraButtons()            VIRTUAL
 
    METHOD editConfig()
 
@@ -30,9 +29,7 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD loadedDuplicateBuffer() 
 
-
    METHOD loadedBuffer()               INLINE ( ::getHistoryManager():Set( ::getModel():hBuffer ) )
-
 
    METHOD insertingBuffer()
 
@@ -64,26 +61,27 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    METHOD hasLines()
 
-   METHOD hasNotLines()                      INLINE ( !::hasLines() )
+   METHOD hasNotLines()                INLINE ( !::hasLines() )
 
    METHOD getConfigItems()
 
    METHOD calculateTotals( uuidFactura )  
 
-   METHOD getTotalDocument( uuidFactura )    INLINE ( ::getRepository():getTotalDocument( uuidFactura ) )
+   METHOD getTotalDocument( uuidFactura ) ;
+                                       INLINE ( ::getRepository():getTotalDocument( uuidFactura ) )
 
    METHOD getTotalesDocument( uuidFactura ) ;
-                                             INLINE ( ::getRepository():getTotalesDocument( uuidFactura ) )
+                                       INLINE ( ::getRepository():getTotalesDocument( uuidFactura ) )
    
    METHOD getTotalesDocumentGroupByIVA( uuidFactura ) ;
-                                             INLINE ( ::getRepository():getTotalesDocumentGroupByIVA( uuidFactura ) )
+                                       INLINE ( ::getRepository():getTotalesDocumentGroupByIVA( uuidFactura ) )
 
    METHOD getHashSentenceLineas( uuidFactura ) ;
-                                             INLINE ( ::getRepository():getHashSentenceLineas( uuidFactura ) )
+                                       INLINE ( ::getRepository():getHashSentenceLineas( uuidFactura ) )
+
    METHOD hasNotPaid( uuidFactura )
 
    // Impresiones--------------------------------------------------------------
-
 
    METHOD getDocumentPrint()                 INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_impresion', '' ) )
 
@@ -276,13 +274,16 @@ RETURN ( ::getRecibosGeneratorController():Update() )
 
 METHOD getClientUuid() CLASS OperacionesComercialesController 
 
-RETURN ( ::getClientesController():getModel():getUuidWhereCodigo( ::getModelBuffer( "tercero_codigo" ) ) )
+RETURN ( ::getTercerosController():getModel():getUuidWhereCodigo( ::getModelBuffer( "tercero_codigo" ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD clientesSettedHelpText() CLASS OperacionesComercialesController
 
+   msgalert( "clientesSettedHelpText" )
+
    if ::getHistoryManager():isEqual( "tercero_codigo", ::getModelBuffer( "tercero_codigo" ) )
+      msgalert( "no hay cambios en clientesSettedHelpText" )
       RETURN ( nil )
    end if         
 
@@ -310,11 +311,11 @@ METHOD clientSetMetodoPago() CLASS OperacionesComercialesController
 
    cCodigoMetodoPago    := space( 20 )
 
-   if empty( ::getClientesController():getSelector():uFields )
+   if empty( ::getTercerosController():getSelector():uFields )
       RETURN ( nil )
    end if 
 
-   cCodigoMetodoPago    := hget( ::getClientesController():getSelector():uFields, "metodo_pago_codigo" )
+   cCodigoMetodoPago    := hget( ::getTercerosController():getSelector():uFields, "metodo_pago_codigo" )
 
    msgalert( cCodigoMetodoPago, "cCodigoMetodoPago" )
 
@@ -336,11 +337,11 @@ METHOD clientSetTarifa() CLASS OperacionesComercialesController
 
    cCodigoTarifa     := space( 20 )
 
-   if empty( ::getClientesController():getSelector():uFields )
+   if empty( ::getTercerosController():getSelector():uFields )
       RETURN ( nil )
    end if 
 
-   cCodigoTarifa     := hget( ::getClientesController():getSelector():uFields, "tarifa_codigo" )
+   cCodigoTarifa     := hget( ::getTercerosController():getSelector():uFields, "tarifa_codigo" )
 
    if empty( cCodigoTarifa )
       cCodigoTarifa  := Company():getDefaultTarifa()
@@ -360,11 +361,11 @@ METHOD clientSetRuta() CLASS OperacionesComercialesController
 
    cCodigoRuta       := space( 20 )
 
-   if empty( ::getClientesController():getSelector():uFields )
+   if empty( ::getTercerosController():getSelector():uFields )
       RETURN ( nil )
    end if 
 
-   cCodigoRuta       := hget( ::getClientesController():getSelector():uFields, "ruta_codigo" )
+   cCodigoRuta       := hget( ::getTercerosController():getSelector():uFields, "ruta_codigo" )
 
    ::getRutasController():getSelector():cText( cCodigoRuta )
    
@@ -378,11 +379,11 @@ METHOD clientSetAgente() CLASS OperacionesComercialesController
 
    local cCodigoAgente 
 
-   if empty( ::getClientesController():getSelector():uFields )
+   if empty( ::getTercerosController():getSelector():uFields )
       RETURN ( nil )
    end if 
 
-   cCodigoAgente     := hget( ::getClientesController():getSelector():uFields, "agente_codigo" )
+   cCodigoAgente     := hget( ::getTercerosController():getSelector():uFields, "agente_codigo" )
 
    ::getAgentesController():getSelector():cText( cCodigoAgente )
    
@@ -408,11 +409,11 @@ RETURN ( nil )
 
 METHOD clientSetRecargo() CLASS OperacionesComercialesController
 
-   if empty( ::getClientesController():getSelector():uFields )
+   if empty( ::getTercerosController():getSelector():uFields )
       RETURN ( nil )
    end if 
 
-   ::getDialogView():oRecargoEquivalencia:setCheck( hget( ::getClientesController():getSelector():uFields, "recargo_equivalencia" ) )
+   ::getDialogView():oRecargoEquivalencia:setCheck( hget( ::getTercerosController():getSelector():uFields, "recargo_equivalencia" ) )
 
 RETURN ( nil )
 
