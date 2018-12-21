@@ -57,6 +57,8 @@ METHOD New( oController ) CLASS RecibosController
    
    ::getPagosController():getModel():setEvent( 'loadedBlankBuffer', {|| ::pagosModelLoadedBlankBuffer() } )
 
+   ::getBrowseView:setEvent( 'activatedDialog', {|| ::getBrowseView:refresh() } )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -160,19 +162,29 @@ RETURN ( nil )
 
 CLASS RecibosBrowseView FROM SQLBrowseView
 
-   DATA lDeletedColored    INIT .f.
+   DATA lFastEdit                      INIT .t.
+
+   DATA nMarqueeStyle                  INIT 3
+
+   DATA nColSel                        INIT 2
+
+   DATA lDeletedColored                INIT .f.
 
    METHOD addColumns() 
 
    METHOD Paid()  
 
-   METHOD PaidIcon()                    
+   METHOD PaidIcon()
+
+   METHOD getFooter()                  INLINE ( !empty(::oController:oController ) )
 
 END CLASS
 
 //----------------------------------------------------------------------------//
 
 METHOD addColumns() CLASS RecibosBrowseView
+
+
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Id'
@@ -221,6 +233,60 @@ METHOD addColumns() CLASS RecibosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'importe'
+      :cHeader             := 'Importe'
+      :nWidth              := 80
+      :cEditPicture        := "@E 99,999,999.99"
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'importe' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      
+      if ::getFooter()
+         :nFootStyle       := :nDataStrAlign               
+         :nFooterType      := AGGR_SUM
+         :cFooterPicture   := :cEditPicture
+         :oFooterFont      := oFontBold()
+         :cDataType        := "N"
+      end if
+
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Total pagado'
+      :nWidth              := 80
+      :cEditPicture        := "@E 99,999,999.99"
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'total_pagado' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+
+      if ::getFooter()
+         :nFootStyle       := :nDataStrAlign               
+         :nFooterType      := AGGR_SUM
+         :cFooterPicture   := :cEditPicture
+         :oFooterFont      := oFontBold()
+         :cDataType        := "N"
+      end if
+
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Importe restante'
+      :nWidth              := 100
+      :cEditPicture        := "@E 99,999,999.99"
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'diferencia' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+
+      if ::getFooter()
+         :nFootStyle       := :nDataStrAlign               
+         :nFooterType      := AGGR_SUM
+         :cFooterPicture   := :cEditPicture
+         :oFooterFont      := oFontBold()
+         :cDataType        := "N"
+         :lHide            := .t.
+      end if
+
+   end with
+
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'tercero_codigo'
       :cHeader             := 'Código cliente'
       :nWidth              := 80
@@ -242,32 +308,6 @@ METHOD addColumns() CLASS RecibosBrowseView
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'concepto' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'importe'
-      :cHeader             := 'Importe'
-      :nWidth              := 80
-      :cEditPicture        := "@E 99,999,999.99"
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'importe' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Total pagado'
-      :nWidth              := 80
-      :cEditPicture        := "@E 99,999,999.99"
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'total_pagado' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Importe restante'
-      :nWidth              := 100
-      :cEditPicture        := "@E 99,999,999.99"
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'diferencia' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
    end with
 
    ::getColumnDeletedAt()

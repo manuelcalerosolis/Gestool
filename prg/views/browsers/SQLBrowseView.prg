@@ -53,6 +53,7 @@ CLASS SQLBrowseView
    METHOD setSize( nTop, nLeft, nRight, nBottom ) 
 
    METHOD setFooter( lFooter )               INLINE ( ::lFooter := lFooter )
+   METHOD getFooter()                        INLINE ( ::lFooter )
 
    // Type and name -----------------------------------------------------------
 
@@ -268,7 +269,7 @@ METHOD Create( oWindow )
    ::oBrowse:lSortDescend     := .f.  
    ::oBrowse:lGDIP            := .f.
 
-   ::oBrowse:lFooter          := ::lFooter
+   ::oBrowse:lFooter          := ::getFooter()
    ::oBrowse:lFastEdit        := ::lFastEdit
    ::oBrowse:lMultiSelect     := ::lMultiSelect
    ::oBrowse:nColSel          := ::nColSel
