@@ -22,6 +22,10 @@ CLASS SQLTercerosModel FROM SQLCompanyModel
 
    METHOD getPaymentDays( cId )        INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentencePaymentDays( cId ) ) ) )
 
+   METHOD isWhereCodigoNotDeletedAndClient( cCodigo, lDeleted )
+
+   METHOD isWhereCodigoNotDeletedAndProveedor( cCodigo, lDeleted )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -43,7 +47,7 @@ METHOD getColumns() CLASS SQLTercerosModel
    hset( ::hColumns, "dni",                        {  "create"    => "VARCHAR( 20 )"                              ,;
                                                       "default"   => {|| space( 20 ) } }                          )
 
-   hset( ::hColumns, "tipo",                       {  "create"     => "ENUM( 'Cliente', 'Proveedor', 'Ambos' )"  ,;
+   hset( ::hColumns, "tipo",                       {  "create"     => "ENUM( 'Cliente', 'Proveedor', 'Cliente y Proveedor' )"  ,;
                                                       "default"    => {|| 'Cliente' }  }                          )
 
    hset( ::hColumns, "metodo_pago_codigo",         {  "create"    => "VARCHAR( 20 )"                              ,;
@@ -246,6 +250,7 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLTercerosModel
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
+
 METHOD getSentencePaymentDays( cId ) CLASS SQLTercerosModel
 
    local cSql
@@ -266,4 +271,53 @@ METHOD getSentencePaymentDays( cId ) CLASS SQLTercerosModel
    cSql  := hb_strformat( cSql, ::getTableName(), ::cTableName, quoted( cId ) )
 
 RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD isWhereCodigoNotDeletedAndClient( cCodigo, lDeleted )
+
+   local cSQL
+   local nCount 
+
+   DEFAULT lDeleted  := ::isDeletedAtColumn()
+
+   cSQL              := "SELECT COUNT(*) FROM " + ::getTableName()                  + " "    
+   cSQL              +=    "WHERE codigo = " + quoted( cCodigo )                    
+
+   if lDeleted
+      cSQL           +=    ::getWhereOrAnd( cSQL ) + "deleted_at = 0" 
+   end if 
+
+      CSQL           +=    ::getWhereOrAnd( cSql ) + "tipo like 'Cliente%'"
+
+   nCount      := ::getDatabase():getValue( cSQL )
+
+RETURN ( hb_isnumeric( nCount ) .and. nCount > 0 )
+
+//---------------------------------------------------------------------------//
+
+METHOD isWhereCodigoNotDeletedAndProveedor( cCodigo, lDeleted )
+
+   local cSQL
+   local nCount 
+
+   DEFAULT lDeleted  := ::isDeletedAtColumn()
+
+   cSQL              := "SELECT COUNT(*) FROM " + ::getTableName()                  + " "    
+   cSQL              +=    "WHERE codigo = " + quoted( cCodigo )                    
+
+   if lDeleted
+      cSQL           +=    ::getWhereOrAnd( cSQL ) + "deleted_at = 0" 
+   end if 
+
+      CSQL           +=    ::getWhereOrAnd( cSql ) + "tipo like '%Proveedor'"
+
+   nCount      := ::getDatabase():getValue( cSQL )
+
+RETURN ( hb_isnumeric( nCount ) .and. nCount > 0 )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
