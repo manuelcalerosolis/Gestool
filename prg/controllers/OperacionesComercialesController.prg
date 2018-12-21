@@ -309,6 +309,8 @@ METHOD clientSetMetodoPago() CLASS OperacionesComercialesController
 
    cCodigoMetodoPago    := hget( ::getClientesController():getSelector():uFields, "metodo_pago_codigo" )
 
+   msgalert( cCodigoMetodoPago, "cCodigoMetodoPago" )
+
    if empty( cCodigoMetodoPago )
       cCodigoMetodoPago := Company():getDefaultMetodoPago()
    end if

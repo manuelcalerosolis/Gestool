@@ -29,7 +29,7 @@ CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
 
    METHOD testCreateFacturaConRecargoDeEqivalencia( uuid )
 
-   METHOD testCreateFacturaConPlazos( uuid )
+   METHOD testCreateFacturaConVariosPlazos( uuid )
 
 #endif
 
@@ -234,7 +234,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateFacturaConPlazos( uuid ) CLASS SQLOperacionesComercialesModel
+METHOD testCreateFacturaConVariosPlazos( uuid ) CLASS SQLOperacionesComercialesModel
 
    local hBuffer  := ::loadBlankBuffer()
 
