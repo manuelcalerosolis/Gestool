@@ -259,8 +259,6 @@ RETURN ( ::hValidators )
 
 CLASS SQLOperacionesComercialesDescuentosModel FROM SQLCompanyModel
 
-   //DATA cTableName               INIT "facturas_clientes_descuentos"
-
    DATA cConstraints             INIT "PRIMARY KEY ( nombre, deleted_at, parent_uuid )"
 
    METHOD getColumns() 
@@ -368,7 +366,7 @@ RETURN ( getSQLDatabase():getValue( cSql ) )
 METHOD getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) CLASS SQLOperacionesComercialesDescuentosModel 
 
    local cSql
-
+ 
    TEXT INTO cSql
 
    SELECT 

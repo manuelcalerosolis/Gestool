@@ -351,10 +351,10 @@ CLASS SQLApplicationController FROM SQLBaseController
                                     INLINE ( if( empty( ::oCombinacionesController ), ::oCombinacionesController := CombinacionesController():New( self ), ), ::oCombinacionesController )
 
    METHOD getFacturasClientesDescuentosController();
-                                    INLINE ( if( empty( ::oFacturasClientesDescuentosController ), ::oFacturasClientesDescuentosController := FacturasProveedoresDescuentosController():New( self ), ), ::oFacturasClientesDescuentosController )
+                                    INLINE ( if( empty( ::oFacturasClientesDescuentosController ), ::oFacturasClientesDescuentosController := FacturasClientesDescuentosController():New( self ), ), ::oFacturasClientesDescuentosController )
 
    METHOD getFacturasProveedoresDescuentosController();
-                                    INLINE ( if( empty( ::oFacturasProveedoresDescuentosController ), ::oFacturasProveedoresDescuentosController := FacturasClientesDescuentosController():New( self ), ), ::oFacturasProveedoresDescuentosController )
+                                    INLINE ( if( empty( ::oFacturasProveedoresDescuentosController ), ::oFacturasProveedoresDescuentosController := FacturasProveedoresDescuentosController():New( self ), ), ::oFacturasProveedoresDescuentosController )
 
    METHOD getDireccionTipoDocumentoController();
                                     INLINE ( if( empty( ::oDireccionTipoDocumentoController ), ::oDireccionTipoDocumentoController := DireccionTipoDocumentoController():New( self ), ), ::oDireccionTipoDocumentoController )
