@@ -11,7 +11,7 @@ CLASS FacturasProveedoresDescuentosController FROM OperacionesComercialesDescuen
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasClientesDescuentosModel():New( self ), ), ::oModel )
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasProveedoresDescuentosModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -50,6 +50,7 @@ RETURN ( ::Super:End() )
 CLASS SQLFacturasProveedoresDescuentosModel FROM SQLOperacionesComercialesDescuentosModel
 
    DATA cTableName               INIT "facturas_proveedores_descuentos"
+   
 END CLASS
 
 //---------------------------------------------------------------------------//
