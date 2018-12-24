@@ -5,10 +5,6 @@
 
 CLASS AlmacenesController FROM SQLNavigatorController
 
-   DATA oPaisesController
-
-   DATA oProvinciasController
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -44,10 +40,6 @@ METHOD New( oController ) CLASS AlmacenesController
                                           "48" => "gc_warehouse_48" }
 
    ::nLevel                         := Auth():Level( ::getName() )
-
-   ::oPaisesController              := PaisesController():New( self )
-
-   ::oProvinciasController          := ProvinciasController():New( self )
 
    ::getModel():setEvent( 'loadedBlankBuffer',           {|| ::getDireccionesController():loadMainBlankBuffer() } )
    ::getModel():setEvent( 'insertedBuffer',              {|| ::getDireccionesController():insertBuffer() } )
@@ -90,13 +82,7 @@ METHOD End() CLASS AlmacenesController
       ::oRepository:End()
    end if
 
-   ::oPaisesController:End()
-
-   ::oProvinciasController:End()
-
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 

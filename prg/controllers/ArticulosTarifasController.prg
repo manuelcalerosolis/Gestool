@@ -671,6 +671,8 @@ METHOD testCreateTarifaMayorista() CLASS SQLArticulosTarifasModel
 
 RETURN ( ::insertIgnore( hBuffer ) )
 
+//---------------------------------------------------------------------------//
+
 #endif
 
 //---------------------------------------------------------------------------//

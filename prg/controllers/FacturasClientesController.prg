@@ -152,20 +152,29 @@ METHOD initModels() CLASS TestFacturasClientesController
 
    SQLTercerosModel():truncateTable()
    SQLDireccionesModel():truncateTable()
+
    SQLAlmacenesModel():truncateTable()
+
    SQLMetodoPagoModel():truncateTable()
+
+   SQLArticulosModel():truncateTable()
+   
    SQLFacturasClientesModel():truncateTable()
    SQLFacturasClientesLineasModel():truncateTable()
    SQLFacturasClientesDescuentosModel():truncateTable()
-   SQLArticulosModel():truncateTable()
 
    SQLArticulosTarifasModel():truncateTable()
 
    SQLTercerosModel():testCreateContado()
    SQLTercerosModel():testCreateTarifaMayorista()
+   SQLTercerosModel():testCreateConPlazos()
 
    SQLAlmacenesModel():testCreate()
+
    SQLMetodoPagoModel():testCreateContado()
+   SQLMetodoPagoModel():testCreateReposicion()
+   SQLMetodoPagoModel():testCreateConPlazos()
+
    SQLArticulosModel():testCreateArticuloConUnidadeDeMedicionCajasPalets()
    SQLArticulosModel():testCreateArticuloConTarifaMayorista()
 
