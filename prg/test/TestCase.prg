@@ -17,12 +17,14 @@
 
 CLASS TestCase FROM Test
 
-  METHOD run()
-  METHOD setUp()          VIRTUAL
-  METHOD tearDown()       VIRTUAL
+   METHOD run()
+   METHOD before()                     VIRTUAL
+   METHOD beforeClass()                VIRTUAL
+   METHOD after()                      VIRTUAL
+   METHOD afterClass()                 VIRTUAL
 
-  PROTECTED:
-    DATA assert
+   PROTECTED:
+      DATA assert
 
 ENDCLASS
 
@@ -30,9 +32,9 @@ ENDCLASS
 
 METHOD run() CLASS TestCase
   
-  ::assert  := TAssert():new( ::oResult )
+   ::assert    := TAssert():new( ::oResult )
   
-  ::oResult():run( self )
+   ::oResult():run( self )
 
 RETURN ( ::oResult() )
 

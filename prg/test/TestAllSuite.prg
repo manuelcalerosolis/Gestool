@@ -48,7 +48,9 @@ USER FUNCTION hbunit_test()
 
    // oSuite:addTest( TestFacturasClientesFacturaeController():new() )
 
-   oSuite:addTest( TestFacturasClientesController():new() )
+   oSuite:addTest( TestAlmacenesController():new() )
+
+   // oSuite:addTest( TestFacturasClientesController():new() )
    
    oRunner:run( oSuite )
 

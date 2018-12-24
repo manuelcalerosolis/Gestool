@@ -11,7 +11,7 @@ CLASS ZonasController FROM SQLBrowseController
 
    METHOD gettingSelectSentence()
 
-   //Construcciones tardias----------------------------------------------------
+   // Construcciones tardias---------------------------------------------------
 
    METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := AlmacenesBrowseView():New( self ), ), ::oBrowseView ) 
 
@@ -68,9 +68,7 @@ METHOD End()
       ::oValidator:End()
    end if
 
-   ::Super:End()
-
-RETURN ( Self )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
@@ -82,7 +80,7 @@ METHOD gettingSelectSentence() CLASS ZonasController
       ::getModel():setGeneralWhere( "almacen_uuid = " + quoted( uuid ) )
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -106,9 +104,8 @@ METHOD Activating() CLASS ZonasView
    if ::oController:isAppendOrDuplicateMode()
       ::oController:getModel():hBuffer()
    end if 
-   ::oController:getUbicacionesController():buildRowSet()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -186,8 +183,6 @@ METHOD Activate() CLASS ZonasView
    end if
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-   ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 
