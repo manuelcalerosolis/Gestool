@@ -1520,11 +1520,18 @@ METHOD insertBuffer( hBuffer )
 
    DEFAULT hBuffer   := ::hBuffer
 
+   msgalert(::className(), "clase")
+
+   msgalert( hb_valtoexp(hBuffer), "hBuffer")
+
    ::fireEvent( 'insertingBuffer' )
 
    ::getInsertSentence( hBuffer )
 
+   msgalert(::getInsertSentence( hBuffer ), "sentencia insert")
+
    ::getDatabase():Execs( ::cSQLInsert )
+   msgalert("insertado")
 
    nId               := ::getDatabase():LastInsertId()
 

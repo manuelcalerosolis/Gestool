@@ -286,6 +286,8 @@ RETURN ( ::nTermAmount )
 
 METHOD insertRecibo( nTotalToPaid, nTerm ) CLASS RecibosGeneratorController
 
+   msgalert("creando recibo")
+
    ::getModel():loadBlankBuffer()
 
    ::getModel():setBuffer( "importe", nTotalToPaid )

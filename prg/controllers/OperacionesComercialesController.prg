@@ -268,7 +268,7 @@ RETURN ( nil )
 
 METHOD updatedBuffer() CLASS OperacionesComercialesController 
 
-RETURN ( ::getRecibosGeneratorController():Update() )
+RETURN ( ::getRecibosGeneratorController():generate() )
 
 //---------------------------------------------------------------------------//
 

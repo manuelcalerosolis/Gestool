@@ -200,11 +200,15 @@ RETURN ( nil )
 
 METHOD getLinkText()
 
-if ::oController:oController:isClient()
-   RETURN ( {|| "Cliente" } )
-end if 
+   if empty( ::oController:oController ) 
+      RETURN ( {|| "Tercero" } )
+   end if
 
-RETURN ( {|| "Proveedor" } )
+   if ::oController:oController:isClient()
+      RETURN ( {|| "Cliente" } )
+   end if 
+
+   RETURN ( {|| "Proveedor" } )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

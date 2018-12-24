@@ -135,7 +135,11 @@ RETURN ( getSQLDatabase():Exec ( cSql ) )
 
 METHOD InsertPagoRecibo( uuidPago, uuidRecibo, nImporte ) CLASS SQLRecibosPagosModel
 
-   local hPago := {  "uuid"         => win_uuidcreatestring(),;
+   local hPago
+
+   msgalert( "InsertPagoRecibo" )
+
+   hPago := {  "uuid"         => win_uuidcreatestring(),;
                      "pago_uuid"    => uuidPago,;
                      "recibo_uuid"  => uuidRecibo,;
                      "importe"      => nImporte }

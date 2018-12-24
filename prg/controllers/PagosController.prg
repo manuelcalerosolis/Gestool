@@ -24,7 +24,7 @@ CLASS PagosController FROM SQLNavigatorController
 
    METHOD appendAssistant()
 
-   METHOD addExtraButtons()
+   METHOD addExtraButtons() 
 
    //Construcciones tardias----------------------------------------------------
 
@@ -126,6 +126,7 @@ RETURN ( nil )
 
 METHOD insertPagoRecibo() CLASS PagosController
 
+
    ::getRecibosPagosController():getModel():insertPagoRecibo( ::getModelBuffer( "uuid" ), ::getUuidRecibo(), ::getImporte() )
     
 RETURN ( nil )
@@ -138,9 +139,11 @@ RETURN ( nil )
 
 CLASS PagosBrowseView FROM SQLBrowseView
 
+   DATA lDeletedColored          INIT .f.
+
    METHOD addColumns()
 
-   METHOD getPaidIcon()                       
+   METHOD getPaidIcon()                     
 
 END CLASS
 
@@ -156,6 +159,14 @@ METHOD addColumns() CLASS PagosBrowseView
       :cDataType           := 'D'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'tipo'
+      :cHeader             := 'tipo'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'tipo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -225,9 +236,8 @@ RETURN ( nil )
 
 METHOD getPaidIcon() CLASS PagosBrowseView
 
-RETURN ( if( ::getRowSet():fieldGet( 'estado' ) == "Presentado", 1, 2 ) ) 
+RETURN ( if( ::getRowSet():fieldGet( 'estado' ) == "Presentado", 1, 2 ) )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -243,6 +253,10 @@ CLASS PagosView FROM SQLBaseView
    DATA oEstado
 
    DATA aEstado                        INIT { "Presentado", "Rechazado" }
+
+   DATA oTipo
+
+   DATA aTipo                          INIT { "Cobro", "Pago" }
   
    METHOD getImporte()                 INLINE ( ::nImporte )
    METHOD setImporte( nImporte )       INLINE ( ::nImporte := nImporte )
@@ -285,42 +299,49 @@ METHOD Activate() CLASS PagosView
       PROMPT      "&General" ;
       DIALOGS     "PAGO_LIBRE_SQL" 
 
+   REDEFINE COMBOBOX ::oEstado ;
+      VAR         ::oController:getModel():hBuffer[ "tipo" ] ;
+      ID          100 ;
+      ITEMS       ::aTipo;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oFolder:aDialogs[1]
+
    ::oController:getClientesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "tercero_codigo" ] ) )
-   ::oController:getClientesController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getClientesController():getSelector():Build( { "idGet" => 110, "idText" => 111, "idLink" => 112, "oDialog" => ::oFolder:aDialogs[1] } )
    ::oController:getClientesController():getSelector():setWhen( {|| ::oController:isAppendMode() } )
    ::oController:getClientesController():getSelector():setValid( {|| ::oController:validate( "tercero_codigo" ) } )
 
   REDEFINE GET    ::oImporte ;
       VAR         ::nImporte ;
-      ID          110 ;
+      ID          120 ;
       WHEN        ( ::oController:isAppendMode() ) ;
       VALID       ( ::oController:validate( "importe_maximo", ::nImporte ) ) ;
       PICTURE     "@E 999999999999.99";
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE GET   ::oController:getModel():hBuffer[ "fecha" ] ;
-      ID          120 ;
+      ID          130 ;
       VALID       ( ::oController:validate( "fecha" ) ) ;
       WHEN        ( ::oController:isAppendMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
    ::oController:getMediosPagoController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "medio_pago_codigo" ] ) )
-   ::oController:getMediosPagoController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getMediosPagoController():getSelector():Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[1] } )
    ::oController:getMediosPagoController():getSelector():setWhen( {|| ::oController:isAppendMode() } )
    ::oController:getMediosPagoController():getSelector():setValid( {|| ::oController:validate( "medio_pago_codigo" ) } )
 
    ::oController:getCuentasBancariasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cuenta_bancaria_codigo" ] ) )
-   ::oController:getCuentasBancariasController():getSelector():Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getCuentasBancariasController():getSelector():Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[1] } )
    ::oController:getCuentasBancariasController():getSelector():setWhen( {|| ::oController:isAppendMode() } )
 
    REDEFINE GET   ::oController:getModel():hBuffer[ "comentario" ] ;
-      ID          150 ;
+      ID          160 ;
       WHEN        ( ::oController:isAppendMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE COMBOBOX ::oEstado ;
       VAR         ::oController:getModel():hBuffer[ "estado" ] ;
-      ID          160 ;
+      ID          170 ;
       ITEMS       ::aEstado;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
@@ -465,9 +486,13 @@ CLASS SQLPagosModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
+#ifdef __TEST__
+
    METHOD testCreatePagoPresentado( uuid )
 
    METHOD testCreatePagoRechazado( uuid ) 
+
+#endif
 
 END CLASS
 
@@ -499,6 +524,9 @@ METHOD getColumns() CLASS SQLPagosModel
    hset( ::hColumns, "comentario",                 {  "create"    => "VARCHAR( 200 )"                              ,;
                                                       "default"   => {|| space( 200 ) } }                          )
 
+   hset( ::hColumns, "tipo",                       {  "create"     => "ENUM( 'Pago', 'Cobro' )"                    ,;
+                                                      "default"    => {|| 'Cobro' }  }                             )
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
@@ -520,7 +548,8 @@ METHOD getInitialSelect() CLASS SQLPagosModel
       clientes.nombre AS cliente_nombre,
       medio_pago.nombre AS medio_pago_nombre,
       cuentas_bancarias.nombre AS nombre_banco,
-      SUM( pagos_recibos.importe ) AS importe
+      SUM( pagos_recibos.importe ) AS importe,
+      pagos.tipo AS tipo
 
    FROM %1$s AS pagos
 
@@ -535,15 +564,22 @@ METHOD getInitialSelect() CLASS SQLPagosModel
       AND cuentas_bancarias.parent_uuid = %6$s
 
    LEFT JOIN %5$s AS pagos_recibos
-      ON pagos_recibos.pago_uuid = pagos.uuid
+      ON pagos_recibos.pago_uuid = pagos.uuid 
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLTercerosModel():getTableName(), SQLMediosPagoModel():getTableName(), SQLCuentasBancariasModel():getTableName(), SQLRecibosPagosModel():getTableName(), quoted( Company():Uuid() ) )
+   cSql  := hb_strformat( cSql, ::getTableName(),;
+                                 SQLTercerosModel():getTableName(),;
+                                 SQLMediosPagoModel():getTableName(),;
+                                 SQLCuentasBancariasModel():getTableName(),;
+                                 SQLRecibosPagosModel():getTableName(),;
+                                 quoted( Company():Uuid() ) )
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
+
+#ifdef __TEST__
 
 METHOD testCreatePagoPresentado( uuid ) CLASS SQLPagosModel
 
@@ -565,6 +601,8 @@ METHOD testCreatePagoRechazado( uuid ) CLASS SQLPagosModel
 
 RETURN ( ::insertBuffer( hBuffer ) )
 
+#endif
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -582,6 +620,8 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+#ifdef __TEST__
 
 CLASS TestPagosController FROM TestCase
 
@@ -897,6 +937,8 @@ METHOD testDialogAppendMedioPagoInexistente() CLASS TestPagosController
    ::assert:false( oController:Append(), "test ::assert:true with .t." )
 
 RETURN ( nil )
+
+#endif
 
 //---------------------------------------------------------------------------//
 
