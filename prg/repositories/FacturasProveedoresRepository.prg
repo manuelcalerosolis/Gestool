@@ -48,6 +48,7 @@ METHOD getTableName()               INLINE ( SQLFacturasProveedoresModel():getTa
    METHOD getSentenceRecargoEquivalenciaAsParam()
    METHOD getSentenceDescuentosAsSelect( uuidFactura ) 
 
+   METHOD getTotalDocument( uuidFacturaProveedor )
    METHOD getSentenceTotalDocument( uuidFactura )
 
    METHOD getTotalesDocument( uuidFactura )         
@@ -450,6 +451,14 @@ METHOD getTotalesDocument( uuidFacturaProveedor ) CLASS FacturasProveedoresRepos
    local aTotal   := ::getDatabase():selectFetchHash( ::getSentenceTotalesDocument( uuidFacturaProveedor ) ) 
 
 RETURN ( if( hb_isarray( aTotal ), atail( aTotal ), nil ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTotalDocument( uuidFacturaProveedor ) CLASS FacturasProveedoresRepository
+
+   local nTotal   := ::getDatabase():getValue( ::getSentenceTotalDocument( uuidFacturaProveedor ) ) 
+
+RETURN ( if( empty( nTotal ), 0, nTotal ) )
 
 //---------------------------------------------------------------------------//
 
