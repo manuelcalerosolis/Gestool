@@ -5,10 +5,6 @@
 
 CLASS AlmacenesController FROM SQLNavigatorController
 
-   DATA oPaisesController
-
-   DATA oProvinciasController
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -44,10 +40,6 @@ METHOD New( oController ) CLASS AlmacenesController
                                           "48" => "gc_warehouse_48" }
 
    ::nLevel                         := Auth():Level( ::getName() )
-
-   ::oPaisesController              := PaisesController():New( self )
-
-   ::oProvinciasController          := ProvinciasController():New( self )
 
    ::getModel():setEvent( 'loadedBlankBuffer',           {|| ::getDireccionesController():loadMainBlankBuffer() } )
    ::getModel():setEvent( 'insertedBuffer',              {|| ::getDireccionesController():insertBuffer() } )
@@ -90,13 +82,7 @@ METHOD End() CLASS AlmacenesController
       ::oRepository:End()
    end if
 
-   ::oPaisesController:End()
-
-   ::oProvinciasController:End()
-
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
@@ -161,6 +147,7 @@ CLASS AlmacenesView FROM SQLBaseView
    DATA oSayCamposExtra
 
    METHOD Activate()
+      METHOD startActivate()
 
    METHOD Activating()
 
@@ -176,10 +163,6 @@ METHOD Activating() CLASS AlmacenesView
 
 RETURN ( self )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS AlmacenesView
@@ -236,21 +219,21 @@ METHOD Activate() CLASS AlmacenesView
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnAppend:bAction   := {|| ::oController:getZonasController():Append() }
+   oBtnAppend:bAction      := {|| ::oController:getZonasController():Append() }
 
    REDEFINE BUTTON oBtnEdit ;
       ID          130 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnEdit:bAction   := {|| ::oController:getZonasController():Edit() }
+   oBtnEdit:bAction     := {|| ::oController:getZonasController():Edit() }
 
    REDEFINE BUTTON oBtnDelete ;
       ID          140 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnDelete:bAction   := {|| ::oController:getZonasController():Delete() }
+   oBtnDelete:bAction      := {|| ::oController:getZonasController():Delete() }
 
    ::oController:getZonasController():Activate( 150, ::oDialog ) 
 
@@ -260,19 +243,23 @@ METHOD Activate() CLASS AlmacenesView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
+   ::oDialog:bKeyDown      := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
 
    if ::oController:isNotZoomMode() 
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
    end if
 
-   ::oDialog:bStart  := {|| ::oController:getDireccionesController():getDialogView():StartDialog() }
+   ::oDialog:bStart        := {|| ::startActivate(), ::paintedActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-   ::oBitmap:end()
-
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD startActivate() CLASS AlmacenesView
+
+RETURN ( ::oController:getDireccionesController():getDialogView():startDialog() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -285,7 +272,7 @@ CLASS AlmacenesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
-   METHOD getUniqueSenctence( uValue )
+   METHOD getUniqueSentence( uValue )
  
 END CLASS
 
@@ -297,18 +284,19 @@ METHOD getValidators() CLASS AlmacenesValidator
                                           "unique"       => "El nombre introducido ya existe" },;
                         "codigo" =>    {  "required"     => "El código es un dato requerido" ,;
                                           "unique"       => "EL código introducido ya existe" } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
 
-METHOD getUniqueSenctence( uValue ) CLASS AlmacenesValidator
+METHOD getUniqueSentence( uValue ) CLASS AlmacenesValidator
 
-   local cSQLSentence   := ::Super:getUniqueSenctence( uValue )
+   local cSQLSentence   := ::Super:getUniqueSentence( uValue ) + " "
 
    if empty( ::oController ) .or. empty( ::oController:getController() )
-      cSQLSentence      +=    " AND almacen_uuid = ''"
+      cSQLSentence      +=    "AND almacen_uuid = ''"
    else 
-      cSQLSentence      +=    " AND almacen_uuid = " + quoted( ::oController:getController():getUuid() )
+      cSQLSentence      +=    "AND almacen_uuid = " + quoted( ::oController:getController():getUuid() )
    end if
 
 RETURN ( cSQLSentence )
@@ -325,7 +313,7 @@ CLASS SQLAlmacenesModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "almacenes"
 
-   DATA cConstraints                   INIT "PRIMARY KEY ( codigo, deleted_at )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( codigo, almacen_uuid, deleted_at )"
 
    METHOD getColumns()
 
@@ -464,3 +452,90 @@ METHOD getNombres() CLASS AlmacenesRepository
 RETURN ( aResult )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+CLASS TestAlmacenesController FROM TestCase
+
+   DATA oController
+
+   METHOD beforeClass()
+
+   METHOD afterClass()
+
+   METHOD test_dialogo_sin_codigo()
+
+   METHOD test_dialogo_sin_nombre() 
+
+   METHOD test_dialogo_creacion()   
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD beforeClass() CLASS TestAlmacenesController
+
+   SQLAlmacenesModel():truncateTable()
+
+   ::oController           := AlmacenesController():New()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD afterClass() CLASS TestAlmacenesController
+
+RETURN ( ::oController:end() )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_sin_codigo() CLASS TestAlmacenesController
+   
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDCANCEL ):Click() } )
+
+RETURN ( ::assert:false( ::oController:Append(), "test creación de almacen sin código" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_sin_nombre() CLASS TestAlmacenesController
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100 ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDCANCEL ):Click() } )
+   
+RETURN ( ::assert:false( ::oController:Append(), "test creación de almacen sin nombre" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_creacion() CLASS TestAlmacenesController
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100 ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110 ):cText( "Almacen principal" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )
+
+RETURN ( ::assert:true( ::oController:Append(), "test creación de almacen" ) )
+
+//---------------------------------------------------------------------------//
+
+#endif
+
+

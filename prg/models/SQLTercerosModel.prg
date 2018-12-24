@@ -30,6 +30,16 @@ CLASS SQLTercerosModel FROM SQLCompanyModel
 
    METHOD getSelectProveedor()
 
+#ifdef __TEST__
+   
+   METHOD testCreateContado() 
+
+   METHOD testCreateTarifaMayorista() 
+
+   METHOD testCreateConPlazos()   
+
+#endif
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -289,7 +299,7 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD isWhereCodigoNotDeletedAndClient( cCodigo )
+METHOD isWhereCodigoNotDeletedAndClient( cCodigo ) CLASS SQLTercerosModel
 
    local cSql
    local nCount 
@@ -313,7 +323,7 @@ RETURN ( hb_isnumeric( nCount ) .and. nCount > 0 )
 
 //---------------------------------------------------------------------------//
 
-METHOD isWhereCodigoNotDeletedAndProveedor( cCodigo )
+METHOD isWhereCodigoNotDeletedAndProveedor( cCodigo ) CLASS SQLTercerosModel
 
    local cSql
    local nCount 
@@ -337,7 +347,7 @@ RETURN ( hb_isnumeric( nCount ) .and. nCount > 0 )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSelectClient()
+METHOD getSelectClient() CLASS SQLTercerosModel
 
   local cSql
 
@@ -404,7 +414,7 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSelectProveedor()
+METHOD getSelectProveedor() CLASS SQLTercerosModel
 
   local cSql
 
@@ -470,8 +480,118 @@ METHOD getSelectProveedor()
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+METHOD testCreateContado() CLASS SQLTercerosModel
+
+   local uuid     
+   local hBuffer     
+   local hDireccion  
+
+   uuid              := win_uuidcreatestring() 
+
+   hDireccion        := SQLDireccionesModel():loadBlankBuffer()
+
+   hset( hDireccion, "parent_uuid", uuid )
+   hset( hDireccion, "codigo", "0" )
+   hset( hDireccion, "direccion", "Cl. Lepanto, 5" )
+   hset( hDireccion, "poblacion", "La Palma del Condado" )
+   hset( hDireccion, "codigo_provincia", "21" )
+   hset( hDireccion, "provincia", "Huelva" )
+   hset( hDireccion, "codigo_postal", "21700" )
+   hset( hDireccion, "codigo_pais", "ES" )
+   hset( hDireccion, "telefono", "999999999" )
+   hset( hDireccion, "movil", "999999999" )
+   hset( hDireccion, "email", "mail@mail.com" )
+
+   SQLDireccionesModel():insertBuffer( hDireccion )
+
+   hBuffer           := ::loadBlankBuffer()
+
+   hset( hBuffer, "uuid", uuid )
+   hset( hBuffer, "codigo", 0 )
+   hset( hBuffer, "nombre", "Clientes contado" )
+   hset( hBuffer, "dni", "66666666B" )
+   hset( hBuffer, "metodo_pago_codigo", "0" )
+   hset( hBuffer, "tarifa_codigo", "0" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
 //---------------------------------------------------------------------------//
+
+METHOD testCreateTarifaMayorista() CLASS SQLTercerosModel
+
+   local uuid     
+   local hBuffer     
+   local hDireccion  
+
+   uuid              := win_uuidcreatestring() 
+
+   hDireccion        := SQLDireccionesModel():loadBlankBuffer()
+
+   hset( hDireccion, "parent_uuid", uuid )
+   hset( hDireccion, "codigo", "1" )
+   hset( hDireccion, "direccion", "Cl. Real, 58" )
+   hset( hDireccion, "poblacion", "Bollullos Par del Codado" )
+   hset( hDireccion, "codigo_provincia", "21" )
+   hset( hDireccion, "provincia", "Huelva" )
+   hset( hDireccion, "codigo_postal", "21700" )
+   hset( hDireccion, "codigo_pais", "ES" )
+   hset( hDireccion, "telefono", "666666666" )
+   hset( hDireccion, "movil", "666666666" )
+   hset( hDireccion, "email", "mail@mail.com" )
+
+   SQLDireccionesModel():insertBuffer( hDireccion )
+
+   hBuffer           := ::loadBlankBuffer()
+
+   hset( hBuffer, "uuid", uuid )
+   hset( hBuffer, "codigo", "1" )
+   hset( hBuffer, "nombre", "Clientes tarifa mayorista" )
+   hset( hBuffer, "dni", "77777777A" )
+   hset( hBuffer, "metodo_pago_codigo", "0" )
+   hset( hBuffer, "tarifa_codigo", "1" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
 //---------------------------------------------------------------------------//
+
+METHOD testCreateConPlazos() CLASS SQLTercerosModel
+
+   local uuid     
+   local hBuffer     
+   local hDireccion  
+
+   uuid              := win_uuidcreatestring() 
+
+   hDireccion        := SQLDireccionesModel():loadBlankBuffer()
+
+   hset( hDireccion, "parent_uuid", uuid )
+   hset( hDireccion, "codigo", "2" )
+   hset( hDireccion, "direccion", "Cl. Real, 58" )
+   hset( hDireccion, "poblacion", "Bollullos Par del Codado" )
+   hset( hDireccion, "codigo_provincia", "21" )
+   hset( hDireccion, "provincia", "Huelva" )
+   hset( hDireccion, "codigo_postal", "21700" )
+   hset( hDireccion, "codigo_pais", "ES" )
+   hset( hDireccion, "telefono", "666666666" )
+   hset( hDireccion, "movil", "666666666" )
+   hset( hDireccion, "email", "mail@mail.com" )
+
+   SQLDireccionesModel():insertBuffer( hDireccion )
+
+   hBuffer           := ::loadBlankBuffer()
+
+   hset( hBuffer, "uuid", uuid )
+   hset( hBuffer, "codigo", "1" )
+   hset( hBuffer, "nombre", "Clientes tarifa mayorista" )
+   hset( hBuffer, "dni", "77777777A" )
+   hset( hBuffer, "metodo_pago_codigo", "0" )
+   hset( hBuffer, "tarifa_codigo", "1" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+
+#endif

@@ -12,6 +12,8 @@ CLASS Events
    METHOD   End()
 
    METHOD   Set( cEvent, bEvent )
+   METHOD   Add( cEvent, bEvent )
+   
    METHOD   setEvent( cEvent, bEvent ) INLINE ( ::Set( cEvent, bEvent ) )
    METHOD   setEvents( aEvents, bEvent )
 
@@ -42,15 +44,20 @@ RETURN ( nil )
 
 METHOD Set( cEvent, bEvent )
 
-   cEvent   := lower( cEvent )
-
-   if hhaskey( ::hEvents, cEvent )
-      aadd( hget( ::hEvents, cEvent ), bEvent )
-   else
-      hset( ::hEvents, cEvent, { bEvent } )
-   end if 
+   hset( ::hEvents, lower( cEvent ), { bEvent } )
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD Add( cEvent, bEvent )
+
+   if hhaskey( ::hEvents, lower( cEvent ) )
+      aadd( hget( ::hEvents, lower( cEvent ) ), bEvent )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::Set( cEvent, bEvent ) )
 
 //---------------------------------------------------------------------------//
 

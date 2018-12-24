@@ -233,8 +233,7 @@ METHOD getUniqueSentence( uValue )
    cSQLSentence         +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
 
    if ::oController:getModel():isDeletedAtColumn()
-   
-      cSQLSentence         +=    "AND deleted_at = 0 " 
+      cSQLSentence      +=    "AND deleted_at = 0 " 
    end if 
    
    id                   := ::oController:getModelBufferColumnKey()

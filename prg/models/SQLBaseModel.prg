@@ -1533,6 +1533,8 @@ METHOD insertBuffer( hBuffer )
    ::getDatabase():Execs( ::cSQLInsert )
    msgalert("insertado")
 
+   logwrite( ::cSQLInsert )
+
    nId               := ::getDatabase():LastInsertId()
 
    hset( hBuffer, ::cColumnKey, nId )

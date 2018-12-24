@@ -422,11 +422,15 @@ CLASS SQLMetodoPagoModel FROM SQLCompanyModel
 
    METHOD getMedioPagoCodigo( CodigoMetodoPago )   INLINE ( ::getField( "codigo_medio_pago", "codigo", CodigoMetodoPago ) )
 
+#ifdef __TEST__
+
    METHOD testCreateContado()
 
    METHOD testCreateReposicion()
 
    METHOD testCreateConPlazos()
+
+#endif
 
 END CLASS
 
@@ -480,11 +484,13 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+#ifdef __TEST__
+
 METHOD testCreateContado() CLASS SQLMetodoPagoModel
 
    local hBuffer  := ::loadBlankBuffer()
 
-   hset( hBuffer, "codigo", 0 )
+   hset( hBuffer, "codigo", "0" )
    hset( hBuffer, "nombre", "Contado" )
    hset( hBuffer, "cobrado", 1 )
    hset( hBuffer, "codigo_medio_pago", "0" )
@@ -497,7 +503,7 @@ METHOD testCreateReposicion() CLASS SQLMetodoPagoModel
 
    local hBuffer  := ::loadBlankBuffer()
 
-   hset( hBuffer, "codigo", 1 )
+   hset( hBuffer, "codigo", "1" )
    hset( hBuffer, "nombre", "Reposición" )
    hset( hBuffer, "cobrado", 0 )
    hset( hBuffer, "codigo_medio_pago", "0" )
@@ -510,16 +516,18 @@ METHOD testCreateConPlazos() CLASS SQLMetodoPagoModel
 
    local hBuffer  := ::loadBlankBuffer()
 
-   hset( hBuffer, "codigo", 1 )
+   hset( hBuffer, "codigo", "2" )
    hset( hBuffer, "nombre", "30 60 90" )
    hset( hBuffer, "cobrado", 0 )
    hset( hBuffer, "codigo_medio_pago", "0" )
-   hset( hBuffer, "numero_plazos", 3)
-   hset( hBuffer, "primer_plazo", 15)
-   hset( hBuffer, "entre_plazo", 15)
-   hset( hBuffer, "ultimo_plazo", 20)
+   hset( hBuffer, "numero_plazos", 3 )
+   hset( hBuffer, "primer_plazo", 15 )
+   hset( hBuffer, "entre_plazo", 15 )
+   hset( hBuffer, "ultimo_plazo", 20 )
 
 RETURN ( ::insertBuffer( hBuffer ) )
+
+#endif
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

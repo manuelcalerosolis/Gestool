@@ -46,12 +46,16 @@ METHOD run( oTest ) CLASS TestResult
    local nTestMethods   := len ( aTestMethods )
 
    ::oData:addTestCaseCount( nTestMethods )
+      
+   ::invokeTestMethod( oTest, "BEFORECLASS" )
 
    for i := 1 TO nTestMethods
-      ::invokeTestMethod( oTest, "SETUP")
+      ::invokeTestMethod( oTest, "BEFORE" )
       ::invokeTestMethod( oTest, aTestMethods[i] )
-      ::invokeTestMethod( oTest, "TEARDOWN")
+      ::invokeTestMethod( oTest, "AFTER" )
    next
+
+   ::invokeTestMethod( oTest, "AFTERCLASS" )
 
 RETURN ( NIL )
 
