@@ -408,10 +408,8 @@ RETURN ( getSQLDatabase():getValue( cSql ) )
 
 METHOD testCreate() CLASS SQLAlmacenesModel
 
-   local hBuffer  := ::loadBlankBuffer()
-
-   hset( hBuffer, "codigo", "0" )
-   hset( hBuffer, "nombre", "Test de almacen" )
+   local hBuffer  := ::loadBlankBuffer(   {  "codigo" => "0",;
+                                             "nombre" => "Test de almacen" } )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 

@@ -1319,7 +1319,7 @@ RETURN ( {|| Self:&( cMethod ) } )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadBlankBuffer()
+METHOD loadBlankBuffer( hBuffer )
 
    ::hBuffer            := {=>}
 
@@ -1330,6 +1330,10 @@ METHOD loadBlankBuffer()
    ::defaultCurrentBuffer()
 
    ::fireEvent( 'loadedBlankBuffer' )
+
+   if hb_ishash( hBuffer )
+      heval( hBuffer, {|k,v| hset( ::hBuffer, k, v ) } )
+   end if 
 
    ::fireEvent( 'loadedBuffer' )
 
