@@ -112,7 +112,9 @@ METHOD New( oController ) CLASS GetSelector
 
    ::oEvents      := Events():New()
 
-   ::bWhen        := {|| ::oController:getController():isNotZoomMode() } 
+   if !empty( ::oController:getController() )
+      ::bWhen        := {|| ::oController:getController():isNotZoomMode() } 
+   end if
 
 RETURN ( Self )
 

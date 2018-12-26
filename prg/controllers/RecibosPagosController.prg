@@ -137,12 +137,12 @@ METHOD InsertPagoRecibo( uuidPago, uuidRecibo, nImporte ) CLASS SQLRecibosPagosM
 
    local hPago
 
-   msgalert( "InsertPagoRecibo" )
 
    hPago := {  "uuid"         => win_uuidcreatestring(),;
                      "pago_uuid"    => uuidPago,;
                      "recibo_uuid"  => uuidRecibo,;
                      "importe"      => nImporte }
+
 
 RETURN ( ::insertBuffer( hPago ) )
 

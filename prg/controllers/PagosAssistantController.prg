@@ -57,7 +57,7 @@ METHOD New( oController ) CLASS PagosAssistantController
    ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentence() } )
 
    ::getClientesController():getSelector():setEvent( 'validated', {|| ::getRecibos() } )
-   ::setEvent( 'appended',     {|| ::getRecibosPagosController():getModel():InsertPagoReciboAssistant( ::getModelBuffer( "uuid" ) ) } )
+   ::setEvent( 'appended',     {|| ::getRecibosPagosController():getModel():InsertPagoReciboAssistant( ::getModelBuffer( "uuid" ) ), ::oController:getRowset():refresh() } )
    ::setEvent( 'exitAppended', {|| ::getRecibosPagosTemporalController():getModel():dropTemporalTable(), ::resetImporteAndCliente() } )
 
 RETURN ( Self )
@@ -132,7 +132,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getImportePagar( nImporte )
+METHOD getImportePagar( nImporte ) CLASS PagosAssistantController
 
    if ::nImporte == nImporte
       RETURN ( .t. )
@@ -144,8 +144,8 @@ METHOD getImportePagar( nImporte )
 
    ::getRecibosPagosTemporalController():calculatePayment( nImporte )
 
-   ::getRecibosPagosTemporalController():getRowSet():Refresh()
-
+   ::getRecibosPagosTemporalController():getRowSet():refreshAndGoTop()
+   
    ::getRecibosPagosTemporalController():getBrowseView():Refresh()
 
 RETURN ( .t. )
@@ -322,7 +322,7 @@ END CLASS
 
 METHOD getValidators() CLASS PagosAssistantValidator
 
-   ::hValidators  := {  "tercero_codigo"     =>   {  "required"               => "El código del cliente es un dato requerido" },;
+   ::hValidators  := {  "tercero_codigo"     =>   {  "required"               => "El código de tercero es un dato requerido" },;
                         "importe"            =>   {  "required"               => "El importe es un dato requerido" },;
                         "fecha"              =>   {  "required"               => "La fecha es un dato requerido" },;
                         "medio_pago_codigo"  =>   {  "required"               => "El medio de pago es un dato requerido" },;
@@ -348,6 +348,8 @@ RETURN ( ::oController:getImportePagar( nImporte ) )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+#ifdef __TEST__
 
 CLASS TestPagosAssistantController FROM TestCase
 
@@ -804,6 +806,8 @@ METHOD testCreateAsistenteTodosPagosCambioImporte() CLASS TestPagosAssistantCont
    ::assert:true( oController:Append(), "test ::assert:true with .t." )
 
 RETURN ( nil )
+
+#endif
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

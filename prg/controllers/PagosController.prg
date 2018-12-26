@@ -24,7 +24,7 @@ CLASS PagosController FROM SQLNavigatorController
 
    METHOD appendAssistant()
 
-   METHOD addExtraButtons() 
+   METHOD addExtraButtons()                 
 
    //Construcciones tardias----------------------------------------------------
 
@@ -66,9 +66,9 @@ METHOD New( oController ) CLASS PagosController
    ::getCuentasBancariasController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
    ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentence() } )
    
-   ::setEvents( { 'appended', 'duplicated' }, {|| ::insertPagoRecibo() } )
+   //::setEvents( { 'appended', 'duplicated' }, {|| ::insertPagoRecibo() } )
 
-RETURN ( Self )
+RETURN ( Self ) 
 
 //---------------------------------------------------------------------------//
 
@@ -128,6 +128,8 @@ METHOD insertPagoRecibo() CLASS PagosController
 
 
    ::getRecibosPagosController():getModel():insertPagoRecibo( ::getModelBuffer( "uuid" ), ::getUuidRecibo(), ::getImporte() )
+
+   ::getRecibosController():getRowset():refresh()
     
 RETURN ( nil )
 
@@ -164,7 +166,7 @@ METHOD addColumns() CLASS PagosBrowseView
 
     with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'tipo'
-      :cHeader             := 'tipo'
+      :cHeader             := 'Tipo'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'tipo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -183,7 +185,7 @@ METHOD addColumns() CLASS PagosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'tercero_codigo'
-      :cHeader             := 'Código cliente'
+      :cHeader             := 'Código tercero'
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'tercero_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -191,7 +193,7 @@ METHOD addColumns() CLASS PagosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'cliente_nombre'
-      :cHeader             := 'Cliente'
+      :cHeader             := 'Tercero'
       :nWidth              := 250
       :bEditValue          := {|| ::getRowSet():fieldGet( 'cliente_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -303,12 +305,12 @@ METHOD Activate() CLASS PagosView
       VAR         ::oController:getModel():hBuffer[ "tipo" ] ;
       ID          100 ;
       ITEMS       ::aTipo;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() .AND. ::oController:isNotEditMode() .AND. ::oController:isNotAppendOrDuplicateMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
    ::oController:getClientesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "tercero_codigo" ] ) )
    ::oController:getClientesController():getSelector():Build( { "idGet" => 110, "idText" => 111, "idLink" => 112, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::oController:getClientesController():getSelector():setWhen( {|| ::oController:isAppendMode() } )
+   ::oController:getClientesController():getSelector():setWhen( {|| ::oController:isNotAppendOrDuplicateMode() .AND. ::oController:isNotZoomMode() .AND. ::oController:isNotEditMode() } )
    ::oController:getClientesController():getSelector():setValid( {|| ::oController:validate( "tercero_codigo" ) } )
 
   REDEFINE GET    ::oImporte ;

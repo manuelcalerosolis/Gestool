@@ -3,6 +3,18 @@
 
 //---------------------------------------------------------------------------//
 
+CLASS CuentasBancariasGestoolController FROM CuentasBancariasController
+
+   METHOD getModel()                            INLINE ( if( empty( ::oModel ), ::oModel := SQLCuentasBancariasGestoolModel():New( self ), ), ::oModel )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
 CLASS CuentasBancariasController FROM SQLNavigatorController
 
    METHOD New() CONSTRUCTOR
@@ -427,6 +439,18 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
+CLASS SQLCuentasBancariasGestoolModel FROM SQLCuentasBancariasModel
+
+   METHOD getTableName()               INLINE ( "gestool." + ::cTableName )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
 CLASS SQLCuentasBancariasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "cuentas_bancarias"
@@ -479,6 +503,9 @@ METHOD getColumns() CLASS SQLCuentasBancariasModel
 
    hset( ::hColumns, "cuenta_numero",           {  "create"    => "VARCHAR( 10 )"                           ,;
                                                    "default"   => {|| space( 10 ) } }                       )
+
+   hset( ::hColumns, "defecto",                 {  "create"    => "TINYINT( 1 )"                            ,;
+                                                   "default"   => {|| 0 } }                                 )
    ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
