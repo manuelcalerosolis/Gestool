@@ -32,11 +32,11 @@ CLASS SQLTercerosModel FROM SQLCompanyModel
 
 #ifdef __TEST__
    
-   METHOD testCreateContado() 
+   METHOD test_create_contado() 
 
-   METHOD testCreateTarifaMayorista() 
+   METHOD test_create_tarifa_mayorista() 
 
-   METHOD testCreateConPlazos()   
+   METHOD test_create_con_plazos()   
 
 #endif
 
@@ -61,7 +61,7 @@ METHOD getColumns() CLASS SQLTercerosModel
    hset( ::hColumns, "dni",                        {  "create"    => "VARCHAR( 20 )"                              ,;
                                                       "default"   => {|| space( 20 ) } }                          )
 
-   hset( ::hColumns, "tipo",                       {  "create"     => "ENUM( 'Cliente', 'Proveedor', 'Cliente y Proveedor' )"  ,;
+   hset( ::hColumns, "tipo",                       {  "create"     => "ENUM( 'Cliente', 'Proveedor', 'Cliente/Proveedor' )"  ,;
                                                       "default"    => {|| 'Cliente' }  }                          )
 
    hset( ::hColumns, "metodo_pago_codigo",         {  "create"    => "VARCHAR( 20 )"                              ,;
@@ -477,7 +477,7 @@ RETURN ( cSql )
 
 #ifdef __TEST__
 
-METHOD testCreateContado() CLASS SQLTercerosModel
+METHOD test_create_contado() CLASS SQLTercerosModel
 
    local uuid     
    local hBuffer     
@@ -514,7 +514,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateTarifaMayorista() CLASS SQLTercerosModel
+METHOD test_create_tarifa_mayorista() CLASS SQLTercerosModel
 
    local uuid     
    local hBuffer     
@@ -551,7 +551,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateConPlazos() CLASS SQLTercerosModel
+METHOD test_create_con_plazos() CLASS SQLTercerosModel
 
    local uuid     
    local hBuffer     

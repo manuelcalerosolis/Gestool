@@ -22708,10 +22708,10 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Provincia", -1, "Static", WS_GROUP, 11, 142, 34, 8
   CONTROL "Web", -1, "Static", WS_GROUP, 11, 212, 42, 8
   CONTROL "Establecimiento", -1, "Static", WS_GROUP, 11, 226, 54, 8
-  CONTROL "", -1, "Button", BS_GROUPBOX, 3, 240, 444, 33
-  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 69, 251, 96, 12
-  CONTROL "", 161, "Edit", WS_BORDER|WS_TABSTOP, 166, 251, 277, 12
-  CONTROL "Tarifa", 162, "Static", WS_GROUP, 10, 255, 45, 8
+  CONTROL "", -1, "Button", BS_GROUPBOX, 3, 240, 444, 27
+  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 69, 249, 96, 12
+  CONTROL "", 161, "Edit", WS_BORDER|WS_TABSTOP, 166, 249, 277, 12
+  CONTROL "Tarifa", 162, "Static", WS_GROUP, 10, 253, 45, 8
   CONTROL "", 130, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 70, 51, 76, 99
   CONTROL "Tipo *", -1, "Static", WS_GROUP, 11, 54, 38, 8
 }
@@ -22740,42 +22740,42 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 301, 124, 10, 10
   CONTROL "", 230, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 301, 136, 96, 12
   CONTROL "", 240, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 301, 149, 143, 12
-  CONTROL "", 250, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 70, 178, 10, 10
-  CONTROL "", 260, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 70, 190, 96, 12
-  CONTROL "", 270, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 70, 203, 96, 12
-  CONTROL "", 280, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 301, 177, 10, 10
-  CONTROL "", 290, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 301, 190, 96, 12
-  CONTROL "", 300, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 301, 203, 96, 12
-  CONTROL "Excluido del programa de fidelización", 320, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 69, 233, 139, 10
-  CONTROL "Datos inmutables en operaciones comerciales", 330, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 69, 247, 157, 10
+  CONTROL "", 250, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 70, 180, 10, 10
+  CONTROL "", 260, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 70, 192, 96, 12
+  CONTROL "", 270, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 70, 205, 96, 12
+  CONTROL "", 280, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 301, 179, 10, 10
+  CONTROL "", 290, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 301, 192, 96, 12
+  CONTROL "", 300, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 301, 205, 96, 12
+  CONTROL "Excluido del programa de fidelización", 320, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 70, 233, 139, 10
+  CONTROL "Datos inmutables en operaciones comerciales", 330, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 70, 247, 157, 10
   CONTROL "", 340, "Edit", WS_BORDER|WS_TABSTOP, 354, 233, 76, 12
   CONTROL "", 350, "TBtnBmp", 0x00000000, 431, 233, 12, 12
   CONTROL "Vacaciones", -1, "Static", WS_GROUP, 237, 95, 43, 10
-  CONTROL "Riesgo ", 292, "Static", WS_GROUP, 237, 192, 29, 9
-  CONTROL "Alcanzado", 302, "Static", WS_GROUP, 237, 205, 39, 9
-  CONTROL "Bloqueo", -1, "Button", BS_GROUPBOX, 229, 114, 220, 51
-  CONTROL "Fecha", 232, "Static", WS_GROUP, 237, 137, 25, 10
-  CONTROL "Petición", 262, "Static", WS_GROUP, 12, 191, 31, 10
-  CONTROL "Concesión", 272, "Static", WS_GROUP, 12, 204, 39, 10
-  CONTROL "Causa", 242, "Static", WS_GROUP, 237, 150, 25, 10
-  CONTROL "Día pago 1, 2, 3", -1, "Static", WS_GROUP, 12, 97, 54, 8
-  CONTROL "Riesgo", -1, "Button", BS_GROUPBOX, 5, 169, 444, 50
-  CONTROL "Impuestos", -1, "Button", BS_GROUPBOX, 5, 114, 220, 51
-  CONTROL "I.R.P.F.", -1, "Static", WS_GROUP, 12, 151, 28, 8
+  CONTROL "Riesgo ", 292, "Static", WS_GROUP, 235, 194, 29, 9
+  CONTROL "Alcanzado", 302, "Static", WS_GROUP, 235, 207, 39, 9
+  CONTROL "Bloqueo", -1, "Button", BS_GROUPBOX, 229, 114, 220, 52
+  CONTROL "Fecha", 232, "Static", WS_GROUP, 235, 137, 25, 10
+  CONTROL "Petición", 262, "Static", WS_GROUP, 11, 193, 31, 10
+  CONTROL "Concesión", 272, "Static", WS_GROUP, 11, 206, 39, 10
+  CONTROL "Causa", 242, "Static", WS_GROUP, 235, 150, 25, 10
+  CONTROL "Día pago 1, 2, 3", -1, "Static", WS_GROUP, 11, 97, 54, 8
+  CONTROL "Riesgo", -1, "Button", BS_GROUPBOX, 5, 169, 444, 52
+  CONTROL "Impuestos", -1, "Button", BS_GROUPBOX, 5, 114, 220, 52
+  CONTROL "I.R.P.F.", -1, "Static", WS_GROUP, 11, 151, 28, 8
   CONTROL "%", 4009, "Static", WS_GROUP, 169, 152, 9, 8
-  CONTROL "Régimen", -1, "Static", WS_GROUP, 12, 125, 32, 10
-  CONTROL "Método de pago", -1, "Button", BS_GROUPBOX, 5, 69, 444, 40
-  CONTROL "Método pago", 152, "Static", WS_GROUP, 12, 82, 55, 8
+  CONTROL "Régimen", -1, "Static", WS_GROUP, 11, 125, 32, 10
+  CONTROL "Método de pago", -1, "Button", BS_GROUPBOX, 5, 69, 444, 42
+  CONTROL "Método pago", 152, "Static", WS_GROUP, 11, 82, 55, 8
   CONTROL "Valores", -1, "Button", BS_GROUPBOX, 5, 2, 444, 64
   CONTROL "Grupo", 142, "Static", WS_GROUP, 11, 53, 25, 8, WS_EX_TRANSPARENT
   CONTROL "Agente", 132, "Static", WS_GROUP, 11, 40, 46, 8, WS_EX_TRANSPARENT
   CONTROL "Ruta", 122, "Static", WS_GROUP, 11, 27, 46, 8, WS_EX_TRANSPARENT
   CONTROL "Remesa", 112, "Static", WS_GROUP, 11, 14, 45, 8
-  CONTROL "Recargo", 202, "Static", WS_GROUP, 12, 138, 33, 10
-  CONTROL "Bloquear", 222, "Static", WS_GROUP, 237, 125, 33, 10
-  CONTROL "Bloq. al alcanzarlo", 282, "Static", WS_GROUP, 237, 179, 61, 9
-  CONTROL "Credito autoriz.", 252, "Static", WS_GROUP, 12, 179, 52, 9
-  CONTROL "Opciones", -1, "Button", BS_GROUPBOX, 4, 223, 444, 39
+  CONTROL "Recargo", 202, "Static", WS_GROUP, 11, 138, 33, 10
+  CONTROL "Bloquear", 222, "Static", WS_GROUP, 235, 125, 33, 10
+  CONTROL "Bloq. al alcanzarlo", 282, "Static", WS_GROUP, 235, 181, 61, 9
+  CONTROL "Credito autoriz.", 252, "Static", WS_GROUP, 11, 181, 52, 9
+  CONTROL "Opciones", -1, "Button", BS_GROUPBOX, 5, 223, 444, 39
   CONTROL "Última llamada", -1, "Static", WS_GROUP, 300, 235, 51, 10
 }
 
@@ -23595,18 +23595,16 @@ CLIENTE_CONTABILIDAD DIALOG DISCARDABLE 35, -50, 456, 270
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "Ms Sans Serif"
 {
-  CONTROL "", 330, "Edit", WS_BORDER|WS_TABSTOP, 70, 13, 96, 12
-  CONTROL "", 331, "Edit", WS_BORDER|WS_TABSTOP, 167, 13, 216, 12
-  CONTROL "", 340, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 385, 13, 58, 12
-  CONTROL "", 350, "Edit", WS_BORDER|WS_TABSTOP, 70, 25, 96, 12
-  CONTROL "", 351, "Edit", WS_BORDER|WS_TABSTOP, 167, 26, 216, 12
-  CONTROL "", 370, "Edit", WS_BORDER|WS_TABSTOP, 70, 39, 96, 12
-  CONTROL "", 371, "Edit", WS_BORDER|WS_TABSTOP, 167, 39, 216, 12
-  CONTROL "", 380, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 385, 39, 58, 12
-  CONTROL "Cuenta venta", 352, "Static", WS_GROUP, 12, 29, 57, 8
-  CONTROL "Subcuenta", 320, "Static", WS_GROUP, 12, 16, 48, 8
+  CONTROL "", 330, "Edit", WS_BORDER|WS_TABSTOP, 100, 12, 96, 12
+  CONTROL "", 331, "Edit", WS_BORDER|WS_TABSTOP, 197, 12, 248, 12
+  CONTROL "", 350, "Edit", WS_BORDER|WS_TABSTOP, 100, 26, 96, 12
+  CONTROL "", 351, "Edit", WS_BORDER|WS_TABSTOP, 197, 26, 248, 12
+  CONTROL "", 370, "Edit", WS_BORDER|WS_TABSTOP, 100, 40, 96, 12
+  CONTROL "", 371, "Edit", WS_BORDER|WS_TABSTOP, 197, 40, 248, 12
+  CONTROL "Subcuenta de compra", 352, "Static", WS_GROUP, 12, 30, 75, 8
+  CONTROL "Subcuenta de venta", 320, "Static", WS_GROUP, 12, 16, 70, 8
   CONTROL "Contabilidad", -1, "Button", BS_GROUPBOX, 5, 2, 444, 54
-  CONTROL "Descuento", 360, "Static", WS_GROUP, 12, 42, 49, 8
+  CONTROL "Descuento", 360, "Static", WS_GROUP, 12, 43, 49, 8
 }
 
 ARTICULOS_PRECIOS_DESCUENTOS DIALOG DISCARDABLE 193, 47, 430, 139

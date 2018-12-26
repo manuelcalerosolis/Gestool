@@ -261,12 +261,12 @@ CLASS SQLBaseModel
    METHOD deleteWhereParentUuid( uUuid )
    METHOD deleteWhere( hWhere )
 
-   METHOD loadBlankBuffer()
+   METHOD loadBlankBuffer( hBuffer )
    METHOD loadDuplicateBuffer() 
    METHOD loadCurrentBuffer()
    METHOD defaultCurrentBuffer()
 
-   METHOD insertBlankBuffer()          INLINE ( ::loadBlankBuffer(), ::insertBuffer() ) 
+   METHOD insertBlankBuffer( hBuffer ) INLINE ( ::loadBlankBuffer( hBuffer ), ::insertBuffer() ) 
 
    // Events-------------------------------------------------------------------
 
@@ -1526,15 +1526,9 @@ METHOD insertBuffer( hBuffer )
 
    ::getDatabase():Execs( ::cSQLInsert )
 
-   logwrite( "cSQLInsert->" )
-   logwrite( ::cSQLInsert )
-
    nId               := ::getDatabase():LastInsertId()
 
    hset( hBuffer, ::cColumnKey, nId )
-
-   logwrite( "nId->" )
-   logwrite( nId )
 
    ::fireEvent( 'insertedBuffer' )
 

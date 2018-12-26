@@ -45,13 +45,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oRutasController
 
-   DATA oClientesController
-
    DATA oTercerosController
 
-   DATA oProveedoresController
-
-   DATA oClientesGruposController
+   DATA oTercerosGruposController
 
    DATA oContactosController
 
@@ -247,17 +243,11 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getRutasController();
                                     INLINE ( if( empty( ::oRutasController ), ::oRutasController := RutasController():New( self ), ), ::oRutasController )
 
-   METHOD getClientesController();
-                                    INLINE ( if( empty( ::oClientesController ), ::oClientesController := ClientesController():New( self ), ), ::oClientesController )
-
    METHOD getTercerosController();
                                     INLINE ( if( empty( ::oTercerosController ), ::oTercerosController := TercerosController():New( self ), ), ::oTercerosController )
 
-   METHOD getProveedoresController();
-                                    INLINE ( if( empty( ::oProveedoresController ), ::oProveedoresController := ProveedoresController():New( self ), ), ::oProveedoresController )
-
    METHOD getClientesGruposController();
-                                    INLINE ( if( empty( ::oClientesGruposController ), ::oClientesGruposController := ClientesGruposController():New( self ), ), ::oClientesGruposController )
+                                    INLINE ( if( empty( ::oTercerosGruposController ), ::oTercerosGruposController := ClientesGruposController():New( self ), ), ::oTercerosGruposController )
 
    METHOD getContactosController();
                                     INLINE ( if( empty( ::oContactosController ), ::oContactosController := ContactosController():New( self ), ), ::oContactosController )
@@ -541,20 +531,12 @@ METHOD End() CLASS SQLApplicationController
       ::oRutasController:End()
    end if    
 
-   if !empty( ::oClientesController )   
-      ::oClientesController:End()
-   end if
-
    if !empty( ::oTercerosController )   
       ::oTercerosController:End()
    end if
 
-   if !empty( ::oProveedoresController )   
-      ::oProveedoresController:End()
-   end if  
-
-  if !empty( ::oClientesGruposController )   
-      ::oClientesGruposController:End()
+  if !empty( ::oTercerosGruposController )   
+      ::oTercerosGruposController:End()
    end if 
 
    if !empty( ::oContactosController )   

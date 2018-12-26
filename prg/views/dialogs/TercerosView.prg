@@ -5,7 +5,7 @@ CLASS TercerosView FROM SQLBaseView
 
    DATA oTipo
 
-   DATA aTipo INIT { "Cliente", "Proveedor", "Cliente y Proveedor" }
+   DATA aTipo                          INIT { "Cliente", "Proveedor", "Cliente/Proveedor" }
   
    DATA oExplorerBar
 
@@ -31,9 +31,6 @@ CLASS TercerosView FROM SQLBaseView
    DATA oRiesgoAlcanzado
    DATA nRiesgoAlcanzado               INIT 0
 
-   DATA oInfoSubCuenta
-   DATA oInfoSubCuentaDescuento
-
    DATA oGetSubcuenta
    DATA oGetCuentaVenta
    DATA oGetSubcuentaDescuento
@@ -45,12 +42,11 @@ CLASS TercerosView FROM SQLBaseView
    DATA nSaldoSubcuentaDescuento
 
    METHOD Activate()
+      METHOD startActivate()
 
    METHOD Activating()
 
    METHOD getDireccionesController()   INLINE ( ::getController():oDireccionesController )
-
-   METHOD startDialog()
 
    METHOD redefineGeneral()
 
@@ -73,7 +69,7 @@ END CLASS
 METHOD Activating() CLASS TercerosView
 
    if ::getController():isAppendOrDuplicateMode()
-      ::getController():oModel:hBuffer()
+      ::getController():getModel():hBuffer()
    end if 
 
 RETURN ( nil )
@@ -122,17 +118,15 @@ METHOD Activate() CLASS TercerosView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
+   ::oDialog:bKeyDown      := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
 
    if ::getController():isNotZoomMode() 
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }
    end if
 
-   ::oDialog:bStart        := {|| ::startDialog() }
+   ::oDialog:bStart        := {|| ::startActivate(), ::paintedActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-   ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 
@@ -141,20 +135,20 @@ RETURN ( ::oDialog:nResult )
 METHOD redefineGeneral() CLASS TercerosView
 
    REDEFINE GET   ::oGetCodigo ;
-      VAR         ::getController():oModel:hBuffer[ "codigo" ] ;
+      VAR         ::getController():getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     ( "@! NNNNNNNNNNNN" ) ;
       WHEN        ( ::getController():isAppendOrDuplicateMode() ) ;
       VALID       ( ::getController():validate( "codigo" ) ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::getController():oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::getController():getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::getController():isNotZoomMode() ) ;
       VALID       ( ::getController():validate( "nombre" ) ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::oGetDni VAR ::getController():oModel:hBuffer[ "dni" ] ;
+   REDEFINE GET   ::oGetDni VAR ::getController():getModel():hBuffer[ "dni" ] ;
       ID          120 ;
       WHEN        ( ::getController():isNotZoomMode() ) ;
       VALID       ( CheckCif( ::oGetDni ) );
@@ -169,17 +163,17 @@ METHOD redefineGeneral() CLASS TercerosView
 
    ::getController():getDireccionesController():getDialogView():ExternalRedefine( ::oFolder:aDialogs[1] )
 
-   REDEFINE GET   ::getController():oModel:hBuffer[ "web" ] ;
+   REDEFINE GET   ::getController():getModel():hBuffer[ "web" ] ;
       ID          140 ;
       WHEN        ( ::getController():isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::getController():oModel:hBuffer[ "establecimiento" ] ;
+   REDEFINE GET   ::getController():getModel():hBuffer[ "establecimiento" ] ;
       ID          150 ;
       WHEN        ( ::getController():isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   ::getController():getArticulosTarifasController():getSelector():Bind( bSETGET( ::getController():oModel:hBuffer[ "tarifa_codigo" ] ) )
+   ::getController():getArticulosTarifasController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "tarifa_codigo" ] ) )
    ::getController():getArticulosTarifasController():getSelector():Build( { "idGet" => 160, "idText" => 161, "idLink" => 162, "oDialog" => ::oFolder:aDialogs[1] } )
 
 RETURN ( nil )
@@ -188,68 +182,68 @@ RETURN ( nil )
 
 METHOD redefineComercial() CLASS TercerosView
 
-   ::getController():getCuentasRemesaController():getSelector():Bind( bSETGET( ::getController():oModel:hBuffer[ "cuenta_remesa_codigo" ] ) )
+   ::getController():getCuentasRemesaController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "cuenta_remesa_codigo" ] ) )
    ::getController():getCuentasRemesaController():getSelector():Build( { "idGet" => 110, "idText" => 111, "idLink" => 112, "oDialog" => ::oFolder:aDialogs[2] } )
 
-   ::getController():getRutasController():getSelector():Bind( bSETGET( ::getController():oModel:hBuffer[ "ruta_codigo" ] ) )
+   ::getController():getRutasController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "ruta_codigo" ] ) )
    ::getController():getRutasController():getSelector():Build( { "idGet" => 120, "idText" => 121, "idLink" => 122, "oDialog" => ::oFolder:aDialogs[2] } )
 
-   ::getController():getAgentesController():getSelector():Bind( bSETGET( ::getController():oModel:hBuffer[ "agente_codigo" ] ) )
+   ::getController():getAgentesController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "agente_codigo" ] ) )
    ::getController():getAgentesController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[2] } )
 
-   ::getController():getClientesGruposController():getSelector():Bind( bSETGET( ::getController():oModel:hBuffer[ "cliente_grupo_codigo" ] ) )
+   ::getController():getClientesGruposController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "cliente_grupo_codigo" ] ) )
    ::getController():getClientesGruposController():getSelector():Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[2] } )
 
-   ::getController():getMetodosPagosController():getSelector():Bind( bSETGET( ::getController():oModel:hBuffer[ "metodo_pago_codigo" ] ) )
+   ::getController():getMetodosPagosController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "metodo_pago_codigo" ] ) )
    ::getController():getMetodosPagosController():getSelector():Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[2] } )
 
-   REDEFINE GET ::getController():oModel:hBuffer[ "primer_dia_pago" ] ;
+   REDEFINE GET ::getController():getModel():hBuffer[ "primer_dia_pago" ] ;
       ID       160;
       PICTURE  "99" ;
       SPINNER ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
-   REDEFINE GET ::getController():oModel:hBuffer[ "segundo_dia_pago" ] ;
+   REDEFINE GET ::getController():getModel():hBuffer[ "segundo_dia_pago" ] ;
       ID       170;
       PICTURE  "99" ;
       SPINNER ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
-   REDEFINE GET ::getController():oModel:hBuffer[ "tercer_dia_pago" ] ;
+   REDEFINE GET ::getController():getModel():hBuffer[ "tercer_dia_pago" ] ;
       ID       310;
       PICTURE  "99" ;
       SPINNER ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
-   REDEFINE COMBOBOX ::getController():oModel:hBuffer[ "mes_vacaciones" ];
+   REDEFINE COMBOBOX ::getController():getModel():hBuffer[ "mes_vacaciones" ];
       ITEMS    aMonths() ;
       ID       180 ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
-   REDEFINE COMBOBOX ::getController():oModel:hBuffer[ "regimen_iva" ];
+   REDEFINE COMBOBOX ::getController():getModel():hBuffer[ "regimen_iva" ];
       ITEMS    AREGIMENIVA ;
       ID       190 ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
-   REDEFINE SAYCHECKBOX ::getController():oModel:hBuffer[ "recargo_equivalencia" ] ;
+   REDEFINE SAYCHECKBOX ::getController():getModel():hBuffer[ "recargo_equivalencia" ] ;
       ID       200 ;
       IDSAY    202 ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
-   REDEFINE GET ::getController():oModel:hBuffer[ "porcentaje_irpf" ] ;
+   REDEFINE GET ::getController():getModel():hBuffer[ "porcentaje_irpf" ] ;
       ID       210;
       SPINNER ;
       PICTURE  "@E 999.99" ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
-   REDEFINE SAYCHECKBOX ::getController():oModel:hBuffer[ "bloqueado" ] ;
+   REDEFINE SAYCHECKBOX ::getController():getModel():hBuffer[ "bloqueado" ] ;
       ID       220 ;
       IDSAY    222 ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
@@ -257,7 +251,7 @@ METHOD redefineComercial() CLASS TercerosView
       OF       ::oFolder:aDialogs[2]
 
    REDEFINE GET ::oGetFechaBloqueo ; 
-      VAR      ::getController():oModel:hBuffer[ "fecha_bloqueo" ] ;
+      VAR      ::getController():getModel():hBuffer[ "fecha_bloqueo" ] ;
       ID       230 ;
       IDSAY    232 ;
       SPINNER ;
@@ -265,13 +259,13 @@ METHOD redefineComercial() CLASS TercerosView
       OF       ::oFolder:aDialogs[2]
 
    REDEFINE GET ::oGetCausaBloqueo ;
-      VAR      ::getController():oModel:hBuffer[ "causa_bloqueo" ] ;
+      VAR      ::getController():getModel():hBuffer[ "causa_bloqueo" ] ;
       ID       240 ;
       IDSAY    242 ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
-   REDEFINE SAYCHECKBOX ::getController():oModel:hBuffer[ "autorizado_venta_credito" ] ;
+   REDEFINE SAYCHECKBOX ::getController():getModel():hBuffer[ "autorizado_venta_credito" ] ;
       ID       250 ;
       IDSAY    252 ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
@@ -279,7 +273,7 @@ METHOD redefineComercial() CLASS TercerosView
       OF       ::oFolder:aDialogs[2]
 
    REDEFINE GET ::oGetFechaPeticion ; 
-      VAR      ::getController():oModel:hBuffer[ "fecha_peticion_riesgo" ] ;
+      VAR      ::getController():getModel():hBuffer[ "fecha_peticion_riesgo" ] ;
       ID       260 ;
       IDSAY    262 ;
       SPINNER ;
@@ -287,7 +281,7 @@ METHOD redefineComercial() CLASS TercerosView
       OF       ::oFolder:aDialogs[2]
 
    REDEFINE GET ::oGetFechaConcesion ; 
-      VAR      ::getController():oModel:hBuffer[ "fecha_concesion_riesgo" ] ;
+      VAR      ::getController():getModel():hBuffer[ "fecha_concesion_riesgo" ] ;
       ID       270 ;
       IDSAY    272 ;
       SPINNER ;
@@ -295,14 +289,14 @@ METHOD redefineComercial() CLASS TercerosView
       OF       ::oFolder:aDialogs[2]
 
    REDEFINE SAYCHECKBOX ::oBloqueoRiesgo ;
-      VAR      ::getController():oModel:hBuffer[ "bloquear_riesgo_alcanzado" ] ;
+      VAR      ::getController():getModel():hBuffer[ "bloquear_riesgo_alcanzado" ] ;
       ID       280 ;
       IDSAY    282 ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
    REDEFINE GET ::oRiesgo ; 
-      VAR      ::getController():oModel:hBuffer[ "riesgo" ] ;
+      VAR      ::getController():getModel():hBuffer[ "riesgo" ] ;
       ID       290;
       IDSAY    292 ;
       SPINNER ;
@@ -318,18 +312,18 @@ METHOD redefineComercial() CLASS TercerosView
       WHEN     ( ::getController():isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
-   REDEFINE CHECKBOX ::getController():oModel:hBuffer[ "excluir_fidelizacion" ] ;
+   REDEFINE CHECKBOX ::getController():getModel():hBuffer[ "excluir_fidelizacion" ] ;
       ID       320 ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
-   REDEFINE CHECKBOX ::getController():oModel:hBuffer[ "no_editar_datos" ] ;
+   REDEFINE CHECKBOX ::getController():getModel():hBuffer[ "no_editar_datos" ] ;
       ID       330 ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
    REDEFINE GET ::oGetFechaUltimaLlamada ;
-      VAR      ::getController():oModel:hBuffer[ "fecha_ultima_llamada" ] ;
+      VAR      ::getController():getModel():hBuffer[ "fecha_ultima_llamada" ] ;
       ID       340 ;
       SPINNER ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
@@ -343,72 +337,24 @@ RETURN ( nil )
 
 METHOD redefineContabilidad() CLASS TercerosView
 
-   REDEFINE SAY ::oInfoSubCuenta ;
-      PROMPT   "Subcuenta..." ;
-      FONT     oFontBold() ; 
-      COLOR    rgb( 10, 152, 234 ) ;
-      ID       320 ;
-      OF       ::oFolder:aDialogs[3]
-
-   ::oInfoSubCuenta:lWantClick  := .t.
-   ::oInfoSubCuenta:OnClick     := {|| if( ::getController():isNotZoomMode(), msgInfo( "Informe subcuenta del cliente" ), ) }
-
    REDEFINE GET ::oGetSubcuenta ; 
-      VAR      ::getController():oModel:hBuffer[ "subcuenta" ] ;
+      VAR      ::getController():getModel():hBuffer[ "subcuenta" ] ;
       ID       330 ;
       IDTEXT   331 ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
-      ON HELP  ( msgInfo( "Conectar con Contaplus" ) ) ;
-      BITMAP   "LUPA" ;
       OF       ::oFolder:aDialogs[3]
-
-   REDEFINE GET ::oSaldoSubcuenta ; 
-      VAR      ::nSaldoSubcuenta ;
-      ID       340;
-      WHEN     ( ::getController():isNotZoomMode() ) ;
-      OF       ::oFolder:aDialogs[3]
-
-   REDEFINE SAY ::oInfoSubCuenta ;
-      PROMPT   "Cuenta venta" ;
-      FONT     oFontBold() ; 
-      COLOR    rgb( 10, 152, 234 ) ;
-      ID       352 ;
-      OF       ::oFolder:aDialogs[3]
-
-   ::oInfoSubCuenta:lWantClick  := .t.
-   ::oInfoSubCuenta:OnClick     := {|| if( ::getController():isNotZoomMode(), msgInfo( "Informe cuenta venta del cliente" ), ) }
 
    REDEFINE GET ::oGetCuentaVenta ; 
-      VAR      ::getController():oModel:hBuffer[ "cuenta_venta" ] ;
+      VAR      ::getController():getModel():hBuffer[ "cuenta_venta" ] ;
       ID       350 ;
       IDTEXT   351 ;
       WHEN     ( ::getController():isNotZoomMode() ) ;
-      ON HELP  ( MsgInfo( "Conectar con Contaplus" ) ) ;
-      BITMAP   "LUPA" ;
       OF       ::oFolder:aDialogs[3]
-
-   REDEFINE SAY ::oInfoSubCuentaDescuento ;
-      PROMPT   "Descuento..." ;
-      FONT     oFontBold() ; 
-      COLOR    rgb( 10, 152, 234 ) ;
-      ID       360 ;
-      OF       ::oFolder:aDialogs[3]
-
-   ::oInfoSubCuentaDescuento:lWantClick  := .t.
-   ::oInfoSubCuentaDescuento:OnClick     := {|| if( ::getController():isNotZoomMode(), msgInfo( "Informe subcuenta dedescuento" ), ) }
 
    REDEFINE GET ::oGetSubcuentaDescuento ; 
-      VAR      ::getController():oModel:hBuffer[ "cuenta_venta" ] ;
+      VAR      ::getController():getModel():hBuffer[ "cuenta_venta" ] ;
       ID       370 ;
       IDTEXT   371 ;
-      WHEN     ( ::getController():isNotZoomMode() ) ;
-      ON HELP  ( MsgInfo( "Conectar con Contaplus" ) ) ;
-      BITMAP   "LUPA" ;
-      OF       ::oFolder:aDialogs[3]
-
-   REDEFINE GET ::oSaldoSubcuentaDescuento ; 
-      VAR      ::nSaldoSubcuentaDescuento ;
-      ID       380;
       WHEN     ( ::getController():isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[3]
 
@@ -416,7 +362,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD startDialog() CLASS TercerosView
+METHOD startActivate() CLASS TercerosView
 
    ::addLinksToExplorerBar()
    
@@ -432,7 +378,7 @@ METHOD startDialog() CLASS TercerosView
 
    ::getController():getClientesGruposController():getSelector():Start()
 
-   ::getController():getDireccionesController():externalStartDialog()
+   // ::getController():getDireccionesController():externalStartActivate()
 
    if ::getController():isClient()
       ::getController():getArticulosTarifasController():getSelector():Start()
@@ -440,12 +386,12 @@ METHOD startDialog() CLASS TercerosView
       ::getController():getArticulosTarifasController():getSelector():Hide()
    end if 
 
-   if !::getController():oModel:hBuffer[ "bloqueado" ]
+   if !::getController():getModelBuffer( "bloqueado" )
       ::oGetFechaBloqueo:Hide()
       ::oGetCausaBloqueo:Hide()
    end if
 
-   if !::getController():oModel:hBuffer[ "autorizado_venta_credito" ]
+   if !::getController():getModelBuffer( "autorizado_venta_credito" )
       ::oGetFechaPeticion:Hide()
       ::oGetFechaConcesion:Hide()
       ::oBloqueoRiesgo:Hide()
@@ -491,19 +437,19 @@ RETURN ( nil )
 
 METHOD changeBloqueo() CLASS TercerosView
 
-   if ::getController():oModel:hBuffer[ "bloqueado" ]
+   if ::getController():getModelBuffer( "bloqueado" )
       
-      hSet( ::getController():oModel:hBuffer, "fecha_bloqueo", date() )
+      ::getController():setModelBuffer( "fecha_bloqueo", date() )
       ::oGetFechaBloqueo:Show()
       
       ::oGetCausaBloqueo:Show()
 
    else
       
-      hSet( ::getController():oModel:hBuffer, "fecha_bloqueo", cTod( "" ) )
+      ::getController():setModelBuffer( "fecha_bloqueo", ctod( "" ) )
       ::oGetFechaBloqueo:Hide()
 
-      hSet( ::getController():oModel:hBuffer, "causa_bloqueo", Space( 100 ) )
+      ::getController():setModelBuffer( "causa_bloqueo", space( 100 ) )
       ::oGetCausaBloqueo:Hide()
 
    end if
@@ -512,23 +458,23 @@ METHOD changeBloqueo() CLASS TercerosView
    
    ::oGetCausaBloqueo:Refresh()
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD loadFechaLlamada() CLASS TercerosView
 
-   hSet( ::getController():oModel:hBuffer, "fecha_ultima_llamada", date() )
+   ::getController():setModelBuffer( "fecha_ultima_llamada", date() )
 
    ::oGetFechaUltimaLlamada:Refresh()
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD changeAutorizacioncredito() CLASS TercerosView
 
-   if ::getController():oModel:hBuffer[ "autorizado_venta_credito" ]
+   if ::getController():getModelBuffer( "autorizado_venta_credito" )
       
       ::oGetFechaPeticion:Show()
       ::oGetFechaConcesion:Show()
@@ -538,9 +484,9 @@ METHOD changeAutorizacioncredito() CLASS TercerosView
 
    else
       
-      hSet( ::getController():oModel:hBuffer, "fecha_peticion_riesgo", cTod( "" ) )
-      hSet( ::getController():oModel:hBuffer, "fecha_concesion_riesgo", cTod( "" ) )
-      hSet( ::getController():oModel:hBuffer, "riesgo", 0 )
+      ::getController():setModelBuffer( "fecha_peticion_riesgo", ctod( "" ) )
+      ::getController():setModelBuffer( "fecha_concesion_riesgo", ctod( "" ) )
+      ::getController():setModelBuffer( "riesgo", 0 )
 
       ::oGetFechaPeticion:Hide()
       ::oGetFechaConcesion:Hide()
@@ -556,7 +502,7 @@ METHOD changeAutorizacioncredito() CLASS TercerosView
    ::oRiesgo:Refresh()
    ::oRiesgoAlcanzado:Refresh() 
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

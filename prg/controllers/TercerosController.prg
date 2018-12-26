@@ -63,15 +63,15 @@ CLASS TercerosController FROM SQLNavigatorController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getDialogView()                                      INLINE ( if( empty( ::oDialogView ), ::oDialogView := TercerosView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := TercerosView():New( self ), ), ::oDialogView )
 
-   METHOD getBrowseView()                                      INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := TercerosBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := TercerosBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getValidator()                                       INLINE( if( empty( ::oValidator ), ::oValidator := TercerosValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := TercerosValidator():New( self ), ), ::oValidator )
 
-   METHOD getModel()                                           INLINE ( if( empty( ::oModel ), ::oModel := SQLTercerosModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLTercerosModel():New( self ), ), ::oModel )
 
-   METHOD getSelector()                                        INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := ClientGetSelector():New( self ), ), ::oGetSelector )
+   METHOD getSelector()                INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := ClientGetSelector():New( self ), ), ::oGetSelector )
 
 END CLASS
 
@@ -81,20 +81,19 @@ METHOD New( oController) CLASS TercerosController
 
    ::Super:New( oController )
 
-   ::lTransactional     := .f.
+   ::lTransactional                    := .f.
 
-   ::cTitle                            := "Clientes"
+   ::cTitle                            := "Terceros"
 
-   ::cMessage                          := "Cliente"
+   ::cMessage                          := "Tercero"
 
-   ::cName                             := "clientes_sql"
+   ::cName                             := "terceros"
 
    ::isClient                          := .t.
 
    ::hImage                            := {  "16" => "gc_user_16",;
                                              "32" => "gc_user_32",;
                                              "48" => "gc_user2_48" }
-
 
    ::getModel():setEvent( 'loadedBlankBuffer',              {|| ::getDireccionesController():loadMainBlankBuffer() } )
    ::getModel():setEvent( 'insertedBuffer',                 {|| ::getDireccionesController():insertBuffer() } )
@@ -209,11 +208,8 @@ METHOD buildRowSetSentence( cType )
    local cColumnOrientation   
 
    if !empty( ::getBrowseView() )
-
       cColumnOrder            := ::getBrowseView():getColumnOrderView( cType, ::getName() )
-      
       cColumnOrientation      := ::getBrowseView():getColumnOrientationView( cType, ::getName() )
-
    end if 
 
    if empty(::oController)
@@ -227,6 +223,7 @@ METHOD buildRowSetSentence( cType )
    end if
 
    ::getRowSet():Build( ::getModel():getSelectProveedor( cColumnOrder, cColumnOrientation ) )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -235,3 +232,104 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
+#ifdef __TEST__
+
+CLASS TestTercerosController FROM TestCase
+
+   DATA oController
+
+   METHOD beforeClass()
+
+   METHOD afterClass()
+
+   METHOD Before() 
+   
+   METHOD test_create()                
+
+   METHOD test_dialogo_sin_codigo()     
+
+   METHOD test_dialogo_creacion()       
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD beforeClass() CLASS TestTercerosController
+
+   ::oController  := TercerosController():New()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD afterClass() CLASS TestTercerosController
+
+RETURN ( ::oController:end() )
+
+//---------------------------------------------------------------------------//
+
+METHOD Before() CLASS TestTercerosController
+
+   SQLTercerosModel():truncateTable()
+
+   SQLDireccionesModel():truncateTable()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create() CLASS TestTercerosController
+
+   local hBuffer
+
+   hBuffer  := ::oController:getModel();
+                  :loadBlankBuffer( {  "codigo" => "0",;
+                                       "nombre" => "Test de cliente/proveedor",;
+                                       "dni"    => "757575757A",;
+                                       "tipo"   => "Cliente/Proveedor" } )
+   
+   ::assert:notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion terceros" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_sin_codigo() CLASS TestTercerosController
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110, self:oFolder:aDialogs[1] ):cText( "Test de cliente/proveedor" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 120, self:oFolder:aDialogs[1] ):cText( "75757575A" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDCANCEL ):Click() } )
+
+   ::assert:false( ::oController:Append(), "test creación de factura sin lineas" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_creacion() CLASS TestTercerosController
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100, self:oFolder:aDialogs[1] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110, self:oFolder:aDialogs[1] ):cText( "Test de cliente/proveedor" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 120, self:oFolder:aDialogs[1] ):cText( "75757575A" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )
+
+   ::assert:true( ::oController:Append(), "test creación de factura sin lineas" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+#endif
