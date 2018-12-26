@@ -184,8 +184,6 @@ END CLASS
 
 METHOD addColumns() CLASS RecibosBrowseView
 
-
-
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Id'
       :cSortOrder          := 'id'
@@ -284,7 +282,6 @@ METHOD addColumns() CLASS RecibosBrowseView
       end if
 
    end with
-
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'tercero_codigo'
@@ -519,14 +516,13 @@ RETURN ( ::hValidators )
 
 CLASS SQLRecibosModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "recibos"
+   DATA cTableName                     INIT "recibos"
 
-   DATA cGroupBy                 INIT "recibos.uuid"
+   DATA cGroupBy                       INIT "recibos.uuid"
 
    METHOD getColumns()
 
    METHOD getInitialSelect()
-
 
    METHOD getDiferencia( uuidRecibo ) 
 
@@ -540,29 +536,29 @@ END CLASS
 
 METHOD getColumns() CLASS SQLRecibosModel
 
-   hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
-                                                      "default"   => {|| 0 } }                                    )
+   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
+                                          "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"              ,;                                  
-                                                      "default"   => {|| win_uuidcreatestring() } }               )
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"              ,;                                  
+                                          "default"   => {|| win_uuidcreatestring() } }               )
 
-   hset( ::hColumns, "parent_uuid",                {  "create"    => "VARCHAR( 40 )"                              ,;
-                                                      "default"   => {|| ::getControllerParentUuid() } }          )
+   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 )"                              ,;
+                                          "default"   => {|| ::getControllerParentUuid() } }          )
 
-   hset( ::hColumns, "parent_table",               {  "create"    => "VARCHAR( 200 )"                             ,;
-                                                      "default"   => {|| space( 200 ) } }                         )
+   hset( ::hColumns, "parent_table",   {  "create"    => "VARCHAR( 200 )"                             ,;
+                                          "default"   => {|| space( 200 ) } }                         )
 
-   hset( ::hColumns, "expedicion",                 {  "create"    => "DATE"                                       ,;
-                                                      "default"   => {|| hb_date() } }                            )
+   hset( ::hColumns, "expedicion",     {  "create"    => "DATE"                                       ,;
+                                          "default"   => {|| hb_date() } }                            )
 
-   hset( ::hColumns, "vencimiento",                {  "create"   => "DATE"                                        ,;
-                                                      "default"   => {|| hb_date() } }                            )
+   hset( ::hColumns, "vencimiento",    {  "create"   => "DATE"                                        ,;
+                                          "default"   => {|| hb_date() } }                            )
 
-   hset( ::hColumns, "importe",                    {  "create"    => "FLOAT( 16,2 )"                              ,;
-                                                      "default"   => {||  0  } }                                  )
+   hset( ::hColumns, "importe",        {  "create"    => "FLOAT( 16,2 )"                              ,;
+                                          "default"   => {||  0  } }                                  )
 
-   hset( ::hColumns, "concepto",                   {  "create"    => "VARCHAR( 200 )"                              ,;
-                                                      "default"   => {|| space( 200 ) } }                          )
+   hset( ::hColumns, "concepto",       {  "create"    => "VARCHAR( 200 )"                             ,;
+                                          "default"   => {|| space( 200 ) } }                         )
 
    ::getTimeStampColumns()
 
@@ -574,7 +570,7 @@ RETURN ( ::hColumns )
 
 METHOD getInitialSelect() CLASS SQLRecibosModel
 
- local cSql
+   local cSql
 
    TEXT INTO cSql
 
@@ -730,6 +726,11 @@ CLASS RecibosRepository FROM SQLBaseRepository
    METHOD getLastNoPaidWhereFacturaUuid( uuidFactura ) ;
                                        INLINE ( ::getDatabase():getValue( ::getSentenceLastNoPaidWhereFacturaUuid( uuidFactura ) ) )
 
+   METHOD getSentenceCountWhereFacturaUuid( uuidFactura )
+
+   METHOD getCountWhereFacturaUuid( uuidFactura ) ;
+                                       INLINE ( ::getDatabase():getValue( ::getSentenceCountWhereFacturaUuid( uuidFactura ), 0 ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -749,11 +750,33 @@ METHOD getSentenceImporteWhereFacturaUuid( uuidFactura ) CLASS RecibosRepository
 
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql, ::getTableName(), quoted( uuidFactura ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidFactura ) )
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
+
+METHOD getSentenceCountWhereFacturaUuid( uuidFactura ) CLASS RecibosRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT 
+      COUNT(*) 
+
+   FROM %1$s AS recibos
+
+   WHERE recibos.parent_uuid = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidFactura ) )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD getSentenceLastNoPaidWhereFacturaUuid( uuidFactura ) CLASS RecibosRepository
 

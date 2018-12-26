@@ -279,10 +279,7 @@ METHOD getSentencePaymentDays( cCodigoTercero ) CLASS SQLTercerosModel
    TEXT INTO cSql
 
    SELECT
-      primer_dia_pago AS primer_dia_pago,
-      segundo_dia_pago AS segundo_dia_pago,
-      tercer_dia_pago AS tercer_dia_pago,
-      mes_vacaciones AS mes_vacaciones
+      primer_dia_pago, segundo_dia_pago, tercer_dia_pago, mes_vacaciones
 
    FROM %1$s
 
@@ -291,9 +288,6 @@ METHOD getSentencePaymentDays( cCodigoTercero ) CLASS SQLTercerosModel
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( cCodigoTercero ) )
-
-   logwrite( cSql )
-   msgalert( cSql )
 
 RETURN ( cSql )
 
@@ -584,10 +578,10 @@ METHOD testCreateConPlazos() CLASS SQLTercerosModel
    hBuffer           := ::loadBlankBuffer()
 
    hset( hBuffer, "uuid", uuid )
-   hset( hBuffer, "codigo", "1" )
-   hset( hBuffer, "nombre", "Clientes tarifa mayorista" )
+   hset( hBuffer, "codigo", "2" )
+   hset( hBuffer, "nombre", "Clientes con pagos a plazos" )
    hset( hBuffer, "dni", "77777777A" )
-   hset( hBuffer, "metodo_pago_codigo", "0" )
+   hset( hBuffer, "metodo_pago_codigo", "2" )
    hset( hBuffer, "tarifa_codigo", "1" )
 
 RETURN ( ::insertBuffer( hBuffer ) )

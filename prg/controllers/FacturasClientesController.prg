@@ -131,24 +131,22 @@ CLASS TestFacturasClientesController FROM TestCase
    METHOD afterClass()
 
    METHOD Before() 
+   
+   METHOD test_calculo_con_descuento()                
 
-   METHOD test_calculo_con_descuento()
+   METHOD test_calculo_con_incremento()               
 
-   METHOD test_calculo_con_incremento()
+   METHOD test_con_unidades_de_medicion()             
 
-   METHOD test_con_unidades_de_medicion()
+   METHOD test_dialogo_sin_lineas()                   
 
-   METHOD test_dialogo_sin_lineas()
+   METHOD test_dialogo_ventas_por_cajas()             
 
-   METHOD test_dialogo_ventas_por_cajas()
+   METHOD test_dialogo_tarifa_mayorista()             
 
-   METHOD test_dialogo_tarifa_mayorista()
-
-   METHOD testDialogoConUnSoloPago( uuid )         VIRTUAL
-
-   METHOD testDialogoConReciboPagado( uuid )       VIRTUAL
-
-   METHOD testDialogoConPlazosCambioImporte( uuid ) VIRTUAL
+   METHOD test_dialogo_con_un_solo_pago()
+   
+   METHOD test_dialogo_con_varios_pagos()             
 
 END CLASS
 
@@ -185,6 +183,10 @@ METHOD Before() CLASS TestFacturasClientesController
 
    SQLArticulosTarifasModel():truncateTable()
 
+   SQLRecibosModel():truncateTable()
+   SQLPagosModel():truncateTable()
+   SQLRecibosPagosModel():truncateTable()
+
    SQLTercerosModel():testCreateContado()
    SQLTercerosModel():testCreateTarifaMayorista()
    SQLTercerosModel():testCreateConPlazos()
@@ -212,19 +214,15 @@ METHOD test_calculo_con_descuento() CLASS TestFacturasClientesController
 
    uuid        := win_uuidcreatestring()
 
-   msgalert( "testCreateFactura" )
-
    SQLFacturasClientesModel():testCreateFactura( uuid )
 
-   msgalert( "salida testCreateFactura" )
-
-   SQLFacturasClientesLineasModel():testCreateIVAal0Con10PorcientoDescuento( uuid )
+   SQLFacturasClientesLineasModel():test_create_IVA_al_0_con_10_descuento( uuid )
    SQLFacturasClientesLineasModel():testCreateIVAal10Con15PorcientoDescuento( uuid )
    SQLFacturasClientesLineasModel():testCreateIVAal21Con20PorcientoDescuento( uuid )
 
-   SQLFacturasClientesDescuentosModel():testCreatel0PorCiento( uuid )
-   SQLFacturasClientesDescuentosModel():testCreate20PorCiento( uuid )
-   SQLFacturasClientesDescuentosModel():testCreate30PorCiento( uuid )
+   SQLFacturasClientesDescuentosModel():test_create_l0_por_ciento( uuid )
+   SQLFacturasClientesDescuentosModel():test_create_20_por_ciento( uuid )
+   SQLFacturasClientesDescuentosModel():test_create_30_por_ciento( uuid )
 
    hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
 
@@ -352,6 +350,70 @@ METHOD test_dialogo_tarifa_mayorista() CLASS TestFacturasClientesController
          self:getControl( IDOK ):Click() } )
 
    ::assert:true( ::oController:Append(), "test creación de factura con ventas por cajas" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_con_un_solo_pago() CLASS TestFacturasClientesController
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 170, self:oFolder:aDialogs[1] ):cText( "1" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 170, self:oFolder:aDialogs[1] ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 240, self:oFolder:aDialogs[1] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 240, self:oFolder:aDialogs[1] ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 501, self:oFolder:aDialogs[1] ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "1", 0 ),;
+         apoloWaitSeconds( 1 ),;
+         ::oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
+         apoloWaitSeconds( 1 ),;
+         eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , 100, 0 ),;
+         apoloWaitSeconds( 1 ),;
+         ::oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )
+
+   ::assert:true( ::oController:Append(), "test creación de factura con un recibo pagado" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_con_varios_pagos() CLASS TestFacturasClientesController
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 170, self:oFolder:aDialogs[1] ):cText( "2" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 170, self:oFolder:aDialogs[1] ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 240, self:oFolder:aDialogs[1] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 240, self:oFolder:aDialogs[1] ):lValid(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 501, self:oFolder:aDialogs[1] ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "1", 0 ),;
+         apoloWaitSeconds( 1 ),;
+         ::oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
+         apoloWaitSeconds( 1 ),;
+         eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , 300, 0 ),;
+         apoloWaitSeconds( 1 ),;
+         ::oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )
+
+   ::assert:true( ::oController:Append(), "test creación de factura con varios recibos pagados" )
+
+   ::assert:equals( 3, RecibosRepository():getCountWhereFacturaUuid( ::oController:getModelBuffer( "uuid" ) ), "test comprobacion numeros de recibos" )
 
 RETURN ( nil )
 

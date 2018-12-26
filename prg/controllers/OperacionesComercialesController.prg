@@ -268,7 +268,7 @@ RETURN ( nil )
 
 METHOD updatedBuffer() CLASS OperacionesComercialesController 
 
-RETURN ( ::getRecibosGeneratorController():generate() )
+RETURN ( ::getRecibosGeneratorController():update() )
 
 //---------------------------------------------------------------------------//
 
@@ -280,10 +280,7 @@ RETURN ( ::getTercerosController():getModel():getUuidWhereCodigo( ::getModelBuff
 
 METHOD clientesSettedHelpText() CLASS OperacionesComercialesController
 
-   msgalert( "clientesSettedHelpText" )
-
    if ::getHistoryManager():isEqual( "tercero_codigo", ::getModelBuffer( "tercero_codigo" ) )
-      msgalert( "no hay cambios en clientesSettedHelpText" )
       RETURN ( nil )
    end if         
 
@@ -316,8 +313,6 @@ METHOD clientSetMetodoPago() CLASS OperacionesComercialesController
    end if 
 
    cCodigoMetodoPago    := hget( ::getTercerosController():getSelector():uFields, "metodo_pago_codigo" )
-
-   msgalert( cCodigoMetodoPago, "cCodigoMetodoPago" )
 
    if empty( cCodigoMetodoPago )
       cCodigoMetodoPago := Company():getDefaultMetodoPago()

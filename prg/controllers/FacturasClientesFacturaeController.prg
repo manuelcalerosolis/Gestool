@@ -357,13 +357,13 @@ METHOD testGenerateXml() CLASS TestFacturasClientesFacturaeController
 
    SQLFacturasClientesModel():testCreateFacturaConRecargoDeEqivalencia( uuid ) 
 
-   SQLFacturasClientesLineasModel():testCreateIVAal0Con10PorcientoDescuento( uuid ) 
+   SQLFacturasClientesLineasModel():test_create_IVA_al_0_con_10_descuento( uuid ) 
    SQLFacturasClientesLineasModel():testCreateIVAal10ConRecargoEquivalencia( uuid ) 
    SQLFacturasClientesLineasModel():testCreateIVAal21ConRecargoEquivalencia( uuid ) 
 
-   SQLFacturasClientesDescuentosModel():testCreatel0PorCiento( uuid )   
-   SQLFacturasClientesDescuentosModel():testCreate20PorCiento( uuid )   
-   SQLFacturasClientesDescuentosModel():testCreate30PorCiento( uuid )   
+   SQLFacturasClientesDescuentosModel():test_create_l0_por_ciento( uuid )   
+   SQLFacturasClientesDescuentosModel():test_create_20_por_ciento( uuid )   
+   SQLFacturasClientesDescuentosModel():test_create_30_por_ciento( uuid )   
 
    oController := FacturasClientesController():New()
 

@@ -518,8 +518,7 @@ METHOD testCreateConPlazos() CLASS SQLMetodoPagoModel
 
    hset( hBuffer, "codigo", "2" )
    hset( hBuffer, "nombre", "30 60 90" )
-   hset( hBuffer, "cobrado", 0 )
-   hset( hBuffer, "codigo_medio_pago", "0" )
+   hset( hBuffer, "cobrado", 2 )
    hset( hBuffer, "numero_plazos", 3 )
    hset( hBuffer, "primer_plazo", 15 )
    hset( hBuffer, "entre_plazo", 15 )

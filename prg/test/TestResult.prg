@@ -33,7 +33,7 @@ ENDCLASS
 
 METHOD new() CLASS TestResult
 
-  ::oData      := TestResultData():new()
+   ::oData  := TestResultData():new()
 
 RETURN ( self )
 
@@ -41,37 +41,31 @@ RETURN ( self )
 
 METHOD run( oTest ) CLASS TestResult
 
-   local i
+   local cMethod
    local aTestMethods   := ::getTestMethods( oTest )
-   local nTestMethods   := len ( aTestMethods )
 
-   ::oData:addTestCaseCount( nTestMethods )
+   ::oData:addTestCaseCount( len( aTestMethods ) )
       
    ::invokeTestMethod( oTest, "BEFORECLASS" )
 
-   for i := 1 TO nTestMethods
+   for each cMethod in aTestMethods
       ::invokeTestMethod( oTest, "BEFORE" )
-      ::invokeTestMethod( oTest, aTestMethods[i] )
+      ::invokeTestMethod( oTest, cMethod )
       ::invokeTestMethod( oTest, "AFTER" )
    next
 
    ::invokeTestMethod( oTest, "AFTERCLASS" )
 
-RETURN ( NIL )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD getTestMethods( oTest ) CLASS TestResult
 
-   local i
    local aTestMethods   := {}
    local aMethods       := __objGetMethodList( oTest )
 
-   for i := 1 to len( aMethods )
-      if ( left( aMethods[i], 4 ) == "TEST" )
-         aadd( aTestMethods, aMethods[i] )
-      endif
-   next
+   aeval( aMethods, {| cMethod | if( left( cMethod, 5 ) == "TEST_", aadd( aTestMethods, cMethod ), ) } )
 
 RETURN ( aTestMethods )
 
@@ -83,7 +77,7 @@ METHOD invokeTestMethod( oTest, cMethod ) CLASS TestResult
 
    BEGIN SEQUENCE
 
-      __ObjSendMsg( oTest, cMethod )
+      __objSendMsg( oTest, cMethod )
 
    RECOVER USING oError
 

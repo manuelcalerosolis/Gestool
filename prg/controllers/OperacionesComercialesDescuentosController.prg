@@ -271,15 +271,15 @@ CLASS SQLOperacionesComercialesDescuentosModel FROM SQLCompanyModel
 
    METHOD selectDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) 
 
-/*#ifdef __TEST__   
+#ifdef __TEST__   
 
-   METHOD testCreatel0PorCiento( uuid ) 
+   METHOD test_create_l0_por_ciento( uuid ) 
 
-   METHOD testCreate20PorCiento( uuid ) 
+   METHOD test_create_20_por_ciento( uuid ) 
 
-   METHOD testCreate30PorCiento( uuid ) 
+   METHOD test_create_30_por_ciento( uuid ) 
 
-#endif*/
+#endif
 
 END CLASS
 
@@ -394,9 +394,9 @@ RETURN ( ::getDatabase():selectTrimedFetchHash( ::getSentenceDescuentosWhereUuid
 
 //---------------------------------------------------------------------------//
 
-/*#ifdef __TEST__   
+#ifdef __TEST__   
 
-METHOD testCreatel0PorCiento( uuid ) CLASS SQLOperacionesComercialesDescuentosModel
+METHOD test_create_l0_por_ciento( uuid ) CLASS SQLOperacionesComercialesDescuentosModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -408,7 +408,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreate20PorCiento( uuid ) CLASS SQLOperacionesComercialesDescuentosModel
+METHOD test_create_20_por_ciento( uuid ) CLASS SQLOperacionesComercialesDescuentosModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -420,7 +420,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreate30PorCiento( uuid ) CLASS SQLOperacionesComercialesDescuentosModel
+METHOD test_create_30_por_ciento( uuid ) CLASS SQLOperacionesComercialesDescuentosModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -430,7 +430,7 @@ METHOD testCreate30PorCiento( uuid ) CLASS SQLOperacionesComercialesDescuentosMo
 
 RETURN ( ::insertBuffer( hBuffer ) )
 
-#endif*/
+#endif
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -165,13 +165,13 @@ METHOD testCalculoFacturaConDescuento() CLASS TestFacturasProveedoresController
 
    SQLFacturasClientesModel():testCreateFactura( uuid ) 
 
-   SQLFacturasClientesLineasModel():testCreateIVAal0Con10PorcientoDescuento( uuid ) 
+   SQLFacturasClientesLineasModel():test_create_IVA_al_0_con_10_descuento( uuid ) 
    SQLFacturasClientesLineasModel():testCreateIVAal10Con15PorcientoDescuento( uuid ) 
    SQLFacturasClientesLineasModel():testCreateIVAal21Con20PorcientoDescuento( uuid ) 
 
-   SQLFacturasClientesDescuentosModel():testCreatel0PorCiento( uuid )   
-   SQLFacturasClientesDescuentosModel():testCreate20PorCiento( uuid )   
-   SQLFacturasClientesDescuentosModel():testCreate30PorCiento( uuid )   
+   SQLFacturasClientesDescuentosModel():test_create_l0_por_ciento( uuid )   
+   SQLFacturasClientesDescuentosModel():test_create_20_por_ciento( uuid )   
+   SQLFacturasClientesDescuentosModel():test_create_30_por_ciento( uuid )   
 
    oController := FacturasClientesController():New() 
 

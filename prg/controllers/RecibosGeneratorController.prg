@@ -286,8 +286,6 @@ RETURN ( ::nTermAmount )
 
 METHOD insertRecibo( nTotalToPaid, nTerm ) CLASS RecibosGeneratorController
 
-   msgalert("creando recibo")
-
    ::getModel():loadBlankBuffer()
 
    ::getModel():setBuffer( "importe", nTotalToPaid )
@@ -304,15 +302,13 @@ RETURN ( ::getModel():getBuffer( "uuid" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertPago( nTotalToPaid ) CLASS RecibosGeneratorController
+METHOD insertPago() CLASS RecibosGeneratorController
 
    ::getPagosModel():loadBlankBuffer()
 
    ::getPagosModel():setBuffer( "tercero_codigo", ::oController:getModelBuffer( 'tercero_codigo' ) )
 
    ::getPagosModel():setBuffer( "medio_pago_codigo", ::getMetodoPagoModel():getMedioPagoCodigo( ::oController:getModelBuffer( 'metodo_pago_codigo' ) ) )
-
-   ::getPagosModel():setBuffer( "importe", nTotalToPaid )
 
    ::getPagosModel():setBuffer( "comentario", ::getConcept() )
 
@@ -350,12 +346,12 @@ METHOD generatePaids() CLASS RecibosGeneratorController
    for nTerm := 1 to ::getTerms()
 
       nTotalTerm        := ::getTermAmount( ::nTotalToPaid, nTerm )
-
+      
       ::uuidRecibo      := ::insertRecibo( nTotalTerm, nTerm )
 
       if ::isPaid() 
 
-         ::uuidPago     := ::insertPago( nTotalTerm )
+         ::uuidPago     := ::insertPago()
 
          ::insertReciboPago( nTotalTerm, ::uuidRecibo, ::uuidPago )
 

@@ -1065,21 +1065,21 @@ RETURN ( cSQLUpdate )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteOrUpdateSentenceByUuid( uUuid )
+METHOD getDeleteOrUpdateSentenceByUuid( uuid )
 
-   if hb_ischar( uUuid )
-      uUuid          := { uUuid }
+   if hb_ischar( uuid )
+      uuid          := { uuid }
    end if 
 
    if ::isDeletedAtColumn()
-      RETURN( ::SQLUpdateDeletedAtSentenceWhereUuid( uUuid ) )
+      RETURN( ::SQLUpdateDeletedAtSentenceWhereUuid( uuid ) )
    end if
 
-RETURN ( ::SQLDeletedSentenceWhereUuid( uUuid ) )
+RETURN ( ::SQLDeletedSentenceWhereUuid( uuid ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD SQLUpdateDeletedAtSentenceWhereUuid( uUuid )
+METHOD SQLUpdateDeletedAtSentenceWhereUuid( uuid )
 
    local cSentence
 
@@ -1087,7 +1087,7 @@ METHOD SQLUpdateDeletedAtSentenceWhereUuid( uUuid )
                      "SET deleted_at = NOW() " + ; 
                      "WHERE uuid IN ( "
    
-   aeval( uUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+   aeval( uuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
 
    cSentence   := chgAtEnd( cSentence, ' )', 2 )
 
@@ -1095,14 +1095,14 @@ RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD SQLDeletedSentenceWhereUuid( uUuid )
+METHOD SQLDeletedSentenceWhereUuid( uuid )
    
    local cSentence
 
    cSentence   := "DELETE FROM " + ::getTableName() + " " + ;
                      "WHERE uuid IN ( " 
 
-   aeval( uUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+   aeval( uuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
 
    cSentence   := chgAtEnd( cSentence, ' )', 2 )
 
@@ -1110,35 +1110,35 @@ RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteOrUpdateSentenceWhereParentUuid( uUuid )   
+METHOD getDeleteOrUpdateSentenceWhereParentUuid( uuid )   
 
-   if hb_ischar( uUuid )
-      uUuid    := { uUuid }
+   if hb_ischar( uuid )
+      uuid    := { uuid }
    end if 
 
    if ::isDeletedAtColumn()
-      RETURN( ::SQLUpdateDeletedAtSentenceWhereParentUuid( uUuid ) )
+      RETURN( ::SQLUpdateDeletedAtSentenceWhereParentUuid( uuid ) )
    end if
 
-RETURN ( ::SQLDeletedSentenceWhereParentUuid( uUuid ) )
+RETURN ( ::SQLDeletedSentenceWhereParentUuid( uuid ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD SQLDeletedSentenceWhereParentUuid( uUuid)
+METHOD SQLDeletedSentenceWhereParentUuid( uuid)
 
    local cSentence
 
    cSentence   := "DELETE FROM " + ::getTableName() + " " + ;
                      "WHERE parent_uuid IN ( " 
 
-   aeval( uUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+   aeval( uuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
 
    cSentence   := chgAtEnd( cSentence, ' )', 2 )
 
 RETURN( cSentence )
 //---------------------------------------------------------------------------//
 
-METHOD SQLUpdateDeletedAtSentenceWhereParentUuid( uUuid )
+METHOD SQLUpdateDeletedAtSentenceWhereParentUuid( uuid )
 
    local cSentence
 
@@ -1146,7 +1146,7 @@ METHOD SQLUpdateDeletedAtSentenceWhereParentUuid( uUuid )
                      "SET deleted_at = NOW() " + ; 
                      "WHERE parent_uuid IN ( "
 
-   aeval( uUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+   aeval( uuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
 
    cSentence   := chgAtEnd( cSentence, ' )', 2 )
 
@@ -1526,9 +1526,15 @@ METHOD insertBuffer( hBuffer )
 
    ::getDatabase():Execs( ::cSQLInsert )
 
+   logwrite( "cSQLInsert->" )
+   logwrite( ::cSQLInsert )
+
    nId               := ::getDatabase():LastInsertId()
 
    hset( hBuffer, ::cColumnKey, nId )
+
+   logwrite( "nId->" )
+   logwrite( nId )
 
    ::fireEvent( 'insertedBuffer' )
 

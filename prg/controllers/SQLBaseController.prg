@@ -74,8 +74,8 @@ CLASS SQLBaseController
    METHOD changeModelOrderAndOrientation()            
    METHOD getModelHeaderFromColumnOrder()             INLINE ( ::getModel():getHeaderFromColumnOrder() )
 
-   METHOD getId()                                     INLINE ( iif(  !empty( ::getModel() ), ::getModel():getId(), nil ) )
-   METHOD getUuid()                                   INLINE ( iif(  !empty( ::getModel() ), ::getModel():getUuid(), nil ) )
+   METHOD getId()                                     INLINE ( iif( !empty( ::getModel() ), ::getModel():getId(), nil ) )
+   METHOD getUuid()                                   INLINE ( iif( !empty( ::getModel() ), ::getModel():getUuid(), nil ) )
    
    // Rowset-------------------------------------------------------------------
 
@@ -323,7 +323,7 @@ METHOD Append()
             ::refreshRowSet()
          end if 
          
-         if !empty(::getBrowseView())
+         if !empty( ::getBrowseView() )
             ::refreshBrowseView()
          end if
 
