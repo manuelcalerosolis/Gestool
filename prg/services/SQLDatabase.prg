@@ -125,7 +125,7 @@ METHOD New( cDatabaseMySQL )
 
    ::oConexion                := THDO():new( "mysql" )
 
-   ::oConexion:setAttribute( HDO_ATTR_ERRMODE, .t. )
+   ::oConexion:setAttribute( HDO_ATTR_ERRMODE, .f. )
 
    ::oConexion:setAttribute( MYSQL_OPT_RECONNECT, .t. )
 

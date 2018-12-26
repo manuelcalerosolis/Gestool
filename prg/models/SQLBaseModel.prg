@@ -137,6 +137,7 @@ CLASS SQLBaseModel
    METHOD isNotBufferSystemRegister( hBuffer )        INLINE ( !( ::isBufferSystemRegister( hBuffer ) ) )
 
    METHOD getInsertSentence()
+      METHOD writeInsertSentence( key, value )
    METHOD getInsertIgnoreSentence( hBuffer )          INLINE ( ::getInsertSentence( hBuffer, .t. ) )
    METHOD getUpdateSentence()
    METHOD getInsertOnDuplicateSentence( hBuffer )   
@@ -950,53 +951,48 @@ METHOD getInsertSentence( hBuffer, lIgnore )
    DEFAULT hBuffer   := ::hBuffer
    DEFAULT lIgnore   := .f.
 
-   logwrite( 'getInsertSentence' )   
-   
    if !hb_ishash( hBuffer )
       RETURN ( nil )
    end if 
 
-   logwrite( 'getingInsertSentence' )   
-
    ::fireEvent( 'getingInsertSentence' )   
    
-   logwrite( 'setCreatedTimeStamp' )   
-
    hBuffer           := ::setCreatedTimeStamp( hBuffer )
 
-   logwrite( 'hBuffer := ::setCreatedTimeStamp( hBuffer )' )   
-
    ::cSQLInsert      := "INSERT " 
-
-   logwrite( ::cSQLInsert )   
 
    if lIgnore
       ::cSQLInsert   += "IGNORE "
    end if 
 
-   logwrite( ::cSQLInsert )   
-
    ::cSQLInsert      += "INTO " + ::getTableName() + " ( "
 
-   logwrite( ::cSQLInsert )   
-   
    hEval( hBuffer, {| k, v | if( k != ::cColumnKey, ::cSQLInsert += k + ", ", ) } )
 
-   logwrite( ::cSQLInsert )   
-   
    ::cSQLInsert      := chgAtEnd( ::cSQLInsert, ' ) VALUES ( ', 2 )
    
-   logwrite( ::cSQLInsert )   
+   hEval( hBuffer, {| k, v | ::writeInsertSentence( k, v ) } )
 
-   hEval( hBuffer, {| k, v | if( k != ::cColumnKey, ::cSQLInsert += toSQLString( ::setAttribute( k, v ) ) + ", ", ) } )
-
-   logwrite( ::cSQLInsert )   
-   
    ::cSQLInsert      := chgAtEnd( ::cSQLInsert, ' )', 2 )
 
-   logwrite( ::cSQLInsert )   
-
    ::fireEvent( 'gotInsertSentence' ) 
+
+RETURN ( ::cSQLInsert )
+
+//---------------------------------------------------------------------------//
+
+METHOD writeInsertSentence( key, value )
+
+   if key == ::cColumnKey
+      RETURN ( nil )
+   end if 
+
+   if at( 'uuid', key ) != 0
+      ::cSQLInsert += quotedUuid( value ) + ", " 
+      RETURN ( nil )
+   end if 
+
+   ::cSQLInsert   += toSQLString( ::setAttribute( key, value ) ) + ", " 
 
 RETURN ( ::cSQLInsert )
 
@@ -1293,7 +1289,7 @@ METHOD setAttribute( key, value )
 
    local cMethod  := "set" + strtran( key, "_", "" ) + "attribute"
 
-   if __ObjHasMethod( Self, cMethod )
+   if __objhasmethod( Self, cMethod )
       RETURN ( Self:&( cMethod )( value ) )
    end if 
 
@@ -1524,20 +1520,11 @@ METHOD insertBuffer( hBuffer )
 
    DEFAULT hBuffer   := ::hBuffer
 
-   msgalert(::className(), "clase")
-
-   msgalert( hb_valtoexp(hBuffer), "hBuffer")
-
    ::fireEvent( 'insertingBuffer' )
 
    ::getInsertSentence( hBuffer )
 
-   msgalert(::getInsertSentence( hBuffer ), "sentencia insert")
-
    ::getDatabase():Execs( ::cSQLInsert )
-   msgalert("insertado")
-
-   logwrite( ::cSQLInsert )
 
    nId               := ::getDatabase():LastInsertId()
 
