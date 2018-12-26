@@ -144,7 +144,7 @@ METHOD pagosModelAppend() CLASS RecibosController
 
       :setBuffer( "pago_uuid", ::getPagosController():getModelBuffer('uuid') )
 
-      :setBuffer( "importe", ::getPagosController():getModelBuffer('importe') ) 
+      :setBuffer( "importe", ::getPagosController():getImporte() ) 
 
       :insertBuffer()
 
@@ -177,6 +177,8 @@ CLASS RecibosBrowseView FROM SQLBrowseView
    METHOD PaidIcon()
 
    METHOD getFooter()                  INLINE ( !empty(::oController:oController ) )
+
+   METHOD getTipoRecibo()
 
 END CLASS
 
@@ -218,6 +220,12 @@ METHOD addColumns() CLASS RecibosBrowseView
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'vencimiento' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol()  )
+      :cHeader          := "Tipo"
+      :bStrData         := {|| ::getTipoRecibo() }
+      :nWidth           := 120
    end with
 
    with object ( ::oBrowse:AddCol()  )
@@ -338,6 +346,21 @@ METHOD PaidIcon() CLASS RecibosBrowseView
    end if 
 
 RETURN ( 3 )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTipoRecibo() CLASS RecibosBrowseView
+
+   local cTipo
+
+   if ::oController:getRowSet():fieldGet( 'parent_table' ) == "facturas_clientes"
+      cTipo = "Cobro"
+      RETURN ( cTipo )
+   end if
+
+   cTipo = "Pago"
+
+RETURN ( cTipo )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -39,7 +39,7 @@ CLASS OperacionesComercialesView FROM SQLBaseView
                                                 ::oBtnLineasDeleted:Toggle(),;
                                                 ::oBtnLineasDeleted:cTooltip := if( ::oBtnLineasDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
-   METHOD setDescuentoShowDeleted()    INLINE ( ::getController():getFacturasClientesDescuentosController():setShowDeleted(),;
+   METHOD setDescuentoShowDeleted()    INLINE ( ::getController():getTercerosDescuentosController():setShowDeleted(),;
                                                 ::oBtnDescuentosDeleted:Toggle(),;
                                                 ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
@@ -263,7 +263,7 @@ METHOD startActivate() CLASS OperacionesComercialesView
 
    ::getController():getTercerosLineasController():getBrowseView():Refresh()
    
-   ::getController():getFacturasClientesDescuentosController():getBrowseView():Refresh()
+   ::getController():getTercerosDescuentosController():getBrowseView():Refresh()
 
    ::getController():calculateTotals()
 

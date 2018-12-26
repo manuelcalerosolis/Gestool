@@ -166,7 +166,7 @@ METHOD New( oController ) CLASS OperacionesComercialesController
    ::getTercerosLineasController():setEvent( 'appending',          {|| ::isClientFilled() } )
    ::getTercerosLineasController():setEvent( 'deletedSelection',   {|| ::calculateTotals() } ) 
 
-   ::getFacturasClientesDescuentosController():setEvent( 'deletedSelection',  {|| ::calculateTotals() } ) 
+   ::getTercerosDescuentosController():setEvent( 'deletedSelection',  {|| ::calculateTotals() } ) 
 
    ::getTercerosController():getSelector():setEvent( 'settedHelpText', {|| ::clientesSettedHelpText() } )
 
@@ -390,13 +390,13 @@ RETURN ( nil )
 
 METHOD clientSetDescuentos() CLASS OperacionesComercialesController
 
-   ::getFacturasClientesDescuentosController():getModel():deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
+   ::getTercerosDescuentosController():getModel():deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
 
-   ::getFacturasClientesDescuentosController():getModel():insertWhereClienteCodigo( ::getModelBuffer( "tercero_codigo" ) )
+   ::getTercerosDescuentosController():getModel():insertWhereClienteCodigo( ::getModelBuffer( "tercero_codigo" ) )
 
-   ::getFacturasClientesDescuentosController():refreshRowSetAndGoTop()
+   ::getTercerosDescuentosController():refreshRowSetAndGoTop()
 
-   ::getFacturasClientesDescuentosController():refreshBrowseView()
+   ::getTercerosDescuentosController():refreshBrowseView()
 
 RETURN ( nil )
 

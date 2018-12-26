@@ -50,6 +50,9 @@ RETURN ( ::Super:End() )
 CLASS SQLFacturasClientesDescuentosModel FROM SQLOperacionesComercialesDescuentosModel
 
    DATA cTableName               INIT "facturas_clientes_descuentos"
+
+   DATA cOrderBy                 INIT "facturas_clientes_descuentos.id"
+   
 END CLASS
 
 //---------------------------------------------------------------------------//

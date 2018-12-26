@@ -200,6 +200,8 @@ METHOD addModels() CLASS SQLGestoolMigrations
 
    aadd( ::aModels, SQLAjustableGestoolModel():New() )
 
+   aadd( ::aModels, SQLCuentasBancariasGestoolModel():New() )
+
 RETURN ( ::aModels )
  
 //----------------------------------------------------------------------------//
