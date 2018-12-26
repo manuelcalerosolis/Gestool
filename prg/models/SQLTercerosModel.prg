@@ -216,7 +216,7 @@ METHOD getInitialSelect() CLASS SQLTercerosModel
                           SQLMetodoPagoModel():getTableName(),;
                           SQLAgentesModel():getTableName(),;
                           SQLRutasModel():getTableName(),;
-                          SQLClientesGruposModel():getTableName(),;
+                          SQLTercerosGruposModel():getTableName(),;
                           SQLCuentasRemesaModel():getTableName(),;
                           SQLArticulosTarifasModel():getTableName() )
 
@@ -400,7 +400,7 @@ METHOD getSelectClient() CLASS SQLTercerosModel
                           SQLMetodoPagoModel():getTableName(),;
                           SQLAgentesModel():getTableName(),;
                           SQLRutasModel():getTableName(),;
-                          SQLClientesGruposModel():getTableName(),;
+                          SQLTercerosGruposModel():getTableName(),;
                           SQLCuentasRemesaModel():getTableName(),;
                           SQLArticulosTarifasModel():getTableName() )
 
@@ -467,7 +467,7 @@ METHOD getSelectProveedor() CLASS SQLTercerosModel
                           SQLMetodoPagoModel():getTableName(),;
                           SQLAgentesModel():getTableName(),;
                           SQLRutasModel():getTableName(),;
-                          SQLClientesGruposModel():getTableName(),;
+                          SQLTercerosGruposModel():getTableName(),;
                           SQLCuentasRemesaModel():getTableName(),;
                           SQLArticulosTarifasModel():getTableName() )
 

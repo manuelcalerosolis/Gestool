@@ -246,8 +246,8 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getTercerosController();
                                     INLINE ( if( empty( ::oTercerosController ), ::oTercerosController := TercerosController():New( self ), ), ::oTercerosController )
 
-   METHOD getClientesGruposController();
-                                    INLINE ( if( empty( ::oTercerosGruposController ), ::oTercerosGruposController := ClientesGruposController():New( self ), ), ::oTercerosGruposController )
+   METHOD getTercerosGruposController();
+                                    INLINE ( if( empty( ::oTercerosGruposController ), ::oTercerosGruposController := TercerosGruposController():New( self ), ), ::oTercerosGruposController )
 
    METHOD getContactosController();
                                     INLINE ( if( empty( ::oContactosController ), ::oContactosController := ContactosController():New( self ), ), ::oContactosController )

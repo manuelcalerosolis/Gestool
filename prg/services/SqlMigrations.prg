@@ -89,7 +89,7 @@ METHOD checkRepository( oRepository ) CLASS SQLBaseMigrations
 
    getSQLDatabase():ExecsWithOutParse( oRepository:getSQLFunctions() )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -374,7 +374,7 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLRutasModel():New() )
 
-   aadd( ::aModels, SQLClientesGruposModel():New() )
+   aadd( ::aModels, SQLTercerosGruposModel():New() )
 
    aadd( ::aModels, SQLArticulosTemporadasModel():New() )
 

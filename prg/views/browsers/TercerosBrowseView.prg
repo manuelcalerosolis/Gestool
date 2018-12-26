@@ -227,7 +227,7 @@ METHOD addColumns() CLASS TercerosBrowseView
       if ::oController:isUserEdit()
          :nEditType        := 5
          :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnGruposBrowse( uNewValue, nKey ) }
-         :bEditBlock       := {|| ::oController:oClientesGruposController:ActivateSelectorView() }
+         :bEditBlock       := {|| ::oController:oTercerosGruposController:ActivateSelectorView() }
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if

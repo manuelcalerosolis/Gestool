@@ -191,8 +191,8 @@ METHOD redefineComercial() CLASS TercerosView
    ::getController():getAgentesController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "agente_codigo" ] ) )
    ::getController():getAgentesController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[2] } )
 
-   ::getController():getClientesGruposController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "cliente_grupo_codigo" ] ) )
-   ::getController():getClientesGruposController():getSelector():Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[2] } )
+   ::getController():getTercerosGruposController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "cliente_grupo_codigo" ] ) )
+   ::getController():getTercerosGruposController():getSelector():Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[2] } )
 
    ::getController():getMetodosPagosController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "metodo_pago_codigo" ] ) )
    ::getController():getMetodosPagosController():getSelector():Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[2] } )
@@ -376,9 +376,7 @@ METHOD startActivate() CLASS TercerosView
 
    ::getController():getRutasController():getSelector():Start()
 
-   ::getController():getClientesGruposController():getSelector():Start()
-
-   // ::getController():getDireccionesController():externalStartActivate()
+   ::getController():getTercerosGruposController():getSelector():Start()
 
    if ::getController():isClient()
       ::getController():getArticulosTarifasController():getSelector():Start()

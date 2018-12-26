@@ -21,7 +21,7 @@ CLASS TercerosController FROM SQLNavigatorController
 
    DATA oRutasController
 
-   DATA oClientesGruposController
+   DATA oTercerosGruposController
 
    DATA oContactosController
 
@@ -47,7 +47,7 @@ CLASS TercerosController FROM SQLNavigatorController
 
    METHOD validColumnRutasBrowse( uValue, nKey )               INLINE ( ::validColumnBrowse( uValue, nKey, ::getRutasController():oModel, "ruta_uuid" ) )
 
-   METHOD validColumnGruposBrowse( uValue, nKey )              INLINE ( ::validColumnBrowse( uValue, nKey, ::getClientesGruposController():oModel, "cliente_grupo_uuid" ) )
+   METHOD validColumnGruposBrowse( uValue, nKey )              INLINE ( ::validColumnBrowse( uValue, nKey, ::getTercerosGruposController():oModel, "cliente_grupo_uuid" ) )
 
    METHOD validColumnCuentasRemesasBrowse( uValue, nKey )      INLINE ( ::validColumnBrowse( uValue, nKey, ::getCuentasRemesasController():oModel, "cuenta_remesa_uuid" ) )
 

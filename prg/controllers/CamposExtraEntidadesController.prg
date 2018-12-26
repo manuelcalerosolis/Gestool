@@ -47,7 +47,7 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
                                  "facturas_rectificativa_proveedores"=>    { "nombre" => "Facturas rectificativa a proveedores", "icono" => "gc_document_text_delete2_16" } ,;
                                  "sat" =>                                  { "nombre" => "S.A.T",  "icono" => "gc_power_drill_sat_user_16"                                } ,;
                                  "envases_articulos" =>                    { "nombre" => "Envases de artículos",  "icono" => "gc_box_closed_16"                           } ,;
-                                 "grupos_clientes" =>                      { "nombre" => "Grupos de clientes",  "icono" => "gc_users3_16"                                 } ,;
+                                 "grupos_terceros" =>                      { "nombre" => "Grupos de terceros",  "icono" => "gc_users3_16"                                 } ,;
                                  "movimientos_almacen" =>                  { "nombre" => "Movimientos de almacén",  "icono" => "gc_pencil_package_16"                     } ,;
                                  "movimientos_almacen_lineas" =>           { "nombre" => "Movimientos de almacén lineas", "icono" => "gc_pencil_package_16"               } ,;
                                  "articulos_fabricantes" =>                { "nombre" => "Fabricantes", "icono" => "gc_pencil_package_16"                                 } ,;

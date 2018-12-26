@@ -173,7 +173,7 @@ IvaTipoController.prg 														\
 CuentasRemesaController.prg 												\
 CuentasBancariasController.prg 											\
 RutasController.prg 															\
-ClientesGruposController.prg 												\
+TercerosGruposController.prg 												\
 ArticulosTemporadaController.prg 										\
 ArticulosCategoriasController.prg 										\
 ArticulosUnidadesMedicionController.prg								\
@@ -539,7 +539,7 @@ IvaTipoController.obj       												\
 CuentasRemesaController.obj       										\
 CuentasBancariasController.obj       									\
 RutasController.obj       													\
-ClientesGruposController.obj       										\
+TercerosGruposController.obj       										\
 ArticulosTemporadaController.obj       								\
 ArticulosCategoriasController.obj       								\
 ArticulosUnidadesMedicionController.obj 								\
@@ -903,7 +903,7 @@ $(OBJ)\IvaTipoController.obj    											+
 $(OBJ)\CuentasRemesaController.obj    									+
 $(OBJ)\CuentasBancariasController.obj    								+
 $(OBJ)\RutasController.obj    											+
-$(OBJ)\ClientesGruposController.obj    								+
+$(OBJ)\TercerosGruposController.obj    								+
 $(OBJ)\ArticulosTemporadaController.obj    							+
 $(OBJ)\ArticulosCategoriasController.obj    							+
 $(OBJ)\ArticulosUnidadesMedicionController.obj    					+

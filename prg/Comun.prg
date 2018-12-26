@@ -1369,10 +1369,10 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Grupos de clientes'
-   oItem:cMessage       := 'Grupos de clientes'
-   oItem:bAction        := {|| ClientesGruposController():New():ActivateNavigatorView() }
-   oItem:cId            := "grupos_clientes"
+   oItem:cPrompt        := 'Grupos de terceros'
+   oItem:cMessage       := 'Grupos de terceros'
+   oItem:bAction        := {|| TercerosGruposController():New():ActivateNavigatorView() }
+   oItem:cId            := "grupos_terceros"
    oItem:cBmp           := "gc_users3_16"
    oItem:cBmpBig        := "gc_users3_32"
    oItem:lShow          := .f.
