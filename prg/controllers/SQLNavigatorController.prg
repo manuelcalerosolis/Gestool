@@ -197,6 +197,8 @@ METHOD activateNavigatorView()
 
    cursorWait()
 
+   ::fireEvent( 'activatingnavigatorview' )
+
    ::closeAllWindows()
 
    ::buildRowSetSentenceNavigator()   
@@ -208,6 +210,8 @@ METHOD activateNavigatorView()
       ::EnableWindowsBar()
 
    endif 
+
+   ::fireEvent( 'activatednavigatorview' )
 
    cursorWE()
 

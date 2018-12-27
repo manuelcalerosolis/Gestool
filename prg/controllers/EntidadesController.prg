@@ -237,7 +237,7 @@ METHOD Activate() CLASS EntidadesView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    ::oController:getImage( "48" ) ;
+      RESOURCE    ::getController():getImage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog ;
 
@@ -246,63 +246,63 @@ METHOD Activate() CLASS EntidadesView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::getController():getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
-      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
-      VALID       ( ::oController:validate( "codigo" ) ) ;
+      WHEN        ( ::getController():isAppendOrDuplicateMode() ) ;
+      VALID       ( ::getController():validate( "codigo" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "descripcion" ] ;
+   REDEFINE GET   ::getController():getModel():hBuffer[ "descripcion" ] ;
       ID          110 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "descripcion" ) ) ;
+      WHEN        ( ::getController():isNotZoomMode() ) ;
+      VALID       ( ::getController():validate( "descripcion" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::getController():getModel():hBuffer[ "nombre" ] ;
       ID          120 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
+      WHEN        ( ::getController():isNotZoomMode() ) ;
+      VALID       ( ::getController():validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "gnl_fisico" ] ;
+   REDEFINE GET   ::getController():getModel():hBuffer[ "gnl_fisico" ] ;
       ID          130 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "gnl_fisico" ) ) ;
+      WHEN        ( ::getController():isNotZoomMode() ) ;
+      VALID       ( ::getController():validate( "gnl_fisico" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "punto_logico_op" ] ;
+   REDEFINE GET   ::getController():getModel():hBuffer[ "punto_logico_op" ] ;
       ID          140 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "punto_logico_op" ) ) ;
+      WHEN        ( ::getController():isNotZoomMode() ) ;
+      VALID       ( ::getController():validate( "punto_logico_op" ) ) ;
       OF          ::oDialog
 
    // Direcciones--------------------------------------------------------------
 
-   ::oController:getDireccionesController():getDialogView():ExternalCoreRedefine( ::oDialog )
+   ::getController():getDireccionesController():getDialogView():ExternalCoreRedefine( ::oDialog )
 
    // Contacto-----------------------------------------------------------------
 
-   ::oController:getContactosController():getDialogView():ExternalRedefine( ::oDialog )
+   ::getController():getContactosController():getDialogView():ExternalRedefine( ::oDialog )
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "web" ] ;
+   REDEFINE GET   ::getController():getModel():hBuffer[ "web" ] ;
       ID          150 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::getController():isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo_ine" ] ;
+   REDEFINE GET   ::getController():getModel():hBuffer[ "codigo_ine" ] ;
       ID          160 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::getController():isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "cno_cnae" ] ;
+   REDEFINE GET   ::getController():getModel():hBuffer[ "cno_cnae" ] ;
       ID          170 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::getController():isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "otros" ] ;
+   REDEFINE GET   ::getController():getModel():hBuffer[ "otros" ] ;
       ID          180 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::getController():isNotZoomMode() ) ;
       OF          ::oDialog
 
    REDEFINE SAY   ::oSayCamposExtra ;
@@ -313,21 +313,19 @@ METHOD Activate() CLASS EntidadesView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::getController():getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
    ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-
    if ::oController:isNotZoomMode() 
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
+   else
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
    end if
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-   ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 

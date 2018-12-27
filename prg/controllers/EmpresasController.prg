@@ -94,7 +94,7 @@ METHOD New( oController ) CLASS EmpresasController
    ::hImage                         := {  "16" => "gc_factory_16",;
                                           "32" => "gc_factory_32",;
                                           "48" => "gc_factory_48" }
-   
+
    ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadMainBlankBuffer() } )
    ::getModel():setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    

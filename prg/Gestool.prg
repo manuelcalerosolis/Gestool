@@ -108,7 +108,11 @@ STATIC FUNCTION mainAdminSQL()
    getSQLDatabase():ConnectWithoutDataBase()
 
    if AccessController():New():isLoginSuperAdmin()
+
+      SQLGestoolMigrations():messageRun()
+
       CreateAdminSQLWindow()
+   
    end if
 
    getSQLDatabase():Disconnect() 

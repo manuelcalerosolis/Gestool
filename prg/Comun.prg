@@ -4286,7 +4286,7 @@ FUNCTION CreateAdminSQLWindow()
 
    // Mensajes-----------------------------------------------------------------
 
-   oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), oFontLittleTitle(), .f. )
+   oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space( 2 ) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), oFontLittleTitle(), .f. )
 
    // Abrimos la ventana-------------------------------------------------------
 
@@ -4295,7 +4295,7 @@ FUNCTION CreateAdminSQLWindow()
       ON PAINT                ( WndPaint( hDC, oWnd ) ); 
       ON RESIZE               ( WndResize( oWnd ) )
 
-   SysRefresh()
+   sysrefresh()
 
 RETURN nil
 

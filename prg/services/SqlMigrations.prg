@@ -9,7 +9,9 @@ CLASS SQLBaseMigrations
 
    DATA aRepositories                     INIT {}
 
-   METHOD Run( cDatabaseMySQL ) 
+   METHOD messageRun()                    
+
+   METHOD Run()                           VIRTUAL 
 
    METHOD createDatabase()
 
@@ -31,19 +33,9 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD Run( cDatabaseMySQL ) CLASS SQLBaseMigrations
+METHOD messageRun() CLASS SQLBaseMigrations
 
-   DEFAULT cDatabaseMySQL  := 'Gestool'
-
-   ::createDatabase( cDatabaseMySQL )
-
-   ::addModels()
-
-   ::checkModels( cDatabaseMySQL )
-
-   ::checkValues()
-
-RETURN ( Self )
+RETURN ( msgRun( "Actualizando estructuras de datos", "Espere por favor...", {|| ::Run() } ) )
 
 //----------------------------------------------------------------------------//
 
@@ -152,11 +144,29 @@ RETURN ( aSchemaColumns )
 
 CLASS SQLGestoolMigrations FROM SQLBaseMigrations
 
+   METHOD Run( cDatabaseMySQL )
+
    METHOD addModels()  
 
    METHOD checkValues()
 
 ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD Run( cDatabaseMySQL ) CLASS SQLGestoolMigrations
+
+   DEFAULT cDatabaseMySQL  := 'gestool'
+
+   ::createDatabase( cDatabaseMySQL )
+
+   ::addModels()
+
+   ::checkModels( cDatabaseMySQL )
+
+   ::checkValues()
+
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -181,8 +191,6 @@ METHOD addModels() CLASS SQLGestoolMigrations
    aadd( ::aModels, SQLCamposExtraEntidadesGestoolModel():New() )
    
    aadd( ::aModels, SQLCamposExtraValoresGestoolModel():New() )
-
-   aadd( ::aModels, SQLFiltrosModel():New() ) 
 
    aadd( ::aModels, SQLConfiguracionEmpresasModel():New() )
 
@@ -407,8 +415,6 @@ METHOD addModels() CLASS SQLCompanyMigrations
    aadd( ::aModels, SQLPropiedadesModel():New() )
 
    aadd( ::aModels, SQLPropiedadesLineasModel():New() )
-
-   //aadd( ::aModels, SQLTercerosModel():New() ) 
 
    aadd( ::aModels, SQLTraduccionesModel():New() ) 
 
