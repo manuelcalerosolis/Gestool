@@ -54,7 +54,9 @@ USER FUNCTION hbunit_test()
 
    // oSuite:addTest( TestTercerosController():new() )
 
-   oSuite:addTest( TestTercerosGruposController():new() )
+   // oSuite:addTest( TestTercerosGruposController():new() )
+
+   oSuite:addTest( TestEntidadesController():new() )
 
    oRunner:run( oSuite )
 

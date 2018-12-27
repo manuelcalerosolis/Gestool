@@ -29,37 +29,37 @@ METHOD New( oController ) CLASS EntidadesController
 
    ::Super:New( oController )
 
-   ::cTitle                               := "Entidades"
+   ::cTitle                            := "Entidades"
 
-   ::cName                                := "entidades"
+   ::cName                             := "entidades"
 
-   ::hImage                               := {  "16" => "gc_office_building2_16",;
-                                                "32" => "gc_office_building2_32",;
-                                                "48" => "gc_office_building2_48" }
+   ::hImage                            := {  "16" => "gc_office_building2_16",;
+                                             "32" => "gc_office_building2_32",;
+                                             "48" => "gc_office_building2_48" }
 
-   ::nLevel                               := Auth():Level( ::cName )
+   ::nLevel                            := Auth():Level( ::cName )
    
-   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadMainBlankBuffer() } )
-   ::getModel():setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
+   ::getModel():addEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadMainBlankBuffer() } )
+   ::getModel():addEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    
-   ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
-   ::getModel():setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
+   ::getModel():addEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::getModel():addEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
 
-   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::getModel():setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
+   ::getModel():addEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::getModel():addEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::getModel():setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
+   ::getModel():addEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
 
-   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getContactosController():loadBlankBuffer() } )
-   ::getModel():setEvent( 'insertedBuffer',               {|| ::getContactosController():insertBuffer() } )
+   ::getModel():addEvent( 'loadedBlankBuffer',            {|| ::getContactosController():loadBlankBuffer() } )
+   ::getModel():addEvent( 'insertedBuffer',               {|| ::getContactosController():insertBuffer() } )
    
-   ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getContactosController():loadedCurrentBuffer( ::getUuid() ) } )
-   ::getModel():setEvent( 'updatedBuffer',                {|| ::getContactosController():updateBuffer( ::getUuid() ) } )
+   ::getModel():addEvent( 'loadedCurrentBuffer',          {|| ::getContactosController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::getModel():addEvent( 'updatedBuffer',                {|| ::getContactosController():updateBuffer( ::getUuid() ) } )
 
-   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getContactosController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::getModel():setEvent( 'loadedDuplicateBuffer',        {|| ::getContactosController():loadedDuplicateBuffer( ::getUuid() ) } )
+   ::getModel():addEvent( 'loadedDuplicateCurrentBuffer', {|| ::getContactosController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::getModel():addEvent( 'loadedDuplicateBuffer',        {|| ::getContactosController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::getModel():setEvent( 'deletedSelection',             {|| ::getContactosController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::getModel():addEvent( 'deletedSelection',             {|| ::getContactosController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
@@ -87,9 +87,7 @@ METHOD End() CLASS EntidadesController
       ::oRepository:End()
    end if
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -325,6 +323,8 @@ METHOD Activate() CLASS EntidadesView
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
    end if
 
+   ::oDialog:bStart        := {|| ::paintedActivate() }
+
    ACTIVATE DIALOG ::oDialog CENTER
 
 RETURN ( ::oDialog:nResult )
@@ -482,3 +482,111 @@ CLASS EntidadesRepository FROM SQLBaseRepository
 END CLASS
 
 //---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+CLASS TestEntidadesController FROM TestCase
+
+   DATA oController
+
+   METHOD beforeClass()
+
+   METHOD afterClass()
+
+   METHOD Before() 
+   
+   METHOD test_create()                
+
+   METHOD test_dialogo_sin_codigo()     
+
+   METHOD test_dialogo_creacion()       
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD beforeClass() CLASS TestEntidadesController
+
+   ::oController  := EntidadesController():New()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD afterClass() CLASS TestEntidadesController
+
+RETURN ( ::oController:end() )
+
+//---------------------------------------------------------------------------//
+
+METHOD Before() CLASS TestEntidadesController
+
+   SQLEntidadesModel():truncateTable()
+
+   SQLDireccionesModel():truncateTable()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create() CLASS TestEntidadesController
+
+   local hBuffer
+
+   hBuffer  := ::oController:getModel();
+                  :loadBlankBuffer( {  "codigo"          => "0",;
+                                       "nombre"          => "Test de entidades",;
+                                       "descripcion"     => "Descripción de entidades",;
+                                       "gnl_fisico"      => "GNL",;
+                                       "punto_logico_op" => "Punto lógico" } )
+   
+   ::assert:notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion entidades" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_sin_codigo() CLASS TestEntidadesController
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110 ):cText( "Test de entidades" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 120 ):cText( "Descripción" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDCANCEL ):Click() } )
+
+   ::assert:false( ::oController:Append(), "test creación de enditades sin codigo" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_creacion() CLASS TestEntidadesController
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100 ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110 ):cText( "Test de entidades" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 120 ):cText( "Nombre de entidad" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 130 ):cText( "GNL fisico" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 140 ):cText( "Punto lógico" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )
+
+   ::assert:true( ::oController:Append(), "test creación de entidades al completo" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+#endif
+

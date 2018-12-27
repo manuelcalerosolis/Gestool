@@ -272,6 +272,7 @@ CLASS SQLBaseModel
 
    METHOD setEvents( aEvents, bEvent )
    METHOD setEvent( cEvent, bEvent )   INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
+   METHOD addEvent( cEvent, bEvent )   INLINE ( if( !empty( ::oEvents ), ::oEvents:add( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent, uValue )  INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent, uValue ), ) )
 
    // Updates------------------------------------------------------------------
