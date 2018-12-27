@@ -35,7 +35,7 @@ CLASS TercerosController FROM SQLNavigatorController
 
    DATA oDescuentosController
 
-   DATA oClientesEntidadesController
+   DATA oTercerosEntidadesController
 
    DATA oClientesTarifasController
 
@@ -150,7 +150,7 @@ METHOD setUuidOldersParents() CLASS TercerosController
 
    ::getDocumentosController():getModel():setUuidOlderParent( ::getUuid() )
 
-   ::getClientesEntidadesController():getModel():setUuidOlderParent( ::getUuid() )
+   ::getTercerosEntidadesController():getModel():setUuidOlderParent( ::getUuid() )
 
    ::getCamposExtraValoresController():getModel():setUuidOlderParent( ::getUuid() )
 
@@ -172,7 +172,7 @@ METHOD getDuplicateOthers() CLASS TercerosController
 
    ::getDocumentosController():getModel():duplicateOthers( ::getUuid() )
 
-   ::getClientesEntidadesController():getModel():duplicateOthers( ::getUuid() )
+   ::getTercerosEntidadesController():getModel():duplicateOthers( ::getUuid() )
    
    ::getCamposExtraValoresController():getModel():duplicateOthers( ::getUuid() )
 
@@ -194,7 +194,7 @@ METHOD deletedOthersSelection() CLASS TercerosController
 
    ::getDocumentosController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
 
-   ::getClientesEntidadesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+   ::getTercerosEntidadesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
    
    ::getCamposExtraValoresController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
 

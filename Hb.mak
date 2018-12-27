@@ -152,7 +152,7 @@ CajasController.prg 															\
 EntradaSalidaController.prg 												\
 ArticulosEnvasadoController.prg 											\
 OrdenComandasController.prg 												\
-ClientesEntidadesController.prg 											\
+TercerosEntidadesController.prg 											\
 EntidadesController.prg 													\
 DocumentosController.prg 													\
 IncidenciasController.prg 													\
@@ -518,7 +518,7 @@ CajasController.obj       													\
 EntradaSalidaController.obj       										\
 ArticulosEnvasadoController.obj       									\
 OrdenComandasController.obj       										\
-ClientesEntidadesController.obj       									\
+TercerosEntidadesController.obj       									\
 EntidadesController.obj       											\
 DocumentosController.obj       											\
 IncidenciasController.obj      	 										\
@@ -882,7 +882,7 @@ $(OBJ)\CajasController.obj    											+
 $(OBJ)\EntradaSalidaController.obj    									+
 $(OBJ)\ArticulosEnvasadoController.obj    							+
 $(OBJ)\OrdenComandasController.obj    									+
-$(OBJ)\ClientesEntidadesController.obj    							+
+$(OBJ)\TercerosEntidadesController.obj    							+
 $(OBJ)\EntidadesController.obj    										+
 $(OBJ)\DocumentosController.obj    										+
 $(OBJ)\IncidenciasController.obj    									+

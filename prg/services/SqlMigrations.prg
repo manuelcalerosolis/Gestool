@@ -324,7 +324,7 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLOrdenComandasModel():New() )
 
-   aadd( ::aModels, SQLClientesEntidadesModel():New() )
+   aadd( ::aModels, SQLTercerosEntidadesModel():New() )
 
    aadd( ::aModels, SQLEntidadesModel():New() )
 

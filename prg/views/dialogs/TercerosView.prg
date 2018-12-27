@@ -420,7 +420,7 @@ METHOD addLinksToExplorerBar() CLASS TercerosView
       oPanel:AddLink( "Cuentas bancarias...",   {|| ::getController():getCuentasBancariasController():activateDialogView() }, ::getController():getCuentasBancariasController():getImage( "16" ) )
       oPanel:AddLink( "Incidencias...",         {|| ::getController():getIncidenciasController():activateDialogView() }, ::getController():getIncidenciasController():getImage( "16" ) )
       oPanel:AddLink( "Documentos...",          {|| ::getController():getDocumentosController():activateDialogView() }, ::getController():getDocumentosController():getImage( "16" ) )
-      oPanel:AddLink( "Entidades facturae...",  {|| ::getController():getClientesEntidadesController():activateDialogView() }, ::getController():getClientesEntidadesController():getImage( "16" ) )
+      oPanel:AddLink( "Entidades facturae...",  {|| ::getController():getTercerosEntidadesController():activateDialogView() }, ::getController():getTercerosEntidadesController():getImage( "16" ) )
    end if
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
