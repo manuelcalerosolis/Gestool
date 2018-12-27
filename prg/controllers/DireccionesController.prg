@@ -73,15 +73,15 @@ METHOD New( oController ) CLASS DireccionesController
 
    ::Super:New( oController )
 
-   ::lTransactional                 := .t.
+   ::lTransactional                    := .t.
 
-   ::cTitle                         := "Direcciones"
+   ::cTitle                            := "Direcciones"
 
-   ::cName                          := "direcciones"
+   ::cName                             := "direcciones"
 
-   ::hImage                         := {  "16" => "gc_signpost3_16",;
-                                          "32" => "gc_signpost3_32",;
-                                          "48" => "gc_signpost3_48" }
+   ::hImage                            := {  "16" => "gc_signpost3_16",;
+                                             "32" => "gc_signpost3_32",;
+                                             "48" => "gc_signpost3_48" }
 
    ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
@@ -111,9 +111,7 @@ METHOD End() CLASS DireccionesController
       ::oGetSelector:End()
    end if 
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
@@ -379,7 +377,7 @@ METHOD ExternalCoreRedefine( oDialog )
       BITMAP      "gc_earth_lupa_16" ;
       OF          oDialog
 
-   ::oGetDireccion:bHelp  := {|| GoogleMaps( ::oController:getModel():hBuffer[ "direccion" ], Rtrim( ::oController:oModel:hBuffer[ "poblacion" ] ) + Space( 1 ) + Rtrim( ::oController:oModel:hBuffer[ "provincia" ] ) ) }
+   ::oGetDireccion:bHelp  := {|| GoogleMaps( ::oController:getModel():hBuffer[ "direccion" ], rtrim( ::oController:oModel:hBuffer[ "poblacion" ] ) + Space( 1 ) + Rtrim( ::oController:oModel:hBuffer[ "provincia" ] ) ) }
 
    REDEFINE GET   ::oController:getModel():hBuffer[ "codigo_postal" ] ;
       ID          1020 ;
