@@ -277,6 +277,8 @@ METHOD addColumns() CLASS CuentasBancariasBrowseView
       :SetCheck( { "bullet_square_green_16", "bullet_square_red_16" } )
    end with
 
+   ::getColumnDeletedAt()
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//
@@ -544,6 +546,8 @@ CLASS SQLCuentasBancariasModel FROM SQLCompanyModel
 
    METHOD countBancoParentUuidAndDefecto( uuidParent )
 
+   METHOD getUuidWhereCodigoAndParentAndNotDeleted( cCodigo ,uuidParent  )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -640,6 +644,26 @@ METHOD updateBlanckDefecto( uuidParent, uuidBanco ) CLASS SQLCuentasBancariasMod
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ), quoted( uuidBanco ) )
+
+RETURN ( getSQLDatabase():Exec( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getUuidWhereCodigoAndParentAndNotDeleted( cCodigo ,uuidParent  ) CLASS SQLCuentasBancariasModel
+   
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT uuid 
+
+   FROM %1$s 
+
+   WHERE codigo = %2$s AND parent_uuid =%3$s AND deleted_at = 0 
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( cCodigo ), quoted( uuidParent ) )
 
 RETURN ( getSQLDatabase():Exec( cSql ) )
 

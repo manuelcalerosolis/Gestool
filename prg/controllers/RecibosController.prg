@@ -293,7 +293,7 @@ METHOD addColumns() CLASS RecibosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'tercero_codigo'
-      :cHeader             := 'Código cliente'
+      :cHeader             := 'Código tercero'
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'tercero_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -301,9 +301,9 @@ METHOD addColumns() CLASS RecibosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'cliente_nombre'
-      :cHeader             := 'Nombre cliente'
+      :cHeader             := 'Nombre tercero'
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'cliente_nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'tercero_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -606,8 +606,8 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
       recibos.vencimiento AS vencimiento,
       recibos.importe AS importe,
       recibos.concepto AS concepto,
-      clientes.codigo AS tercero_codigo,
-      clientes.nombre AS cliente_nombre,
+      terceros.codigo AS tercero_codigo,
+      terceros.nombre AS tercero_nombre,
       @total_pagado:=( SELECT %6$s(recibos.uuid) ) AS total_pagado,
       ( recibos.importe - @total_pagado ) AS diferencia
    FROM %1$s AS recibos
@@ -621,8 +621,8 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
    LEFT JOIN %4$s AS facturas_clientes
       ON recibos.parent_uuid = facturas_clientes.uuid 
 
-   LEFT JOIN %5$s AS clientes 
-      ON facturas_clientes.tercero_codigo = clientes.codigo AND clientes.deleted_at = 0
+   LEFT JOIN %5$s AS terceros 
+      ON facturas_clientes.tercero_codigo = terceros.codigo AND terceros.deleted_at = 0
 
    ENDTEXT
 

@@ -13,7 +13,8 @@ CLASS PagosController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD gettingSelectSentence()
+   METHOD gettingSelectSentenceTercero()
+   METHOD gettingSelectSentenceEmpresa()
 
    METHOD insertPagoRecibo()
 
@@ -24,7 +25,9 @@ CLASS PagosController FROM SQLNavigatorController
 
    METHOD appendAssistant()
 
-   METHOD addExtraButtons()                 
+   METHOD addExtraButtons()
+
+   METHOD isClient()                   INLINE ( nil )                 
 
    //Construcciones tardias----------------------------------------------------
 
@@ -64,7 +67,9 @@ METHOD New( oController ) CLASS PagosController
    ::getNavigatorView():getMenuTreeView():setEvent( 'addedRefreshButton', {|| ::addExtraButtons() } )
 
    ::getCuentasBancariasController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
-   ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentence() } )
+   ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentenceTercero() } )
+   ::getCuentasBancariasGestoolController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
+   ::getCuentasBancariasGestoolController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentenceEmpresa() } )
    
    //::setEvents( { 'appended', 'duplicated' }, {|| ::insertPagoRecibo() } )
 
@@ -106,9 +111,17 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD gettingSelectSentence() CLASS PagosController
+METHOD gettingSelectSentenceTercero() CLASS PagosController
 
-   ::getCuentasBancariasController():getModel():setGeneralWhere( "parent_uuid = " + quoted( Company():Uuid() ) )
+   ::getCuentasBancariasController():getModel():setGeneralWhere( "parent_uuid = " + quoted( SQLtercerosModel():getuuidWhereCodigo( ::getModelBuffer( "tercero_codigo" ) ) ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD gettingSelectSentenceEmpresa() CLASS PagosController
+
+   ::getCuentasBancariasGestoolController():getModel():setGeneralWhere( "parent_uuid = " + quoted( Company():Uuid() ) )
 
 RETURN ( nil )
 
@@ -217,10 +230,18 @@ METHOD addColumns() CLASS PagosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre_banco'
-      :cHeader             := 'Cuenta bancaria'
+      :cSortOrder          := 'nombre_banco_tercero'
+      :cHeader             := 'Cuenta tercero'
       :nWidth              := 150
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_banco' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_banco_tercero' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre_banco_empresa'
+      :cHeader             := 'Cuenta empresa'
+      :nWidth              := 150
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_banco_empresa' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -308,10 +329,10 @@ METHOD Activate() CLASS PagosView
       WHEN        ( ::oController:isNotZoomMode() .AND. ::oController:isNotEditMode() .AND. ::oController:isNotAppendOrDuplicateMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   ::oController:getClientesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "tercero_codigo" ] ) )
-   ::oController:getClientesController():getSelector():Build( { "idGet" => 110, "idText" => 111, "idLink" => 112, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::oController:getClientesController():getSelector():setWhen( {|| ::oController:isNotAppendOrDuplicateMode() .AND. ::oController:isNotZoomMode() .AND. ::oController:isNotEditMode() } )
-   ::oController:getClientesController():getSelector():setValid( {|| ::oController:validate( "tercero_codigo" ) } )
+   ::oController:getTercerosController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "tercero_codigo" ] ) )
+   ::oController:getTercerosController():getSelector():Build( { "idGet" => 110, "idText" => 111, "idLink" => 112, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getTercerosController():getSelector():setWhen( {|| ::oController:isNotAppendOrDuplicateMode() .AND. ::oController:isNotZoomMode() .AND. ::oController:isNotEditMode() } )
+   ::oController:getTercerosController():getSelector():setValid( {|| ::oController:validate( "tercero_codigo" ) } )
 
   REDEFINE GET    ::oImporte ;
       VAR         ::nImporte ;
@@ -332,21 +353,29 @@ METHOD Activate() CLASS PagosView
    ::oController:getMediosPagoController():getSelector():setWhen( {|| ::oController:isAppendMode() } )
    ::oController:getMediosPagoController():getSelector():setValid( {|| ::oController:validate( "medio_pago_codigo" ) } )
 
-   ::oController:getCuentasBancariasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cuenta_bancaria_codigo" ] ) )
-   ::oController:getCuentasBancariasController():getSelector():Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::oController:getCuentasBancariasController():getSelector():setWhen( {|| ::oController:isAppendMode() } )
-
    REDEFINE GET   ::oController:getModel():hBuffer[ "comentario" ] ;
-      ID          160 ;
+      ID          150 ;
       WHEN        ( ::oController:isAppendMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE COMBOBOX ::oEstado ;
       VAR         ::oController:getModel():hBuffer[ "estado" ] ;
-      ID          170 ;
+      ID          160 ;
       ITEMS       ::aEstado;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
+
+   //Cuenta tercero------------------------------------------------------------
+
+   ::oController:getCuentasBancariasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cuenta_bancaria_tercero_uuid" ] ) )
+   ::oController:getCuentasBancariasController():getSelector():Build( { "idGet" => 170, "idText" => 171, "idLink" => 172, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getCuentasBancariasController():getSelector():setWhen( {|| ::oController:isAppendMode() } )
+
+   //Cuenta empresa------------------------------------------------------------
+
+   ::oController:getCuentasBancariasGestoolController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cuenta_bancaria_empresa_uuid" ] ) )
+   ::oController:getCuentasBancariasGestoolController():getSelector():Build( { "idGet" => 180, "idText" => 181, "idLink" => 182, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getCuentasBancariasGestoolController():getSelector():setWhen( {|| ::oController:isAppendMode() } )
 
    // Botones------------------------------------------------------------------
 
@@ -388,11 +417,13 @@ METHOD StartActivate() CLASS PagosView
 
    ::addLinksToExplorerBar()
 
-   ::oController:getClientesController():getSelector():Start()
+   ::oController:getTercerosController():getSelector():Start()
 
    ::oController:getMediosPagoController():getSelector():Start()
 
    ::oController:getCuentasBancariasController():getSelector():Start()
+
+   ::oController:getCuentasBancariasGestoolController():getSelector():Start()
 
 RETURN ( nil )
 
@@ -488,6 +519,18 @@ CLASS SQLPagosModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
+   METHOD getCuentaBancariaTerceroUuidAttribute( uValue ) ; 
+                                          INLINE ( if( empty( uValue ), space( 3 ), SQLCuentasBancariasModel():getCodigoWhereUuid( uValue ) ) )
+
+   METHOD setCuentaBancariaTerceroUuidAttribute( uValue ) ;
+                                          INLINE ( if( empty( uValue ), "", SQLCuentasBancariasModel():getUuidWhereCodigo( uValue ) ) )
+
+   METHOD getCuentaBancariaEmpresaUuidAttribute( uValue ) ; 
+                                          INLINE ( if( empty( uValue ), space( 3 ), SQLCuentasBancariasGestoolModel():getCodigoWhereUuid( uValue ) ) )
+
+   METHOD setCuentaBancariaEmpresaUuidAttribute( uValue ) ;
+                                          INLINE ( if( empty( uValue ), "", SQLCuentasBancariasGestoolModel():getUuidWhereCodigo( uValue ) ) )
+
 #ifdef __TEST__
 
    METHOD testCreatePagoPresentado( uuid )
@@ -502,32 +545,35 @@ END CLASS
 
 METHOD getColumns() CLASS SQLPagosModel
 
-   hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
-                                                      "default"   => {|| 0 } }                                    )
+   hset( ::hColumns, "id",                            {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
+                                                         "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"                ,;                                  
-                                                      "default"   => {|| win_uuidcreatestring() } }               )
+   hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"                ,;                                  
+                                                         "default"   => {|| win_uuidcreatestring() } }               )
 
-   hset( ::hColumns, "tercero_codigo",             {  "create"    => "VARCHAR( 20 )"                              ,;
-                                                      "default"   => {|| space( 20 ) } }                          )
+   hset( ::hColumns, "tercero_codigo",                {  "create"    => "VARCHAR( 20 )"                              ,;
+                                                         "default"   => {|| space( 20 ) } }                          )
 
-   hset( ::hColumns, "medio_pago_codigo",          {  "create"    => "VARCHAR( 20 )"                              ,;
-                                                      "default"   => {|| space( 20 ) } }                          )
+   hset( ::hColumns, "medio_pago_codigo",             {  "create"    => "VARCHAR( 20 )"                              ,;
+                                                         "default"   => {|| space( 20 ) } }                          )
 
-   hset( ::hColumns, "cuenta_bancaria_codigo",     {  "create"    => "VARCHAR( 20 )"                              ,;
-                                                      "default"   => {|| space( 20 ) } }                          )
+   hset( ::hColumns, "cuenta_bancaria_tercero_uuid",  {  "create"    => "VARCHAR( 20 )"                              ,;
+                                                         "default"   => {|| space( 40 ) } }                          )
 
-   hset( ::hColumns, "fecha",                      {  "create"    => "DATE"                                       ,;
-                                                      "default"   => {|| hb_date() } }                            )
+   hset( ::hColumns, "cuenta_bancaria_empresa_uuid",  {  "create"    => "VARCHAR( 20 )"                              ,;
+                                                         "default"   => {|| space( 40 ) } }                          )
 
-   hset( ::hColumns, "estado",                     {  "create"     => "ENUM( 'Presentado', 'Rechazado' )"          ,;
-                                                      "default"    => {|| 'Presentado' }  }                        )
+   hset( ::hColumns, "fecha",                         {  "create"    => "DATE"                                       ,;
+                                                         "default"   => {|| hb_date() } }                            )
 
-   hset( ::hColumns, "comentario",                 {  "create"    => "VARCHAR( 200 )"                              ,;
-                                                      "default"   => {|| space( 200 ) } }                          )
+   hset( ::hColumns, "estado",                        {  "create"     => "ENUM( 'Presentado', 'Rechazado' )"          ,;
+                                                         "default"    => {|| 'Presentado' }  }                        )
 
-   hset( ::hColumns, "tipo",                       {  "create"     => "ENUM( 'Pago', 'Cobro' )"                    ,;
-                                                      "default"    => {|| 'Cobro' }  }                             )
+   hset( ::hColumns, "comentario",                    {  "create"    => "VARCHAR( 200 )"                              ,;
+                                                         "default"   => {|| space( 200 ) } }                          )
+
+   hset( ::hColumns, "tipo",                          {  "create"     => "ENUM( 'Pago', 'Cobro' )"                    ,;
+                                                         "default"    => {|| 'Cobro' }  }                             )
 
 RETURN ( ::hColumns )
 
@@ -544,12 +590,14 @@ METHOD getInitialSelect() CLASS SQLPagosModel
       pagos.tercero_codigo AS tercero_codigo,
       pagos.fecha AS fecha,
       pagos.medio_pago_codigo AS medio_pago_codigo,
-      pagos.cuenta_bancaria_codigo AS cuenta_bancaria_codigo,
+      pagos.cuenta_bancaria_tercero_uuid AS cuenta_bancaria_tercero_uuid,
+      pagos.cuenta_bancaria_empresa_uuid AS cuenta_bancaria_empresa_uuid,
       pagos.comentario AS comentario,
       pagos.estado AS estado,
       clientes.nombre AS cliente_nombre,
       medio_pago.nombre AS medio_pago_nombre,
-      cuentas_bancarias.nombre AS nombre_banco,
+      cuentas_bancarias.nombre AS nombre_banco_tercero,
+      gestool_cuentas_bancarias.nombre AS nombre_banco_empresa,
       SUM( pagos_recibos.importe ) AS importe,
       pagos.tipo AS tipo
 
@@ -561,11 +609,13 @@ METHOD getInitialSelect() CLASS SQLPagosModel
    LEFT JOIN %3$s AS medio_pago
       ON pagos.medio_pago_codigo = medio_pago.codigo AND medio_pago.deleted_at = 0
 
-   LEFT JOIN %4$s AS cuentas_bancarias
-      ON pagos.cuenta_bancaria_codigo = cuentas_bancarias.codigo AND cuentas_bancarias.deleted_at = 0 
-      AND cuentas_bancarias.parent_uuid = %6$s
+  LEFT JOIN %4$s AS cuentas_bancarias
+      ON pagos.cuenta_bancaria_tercero_uuid = cuentas_bancarias.uuid AND cuentas_bancarias.deleted_at = 0 
+   
+   LEFT JOIN %5$s AS gestool_cuentas_bancarias
+      ON pagos.cuenta_bancaria_empresa_uuid = gestool_cuentas_bancarias.uuid AND gestool_cuentas_bancarias.deleted_at = 0 
 
-   LEFT JOIN %5$s AS pagos_recibos
+   LEFT JOIN %6$s AS pagos_recibos
       ON pagos_recibos.pago_uuid = pagos.uuid 
 
    ENDTEXT
@@ -574,8 +624,8 @@ METHOD getInitialSelect() CLASS SQLPagosModel
                                  SQLTercerosModel():getTableName(),;
                                  SQLMediosPagoModel():getTableName(),;
                                  SQLCuentasBancariasModel():getTableName(),;
-                                 SQLRecibosPagosModel():getTableName(),;
-                                 quoted( Company():Uuid() ) )
+                                 SQLCuentasBancariasGestoolModel():getTableName(),;
+                                 SQLRecibosPagosModel():getTableName() ) 
 
 RETURN ( cSql )
 
