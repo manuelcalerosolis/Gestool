@@ -77,7 +77,7 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
    
    METHOD getDireccionesController()   INLINE ( iif( empty( ::oDireccionesController ), ::oDireccionesController := DireccionesGestoolController():New( self ), ), ::oDireccionesController )
 
-   METHOD getCuentasBancariasGestoolController();
+   METHOD getCuentasBancariasController();
                                        INLINE ( iif( empty( ::oCuentasBancariasController ), ::oCuentasBancariasController := CuentasBancariasGestoolController():New( self ), ), ::oCuentasBancariasController )
 
 END CLASS
