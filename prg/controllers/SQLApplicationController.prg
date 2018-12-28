@@ -431,6 +431,9 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getCaracteristicasValoresArticulosController();
                                     INLINE ( if( empty( ::oCaracteristicasValoresArticulosController ), ::oCaracteristicasValoresArticulosController := CaracteristicasValoresArticulosController():New( self ), ), ::oCaracteristicasValoresArticulosController )
 
+   METHOD getDelegacionesController();
+                                    INLINE ( if( empty( ::oDelegacionesController ), ::oDelegacionesController := DelegacionesController():New( self ), ), ::oDelegacionesController )
+
    METHOD loadDocuments() 
 
    METHOD loadTemplatesHTML()
