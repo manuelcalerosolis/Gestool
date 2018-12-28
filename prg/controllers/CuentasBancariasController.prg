@@ -5,7 +5,10 @@
 
 CLASS CuentasBancariasGestoolController FROM CuentasBancariasController
 
-   METHOD getModel()                            INLINE ( if( empty( ::oModel ), ::oModel := SQLCuentasBancariasGestoolModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLCuentasBancariasGestoolModel():New( self ), ), ::oModel )
+
+   METHOD getConfiguracionVistasController();
+                                       INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
 
 END CLASS
 

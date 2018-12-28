@@ -80,6 +80,9 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
    METHOD getCuentasBancariasController();
                                        INLINE ( iif( empty( ::oCuentasBancariasController ), ::oCuentasBancariasController := CuentasBancariasGestoolController():New( self ), ), ::oCuentasBancariasController )
 
+   METHOD getDelegacionesController();
+                                    INLINE ( if( empty( ::oDelegacionesController ), ::oDelegacionesController := DelegacionesController():New( self ), ), ::oDelegacionesController )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

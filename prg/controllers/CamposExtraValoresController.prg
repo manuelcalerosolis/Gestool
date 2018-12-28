@@ -448,11 +448,13 @@ RETURN ( ::hValidators )
 
 CLASS SQLCamposExtraValoresGestoolModel FROM SQLCamposExtraValoresModel
 
-   METHOD getTableName()                              INLINE ( "gestool." + ::cTableName )
+   METHOD getTableName()               INLINE ( "gestool." + ::cTableName )
 
-   METHOD getSQLCamposExtraModelTableName()           INLINE ( SQLCamposExtraGestoolModel():getTableName() )
+   METHOD getSQLCamposExtraModelTableName() ;
+                                       INLINE ( SQLCamposExtraGestoolModel():getTableName() )
 
-   METHOD getSQLCamposExtraEntidadesModelTableName()  INLINE ( SQLCamposExtraEntidadesGestoolModel():getTableName() )
+   METHOD getSQLCamposExtraEntidadesModelTableName() ;
+                                       INLINE ( SQLCamposExtraEntidadesGestoolModel():getTableName() )
 
 END CLASS
 
@@ -464,25 +466,34 @@ END CLASS
 
 CLASS SQLCamposExtraValoresModel FROM SQLCompanyModel
 
-   DATA cTableName                                    INIT "campos_extra_valores"
+   DATA cTableName                     INIT "campos_extra_valores"
 
-   DATA cConstraints                                  INIT "PRIMARY KEY ( campo_extra_entidad_uuid, entidad_uuid, deleted_at )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( campo_extra_entidad_uuid, entidad_uuid, deleted_at )"
 
-   DATA cColumnOrder                                  INIT "nombre"                  
+   DATA cColumnOrder                   INIT "nombre"                  
 
    METHOD getInitialSelect()
 
    METHOD getColumns()
 
-   METHOD getListaAttribute( value )                  INLINE ( if( empty( value ), {}, hb_deserialize( value ) ) )
+   METHOD getSQLCamposExtraModelTableName() ;
+                                       INLINE ( SQLCamposExtraModel():getTableName() )
 
-   METHOD setListaAttribute( value )                  INLINE ( hb_serialize( value ) )
+   METHOD getSQLCamposExtraEntidadesModelTableName() ;
+                                       INLINE ( SQLCamposExtraEntidadesModel():getTableName() )
 
-   METHOD updateValorWhereUuid( uuid, uValue )        INLINE ( ::updateFieldWhereUuid( uuid, 'valor', uValue ) )
+   METHOD getListaAttribute( value )   INLINE ( if( empty( value ), {}, hb_deserialize( value ) ) )
 
-   METHOD getSQLCamposExtraModelTableName()           INLINE ( SQLCamposExtraModel():getTableName() )
+   METHOD setListaAttribute( value )   INLINE ( hb_serialize( value ) )
 
-   METHOD getSQLCamposExtraEntidadesModelTableName()  INLINE ( SQLCamposExtraEntidadesModel():getTableName() )
+   METHOD updateValorWhereUuid( uuid, uValue ) ;
+                                       INLINE ( ::updateFieldWhereUuid( uuid, 'valor', uValue ) )
+
+   METHOD getSQLCamposExtraModelTableName() ;
+                                       INLINE ( SQLCamposExtraModel():getTableName() )
+
+   METHOD getSQLCamposExtraEntidadesModelTableName() ;
+                                       INLINE ( SQLCamposExtraEntidadesModel():getTableName() )
 
    METHOD getSentenceCampoExtraValoresWhereEntidad( cEntidad )
 
@@ -524,7 +535,7 @@ local cSql
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLCamposExtraEntidadesModel():getTableName(), SQLCamposExtraModel():getTableName(), quoted( ::oController:cEntidad ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), ::getSQLCamposExtraEntidadesModelTableName(), ::getSQLCamposExtraModelTableName(), quoted( ::oController:cEntidad ) )
 
    if !empty( ::oController )
       cSQL     += " WHERE entidad.entidad = " + quoted( ::oController:cEntidad )
@@ -559,7 +570,7 @@ RETURN ( ::hColumns )
 
 METHOD getSentenceCampoExtraValoresWhereEntidad( cEntidad ) CLASS SQLCamposExtraValoresModel
 
-local cSql
+   local cSql
 
    TEXT INTO cSql
 
@@ -582,7 +593,7 @@ local cSql
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, SQLCamposExtraEntidadesModel():getTableName(), SQLCamposExtraModel():getTableName(), ::getTableName(), quoted( cEntidad ) )
+   cSql  := hb_strformat( cSql, ::getSQLCamposExtraEntidadesModelTableName(), ::getSQLCamposExtraModelTableName(), ::getTableName(), quoted( cEntidad ) )
 
 RETURN ( cSQL )
 

@@ -383,9 +383,6 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getAjustableGestoolController();
                                     INLINE ( if( empty( ::oAjustableGestoolController ), ::oAjustableGestoolController := AjustableGestoolController():New( self ), ), ::oAjustableGestoolController )
 
-   METHOD getDelegacionesController();
-                                    INLINE ( if( empty( ::oDelegacionesController ), ::oDelegacionesController := DelegacionesController():New( self ), ), ::oDelegacionesController )
-
    METHOD getMailController()       INLINE ( if( empty( ::oMailController ), ::oMailController := MailController():New( self ), ), ::oMailController ) 
 
    METHOD getArticulosEnvasadoController();
@@ -402,9 +399,6 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getTiposImpresorasController();
                                     INLINE ( if( empty( ::oTiposImpresorasController ), ::oTiposImpresorasController := TiposImpresorasController():New( self ), ), ::oTiposImpresorasController )
-
-   METHOD getDelegacionesController();
-                                    INLINE ( if( empty( ::oDelegacionesController ), ::oDelegacionesController := DelegacionesController():New( self ), ), ::oDelegacionesController )
 
    METHOD getSituacionesController();
                                     INLINE ( if( empty( ::oSituacionesController ), ::oSituacionesController := SituacionesController():New( self ), ), ::oSituacionesController )
