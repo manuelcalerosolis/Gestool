@@ -25,6 +25,8 @@ CLASS PagosAssistantController FROM SQLNavigatorController
 
    METHOD resetImporteAndCliente()
 
+   METHOD isCLient()                   INLINE ( nil )
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getBrowseView()              INLINE ( if( !empty(::oController), ::oController:getBrowseView(), nil ) )
@@ -56,7 +58,7 @@ METHOD New( oController ) CLASS PagosAssistantController
    ::getCuentasBancariasController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
    ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentence() } )
 
-   ::getClientesController():getSelector():setEvent( 'validated', {|| ::getRecibos() } )
+   ::getTercerosController():getSelector():setEvent( 'validated', {|| ::getRecibos() } )
    ::setEvent( 'appended',     {|| ::getRecibosPagosController():getModel():InsertPagoReciboAssistant( ::getModelBuffer( "uuid" ) ), ::oController:getRowset():refresh() } )
    ::setEvent( 'exitAppended', {|| ::getRecibosPagosTemporalController():getModel():dropTemporalTable(), ::resetImporteAndCliente() } )
 
@@ -200,9 +202,9 @@ METHOD Activate() CLASS PagosAssistantView
       PROMPT      "&General" ;
       DIALOGS     "PAGO_ASISTENTE_SQL" 
 
-   ::oController:getClientesController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "tercero_codigo" ] ) )
-   ::oController:getClientesController():getSelector():Build( { "idGet" => 100, "idLink" => 102, "idText" => 101, "idNif" => 103, "idDireccion" => 104, "idCodigoPostal" => 105, "idPoblacion" => 106, "idProvincia" => 107, "idTelefono" => 108, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::oController:getClientesController():getSelector():setValid( {|| ::oController:validate( "tercero_codigo" ) } )
+   ::oController:getTercerosController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "tercero_codigo" ] ) )
+   ::oController:getTercerosController():getSelector():Build( { "idGet" => 100, "idLink" => 102, "idText" => 101, "idNif" => 103, "idDireccion" => 104, "idCodigoPostal" => 105, "idPoblacion" => 106, "idProvincia" => 107, "idTelefono" => 108, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getTercerosController():getSelector():setValid( {|| ::oController:validate( "tercero_codigo" ) } )
 
    ::getController():getRecibosPagosTemporalController():Activate( 500, ::oFolder:aDialogs[1] )
 
@@ -254,11 +256,11 @@ RETURN ( ::oDialog:nResult )
 
 METHOD StartActivate() CLASS PagosAssistantView
 
-   ::oController:getClientesController():getSelector():setFocus()
+   ::oController:getTercerosController():getSelector():setFocus()
 
    ::addLinksToExplorerBar()
 
-   ::oController:getClientesController():getSelector():Start()
+   ::oController:getTercerosController():getSelector():Start()
 
    ::oController:getMediosPagoController():getSelector():Start()
 

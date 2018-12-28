@@ -204,6 +204,10 @@ METHOD getLinkText()
       RETURN ( {|| "Tercero" } )
    end if
 
+   if empty( ::oController:oController:isClient() )
+      RETURN ( {|| "Tercero" } )
+   end if
+
    if ::oController:oController:isClient()
       RETURN ( {|| "Cliente" } )
    end if 

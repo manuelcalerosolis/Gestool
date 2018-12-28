@@ -35,6 +35,8 @@ CLASS CuentasBancariasController FROM SQLNavigatorController
 
    METHOD deleteBuffer( aUuidEntidades )
 
+   METHOD updateBlanckDefecto()
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := CuentasBancariasBrowseView():New( self ), ), ::oBrowseView )
@@ -63,9 +65,8 @@ METHOD New( oController ) CLASS CuentasBancariasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   // ::setEvent( 'appended',          {|| ::oBrowseView:Refresh() } )
-   // ::setEvent( 'edited',            {|| ::oBrowseView:Refresh() } )
-   // ::setEvent( 'deletedSelection',  {|| ::oBrowseView:Refresh() } ) 
+   ::setEvent( 'appended',          {|| ::updateBlanckDefecto( ::getModelBuffer( "uuid" ) ) } )
+   ::setEvent( 'edited',            {|| ::updateBlanckDefecto( ::getModelBuffer( "uuid" ) ) } )
 
 RETURN ( self )
 
@@ -90,6 +91,22 @@ METHOD End() CLASS CuentasBancariasController
    end if 
 
    ::Super:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateBlanckDefecto( uuidBanco ) CLASS CuentasBancariasController
+
+   if ::getModelBuffer( "defecto" )
+      
+      ::getModel():updateBlanckDefecto( ::getModelBuffer( "parent_uuid" ), uuidBanco )
+      
+      ::getRowset():refresh()
+      
+      ::getBrowseView:refresh()
+
+   end if
 
 RETURN ( nil )
 
@@ -248,6 +265,15 @@ METHOD addColumns() CLASS CuentasBancariasBrowseView
       :bEditValue          := {|| ::formatoCuenta() }
    end with 
 
+    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'defecto'
+      :cHeader             := 'Por defecto'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'defecto' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :SetCheck( { "bullet_square_green_16", "bullet_square_red_16" } )
+   end with
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//
@@ -289,9 +315,13 @@ CLASS CuentasBancariasView FROM SQLBaseView
    DATA oIBAN 
    DATA oDigitoControl
 
+   DATA oCheckBoxDefecto
+
    METHOD Activate()
 
    METHOD ExternalRedefine( oDialog )
+
+   METHOD startActivate()
 
 END CLASS
 
@@ -338,15 +368,15 @@ METHOD Activate() CLASS CuentasBancariasView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-
    if ::oController:isNotZoomMode() 
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
+   else
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
    end if
 
-   ACTIVATE DIALOG ::oDialog CENTER
+   ::oDialog:bStart        := {|| ::startActivate() }
 
-   ::oBitmap:end()
+   ACTIVATE DIALOG ::oDialog CENTER
 
 RETURN ( ::oDialog:nResult )
 
@@ -406,6 +436,23 @@ METHOD ExternalRedefine( oDialog ) CLASS CuentasBancariasView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
+   REDEFINE CHECKBOX ::oCheckBoxDefecto ;
+      VAR         ::oController:getModel():hBuffer[ "defecto" ] ;
+      ID          1026 ;
+      VALID       ( ::oController:validate( "defecto" ) ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD startActivate() CLASS CuentasBancariasView
+
+   if ::getController():isAppendMode()      
+      ::oCheckBoxDefecto:SetCheck( ::oController:getModel():countBancoParentUuid( ::oController:oController:getModelBuffer( "uuid" ) ) == 0 )
+   end if 
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -418,6 +465,8 @@ RETURN ( nil )
 CLASS CuentasBancariasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
+
+   METHOD getUniqueSentence( uValue )
  
 END CLASS
 
@@ -425,13 +474,36 @@ END CLASS
 
 METHOD getValidators() CLASS CuentasBancariasValidator
 
-   ::hValidators  := {  "nombre_banco" =>         {  "required"           => "El nombre es un dato requerido",;
-                                                      "unique"            => "El nombre introducido ya existe" } }
+   ::hValidators  := {  "codigo"    =>    {  "required"     => "El codigo es un dato requerido",;
+                                             "unique"       => "El codigo introducido ya existe" },;
+                        "nombre"    =>    {  "required"     => "El nombre es un dato requerido",;
+                                             "unique"       => "El nombre introducido ya existe" } }
 
-RETURN ( ::hValidators )
+RETURN ( ::hValidators ) 
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+
+METHOD getUniqueSentence( uValue )
+
+   local id
+   local cSQLSentence
+
+   cSQLSentence         := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
+   cSQLSentence         +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
+
+   if ::oController:getModel():isDeletedAtColumn()
+      cSQLSentence      +=    "AND deleted_at = 0 " 
+   end if 
+   
+   id                   := ::oController:getModelBufferColumnKey()
+   if !empty( id )
+      cSQLSentence      +=    "AND " + ::oController:getModelColumnKey() + " <> " + toSQLString( id )
+   end if 
+
+   cSQLSentence         +=    "AND parent_uuid=" + quoted( ::getSuperController():getModelBuffer( "uuid" ) ) + " "
+
+RETURN ( cSQLSentence )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -464,6 +536,10 @@ CLASS SQLCuentasBancariasModel FROM SQLCompanyModel
    METHOD getSelectByOrder( cSQLSelect )  INLINE (cSQLSelect)
 
    METHOD getColumns()
+
+   METHOD updateBlanckDefecto( uuidParent )
+
+   METHOD countBancoParentUuid( uuidParent )
 
 END CLASS
 
@@ -525,6 +601,45 @@ METHOD getParentUuidAttribute( value ) CLASS SQLCuentasBancariasModel
 RETURN ( ::oController:oController:getUuid()  )
 
 //---------------------------------------------------------------------------//
+
+METHOD countBancoParentUuid( uuidParent ) CLASS SQLCuentasBancariasModel
+
+local cSql
+
+   TEXT INTO cSql
+
+   SELECT COUNT(*)
+
+   FROM %1$s AS cuentas_bancarias
+
+   WHERE parent_uuid = %2$s AND deleted_at = 0
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
+
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateBlanckDefecto( uuidParent, uuidBanco ) CLASS SQLCuentasBancariasModel
+
+ local cSql
+
+   TEXT INTO cSql
+
+   UPDATE %1$s 
+
+   SET defecto = 0
+
+   WHERE parent_uuid =%2$s AND deleted_at = 0 AND uuid <> %3$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ), quoted( uuidBanco ) )
+
+RETURN ( getSQLDatabase():Exec( cSql ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
