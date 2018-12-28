@@ -35,6 +35,8 @@ CLASS CuentasBancariasController FROM SQLNavigatorController
 
    METHOD deleteBuffer( aUuidEntidades )
 
+   METHOD updateBlanckDefecto()
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := CuentasBancariasBrowseView():New( self ), ), ::oBrowseView )
@@ -63,8 +65,8 @@ METHOD New( oController ) CLASS CuentasBancariasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::setEvent( 'appended',          {|| ::getModel():updateBlanckDefecto( ::oController:getModelBuffer( "parent_uuid" ) ) } )
-   ::setEvent( 'edited',            {|| ::getModel():updateBlanckDefecto( ::oController:getModelBuffer( "parent_uuid" ) ) } )
+   ::setEvent( 'appended',          {|| ::updateBlanckDefecto( ::getModelBuffer( "uuid" ) ) } )
+   ::setEvent( 'edited',            {|| ::updateBlanckDefecto( ::getModelBuffer( "uuid" ) ) } )
 
 RETURN ( self )
 
@@ -89,6 +91,22 @@ METHOD End() CLASS CuentasBancariasController
    end if 
 
    ::Super:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateBlanckDefecto( uuidBanco ) CLASS CuentasBancariasController
+
+   if ::getModelBuffer( "defecto" )
+      
+      ::getModel():updateBlanckDefecto( ::getModelBuffer( "parent_uuid" ), uuidBanco )
+      
+      ::getRowset():refresh()
+      
+      ::getBrowseView:refresh()
+
+   end if
 
 RETURN ( nil )
 
@@ -448,7 +466,7 @@ CLASS CuentasBancariasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
-   METHOD bancoDefecto()
+   METHOD getUniqueSentence( uValue )
  
 END CLASS
 
@@ -458,34 +476,33 @@ METHOD getValidators() CLASS CuentasBancariasValidator
 
    ::hValidators  := {  "codigo"    =>    {  "required"     => "El codigo es un dato requerido",;
                                              "unique"       => "El codigo introducido ya existe" },;
-                        "nombre"    =>    {  "required"     => "El nombre es un dato requerido"},;
-                        "defecto"   =>    {  "bancoDefecto" => "Debe seleccionar una única cuenta bancaria por defecto" } }
+                        "nombre"    =>    {  "required"     => "El nombre es un dato requerido",;
+                                             "unique"       => "El nombre introducido ya existe" } }
 
 RETURN ( ::hValidators ) 
 
 //---------------------------------------------------------------------------//
 
-METHOD bancoDefecto() CLASS CuentasBancariasValidator
+METHOD getUniqueSentence( uValue )
 
-   if ::oController:getModelBuffer( "defecto" )
+   local id
+   local cSQLSentence
+
+   cSQLSentence         := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
+   cSQLSentence         +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
+
+   if ::oController:getModel():isDeletedAtColumn()
+      cSQLSentence      +=    "AND deleted_at = 0 " 
+   end if 
    
-      if ::oController:getModel():countDefecto( ::oController:getModelBuffer( "parent_uuid" ), ::oController:getModelBuffer( "uuid" ) ) != 1
-         RETURN ( .f. )
-      end if
+   id                   := ::oController:getModelBufferColumnKey()
+   if !empty( id )
+      cSQLSentence      +=    "AND " + ::oController:getModelColumnKey() + " <> " + toSQLString( id )
+   end if 
 
-   else
+   cSQLSentence         +=    "AND parent_uuid=" + quoted( ::getSuperController():getModelBuffer( "uuid" ) ) + " "
 
-      if ::oController:getModel():CountBancoDefecto( ::oController:getModelBuffer( "parent_uuid" ) ) == 0
-         RETURN ( .f. )
-      end if
-
-      if ::oController:getModel():countDefecto( ::oController:getModelBuffer( "parent_uuid" ), ::oController:getModelBuffer( "uuid" ) ) == 1
-         RETURN ( .f. )
-      end if
-
-   end if
-
-RETURN ( .t. )
+RETURN ( cSQLSentence )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -519,10 +536,6 @@ CLASS SQLCuentasBancariasModel FROM SQLCompanyModel
    METHOD getSelectByOrder( cSQLSelect )  INLINE (cSQLSelect)
 
    METHOD getColumns()
-
-   METHOD CountBancoDefecto( uuidParent )
-
-   METHOD countDefecto( uuidParent, uuid )
 
    METHOD updateBlanckDefecto( uuidParent )
 
@@ -609,48 +622,7 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD CountBancoDefecto( uuidParent ) CLASS SQLCuentasBancariasModel
-
- local cSql
-
-   TEXT INTO cSql
-
-   SELECT COUNT(*)
-
-   FROM %1$s AS cuentas_bancarias
-
-   WHERE defecto = 1 AND parent_uuid = %2$s AND deleted_at = 0
-
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
-
-RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD countDefecto( uuidParent, uuid ) CLASS SQLCuentasBancariasModel
-
- local cSql
-
-   TEXT INTO cSql
-
-   SELECT COUNT(*)
-
-   FROM %1$s AS cuentas_bancarias
-
-   WHERE defecto = 1 AND parent_uuid = %2$s AND uuid = %3$s AND deleted_at = 0
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ), quoted( uuid ) )
-
-RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD updateBlanckDefecto( uuidParent ) CLASS SQLCuentasBancariasModel
+METHOD updateBlanckDefecto( uuidParent, uuidBanco ) CLASS SQLCuentasBancariasModel
 
  local cSql
 
@@ -660,11 +632,11 @@ METHOD updateBlanckDefecto( uuidParent ) CLASS SQLCuentasBancariasModel
 
    SET defecto = 0
 
-   WHERE parent_uuid =%2$s AND deleted_at = 0
+   WHERE parent_uuid =%2$s AND deleted_at = 0 AND uuid <> %3$s
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ), quoted( uuidBanco ) )
 
 RETURN ( getSQLDatabase():Exec( cSql ) )
 
