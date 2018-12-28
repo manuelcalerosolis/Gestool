@@ -42,26 +42,29 @@ CLASS SQLBaseView
    METHOD New() CONSTRUCTOR
    METHOD End()      
 
-   METHOD Activate()                                  VIRTUAL
-   METHOD Activating()                                VIRTUAL
-   METHOD Activated()                                 VIRTUAL
+   METHOD Activate()                   VIRTUAL
+   METHOD Activating()                 VIRTUAL
+   METHOD Activated()                  VIRTUAL
+   METHOD closeActivate()
 
-   METHOD lblTitle()                                  INLINE ( iif(  hhaskey( ::hTextMode, ::oController:getMode() ),;
-                                                                     hget( ::hTextMode, ::oController:getMode() ),;
-                                                                     "" ) )
+   METHOD lblTitle()                   INLINE ( iif(  hhaskey( ::hTextMode, ::getController():getMode() ),;
+                                                      hget( ::hTextMode, ::getController():getMode() ),;
+                                                      "" ) )
 
    // Facades------------------------------------------------------------------
 
-   METHOD getModel()                                  INLINE ( ::oController:oModel )
-   METHOD getModelBuffer()                            INLINE ( ::oController:oModel:hBuffer ) 
-   METHOD setGetModelBuffer( uValue, cName )          INLINE ( iif(  hb_isnil( uValue ),;
-                                                                     hGet( ::oController:oModel:hBuffer, cName ),;
-                                                                     hSet( ::oController:oModel:hBuffer, cName, uValue ) ) )
+   METHOD getModel()                   INLINE ( ::getController():oModel )
+   METHOD getModelBuffer()             INLINE ( ::getController():oModel:hBuffer ) 
+   
+   METHOD setGetModelBuffer( uValue, cName ) ;
+                                       INLINE ( iif(  hb_isnil( uValue ),;
+                                                      hGet( ::getController():oModel:hBuffer, cName ),;
+                                                      hSet( ::getController():oModel:hBuffer, cName, uValue ) ) )
 
-   METHOD getController()                             INLINE ( ::oController )    
-   METHOD getSuperController()                        INLINE ( ::oController:oController )    
+   METHOD getController()              INLINE ( ::oController )    
+   METHOD getSuperController()         INLINE ( ::getController():getController() )    
 
-   METHOD getComboBoxOrder()                          VIRTUAL
+   METHOD getComboBoxOrder()           VIRTUAL
 
    METHOD redefineExplorerBar( idExplorerBar ) 
 
@@ -72,16 +75,16 @@ CLASS SQLBaseView
    METHOD showMessage( cMessage )        
    METHOD restoreMessage()
 
-   METHOD setMessage( cMessage )                      INLINE ( iif( empty( ::cMessage ), ::cMessage := cMessage, ) )
-   METHOD setBitmap( cBitmap )                        INLINE ( iif( empty( ::cBitmap ), ::cBitmap := cBitmap, ) )
+   METHOD setMessage( cMessage )       INLINE ( iif( empty( ::cMessage ), ::cMessage := cMessage, ) )
+   METHOD setBitmap( cBitmap )         INLINE ( iif( empty( ::cBitmap ), ::cBitmap := cBitmap, ) )
 
    METHOD verticalHide( oControl )
    METHOD verticalShow( oControl )
 
-   METHOD getEvents()                                 INLINE ( if( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
+   METHOD getEvents()                  INLINE ( if( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
 
-   METHOD setEvent( cEvent, bEvent )                  INLINE ( ::getEvents():set( cEvent, bEvent ) )
-   METHOD fireEvent( cEvent, uValue )                 INLINE ( ::getEvents():fire( cEvent, uValue ) )
+   METHOD setEvent( cEvent, bEvent )   INLINE ( ::getEvents():set( cEvent, bEvent ) )
+   METHOD fireEvent( cEvent, uValue )  INLINE ( ::getEvents():fire( cEvent, uValue ) )
 
    METHOD getControl( nId )                              
 
@@ -89,8 +92,8 @@ CLASS SQLBaseView
 
    METHOD defaultTitle()                                           
 
-   METHOD setTitle( cTitle )                          INLINE ( ::cTitle := cTitle )
-   METHOD getTitle()                                  INLINE ( iif( empty( ::cTitle ), ::defaultTitle(), ::cTitle ) )          
+   METHOD setTitle( cTitle )           INLINE ( ::cTitle := cTitle )
+   METHOD getTitle()                   INLINE ( iif( empty( ::cTitle ), ::defaultTitle(), ::cTitle ) )          
 
    METHOD paintedActivate()
 
@@ -100,7 +103,7 @@ END CLASS
 
 METHOD New( oController )
 
-   ::oController                                      := oController
+   ::oController                       := oController
 
 RETURN ( self )
 
@@ -117,6 +120,21 @@ METHOD End()
    end if 
 
 RETURN ( hb_gcall( .t. ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD closeActivate()
+
+   if ::getController():isZoomMode() 
+      ::oDialog:end()
+      RETURN ( nil )
+   end if 
+
+   if validateDialog( ::oDialog )
+      ::oDialog:end( IDOK )
+   end if
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -243,22 +261,22 @@ METHOD defaultTitle()
 
    local cTitle   
 
-   cTitle         := ::oController:getTitle() + " : "  
+   cTitle         := ::getController():getTitle() + " : "  
 
-   if empty( ::oController:oModel )
+   if empty( ::getController():oModel )
       RETURN ( cTitle )
    end if 
 
-   if empty( ::oController:oModel:hBuffer )
+   if empty( ::getController():oModel:hBuffer )
       RETURN ( cTitle )
    end if 
 
-   if hhaskey( ::oController:oModel:hBuffer, "codigo" ) 
-      cTitle      += alltrim( ::oController:oModel:hBuffer[ "codigo" ] ) + " - "
+   if hhaskey( ::getController():oModel:hBuffer, "codigo" ) 
+      cTitle      += alltrim( ::getController():oModel:hBuffer[ "codigo" ] ) + " - "
    end if 
 
-   if hhaskey( ::oController:oModel:hBuffer, "nombre" ) 
-      cTitle      += alltrim( ::oController:oModel:hBuffer[ "nombre" ] ) 
+   if hhaskey( ::getController():oModel:hBuffer, "nombre" ) 
+      cTitle      += alltrim( ::getController():oModel:hBuffer[ "nombre" ] ) 
    end if 
 
 RETURN ( cTitle )

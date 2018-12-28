@@ -83,8 +83,8 @@ METHOD getColumns() CLASS SQLOperacionesComercialesLineasModel
    hset( ::hColumns, "fecha_caducidad",            {  "create"    => "DATE"                           ,;
                                                       "default"   => {|| ctod('') } }                 )
 
-   hset( ::hColumns, "lote",                       {  "create"    => "VARCHAR(40)"                    ,;
-                                                      "default"   => {|| space(40) } }                )
+   hset( ::hColumns, "lote",                       {  "create"    => "VARCHAR( 40 )"                  ,;
+                                                      "default"   => {|| space( 40 ) } }              )
 
    hset( ::hColumns, "articulo_unidades",          {  "create"    => "DECIMAL(19,6)"                  ,;
                                                       "default"   => {|| 1 } }                        )

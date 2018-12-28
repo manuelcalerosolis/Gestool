@@ -17,7 +17,7 @@ CLASS AlmacenesController FROM SQLNavigatorController
 
    METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := AlmacenesView():New( self ), ), ::oDialogView )
 
-   METHOD getRepository()              INLINE(if(empty( ::oRepository ), ::oRepository := AlmacenesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE( if(empty( ::oRepository ), ::oRepository := AlmacenesRepository():New( self ), ), ::oRepository )
 
    METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := AlmacenesValidator():New( self  ), ), ::oValidator ) 
    
@@ -47,8 +47,8 @@ METHOD New( oController ) CLASS AlmacenesController
    ::getModel():setEvent( 'loadedCurrentBuffer',         {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
    ::getModel():setEvent( 'updatedBuffer',               {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
 
-   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer',   {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::getModel():setEvent( 'loadedDuplicateBuffer',          {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
    ::getModel():setEvent( 'deletedSelection',            {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
 
@@ -88,9 +88,7 @@ RETURN ( ::Super:End() )
 
 METHOD gettingSelectSentence() CLASS AlmacenesController
 
-   ::getModel():setGeneralWhere( "almacen_uuid = ''" )
-
-RETURN ( nil )
+RETURN ( ::getModel():setGeneralWhere( "almacen_uuid = ''" ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -136,14 +134,9 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS AlmacenesView FROM SQLBaseView
   
-   DATA oGetPais
-   DATA oGetProvincia
-   DATA oGetPoblacion
    DATA oSayCamposExtra
 
    METHOD Activate()
@@ -170,7 +163,6 @@ METHOD Activate() CLASS AlmacenesView
    local oBtnEdit
    local oBtnAppend
    local oBtnDelete
-   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "ALMACEN_SQL" ;
@@ -178,7 +170,7 @@ METHOD Activate() CLASS AlmacenesView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    ::oController:getimage("48")  ;
+      RESOURCE    ::oController:getimage( "48" )  ;
       TRANSPARENT ;
       OF          ::oDialog
 
@@ -233,23 +225,19 @@ METHOD Activate() CLASS AlmacenesView
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnDelete:bAction      := {|| ::oController:getZonasController():Delete() }
+   oBtnDelete:bAction   := {|| ::oController:getZonasController():Delete() }
 
    ::oController:getZonasController():Activate( 150, ::oDialog ) 
 
    // Botones almacenes -------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| ::closeActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown      := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::closeActivate(), ) }
 
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
-   end if
-
-   ::oDialog:bStart        := {|| ::startActivate(), ::paintedActivate() }
+   ::oDialog:bStart     := {|| ::startActivate(), ::paintedActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -375,12 +363,20 @@ RETURN ( ::oController:getController():getUuid() )
 
 METHOD getInsertAlmacenSentence() CLASS SQLAlmacenesModel
 
-   local cSentence   := "INSERT IGNORE INTO " + ::getTableName()                          + " " + ;
-                           "( uuid, codigo, nombre, sistema )"                            + " " + ;
-                        "VALUES"                                                          + " " + ;
-                           "( " + quoted( win_uuidcreatestring() ) + ", '0', 'Principal', 1 )"
+   local cSql
 
-RETURN ( cSentence )
+   TEXT INTO cSql
+
+   INSERT IGNORE INTO %1$s 
+      ( uuid, codigo, nombre, sistema, deleted_at ) 
+   VALUES 
+      ( UUID(), '0', 'Principal', 1, '0000-00-00 00:00:00' )
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName() )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 

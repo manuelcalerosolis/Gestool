@@ -13,15 +13,15 @@ CLASS ZonasController FROM SQLBrowseController
 
    // Construcciones tardias---------------------------------------------------
 
-   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := AlmacenesBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := AlmacenesBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := ZonasView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := ZonasView():New( self ), ), ::oDialogView )
 
-   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := AlmacenesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( iif( empty( ::oRepository ), ::oRepository := AlmacenesRepository():New( self ), ), ::oRepository )
 
-   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := AlmacenesValidator():New( self  ), ), ::oValidator ) 
+   METHOD getValidator()               INLINE ( iif( empty( ::oValidator ), ::oValidator := AlmacenesValidator():New( self  ), ), ::oValidator ) 
    
-   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLAlmacenesModel():New( self ), ), ::oModel ) 
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLAlmacenesModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -31,13 +31,13 @@ METHOD New( oController ) CLASS ZonasController
 
    ::Super:New( oController )
 
-   ::cTitle                      := "Zonas"
+   ::cTitle                            := "Zonas"
 
-   ::cName                       := "zonas"
+   ::cName                             := "zonas"
 
-   ::hImage                      := {  "16" => "gc_shelf_full_16",;
-                                       "32" => "gc_shelf_full_32",;
-                                       "48" => "gc_shelf_full_48" }
+   ::hImage                            := {  "16" => "gc_shelf_full_16",;
+                                             "32" => "gc_shelf_full_32",;
+                                             "48" => "gc_shelf_full_48" }
 
 
    ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 

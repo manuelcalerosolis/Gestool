@@ -6,13 +6,13 @@
 
 CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
 
-   DATA lFastEdit          INIT .t.
+   DATA lFastEdit                      INIT .t.
 
-   DATA lFooter            INIT .t.
+   DATA lFooter                        INIT .t.
 
-   DATA nMarqueeStyle      INIT 3
+   DATA nMarqueeStyle                  INIT 3
 
-   DATA nColSel            INIT 2
+   DATA nColSel                        INIT 2
 
    DATA oColumnCodigoArticulo
 
@@ -135,7 +135,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_caducidad' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := ::getEditGet()
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::getController():updateFieldWhereId( 'fecha_caducidad', uNewValue ) }
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::getController():updateField( 'fecha_caducidad', uNewValue ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -146,7 +146,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'lote' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := ::getEditGet()
-      :bOnPostEdit         := {| oCol, uNewValue, nKey | ::getController():updateFieldWhereId( 'lote', uNewValue ) }
+      :bOnPostEdit         := {| oCol, uNewValue, nKey | ::getController():updateField( 'lote', uNewValue ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
