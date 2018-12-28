@@ -32,6 +32,7 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oArticulosPreciosDescuentosController
 
    DATA oCuentasBancariasController
+   DATA oCuentasBancariasGestoolController
 
    DATA oDocumentosController
 
@@ -224,6 +225,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getCuentasBancariasController();
                                     INLINE ( if( empty( ::oCuentasBancariasController ), ::oCuentasBancariasController := CuentasBancariasController():New( self ), ), ::oCuentasBancariasController )
+
+   METHOD getCuentasBancariasGestoolController();
+                                    INLINE ( if( empty( ::oCuentasBancariasGestoolController ), ::oCuentasBancariasGestoolController := CuentasBancariasGestoolController():New( self ), ), ::oCuentasBancariasGestoolController )
 
    METHOD getDocumentosController();
                                     INLINE ( if( empty( ::oDocumentosController ), ::oDocumentosController := DocumentosController():New( self ), ), ::oDocumentosController )

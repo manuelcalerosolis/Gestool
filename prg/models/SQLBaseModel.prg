@@ -988,10 +988,10 @@ METHOD writeInsertSentence( key, value )
       RETURN ( nil )
    end if 
 
-   if at( 'uuid', key ) != 0
-      ::cSQLInsert += quotedUuid( value ) + ", " 
-      RETURN ( nil )
-   end if 
+   // if at( 'uuid', key ) != 0
+   //    ::cSQLInsert += quotedUuid( value ) + ", " 
+   //    RETURN ( nil )
+   // end if 
 
    ::cSQLInsert   += toSQLString( ::setAttribute( key, value ) ) + ", " 
 

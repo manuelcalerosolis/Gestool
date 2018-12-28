@@ -277,6 +277,8 @@ METHOD addColumns() CLASS CuentasBancariasBrowseView
       :SetCheck( { "bullet_square_green_16", "bullet_square_red_16" } )
    end with
 
+   ::getColumnDeletedAt()
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//
@@ -453,7 +455,7 @@ RETURN ( nil )
 METHOD startActivate() CLASS CuentasBancariasView
 
    if ::getController():isAppendMode()      
-      ::oCheckBoxDefecto:SetCheck( ::oController:getModel():countBancoParentUuid( ::oController:oController:getModelBuffer( "uuid" ) ) == 0 )
+      ::oCheckBoxDefecto:SetCheck( ::oController:getModel():countBancoParentUuidAndDefecto( ::oController:oController:getModelBuffer( "uuid" ) ) == 0 )
    end if 
 
 RETURN ( nil )
@@ -491,7 +493,7 @@ METHOD getUniqueSentence( uValue )
    local id
    local cSQLSentence
 
-   cSQLSentence         := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
+   cSQLSentence         := "SELECT COUNT(*) FROM " + ::oController:getModel():getTableName()       + space( 1 )
    cSQLSentence         +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
 
    if ::oController:getModel():isDeletedAtColumn()
@@ -500,7 +502,7 @@ METHOD getUniqueSentence( uValue )
    
    id                   := ::oController:getModelBufferColumnKey()
    if !empty( id )
-      cSQLSentence      +=    "AND " + ::oController:getModelColumnKey() + " <> " + toSQLString( id )
+      cSQLSentence      +=    "AND " + ::oController:getModelColumnKey() + " <> " + toSQLString( id ) + " "
    end if 
 
    cSQLSentence         +=    "AND parent_uuid=" + quoted( ::getSuperController():getModelBuffer( "uuid" ) ) + " "
@@ -542,7 +544,9 @@ CLASS SQLCuentasBancariasModel FROM SQLCompanyModel
 
    METHOD updateBlanckDefecto( uuidParent )
 
-   METHOD countBancoParentUuid( uuidParent )
+   METHOD countBancoParentUuidAndDefecto( uuidParent )
+
+   METHOD getUuidWhereCodigoAndParentAndNotDeleted( cCodigo ,uuidParent  )
 
 END CLASS
 
@@ -605,7 +609,7 @@ RETURN ( ::oController:oController:getUuid()  )
 
 //---------------------------------------------------------------------------//
 
-METHOD countBancoParentUuid( uuidParent ) CLASS SQLCuentasBancariasModel
+METHOD countBancoParentUuidAndDefecto( uuidParent ) CLASS SQLCuentasBancariasModel
 
 local cSql
 
@@ -615,7 +619,7 @@ local cSql
 
    FROM %1$s AS cuentas_bancarias
 
-   WHERE parent_uuid = %2$s AND deleted_at = 0
+   WHERE parent_uuid = %2$s AND deleted_at = 0 AND defecto = 1
 
    ENDTEXT
 
@@ -640,6 +644,26 @@ METHOD updateBlanckDefecto( uuidParent, uuidBanco ) CLASS SQLCuentasBancariasMod
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ), quoted( uuidBanco ) )
+
+RETURN ( getSQLDatabase():Exec( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getUuidWhereCodigoAndParentAndNotDeleted( cCodigo ,uuidParent  ) CLASS SQLCuentasBancariasModel
+   
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT uuid 
+
+   FROM %1$s 
+
+   WHERE codigo = %2$s AND parent_uuid =%3$s AND deleted_at = 0 
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( cCodigo ), quoted( uuidParent ) )
 
 RETURN ( getSQLDatabase():Exec( cSql ) )
 

@@ -15,4 +15,5 @@
 #define IDBACK          10
 
 
-#define Recibos  65535
+
+#define bancos  65535
