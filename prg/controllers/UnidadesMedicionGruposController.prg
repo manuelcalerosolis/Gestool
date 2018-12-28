@@ -331,7 +331,7 @@ CLASS SQLUnidadesMedicionGruposModel FROM SQLCompanyModel
 
 #ifdef __TEST__
 
-   METHOD testCreate()
+   METHOD test_create()
 
 #endif
 
@@ -371,20 +371,20 @@ METHOD getInitialSelect() CLASS SQLUnidadesMedicionGruposModel
 
    TEXT INTO cSql
 
-      SELECT unidades_medicion_grupos.id,
-         unidades_medicion_grupos.uuid,
-         unidades_medicion_grupos.codigo,
-         unidades_medicion_grupos.nombre,
-         unidades_medicion_grupos.unidad_base_codigo,
-         unidades_medicion_grupos.sistema,
-         unidades_medicion_grupos.created_at,
-         unidades_medicion_grupos.updated_at,
-         unidades_medicion.nombre AS unidad_base_nombre
+   SELECT unidades_medicion_grupos.id,
+      unidades_medicion_grupos.uuid,
+      unidades_medicion_grupos.codigo,
+      unidades_medicion_grupos.nombre,
+      unidades_medicion_grupos.unidad_base_codigo,
+      unidades_medicion_grupos.sistema,
+      unidades_medicion_grupos.created_at,
+      unidades_medicion_grupos.updated_at,
+      unidades_medicion.nombre AS unidad_base_nombre
 
-      FROM %1$s AS unidades_medicion_grupos
+   FROM %1$s AS unidades_medicion_grupos
 
-      LEFT JOIN %2$s AS unidades_medicion 
-         ON unidades_medicion_grupos.unidad_base_codigo = unidades_medicion.codigo 
+   LEFT JOIN %2$s AS unidades_medicion 
+      ON unidades_medicion_grupos.unidad_base_codigo = unidades_medicion.codigo 
 
    ENDTEXT
 
@@ -400,20 +400,20 @@ METHOD getSentenceUnidadesWhereUnidadAndGrupo( cCodigoUnidad, cCodigoGrupo ) CLA
 
    TEXT INTO cSql
 
-      SELECT 
-         COUNT(*)     
-      
-      FROM %1$s AS unidades_medicion_grupos                                               
+   SELECT 
+      COUNT(*)     
+   
+   FROM %1$s AS unidades_medicion_grupos                                               
 
-      INNER JOIN %2$s AS unidades_medicion_grupos_lineas         
-         ON unidades_medicion_grupos.uuid = unidades_medicion_grupos_lineas.parent_uuid                             
+   INNER JOIN %2$s AS unidades_medicion_grupos_lineas         
+      ON unidades_medicion_grupos.uuid = unidades_medicion_grupos_lineas.parent_uuid                             
 
-      INNER JOIN %3$s AS unidades_medicion         
-         ON unidades_medicion.codigo = unidades_medicion_grupos_lineas.unidad_alternativa_codigo
+   INNER JOIN %3$s AS unidades_medicion         
+      ON unidades_medicion.codigo = unidades_medicion_grupos_lineas.unidad_alternativa_codigo
 
-      WHERE 
-         unidades_medicion.codigo = %4$s AND
-         unidades_medicion_grupos.codigo = %5$s 
+   WHERE 
+      unidades_medicion.codigo = %4$s AND
+      unidades_medicion_grupos.codigo = %5$s 
 
    ENDTEXT
 
@@ -432,19 +432,18 @@ RETURN ( getSQLDatabase():getValue( ::getSentenceUnidadesWhereUnidadAndGrupo( cC
 METHOD getInsertUnidadesMedicionGruposSentence() CLASS SQLUnidadesMedicionGruposModel
 
    local uuid           := win_uuidcreatestring()
-   local cSentence
    local aSentence      := {} 
    local cCodigoDefecto := quoted( __grupo_unidades_medicion__ )
 
-   cSentence            := "INSERT IGNORE INTO " + ::getTableName()                       + " " + ;
+   aadd( aSentence,     "INSERT IGNORE INTO " + ::getTableName()                       + " " + ;
                               "( uuid, codigo, nombre, unidad_base_codigo, sistema )"     + " " + ;
                            "VALUES"                                                       + " " + ;
-                              "( " + quoted( uuid ) + ", " + cCodigoDefecto + ", 'Unidades', " + cCodigoDefecto + ", 1 )"
+                              "( " + quoted( uuid ) + ", " + cCodigoDefecto + ", 'Unidades', " + cCodigoDefecto + ", 1 )" )
 
-   cSentence            := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                         + " " + ;
+   aadd( aSentence,     "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                         + " " + ;
                               "( uuid, parent_uuid, unidad_alternativa_codigo, cantidad_alternativa, cantidad_base, sistema )"   + " " + ;
                            "VALUES"                                                                                              + " " + ;
-                              "( UUID(), " + quoted( uuid ) + ", " + cCodigoDefecto + ", 1, 1, 1 )"
+                              "( UUID(), " + quoted( uuid ) + ", " + cCodigoDefecto + ", 1, 1, 1 )" )
 
 RETURN ( aSentence )
 
@@ -452,7 +451,7 @@ RETURN ( aSentence )
 
 #ifdef __TEST__
 
-METHOD testCreate() CLASS SQLUnidadesMedicionGruposModel
+METHOD test_create() CLASS SQLUnidadesMedicionGruposModel
 
    local uuid 
    local hBuffer

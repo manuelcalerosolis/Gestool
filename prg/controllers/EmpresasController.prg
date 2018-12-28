@@ -797,19 +797,21 @@ RETURN ( aNombres )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
+#ifdef __TEST__
+
 CLASS TestEmpresasController FROM TestCase
 
-   METHOD testDialogAppend()
+   METHOD test_dialog_append()
 
-   METHOD testDelete()
+   METHOD test_delete()
 
-   METHOD testDialogEmptyCIF()
+   METHOD test_dialog_empty_cif()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD testDialogAppend() CLASS TestEmpresasController
+METHOD test_dialog_append() CLASS TestEmpresasController
 
    local oController := EmpresasController():New()
 
@@ -829,7 +831,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testDelete() CLASS TestEmpresasController
+METHOD test_delete() CLASS TestEmpresasController
 
    local nId         := EmpresasController():getModel():getField( 'id', 'codigo', 'TEST' )
    
@@ -843,7 +845,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testDialogEmptyCIF() CLASS TestEmpresasController
+METHOD test_dialog_empty_cif() CLASS TestEmpresasController
 
    local oController := EmpresasController():New()
 
@@ -863,6 +865,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+#endif
 
 /*
 METHOD testDialogEmptyNombre() CLASS TestArticulosController

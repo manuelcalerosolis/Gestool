@@ -353,7 +353,7 @@ METHOD testGenerateXml() CLASS TestFacturasClientesFacturaeController
    SQLFacturasClientesLineasModel():truncateTable() 
    SQLFacturasClientesDescuentosModel():truncateTable()
 
-   SQLTercerosModel():testCreateContado()
+   SQLTercerosModel():test_create_contado()
 
    SQLFacturasClientesModel():testCreateFacturaConRecargoDeEqivalencia( uuid ) 
 

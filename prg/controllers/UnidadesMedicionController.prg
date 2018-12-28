@@ -31,15 +31,15 @@ METHOD New( oController ) CLASS UnidadesMedicionController
 
    ::Super:New( oController )
 
-   ::cTitle                         := "Unidades de medición"
+   ::cTitle                            := "Unidades de medición"
 
-   ::cName                          := "unidades_medicion"
+   ::cName                             := "unidades_medicion"
 
-   ::hImage                         := {  "16" => "gc_tape_measure2_16",;
-                                          "32" => "gc_tape_measure2_32",;
-                                          "48" => "gc_tape_measure2_48" }
+   ::hImage                            := {  "16" => "gc_tape_measure2_16",;
+                                             "32" => "gc_tape_measure2_32",;
+                                             "48" => "gc_tape_measure2_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                            := Auth():Level( ::cName )
 
    ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
@@ -256,11 +256,11 @@ CLASS SQLUnidadesMedicionModel FROM SQLCompanyModel
 
 #ifdef __TEST__
 
-   METHOD testCreateUnidades()
+   METHOD test_create_unidades()
 
-   METHOD testCreateCajas() 
+   METHOD test_create_cajas() 
 
-   METHOD testCreatePalets() 
+   METHOD test_create_palets() 
 
 #endif
 
@@ -300,10 +300,10 @@ METHOD getInsertUnidadesMedicionSentence() CLASS SQLUnidadesMedicionModel
 
    TEXT INTO cSql
 
-      INSERT IGNORE INTO %1$s 
-         ( uuid, codigo, nombre, codigo_iso, sistema ) 
-      VALUES 
-         ( UUID(), 'UDS', 'Unidades', 'UDS', 1 )
+   INSERT IGNORE INTO %1$s 
+      ( uuid, codigo, nombre, codigo_iso, sistema, deleted_at ) 
+   VALUES 
+      ( UUID(), 'UDS', 'Unidades', 'UDS', 1, '0000-00-00 00:00:00' )
 
    ENDTEXT
 
@@ -319,12 +319,12 @@ METHOD getUnidadMedicionSistema() CLASS SQLUnidadesMedicionModel
 
    TEXT INTO cSql
 
-      SELECT 
-         unidades_medicion.codigo
+   SELECT 
+      unidades_medicion.codigo
 
-      FROM %1$s AS unidades_medicion
+   FROM %1$s AS unidades_medicion
 
-         WHERE unidades_medicion.sistema = 1
+      WHERE unidades_medicion.sistema = 1
 
    ENDTEXT
 
@@ -346,7 +346,7 @@ RETURN ( nil )
 
 #ifdef __TEST__
 
-METHOD testCreateUnidades() CLASS SQLUnidadesMedicionModel
+METHOD test_create_unidades() CLASS SQLUnidadesMedicionModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -358,7 +358,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateCajas() CLASS SQLUnidadesMedicionModel
+METHOD test_create_cajas() CLASS SQLUnidadesMedicionModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -370,7 +370,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreatePalets() CLASS SQLUnidadesMedicionModel
+METHOD test_create_palets() CLASS SQLUnidadesMedicionModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -384,6 +384,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 #endif
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -187,9 +187,9 @@ METHOD Before() CLASS TestFacturasClientesController
    SQLPagosModel():truncateTable()
    SQLRecibosPagosModel():truncateTable()
 
-   SQLTercerosModel():testCreateContado()
-   SQLTercerosModel():testCreateTarifaMayorista()
-   SQLTercerosModel():testCreateConPlazos()
+   SQLTercerosModel():test_create_contado()
+   SQLTercerosModel():test_create_tarifa_mayorista()
+   SQLTercerosModel():test_create_con_plazos()
 
    SQLAlmacenesModel():testCreate()
 

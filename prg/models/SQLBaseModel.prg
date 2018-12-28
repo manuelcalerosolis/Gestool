@@ -163,10 +163,10 @@ CLASS SQLBaseModel
    METHOD aUuidToDelete()
    
    METHOD getDropTableSentence()       INLINE ( "DROP TABLE " + ::getTableName() )
-   METHOD dropTable()                  INLINE ( ::getDatabase():Exec( ::getDropTableSentence() ) )
+   METHOD dropTable()                  INLINE ( ::getDatabase():Query( ::getDropTableSentence() ) )
 
    METHOD getTruncateTableSentence()   INLINE ( "TRUNCATE TABLE " + ::getTableName() )
-   METHOD truncateTable()              INLINE ( ::getDatabase():Exec( ::getTruncateTableSentence() ) )
+   METHOD truncateTable()              INLINE ( ::getDatabase():Query( ::getTruncateTableSentence() ) )
 
    METHOD setGeneralSelect( cSelect )  INLINE ( ::cGeneralSelect  := cSelect )
 
@@ -1525,7 +1525,7 @@ METHOD insertBuffer( hBuffer )
 
    ::getInsertSentence( hBuffer )
 
-   ::getDatabase():Execs( ::cSQLInsert )
+   ::getDatabase():Query( ::cSQLInsert )
 
    nId               := ::getDatabase():LastInsertId()
 
@@ -1553,9 +1553,9 @@ METHOD insertIgnore( hBuffer, lTransactional )
    end if 
 
    if lTransactional 
-      ::getDatabase():TransactionalExec( ::cSQLInsert )
+      ::getDatabase():TransactionalQuery( ::cSQLInsert )
    else
-      ::getDatabase():Execs( ::cSQLInsert )
+      ::getDatabase():Query( ::cSQLInsert )
    end if 
 
    nId                     := ::getDatabase():LastInsertId()
@@ -1573,7 +1573,7 @@ METHOD updateBuffer( hBuffer )
    ::getUpdateSentence( hBuffer )
 
    if !empty( ::cSQLUpdate )
-      ::getDatabase():Execs( ::cSQLUpdate )
+      ::getDatabase():Querys( ::cSQLUpdate )
    end if
 
    ::fireEvent( 'updatedBuffer' )
@@ -1593,9 +1593,9 @@ METHOD insertOnDuplicate( hBuffer, lTransactional )
    cSentence               := ::getInsertOnDuplicateSentence( hBuffer )
 
    if lTransactional 
-      ::getDatabase():TransactionalExec( cSentence )
+      ::getDatabase():TransactionalQuery( cSentence )
    else
-      ::getDatabase():Execs( cSentence )
+      ::getDatabase():Query( cSentence )
    end  if 
 
    ::fireEvent( 'insertedOnDuplicatedBuffer' )
@@ -1610,7 +1610,7 @@ METHOD deleteSelection( aIds )
 
    ::fireEvent( 'deletingSelection' )
 
-   ::getDatabase():Execs( ::getDeleteOrUpdateSentenceById( aIds ) )
+   ::getDatabase():Querys( ::getDeleteOrUpdateSentenceById( aIds ) )
 
    ::fireEvent( 'deletedSelection' )
    
@@ -1622,7 +1622,7 @@ METHOD deleteById( nId )
 
    ::fireEvent( 'deletingById' )
 
-   ::getDatabase():Execs( ::getDeleteOrUpdateSentenceById( nId ) )
+   ::getDatabase():Querys( ::getDeleteOrUpdateSentenceById( nId ) )
 
    ::fireEvent( 'deletedById' )
    
@@ -1634,7 +1634,7 @@ METHOD deleteByUuid( uUuid )
 
    ::fireEvent( 'deletingByUuid' )
 
-   ::getDatabase():Execs( ::getDeleteOrUpdateSentenceByUuid( uUuid ) )
+   ::getDatabase():Querys( ::getDeleteOrUpdateSentenceByUuid( uUuid ) )
 
    ::fireEvent( 'deletedByUuid' )
    
@@ -1646,7 +1646,7 @@ METHOD deleteWhereParentUuid( uUuid )
 
    ::fireEvent( 'deletingWhereParentUuid' )
 
-   ::getDatabase():Execs( ::getDeleteOrUpdateSentenceWhereParentUuid( uUuid ) )
+   ::getDatabase():Querys( ::getDeleteOrUpdateSentenceWhereParentUuid( uUuid ) )
 
    ::fireEvent( 'deletedWhereParentUuid' )
    
@@ -1661,7 +1661,7 @@ METHOD deleteWhere( hWhere )
    hEval( hWhere,; 
       {|k,v| cSql    += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v ) + " " } )
 
-RETURN ( ::getDatabase():Exec( cSql ) )
+RETURN ( ::getDatabase():Query( cSql ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1728,7 +1728,7 @@ METHOD updateFieldWhereId( id, cField, uValue )
    cSql           +=    "SET " + cField + " = " + toSqlString( uValue ) + " "
    cSql           +=    "WHERE id = " + toSqlString( id )
 
-RETURN ( ::getDatabase():Exec( cSql ) )
+RETURN ( ::getDatabase():Query( cSql ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1750,10 +1750,10 @@ METHOD updateFieldsWhere( hFields, hWhere, lTransactional )
       {|k,v| cSql += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v ) + " " } )
 
    if lTransactional
-      RETURN ( ::getDatabase():TransactionalExec( cSql ) )
+      RETURN ( ::getDatabase():TransactionalQuery( cSql ) )
    end if 
 
-RETURN ( ::getDatabase():Exec( cSql ) )
+RETURN ( ::getDatabase():Query( cSql ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1783,10 +1783,10 @@ METHOD updateBufferWhereId( id, hBuffer, lTransactional )
    cSql                    +=    "WHERE id = " + toSqlString( id )
 
    if lTransactional 
-      RETURN ( ::getDatabase():TransactionalExec( cSql ) )
+      RETURN ( ::getDatabase():TransactionalQuery( cSql ) )
    end  if 
 
-RETURN ( ::getDatabase():Exec( cSql ) )
+RETURN ( ::getDatabase():Query( cSql ) )
 
 //---------------------------------------------------------------------------//
 
@@ -1796,7 +1796,7 @@ METHOD updateFieldWhereUuid( uuid, cField, uValue )
    cSql        +=    "SET " + cField + " = " + toSqlString( uValue )    + " "
    cSql        +=    "WHERE uuid = " + toSqlString( uuid )
 
-RETURN ( ::getDatabase():Exec( cSql ) )
+RETURN ( ::getDatabase():Query( cSql ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1815,7 +1815,7 @@ METHOD updateBufferWhereUuid( uuid, hBuffer )
 
    cSql           +=    "WHERE uuid = " + toSqlString( uuid )
 
-RETURN ( ::getDatabase():Exec( cSql ) )
+RETURN ( ::getDatabase():Query( cSql ) )
 
 //---------------------------------------------------------------------------//
 

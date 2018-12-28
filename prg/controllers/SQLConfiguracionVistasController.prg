@@ -154,7 +154,7 @@ METHOD get( cViewType, cViewName ) CLASS SQLConfiguracionVistasModel
    aFetch            := getSQLDatabase():selectFetchHash( cSentence, .f. )
 
    if hb_isarray( aFetch ) .and. !empty( aFetch )
-    	RETURN ( atail( aFetch ) )
+      RETURN ( atail( aFetch ) )
    end if 
 
 RETURN ( nil )

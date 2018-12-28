@@ -67,7 +67,7 @@ METHOD checkModel( cDatabaseMySQL, oModel ) CLASS SQLBaseMigrations
       getSQLDatabase():Execs( oModel:getAlterTableSentences( cDatabaseMySQL, aSchemaColumns ) )
    end if 
   
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -79,9 +79,7 @@ RETURN ( aeval( ::aRepositories, {|oRepository| ::checkRepository( oRepository )
 
 METHOD checkRepository( oRepository ) CLASS SQLBaseMigrations
 
-   getSQLDatabase():ExecsWithOutParse( oRepository:getSQLFunctions() )
-
-RETURN ( nil )
+RETURN ( getSQLDatabase():ExecsWithOutParse( oRepository:getSQLFunctions() ) )
 
 //----------------------------------------------------------------------------//
 
@@ -89,7 +87,6 @@ METHOD getSchemaColumns( cDatabaseMySQL, cTableName ) CLASS SQLBaseMigrations
 
    local oError
    local cSentence
-   local oStatement
    local aSchemaColumns
 
    if empty( cDatabaseMySQL )
@@ -102,32 +99,19 @@ METHOD getSchemaColumns( cDatabaseMySQL, cTableName ) CLASS SQLBaseMigrations
       RETURN ( nil )  
    end if  
 
-   if empty( getSQLDatabase():oConexion )
-      msgstop( "No hay conexiones disponibles" )
-      RETURN ( nil )  
-   end if  
-
-   cSentence               := "SELECT COLUMN_NAME "                                       + ;
-                                 "FROM INFORMATION_SCHEMA.COLUMNS "                       + ;
-                                 "WHERE table_schema = " + quoted( cDatabaseMySQL ) + " " + ; 
-                                    "AND table_name = " + quoted( cTableName )
+   cSentence            := "SELECT COLUMN_NAME "                                       + ;
+                              "FROM INFORMATION_SCHEMA.COLUMNS "                       + ;
+                              "WHERE table_schema = " + quoted( cDatabaseMySQL ) + " " + ; 
+                                 "AND table_name = " + quoted( cTableName )
                                   
    try
 
-      oStatement           := getSQLDatabase():oConexion:Query( cSentence )
-   
-      aSchemaColumns       := oStatement:fetchAll( FETCH_HASH )
+      aSchemaColumns    := getSQLDatabase():selectFetchHash( cSentence )
 
    catch oError
 
       eval( errorBlock(), oError )
 
-   finally
-
-      if !empty( oStatement )
-        oStatement:free()
-      end if    
-   
    end
 
    if empty( aSchemaColumns ) .or. !hb_isarray( aSchemaColumns )
@@ -216,11 +200,11 @@ RETURN ( ::aModels )
 
 METHOD checkValues() CLASS SQLGestoolMigrations
 
-   getSQLDatabase():Exec( SQLAjustesGestoolModel():getInsertAjustesSentence() )
+   getSQLDatabase():Query( SQLAjustesGestoolModel():getInsertAjustesSentence() )
 
-   getSQLDatabase():Exec( SQLRolesModel():getInsertRolesSentence() )
+   getSQLDatabase():Query( SQLRolesModel():getInsertRolesSentence() )
 
-   getSQLDatabase():Exec( SQLUsuariosModel():getInsertUsuariosSentence() ) 
+   getSQLDatabase():Query( SQLUsuariosModel():getInsertUsuariosSentence() ) 
 
 RETURN ( nil )
 
@@ -454,15 +438,15 @@ RETURN ( ::aModels )
 
 METHOD checkValues() CLASS SQLCompanyMigrations
 
-   getSQLDatabase():Exec( SQLAjustesModel():getInsertAjustesSentence() )
+   getSQLDatabase():Query( SQLAjustesModel():getInsertAjustesSentence() )
 
-   getSQLDatabase():Exec( SQLCajasModel():getInsertCajasSentence() )
+   getSQLDatabase():Query( SQLCajasModel():getInsertCajasSentence() )
 
-   getSQLDatabase():Exec( SQLAlmacenesModel():getInsertAlmacenSentence() )
+   getSQLDatabase():Query( SQLAlmacenesModel():getInsertAlmacenSentence() )
 
-   getSQLDatabase():Exec( SQLUnidadesMedicionModel():getInsertUnidadesMedicionSentence() )
+   getSQLDatabase():Query( SQLUnidadesMedicionModel():getInsertUnidadesMedicionSentence() )
 
-   getSQLDatabase():Execs( SQLUnidadesMedicionGruposModel():getInsertUnidadesMedicionGruposSentence() )
+   getSQLDatabase():Querys( SQLUnidadesMedicionGruposModel():getInsertUnidadesMedicionGruposSentence() )
 
    SQLArticulosTarifasModel():insertTarifaBase()
 

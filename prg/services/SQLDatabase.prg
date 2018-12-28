@@ -49,7 +49,10 @@ CLASS SQLDatabase
 
    METHOD TransactionalExec( cSql )    INLINE ( ::BeginTransaction(), ::Exec( cSql ), ::Commit() )            
    
-   METHOD Query( cSql )                INLINE ( if( !empty( ::oConexion ), ::oConexion:Query( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD Query( cSql )                
+   METHOD Querys( aSql )                
+   METHOD TransactionalQuery( cSql )   INLINE ( ::BeginTransaction(), ::Query( cSql ), ::Commit() )            
+
    METHOD Prepare( cSql )              INLINE ( if( !empty( ::oConexion ), ::oConexion:Prepare( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
    METHOD Parse( cSql )                INLINE ( if( !empty( ::oConexion ), ::oConexion:Parse( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
 
@@ -125,9 +128,9 @@ METHOD New( cDatabaseMySQL )
 
    ::oConexion                := THDO():new( "mysql" )
 
-   ::oConexion:setAttribute( HDO_ATTR_ERRMODE, .f. )
+   ::oConexion:setAttribute( HDO_ATTR_ERRMODE, .t. ) 
 
-   ::oConexion:setAttribute( MYSQL_OPT_RECONNECT, .t. )
+   ::oConexion:setAttribute( MYSQL_OPT_RECONNECT, .t. ) 
 
    ::oConexion:setAttribute( HDO_ATTR_DEF_TINY_AS_BOOL, .t. )     
    
@@ -252,6 +255,16 @@ RETURN ( ::Exec( cSentence, lParse ) )
 
 //----------------------------------------------------------------------------//
 
+METHOD Querys( cSentence, lParse )
+
+   if hb_isarray( cSentence )
+      RETURN ( aeval( cSentence, {|cSql| ::Query( cSql, lParse ) } ) ) 
+   end if 
+
+RETURN ( ::Query( cSentence, lParse ) ) 
+
+//----------------------------------------------------------------------------//
+
 METHOD genStatement( cSentence )
 
 RETURN ( cSentence )
@@ -264,7 +277,7 @@ METHOD selectFetch( cSentence, fetchType, attributePad )
    local aFetch
    local oStatement
 
-   DEFAULT fetchType    := FETCH_ARRAY
+   DEFAULT fetchType    := 1
    DEFAULT attributePad := .t.
 
    if ::isParseError( cSentence )
@@ -273,16 +286,18 @@ METHOD selectFetch( cSentence, fetchType, attributePad )
 
    try 
 
-      oStatement        := ::Query( cSentence )
+      oStatement        := ::Prepare( cSentence )
 
       oStatement:setAttribute( STMT_ATTR_STR_PAD, attributePad )
 
-      oStatement:setAttribute( STMT_ATTR_CURSOR_TYPE, CURSOR_TYPE_READ_ONLY )         
-   
+      oStatement:setAttribute( STMT_ATTR_CURSOR_TYPE, CURSOR_TYPE_READ_ONLY )
+
+      oStatement:Execute()   
+      
       aFetch            := oStatement:fetchAll( fetchType )
 
    catch oError
-
+      
       eval( errorBlock(), oError )
 
    finally
@@ -298,6 +313,33 @@ METHOD selectFetch( cSentence, fetchType, attributePad )
    if !empty( aFetch ) .and. hb_isarray( aFetch )
       RETURN ( aFetch )
    end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD Query( cSentence )
+
+   local oError
+   local oStatement
+
+   try  
+
+      oStatement        := ::oConexion:Query( cSentence )
+
+   catch oError
+      
+      eval( errorBlock(), oError )
+
+   finally
+
+      if !empty( oStatement )
+         oStatement:Free()
+      end if
+
+      oStatement        := nil
+
+   end
 
 RETURN ( nil )
 
@@ -386,11 +428,13 @@ METHOD getValue( cSentence, uDefault )
 
    try 
 
-      oStatement     := ::Query( cSentence )
+      oStatement     := ::Prepare( cSentence )
 
       oStatement:setAttribute( STMT_ATTR_STR_PAD, .t. )
 
-      oStatement:setAttribute( STMT_ATTR_CURSOR_TYPE, CURSOR_TYPE_READ_ONLY )   
+      oStatement:setAttribute( STMT_ATTR_CURSOR_TYPE, CURSOR_TYPE_READ_ONLY ) 
+
+      oStatement:Execute()  
       
       if oStatement:fetchDirect()
          uValue      := oStatement:getValue( 1 ) 
@@ -497,32 +541,8 @@ RETURN ( aSchemaColumns )
 //---------------------------------------------------------------------------//
 
 METHOD getListTables()
-   
-   local oError
-   local oStatement
-   local aListTables
 
-   try 
-
-      oStatement           := ::Query( "SHOW TABLES FROM " + ::cDatabaseMySQL )      
-            
-      aListTables          := oStatement:fetchAllArray()
-
-   catch oError
-
-      eval( errorBlock(), oError )
-
-   finally
-
-      if !empty( oStatement )
-         oStatement:Free()
-      end if
-
-      oStatement  := nil
-
-   end
-
-RETURN ( aListTables )
+RETURN ( ::selectFetchArray( "SHOW TABLES FROM " + ::cDatabaseMySQL ) )
 
 //---------------------------------------------------------------------------//
 
