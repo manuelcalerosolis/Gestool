@@ -150,6 +150,8 @@ END CLASS
 
 METHOD Activating() CLASS AlmacenesView
 
+   msgalert( ::oController:getModel():hBuffer[ "almacen_uuid" ], "Activating almacen_uuid" )
+
    if ::oController:isAppendOrDuplicateMode()
       ::oController:getModel():hBuffer()
    end if 
@@ -160,9 +162,7 @@ RETURN ( self )
 
 METHOD Activate() CLASS AlmacenesView
 
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
+   msgalert( ::oController:getModel():hBuffer[ "almacen_uuid" ], "antes almacen_uuid" )
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "ALMACEN_SQL" ;
@@ -206,27 +206,12 @@ METHOD Activate() CLASS AlmacenesView
 
    // Zonas--------------------------------------------------------------------
 
-   REDEFINE BUTTON oBtnAppend ;
-      ID          120 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+   TBtnBmp():ReDefine( 501, "new16",,,,, {|| ::oController:getZonasController():Append() }, ::oDialog, .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir zonas" )
 
-   oBtnAppend:bAction      := {|| ::oController:getZonasController():Append() }
+   TBtnBmp():ReDefine( 502, "edit16",,,,, {|| ::oController:getZonasController():Edit() }, ::oDialog, .f., {|| ::getController():isNotZoomMode() }, .f., "Modificar zonas" )
 
-   REDEFINE BUTTON oBtnEdit ;
-      ID          130 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnEdit:bAction     := {|| ::oController:getZonasController():Edit() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          140 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnDelete:bAction   := {|| ::oController:getZonasController():Delete() }
-
+   TBtnBmp():ReDefine( 503, "del16",,,,, {|| ::oController:getZonasController():Delete() }, ::oDialog, .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar zonas" )
+ 
    ::oController:getZonasController():Activate( 150, ::oDialog ) 
 
    // Botones almacenes -------------------------------------------------------
@@ -240,6 +225,8 @@ METHOD Activate() CLASS AlmacenesView
    ::oDialog:bStart     := {|| ::startActivate(), ::paintedActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
+
+   msgalert( ::oController:getModel():hBuffer[ "almacen_uuid" ], "despues almacen_uuid" )
 
 RETURN ( ::oDialog:nResult )
 
@@ -305,11 +292,9 @@ CLASS SQLAlmacenesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getAlmacenUuidAttribute( value )
-
    METHOD getInsertAlmacenSentence()
 
-   METHOD CountAlmacenWhereCodigo( cCodigoAlmacen )
+   METHOD countAlmacenWhereCodigo( cCodigoAlmacen )
 
 #ifdef __TEST__
 
@@ -344,20 +329,6 @@ METHOD getColumns() CLASS SQLAlmacenesModel
    ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
-
-//---------------------------------------------------------------------------//
-
-METHOD getAlmacenUuidAttribute( value ) CLASS SQLAlmacenesModel
-   
-   if empty( ::oController )
-      RETURN ( value )
-   end if
-
-   if empty( ::oController:getController() )
-      RETURN ( value )
-   end if
-
-RETURN ( ::oController:getController():getUuid() )
 
 //---------------------------------------------------------------------------//
 

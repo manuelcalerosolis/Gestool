@@ -21,7 +21,7 @@ CLASS ZonasController FROM SQLBrowseController
 
    METHOD getValidator()               INLINE ( iif( empty( ::oValidator ), ::oValidator := AlmacenesValidator():New( self  ), ), ::oValidator ) 
    
-   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLAlmacenesModel():New( self ), ), ::oModel ) 
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLZonasModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -38,7 +38,6 @@ METHOD New( oController ) CLASS ZonasController
    ::hImage                            := {  "16" => "gc_shelf_full_16",;
                                              "32" => "gc_shelf_full_32",;
                                              "48" => "gc_shelf_full_48" }
-
 
    ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
 
@@ -115,10 +114,6 @@ RETURN ( nil )
 
 METHOD Activate() CLASS ZonasView
 
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
-
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "ZONAS" ;
       TITLE       ::LblTitle() + "zonas"
@@ -148,39 +143,22 @@ METHOD Activate() CLASS ZonasView
       OF          ::oDialog
 
    // Ubicaciones--------------------------------------------------------------------
+   
+   TBtnBmp():ReDefine( 501, "new16",,,,, {|| ::oController:getUbicacionesController():Append() }, ::oDialog, .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir ubicaciones" )
 
-   REDEFINE BUTTON oBtnAppend ;
-      ID          120 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+   TBtnBmp():ReDefine( 502, "edit16",,,,, {|| ::oController:getUbicacionesController():Edit() }, ::oDialog, .f., {|| ::getController():isNotZoomMode() }, .f., "Modificar ubicaciones" )
 
-   oBtnAppend:bAction   := {|| ::oController:getUbicacionesController():Append() }
-
-   REDEFINE BUTTON oBtnEdit ;
-      ID          130 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnEdit:bAction   := {|| ::oController:getUbicacionesController():Edit() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          140 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnDelete:bAction   := {|| ::oController:getUbicacionesController():Delete() }
+   TBtnBmp():ReDefine( 503, "del16",,,,, {|| ::oController:getUbicacionesController():Delete() }, ::oDialog, .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar ubicaciones" )
 
    ::oController:getUbicacionesController():Activate( 150, ::oDialog )
 
    // Botones zonas -------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| ::closeActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
-   end if
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::closeActivate(), ) }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -193,3 +171,28 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
+CLASS SQLZonasModel FROM SQLAlmacenesModel
+
+   METHOD getAlmacenUuidAttribute( value )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getAlmacenUuidAttribute( value ) CLASS SQLZonasModel
+   
+   if empty( ::oController )
+      RETURN ( value )
+   end if
+
+   if empty( ::oController:getController() )
+      RETURN ( value )
+   end if
+
+RETURN ( ::oController:getController():getUuid() )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//

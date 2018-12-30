@@ -217,6 +217,7 @@ METHOD addSelectorButtons()
    ::fireEvent( 'addingSelectorButton' )
 
    ::addGeneralButton()
+
    if !::isCreatorControllerZoomMode()
       ::addSelectButton()
    end if
@@ -519,7 +520,7 @@ METHOD AddCloseButton()
       RETURN ( nil )
    end if 
 
-   ::AddButton( "Salir [ESC]", "End16", {|| ::oController:End() }, "S" ) 
+   ::AddButton( "Salir [ESC]", "End16", {|| if( !empty( ::oController ) .and. !empty( ::oController:oDialog ), ::oController:oDialog:End(), ) }, "S" ) 
 
    ::fireEvent( 'addedCloseButton' )
 

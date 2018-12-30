@@ -13,15 +13,15 @@ CLASS UbicacionesController FROM SQLBrowseController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := AlmacenesBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := AlmacenesBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := UbicacionesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := UbicacionesView():New( self ), ), ::oDialogView )
 
-   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := AlmacenesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE( if( empty( ::oRepository ), ::oRepository := AlmacenesRepository():New( self ), ), ::oRepository )
 
-   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := AlmacenesValidator():New( self  ), ), ::oValidator ) 
+   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := AlmacenesValidator():New( self  ), ), ::oValidator ) 
    
-   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLAlmacenesModel():New( self ), ), ::oModel ) 
+   METHOD getModel()                   INLINE( if( empty( ::oModel ), ::oModel := SQLZonasModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -31,14 +31,13 @@ METHOD New( oController ) CLASS UbicacionesController
 
    ::Super:New( oController )
 
-   ::cTitle                      := "Ubicaciones"
+   ::cTitle                            := "Ubicaciones"
 
-   ::cName                       := "ubicaciones"
+   ::cName                             := "ubicaciones"
 
-   ::hImage                      := {  "16" => "gc_package_16",;
-                                       "32" => "gc_package_32",;
-                                       "48" => "gc_package_48" }
-
+   ::hImage                            := {  "16" => "gc_package_16",;
+                                             "32" => "gc_package_32",;
+                                             "48" => "gc_package_48" }
 
    ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
 
@@ -68,9 +67,7 @@ METHOD End()
       ::oValidator:End()
    end if
 
-   ::Super:End()
-
-RETURN ( Self )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
@@ -82,7 +79,7 @@ METHOD gettingSelectSentence() CLASS UbicacionesController
       ::getModel():setGeneralWhere( "almacen_uuid = " + quoted( uuid ) )
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -107,7 +104,7 @@ METHOD Activating() CLASS UbicacionesView
       ::oController:getModel():hBuffer()
    end if 
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -145,17 +142,13 @@ METHOD Activate() CLASS UbicacionesView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| ::closeActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
-   end if
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::closeActivate(), ) }
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-   ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 
