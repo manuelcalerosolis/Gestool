@@ -10,7 +10,9 @@ CLASS CuentasBancariasGestoolController FROM CuentasBancariasController
    METHOD getConfiguracionVistasController();
                                        INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
 
-END CLASS
+   METHOD getUuidParent()              INLINE (msgalert("empresa"), Company():UUID() )
+
+END CLASS 
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -40,6 +42,8 @@ CLASS CuentasBancariasController FROM SQLNavigatorController
 
    METHOD updateBlanckDefecto()
 
+   METHOD getUuidParent()              INLINE ( msgalert( "cliente" ), SQLtercerosModel():getuuidWhereCodigo( ::oController():getModelBuffer( "tercero_codigo" ) ) )
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := CuentasBancariasBrowseView():New( self ), ), ::oBrowseView )
@@ -49,6 +53,8 @@ CLASS CuentasBancariasController FROM SQLNavigatorController
    METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := CuentasBancariasValidator():New( self ), ), ::oValidator )
    
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLCuentasBancariasModel():New( self ), ), ::oModel )
+
+   METHOD getSelector()                INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := CuentasBancariasGetSelector():New( self ), ), ::oGetSelector )
 
 END CLASS
 
@@ -91,6 +97,10 @@ METHOD End() CLASS CuentasBancariasController
 
    if !empty( ::oValidator )
       ::oValidator:End()
+   end if 
+
+   if !empty( ::oGetSelector )
+      ::oGetSelector:End()
    end if 
 
    ::Super:End()
@@ -546,7 +556,9 @@ CLASS SQLCuentasBancariasModel FROM SQLCompanyModel
 
    METHOD countBancoParentUuidAndDefecto( uuidParent )
 
-   METHOD getUuidWhereCodigoAndParentAndNotDeleted( cCodigo ,uuidParent  )
+   METHOD getUuidWhereCodigoAndParentAndNotDeleted( cCodigo )
+
+   METHOD getCodigoWhereUuidAndNotDeleted( uuid , uuidParent  )
 
 END CLASS
 
@@ -649,7 +661,7 @@ RETURN ( getSQLDatabase():Exec( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getUuidWhereCodigoAndParentAndNotDeleted( cCodigo ,uuidParent  ) CLASS SQLCuentasBancariasModel
+METHOD getUuidWhereCodigoAndParentAndNotDeleted( cCodigo, uuidParent  ) CLASS SQLCuentasBancariasModel
    
    local cSql
 
@@ -665,7 +677,27 @@ METHOD getUuidWhereCodigoAndParentAndNotDeleted( cCodigo ,uuidParent  ) CLASS SQ
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( cCodigo ), quoted( uuidParent ) )
 
-RETURN ( getSQLDatabase():Exec( cSql ) )
+RETURN ( getSQLDatabase():getValue( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getCodigoWhereUuidAndNotDeleted( uuid  ) CLASS SQLCuentasBancariasModel
+   
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT codigo 
+
+   FROM %1$s 
+
+   WHERE uuid = %2$s AND deleted_at = 0 
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuid ) )
+
+RETURN ( getSQLDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

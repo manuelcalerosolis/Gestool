@@ -13,8 +13,6 @@ CLASS PagosAssistantController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD gettingSelectSentence()
-
    METHOD getRecibos()
 
    METHOD insertRecibosPago()
@@ -26,6 +24,9 @@ CLASS PagosAssistantController FROM SQLNavigatorController
    METHOD resetImporteAndCliente()
 
    METHOD isCLient()                   INLINE ( nil )
+
+   METHOD gettingSelectSentenceTercero()
+   METHOD gettingSelectSentenceEmpresa()
 
    //Construcciones tardias----------------------------------------------------
 
@@ -55,12 +56,14 @@ METHOD New( oController ) CLASS PagosAssistantController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::getCuentasBancariasController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
-   ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentence() } )
-
    ::getTercerosController():getSelector():setEvent( 'validated', {|| ::getRecibos() } )
    ::setEvent( 'appended',     {|| ::getRecibosPagosController():getModel():InsertPagoReciboAssistant( ::getModelBuffer( "uuid" ) ), ::oController:getRowset():refresh() } )
    ::setEvent( 'exitAppended', {|| ::getRecibosPagosTemporalController():getModel():dropTemporalTable(), ::resetImporteAndCliente() } )
+   ::getCuentasBancariasController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
+   ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentenceTercero() } )
+   ::getCuentasBancariasGestoolController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
+   ::getCuentasBancariasGestoolController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentenceEmpresa() } )
+   //::getCuentasBancariasGestoolController():getSelector():setEvent( 'loading', {|| msgalert("cargando helptext") } )
 
 RETURN ( Self )
 
@@ -90,9 +93,17 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD gettingSelectSentence() CLASS PagosAssistantController
+METHOD gettingSelectSentenceTercero() CLASS PagosAssistantController
 
-   ::getCuentasBancariasController():getModel():setGeneralWhere( "parent_uuid = " + quoted( Company():Uuid() ) )
+   ::getCuentasBancariasController():getModel():setGeneralWhere( "parent_uuid = " + quoted( SQLtercerosModel():getuuidWhereCodigo( ::getModelBuffer( "tercero_codigo" ) ) ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD gettingSelectSentenceEmpresa() CLASS PagosAssistantController
+
+   ::getCuentasBancariasGestoolController():getModel():setGeneralWhere( "parent_uuid = " + quoted( Company():Uuid() ) )
 
 RETURN ( nil )
 
@@ -107,6 +118,16 @@ METHOD OtherClient( cCodigoCliente ) CLASS PagosAssistantController
    ::getRecibosPagosTemporalController():getRowset():buildPad( ::getRecibosPagosTemporalController():getModel():getGeneralSelect( ::getModelBuffer( "uuid" ), ::getModelBuffer( "tercero_codigo" ) ) )
 
    ::getRecibosPagosTemporalController():getBrowseView():Refresh()
+
+   ::getMediosPagoController():getSelector():setBlank()
+   ::getMediosPagoController():getSelector():cOriginal:= ""
+
+   ::getCuentasBancariasController():getSelector():setBlank()
+   ::getCuentasBancariasController():getSelector():cOriginal:= ""
+
+   ::getCuentasBancariasGestoolController():getSelector():setBlank()
+   ::getCuentasBancariasGestoolController():getSelector():cOriginal:= ""
+
 
 RETURN ( nil )
 
@@ -226,11 +247,14 @@ METHOD Activate() CLASS PagosAssistantView
    ::oController:getMediosPagoController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[1] } )
    ::oController:getMediosPagoController():getSelector():setValid( {|| ::oController:validate( "medio_pago_codigo" ) } )
 
-   ::oController:getCuentasBancariasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cuenta_bancaria_codigo" ] ) )
+   ::oController:getCuentasBancariasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cuenta_bancaria_tercero_uuid" ] ) )
    ::oController:getCuentasBancariasController():getSelector():Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[1] } )
 
+   ::oController:getCuentasBancariasGestoolController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cuenta_bancaria_empresa_uuid" ] ) )
+   ::oController:getCuentasBancariasGestoolController():getSelector():Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[1] } )
+
    REDEFINE GET   ::oController:getModel():hBuffer[ "comentario" ] ;
-      ID          150 ;
+      ID          160 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 

@@ -337,6 +337,7 @@ TercerosView.prg 																\
 TercerosValidator.prg 														\
 SqlGetSelector.prg 															\
 SqlClientGetSelector.prg													\
+SqlCuentasBancariasGetSelector.prg										\
 SQLProveedorGetSelector.prg												\
 SqlDireccionGetSelector.prg												\
 DocumentComponent.prg 														\
@@ -696,6 +697,7 @@ TercerosView.obj 																\
 TercerosValidator.obj 														\
 SqlGetSelector.obj 															\
 SqlClientGetSelector.obj 													\
+SqlCuentasBancariasGetSelector.obj 										\
 SQLProveedorGetSelector.obj 												\
 SqlDireccionGetSelector.obj 												\
 DocumentComponent.obj 														\
@@ -1052,6 +1054,7 @@ $(OBJ)\TercerosView.obj 													+
 $(OBJ)\TercerosValidator.obj 												+
 $(OBJ)\SqlGetSelector.obj 													+
 $(OBJ)\SqlClientGetSelector.obj											+
+$(OBJ)\SqlCuentasBancariasGetSelector.obj								+
 $(OBJ)\SQLProveedorGetSelector.obj										+
 $(OBJ)\SqlDireccionGetSelector.obj										+
 $(OBJ)\DocumentComponent.obj												+

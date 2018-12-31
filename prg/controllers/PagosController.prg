@@ -520,16 +520,16 @@ CLASS SQLPagosModel FROM SQLCompanyModel
    METHOD getInitialSelect()
 
    METHOD getCuentaBancariaTerceroUuidAttribute( uValue ) ; 
-                                          INLINE ( if( empty( uValue ), space( 3 ), SQLCuentasBancariasModel():getCodigoWhereUuid( uValue ) ) )
+                                          INLINE ( if( empty( uValue ), space( 3 ), SQLCuentasBancariasModel():getCodigoWhereUuidAndNotDeleted( uValue ) ) )
 
    METHOD setCuentaBancariaTerceroUuidAttribute( uValue ) ;
-                                          INLINE ( if( empty( uValue ), "", SQLCuentasBancariasModel():getUuidWhereCodigo( uValue ) ) )
+                                          INLINE ( if( empty( uValue ), "", SQLCuentasBancariasModel():getUuidWhereCodigoAndParentAndNotDeleted( uValue, SQLtercerosModel():getuuidWhereCodigo( ::getController():getModelBuffer( "tercero_codigo" ) ) ) ) )
 
    METHOD getCuentaBancariaEmpresaUuidAttribute( uValue ) ; 
-                                          INLINE ( if( empty( uValue ), space( 3 ), SQLCuentasBancariasGestoolModel():getCodigoWhereUuid( uValue ) ) )
+                                          INLINE ( if( empty( uValue ), space( 3 ), SQLCuentasBancariasGestoolModel():getCodigoWhereUuidAndNotDeleted( uValue ) ) )
 
    METHOD setCuentaBancariaEmpresaUuidAttribute( uValue ) ;
-                                          INLINE ( if( empty( uValue ), "", SQLCuentasBancariasGestoolModel():getUuidWhereCodigo( uValue ) ) )
+                                          INLINE ( if( empty( uValue ), "", SQLCuentasBancariasGestoolModel():getUuidWhereCodigoAndParentAndNotDeleted( uValue, Company():Uuid() ) ) )
 
 #ifdef __TEST__
 
