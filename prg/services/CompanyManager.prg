@@ -33,6 +33,8 @@ CLASS CompanyManager
    METHOD getDefaultMetodoPago()       INLINE ( SQLAjustableModel():getMetodoPago( ::uuid ) )
 
    METHOD getDefaultCertificado()      INLINE ( SQLAjustableModel():getCertificado( ::uuid ) )
+
+   METHOD getDefaultUsarUbicaciones()  INLINE ( SQLAjustableModel():getUsarUbicaciones( ::uuid ) )
    
    METHOD getPathDocuments( cDirectory ) ;
                                        INLINE ( cCompanyPathDocuments( ::codigo, cDirectory ) )

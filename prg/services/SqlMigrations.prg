@@ -374,13 +374,15 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLAlmacenesModel():New() )
 
+   aadd( ::aModels, SQLUbicacionesModel():New() )
+
    aadd( ::aModels, SQLTageableModel():New() )
                                       
    aadd( ::aModels, SQLConfiguracionVistasModel():New() )
 
    aadd( ::aModels, SQLConfiguracionesModel():New() ) 
 
-   //aadd( ::aModels, SQLMovimientosAlmacenModel():New() )
+   //aadd( ::aModels, SQLConsolidacionesAlmacenModel():New() )
 
    //aadd( ::aModels, SQLMovimientosAlmacenLineasModel():New() )
 
@@ -411,6 +413,8 @@ METHOD addModels() CLASS SQLCompanyMigrations
    aadd( ::aModels, SQLFacturasProveedoresModel():New() )  
 
    aadd( ::aModels, SQLFacturasClientesLineasModel():New() ) 
+
+   aadd( ::aModels, SQLConsolidacionesAlmacenLineasModel():New() ) 
 
    aadd( ::aModels, SQLFacturasProveedoresLineasModel():New() ) 
 

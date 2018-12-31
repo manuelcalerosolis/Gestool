@@ -313,7 +313,7 @@ METHOD getSQLSentenceMovimientosAlmacenForReport( oReporting )
    cSentence         +=    "movimientos_almacen.numero, "
    cSentence         +=    "CAST( movimientos_almacen.fecha_hora AS date ) AS fecha, "
    cSentence         +=    "CAST( movimientos_almacen.fecha_hora AS time ) AS hora, "
-   cSentence         +=    SQLMovimientosAlmacenModel():getColumnMovimiento( 'movimientos_almacen' ) 
+   cSentence         +=    SQLConsolidacionesAlmacenModel():getColumnMovimiento( 'movimientos_almacen' ) 
    cSentence         +=    "movimientos_almacen.almacen_destino, "
    cSentence         +=    "movimientos_almacen.almacen_origen, "
    cSentence         +=    "movimientos_almacen_lineas.uuid AS uuid, "
@@ -381,7 +381,7 @@ METHOD getSQLSentenceMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenL
    cSentence         +=    "movimientos_almacen.numero, "
    cSentence         +=    "CAST( movimientos_almacen.fecha_hora AS DATE ) AS fecha, "
    cSentence         +=    "CAST( movimientos_almacen.fecha_hora AS TIME ) AS hora, "
-   cSentence         +=    SQLMovimientosAlmacenModel():getColumnMovimiento( 'movimientos_almacen' ) 
+   cSentence         +=    SQLConsolidacionesAlmacenModel():getColumnMovimiento( 'movimientos_almacen' ) 
    cSentence         +=    "movimientos_almacen.almacen_destino, "
    cSentence         +=    "movimientos_almacen.almacen_origen, "
    cSentence         +=    "movimientos_almacen_lineas.parent_uuid, "

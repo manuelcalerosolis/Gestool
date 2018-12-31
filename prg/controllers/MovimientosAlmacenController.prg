@@ -108,7 +108,7 @@ METHOD New()
 
    ::lOthers                     := .t.
 
-   ::oModel                      := SQLMovimientosAlmacenModel():New( self )
+   ::oModel                      := SQLConsolidacionesAlmacenModel():New( self )
 
    ::oBrowseView                 := MovimientosAlmacenBrowseView():New( self )
 

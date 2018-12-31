@@ -4,409 +4,203 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
+CLASS SQLConsolidacionesAlmacenLineasModel FROM SQLOperacionesComercialesLineasModel
 
-   DATA cTableName            INIT  "movimientos_almacen_lineas"
+   DATA cTableName            INIT  "consolidaciones_almacenes_lineas"
 
-   DATA cTableTemporal        
+   DATA cGroupBy              INIT  "consolidaciones_almacenes_lineas.id" 
 
-   DATA cConstraints          INIT  "PRIMARY KEY ( id ), "                       + ; 
-                                       "KEY ( uuid ), "                          + ;
-                                       "KEY ( parent_uuid ), "                   + ;
-                                       "KEY ( codigo_articulo ) "               
+#ifdef __TEST__
 
-   METHOD getColumns()
+   METHOD testCreateIVAal0( uuid )
+   METHOD test_create_IVA_al_0_con_10_descuento( uuid )
 
-   METHOD getInitialSelect()
-
-   METHOD getInsertSentence()
-
-   METHOD addInsertSentence()
-
-   METHOD addUpdateSentence()
+   METHOD testCreateIVAal10( uuid )
+   METHOD testCreateIVAal10ConRecargoEquivalencia( uuid )
    
-   METHOD addDeleteSentence()
+   METHOD testCreateIVAal10Con15PorcientoDescuento( uuid )
 
-   METHOD addDeleteSentenceById()
+   METHOD testCreateIVAal21( uuid )
+   METHOD testCreateIVAal21ConRecargoEquivalencia( uuid )
+   
+   METHOD testCreateIVAal21Con20PorcientoDescuento( uuid )   
 
-   METHOD deleteWhereUuid( uuid )
+   METHOD testCreateIVAal21ConIncrememtoPrecio( uuid ) 
 
-   METHOD aUuidToDelete( uuid )
+   METHOD testCreate10PorCientoDescuento15Incremento( uuid )
 
-   METHOD getDeleteSentenceFromParentsUuid()
-
-   METHOD getSQLSubSentenceTotalUnidadesLinea( cTable, cAs )
-
-   METHOD getSQLSubSentenceTotalPrecioLinea( cTable, cAs )
-
-   METHOD getSQLSubSentenceSumatorioUnidadesLinea( cTable, cAs )
-
-   METHOD getSQLSubSentenceSumatorioTotalPrecioLinea( cTable, cAs )
-
-   METHOD getSentenceNotSent( aFetch )
-
-   METHOD getIdProductAdded()
-
-   METHOD getUpdateUnitsSentece()
-
-   METHOD createTemporalTableWhereUuid( originalUuid )
-
-   METHOD alterTemporalTableWhereUuid()
-
-   METHOD replaceUuidInTemporalTable( duplicatedUuid )
-
-   METHOD insertTemporalTable()
-
-   METHOD dropTemporalTable()
-
-   METHOD duplicateByUuid( originalUuid, duplicatedUuid )
+#endif
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns()
+#ifdef __TEST__
 
-   hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT"         ,;
-                                                      "default"   => {|| 0 } }                        )
+METHOD testCreateIVAal0( uuid ) CLASS SQLFacturasClientesLineasModel
 
-   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"    ,;
-                                                      "default"   => {|| win_uuidcreatestring() } }   )
+   local hBuffer  := ::loadBlankBuffer()
 
-   hset( ::hColumns, "parent_uuid",                {  "create"    => "VARCHAR(40) NOT NULL"           ,;
-                                                      "default"   => {|| space(40) } }                )
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "articulo_codigo", "0" )
+   hset( hBuffer, "articulo_nombre", "Test al 0% IVA" )
+   hset( hBuffer, "articulo_unidades", 1 )
+   hset( hBuffer, "articulo_precio", 100 )
+   hset( hBuffer, "almacen_codigo", "0" )
 
-   hset( ::hColumns, "codigo_articulo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"         ,;
-                                                      "default"   => {|| space( 20 ) } }              )
-
-   hset( ::hColumns, "nombre_articulo",            {  "create"    => "VARCHAR(250) NOT NULL"          ,;
-                                                      "default"   => {|| space(250) } }               )
-
-   hset( ::hColumns, "codigo_primera_propiedad",   {  "create"    => "VARCHAR(20)"                    ,;
-                                                      "default"   => {|| space(20) } }                )
-
-   hset( ::hColumns, "valor_primera_propiedad",    {  "create"    => "VARCHAR(200)"                   ,;
-                                                      "default"   => {|| space(200) } }               )
-
-   hset( ::hColumns, "codigo_segunda_propiedad",   {  "create"    => "VARCHAR(20)"                    ,;
-                                                      "default"   => {|| space(20) } }                )
-
-   hset( ::hColumns, "valor_segunda_propiedad",    {  "create"    => "VARCHAR(200)"                   ,;
-                                                      "default"   => {|| space(200) } }               )
-
-   hset( ::hColumns, "fecha_caducidad",            {  "create"    => "DATE"                           ,;
-                                                      "default"   => {|| ctod('') } }                 )
-
-   hset( ::hColumns, "lote",                       {  "create"    => "VARCHAR(40)"                    ,;
-                                                      "default"   => {|| space(40) } }                )
-
-   hset( ::hColumns, "bultos_articulo",            {  "create"    => "DECIMAL(19,6)"                  ,;
-                                                      "default"   => {|| 0 } }                        )
-
-   hset( ::hColumns, "cajas_articulo",             {  "create"    => "DECIMAL(19,6)"                  ,;
-                                                      "default"   => {|| 0 } }                        )
-
-   hset( ::hColumns, "unidades_articulo",          {  "create"    => "DECIMAL(19,6)"                  ,;
-                                                      "default"   => {|| 1 } }                        )
-
-   hset( ::hColumns, "precio_articulo",            {  "create"    => "DECIMAL(19,6)"                  ,;
-                                                      "default"   => {|| 0 } }                        )
-
-RETURN ( ::hColumns )
+RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInitialSelect()
+METHOD test_create_IVA_al_0_con_10_descuento( uuid ) CLASS SQLFacturasClientesLineasModel
 
-   local cSelect  := "SELECT id, "                                            + ;
-                        "uuid, "                                              + ;
-                        "parent_uuid, "                                       + ;
-                        "codigo_articulo, "                                   + ;
-                        "nombre_articulo, "                                   + ;
-                        "codigo_primera_propiedad, "                          + ;
-                        "valor_primera_propiedad, "                           + ;
-                        "codigo_segunda_propiedad, "                          + ;
-                        "valor_segunda_propiedad, "                           + ;
-                        "fecha_caducidad, "                                   + ;
-                        "lote, "                                              + ;
-                        "bultos_articulo, "                                   + ;
-                        "cajas_articulo, "                                    + ;
-                        "unidades_articulo, "                                 + ;
-                        ::getSQLSubSentenceTotalUnidadesLinea() + ", "        + ;
-                        "precio_articulo, "                                   + ;
-                        ::getSQLSubSentenceTotalPrecioLinea()                 + ;
-                     "FROM " + ::getTableName()    
+   local hBuffer  := ::loadBlankBuffer()
 
-RETURN ( cSelect )
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "articulo_codigo", "0" )
+   hset( hBuffer, "articulo_nombre", "Test al 0% IVA con 10% descuento" )
+   hset( hBuffer, "articulo_unidades", 1 )
+   hset( hBuffer, "articulo_precio", 100 )
+   hset( hBuffer, "descuento", 10 )
+   hset( hBuffer, "almacen_codigo", "0" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertSentence()
+METHOD testCreate10PorCientoDescuento15Incremento( uuid ) CLASS SQLFacturasClientesLineasModel
 
-   local nId
+   local hBuffer  := ::loadBlankBuffer()
 
-   nId            := ::getIdProductAdded()
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "articulo_codigo", "0" )
+   hset( hBuffer, "articulo_nombre", "Test al 0% IVA con 10% descuento" )
+   hset( hBuffer, "articulo_unidades", 1 )
+   hset( hBuffer, "articulo_precio", 100 )
+   hset( hBuffer, "incremento_precio", 15 )
+   hset( hBuffer, "descuento", 10 )
+   hset( hBuffer, "almacen_codigo", "0" )
 
-   if empty( nId )
-      RETURN ( ::Super:getInsertSentence() )
-   end if 
-
-   ::setSQLInsert( ::getUpdateUnitsSentece( nId ) )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD addInsertSentence( aSQLInsert, oProperty )
-
-   if empty( oProperty:Value )
-      RETURN ( nil )
-   end if
-
-   hset( ::hBuffer, "uuid",                     win_uuidcreatestring() )
-   hset( ::hBuffer, "codigo_primera_propiedad", oProperty:cCodigoPropiedad1 )
-   hset( ::hBuffer, "valor_primera_propiedad",  oProperty:cValorPropiedad1 )
-   hset( ::hBuffer, "codigo_segunda_propiedad", oProperty:cCodigoPropiedad2 )
-   hset( ::hBuffer, "valor_segunda_propiedad",  oProperty:cValorPropiedad2 )
-   hset( ::hBuffer, "unidades_articulo",        oProperty:Value )
-
-   aadd( aSQLInsert, ::Super:getInsertSentence() + "; " )
-
-RETURN ( nil )
+RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD addUpdateSentence( aSQLUpdate, oProperty )
+METHOD testCreateIVAal10( uuid ) CLASS SQLFacturasClientesLineasModel
 
-   aadd( aSQLUpdate, "UPDATE " + ::cTableName + " " +                                                       ;
-                        "SET unidades_articulo = " + toSqlString( oProperty:Value )                + ", " + ;
-                        "precio_articulo = " + toSqlString( hget( ::hBuffer, "precio_articulo" ) ) + " " +  ;
-                        "WHERE uuid = " + quoted( oProperty:Uuid ) +  "; " )
+   local hBuffer  := ::loadBlankBuffer()
 
-RETURN ( nil )
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "articulo_codigo", "0" )
+   hset( hBuffer, "articulo_nombre", "Test al 10% IVA" )
+   hset( hBuffer, "articulo_unidades", 1 )
+   hset( hBuffer, "articulo_precio", 100 )
+   hset( hBuffer, "iva", 10 )
+   hset( hBuffer, "almacen_codigo", "0" )
 
-//---------------------------------------------------------------------------//
-
-METHOD addDeleteSentence( aSQLUpdate, oProperty )
-
-   aadd( aSQLUpdate, "DELETE FROM " + ::cTableName + " " +                          ;
-                        "WHERE uuid = " + quoted( oProperty:Uuid ) + "; " )
-
-RETURN ( nil )
+RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD addDeleteSentenceById( aSQLUpdate, nId )
+METHOD testCreateIVAal10ConRecargoEquivalencia( uuid ) CLASS SQLFacturasClientesLineasModel
 
-   aadd( aSQLUpdate, "DELETE FROM " + ::cTableName + " " +                          ;
-                        "WHERE id = " + quoted( nId ) + "; " )
+   local hBuffer  := ::loadBlankBuffer()
 
-RETURN ( nil )
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "articulo_codigo", "0" )
+   hset( hBuffer, "articulo_nombre", "Test al 10% IVA" )
+   hset( hBuffer, "articulo_unidades", 1 )
+   hset( hBuffer, "articulo_precio", 100 )
+   hset( hBuffer, "iva", 10 )
+   hset( hBuffer, "recargo_equivalencia", 1.4 )
+   hset( hBuffer, "almacen_codigo", "0" )
 
-//---------------------------------------------------------------------------//
-
-METHOD deleteWhereUuid( uuid )
-
-   local cSentence   := "DELETE FROM " + ::cTableName + " " + ;
-                           "WHERE parent_uuid = " + quoted( uuid )
-
-RETURN ( ::getDatabase():Exec( cSentence ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD aUuidToDelete( aParentsUuid )
-
-   local cSentence   
-
-   cSentence            := "SELECT uuid FROM " + ::cTableName + " "
-   cSentence            +=    "WHERE parent_uuid IN ( " 
-
-   aeval( aParentsUuid, {| v | cSentence += toSQLString( v ) + ", " } )
-
-   cSentence            := chgAtEnd( cSentence, ' )', 2 )
-
-RETURN ( ::getDatabase():selectFetchArray( cSentence ) )
+RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentenceFromParentsUuid( aParentsUuid )
+METHOD testCreateIVAal10Con15PorcientoDescuento( uuid ) CLASS SQLFacturasClientesLineasModel
 
-   local aUuid       := ::aUuidToDelete( aParentsUuid )
+   local hBuffer  := ::loadBlankBuffer()
 
-   if !empty( aUuid )
-      RETURN ::getDeleteSentence( aUuid )
-   end if 
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "articulo_codigo", "0" )
+   hset( hBuffer, "articulo_nombre", "Test al 10% IVA con 15% descuento" )
+   hset( hBuffer, "articulo_unidades", 1 )
+   hset( hBuffer, "articulo_precio", 100 )
+   hset( hBuffer, "iva", 10 )
+   hset( hBuffer, "descuento", 15 )
+   hset( hBuffer, "almacen_codigo", "0" )
 
-RETURN ( "" )
-
-//---------------------------------------------------------------------------//
-
-METHOD getSQLSubSentenceTotalUnidadesLinea( cTable, cAs )
-
-   DEFAULT cTable    := ""
-   DEFAULT cAs       := "total_unidades"
-   
-   if !empty( cTable )
-      cTable         += "."
-   end if 
-
-RETURN ( cTable + "unidades_articulo AS " + cAs + " " )
+RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSubSentenceTotalPrecioLinea( cTable, cAs )
+METHOD testCreateIVAal21( uuid ) CLASS SQLFacturasClientesLineasModel
 
-   DEFAULT cTable    := ""
-   DEFAULT cAs       := "total_precio"
+   local hBuffer  := ::loadBlankBuffer()
 
-   if !empty( cTable )
-      cTable         += "."
-   end if 
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "articulo_codigo", "0" )
+   hset( hBuffer, "articulo_nombre", "Test al 21% IVA" )
+   hset( hBuffer, "articulo_unidades", 1 )
+   hset( hBuffer, "articulo_precio", 100 )
+   hset( hBuffer, "iva", 21 )
+   hset( hBuffer, "almacen_codigo", "0" )
 
-RETURN ( cTable + "unidades_articulo * " + cTable + "precio_articulo AS " + cAs + " " )
-
-//---------------------------------------------------------------------------//
-
-METHOD getSQLSubSentenceSumatorioUnidadesLinea( cTable, cAs )
-
-   DEFAULT cAs       := "total_unidades"
-
-   if empty( cTable )
-      cTable         := ""
-   else
-      cTable         += "."
-   end if
-
-RETURN ( "SUM( " + cTable + "unidades_articulo ) AS " + cAs + " " )
+RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSubSentenceSumatorioTotalPrecioLinea( cTable, cAs )
+METHOD testCreateIVAal21ConRecargoEquivalencia( uuid ) CLASS SQLFacturasClientesLineasModel
 
-   DEFAULT cAs       := "total_precio"
+   local hBuffer  := ::loadBlankBuffer()
 
-   if empty( cTable )
-      cTable         := ""
-   else
-      cTable         += "."
-   end if
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "articulo_codigo", "0" )
+   hset( hBuffer, "articulo_nombre", "Test al 21% IVA" )
+   hset( hBuffer, "articulo_unidades", 1 )
+   hset( hBuffer, "articulo_precio", 100 )
+   hset( hBuffer, "iva", 21 )
+   hset( hBuffer, "recargo_equivalencia", 5.2 )
+   hset( hBuffer, "almacen_codigo", "0" )
 
-RETURN ( "SUM( " + cTable + "unidades_articulo * " + cTable + "precio_articulo ) AS " + cAs + " " )
-
-//---------------------------------------------------------------------------//
-
-METHOD getSentenceNotSent( aFetch )
-
-   local cSentence   := "SELECT * FROM " + ::cTableName + " "
-
-   cSentence         +=    "WHERE parent_uuid IN ( " 
-
-   aeval( aFetch, {|h| cSentence += toSQLString( hget( h, "uuid" ) ) + ", " } )
-
-   cSentence         := chgAtEnd( cSentence, ' )', 2 )
-
-RETURN ( cSentence )
+RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getIdProductAdded()
+METHOD testCreateIVAal21Con20PorcientoDescuento( uuid ) CLASS SQLFacturasClientesLineasModel
 
-   local aId         := MovimientosAlmacenLineasRepository():getIdFromBuffer( ::hBuffer )
+   local hBuffer  := ::loadBlankBuffer()
 
-   if !empty( aId )
-      RETURN( hget( atail( aId ), "id" ) )
-   end if 
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "articulo_codigo", "0" )
+   hset( hBuffer, "articulo_nombre", "Test al 21% IVA con 20% descuento" )
+   hset( hBuffer, "articulo_unidades", 1 )
+   hset( hBuffer, "articulo_precio", 100 )
+   hset( hBuffer, "iva", 21 )
+   hset( hBuffer, "descuento", 20 )
+   hset( hBuffer, "almacen_codigo", "0" )
 
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD getUpdateUnitsSentece( id )
-   
-   local cSentence   := "UPDATE " + ::cTableName                                                                                    + " " +  ;
-                           "SET unidades_articulo = unidades_articulo + " + toSQLString( hget( ::hBuffer, "unidades_articulo" ) )   + " " +  ;
-                        "WHERE id = " + quoted( id )
-
-RETURN ( cSentence )
+RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD createTemporalTableWhereUuid( originalUuid )
+METHOD testCreateIVAal21ConIncrememtoPrecio( uuid ) CLASS SQLFacturasClientesLineasModel
 
-   local cSentence
+   local hBuffer  := ::loadBlankBuffer()
 
-   ::cTableTemporal  := ::cTableName + hb_ttos( hb_datetime() )
+   hset( hBuffer, "parent_uuid", uuid )
+   hset( hBuffer, "articulo_codigo", "0" )
+   hset( hBuffer, "articulo_nombre", "Test al 21% IVA con 20% descuento" )
+   hset( hBuffer, "articulo_unidades", 13.22 )
+   hset( hBuffer, "articulo_precio", 0.40438 )
+   hset( hBuffer, "incremento_precio", 0.17000 )
+   hset( hBuffer, "descuento", 15.889 )
+   hset( hBuffer, "iva", 21 )
+   hset( hBuffer, "almacen_codigo", "0" )
 
-   cSentence         := "CREATE TEMPORARY TABLE " + ::cTableTemporal          + " "
-   cSentence         +=    "SELECT * from " + ::cTableName                    + " " 
-   cSentence         += "WHERE parent_uuid = " + quoted( originalUuid )       + "; "
-
-RETURN ( ::getDatabase():Exec( cSentence ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD alterTemporalTableWhereUuid()
-
-   local cSentence
-
-   cSentence         := "ALTER TABLE " + ::cTableTemporal + " DROP id"
-
-RETURN ( ::getDatabase():Exec( cSentence ) )
+RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD replaceUuidInTemporalTable( duplicatedUuid )
-
-   local cSentence
-
-   cSentence         := "UPDATE " + ::cTableTemporal                          + " "
-   cSentence         +=    "SET id = 0"                                       + ", "
-   cSentence         +=       "uuid = UUID()"                                 + ", "
-   cSentence         +=       "parent_uuid = " + quoted( duplicatedUuid )    
-
-RETURN ( ::getDatabase():Exec( cSentence ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertTemporalTable()
-
-   local cSentence
-
-   cSentence         := "INSERT INTO " + ::cTableName                         + " "
-   cSentence         +=    "SELECT * FROM " + ::cTableTemporal
-
-RETURN ( ::getDatabase():Exec( cSentence ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD dropTemporalTable()
-
-   local cSentence
-
-   cSentence         := "DROP TABLE " + ::cTableTemporal           
-
-RETURN ( ::getDatabase():Exec( cSentence ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD duplicateByUuid( originalUuid, duplicatedUuid )
-
-   if !( ::createTemporalTableWhereUuid( originalUuid ) )
-      RETURN ( nil )
-   end if 
-
-   if !( ::replaceUuidInTemporalTable( duplicatedUuid ) )
-      RETURN ( nil )
-   end if 
-
-   if !( ::insertTemporalTable() )
-      RETURN ( nil )
-   end if 
-
-   if !( ::dropTemporalTable() )
-      RETURN ( nil )
-   end if 
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
+#endif

@@ -55,7 +55,7 @@ METHOD setUserDataSet()
    ::oFastReport:ClearDataSets()
 
    ::oFastReport:setUserDataSet(    "Movimientos de almacén",;
-                                    SQLMovimientosAlmacenModel():getSerializeColumns(),;
+                                    SQLConsolidacionesAlmacenModel():getSerializeColumns(),;
                                     {|| ::oMovimientosAlmacenRowSet:gotop() },;
                                     {|| ::oMovimientosAlmacenRowSet:skip(1) },;
                                     {|| ::oMovimientosAlmacenRowSet:skip(-1) },;

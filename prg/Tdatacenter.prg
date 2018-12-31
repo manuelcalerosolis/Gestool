@@ -933,7 +933,7 @@ METHOD syncronizeModels()
    ::oMsg:SetText( "Sincronizando datos de las tablas de MySQL" )
 
    ::oMsg:SetText( "Sincronizando Movimientos de almacén" )
-   SQLMovimientosAlmacenModel():Syncronize()
+   SQLConsolidacionesAlmacenModel():Syncronize()
 
    MsgInfo( "Proceso finalizado con exito" )
 

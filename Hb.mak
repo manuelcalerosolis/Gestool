@@ -204,7 +204,7 @@ FacturasClientesReport.prg													\
 ImprimirSeriesController.prg 												\
 SQLPrintController.prg 														\
 ImprimirSeriesView.prg 														\
-SQLMovimientosAlmacenModel.prg 											\
+SQLConsolidacionesAlmacenModel.prg 										\
 SQLConfiguracionesModel.prg 												\
 ConfiguracionesController.prg												\
 RecordController.prg															\
@@ -314,7 +314,7 @@ PedidosClientesLineasModel.prg 											\
 Events.prg 																		\
 Seeders.prg    																\
 SqlMigrations.prg 															\
-SQLMovimientosAlmacenLineasNumerosSeriesModel.prg 					\
+SQLConsolidacionesAlmacenLineasModel.prg 					\
 NumerosSeriesController.prg 								  				\
 NumerosSeriesView.prg 														\
 SQLExportableModel.prg 														\
@@ -672,7 +672,7 @@ ColumnasUsuariosModel.obj 													\
 Events.obj 																		\
 Seeders.obj 																	\
 SqlMigrations.obj 															\
-SQLMovimientosAlmacenLineasNumerosSeriesModel.obj 					\
+SQLConsolidacionesAlmacenLineasModel.obj 								\
 NumerosSeriesController.obj 												\
 NumerosSeriesView.obj 														\
 SQLExportableModel.obj 														\
@@ -1028,7 +1028,7 @@ $(OBJ)\SQLConfiguracionVistasController.obj 							+
 $(OBJ)\PedidosClientesLineasModel.obj 									+
 $(OBJ)\Seeders.obj 															+
 $(OBJ)\SqlMigrations.obj 													+
-$(OBJ)\SQLMovimientosAlmacenLineasNumerosSeriesModel.obj 		+
+$(OBJ)\SQLConsolidacionesAlmacenLineasModel.obj 		+
 $(OBJ)\NumerosSeriesController.obj 										+
 $(OBJ)\NumerosSeriesView.obj 												+
 $(OBJ)\SQLRowSet.obj 														+

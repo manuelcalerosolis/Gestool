@@ -32,7 +32,7 @@ METHOD New( oController )
 
    ::cTitle                := "Series"
 
-   ::oModel                := SQLMovimientosAlmacenLineasNumerosSeriesModel():New( self )
+   // ::oModel                := SQLMovimientosAlmacenLineasNumerosSeriesModel():New( self )
 
    ::oDialogView           := NumerosSeriesView():New( self )
 

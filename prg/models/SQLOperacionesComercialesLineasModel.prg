@@ -116,6 +116,9 @@ METHOD getColumns() CLASS SQLOperacionesComercialesLineasModel
    hset( ::hColumns, "almacen_codigo",             {  "create"    => "VARCHAR( 20 ) NOT NULL"         ,;
                                                       "default"   => {|| space( 20 ) } }              )
 
+   hset( ::hColumns, "ubicacion_codigo",           {  "create"    => "VARCHAR( 20 ) NOT NULL"         ,;
+                                                      "default"   => {|| space( 20 ) } }              )
+
    hset( ::hColumns, "agente_codigo",              {  "create"    => "VARCHAR( 20 ) NOT NULL"         ,;
                                                       "default"   => {|| space( 20 ) } }              )
 

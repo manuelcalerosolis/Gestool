@@ -408,7 +408,7 @@ METHOD New( cTitle, oWnd, nIndex, cBmpPanel, nBodyHeight ) CLASS TTaskPanel
 
    DEFAULT nBodyHeight  := 50
 
-   ::lUnicode           := FW_SetUnicode()
+   ::lUnicode           := fw_setUniCode()
    ::cTitle             := cTitle
    ::nTop               := ::nTopMargin
 
@@ -531,7 +531,7 @@ RETURN ( oGet )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddComboBox( cPrompt, cItem, aItems ) CLASS TTaskPanel
+METHOD addComboBox( cPrompt, cItem, aItems ) CLASS TTaskPanel
 
    local oSay
    local oCbx

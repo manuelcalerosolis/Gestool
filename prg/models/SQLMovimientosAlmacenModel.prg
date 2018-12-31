@@ -1,223 +1,229 @@
 #include "fivewin.ch"
 #include "factu.ch" 
-#include "hdo.ch"
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
+CLASS SQLConsolidacionesAlmacenModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "movimientos_almacen"
-
-   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid, empresa_codigo, usuario_codigo)"
-
-   DATA aTextoMovimiento         INIT { 'Entre almacenes', 'Regularización', 'Objetivos', 'Consolidación', 'Vacio' }
- 
    METHOD getColumns()
 
-   METHOD getColumnMovimiento()  
+   METHOD getColumnsSelect()           VIRTUAL
+   
+   METHOD getTercerosCodigo()          VIRTUAL
 
    METHOD getInitialSelect()
 
-   METHOD getGroupBy()           INLINE ( "GROUP BY movimientos_almacen.id " )
-   
-   METHOD getDeleteSentenceById( aId )
+   METHOD getTercerosModel()           VIRTUAL
 
-   METHOD loadDuplicateBuffer( id )                
+   METHOD getNumeroWhereUuid( uuid )
 
-   METHOD getInsertSentence( hBuffer )
+   METHOD maxNumberWhereSerie( cSerie )
 
-   METHOD assingNumber()
+#ifdef __TEST__
 
-   METHOD cTextoMovimiento( nTipoMovimiento ) ;
-                                 INLINE ( ::aTextoMovimiento[ minmax( nTipoMovimiento, 1, len( ::aTextoMovimiento ) ) ] )
+   METHOD totalPaid( uuidFactura )
 
-   METHOD Syncronize()
+   METHOD testCreateFactura( uuid )
+
+   METHOD testCreateFacturaConRecargoDeEqivalencia( uuid )
+
+   METHOD testCreateFacturaConVariosPlazos( uuid )
+
+#endif
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns()
-   
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "default"   => {|| 0 } }                                 )
+METHOD getColumns() CLASS SQLConsolidacionesAlmacenModel
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "id",                            {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"        ,;
+                                                         "default"   => {|| 0 } }                              )
 
-   hset( ::hColumns, "empresa",           {  "create"    => "VARCHAR( 4 )"                            ,;
-                                             "default"   => {|| space( 4 ) } }                        )
+   hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"        ,;
+                                                         "default"   => {|| win_uuidcreatestring() } }         )
 
-   hset( ::hColumns, "numero",            {  "create"    => "CHAR ( 50 )"                             ,;
-                                             "default"   => {|| MovimientosAlmacenRepository():getNextNumber() } }                       )
+   hset( ::hColumns, "delegacion_uuid",               {  "create"    => "VARCHAR( 40 )"                        ,;
+                                                         "default"   => {|| Delegation():Uuid() } }            )
 
-   hset( ::hColumns, "fecha_hora",        {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
-                                             "default"   => {|| hb_datetime() } }                     )
+   hset( ::hColumns, "sesion_uuid",                   {  "create"    => "VARCHAR( 40 )"                        ,;
+                                                         "default"   => {|| Session():Uuid() } }               )
 
-   hset( ::hColumns, "tipo_movimiento",   {  "create"    => "TINYINT UNSIGNED NOT NULL"               ,;
-                                             "default"   => {|| 1 } }                                 )
+   hset( ::hColumns, "serie",                         {  "create"    => "VARCHAR( 20 )"                        ,;
+                                                         "default"   => {|| space( 20 ) } }                    )
 
-   hset( ::hColumns, "almacen_origen",    {  "create"    => "CHAR ( 16 )"                             ,;
-                                             "default"   => {|| space( 16 ) } }                       )
+   hset( ::hColumns, "numero",                        {  "create"    => "INT UNSIGNED"                         ,;
+                                                         "default"   => {|| 0 } }                              )
 
-   hset( ::hColumns, "almacen_destino",   {  "create"    => "CHAR ( 16 )"                             ,;
-                                             "default"   => {|| space( 16 ) } }                       )
+   hset( ::hColumns, "fecha",                         {  "create"    => "DATE"                                 ,;
+                                                         "default"   => {|| date() } }                         )
 
-   hset( ::hColumns, "comentarios",       {  "create"    => "TEXT"                                    ,;
-                                             "default"   => {|| "" } }                                )
+   hset( ::hColumns, "fecha_valor_stock",             {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"   ,;
+                                                         "default"   => {|| hb_datetime() } }                  )
 
-   ::getDateTimeColumns()   
+   hset( ::hColumns, "almacen_codigo",                {  "create"    => "VARCHAR( 20 )"                        ,;
+                                                         "default"   => {|| space( 20 ) } }                    )
 
-   ::getTimeStampSentColumns()
+   ::getTimeStampColumns()
+
+   ::getClosedColumns()
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInitialSelect()
-   
-   local cSelect  
+METHOD getInitialSelect() CLASS SQLConsolidacionesAlmacenModel
 
-   cSelect  := "SELECT "                                                                  + ;
-                  "movimientos_almacen.id                         AS id, "                + ;
-                  "movimientos_almacen.uuid                       AS uuid, "              + ;
-                  "movimientos_almacen.numero                     AS numero, "            + ;
-                  "movimientos_almacen.tipo_movimiento            AS tipo_movimiento, "   + ;
-                  ::getColumnMovimiento( "movimientos_almacen" )                          + ;
-                  "movimientos_almacen.fecha_hora                 AS fecha_hora, "        + ;
-                  "movimientos_almacen.almacen_origen             AS almacen_origen, "    + ;
-                  "movimientos_almacen.almacen_destino            AS almacen_destino, "   + ;
-                  SQLMovimientosAlmacenLineasModel():getSQLSubSentenceSumatorioTotalPrecioLinea( "movimientos_almacen_lineas" ) + ", " +;
-                  "movimientos_almacen.divisa                     AS divisa, "            + ;
-                  "movimientos_almacen.divisa_cambio              AS divisa_cambio, "     + ;
-                  "movimientos_almacen.comentarios                AS comentarios, "       + ;        
-                  "movimientos_almacen.creado                     AS creado, "            + ;
-                  "movimientos_almacen.modificado                 AS modificado, "        + ;
-                  "movimientos_almacen.enviado                    AS enviado "            + ;  
-               "FROM " + ::getTableName() + " "                                           + ;
-                  "INNER JOIN movimientos_almacen_lineas "                                + ;
-                  "ON movimientos_almacen.uuid = movimientos_almacen_lineas.parent_uuid " 
+   local cSql
 
-RETURN ( cSelect )
+   TEXT INTO cSql
 
-//---------------------------------------------------------------------------//
+   SELECT
+      %5$s
 
-METHOD getColumnMovimiento( cTable )  
+   FROM %1$s AS operaciones_comerciales
 
-   local cSql  
+      LEFT JOIN %2$s terceros
+         ON operaciones_comerciales.tercero_codigo = terceros.codigo AND terceros.deleted_at = 0
 
-   DEFAULT cTable := ""
+      LEFT JOIN %3$s direcciones
+         ON terceros.uuid = direcciones.parent_uuid AND direcciones.codigo = 0
 
-   if !empty( cTable )
-      cTable      += "."
-   end if
+      LEFT JOIN %4$s tarifas
+         ON operaciones_comerciales.tarifa_codigo = tarifas.codigo
 
-   cSql           := "CASE "                                                                                                  
-   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 1 THEN '" + ::aTextoMovimiento[ 1 ] + "'" 
-   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 2 THEN '" + ::aTextoMovimiento[ 2 ] + "'" 
-   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 3 THEN '" + ::aTextoMovimiento[ 3 ] + "'" 
-   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 4 THEN '" + ::aTextoMovimiento[ 4 ] + "'" 
-   cSql           +=    "ELSE '"                                        + ::aTextoMovimiento[ 5 ] + "'" 
-   cSql           += "END as nombre_movimiento, "
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql,;
+                           ::getTableName(),;
+                           ::getTercerosModel():getTableName(),;
+                           SQLDireccionesModel():getTableName(),;
+                           SQLArticulosTarifasModel():getTableName(),;
+                           ::getColumnsSelect() )
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentenceById( aIds, aUuids )
+METHOD getNumeroWhereUuid( uuid ) CLASS SQLConsolidacionesAlmacenModel
 
-   local aSQLDelete        := {}
-   local aUuidLineasToDelete
-   local aUuidSeriesToDelete
+   local cSql
 
-   aadd( aSQLDelete, ::Super:getDeleteSentenceById( aIds ) )
+   TEXT INTO cSql
 
-   aUuidLineasToDelete     := SQLMovimientosAlmacenLineasModel():aUuidToDelete( aUuids )
+   SELECT
+      CONCAT( serie, '-', numero ) AS numero
 
-   if empty( aUuidLineasToDelete )
-      RETURN ( aSQLDelete )
-   end if 
-   
-   aadd( aSQLDelete, SQLMovimientosAlmacenLineasModel():getDeleteSentenceByUuid( aUuidLineasToDelete ) )
+      FROM %1$s
 
-   aUuidSeriesToDelete     := SQLMovimientosAlmacenLineasNumerosSeriesModel():aUuidToDelete( aUuidLineasToDelete )
+      WHERE uuid = %2$s
 
-   if empty( aUuidSeriesToDelete )
-      RETURN ( aSQLDelete )
-   end if 
+   ENDTEXT
 
-   aadd( aSQLDelete, SQLMovimientosAlmacenLineasNumerosSeriesModel():getDeleteSentenceByUuid( aUuidSeriesToDelete ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuid ) )
 
-RETURN ( aSQLDelete )
+RETURN ( alltrim( ::getDatabase():getValue( cSql ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadDuplicateBuffer( id )         
+METHOD totalPaid( uuidFactura ) CLASS SQLConsolidacionesAlmacenModel
 
-   local originalUuid   
-   local duplicatedUuid 
-   
-   ::Super:loadDuplicateBuffer( id )
+   local cSql
 
-   originalUuid         := hget( ::hBuffer, "uuid" )       
+   TEXT INTO cSql
 
-   hset( ::hBuffer, "numero", MovimientosAlmacenRepository():getNextNumber() )
+   SELECT SUM( pagos.importe ) AS total_pagado
+      FROM %1$s AS facturas_clientes
 
-   hset( ::hBuffer, "fecha_hora", hb_datetime() )
+      INNER JOIN %2$s AS recibos
+         ON facturas_clientes.uuid = recibos.parent_uuid
 
-   duplicatedUuid       := hget( ::hBuffer, "uuid" )       
+      INNER JOIN %3$s AS pagos_recibos
+         ON pagos_recibos.recibo_uuid = recibos.uuid
 
-   SQLMovimientosAlmacenLineasModel():duplicateByUuid( originalUuid, duplicatedUuid )
+      INNER JOIN %4$s AS pagos
+         ON pagos_recibos.pago_uuid = pagos.uuid
 
-RETURN ( ::hBuffer )
+      WHERE facturas_clientes.uuid = %5$s
 
-//---------------------------------------------------------------------------//
+      GROUP BY facturas_clientes.uuid
+   ENDTEXT
 
-METHOD getInsertSentence( hBuffer )
+   cSql  := hb_strformat(  cSql,;
+                           ::getTableName(),;
+                           SQLRecibosModel():getTableName(),;
+                           SQLRecibosPagosModel():getTableName(),;
+                           SQLPagosModel():getTableName(),;
+                           quoted( uuidFactura ) )
 
-   DEFAULT hBuffer   := ::hBuffer
-
-   ::assingNumber( hBuffer )
-
-   ::Super:getInsertSentence( hBuffer )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD assingNumber( hBuffer )
-
-   local cNumero     := hget( hBuffer, "numero" )
-
-   if empty( cNumero )
-      RETURN ( .f. )
-   end if 
-
-   while !empty( MovimientosAlmacenRepository():getIdByNumber( cNumero ) )
-      cNumero        := nextDocumentNumber( cNumero )
-   end while
-
-   hset( hBuffer, "numero", cNumero )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-// Actualizar datos de empresa----------------------------------------------
-//---------------------------------------------------------------------------//
-
-METHOD Syncronize()
-
-   local cSql       
-   local cEmpresaTableName := SQLEmpresasModel():cTableName       
-
-   cSql                    := "UPDATE " + ::cTableName + " "
-   cSql                    +=    "INNER JOIN " + cEmpresaTableName + " ON " + ::cTableName + ".empresa = " + cEmpresaTableName + ".codigo "
-   cSql                    += "SET " + ::cTableName + ".empresa_uuid = " + cEmpresaTableName + ".uuid "
-   cSql                    +=    "WHERE " + ::cTableName + ".empresa_uuid = '' "
-
-   getSQLDatabase():Exec( cSql )
-
-RETURN ( .t. )
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD maxNumberWhereSerie( cSerie ) CLASS SQLConsolidacionesAlmacenModel
+
+   local cSql
+
+   cSql        := "SELECT MAX( numero ) FROM " + ::getTableName() + " "
+   cSql        +=    "WHERE serie = " + quoted( cSerie )
+
+RETURN ( ::getDatabase():getValue( cSql, 0 ) + 1 )
+
+//---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+METHOD testCreateFactura( uuid ) CLASS SQLConsolidacionesAlmacenModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "serie", "TEST" )
+   hset( hBuffer, "numero", 1 )
+   hset( hBuffer, "uuid", uuid )
+   hset( hBuffer, "tercero_codigo", "0" )
+   hset( hBuffer, "metodo_pago_codigo", "0" )
+   hset( hBuffer, "almacen_codigo", "0" )
+   hset( hBuffer, "tarifa_codigo", "0" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateFacturaConRecargoDeEqivalencia( uuid ) CLASS SQLConsolidacionesAlmacenModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "serie", "TEST" )
+   hset( hBuffer, "numero", 1 )
+   hset( hBuffer, "uuid", uuid )
+   hset( hBuffer, "tercero_codigo", "0" )
+   hset( hBuffer, "metodo_pago_codigo", "0" )
+   hset( hBuffer, "almacen_codigo", "0" )
+   hset( hBuffer, "recargo_equivalencia", 1 )
+   hset( hBuffer, "tarifa_codigo", "0" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testCreateFacturaConVariosPlazos( uuid ) CLASS SQLConsolidacionesAlmacenModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "serie", "TEST" )
+   hset( hBuffer, "numero", 1 )
+   hset( hBuffer, "uuid", uuid )
+   hset( hBuffer, "tercero_codigo", "0" )
+   hset( hBuffer, "metodo_pago_codigo", "1" )
+   hset( hBuffer, "almacen_codigo", "0" )
+   hset( hBuffer, "tarifa_codigo", "0" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+#endif
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//

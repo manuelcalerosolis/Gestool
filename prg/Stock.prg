@@ -2393,7 +2393,7 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto, cCodEmpOld, cCodEmpNew ) CL
             Creo la cabecera de los movimientos de traspaso--------------------
             */
 
-            hCampos        := SQLMovimientosAlmacenModel():loadBlankBuffer()
+            hCampos        := SQLConsolidacionesAlmacenModel():loadBlankBuffer()
 
             hset( hCampos, "almacen_destino", ( dbfAlm )->cCodAlm )
             hset( hCampos, "tipo_movimiento", 4 )
@@ -2401,7 +2401,7 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto, cCodEmpOld, cCodEmpNew ) CL
 
             parentId       := hGet( hCampos, "uuid" )
 
-            SQLMovimientosAlmacenModel():Insertbuffer( hCampos )
+            SQLConsolidacionesAlmacenModel():Insertbuffer( hCampos )
 
             /*
             Creo las líneas de los movimientos de traspaso---------------------

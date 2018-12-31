@@ -6,7 +6,7 @@
 
 CLASS MovimientosAlmacenRepository FROM SQLBaseRepository
 
-   METHOD getTableName()            INLINE ( SQLMovimientosAlmacenModel():getTableName() )
+   METHOD getTableName()            INLINE ( SQLConsolidacionesAlmacenModel():getTableName() )
 
    METHOD getSQLSentenceIdByNumber( nNumber ) 
 

@@ -18,6 +18,7 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
    DATA cMetodoPagoDefecto
    DATA cAlmacenDefecto
    DATA cUnidadesDefecto
+   DATA lUbicacionesDefecto
    DATA cCertificadoDefecto
 
    DATA aDelegaciones
@@ -172,6 +173,8 @@ METHOD loadConfig( uuidEmpresa )
    
    ::cUnidadesDefecto            := ::getAjustableController():getModel():getUnidadesGrupo( uuidEmpresa )
 
+   ::lUbicacionesDefecto         := ::getAjustableController():getModel():getUsarUbicaciones( uuidEmpresa )
+
    ::cCertificadoDefecto         := ::getAjustableController():getModel():getCertificado( uuidEmpresa )
 
 RETURN ( .t. )
@@ -185,6 +188,8 @@ METHOD saveConfig( uuidEmpresa )
    ::getAjustableController():getModel():setAlmacen( ::cAlmacenDefecto, uuidEmpresa )
 
    ::getAjustableController():getModel():setUnidadesGrupo( ::cUnidadesDefecto, uuidEmpresa )
+
+   ::getAjustableController():getModel():setUsarUbicaciones( ::lUbicacionesDefecto, uuidEmpresa )
 
    ::getAjustableController():getModel():setCertificado( ::cCertificadoDefecto, uuidEmpresa )
    
@@ -207,6 +212,8 @@ METHOD startingActivate()
 
    ::getUnidadesMedicionController():getSelector():Bind( bSETGET( ::cUnidadesDefecto ) )
    ::getUnidadesMedicionController():getSelector():addGetSelector( "Grupos unidades", oPanel ) 
+
+   oPanel:addCheckBox( "Ubicaciones en almacén", @::lUbicacionesDefecto ) 
 
    oGetCertificado      := oPanel:addGetAction( "Certificado", bSETGET( ::cCertificadoDefecto ), {|| ::selectCertificado( oGetCertificado ) } ) 
 

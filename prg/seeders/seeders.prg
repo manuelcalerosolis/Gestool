@@ -1023,7 +1023,9 @@ METHOD getStatementSeederMovimientosAlmacenLineasNumerosSeries( dbfMovSer ) CLAS
                         "parent_uuid"     => quoted( ( dbfMovSer )->cGuidPar ),;
                         "numero_serie"    => quoted( ( dbfMovSer )->cNumSer ) }
 
-RETURN ( ::getInsertStatement( hCampos, SQLMovimientosAlmacenLineasNumerosSeriesModel():getTableName() ) )
+   // ::getInsertStatement( hCampos, SQLMovimientosAlmacenLineasNumerosSeriesModel():getTableName() ) 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

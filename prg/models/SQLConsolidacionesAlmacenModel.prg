@@ -1,11 +1,9 @@
-#include "FiveWin.Ch"
-#include "Factu.ch"
+#include "fivewin.ch"
+#include "factu.ch" 
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
-
-   DATA cConstraints                   // INIT "PRIMARY KEY ( numero, serie )"
+CLASS SQLConsolidacionesAlmacenModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
@@ -37,7 +35,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLOperacionesComercialesModel
+METHOD getColumns() CLASS SQLConsolidacionesAlmacenModel
 
    hset( ::hColumns, "id",                            {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"        ,;
                                                          "default"   => {|| 0 } }                              )
@@ -57,37 +55,10 @@ METHOD getColumns() CLASS SQLOperacionesComercialesModel
    hset( ::hColumns, "numero",                        {  "create"    => "INT UNSIGNED"                         ,;
                                                          "default"   => {|| 0 } }                              )
 
-   hset( ::hColumns, "fecha",                         {  "create"    => "DATE"                                 ,;
-                                                         "default"   => {|| date() } }                         )
-
    hset( ::hColumns, "fecha_valor_stock",             {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"   ,;
                                                          "default"   => {|| hb_datetime() } }                  )
 
-   hset( ::hColumns, "tercero_codigo",                {  "create"    => "VARCHAR( 20 )"                        ,;
-                                                         "default"   => {|| space( 20 ) } }                    )
-
-   hset( ::hColumns, "recargo_equivalencia",          {  "create"    => "TINYINT( 1 )"                         ,;
-                                                         "default"   => {|| 0 } }                              )
-
-   hset( ::hColumns, "direccion_principal_uuid",      {  "create"    => "VARCHAR( 40 )"                        ,;
-                                                         "default"   => {|| space( 40 ) } }                    )
-
-   hset( ::hColumns, "metodo_pago_codigo",             {  "create"   => "VARCHAR( 20 )"                        ,;
-                                                         "default"   => {|| space( 20 ) } }                    )
-
    hset( ::hColumns, "almacen_codigo",                {  "create"    => "VARCHAR( 20 )"                        ,;
-                                                         "default"   => {|| space( 20 ) } }                    )
-
-   hset( ::hColumns, "agente_codigo",                 {  "create"    => "VARCHAR( 20 )"                        ,;
-                                                         "default"   => {|| space( 20 ) } }                    )
-
-   hset( ::hColumns, "ruta_codigo",                   {  "create"    => "VARCHAR( 20 )"                        ,;
-                                                         "default"   => {|| space( 20 ) } }                    )
-
-   hset( ::hColumns, "transportista_codigo",          {  "create"    => "VARCHAR( 20 )"                        ,;
-                                                         "default"   => {|| space( 20 ) } }                    )
-
-   hset( ::hColumns, "tarifa_codigo",                 {  "create"    => "VARCHAR( 20 )"                        ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
    ::getTimeStampColumns()
@@ -98,7 +69,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInitialSelect() CLASS SQLOperacionesComercialesModel
+METHOD getInitialSelect() CLASS SQLConsolidacionesAlmacenModel
 
    local cSql
 
@@ -131,7 +102,7 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getNumeroWhereUuid( uuid ) CLASS SQLOperacionesComercialesModel
+METHOD getNumeroWhereUuid( uuid ) CLASS SQLConsolidacionesAlmacenModel
 
    local cSql
 
@@ -152,7 +123,7 @@ RETURN ( alltrim( ::getDatabase():getValue( cSql ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD totalPaid( uuidFactura ) CLASS SQLOperacionesComercialesModel
+METHOD totalPaid( uuidFactura ) CLASS SQLConsolidacionesAlmacenModel
 
    local cSql
 
@@ -186,7 +157,7 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD maxNumberWhereSerie( cSerie ) CLASS SQLOperacionesComercialesModel
+METHOD maxNumberWhereSerie( cSerie ) CLASS SQLConsolidacionesAlmacenModel
 
    local cSql
 
@@ -199,7 +170,7 @@ RETURN ( ::getDatabase():getValue( cSql, 0 ) + 1 )
 
 #ifdef __TEST__
 
-METHOD testCreateFactura( uuid ) CLASS SQLOperacionesComercialesModel
+METHOD testCreateFactura( uuid ) CLASS SQLConsolidacionesAlmacenModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -215,7 +186,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateFacturaConRecargoDeEqivalencia( uuid ) CLASS SQLOperacionesComercialesModel
+METHOD testCreateFacturaConRecargoDeEqivalencia( uuid ) CLASS SQLConsolidacionesAlmacenModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -232,7 +203,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateFacturaConVariosPlazos( uuid ) CLASS SQLOperacionesComercialesModel
+METHOD testCreateFacturaConVariosPlazos( uuid ) CLASS SQLConsolidacionesAlmacenModel
 
    local hBuffer  := ::loadBlankBuffer()
 

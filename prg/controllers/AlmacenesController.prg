@@ -9,8 +9,6 @@ CLASS AlmacenesController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD gettingSelectSentence()
-
    //Construcciones tardias----------------------------------------------------
 
    METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := AlmacenesBrowseView():New( self ), ), ::oBrowseView ) 
@@ -33,28 +31,26 @@ METHOD New( oController ) CLASS AlmacenesController
 
    ::Super:New( oController )
 
-   ::cTitle                         := "Almacenes"
+   ::cTitle                            := "Almacenes"
 
-   ::hImage                         := {  "16" => "gc_warehouse_16",;
-                                          "32" => "gc_warehouse_32",;
-                                          "48" => "gc_warehouse_48" }
+   ::hImage                            := {  "16" => "gc_warehouse_16",;
+                                             "32" => "gc_warehouse_32",;
+                                             "48" => "gc_warehouse_48" }
 
-   ::nLevel                         := Auth():Level( ::getName() )
+   ::nLevel                            := Auth():Level( ::getName() )
 
-   ::getModel():setEvent( 'loadedBlankBuffer',           {|| ::getDireccionesController():loadMainBlankBuffer() } )
-   ::getModel():setEvent( 'insertedBuffer',              {|| ::getDireccionesController():insertBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer', {|| ::getDireccionesController():loadMainBlankBuffer() } )
+   ::getModel():setEvent( 'insertedBuffer', {|| ::getDireccionesController():insertBuffer() } )
    
-   ::getModel():setEvent( 'loadedCurrentBuffer',         {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
-   ::getModel():setEvent( 'updatedBuffer',               {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedCurrentBuffer', {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'updatedBuffer', {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
 
    ::getModel():setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::getModel():setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateBuffer', {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::getModel():setEvent( 'deletedSelection',            {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
+   ::getModel():setEvent( 'deletedSelection', {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
 
-   ::getModel():setEvent( 'gettingSelectSentence',       {|| ::gettingSelectSentence() } ) 
-
-   ::setEvents( { 'editing', 'deleting' },               {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
+   ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
 
@@ -83,12 +79,6 @@ METHOD End() CLASS AlmacenesController
    end if
 
 RETURN ( ::Super:End() )
-
-//---------------------------------------------------------------------------//
-
-METHOD gettingSelectSentence() CLASS AlmacenesController
-
-RETURN ( ::getModel():setGeneralWhere( "almacen_uuid = ''" ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -127,7 +117,7 @@ METHOD addColumns() CLASS AlmacenesBrowseView
 
    ::getColumnDeletedAt()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -144,75 +134,62 @@ CLASS AlmacenesView FROM SQLBaseView
 
    METHOD Activating()
 
+   METHOD addLinksToExplorerBar()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD Activating() CLASS AlmacenesView
 
-   msgalert( ::oController:getModel():hBuffer[ "almacen_uuid" ], "Activating almacen_uuid" )
-
    if ::oController:isAppendOrDuplicateMode()
       ::oController:getModel():hBuffer()
    end if 
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS AlmacenesView
 
-   msgalert( ::oController:getModel():hBuffer[ "almacen_uuid" ], "antes almacen_uuid" )
-
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "ALMACEN_SQL" ;
+      RESOURCE    "CONTAINER_MEDIUM_EXTENDED" ;
       TITLE       ::LblTitle() + "almacén"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    ::oController:getimage( "48" )  ;
+      RESOURCE    ::oController:getimage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
+      PROMPT      "Almacén" ;
       ID          800 ;
       FONT        oFontBold() ;
       OF          ::oDialog
+
+   ::redefineExplorerBar()
+
+   REDEFINE FOLDER ::oFolder ;
+      ID          500 ;
+      OF          ::oDialog ;
+      PROMPT      "&General" ;
+      DIALOGS     "ALMACEN_SQL" 
 
    REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      OF          ::oDialog
+      OF          ::oFolder:aDialogs[1]
 
    REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          ::oDialog
+      OF          ::oFolder:aDialogs[1]
 
-   REDEFINE SAY   ::oSayCamposExtra ;
-      PROMPT      "Campos extra..." ;
-      FONT        oFontBold() ; 
-      COLOR       rgb( 10, 152, 234 ) ;
-      ID          160 ;
-      OF          ::oDialog ;
-
-   ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
-
-   ::oController:getDireccionesController():getDialogView():ExternalRedefine( ::oDialog() )
-
-   // Zonas--------------------------------------------------------------------
-
-   TBtnBmp():ReDefine( 501, "new16",,,,, {|| ::oController:getZonasController():Append() }, ::oDialog, .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir zonas" )
-
-   TBtnBmp():ReDefine( 502, "edit16",,,,, {|| ::oController:getZonasController():Edit() }, ::oDialog, .f., {|| ::getController():isNotZoomMode() }, .f., "Modificar zonas" )
-
-   TBtnBmp():ReDefine( 503, "del16",,,,, {|| ::oController:getZonasController():Delete() }, ::oDialog, .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar zonas" )
- 
-   ::oController:getZonasController():Activate( 150, ::oDialog ) 
+   ::oController:getDireccionesController():getDialogView():ExternalRedefine( ::oFolder:aDialogs[1] )
 
    // Botones almacenes -------------------------------------------------------
 
@@ -226,17 +203,48 @@ METHOD Activate() CLASS AlmacenesView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-   msgalert( ::oController:getModel():hBuffer[ "almacen_uuid" ], "despues almacen_uuid" )
-
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
 METHOD startActivate() CLASS AlmacenesView
 
-RETURN ( ::oController:getDireccionesController():getDialogView():startDialog() )
+   ::addLinksToExplorerBar()
+
+   ::oController:getDireccionesController():getDialogView():startDialog()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD addLinksToExplorerBar() CLASS AlmacenesView
+
+   local oPanel            
+
+   oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+
+   if Company():getDefaultUsarUbicaciones()
+
+      oPanel:AddLink(   "Ubicaciones...",;
+                           {||::oController:getUbicacionesController():activateDialogView() },;
+                              ::oController:getUbicacionesController():getImage( "16" ) )
+
+   end if 
+
+   oPanel:AddLink(   "Campos extra...",;
+                        {||::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) },;
+                           ::oController:getCamposExtraValoresController():getImage( "16" ) )
+
+   oPanel:AddLink(   "Incidencias...",;
+                        {||::oController:getIncidenciasController():activateDialogView( ::oController:getUuid() ) },;
+                           ::oController:getIncidenciasController():getImage( "16" ) )
+   
+   oPanel:AddLink(   "Documentos...",;
+                        {||::oController:getDocumentosController():activateDialogView( ::oController:getUuid() ) },;
+                           ::oController:getDocumentosController():getImage( "16" ) )
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -247,8 +255,6 @@ CLASS AlmacenesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
-   METHOD getUniqueSentence( uValue )
- 
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -263,22 +269,6 @@ METHOD getValidators() CLASS AlmacenesValidator
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
-
-METHOD getUniqueSentence( uValue ) CLASS AlmacenesValidator
-
-   local cSQLSentence   := ::Super:getUniqueSentence( uValue ) + " "
-
-   if empty( ::oController ) .or. empty( ::oController:getController() )
-      cSQLSentence      +=    "AND almacen_uuid = ''"
-   else 
-      cSQLSentence      +=    "AND almacen_uuid = " + quoted( ::oController:getController():getUuid() )
-   end if
-
-RETURN ( cSQLSentence )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -288,7 +278,7 @@ CLASS SQLAlmacenesModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "almacenes"
 
-   DATA cConstraints                   INIT "PRIMARY KEY ( codigo, almacen_uuid, deleted_at )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( codigo, deleted_at )"
 
    METHOD getColumns()
 
@@ -313,9 +303,6 @@ METHOD getColumns() CLASS SQLAlmacenesModel
 
    hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
-
-   hset( ::hColumns, "almacen_uuid",   {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
-                                          "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
                                           "default"   => {|| space( 20 ) } }                       )
@@ -476,7 +463,7 @@ METHOD test_dialogo_sin_nombre() CLASS TestAlmacenesController
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          apoloWaitSeconds( 1 ),;
-         self:getControl( 100 ):cText( "0" ),;
+         self:getControl( 100, self:oFolder:aDialogs[1] ):cText( "0" ),;
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),;
          apoloWaitSeconds( 1 ),;
@@ -491,9 +478,9 @@ METHOD test_dialogo_creacion() CLASS TestAlmacenesController
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          apoloWaitSeconds( 1 ),;
-         self:getControl( 100 ):cText( "0" ),;
+         self:getControl( 100, self:oFolder:aDialogs[1] ):cText( "0" ),;
          apoloWaitSeconds( 1 ),;
-         self:getControl( 110 ):cText( "Almacen principal" ),;
+         self:getControl( 110, self:oFolder:aDialogs[1] ):cText( "Almacen principal" ),;
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 

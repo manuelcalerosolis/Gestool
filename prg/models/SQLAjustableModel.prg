@@ -209,6 +209,11 @@ CLASS SQLAjustableModel FROM SQLCompanyModel
    METHOD getUnidadesGrupo( uuidEmpresa );
                                        INLINE ( padr( ::getValue( uuidEmpresa, 'empresas', 'unidades_grupo_defecto', space( 20 ) ), 20 ) )   
 
+   METHOD setUsarUbicaciones( uAjusteValue, cAjustableUuid );
+                                       INLINE ( ::setLogic( 'usar_ubicaciones', uAjusteValue, 'empresas', cAjustableUuid ) )
+   METHOD getUsarUbicaciones( uuidEmpresa );
+                                       INLINE ( ::getLogic( uuidEmpresa, 'empresas', 'usar_ubicaciones', .f. ) )   
+
    METHOD setEmpresaTarifaDefecto( uAjusteValue, cAjustableUuid );
                                        INLINE ( ::setValue( 'tarifas_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
    METHOD getEmpresaTarifaDefecto( cCodigo );
