@@ -63,7 +63,6 @@ METHOD New( oController ) CLASS PagosAssistantController
    ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentenceTercero() } )
    ::getCuentasBancariasGestoolController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
    ::getCuentasBancariasGestoolController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentenceEmpresa() } )
-   //::getCuentasBancariasGestoolController():getSelector():setEvent( 'loading', {|| msgalert("cargando helptext") } )
 
 RETURN ( Self )
 
@@ -120,14 +119,15 @@ METHOD OtherClient( cCodigoCliente ) CLASS PagosAssistantController
    ::getRecibosPagosTemporalController():getBrowseView():Refresh()
 
    ::getMediosPagoController():getSelector():setBlank()
-   ::getMediosPagoController():getSelector():cOriginal:= ""
+   ::getMediosPagoController():getSelector():setOriginal()
 
    ::getCuentasBancariasController():getSelector():setBlank()
-   ::getCuentasBancariasController():getSelector():cOriginal:= ""
+   ::getCuentasBancariasController():getSelector():setOriginal()
 
    ::getCuentasBancariasGestoolController():getSelector():setBlank()
-   ::getCuentasBancariasGestoolController():getSelector():cOriginal:= ""
-
+   ::getCuentasBancariasGestoolController():getSelector():setOriginal()
+   
+   ::getDialogView():oImporte:cText( 0 ) 
 
 RETURN ( nil )
 

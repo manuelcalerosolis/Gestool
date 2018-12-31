@@ -10,7 +10,7 @@ CLASS CuentasBancariasGestoolController FROM CuentasBancariasController
    METHOD getConfiguracionVistasController();
                                        INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
 
-   METHOD getUuidParent()              INLINE (msgalert("empresa"), Company():UUID() )
+   METHOD getUuidParent()              INLINE ( Company():UUID() )
 
 END CLASS 
 
@@ -42,7 +42,7 @@ CLASS CuentasBancariasController FROM SQLNavigatorController
 
    METHOD updateBlanckDefecto()
 
-   METHOD getUuidParent()              INLINE ( msgalert( "cliente" ), SQLtercerosModel():getuuidWhereCodigo( ::oController():getModelBuffer( "tercero_codigo" ) ) )
+   METHOD getUuidParent()              INLINE ( SQLtercerosModel():getuuidWhereCodigo( ::oController():getModelBuffer( "tercero_codigo" ) ) )
 
    //Construcciones tardias----------------------------------------------------
 

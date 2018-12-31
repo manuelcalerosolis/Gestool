@@ -23881,16 +23881,16 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 81, 298, 98, 12
   CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 81, 311, 98, 12
   CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 81, 325, 98, 12
-  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 81, 339, 359, 12
+  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 81, 339, 546, 12
   CONTROL "Cliente", -1, "Button", BS_GROUPBOX, 5, 3, 626, 108
   CONTROL "Expedición", -1, "Static", WS_GROUP, 11, 289, 41, 8
   CONTROL "Importe a pagar", -1, "Static", WS_GROUP, 457, 254, 63, 8
   CONTROL "", 101, "Edit", WS_BORDER|WS_TABSTOP, 180, 12, 448, 12
   CONTROL "Cliente", 102, "Static", WS_GROUP, 11, 16, 58, 8
-  CONTROL "", 131, "Edit", WS_BORDER|WS_TABSTOP, 180, 298, 260, 12
+  CONTROL "", 131, "Edit", WS_BORDER|WS_TABSTOP, 180, 298, 448, 12
   CONTROL "Medio de pago", 132, "Static", WS_GROUP, 11, 302, 58, 8
   CONTROL "Comentario", 4005, "Static", WS_GROUP, 11, 343, 58, 8
-  CONTROL "", 151, "Edit", WS_BORDER|WS_TABSTOP, 180, 325, 260, 12
+  CONTROL "", 151, "Edit", WS_BORDER|WS_TABSTOP, 180, 325, 448, 12
   CONTROL "Banco empresa", 152, "Static", WS_GROUP, 11, 329, 55, 8
   CONTROL "Datos del pago", -1, "Button", BS_GROUPBOX, 5, 272, 625, 85
   CONTROL "", 500, "SQLXBrowse", WS_TABSTOP|0x00300000, 11, 127, 615, 120
@@ -23907,7 +23907,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Provincia", -1, "Static", WS_GROUP, 11, 81, 52, 8
   CONTROL "Teléfono", -1, "Static", WS_GROUP, 11, 94, 52, 8
   CONTROL "Población", 4004, "Static", WS_GROUP, 11, 68, 52, 8
-  CONTROL "", 141, "Edit", WS_BORDER|WS_TABSTOP, 180, 311, 260, 12
+  CONTROL "", 141, "Edit", WS_BORDER|WS_TABSTOP, 180, 311, 448, 12
   CONTROL "Banco tercero", 142, "Static", WS_GROUP, 11, 315, 58, 8
 }
 
