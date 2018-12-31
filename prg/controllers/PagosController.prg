@@ -520,22 +520,22 @@ CLASS SQLPagosModel FROM SQLCompanyModel
    METHOD getInitialSelect()
 
    METHOD getCuentaBancariaTerceroUuidAttribute( uValue ) ; 
-                                          INLINE ( if( empty( uValue ), space( 3 ), SQLCuentasBancariasModel():getCodigoWhereUuid( uValue ) ) )
+                                          INLINE ( if( empty( uValue ), space( 3 ), SQLCuentasBancariasModel():getCodigoWhereUuidAndNotDeleted( uValue ) ) )
 
    METHOD setCuentaBancariaTerceroUuidAttribute( uValue ) ;
-                                          INLINE ( if( empty( uValue ), "", SQLCuentasBancariasModel():getUuidWhereCodigo( uValue ) ) )
+                                          INLINE ( if( empty( uValue ), "", SQLCuentasBancariasModel():getUuidWhereCodigoAndParentAndNotDeleted( uValue, SQLtercerosModel():getuuidWhereCodigo( ::getController():getModelBuffer( "tercero_codigo" ) ) ) ) )
 
    METHOD getCuentaBancariaEmpresaUuidAttribute( uValue ) ; 
-                                          INLINE ( if( empty( uValue ), space( 3 ), SQLCuentasBancariasGestoolModel():getCodigoWhereUuid( uValue ) ) )
+                                          INLINE ( if( empty( uValue ), space( 3 ), SQLCuentasBancariasGestoolModel():getCodigoWhereUuidAndNotDeleted( uValue ) ) )
 
    METHOD setCuentaBancariaEmpresaUuidAttribute( uValue ) ;
-                                          INLINE ( if( empty( uValue ), "", SQLCuentasBancariasGestoolModel():getUuidWhereCodigo( uValue ) ) )
+                                          INLINE ( if( empty( uValue ), "", SQLCuentasBancariasGestoolModel():getUuidWhereCodigoAndParentAndNotDeleted( uValue, Company():Uuid() ) ) )
 
 #ifdef __TEST__
 
-   METHOD testCreatePagoPresentado( uuid )
+   METHOD test_create_pago_presentado( uuid )
 
-   METHOD testCreatePagoRechazado( uuid ) 
+   METHOD test_create_pago_rechazado( uuid ) 
 
 #endif
 
@@ -633,7 +633,7 @@ RETURN ( cSql )
 
 #ifdef __TEST__
 
-METHOD testCreatePagoPresentado( uuid ) CLASS SQLPagosModel
+METHOD test_create_pago_presentado( uuid ) CLASS SQLPagosModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -644,7 +644,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreatePagoRechazado( uuid ) CLASS SQLPagosModel
+METHOD test_create_pago_rechazado( uuid ) CLASS SQLPagosModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -677,31 +677,33 @@ END CLASS
 
 CLASS TestPagosController FROM TestCase
 
-   METHOD testCreateReciboComoPagado()
+   /*METHOD test_create_recibo_como_pagado()
 
-   METHOD testCreateReciboConDoblePago()
+   METHOD test_create_pago_como_Rechazado()   
 
-   METHOD testCreatePagoComoRechazado()   
+   METHOD test_create_recibo_con_doble_pago()
 
-   METHOD testCreatePagoConDobleRecibo()    
+   METHOD test_create_pago_con_doble_recibo()    
 
-   METHOD testCreateReciboConPagoPresentadoYPagoRechazado()   
+   METHOD test_create_recibo_con_pago_presentado_y_pago_rechazado()   
 
-   METHOD testCreateReciboConPagosRechazados()  
+   METHOD test_create_recibo_con_pagos_rechazados()  
 
-   METHOD testDialogAppend()
+   METHOD test_dialog_append()*/
 
-   METHOD testDialogAppendConImporteMayor() 
+   METHOD test_dialog_append_con_bancos()
 
-   METHOD testDialogAppendClienteInexistente()
+   /*METHOD test_dialog_append_con_importe_mayor() 
 
-   METHOD testDialogAppendMedioPagoInexistente()
+   METHOD test_dialog_append_cliente_inexistente()
+
+   METHOD test_dialog_append_medio_pago_inexistente()*/
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateReciboComoPagado() CLASS TestPagosController
+/*METHOD test_create_recibo_como_pagado() CLASS TestPagosController
 
    local uuidRecibo  := win_uuidcreatestring()
    local uuidPago    := win_uuidcreatestring()
@@ -710,9 +712,9 @@ METHOD testCreateReciboComoPagado() CLASS TestPagosController
    SQLPagosModel():truncateTable() 
    SQLRecibosPagosModel():truncateTable() 
 
-   ::assert:notEquals( SQLRecibosModel():testCreateRecibo( uuidRecibo ), 0, "test create recibo" )
+   ::assert:notEquals( SQLRecibosModel():test_create_recibo( uuidRecibo ), 0, "test create recibo" )
 
-   ::assert:notEquals( SQLPagosModel():testCreatePagoPresentado( uuidPago ), 0, "test create pago" )
+   ::assert:notEquals( SQLPagosModel():test_create_pago_presentado( uuidPago ), 0, "test create pago" )
 
    SQLRecibosPagosModel():insertPagoRecibo( uuidPago, uuidRecibo, 100 )
 
@@ -722,7 +724,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreatePagoComoRechazado() CLASS TestPagosController
+METHOD test_create_pago_como_Rechazado() CLASS TestPagosController
 
    local uuidRecibo  := win_uuidcreatestring()
    local uuidPago    := win_uuidcreatestring()
@@ -731,9 +733,9 @@ METHOD testCreatePagoComoRechazado() CLASS TestPagosController
    SQLPagosModel():truncateTable() 
    SQLRecibosPagosModel():truncateTable() 
 
-   ::assert:notEquals( SQLRecibosModel():testCreateRecibo( uuidRecibo ), 0, "test create recibo" )
+   ::assert:notEquals( SQLRecibosModel():test_create_recibo( uuidRecibo ), 0, "test create recibo" )
 
-   ::assert:notEquals( SQLPagosModel():testCreatePagoRechazado( uuidPago ), 0, "test create pago" )
+   ::assert:notEquals( SQLPagosModel():test_create_pago_rechazado( uuidPago ), 0, "test create pago" )
 
    SQLRecibosPagosModel():insertPagoRecibo( uuidPago, uuidRecibo, 100 )
 
@@ -743,7 +745,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateReciboConDoblePago() CLASS TestPagosController
+METHOD test_create_recibo_con_doble_pago() CLASS TestPagosController
 
    local uuidRecibo        := win_uuidcreatestring()
    local uuidPrimerPago    := win_uuidcreatestring()
@@ -753,11 +755,11 @@ METHOD testCreateReciboConDoblePago() CLASS TestPagosController
    SQLPagosModel():truncateTable() 
    SQLRecibosPagosModel():truncateTable() 
 
-   ::assert:notEquals( 0, SQLRecibosModel():testCreateRecibo( uuidRecibo ), "test create recibo" )
+   ::assert:notEquals( 0, SQLRecibosModel():test_create_recibo( uuidRecibo ), "test create recibo" )
 
-   ::assert:notEquals( 0, SQLPagosModel():testCreatePagoPresentado( uuidPrimerPago ), "test create pago" )
+   ::assert:notEquals( 0, SQLPagosModel():test_create_pago_presentado( uuidPrimerPago ), "test create pago" )
 
-   ::assert:notEquals( 0, SQLPagosModel():testCreatePagoPresentado( uuidSegundoPago ), "test create pago" )
+   ::assert:notEquals( 0, SQLPagosModel():test_create_pago_presentado( uuidSegundoPago ), "test create pago" )
 
    SQLRecibosPagosModel():insertPagoRecibo( uuidPrimerPago, uuidRecibo, 50 )
    SQLRecibosPagosModel():insertPagoRecibo( uuidSegundoPago, uuidRecibo, 50 )
@@ -768,7 +770,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreatePagoConDobleRecibo() CLASS TestPagosController
+METHOD test_create_pago_con_doble_recibo() CLASS TestPagosController
 
    local uuidPago          := win_uuidcreatestring()
    local uuidPrimerRecibo  := win_uuidcreatestring()
@@ -778,10 +780,10 @@ METHOD testCreatePagoConDobleRecibo() CLASS TestPagosController
    SQLPagosModel():truncateTable() 
    SQLRecibosPagosModel():truncateTable() 
 
-   ::assert:notEquals( 0, SQLRecibosModel():testCreateRecibo( uuidPrimerRecibo ), "test create recibo" )
-   ::assert:notEquals( 0, SQLRecibosModel():testCreateRecibo( uuidSegundoRecibo ), "test create recibo" )
+   ::assert:notEquals( 0, SQLRecibosModel():test_create_recibo( uuidPrimerRecibo ), "test create recibo" )
+   ::assert:notEquals( 0, SQLRecibosModel():test_create_recibo( uuidSegundoRecibo ), "test create recibo" )
 
-   ::assert:notEquals( 0, SQLPagosModel():testCreatePagoPresentado( uuidPago ), "test create pago" )
+   ::assert:notEquals( 0, SQLPagosModel():test_create_pago_presentado( uuidPago ), "test create pago" )
 
    SQLRecibosPagosModel():insertPagoRecibo( uuidPago, uuidPrimerRecibo, 100 )
    SQLRecibosPagosModel():insertPagoRecibo( uuidPago, uuidSegundoRecibo, 100 )
@@ -792,7 +794,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateReciboConPagoPresentadoYPagoRechazado() CLASS TestPagosController
+METHOD test_create_recibo_con_pago_presentado_y_pago_rechazado() CLASS TestPagosController
 
    local uuidRecibo        := win_uuidcreatestring()
    local uuidPrimerPago    := win_uuidcreatestring()
@@ -802,11 +804,11 @@ METHOD testCreateReciboConPagoPresentadoYPagoRechazado() CLASS TestPagosControll
    SQLPagosModel():truncateTable() 
    SQLRecibosPagosModel():truncateTable() 
 
-   ::assert:notEquals( 0, SQLRecibosModel():testCreateRecibo( uuidRecibo ), "test create recibo" )
+   ::assert:notEquals( 0, SQLRecibosModel():test_create_recibo( uuidRecibo ), "test create recibo" )
 
-   ::assert:notEquals( 0, SQLPagosModel():testCreatePagoPresentado( uuidPrimerPago ), "test create pago" )
+   ::assert:notEquals( 0, SQLPagosModel():test_create_pago_presentado( uuidPrimerPago ), "test create pago" )
 
-   ::assert:notEquals( 0, SQLPagosModel():testCreatePagoRechazado( uuidSegundoPago ), "test create pago" )
+   ::assert:notEquals( 0, SQLPagosModel():test_create_pago_rechazado( uuidSegundoPago ), "test create pago" )
 
    SQLRecibosPagosModel():insertPagoRecibo( uuidPrimerPago, uuidRecibo, 50 )
    SQLRecibosPagosModel():insertPagoRecibo( uuidSegundoPago, uuidRecibo, 50 )
@@ -817,7 +819,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateReciboConPagosRechazados() CLASS TestPagosController
+METHOD test_create_recibo_con_pagos_rechazados() CLASS TestPagosController
 
    local uuidRecibo        := win_uuidcreatestring()
    local uuidPrimerPago    := win_uuidcreatestring()
@@ -827,11 +829,11 @@ METHOD testCreateReciboConPagosRechazados() CLASS TestPagosController
    SQLPagosModel():truncateTable() 
    SQLRecibosPagosModel():truncateTable() 
 
-   ::assert:notEquals( 0, SQLRecibosModel():testCreateRecibo( uuidRecibo ), "test create recibo" )
+   ::assert:notEquals( 0, SQLRecibosModel():test_create_recibo( uuidRecibo ), "test create recibo" )
 
-   ::assert:notEquals( 0, SQLPagosModel():testCreatePagoRechazado( uuidPrimerPago ), "test create pago" )
+   ::assert:notEquals( 0, SQLPagosModel():test_create_pago_rechazado( uuidPrimerPago ), "test create pago" )
 
-   ::assert:notEquals( 0, SQLPagosModel():testCreatePagoRechazado( uuidSegundoPago ), "test create pago" )
+   ::assert:notEquals( 0, SQLPagosModel():test_create_pago_rechazado( uuidSegundoPago ), "test create pago" )
 
    SQLRecibosPagosModel():insertPagoRecibo( uuidPrimerPago, uuidRecibo, 50 )
    SQLRecibosPagosModel():insertPagoRecibo( uuidSegundoPago, uuidRecibo, 50 )
@@ -842,7 +844,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testDialogAppend() CLASS TestPagosController
+METHOD test_dialog_append() CLASS TestPagosController
 
    local oController 
    local uuidRecibo        := win_uuidcreatestring()
@@ -853,11 +855,11 @@ METHOD testDialogAppend() CLASS TestPagosController
    SQLMediosPagoModel():truncateTable()
    SQLRecibosPagosModel():truncateTable() 
 
-   ::assert:notEquals( 0, SQLRecibosModel():testCreateRecibo( uuidRecibo ), "test create recibo" )
+   ::assert:notEquals( 0, SQLRecibosModel():test_create_recibo( uuidRecibo ), "test create recibo" )
    
-   ::assert:notEquals( 0, SQLTercerosModel():testCreateContado(), "test creacion de cliente" )
+   ::assert:notEquals( 0, SQLTercerosModel():test_create_contado(), "test creacion de cliente" )
 
-   ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
+   ::assert:notEquals( 0, SQLMediosPagoModel():test_create_metalico(), "test de creacion de medio de pago" )
 
    oController             := PagosController():New()
    oController:setUuidRecibo( uuidRecibo )
@@ -865,12 +867,58 @@ METHOD testDialogAppend() CLASS TestPagosController
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          apoloWaitSeconds( 1 ),; 
-         self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):cText( 50 ),;
          apoloWaitSeconds( 1 ),;
-         self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 50 ),;
+         self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
          apoloWaitSeconds( 1 ),;
-         self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         self:getControl( IDOK ):Click() } )
+
+   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+
+RETURN ( nil )*/
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialog_append_con_bancos() CLASS TestPagosController
+
+   local oController 
+   local uuidRecibo        := win_uuidcreatestring()
+   local uuidTercero       := win_uuidcreatestring()
+
+   SQLPagosModel():truncateTable()
+   SQLRecibosModel():truncateTable() 
+   SQLTercerosModel():truncateTable()
+   SQLMediosPagoModel():truncateTable()
+   SQLRecibosPagosModel():truncateTable()
+   SQLCuentasBancariasModel():truncateTable()  
+   SQLCuentasBancariasGestoolModel():truncateTable()  
+
+   ::assert:notEquals( 0, SQLRecibosModel():test_create_recibo( uuidRecibo ), "test create recibo" )
+   
+   ::assert:notEquals( 0, SQLTercerosModel():test_create_con_uuid( uuidTercero ), "test creacion de cliente" )
+
+   ::assert:notEquals( 0, SQLMediosPagoModel():test_create_metalico(), "test de creacion de medio de pago" )
+
+   ::assert:notEquals( 0, SQLCuentasBancariasModel():create_cuenta( uuidTercero ), "test de creacion de cuenta bancaria tercero" )
+   
+   ::assert:notEquals( 0, SQLCuentasBancariasGestoolModel():create_cuenta( Company():UUID() ), "test de creacion de cuenta bancaria empresa" )
+
+   oController             := PagosController():New()
+   oController:setUuidRecibo( uuidRecibo )
+
+   oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),; 
+         self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( "0"),;
          apoloWaitSeconds( 1 ),;
+         self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):cText( 50 ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 170, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 180, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         apoloWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } )
 
    ::assert:true( oController:Append(), "test ::assert:true with .t." )
@@ -879,7 +927,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testDialogAppendConImporteMayor() CLASS TestPagosController
+/*METHOD test_dialog_append_con_importe_mayor() CLASS TestPagosController
 
    local oController 
    local uuidRecibo        := win_uuidcreatestring()
@@ -890,11 +938,11 @@ METHOD testDialogAppendConImporteMayor() CLASS TestPagosController
    SQLMediosPagoModel():truncateTable()
    SQLRecibosPagosModel():truncateTable() 
 
-   ::assert:notEquals( 0, SQLRecibosModel():testCreateRecibo( uuidRecibo ), "test create recibo" )
+   ::assert:notEquals( 0, SQLRecibosModel():test_create_recibo( uuidRecibo ), "test create recibo" )
    
-   ::assert:notEquals( 0, SQLTercerosModel():testCreateContado(), "test creacion de cliente" )
+   ::assert:notEquals( 0, SQLTercerosModel():test_create_contado(), "test creacion de cliente" )
 
-   ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
+   ::assert:notEquals( 0, SQLMediosPagoModel():test_create_metalico(), "test de creacion de medio de pago" )
 
    oController             := PagosController():New()
    oController:setUuidRecibo( uuidRecibo )
@@ -902,11 +950,9 @@ METHOD testDialogAppendConImporteMayor() CLASS TestPagosController
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          apoloWaitSeconds( 1 ),;
-         self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
          apoloWaitSeconds( 1 ),;
-         self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 500 ),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( 500 ),;
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),;
          apoloWaitSeconds( 1 ),;
@@ -918,7 +964,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testDialogAppendClienteInexistente() CLASS TestPagosController
+METHOD test_dialog_append_cliente_inexistente() CLASS TestPagosController
 
    local oController 
    local uuidRecibo        := win_uuidcreatestring()
@@ -929,9 +975,9 @@ METHOD testDialogAppendClienteInexistente() CLASS TestPagosController
    SQLMediosPagoModel():truncateTable()
    SQLRecibosPagosModel():truncateTable() 
 
-   ::assert:notEquals( 0, SQLRecibosModel():testCreateRecibo( uuidRecibo ), "test create recibo" )
-   
-   ::assert:notEquals( 0, SQLMediosPagoModel():testCreateMetalico(), "test de creacion de medio de pago" )
+   ::assert:notEquals( 0, SQLRecibosModel():test_create_recibo( uuidRecibo ), "test create recibo" )
+
+   ::assert:notEquals( 0, SQLMediosPagoModel():test_create_metalico(), "test de creacion de medio de pago" )
 
    oController             := PagosController():New()
    oController:setUuidRecibo( uuidRecibo )
@@ -955,7 +1001,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testDialogAppendMedioPagoInexistente() CLASS TestPagosController
+METHOD test_dialog_append_medio_pago_inexistente() CLASS TestPagosController
 
    local oController 
    local uuidRecibo        := win_uuidcreatestring()
@@ -966,9 +1012,9 @@ METHOD testDialogAppendMedioPagoInexistente() CLASS TestPagosController
    SQLMediosPagoModel():truncateTable()
    SQLRecibosPagosModel():truncateTable() 
 
-   ::assert:notEquals( 0, SQLRecibosModel():testCreateRecibo( uuidRecibo ), "test create recibo" )
-
-   ::assert:notEquals( 0, SQLTercerosModel():testCreateContado(), "test creacion de cliente" )
+   ::assert:notEquals( 0, SQLRecibosModel():test_create_recibo( uuidRecibo ), "test create recibo" )
+   
+   ::assert:notEquals( 0, SQLTercerosModel():test_create_contado(), "test creacion de cliente" )
 
    oController             := PagosController():New()
    oController:setUuidRecibo( uuidRecibo )
@@ -988,7 +1034,7 @@ METHOD testDialogAppendMedioPagoInexistente() CLASS TestPagosController
 
    ::assert:false( oController:Append(), "test ::assert:true with .t." )
 
-RETURN ( nil )
+RETURN ( nil )*/
 
 #endif
 
