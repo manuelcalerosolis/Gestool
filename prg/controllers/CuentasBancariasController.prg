@@ -530,7 +530,34 @@ CLASS SQLCuentasBancariasGestoolModel FROM SQLCuentasBancariasModel
 
    METHOD getTableName()               INLINE ( "gestool." + ::cTableName )
 
+#ifdef __TEST__ 
+
+   METHOD create_cuenta()
+
+#endif 
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+METHOD create_cuenta( uuidParent) CLASS SQLCuentasBancariasGestoolModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "codigo", "0" )
+   hset( hBuffer, "parent_uuid", uuidParent )
+   hset( hBuffer, "nombre", "cuenta empresa" )
+   hset( hBuffer, "iban_codigo_pais", 44 )
+   hset( hBuffer, "iban_digito_control", 09 )
+   hset( hBuffer, "cuenta_codigo_entidad", 4444 )
+   hset( hBuffer, "cuenta_digito_control", 10 )
+   hset( hBuffer, "cuenta_numero", 4444444444 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+#endif
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -559,6 +586,12 @@ CLASS SQLCuentasBancariasModel FROM SQLCompanyModel
    METHOD getUuidWhereCodigoAndParentAndNotDeleted( cCodigo )
 
    METHOD getCodigoWhereUuidAndNotDeleted( uuid , uuidParent  )
+
+   #ifdef __TEST__
+
+   METHOD create_cuenta()
+
+   #endif
 
 END CLASS
 
@@ -700,6 +733,27 @@ METHOD getCodigoWhereUuidAndNotDeleted( uuid  ) CLASS SQLCuentasBancariasModel
 RETURN ( getSQLDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
+
+
+#ifdef __TEST__
+
+METHOD create_cuenta( uuidParent ) CLASS SQLCuentasBancariasModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "codigo", "0" )
+   hset( hBuffer, "nombre", "cuenta tercero" )
+   hset( hBuffer, "parent_uuid", uuidParent )
+   hset( hBuffer, "iban_codigo_pais", 44 )
+   hset( hBuffer, "iban_digito_control", 09 )
+   hset( hBuffer, "cuenta_codigo_entidad", 4444 )
+   hset( hBuffer, "cuenta_digito_control", 10 )
+   hset( hBuffer, "cuenta_numero", 4444444444 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+#endif
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

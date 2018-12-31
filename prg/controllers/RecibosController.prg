@@ -549,9 +549,9 @@ CLASS SQLRecibosModel FROM SQLCompanyModel
 
    METHOD getDiferencia( uuidRecibo ) 
 
-   METHOD testCreateRecibo()
+   METHOD test_create_recibo()
 
-   METHOD testCreateReciboConParent( uuid, parent_uuid )
+   METHOD test_create_recibo_con_parent( uuid, parent_uuid )
 
 END CLASS
 
@@ -648,7 +648,7 @@ RETURN ( nImporte )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateRecibo( uuid ) CLASS SQLRecibosModel
+METHOD test_create_recibo( uuid ) CLASS SQLRecibosModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -660,7 +660,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateReciboConParent( uuid, parent_uuid ) CLASS SQLRecibosModel
+METHOD test_create_recibo_con_parent( uuid, parent_uuid ) CLASS SQLRecibosModel
 
    local hBuffer  := ::loadBlankBuffer()
 

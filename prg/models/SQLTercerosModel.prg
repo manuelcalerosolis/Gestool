@@ -36,7 +36,9 @@ CLASS SQLTercerosModel FROM SQLCompanyModel
 
    METHOD test_create_tarifa_mayorista() 
 
-   METHOD test_create_con_plazos()   
+   METHOD test_create_con_plazos() 
+
+   METHOD test_create_con_uuid()   
 
 #endif
 
@@ -586,6 +588,17 @@ METHOD test_create_con_plazos() CLASS SQLTercerosModel
 
 RETURN ( ::insertBuffer( hBuffer ) )
 
+//---------------------------------------------------------------------------//
+
+METHOD test_create_con_uuid( uuid ) CLASS SQLTercerosModel
+
+   local hBuffer           := ::loadBlankBuffer()
+
+      hset( hBuffer, "uuid", uuid )
+      hset( hBuffer, "codigo", "0" )
+      hset( hBuffer, "nombre", "Clientes con pagos a plazos" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
 //---------------------------------------------------------------------------//
 
 #endif
