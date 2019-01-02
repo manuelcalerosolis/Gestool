@@ -129,8 +129,6 @@ RETURN ( nil )
 
 METHOD AppendAssistant() CLASS PagosController
 
-   ::getRecibosPagosTemporalController():getModel():createTemporalTable()
- 
    ::getPagosAssistantController():Append()
 
 RETURN ( nil )
@@ -138,7 +136,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD insertPagoRecibo() CLASS PagosController
-
 
    ::getRecibosPagosController():getModel():insertPagoRecibo( ::getModelBuffer( "uuid" ), ::getUuidRecibo(), ::getImporte() )
 
@@ -679,7 +676,8 @@ CLASS TestPagosController FROM TestCase
 
    DATA oController
 
-   DATA uuidPrimerPago  
+   DATA uuidPrimerPagoPresentado
+   DATA uuidSegundoPagoPresentado  
 
    DATA uuidSegundoPago 
 
@@ -737,17 +735,13 @@ RETURN ( ::oController:end() )
 
 METHOD Before() CLASS TestPagosController 
 
-   ::uuidPrimerPago    := win_uuidcreatestring()
+   ::uuidPrimerRecibo            := win_uuidcreatestring()
+   ::uuidSegundoRecibo           := win_uuidcreatestring()
 
-   ::uuidSegundoPago   := win_uuidcreatestring()
+   ::uuidPrimerPagoPresentado    := win_uuidcreatestring()
+   ::uuidSegundoPagoPresentado   := win_uuidcreatestring()
 
-   ::uuidPrimerRecibo  := win_uuidcreatestring()
-
-   ::uuidSegundoRecibo := win_uuidcreatestring()
- 
-   ::uuidTercero       := win_uuidcreatestring()
-
-   ::oController:setUuidRecibo( ::uuidPrimerRecibo )
+   ::uuidPrimerPagoRechazado     := win_uuidcreatestring()
 
    SQLPagosModel():truncateTable()
 
@@ -759,27 +753,35 @@ METHOD Before() CLASS TestPagosController
 
    SQLRecibosPagosModel():truncateTable()
 
-   SQLCuentasBancariasModel():truncateTable() 
+   SQLCuentasBancariasModel():truncateTable()
+
+   SQLCuentasBancariasGestoolModel():truncateTable() 
 
    SQLTercerosModel():test_create_contado()
 
    SQLMediosPagoModel():test_create_metalico()
 
+   SQLRecibosModel():test_create_recibo( ::uuidPrimerRecibo )
+   SQLRecibosModel():test_create_recibo( ::uuidSegundoRecibo )
+   
+   SQLCuentasBancariasModel():create_cuenta( SQLTercerosModel():test_get_uuid_contado() )
+   
+   SQLCuentasBancariasGestoolModel():create_cuenta( Company():Uuid() )
 
+   SQLPagosModel():test_create_pago_presentado( ::uuidPrimerPagoPresentado )
+   SQLPagosModel():test_create_pago_presentado( ::uuidSegundoPagoPresentado )
+
+   SQLPagosModel():test_create_pago_rechazado( ::uuidPrimerPagoRechazado )
+
+   ::oController:setUuidRecibo( ::uuidPrimerRecibo )
 
 RETURN ( nil )
-
 
 //---------------------------------------------------------------------------//
 
 METHOD test_create_recibo_como_pagado() CLASS TestPagosController
 
-
-   SQLRecibosModel():test_create_recibo( ::uuidPrimerRecibo )
-
-   SQLPagosModel():test_create_pago_presentado( ::uuidPrimerPago )
-
-   SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPago, ::uuidPrimerRecibo, 100 )
+   SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPagoPresentado , ::uuidPrimerRecibo, 100 )
 
    ::assert:Equals( RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), 100, "test pago del recibo" )
 
@@ -787,14 +789,9 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_create_pago_como_Rechazado() CLASS TestPagosController
+METHOD test_create_pago_como_rechazado() CLASS TestPagosController
 
-
-   SQLRecibosModel():test_create_recibo( ::uuidPrimerRecibo )
-
-   SQLPagosModel():test_create_pago_rechazado( ::uuidPrimerPago )
-
-   SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPago, ::uuidPrimerRecibo, 100 )
+   SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPagoRechazado, ::uuidPrimerRecibo, 100 )
 
    ::assert:Equals( RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), 0, "test pago del recibo" )
 
@@ -804,16 +801,9 @@ RETURN ( nil )
 
 METHOD test_create_recibo_con_doble_pago() CLASS TestPagosController
 
+   SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPagoPresentado, ::uuidPrimerRecibo, 50 )
 
-   SQLRecibosModel():test_create_recibo( ::uuidPrimerRecibo )
-
-   SQLPagosModel():test_create_pago_presentado( ::uuidPrimerPago )
-
-   SQLPagosModel():test_create_pago_presentado( ::uuidSegundoPago )
-
-   SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPago, ::uuidPrimerRecibo, 50 )
-
-   SQLRecibosPagosModel():insertPagoRecibo( ::uuidSegundoPago, ::uuidPrimerRecibo, 50 )
+   SQLRecibosPagosModel():insertPagoRecibo( ::uuidSegundoPagoPresentado, ::uuidPrimerRecibo, 50 )
 
    ::assert:Equals( 100, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), "test pago del recibo" )
 
@@ -822,12 +812,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD test_create_pago_con_doble_recibo() CLASS TestPagosController
-
-   SQLRecibosModel():test_create_recibo( ::uuidPrimerRecibo )
-
-   SQLRecibosModel():test_create_recibo( ::uuidSegundoRecibo )
-
-   SQLPagosModel():test_create_pago_presentado( ::uuidPrimerPago )
 
    SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPago, ::uuidPrimerRecibo, 100 )
 
@@ -841,14 +825,6 @@ RETURN ( nil )
 
 METHOD test_create_recibo_con_pago_presentado_y_pago_rechazado() CLASS TestPagosController
 
-   
-
-   SQLRecibosModel():test_create_recibo( ::uuidPrimerRecibo )
-
-   SQLPagosModel():test_create_pago_presentado( ::uuidPrimerPago )
-
-   SQLPagosModel():test_create_pago_rechazado( ::uuidSegundoPago )
-
    SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPago, ::uuidPrimerRecibo, 50 )
 
    SQLRecibosPagosModel():insertPagoRecibo( ::uuidSegundoPago, ::uuidPrimerRecibo, 50 )
@@ -860,12 +836,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD test_create_recibo_con_pagos_rechazados() CLASS TestPagosController
-
-   SQLRecibosModel():test_create_recibo( ::uuidPrimerRecibo )
-
-   SQLPagosModel():test_create_pago_rechazado( ::uuidPrimerPago )
-
-   SQLPagosModel():test_create_pago_rechazado( ::uuidSegundoPago )
 
    SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPago, ::uuidPrimerRecibo, 50 )
 
@@ -905,16 +875,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD test_dialog_append_con_bancos() CLASS TestPagosController
-
-    
-
-   SQLRecibosModel():test_create_recibo( ::uuidPrimerRecibo )
-   
-   SQLTercerosModel():test_create_con_uuid( ::uuidTercero )
-
-   SQLCuentasBancariasModel():create_cuenta( ::uuidTercero )
-   
-   //SQLCuentasBancariasGestoolModel():create_cuenta( Company():UUID() )
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
@@ -980,8 +940,6 @@ RETURN ( nil )
 
 METHOD test_dialog_append_cliente_inexistente() CLASS TestPagosController
 
-    
-
    SQLRecibosModel():test_create_recibo( ::uuidPrimerRecibo )
 
    ::oController:getDialogView():setEvent( 'painted',;
@@ -1010,8 +968,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD test_dialog_append_medio_pago_inexistente() CLASS TestPagosController
-
-    
 
    SQLRecibosModel():test_create_recibo( ::uuidPrimerRecibo )
 

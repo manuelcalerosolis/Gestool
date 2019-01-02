@@ -34,11 +34,15 @@ CLASS SQLTercerosModel FROM SQLCompanyModel
    
    METHOD test_create_contado() 
 
+   METHOD test_get_uuid_contado() 
+
    METHOD test_create_tarifa_mayorista() 
+
+   METHOD test_get_uuid_tarifa_mayorista()
 
    METHOD test_create_con_plazos() 
 
-   METHOD test_create_con_uuid()   
+   METHOD test_get_uuid_con_plazos()
 
 #endif
 
@@ -506,13 +510,19 @@ METHOD test_create_contado() CLASS SQLTercerosModel
    hBuffer           := ::loadBlankBuffer()
 
    hset( hBuffer, "uuid", uuid )
-   hset( hBuffer, "codigo", 0 )
+   hset( hBuffer, "codigo", "0" )
    hset( hBuffer, "nombre", "Clientes contado" )
    hset( hBuffer, "dni", "66666666B" )
    hset( hBuffer, "metodo_pago_codigo", "0" )
    hset( hBuffer, "tarifa_codigo", "0" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_get_uuid_contado() CLASS SQLTercerosModel
+
+RETURN ( ::getUuidWhereCodigo( "0" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -553,6 +563,12 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD test_get_uuid_tarifa_mayorista() CLASS SQLTercerosModel
+
+RETURN ( ::getUuidWhereCodigo( "1" ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD test_create_con_plazos() CLASS SQLTercerosModel
 
    local uuid     
@@ -590,15 +606,10 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_create_con_uuid( uuid ) CLASS SQLTercerosModel
+METHOD test_get_uuid_con_plazos() CLASS SQLTercerosModel
 
-   local hBuffer           := ::loadBlankBuffer()
+RETURN ( ::getUuidWhereCodigo( "2" ) )
 
-      hset( hBuffer, "uuid", uuid )
-      hset( hBuffer, "codigo", "1" )
-      hset( hBuffer, "nombre", "Cliente con pagos a plazos" )
-
-RETURN ( ::insertBuffer( hBuffer ) )
 //---------------------------------------------------------------------------//
 
 #endif

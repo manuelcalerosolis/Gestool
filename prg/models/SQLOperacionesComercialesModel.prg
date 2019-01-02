@@ -29,7 +29,9 @@ CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
 
    METHOD test_create_factura_con_recargo_de_eqivalencia( uuid )
 
-   METHOD test_create_factura_con_varios_plazos( uuid, cTerceroCodigo )
+   METHOD test_create_factura_con_varios_plazos()
+
+   METHOD test_get_uuid_factura_con_varios_plazos()   
 
 #endif
 
@@ -232,19 +234,24 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_create_factura_con_varios_plazos( uuid, cTerceroCodigo ) CLASS SQLOperacionesComercialesModel
+METHOD test_create_factura_con_varios_plazos() CLASS SQLOperacionesComercialesModel
 
    local hBuffer  := ::loadBlankBuffer()
 
    hset( hBuffer, "serie", "TEST" )
    hset( hBuffer, "numero", 1 )
-   hset( hBuffer, "uuid", uuid )
-   hset( hBuffer, "tercero_codigo", quoted( cTerceroCodigo ) )
+   hset( hBuffer, "tercero_codigo", "0" )
    hset( hBuffer, "metodo_pago_codigo", "1" )
    hset( hBuffer, "almacen_codigo", "0" )
    hset( hBuffer, "tarifa_codigo", "0" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_get_uuid_factura_con_varios_plazos() CLASS SQLOperacionesComercialesModel
+
+RETURN ( ::getFieldWhere( "uuid", { "serie" => "TEST", "numero" => 1 } ) )
 
 #endif
 

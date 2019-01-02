@@ -20,16 +20,12 @@ USER FUNCTION hbunit_test()
    local oRunner   := TextRunner():new()
    local oSuite    := TestSuite():new()
 
-   
+   /*
    oSuite:addTest( TestAssert():new() )
 
    oSuite:addTest( TestEmpresasController():new() )
 
    oSuite:addTest( TestArticulosController():new() )
-
-   oSuite:addTest( TestPagosController():new() )
-
-   oSuite:addTest( TestPagosAssistantController():new() )
 
    oSuite:addTest( TestCaracteristicasController():new() )
 
@@ -40,8 +36,6 @@ USER FUNCTION hbunit_test()
    oSuite:addTest( TestUnidadesMedicionController():new() )
 
    oSuite:addTest( TestUnidadesMedicionGruposController():new() )
-
-   oSuite:addTest( TestFacturasClientesFacturaeController():new() )
 
    oSuite:addTest( TestArticulosTarifasController():new() )
 
@@ -56,9 +50,13 @@ USER FUNCTION hbunit_test()
    oSuite:addTest( TestTercerosGruposController():new() )
 
    oSuite:addTest( TestEntidadesController():new() )
-   */
 
    oSuite:addTest( TestFacturasClientesFacturaeController():new() )
+   */
+
+   oSuite:addTest( TestPagosController():new() )
+
+   oSuite:addTest( TestPagosAssistantController():new() )
 
    oRunner:run( oSuite )
 

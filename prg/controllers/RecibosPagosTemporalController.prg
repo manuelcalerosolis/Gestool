@@ -322,7 +322,7 @@ METHOD InsertPagoReciboTemporal( uuidPago, cClienteCodigo ) CLASS SQLRecibosPago
       ( id, pago_uuid, recibo_uuid, importe, diferencia ) 
 
    SELECT 
-        recibos.id, %8$s, recibos.uuid, 0, (SELECT %7$s( recibos.uuid ) )
+        recibos.id, %8$s, recibos.uuid, 0, ( SELECT %7$s( recibos.uuid ) )
    
       FROM %2$s AS recibos
       
@@ -384,7 +384,7 @@ RETURN ( nil )
 
 METHOD getGeneralSelect( uuidPago, cCodigoCliente ) CLASS SQLRecibosPagosTemporalModel
 
- local cSql
+   local cSql
 
    TEXT INTO cSql
 
@@ -423,7 +423,7 @@ RETURN ( getSQLDatabase():Exec( ::getCreateTableTemporalSentence( Company() ) ) 
 
 METHOD dropTemporalTable() CLASS SQLRecibosPagosTemporalModel
 
-local cSql
+   local cSql
 
    TEXT INTO cSql
 

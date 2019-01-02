@@ -15,7 +15,7 @@ CLASS RecibosController FROM SQLNavigatorController
 
    METHOD pagosModelAppend()
 
-   METHOD totalPayed()
+   METHOD generatePayIfHasDiference()
 
    METHOD getImporte()           INLINE ( round( ::getRowSet():fieldGet( 'diferencia' ), 2 ) )
 
@@ -91,13 +91,13 @@ RETURN ( ::Super:End() )
 
 METHOD addExtraButtons() CLASS RecibosController
 
-   ::oNavigatorView:getMenuTreeView():AddButton( "Generar pago", "gc_hand_money_16", {|| ::totalPayed() } ) 
+   ::oNavigatorView:getMenuTreeView():AddButton( "Generar pago", "gc_hand_money_16", {|| ::generatePayIfHasDiference() } ) 
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD totalPayed() CLASS RecibosController
+METHOD generatePayIfHasDiference() CLASS RecibosController
 
    if ::getRowSet():fieldGet( 'diferencia' ) > 0
       
@@ -660,11 +660,10 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_create_recibo_con_parent( uuid, parent_uuid ) CLASS SQLRecibosModel
+METHOD test_create_recibo_con_parent( parent_uuid ) CLASS SQLRecibosModel
 
    local hBuffer  := ::loadBlankBuffer()
 
-   hset( hBuffer, "uuid", uuid )
    hset( hBuffer, "importe", 100 )
    hset( hBuffer, "parent_uuid", parent_uuid )
    hset( hBuffer, "concepto", "Recibo test" )

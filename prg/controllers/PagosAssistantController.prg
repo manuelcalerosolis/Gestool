@@ -7,23 +7,21 @@ CLASS PagosAssistantController FROM SQLNavigatorController
 
    DATA nImporte                       
 
-   DATA cCodigoCliente                 INIT ""
+   DATA cCodigoTercero                 INIT ""
 
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
-   METHOD getRecibos()
-
-   METHOD insertRecibosPago()
+   METHOD isLoadRecibos()
 
    METHOD getImportePagar( nImporte )
 
-   METHOD OtherClient()
+   METHOD changeTercero()
 
    METHOD resetImporteAndCliente()
 
-   METHOD isCLient()                   INLINE ( nil )
+   METHOD isClient()                   INLINE ( nil )
 
    METHOD gettingSelectSentenceTercero()
    METHOD gettingSelectSentenceEmpresa()
@@ -56,11 +54,15 @@ METHOD New( oController ) CLASS PagosAssistantController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::getTercerosController():getSelector():setEvent( 'validated', {|| ::getRecibos() } )
+   ::getTercerosController():getSelector():setEvent( 'validated', {|| ::isLoadRecibos() } )
+   
+   ::setEvent( 'appending',    {|| ::getRecibosPagosTemporalController():getModel():createTemporalTable() } )
    ::setEvent( 'appended',     {|| ::getRecibosPagosController():getModel():InsertPagoReciboAssistant( ::getModelBuffer( "uuid" ) ), if ( !empty( ::getController() ), ::getController():getRowset():refresh(), )/*, ::getController():getRowset():refresh()*/ } )
-   ::setEvent( 'exitAppended', {|| ::getRecibosPagosTemporalController():getModel():dropTemporalTable(), ::resetImporteAndCliente() } )
+   ::setEvent( 'exitAppended', {|| ::getRecibosPagosTemporalController():getModel():dropTemporalTable() } )
+   
    ::getCuentasBancariasController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
    ::getCuentasBancariasController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentenceTercero() } )
+   
    ::getCuentasBancariasGestoolController():getModel():setEvent( 'addingParentUuidWhere', {|| .f. } )
    ::getCuentasBancariasGestoolController():getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentenceEmpresa() } )
 
@@ -84,7 +86,7 @@ RETURN ( ::Super:End() )
 
 METHOD resetImporteAndCliente() CLASS PagosAssistantController
 
-   ::cCodigoCliente :=""
+   ::cCodigoTercero := ""
 
    ::getDialogView():oImporte:cText( 0 )
    
@@ -108,14 +110,13 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD OtherClient( cCodigoCliente ) CLASS PagosAssistantController
+METHOD changeTercero( cCodigoTercero ) CLASS PagosAssistantController
+
+   ::cCodigoTercero  := cCodigoTercero
 
    ::getRecibosPagosTemporalController():getModel():deleteTemporal()
-
-   ::insertRecibosPago()
-
-   ::getRecibosPagosTemporalController():getRowset():buildPad( ::getRecibosPagosTemporalController():getModel():getGeneralSelect( ::getModelBuffer( "uuid" ), ::getModelBuffer( "tercero_codigo" ) ) )
-
+   ::getRecibosPagosTemporalController():getModel():insertPagoReciboTemporal( ::getModelBuffer( "uuid" ), ::getModelBuffer( 'tercero_codigo' ) )
+   ::getRecibosPagosTemporalController():getRowset():buildPad( ::getRecibosPagosTemporalController():getModel():getGeneralSelect() )
    ::getRecibosPagosTemporalController():getBrowseView():Refresh()
 
    ::getMediosPagoController():getSelector():setBlank()
@@ -133,25 +134,13 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getRecibos() CLASS PagosAssistantController
+METHOD isLoadRecibos() CLASS PagosAssistantController
 
-   if ::cCodigoCliente == ::getModelBuffer("tercero_codigo")
-      RETURN ( nil )
+   if ::cCodigoTercero != ::getModelBuffer( "tercero_codigo" )
+      ::changeTercero( ::getModelBuffer( "tercero_codigo" ) )
    end if
 
-   ::cCodigoCliente := ::getModelBuffer("tercero_codigo")
-
-   ::OtherClient()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertRecibosPago() CLASS PagosAssistantController
-
-   ::getRecibosPagosTemporalController():getModel():InsertPagoReciboTemporal( ::getModelBuffer( "uuid" ), ::getModelBuffer('tercero_codigo') )
-
-RETURN ( nil )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -186,6 +175,7 @@ CLASS PagosAssistantView FROM SQLBaseView
    DATA nImporte                       INIT 0
   
    METHOD Activate()
+      METHOD Activating()
 
    METHOD startActivate()
 
@@ -275,6 +265,16 @@ METHOD Activate() CLASS PagosAssistantView
    ::oDialog:Activate( , , , .t. )
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD Activating() CLASS PagosAssistantView
+
+   ::getController():cCodigoTercero := ""
+
+   ::oImporte:cText( 0 )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -381,10 +381,6 @@ CLASS TestPagosAssistantController FROM TestCase
 
    DATA oController
 
-   DATA uuidTercero
-
-   DATA uuidFactura
-
    METHOD beforeClass()
 
    METHOD afterClass()
@@ -431,14 +427,6 @@ RETURN ( ::oController:end() )
 
 METHOD Before() CLASS TestPagosAssistantController 
 
-
-   local uuidPrimerRecibo              := win_uuidcreatestring()
-   local uuidTercerRecibo              := win_uuidcreatestring()
-   local uuidSegundoRecibo             := win_uuidcreatestring()
-
-   ::uuidFactura                       := win_uuidcreatestring()
-   ::uuidTercero                       := win_uuidcreatestring()
-
    SQLTercerosModel():truncateTable()
    SQLPagosModel():truncateTable()
    SQLRecibosModel():truncateTable() 
@@ -446,8 +434,10 @@ METHOD Before() CLASS TestPagosAssistantController
    SQLMetodoPagoModel():truncateTable()
    SQLRecibosPagosModel():truncateTable()
    SQLFacturasClientesModel():truncateTable()
+   SQLCuentasBancariasModel():truncateTable()
+   SQLCuentasBancariasGestoolModel():truncateTable()
 
-   SQLRecibosPagosTemporalModel():createTemporalTable() 
+   // SQLRecibosPagosTemporalModel():createTemporalTable() 
 
    SQLTercerosModel():test_create_contado() 
 
@@ -455,17 +445,19 @@ METHOD Before() CLASS TestPagosAssistantController
 
    SQLMetodoPagoModel():test_create_con_plazos()
 
-   SQLFacturasClientesModel():test_create_factura_con_varios_plazos( ::uuidFactura, 0 ) 
+   SQLFacturasClientesModel():test_create_factura_con_varios_plazos() 
 
-   SQLRecibosModel():test_create_recibo_con_parent( uuidPrimerRecibo, ::uuidFactura )
-   SQLRecibosModel():test_create_recibo_con_parent( uuidSegundoRecibo, ::uuidFactura )
-   SQLRecibosModel():test_create_recibo_con_parent( uuidTercerRecibo, ::uuidFactura )
+   SQLCuentasBancariasModel():create_cuenta( SQLTercerosModel():test_get_uuid_contado() )
 
+   SQLCuentasBancariasGestoolModel():create_cuenta( Company():Uuid() )
+
+   SQLRecibosModel():test_create_recibo_con_parent( SQLFacturasClientesModel():test_get_uuid_factura_con_varios_plazos() )
+   SQLRecibosModel():test_create_recibo_con_parent( SQLFacturasClientesModel():test_get_uuid_factura_con_varios_plazos() )
+   SQLRecibosModel():test_create_recibo_con_parent( SQLFacturasClientesModel():test_get_uuid_factura_con_varios_plazos() )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD test_create_asistente_sin_cliente() CLASS TestPagosAssistantController
 
@@ -677,14 +669,6 @@ RETURN ( nil )
 
 METHOD test_create_asistente_un_banco() CLASS TestPagosAssistantController
 
-   SQLFacturasClientesModel():truncateTable()
-
-   SQLTercerosModel():test_create_con_uuid( ::uuidTercero ) 
-
-   SQLFacturasClientesModel():test_create_factura_con_varios_plazos( ::uuidFactura, 1 )
-
-   SQLCuentasBancariasModel():create_cuenta( ::uuidTercero )
-
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          apoloWaitSeconds( 1 ),;
@@ -713,15 +697,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD test_create_asistente_dos_banco() CLASS TestPagosAssistantController 
-
-   SQLTercerosModel():truncateTable()
-   SQLFacturasClientesModel():truncateTable()
-
-   SQLFacturasClientesModel():test_create_factura_con_varios_plazos( ::uuidFactura, 1 )
-   
-   SQLTercerosModel():test_create_con_uuid( ::uuidTercero )
-
-   SQLCuentasBancariasModel():create_cuenta( ::uuidTercero )
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
