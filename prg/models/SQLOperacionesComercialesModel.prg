@@ -21,15 +21,15 @@ CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
 
    METHOD maxNumberWhereSerie( cSerie )
 
-#ifdef __TEST__
-
    METHOD totalPaid( uuidFactura )
 
-   METHOD testCreateFactura( uuid )
+#ifdef __TEST__
 
-   METHOD testCreateFacturaConRecargoDeEqivalencia( uuid )
+   METHOD test_create_factura( uuid )
 
-   METHOD testCreateFacturaConVariosPlazos( uuid )
+   METHOD test_create_factura_con_recargo_de_eqivalencia( uuid )
+
+   METHOD test_create_factura_con_varios_plazos( uuid, cTerceroCodigo )
 
 #endif
 
@@ -199,7 +199,7 @@ RETURN ( ::getDatabase():getValue( cSql, 0 ) + 1 )
 
 #ifdef __TEST__
 
-METHOD testCreateFactura( uuid ) CLASS SQLOperacionesComercialesModel
+METHOD test_create_factura( uuid ) CLASS SQLOperacionesComercialesModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -215,7 +215,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateFacturaConRecargoDeEqivalencia( uuid ) CLASS SQLOperacionesComercialesModel
+METHOD test_create_factura_con_recargo_de_eqivalencia( uuid ) CLASS SQLOperacionesComercialesModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -232,14 +232,14 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateFacturaConVariosPlazos( uuid ) CLASS SQLOperacionesComercialesModel
+METHOD test_create_factura_con_varios_plazos( uuid, cTerceroCodigo ) CLASS SQLOperacionesComercialesModel
 
    local hBuffer  := ::loadBlankBuffer()
 
    hset( hBuffer, "serie", "TEST" )
    hset( hBuffer, "numero", 1 )
    hset( hBuffer, "uuid", uuid )
-   hset( hBuffer, "tercero_codigo", "0" )
+   hset( hBuffer, "tercero_codigo", quoted( cTerceroCodigo ) )
    hset( hBuffer, "metodo_pago_codigo", "1" )
    hset( hBuffer, "almacen_codigo", "0" )
    hset( hBuffer, "tarifa_codigo", "0" )

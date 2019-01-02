@@ -146,7 +146,7 @@ CLASS TestFacturasClientesController FROM TestCase
 
    METHOD test_dialogo_con_un_solo_pago()
    
-   METHOD test_dialogo_con_varios_pagos()             
+   METHOD test_dialogo_con_varios_pagos()                    
 
 END CLASS
 
