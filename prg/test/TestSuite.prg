@@ -17,10 +17,17 @@ CLASS TestSuite FROM Test
 
    DATA aTests
 
+   DATA aCategories
+
    METHOD New() CONSTRUCTOR
 
    METHOD run()
+
    METHOD addTest( oTest )
+
+   METHOD setCategories( uCategories )
+
+   METHOD isInCategories( aTestCategories )
 
 ENDCLASS
 
@@ -30,7 +37,9 @@ METHOD New() CLASS TestSuite
 
   ::Super:New()
 
-  ::aTests     := {}
+  ::aTests        := {}
+
+  ::aCategories   := { "all" }
 
 RETURN ( self )
 
@@ -38,7 +47,7 @@ RETURN ( self )
 
 METHOD Run() CLASS TestSuite
 
-   aeval( ::aTests, {|oTest| oTest:Run() } )
+   aeval( ::aTests, {|oTest| if( ::isInCategories( oTest:aCategories ), oTest:Run(), ) } )
 
 RETURN ( ::oResult )
 
@@ -47,5 +56,36 @@ RETURN ( ::oResult )
 METHOD addTest( oTest ) CLASS TestSuite
 
 RETURN ( aadd( ::aTests, oTest ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD setCategories( uCategories ) CLASS TestSuite
+
+   if hb_ischar( uCategories )
+      aadd( ::aCategories, uCategories )
+   end if 
+
+   if hb_isarray( uCategories )
+      ::aCategories  := uCategories
+   end if 
+
+RETURN ( ::aCategories )
+
+//---------------------------------------------------------------------------//
+
+METHOD isInCategories( aTestCategories ) CLASS TestSuite
+
+   local cTestCategory 
+   local cSuiteCategory
+
+   for each cTestCategory in aTestCategories
+      for each cSuiteCategory in ::aCategories
+         if cTestCategory == cSuiteCategory 
+            RETURN ( .t. )
+         end if 
+      next
+   next 
+
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//

@@ -126,6 +126,8 @@ CLASS TestFacturasClientesController FROM TestCase
 
    DATA oController
 
+   DATA aCategories                    INIT { "all", "facturas_clientes" }
+
    METHOD beforeClass()
 
    METHOD afterClass()

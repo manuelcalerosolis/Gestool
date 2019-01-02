@@ -48,6 +48,9 @@ CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
    METHOD setFocusColumnCodigoAlmacen() ;
                                        INLINE ( ::oBrowse:setFocus(), ::oBrowse:goToCol( ::oColumnCodigoAlmacen ) )
 
+   METHOD setFocusColumnCodigoUbicacion() ;
+                                       INLINE ( ::oBrowse:setFocus(), ::oBrowse:goToCol( ::oColumnCodigoUbicacion ) )
+
    METHOD setFocusColumnPropiedades()  INLINE ( ::oBrowse:setFocus(), ::oBrowse:goToCol( ::oColumnPropiedades ) )
 
    METHOD activateUbicacionesSelectorView()

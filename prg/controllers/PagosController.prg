@@ -679,13 +679,14 @@ CLASS TestPagosController FROM TestCase
    DATA uuidPrimerPagoPresentado
    DATA uuidSegundoPagoPresentado  
 
-   DATA uuidSegundoPago 
+   DATA uuidPrimerPagoRechazado
+   DATA uuidSegundoPagoRechazado
 
    DATA uuidPrimerRecibo 
-
    DATA uuidSegundoRecibo
- 
-   DATA uuidTercero       
+   
+   DATA uuidPrimerPago 
+   DATA uuidSegundoPago 
 
    METHOD beforeClass()
 
@@ -742,6 +743,7 @@ METHOD Before() CLASS TestPagosController
    ::uuidSegundoPagoPresentado   := win_uuidcreatestring()
 
    ::uuidPrimerPagoRechazado     := win_uuidcreatestring()
+   ::uuidSegundoPagoRechazado    := win_uuidcreatestring()
 
    SQLPagosModel():truncateTable()
 
@@ -772,6 +774,7 @@ METHOD Before() CLASS TestPagosController
    SQLPagosModel():test_create_pago_presentado( ::uuidSegundoPagoPresentado )
 
    SQLPagosModel():test_create_pago_rechazado( ::uuidPrimerPagoRechazado )
+   SQLPagosModel():test_create_pago_rechazado( ::uuidSegundoPagoRechazado )
 
    ::oController:setUuidRecibo( ::uuidPrimerRecibo )
 
@@ -813,9 +816,9 @@ RETURN ( nil )
 
 METHOD test_create_pago_con_doble_recibo() CLASS TestPagosController
 
-   SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPago, ::uuidPrimerRecibo, 100 )
+   SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPagoPresentado, ::uuidPrimerRecibo, 100 )
 
-   SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPago, ::uuidSegundoRecibo, 100 )
+   SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPagoPresentado, ::uuidSegundoRecibo, 100 )
 
    ::assert:Equals( 200, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ) + RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidSegundoRecibo ) , "test pago del recibo" )
 
@@ -825,9 +828,9 @@ RETURN ( nil )
 
 METHOD test_create_recibo_con_pago_presentado_y_pago_rechazado() CLASS TestPagosController
 
-   SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPago, ::uuidPrimerRecibo, 50 )
+   SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPagoPresentado, ::uuidPrimerRecibo, 50 )
 
-   SQLRecibosPagosModel():insertPagoRecibo( ::uuidSegundoPago, ::uuidPrimerRecibo, 50 )
+   SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPagoRechazado, ::uuidPrimerRecibo, 50 )
 
    ::assert:Equals( 50, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), "test pago del recibo" )
 
@@ -837,9 +840,9 @@ RETURN ( nil )
 
 METHOD test_create_recibo_con_pagos_rechazados() CLASS TestPagosController
 
-   SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPago, ::uuidPrimerRecibo, 50 )
+   SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPagoRechazado, ::uuidPrimerRecibo, 50 )
 
-   SQLRecibosPagosModel():insertPagoRecibo( ::uuidSegundoPago, ::uuidPrimerRecibo, 50 )
+   SQLRecibosPagosModel():insertPagoRecibo( ::uuidSegundoPagoRechazado, ::uuidPrimerRecibo, 50 )
 
    ::assert:Equals( 0, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), "test pago del recibo" )
 
@@ -848,8 +851,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD test_dialog_append() CLASS TestPagosController
-
-   SQLRecibosModel():test_create_recibo( ::uuidPrimerRecibo )
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
@@ -911,8 +912,6 @@ RETURN ( nil )
 
 METHOD test_dialog_append_con_importe_mayor() CLASS TestPagosController
 
-   SQLRecibosModel():test_create_recibo( ::uuidPrimerRecibo )
-
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          apoloWaitSeconds( 1 ),;
@@ -940,8 +939,6 @@ RETURN ( nil )
 
 METHOD test_dialog_append_cliente_inexistente() CLASS TestPagosController
 
-   SQLRecibosModel():test_create_recibo( ::uuidPrimerRecibo )
-
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          apoloWaitSeconds( 1 ),;
@@ -968,8 +965,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD test_dialog_append_medio_pago_inexistente() CLASS TestPagosController
-
-   SQLRecibosModel():test_create_recibo( ::uuidPrimerRecibo )
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;

@@ -23,6 +23,8 @@ CLASS TestCase FROM Test
    METHOD after()                      VIRTUAL
    METHOD afterClass()                 VIRTUAL
 
+   DATA aCategories                    INIT { "all" }
+
    PROTECTED:
       DATA assert
 

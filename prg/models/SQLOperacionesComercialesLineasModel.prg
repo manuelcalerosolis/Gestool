@@ -8,12 +8,11 @@ CLASS SQLOperacionesComercialesLineasModel FROM SQLCompanyModel
 
    DATA cTableTemporal        
 
-   DATA cConstraints          INIT  "PRIMARY KEY ( id ), "                       + ; 
-                                       "KEY ( uuid ), "                          + ;
-                                       "KEY ( parent_uuid ), "                   + ;
-                                       "KEY ( deleted_at ), "                    + ;
-                                       "KEY ( articulo_codigo ) "              
-
+   DATA cConstraints                   INIT  "PRIMARY KEY ( id ), "                       + ; 
+                                                "KEY ( uuid ), "                          + ;
+                                                "KEY ( parent_uuid ), "                   + ;
+                                                "KEY ( deleted_at ), "                    + ;
+                                                "KEY ( articulo_codigo ) "              
 
    METHOD getColumns()
 
@@ -57,7 +56,8 @@ CLASS SQLOperacionesComercialesLineasModel FROM SQLCompanyModel
 
    METHOD getSentenceCountLineas( uuidParent )
 
-   METHOD countLinesWhereUuidParent( uuidParent )  INLINE ( getSQLDatabase():getValue( ::getSentenceCountLineas( uuidParent ), 0 ) )
+   METHOD countLinesWhereUuidParent( uuidParent ) ;
+                                       INLINE ( getSQLDatabase():getValue( ::getSentenceCountLineas( uuidParent ), 0 ) )
 
 END CLASS
 
@@ -158,15 +158,12 @@ METHOD getColumnsSelect() CLASS SQLOperacionesComercialesLineasModel
       %1$s.almacen_codigo AS almacen_codigo,
       almacenes.nombre AS almacen_nombre,
       %1$s.ubicacion_codigo AS ubicacion_codigo,
-
-
-
+      ubicaciones.nombre AS ubicacion_nombre,
       %1$s.agente_codigo AS agente_codigo,
       %1$s.agente_comision AS agente_comision, 
       agentes.nombre AS agente_nombre, 
       RTRIM( GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) ) AS articulos_propiedades_nombre,
       %1$s.deleted_at AS deleted_at
-   
    ENDTEXT
 
    cColumns  := hb_strformat(  cColumns, ::cTableName )
@@ -182,7 +179,7 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesLineasModel
    TEXT INTO cSql
 
       SELECT 
-         %7$s
+         %8$s
          
       FROM %1$s AS %2$s
 
@@ -197,6 +194,9 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesLineasModel
 
       LEFT JOIN %6$s AS articulos_propiedades_lineas
          ON articulos_propiedades_lineas.uuid = combinaciones_propiedades.propiedad_uuid
+
+      LEFT JOIN %7$s AS ubicaciones
+         ON ubicaciones.codigo = %2$s.ubicacion_codigo AND ubicaciones.parent_uuid = almacenes.uuid
        
    ENDTEXT
 
@@ -207,6 +207,7 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesLineasModel
                            SQLAgentesModel():getTableName(),;
                            SQLCombinacionesPropiedadesModel():getTableName(),;
                            SQLPropiedadesLineasModel():getTableName(),;
+                           SQLUbicacionesModel():getTableName(),;
                            ::getColumnsSelect() )
 
 RETURN ( cSql )

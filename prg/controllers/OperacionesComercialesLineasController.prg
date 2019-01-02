@@ -59,6 +59,8 @@ CLASS OperacionesComercialesLineasController FROM SQLBrowseController
 
    METHOD validLineAlmacen()
 
+   METHOD validLineUbicacion()
+
    // Escritura de campos------------------------------------------------------
 
    METHOD updateField( cField, uValue )   
@@ -304,6 +306,10 @@ METHOD validLine()
       RETURN ( .f. )
    end if
 
+   if !( ::validLineUbicacion() )
+      RETURN ( .f. )
+   end if
+
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -329,6 +335,18 @@ METHOD validLineAlmacen()
    if empty( ::getRowSet():fieldget( 'almacen_codigo' ) )
       ::getController():getDialogView():showMessage( "Almacén no puede estar vacio en la línea" )   
       ::getBrowseView():setFocusColumnCodigoAlmacen()
+      RETURN ( .f. )
+   end if
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD validLineUbicacion()
+
+   if empty( ::getRowSet():fieldget( 'ubicacion_codigo' ) )
+      ::getController():getDialogView():showMessage( "Ubicación no puede estar vacia en la línea" )   
+      ::getBrowseView():setFocusColumnCodigoUbicacion()
       RETURN ( .f. )
    end if
 

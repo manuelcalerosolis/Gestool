@@ -13,17 +13,21 @@
 
 #include "hbunit.ch"
 
+//---------------------------------------------------------------------------//
+
 CLASS Test
 
-   METHOD new() CONSTRUCTOR
+   METHOD new()                        CONSTRUCTOR
 
-   METHOD countTestCases()    VIRTUAL
-   METHOD run()               VIRTUAL
+   METHOD countTestCases()             VIRTUAL
+   METHOD run()                        VIRTUAL
 
    PROTECTED:
       DATA oResult
 
 ENDCLASS
+
+//---------------------------------------------------------------------------//
 
 METHOD new() CLASS Test
 
@@ -31,3 +35,4 @@ METHOD new() CLASS Test
    
 RETURN ( self )
 
+//---------------------------------------------------------------------------//
