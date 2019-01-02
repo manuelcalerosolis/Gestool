@@ -27,7 +27,7 @@ USER FUNCTION hbunit_test()
 
    //oSuite:addTest( TestArticulosController():new() )
 
-   //oSuite:addTest( TestPagosController():new() )
+   oSuite:addTest( TestPagosController():new() )
 
    oSuite:addTest( TestPagosAssistantController():new() )
 
