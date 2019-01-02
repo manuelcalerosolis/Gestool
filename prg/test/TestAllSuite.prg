@@ -20,7 +20,7 @@ USER FUNCTION hbunit_test()
    local oRunner   := TextRunner():new()
    local oSuite    := TestSuite():new()
 
-   /*
+   
    oSuite:addTest( TestAssert():new() )
 
    oSuite:addTest( TestEmpresasController():new() )

@@ -424,11 +424,11 @@ CLASS SQLMetodoPagoModel FROM SQLCompanyModel
 
 #ifdef __TEST__
 
-   METHOD testCreateContado()
+   METHOD test_create_contado()
 
-   METHOD testCreateReposicion()
+   METHOD test_create_reposicion()
 
-   METHOD testCreateConPlazos()
+   METHOD test_create_con_plazos()
 
 #endif
 
@@ -486,7 +486,7 @@ RETURN ( nil )
 
 #ifdef __TEST__
 
-METHOD testCreateContado() CLASS SQLMetodoPagoModel
+METHOD test_create_contado() CLASS SQLMetodoPagoModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -499,7 +499,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateReposicion() CLASS SQLMetodoPagoModel
+METHOD test_create_reposicion() CLASS SQLMetodoPagoModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -512,7 +512,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateConPlazos() CLASS SQLMetodoPagoModel
+METHOD test_create_con_plazos() CLASS SQLMetodoPagoModel
 
    local hBuffer  := ::loadBlankBuffer()
 

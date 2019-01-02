@@ -23848,7 +23848,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Tipo", -1, "Static", WS_GROUP, 11, 16, 38, 8
   CONTROL "Bancos", -1, "Button", BS_GROUPBOX, 6, 117, 444, 49
   CONTROL "", 181, "Edit", WS_BORDER|WS_TABSTOP, 180, 143, 260, 12
-  CONTROL "Banco empresa ", 182, "Static", WS_GROUP, 11, 147, 57, 8
+  CONTROL "Banco empresa ", 182, "Static", WS_GROUP, 11, 147, 67, 8
 }
 
 RECIBOS_SQL DIALOG DISCARDABLE 35, -50, 456, 274
@@ -23887,7 +23887,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Medio de pago", 132, "Static", WS_GROUP, 11, 302, 58, 8
   CONTROL "Comentario", 4005, "Static", WS_GROUP, 11, 343, 58, 8
   CONTROL "", 151, "Edit", WS_BORDER|WS_TABSTOP, 180, 325, 448, 12
-  CONTROL "Banco empresa", 152, "Static", WS_GROUP, 11, 329, 55, 8
+  CONTROL "Banco empresa", 152, "Static", WS_GROUP, 11, 329, 69, 8
   CONTROL "Datos del pago", -1, "Button", BS_GROUPBOX, 5, 272, 625, 85
   CONTROL "", 500, "SQLXBrowse", WS_TABSTOP|0x00300000, 11, 127, 615, 120
   CONTROL "Recibos", -1, "Button", BS_GROUPBOX, 5, 116, 626, 153

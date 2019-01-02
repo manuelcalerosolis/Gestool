@@ -490,7 +490,7 @@ METHOD test_create_contado() CLASS SQLTercerosModel
    hDireccion        := SQLDireccionesModel():loadBlankBuffer()
 
    hset( hDireccion, "parent_uuid", uuid )
-   hset( hDireccion, "codigo", "0" )
+   hset( hDireccion, "codigo", "1" )
    hset( hDireccion, "direccion", "Cl. Lepanto, 5" )
    hset( hDireccion, "poblacion", "La Palma del Condado" )
    hset( hDireccion, "codigo_provincia", "21" )
@@ -595,8 +595,8 @@ METHOD test_create_con_uuid( uuid ) CLASS SQLTercerosModel
    local hBuffer           := ::loadBlankBuffer()
 
       hset( hBuffer, "uuid", uuid )
-      hset( hBuffer, "codigo", "0" )
-      hset( hBuffer, "nombre", "Clientes con pagos a plazos" )
+      hset( hBuffer, "codigo", "1" )
+      hset( hBuffer, "nombre", "Cliente con pagos a plazos" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 //---------------------------------------------------------------------------//
