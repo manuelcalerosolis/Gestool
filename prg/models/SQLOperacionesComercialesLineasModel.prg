@@ -157,6 +157,10 @@ METHOD getColumnsSelect() CLASS SQLOperacionesComercialesLineasModel
       %1$s.recargo_equivalencia AS recargo_equivalencia,
       %1$s.almacen_codigo AS almacen_codigo,
       almacenes.nombre AS almacen_nombre,
+      %1$s.ubicacion_codigo AS ubicacion_codigo,
+
+
+
       %1$s.agente_codigo AS agente_codigo,
       %1$s.agente_comision AS agente_comision, 
       agentes.nombre AS agente_nombre, 

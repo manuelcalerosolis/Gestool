@@ -5,9 +5,16 @@
 
 CLASS UbicacionesController FROM SQLNavigatorController
 
+   DATA parentUuid
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   METHOD getControllerParentUuid()
+
+   METHOD setControllerParentUuid( parentUuid ) ;
+                                       INLINE ( ::parentUuid := parentUuid )
 
    // Construcciones tardias---------------------------------------------------
 
@@ -64,6 +71,16 @@ METHOD End()
    end if
 
 RETURN ( ::Super:End() )
+
+//---------------------------------------------------------------------------//
+
+METHOD getControllerParentUuid()    
+
+   if !empty( ::parentUuid )
+      RETURN ( ::parentUuid )
+   end if 
+
+RETURN ( ::Super:getControllerParentUuid() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -190,6 +207,10 @@ CLASS SQLUbicacionesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD getControllerParentUuid() 
+
+   METHOD CountUbicacionWhereCodigo( cCodigoUbicacion )   
+
 #ifdef __TEST__
 
    METHOD testCreate()
@@ -235,6 +256,36 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
+METHOD getControllerParentUuid() CLASS SQLUbicacionesModel
+
+   if !empty( ::oController ) .and. !empty( ::oController:parentUuid )
+      RETURN ( ::oController:parentUuid )
+   end if 
+
+RETURN ( ::Super:getControllerParentUuid() )
+
+//---------------------------------------------------------------------------//
+
+METHOD CountUbicacionWhereCodigo( cCodigoUbicacion ) CLASS SQLUbicacionesModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT COUNT(*)
+   
+      FROM %1$s AS ubicaciones
+   
+      WHERE ubicaciones.codigo = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( cCodigoUbicacion ) )
+
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
+
+//---------------------------------------------------------------------------//
+
 #ifdef __TEST__
 
 METHOD testCreate() CLASS SQLUbicacionesModel
@@ -254,7 +305,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 CLASS UbicacionesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLUbicacionesModel():getTableName() ) 
+   METHOD getTableName()               INLINE ( SQLUbicacionesModel():getTableName() ) 
 
 END CLASS
 

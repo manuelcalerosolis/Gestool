@@ -359,7 +359,7 @@ METHOD CountNombreWhereFacturaUuid( cNombre ) CLASS SQLOperacionesComercialesDes
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( ::getControllerParentUuid() ), quoted( cNombre ) )
 
-RETURN ( getSQLDatabase():getValue( cSql ) )
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 

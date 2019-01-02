@@ -354,7 +354,7 @@ METHOD CountAlmacenWhereCodigo( cCodigoAlmacen ) CLASS SQLAlmacenesModel
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( cCodigoAlmacen ) )
 
-RETURN ( getSQLDatabase():getValue( cSql ) )
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 

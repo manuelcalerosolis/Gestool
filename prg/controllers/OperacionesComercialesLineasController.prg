@@ -31,6 +31,8 @@ CLASS OperacionesComercialesLineasController FROM SQLBrowseController
 
    METHOD postValidateAlmacenCodigo( oCol, uValue, nKey )
 
+   METHOD postValidateUbicacionCodigo( oCol, uValue, nKey )
+
    METHOD postValidateAgenteCodigo( oCol, uValue, nKey )
 
    METHOD postValidateCombinacionesUuid( oCol, uValue, nKey )
@@ -46,6 +48,8 @@ CLASS OperacionesComercialesLineasController FROM SQLBrowseController
    METHOD validateDescuento( uValue )
    
    METHOD validAlmacenCodigo( oGet, oCol )
+
+   METHOD validUbicacionCodigo( oGet, oCol )
 
    METHOD validAgenteCodigo( oGet, oCol )
 
@@ -66,6 +70,8 @@ CLASS OperacionesComercialesLineasController FROM SQLBrowseController
    METHOD stampArticulo( hArticulo )
 
    METHOD stampAlmacen( hAlmacen )
+
+   METHOD stampUbicacion( hUbicacion )
 
    METHOD stampAgente( hAgente )
 
@@ -113,6 +119,8 @@ CLASS OperacionesComercialesLineasController FROM SQLBrowseController
    METHOD getHashArticuloWhereCodigo( cCodigo )
 
    METHOD getHashAlmacenWhereCodigo( cCodigo )
+
+   METHOD getHashUbicacionWhereCodigo( cCodigo )
 
    METHOD getHashAgenteWhereCodigo( cCodigo )
 
@@ -250,6 +258,21 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD validUbicacionCodigo( oGet, oCol )
+
+   local uValue   := oGet:varGet()
+
+   if SQLUbicacionesModel():CountUbicacionWhereCodigo( uValue ) <= 0 
+      ::getController():getDialogView():showMessage( "La ubicación introducida no existe" )      
+      RETURN( .f. )
+   end if
+
+   ::updateField( 'ubicacion_codigo', uValue)
+
+RETURN ( .t. ) 
+
+//---------------------------------------------------------------------------//
+
 METHOD validAgenteCodigo( oGet, oCol )
 
    local uValue   := oGet:varGet()
@@ -377,6 +400,38 @@ RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
+METHOD postValidateUbicacionCodigo( oCol, uValue, nKey )
+
+   local hUbicacion
+
+   if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
+      RETURN ( .t. )
+   end if
+
+   if hb_ishash( uValue )
+      if ::getHistoryManager():isEqual( "ubicacion_codigo", hget( uValue, "codigo" ) )
+         RETURN ( .f. )
+      end if          
+      RETURN ( ::stampUbicacion( uValue ) )
+   end if 
+
+   if !hb_ischar( uValue )
+      RETURN ( .f. )
+   end if 
+
+   if ::getHistoryManager():isEqual( "ubicacion_codigo", uValue )
+      RETURN ( .f. )
+   end if          
+
+   hUbicacion   := ::getHashUbicacionWhereCodigo( uValue )
+   if empty( hUbicacion )
+      RETURN ( .f. )
+   end if 
+
+RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
+
 METHOD postValidateAgenteCodigo( oCol, uValue, nKey )
 
    local hAgente
@@ -460,6 +515,12 @@ RETURN ( SQLAlmacenesModel():getHashWhere( "codigo", cCodigo ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD getHashUbicacionWhereCodigo( cCodigo )
+   
+RETURN ( SQLUbicacionesModel():getHashWhere( "codigo", cCodigo ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD getHashAgenteWhereCodigo( cCodigo )
    
 RETURN ( SQLAgentesModel():getHashWhere( "codigo", cCodigo ) )
@@ -505,6 +566,14 @@ RETURN ( .t. )
 METHOD stampAlmacen( hAlmacen )
 
    ::updateField( "almacen_codigo", hget( hAlmacen, "codigo" ) )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD stampUbicacion( hUbicacion )
+
+   ::updateField( "ubicacion_codigo", hget( hUbicacion, "codigo" ) )
 
 RETURN ( .t. )
 

@@ -26,6 +26,8 @@ CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
 
    DATA oColumnArticuloPrecio
 
+   DATA oColumnCodigoUbicacion
+
    METHOD Create( oWindow )
 
    METHOD addColumns()
@@ -47,6 +49,8 @@ CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
                                        INLINE ( ::oBrowse:setFocus(), ::oBrowse:goToCol( ::oColumnCodigoAlmacen ) )
 
    METHOD setFocusColumnPropiedades()  INLINE ( ::oBrowse:setFocus(), ::oBrowse:goToCol( ::oColumnPropiedades ) )
+
+   METHOD activateUbicacionesSelectorView()
 
 ENDCLASS
 
@@ -336,6 +340,32 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
+   if Company():getDefaultUsarUbicaciones()
+
+   with object ( ::oColumnCodigoUbicacion := ::oBrowse:AddCol() )
+      :cSortOrder          := 'ubicacion_codigo'
+      :cHeader             := 'Código ubicación'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'ubicacion_codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nEditType           := EDIT_GET_BUTTON
+      :bEditValid          := {|oGet, oCol| ::getController():validUbicacionCodigo( oGet, oCol ) }
+      :bEditBlock          := {|| ::activateUbicacionesSelectorView() }
+      :nBtnBmp             := 1
+      :AddResource( "Lupa" )
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::getController():postValidateUbicacionCodigo( oCol, uNewValue, nKey ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'ubicacion_nombre'
+      :cHeader             := 'Nombre ubicación'
+      :nWidth              := 180
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'ubicacion_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   end if 
+
    with object ( ::oColumnCodigoAgente := ::oBrowse:AddCol() )
       :cSortOrder          := 'agente_codigo'
       :cHeader             := 'Código agente'
@@ -372,5 +402,32 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
    ::getColumnDeletedAt()
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD activateUbicacionesSelectorView() CLASS FacturasClientesLineasBrowseView
+
+   local hUbicacion
+   local uuidAlmacen
+   local cCodigoAlmacen
+
+   cCodigoAlmacen          := ::getRowSet():fieldGet( 'almacen_codigo' )
+
+   if empty( cCodigoAlmacen )
+      msgStop( "El código de almacén no puede estar vacio" )
+      RETURN ( nil )
+   end if 
+
+   uuidAlmacen             := SQLAlmacenesModel():getUuidWhereCodigo( cCodigoAlmacen )
+   if empty( uuidAlmacen )
+      msgStop( "No se ha podido obtener el identificador de almacén" )
+      RETURN ( nil )
+   end if 
+
+   ::getSuperController():getUbicacionesController():setControllerParentUuid( uuidAlmacen )
+
+   hUbicacion              := ::getSuperController():getUbicacionesController():ActivateSelectorView()
+
+RETURN ( hUbicacion )
 
 //---------------------------------------------------------------------------//

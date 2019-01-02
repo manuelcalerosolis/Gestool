@@ -398,7 +398,7 @@ METHOD CountAgenteWhereCodigo( cCodigoAgente ) CLASS SQLAgentesModel
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( cCodigoAgente ) )
 
-RETURN ( getSQLDatabase():getValue ( cSql ) )
+RETURN ( getSQLDatabase():getValue ( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 

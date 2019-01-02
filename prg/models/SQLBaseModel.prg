@@ -326,10 +326,11 @@ CLASS SQLBaseModel
    METHOD getColumnWhere( cColumn, cField, cCondition, cValue )
    METHOD getColumnsWithBlank( cColumn ) 
 
-   METHOD getNombres()                                INLINE ( ::getColumn( 'nombre' ) )
-   METHOD getNombresWithBlank()                       INLINE ( ::getColumnsWithBlank( 'nombre' ) )
+   METHOD getNombres()                 INLINE ( ::getColumn( 'nombre' ) )
+   METHOD getNombresWithBlank()        INLINE ( ::getColumnsWithBlank( 'nombre' ) )
 
-   METHOD getController()                             INLINE ( ::oController )
+   METHOD getController()              INLINE ( ::oController )
+   METHOD getSuperController()         INLINE ( if( !empty( ::getController() ), ::getController():getController(), nil ) )
 
    METHOD getControllerParentUuid()
 
@@ -339,13 +340,15 @@ CLASS SQLBaseModel
 
    METHOD getSentenceOthersWhereParentUuid( uuidParent ) 
                                              
-   METHOD getHashOthersWhereParentUuid( uuidParent )  INLINE ( ::getDatabase():selectFetchHash( ::getSentenceOthersWhereParentUuid( uuidParent ) ) )
+   METHOD getHashOthersWhereParentUuid( uuidParent ) ;
+                                       INLINE ( ::getDatabase():selectFetchHash( ::getSentenceOthersWhereParentUuid( uuidParent ) ) )
 
    METHOD duplicateOthers( uuidEntidad )
 
-   METHOD setUuidOlderParent( uuidParent )            INLINE ( ::uuidOlderParent := uuidParent )
+   METHOD setUuidOlderParent( uuidParent ) ;
+                                       INLINE ( ::uuidOlderParent := uuidParent )
 
-   METHOD getUuidOlderParent()                        INLINE ( ::uuidOlderParent )
+   METHOD getUuidOlderParent()         INLINE ( ::uuidOlderParent )
 
 END CLASS
 
@@ -601,19 +604,15 @@ METHOD addParentUuidWhere( cSQLSelect )
       RETURN ( cSQLSelect )
    end if
 
-   if !::isParentUuidColumn()
+   if !( ::isParentUuidColumn() )
       RETURN ( cSQLSelect )
    end if 
 
-   if empty( ::oController )
+   if empty( ::getSuperController() )
       RETURN ( cSQLSelect )
    end if
 
-   if empty( ::oController:getController() )
-      RETURN ( cSQLSelect )
-   end if
-
-   uuid           := ::oController:getController():getUuid()
+   uuid           := ::getControllerParentUuid()   
 
    if !empty( uuid )
       cSQLSelect  += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".parent_uuid = " + quoted( uuid )
@@ -2033,15 +2032,11 @@ RETURN ( aColumns )
 
 METHOD getControllerParentUuid() 
 
-   if empty( ::oController )
+   if empty( ::getSuperController() )
       RETURN ( space( 40 ) )
    end if
 
-   if empty( ::oController:getController() )
-      RETURN ( space( 40 ) )
-   end if
-
-RETURN ( ::oController:getController():getUuid() )
+RETURN ( ::getSuperController():getUuid() )
 
 //---------------------------------------------------------------------------//
 
