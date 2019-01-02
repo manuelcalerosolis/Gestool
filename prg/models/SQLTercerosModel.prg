@@ -595,7 +595,7 @@ METHOD test_create_con_uuid( uuid ) CLASS SQLTercerosModel
    local hBuffer           := ::loadBlankBuffer()
 
       hset( hBuffer, "uuid", uuid )
-      hset( hBuffer, "codigo", "0" )
+      hset( hBuffer, "codigo", "1" )
       hset( hBuffer, "nombre", "Clientes con pagos a plazos" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
