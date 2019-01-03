@@ -205,7 +205,7 @@ RETURN ( nil )
 METHOD buildRowSetSentence( cType )
 
    local cColumnOrder         
-   local cColumnOrientation   
+   local cColumnOrientation  
 
    if !empty( ::getBrowseView() )
       cColumnOrder            := ::getBrowseView():getColumnOrderView( cType, ::getName() )
@@ -217,16 +217,16 @@ METHOD buildRowSetSentence( cType )
       RETURN ( nil )
    end if
 
-   if empty( ::oController:isCLient() )
+   /*if empty( ::oController:isCLient() )
       ::getRowSet():Build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
       RETURN ( nil )
-   end if
+   end if*/
    
-   if ::oController:isClient
+   if ::oController:isClient()
       ::getRowSet():Build( ::getModel():getSelectClient( cColumnOrder, cColumnOrientation ) )
       RETURN ( nil )
    end if
-
+   
    ::getRowSet():Build( ::getModel():getSelectProveedor( cColumnOrder, cColumnOrientation ) )
 
 RETURN ( nil )
