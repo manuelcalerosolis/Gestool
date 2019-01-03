@@ -29,9 +29,9 @@ METHOD New( oController ) CLASS CaracteristicasLineasController
 
    ::Super:New( oController )
 
-   ::cTitle                      := "Características lineas"
+   ::cTitle                            := "Características lineas"
 
-   ::cName                       := "articulos_caracteristicas_lineas" 
+   ::cName                             := "articulos_caracteristicas_lineas" 
 
    ::setEvent( 'exitAppended', {|| ::getBrowseView():setFocusColumnNombre() } )
 
@@ -174,13 +174,13 @@ RETURN ( ::getController():getModel():isDuplicateName( ::getController():getCont
 
 CLASS SQLCaracteristicasLineasModel FROM SQLCompanyModel
 
-   DATA cTableName                        INIT "articulos_caracteristicas_lineas" 
+   DATA cTableName                     INIT "articulos_caracteristicas_lineas" 
 
-   DATA cConstraints                      INIT "PRIMARY KEY ( nombre, parent_uuid, deleted_at )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( nombre, parent_uuid, deleted_at )"
 
    METHOD getColumns()
 
-   METHOD getNombreWhereUuid( uuid )      INLINE ( ::getField( 'nombre', 'uuid', uuid ) )
+   METHOD getNombreWhereUuid( uuid )   INLINE ( ::getField( 'nombre', 'uuid', uuid ) )
 
    METHOD getArrayNombreValoresFromUuid( uuid )
 
@@ -192,13 +192,13 @@ CLASS SQLCaracteristicasLineasModel FROM SQLCompanyModel
 
 #ifdef __TEST__
 
-   METHOD testCreateCaracteristicaLineaSinParent( uuidParent )
+   METHOD test_create_caracteristica_linea_sin_parent( uuidParent )
 
-   METHOD testCreateCaracteristicaLineaConParent( uuidParent )
+   METHOD test_create_caracteristica_linea_con_parent( uuidParent )
 
-   METHOD testCreateCaracteristicaLineaSinNombre( uuidParent )
+   METHOD test_create_caracteristica_linea_sin_nombre( uuidParent )
 
-   METHOD testCreateCaracteristicaLineaConUuidAndParent( uuid, uuidParent )
+   METHOD test_create_caracteristicaLineaConUuidAndParent( uuid, uuidParent )
 
 #endif
 
@@ -272,7 +272,7 @@ RETURN ( hNames )
 
 METHOD deleteBlank( uuidParent )
 
-local cSql
+   local cSql
 
    TEXT INTO cSql
 
@@ -314,7 +314,7 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 #ifdef __TEST__
 
-METHOD testCreateCaracteristicaLineaSinParent() CLASS SQLCaracteristicasLineasModel
+METHOD test_create_caracteristica_linea_sin_parent() CLASS SQLCaracteristicasLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -326,7 +326,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateCaracteristicaLineaConParent( uuidParent ) CLASS SQLCaracteristicasLineasModel
+METHOD test_create_caracteristica_linea_con_parent( uuidParent ) CLASS SQLCaracteristicasLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -338,7 +338,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateCaracteristicaLineaSinNombre( uuidParent ) CLASS SQLCaracteristicasLineasModel
+METHOD test_create_caracteristica_linea_sin_nombre( uuidParent ) CLASS SQLCaracteristicasLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -350,11 +350,11 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateCaracteristicaLineaConUuidAndParent( uuid, uuidParent )
+METHOD test_create_caracteristicaLineaConUuidAndParent( uuid, uuidParent )
 
    local hBuffer  := ::loadBlankBuffer()
 
-   hset( hBuffer, "uuid", uuid)
+   hset( hBuffer, "uuid", uuid )
    hset( hBuffer, "nombre", "linea 1" )
    hset( hBuffer, "personalizado", "0" )
    hset( hBuffer, "parent_uuid", uuidParent )
@@ -387,7 +387,7 @@ METHOD testCreateLineaSinPadre() CLASS TestCaracteristicasLineasController
    
    SQLCaracteristicasLineasModel():truncateTable()
 
-   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaSinParent(), 1, "test create linea" )
+   ::assert:notEquals( SQLCaracteristicasLineasModel():test_create_caracteristica_linea_sin_parent(), 1, "test create linea" )
 
 RETURN ( nil )
 
@@ -400,9 +400,9 @@ METHOD testCreateLineaConPadre() CLASS TestCaracteristicasLineasController
    SQLCaracteristicasModel():truncateTable() 
    SQLCaracteristicasLineasModel():truncateTable()
    
-   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidParent ), 0, "test create caracteristica" )
+   ::assert:notEquals( SQLCaracteristicasModel():test_create_caracteristica( uuidParent ), 0, "test create caracteristica" )
 
-   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConParent( uuidParent ), 0, "test create linea" )
+   ::assert:notEquals( SQLCaracteristicasLineasModel():test_create_caracteristica_linea_con_parent( uuidParent ), 0, "test create linea" )
 
 RETURN ( nil )
 
@@ -415,9 +415,9 @@ METHOD testCreateLineaSinNombre() CLASS TestCaracteristicasLineasController
    SQLCaracteristicasModel():truncateTable() 
    SQLCaracteristicasLineasModel():truncateTable()
    
-   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidParent ), 0, "test create caracteristica" )
+   ::assert:notEquals( SQLCaracteristicasModel():test_create_caracteristica( uuidParent ), 0, "test create caracteristica" )
 
-   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaSinNombre( uuidParent ), 1, "test create linea" )
+   ::assert:notEquals( SQLCaracteristicasLineasModel():test_create_caracteristica_linea_sin_nombre( uuidParent ), 1, "test create linea" )
 
 RETURN ( nil )
 

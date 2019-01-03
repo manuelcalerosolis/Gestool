@@ -292,6 +292,10 @@ CLASS SQLAlmacenesModel FROM SQLCompanyModel
 
    METHOD test_get_uuid_almacen_principal() 
 
+   METHOD test_create_almacen_auxiliar()
+
+   METHOD test_get_uuid_almacen_auxiliar()
+
 #endif
 
 END CLASS
@@ -374,6 +378,21 @@ RETURN ( ::insertBuffer( hBuffer ) )
 METHOD test_get_uuid_almacen_principal() CLASS SQLAlmacenesModel
 
 RETURN ( ::getUuidWhereCodigo( "0" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_almacen_auxiliar() CLASS SQLAlmacenesModel
+
+   local hBuffer  := ::loadBlankBuffer(   {  "codigo" => "1",;
+                                             "nombre" => "Almacen auxiliar" } )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_get_uuid_almacen_auxiliar() CLASS SQLAlmacenesModel
+
+RETURN ( ::getUuidWhereCodigo( "1" ) )
 
 //---------------------------------------------------------------------------//
 

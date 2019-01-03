@@ -424,33 +424,24 @@ RETURN ( .f. )
 
 METHOD postValidateUbicacionCodigo( oCol, uValue, nKey )
 
-   local hUbicacion
+   local cCodigo
 
    if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
       RETURN ( .t. )
    end if
 
-   if hb_ishash( uValue )
-      if ::getHistoryManager():isEqual( "ubicacion_codigo", hget( uValue, "codigo" ) )
-         RETURN ( .f. )
-      end if          
-      RETURN ( ::stampUbicacion( uValue ) )
+   do case
+      case hb_ishash( uValue )
+         cCodigo     := hget( uValue, "codigo" )
+      case hb_ischar( uValue )
+         cCodigo     := uValue
+   end case 
+
+   if ::getHistoryManager():isEqual( "ubicacion_codigo", cCodigo )
+      RETURN ( .t. )
    end if 
 
-   if !hb_ischar( uValue )
-      RETURN ( .f. )
-   end if 
-
-   if ::getHistoryManager():isEqual( "ubicacion_codigo", uValue )
-      RETURN ( .f. )
-   end if          
-
-   hUbicacion   := ::getHashUbicacionWhereCodigo( uValue )
-   if empty( hUbicacion )
-      RETURN ( .f. )
-   end if 
-
-RETURN ( .f. )
+RETURN ( ::stampUbicacion( cCodigo ) )
 
 //---------------------------------------------------------------------------//
 
@@ -593,9 +584,9 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampUbicacion( hUbicacion )
+METHOD stampUbicacion( cCodigoUbicacion )
 
-   ::updateField( "ubicacion_codigo", hget( hUbicacion, "codigo" ) )
+   ::updateField( "ubicacion_codigo", cCodigoUbicacion )
 
 RETURN ( .t. )
 
@@ -932,7 +923,7 @@ METHOD validateIva( uValue )
 
    nPorcentajeIVA             := uValue:VarGet()
 
-    if empty( nPorcentajeIVA )
+   if empty( nPorcentajeIVA )
       RETURN ( .t. )
    end if
 

@@ -134,16 +134,19 @@ CLASS TestFacturasClientesController FROM TestCase
 
    METHOD Before() 
 
-   METHOD set_codigo_cliente( cCodigoCliente ) ;
-                                       INLINE ( self:getControl( 170, self:oFolder:aDialogs[1] ):cText( cCodigoCliente ),;
+   METHOD set_codigo_cliente( cCodigoCliente, view ) ;
+                                       INLINE ( view:getControl( 170, view:oFolder:aDialogs[1] ):cText( cCodigoCliente ),;
                                                 apoloWaitSeconds( 1 ),;
-                                                self:getControl( 170, self:oFolder:aDialogs[1] ):lValid(),;
+                                                view:getControl( 170, view:oFolder:aDialogs[1] ):lValid(),;
                                                 apoloWaitSeconds( 1 ) )
 
-   METHOD set_codigo_forma_pago( cCodigoFormaPago ) ;
-                                       INLINE ( self:getControl( 240, self:oFolder:aDialogs[1] ):cText( "0" ),;
+   METHOD set_codigo_forma_pago( cCodigoFormaPago, view ) ;
+                                       INLINE ( view:getControl( 240, view:oFolder:aDialogs[1] ):cText( "0" ),;
                                                 apoloWaitSeconds( 1 ),;
-                                                self:getControl( 240, self:oFolder:aDialogs[1] ):lValid(),;
+                                                view:getControl( 240, view:oFolder:aDialogs[1] ):lValid(),;
+                                                apoloWaitSeconds( 1 ) )
+
+   METHOD click_nueva_linea( view )    INLINE ( view:getControl( 501, view:oFolder:aDialogs[1] ):Click(),;
                                                 apoloWaitSeconds( 1 ) )
 
    METHOD set_codigo_articulo_en_linea() ;
@@ -227,6 +230,9 @@ METHOD Before() CLASS TestFacturasClientesController
    SQLAlmacenesModel():test_create_almacen_principal()
    SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_principal() )
 
+   SQLAlmacenesModel():test_create_almacen_auxiliar()
+   SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_auxiliar() )
+
    SQLMetodoPagoModel():test_create_contado()
    SQLMetodoPagoModel():test_create_reposicion()
    SQLMetodoPagoModel():test_create_con_plazos()
@@ -307,12 +313,12 @@ RETURN ( nil )
 METHOD test_dialogo_sin_lineas() CLASS TestFacturasClientesController
 
    ::oController:getDialogView():setEvent( 'painted',;
-      {| self | ;
-         ::set_codigo_cliente( "0" ),;
-         ::set_codigo_forma_pago( "0" ),;
-         self:getControl( IDOK ):Click(),;
+      {| view | ;
+         ::set_codigo_cliente( "0", view ),;
+         ::set_codigo_forma_pago( "0", view ),;
+         view:getControl( IDOK ):Click(),;
          apoloWaitSeconds( 1 ),;
-         self:getControl( IDCANCEL ):Click() } )
+         view:getControl( IDCANCEL ):Click() } )
 
    ::assert:false( ::oController:Append(), "test creación de factura sin lineas" )
 
@@ -323,21 +329,14 @@ RETURN ( nil )
 METHOD test_dialogo_ventas_por_cajas() CLASS TestFacturasClientesController
 
    ::oController:getDialogView():setEvent( 'painted',;
-      {| self | ;
-         self:getControl( 170, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 170, self:oFolder:aDialogs[1] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 240, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 240, self:oFolder:aDialogs[1] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 501, self:oFolder:aDialogs[1] ):Click(),;
-         apoloWaitSeconds( 1 ),;
+      {| view | ;
+         ::set_codigo_cliente( "0", view ),;
+         ::set_codigo_forma_pago( "0", view ),;
+         ::click_nueva_linea( view ),;
          ::set_codigo_articulo_en_linea(),;
          ::set_codigo_ubicacion_en_linea(),;
          ::set_precio_en_linea(),;         
-         self:getControl( IDOK ):Click() } )
+         view:getControl( IDOK ):Click() } )
 
    ::assert:true( ::oController:Append(), "test creación de factura con ventas por cajas" )
 
