@@ -175,7 +175,6 @@ CLASS PagosAssistantView FROM SQLBaseView
    DATA nImporte                       INIT 0
   
    METHOD Activate()
-      METHOD Activating()
 
    METHOD startActivate()
 
@@ -268,16 +267,6 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activating() CLASS PagosAssistantView
-
-   ::getController():cCodigoTercero := ""
-
-   ::oImporte:cText( 0 )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
 METHOD StartActivate() CLASS PagosAssistantView
 
    ::oController:getTercerosController():getSelector():setFocus()
@@ -289,6 +278,10 @@ METHOD StartActivate() CLASS PagosAssistantView
    ::oController:getMediosPagoController():getSelector():Start()
 
    ::oController:getCuentasBancariasController():getSelector():Start()
+
+   ::getController():cCodigoTercero := ""
+
+   ::oImporte:cText( 0 )
 
 RETURN ( nil )
 
@@ -672,7 +665,7 @@ METHOD test_create_asistente_un_banco() CLASS TestPagosAssistantController
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          apoloWaitSeconds( 1 ),;
-         self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "1" ),;
+         self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
          apoloWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
          apoloWaitSeconds( 1 ),;
@@ -701,7 +694,8 @@ METHOD test_create_asistente_dos_banco() CLASS TestPagosAssistantController
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          apoloWaitSeconds( 1 ),;
-         self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "1" ),;
+         self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
          apoloWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 20 ),;

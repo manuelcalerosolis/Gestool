@@ -23878,7 +23878,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 81, 311, 98, 12
   CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 81, 325, 98, 12
   CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 81, 339, 546, 12
-  CONTROL "Cliente", -1, "Button", BS_GROUPBOX, 5, 3, 626, 108
+  CONTROL "Tercero", -1, "Button", BS_GROUPBOX, 5, 3, 626, 108
   CONTROL "Expedición", -1, "Static", WS_GROUP, 11, 289, 41, 8
   CONTROL "Importe a pagar", -1, "Static", WS_GROUP, 457, 254, 63, 8
   CONTROL "", 101, "Edit", WS_BORDER|WS_TABSTOP, 180, 12, 448, 12

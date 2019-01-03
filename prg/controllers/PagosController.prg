@@ -880,7 +880,7 @@ METHOD test_dialog_append_con_bancos() CLASS TestPagosController
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          apoloWaitSeconds( 1 ),; 
-         self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( "1"),;
+         self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( "0"),;
          apoloWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
          apoloWaitSeconds( 1 ),;
