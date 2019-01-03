@@ -3,9 +3,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLFacturasProveedoresModel FROM SQLOperacionesComercialesModel
+CLASS SQLFacturasComprasModel FROM SQLOperacionesComercialesModel
 
-   DATA cTableName                     INIT "facturas_proveedores"
+   DATA cTableName                     INIT "facturas_compras"
 
    METHOD getTercerosModel()           INLINE ( SQLTercerosModel() )
 
@@ -15,7 +15,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumnsSelect() CLASS SQLFacturasProveedoresModel
+METHOD getColumnsSelect() CLASS SQLFacturasComprasModel
 
    local cColumns
 
@@ -30,7 +30,7 @@ METHOD getColumnsSelect() CLASS SQLFacturasProveedoresModel
       operaciones_comerciales.tercero_codigo AS tercero_codigo,
       operaciones_comerciales.created_at AS created_at,
       operaciones_comerciales.updated_at AS updated_at,
-      terceros.nombre AS cliente_nombre,
+      terceros.nombre AS tercero_nombre,
       terceros.dni AS cliente_dni,
       direcciones.direccion AS direccion_direccion,
       direcciones.poblacion AS direccion_poblacion,
@@ -45,7 +45,7 @@ METHOD getColumnsSelect() CLASS SQLFacturasProveedoresModel
       ( %1$s( operaciones_comerciales.uuid, operaciones_comerciales.recargo_equivalencia ) ) AS total
    ENDTEXT
 
-   cColumns    := hb_strformat( cColumns, Company():getTableName( 'FacturaProveedorTotalSummaryWhereUuid' ) )
+   cColumns    := hb_strformat( cColumns, Company():getTableName( 'FacturaComprasTotalSummaryWhereUuid' ) )
 
 RETURN ( cColumns )
 

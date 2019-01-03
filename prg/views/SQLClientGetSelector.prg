@@ -200,6 +200,8 @@ RETURN ( nil )
 
 METHOD getLinkText()
 
+msgalert(::oController:oController:isClient(),"isclient")
+
    if empty( ::oController:oController ) 
       RETURN ( {|| "Tercero" } )
    end if

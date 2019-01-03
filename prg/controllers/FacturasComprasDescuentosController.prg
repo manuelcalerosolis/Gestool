@@ -3,21 +3,21 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasProveedoresDescuentosController FROM OperacionesComercialesDescuentosController
+CLASS FacturasComprasDescuentosController FROM OperacionesComercialesDescuentosController
 
    METHOD New() CONSTRUCTOR
 
-   METHOD End() 
+   METHOD End()  
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasProveedoresDescuentosModel():New( self ), ), ::oModel )
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasComprasDescuentosModel():New( self ), ), ::oModel )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS FacturasProveedoresDescuentosController
+METHOD New( oController ) CLASS FacturasComprasDescuentosController
 
    ::Super:New( oController )
 
@@ -33,7 +33,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS FacturasProveedoresDescuentosController
+METHOD End() CLASS FacturasComprasDescuentosController
 
    if !empty( ::oModel )
       ::oModel:End()
@@ -47,11 +47,11 @@ RETURN ( ::Super:End() )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLFacturasProveedoresDescuentosModel FROM SQLOperacionesComercialesDescuentosModel
+CLASS SQLFacturasComprasDescuentosModel FROM SQLOperacionesComercialesDescuentosModel
 
-   DATA cTableName               INIT "facturas_proveedores_descuentos"
+   DATA cTableName               INIT "facturas_compras_descuentos"
 
-   DATA cOrderBy                 INIT "facturas_proveedores_descuentos.id"
+   DATA cOrderBy                 INIT "facturas_compras_descuentos.id"
    
 END CLASS
 

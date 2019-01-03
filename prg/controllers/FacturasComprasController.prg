@@ -3,17 +3,17 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasProveedoresController FROM OperacionesComercialesController
+CLASS FacturasComprasController FROM OperacionesComercialesController
 
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    METHOD getTercerosLineasController();
-                                       INLINE ( ::getFacturasProveedoresLineasController() )
+                                       INLINE ( ::getFacturasComprasLineasController() )
 
    METHOD getTercerosDescuentosController();
-                                       INLINE ( ::getFacturasProveedoresDescuentosController() )
+                                       INLINE ( ::getFacturasComprasDescuentosController() )
 
    METHOD isClient()                   INLINE ( .f. )
 
@@ -25,19 +25,19 @@ CLASS FacturasProveedoresController FROM OperacionesComercialesController
 
    METHOD getName()                    INLINE ( "facturas_proveedor" )
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasProveedoresModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasComprasModel():New( self ), ), ::oModel )
 
-   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasProveedorValidator():New( self ), ), ::oValidator ) 
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasCompraValidator():New( self ), ), ::oValidator ) 
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasProveedoresBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasComprasBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasProveedoresRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasComprasRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS FacturasProveedoresController
+METHOD New( oController ) CLASS FacturasComprasController
 
    ::Super:New( oController )
 
@@ -53,7 +53,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS FacturasProveedoresController
+METHOD End() CLASS FacturasComprasController
 
    if !empty( ::oModel )
       ::oModel:End()
@@ -81,7 +81,7 @@ RETURN ( ::Super:End() )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FacturasProveedorValidator FROM OperacionesComercialesValidator 
+CLASS FacturasCompraValidator FROM OperacionesComercialesValidator 
 
    METHOD New( oController )
 
@@ -91,13 +91,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS FacturasProveedorValidator
+METHOD New( oController ) CLASS FacturasCompraValidator
 
 RETURN ( ::Super:New( oController ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS FacturasProveedorValidator
+METHOD getValidators() CLASS FacturasCompraValidator
 
    hset( ::Super:getValidators(), "tercero_codigo",   {  "required"        => "El código del proveedor es un dato requerido",;
                                                          "proveedorExist"  => "El código del proveedor no existe" } )
@@ -112,7 +112,7 @@ RETURN ( ::hValidators )
 
 #ifdef __TEST__
 
-CLASS TestFacturasProveedoresController FROM TestCase
+CLASS TestFacturasComprasController FROM TestCase
 
    METHOD initModels()
 
@@ -130,7 +130,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD initModels() CLASS TestFacturasProveedoresController
+METHOD initModels() CLASS TestFacturasComprasController
 
    SQLTercerosModel():truncateTable()
    SQLAlmacenesModel():truncateTable()
@@ -152,7 +152,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCalculoFacturaConDescuento() CLASS TestFacturasProveedoresController
+METHOD testCalculoFacturaConDescuento() CLASS TestFacturasComprasController
 
    local uuid  
    local hTotal
@@ -184,7 +184,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCalculoFacturaConIncremento() CLASS TestFacturasProveedoresController
+METHOD testCalculoFacturaConIncremento() CLASS TestFacturasComprasController
 
    local uuid  
    local hTotal
@@ -210,7 +210,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testFacturaConUnidadesDeMedicion() CLASS TestFacturasProveedoresController
+METHOD testFacturaConUnidadesDeMedicion() CLASS TestFacturasComprasController
 
    local uuid  
    local hTotal
@@ -236,7 +236,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testDialogoWithNoLines() CLASS TestFacturasProveedoresController
+METHOD testDialogoWithNoLines() CLASS TestFacturasComprasController
 
    local oController
 
@@ -267,7 +267,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testDialogoVentasPorCajas() CLASS TestFacturasProveedoresController
+METHOD testDialogoVentasPorCajas() CLASS TestFacturasComprasController
 
    local oController
 

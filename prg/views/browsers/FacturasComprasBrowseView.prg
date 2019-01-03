@@ -4,7 +4,7 @@
 
 //----------------------------------------------------------------------------//
 
-CLASS FacturasProveedoresBrowseView FROM OperacionesComercialesBrowseView 
+CLASS FacturasComprasBrowseView FROM OperacionesComercialesBrowseView 
 
    METHOD addTercerosNombreLabel()     INLINE ( "Nombre proveedor" )
 

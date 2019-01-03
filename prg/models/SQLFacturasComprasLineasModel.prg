@@ -4,11 +4,11 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLFacturasProveedoresLineasModel FROM SQLOperacionesComercialesLineasModel
+CLASS SQLFacturasComprasLineasModel FROM SQLOperacionesComercialesLineasModel
 
-   DATA cTableName            INIT  "facturas_proveedores_lineas"
+   DATA cTableName            INIT  "facturas_compras_lineas"
 
-   DATA cGroupBy              INIT  "facturas_proveedores_lineas.id" 
+   DATA cGroupBy              INIT  "facturas_compras_lineas.id" 
 
 #ifdef __TEST__
 
@@ -37,7 +37,7 @@ END CLASS
 
 #ifdef __TEST__
 
-METHOD testCreateIVAal0( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD testCreateIVAal0( uuid ) CLASS SQLFacturasComprasLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -52,7 +52,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_create_IVA_al_0_con_10_descuento( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD test_create_IVA_al_0_con_10_descuento( uuid ) CLASS SQLFacturasComprasLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -68,7 +68,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreate10PorCientoDescuento15Incremento( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD testCreate10PorCientoDescuento15Incremento( uuid ) CLASS SQLFacturasComprasLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -86,7 +86,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 //---------------------------------------------------------------------------//
 
 
-METHOD testCreateIVAal10( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD testCreateIVAal10( uuid ) CLASS SQLFacturasComprasLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -102,7 +102,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal10ConRecargoEquivalencia( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD testCreateIVAal10ConRecargoEquivalencia( uuid ) CLASS SQLFacturasComprasLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -119,7 +119,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal10Con15PorcientoDescuento( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD testCreateIVAal10Con15PorcientoDescuento( uuid ) CLASS SQLFacturasComprasLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -136,7 +136,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal21( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD testCreateIVAal21( uuid ) CLASS SQLFacturasComprasLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -152,7 +152,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal21ConRecargoEquivalencia( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD testCreateIVAal21ConRecargoEquivalencia( uuid ) CLASS SQLFacturasComprasLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -169,7 +169,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal21Con20PorcientoDescuento( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD testCreateIVAal21Con20PorcientoDescuento( uuid ) CLASS SQLFacturasComprasLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -186,7 +186,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal21ConIncrememtoPrecio( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD testCreateIVAal21ConIncrememtoPrecio( uuid ) CLASS SQLFacturasComprasLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
