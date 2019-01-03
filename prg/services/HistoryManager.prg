@@ -9,19 +9,19 @@ CLASS HistoryManager
 
    METHOD New()
 
-   METHOD End()                              INLINE ( ::hHash := nil )
+   METHOD End()                        INLINE ( ::hHash := nil )
 
    METHOD Set( hHash )
 
-   METHOD setKey( key, value )               INLINE ( hSet( ::hHash, key, value ) )
+   METHOD setKey( key, value )         INLINE ( hSet( ::hHash, key, value ) )
 
    METHOD getKey( key )
    
    METHOD isEqual( key, value )              
 
-   METHOD isDiferent( key, value )           INLINE ( !( ::isEqual( key, value ) ) )
+   METHOD isDiferent( key, value )     INLINE ( !( ::isEqual( key, value ) ) )
 
-   METHOD say()                              INLINE ( msgInfo( hb_valtoexp( ::hHash ), "HistoryManager" ) )
+   METHOD say()                        INLINE ( msgInfo( hb_valtoexp( ::hHash ), "HistoryManager" ) )
 
 END CLASS
 

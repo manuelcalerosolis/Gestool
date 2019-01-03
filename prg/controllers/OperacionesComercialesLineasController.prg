@@ -247,14 +247,13 @@ RETURN ( ::validate( 'articulo_codigo', uValue ) )
 
 METHOD validAlmacenCodigo( oGet, oCol )
 
-   local uValue   := oGet:varGet()
+   if SQLAlmacenesModel():CountAlmacenWhereCodigo( oGet:varGet() ) <= 0 
 
-   if SQLAlmacenesModel():CountAlmacenWhereCodigo( uValue ) <= 0 
       ::getController():getDialogView():showMessage( "El almacén introducido no existe" )      
-      RETURN( .f. )
+   
+      RETURN ( .f. )
+   
    end if
-
-   ::updateField( 'almacen_codigo', uValue)
 
 RETURN ( .t. ) 
 
@@ -262,14 +261,13 @@ RETURN ( .t. )
 
 METHOD validUbicacionCodigo( oGet, oCol )
 
-   local uValue   := oGet:varGet()
+   if SQLUbicacionesModel():CountUbicacionWhereCodigo( oGet:varGet() ) <= 0 
+      
+      ::getController():getDialogView():showMessage( "La ubicación introducida no existe" )
 
-   if SQLUbicacionesModel():CountUbicacionWhereCodigo( uValue ) <= 0 
-      ::getController():getDialogView():showMessage( "La ubicación introducida no existe" )      
-      RETURN( .f. )
+      RETURN ( .f. )
+
    end if
-
-   ::updateField( 'ubicacion_codigo', uValue)
 
 RETURN ( .t. ) 
 
@@ -277,16 +275,13 @@ RETURN ( .t. )
 
 METHOD validAgenteCodigo( oGet, oCol )
 
-   local uValue   := oGet:varGet()
+   if SQLAgentesModel():CountAgenteWhereCodigo( oGet:varGet() ) <= 0 
 
-   if SQLAgentesModel():CountAgenteWhereCodigo( uValue ) <= 0 
       ::getController():getDialogView():showMessage( "El agente introducido no existe" )      
-      RETURN( .f. )
-   end if
 
-   ::updateField( 'agente_codigo', uValue)
-   
-   ::stampAgenteComision()
+      RETURN ( .f. )
+
+   end if
 
 RETURN ( .t. ) 
 
@@ -392,33 +387,24 @@ RETURN ( ::stampArticulo( hArticulo ) )
 
 METHOD postValidateAlmacenCodigo( oCol, uValue, nKey )
 
-   local hAlmacen
+   local cCodigo
 
    if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
       RETURN ( .t. )
    end if
 
-   if hb_ishash( uValue )
-      if ::getHistoryManager():isEqual( "almacen_codigo", hget( uValue, "codigo" ) )
-         RETURN ( .f. )
-      end if          
-      RETURN ( ::stampAlmacen( uValue ) )
+   do case
+      case hb_ishash( uValue )
+         cCodigo     := hget( uValue, "codigo" )
+      case hb_ischar( uValue )
+         cCodigo     := uValue
+   end case 
+
+   if ::getHistoryManager():isEqual( "almacen_codigo", cCodigo )
+      RETURN ( .t. )
    end if 
 
-   if !hb_ischar( uValue )
-      RETURN ( .f. )
-   end if 
-
-   if ::getHistoryManager():isEqual( "almacen_codigo", uValue )
-      RETURN ( .f. )
-   end if          
-
-   hAlmacen   := ::getHashAlmacenWhereCodigo( uValue )
-   if empty( hAlmacen )
-      RETURN ( .f. )
-   end if 
-
-RETURN ( .f. )
+RETURN ( ::stampAlmacen( cCodigo ) )
 
 //---------------------------------------------------------------------------//
 
@@ -447,34 +433,24 @@ RETURN ( ::stampUbicacion( cCodigo ) )
 
 METHOD postValidateAgenteCodigo( oCol, uValue, nKey )
 
-   local hAgente
+   local cCodigo
 
    if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
       RETURN ( .t. )
    end if
 
-   if hb_ishash( uValue )
-      if ::getHistoryManager():isEqual( "agente_codigo", hget( uValue, "codigo" ) )
-         RETURN ( .f. )
-      end if          
-      RETURN ( ::stampAgente( uValue ) )
+   do case
+      case hb_ishash( uValue )
+         cCodigo     := hget( uValue, "codigo" )
+      case hb_ischar( uValue )
+         cCodigo     := uValue
+   end case 
+
+   if ::getHistoryManager():isEqual( "agente_codigo", cCodigo )
+      RETURN ( .t. )
    end if 
 
-   if !hb_ischar( uValue )
-      RETURN ( .f. )
-   end if 
-
-   if ::getHistoryManager():isEqual( "agente_codigo", uValue )
-      RETURN ( .f. )
-   end if          
-   
-   hAgente   := ::getHashAgenteWhereCodigo( uValue )
-   
-   if empty( hAgente )
-      RETURN ( .f. )
-   end if 
-
-RETURN ( nil )
+RETURN ( ::stampAgente( cCodigo ) )
 
 //---------------------------------------------------------------------------//
 
@@ -576,11 +552,11 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampAlmacen( hAlmacen )
+METHOD stampAlmacen( cCodigoAlmacen )
 
-   ::updateField( "almacen_codigo", hget( hAlmacen, "codigo" ) )
+   ::updateField( "almacen_codigo", cCodigoAlmacen )
 
-RETURN ( .t. )
+RETURN ( ::stampUbicacion( space( 20 ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -592,13 +568,11 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampAgente( hAgente )
+METHOD stampAgente( cCodigoAgente )
 
-   ::updateField( "agente_codigo", hget( hAgente, "codigo" ) )
+   ::updateField( "agente_codigo", cCodigoAgente )
 
-   ::stampAgenteComision()
-
-RETURN ( .t. )
+RETURN ( ::stampAgenteComision() )
 
 //---------------------------------------------------------------------------//
 
@@ -761,7 +735,7 @@ METHOD stampAgenteComision()
       ::updateField( 'agente_comision', nComision )
    end if 
 
-RETURN ( nil )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
