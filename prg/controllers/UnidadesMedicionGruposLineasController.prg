@@ -325,11 +325,11 @@ CLASS SQLUnidadesMedicionGruposLineasModel FROM SQLCompanyModel
 
 #ifdef __TEST__
 
-   METHOD testCreateUnidades( uuidParent )
+   METHOD test_create_unidades( uuidParent )
 
-   METHOD testCreateCajas( uuidParent ) 
+   METHOD test_create_cajas( uuidParent ) 
 
-   METHOD testCreatePalets( uuidParent ) 
+   METHOD test_create_palets( uuidParent ) 
 
 #endif
 
@@ -416,7 +416,7 @@ RETURN ( getSQLDatabase():Exec( ::getSentenceInserLineaUnidadBase( uuidParent, c
 
 #ifdef __TEST__
 
-METHOD testCreateUnidades( uuidParent ) CLASS SQLUnidadesMedicionGruposLineasModel
+METHOD test_create_unidades( uuidParent ) CLASS SQLUnidadesMedicionGruposLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -429,7 +429,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateCajas( uuidParent ) CLASS SQLUnidadesMedicionGruposLineasModel
+METHOD test_create_cajas( uuidParent ) CLASS SQLUnidadesMedicionGruposLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -442,7 +442,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreatePalets( uuidParent ) CLASS SQLUnidadesMedicionGruposLineasModel
+METHOD test_create_palets( uuidParent ) CLASS SQLUnidadesMedicionGruposLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 

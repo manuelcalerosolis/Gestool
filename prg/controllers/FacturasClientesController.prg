@@ -195,12 +195,12 @@ METHOD Before() CLASS TestFacturasClientesController
 
    SQLAlmacenesModel():testCreate()
 
-   SQLMetodoPagoModel():testCreateContado()
-   SQLMetodoPagoModel():testCreateReposicion()
-   SQLMetodoPagoModel():testCreateConPlazos()
+   SQLMetodoPagoModel():test_create_contado()
+   SQLMetodoPagoModel():test_create_reposicion()
+   SQLMetodoPagoModel():test_create_con_plazos()
 
-   SQLArticulosModel():testCreateArticuloConUnidadeDeMedicionCajasPalets()
-   SQLArticulosModel():testCreateArticuloConTarifaMayorista()
+   SQLArticulosModel():test_create_articulo_con_unidad_de_medicion_cajas_palets()
+   SQLArticulosModel():test_create_articulo_con_tarifa_mayorista()
 
    SQLArticulosTarifasModel():testCreateTarifaBase()
    SQLArticulosTarifasModel():testCreateTarifaMayorista()
@@ -216,7 +216,7 @@ METHOD test_calculo_con_descuento() CLASS TestFacturasClientesController
 
    uuid        := win_uuidcreatestring()
 
-   SQLFacturasClientesModel():testCreateFactura( uuid )
+   SQLFacturasClientesModel():test_create_factura( uuid )
 
    SQLFacturasClientesLineasModel():test_create_IVA_al_0_con_10_descuento( uuid )
    SQLFacturasClientesLineasModel():testCreateIVAal10Con15PorcientoDescuento( uuid )
@@ -241,7 +241,7 @@ METHOD test_calculo_con_incremento() CLASS TestFacturasClientesController
 
    uuid        := win_uuidcreatestring()
 
-   SQLFacturasClientesModel():testCreateFactura( uuid )
+   SQLFacturasClientesModel():test_create_factura( uuid )
 
    SQLFacturasClientesLineasModel():testCreateIVAal21ConIncrememtoPrecio( uuid )
 
@@ -260,7 +260,7 @@ METHOD test_con_unidades_de_medicion() CLASS TestFacturasClientesController
 
    uuid        := win_uuidcreatestring()
 
-   SQLFacturasClientesModel():testCreateFactura( uuid )
+   SQLFacturasClientesModel():test_create_factura( uuid )
 
    SQLFacturasClientesLineasModel():testCreate10PorCientoDescuento15Incremento( uuid )
 

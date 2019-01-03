@@ -15,13 +15,13 @@ CLASS SQLArticulosModel FROM SQLCompanyModel
 
 #ifdef __TEST__   
 
-   METHOD testCreatePrecioConDescuentos() 
+   METHOD test_create_precio_con_descuentos() 
 
-   METHOD testCreateArticuloConUuid( uuid )
+   METHOD test_create_articulo_con_uuid( uuid )
 
-   METHOD testCreateArticuloConUnidadeDeMedicionCajasPalets( uuid )
+   METHOD test_create_articulo_con_unidad_de_medicion_cajas_palets( uuid )
 
-   METHOD testCreateArticuloConTarifaMayorista() 
+   METHOD test_create_articulo_con_tarifa_mayorista() 
 
 #endif
 
@@ -175,7 +175,7 @@ RETURN ( cSql )
 
 #ifdef __TEST__
 
-METHOD testCreatePrecioConDescuentos() CLASS SQLArticulosModel
+METHOD test_create_precio_con_descuentos() CLASS SQLArticulosModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -186,7 +186,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateArticuloConUuid( uuid ) CLASS SQLArticulosModel
+METHOD test_create_articulo_con_uuid( uuid ) CLASS SQLArticulosModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -198,7 +198,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateArticuloConUnidadeDeMedicionCajasPalets() CLASS SQLArticulosModel
+METHOD test_create_articulo_con_unidad_de_medicion_cajas_palets() CLASS SQLArticulosModel
 
    local uuid
    local hBuffer
@@ -209,10 +209,10 @@ METHOD testCreateArticuloConUnidadeDeMedicionCajasPalets() CLASS SQLArticulosMod
    SQLUnidadesMedicionGruposModel():truncateTable()
    SQLUnidadesMedicionOperacionesModel():truncateTable()
 
-   SQLUnidadesMedicionGruposModel():testCreate()
-   SQLUnidadesMedicionOperacionesModel():testCreateVentasPorCajas( uuid )
-   SQLUnidadesMedicionOperacionesModel():testCreateComprasPorPalets( uuid )
-   SQLUnidadesMedicionOperacionesModel():testCreateInventarioPorUnidades( uuid )
+   SQLUnidadesMedicionGruposModel():test_create()
+   SQLUnidadesMedicionOperacionesModel():test_create_ventas_por_cajas( uuid )
+   SQLUnidadesMedicionOperacionesModel():test_create_ventas_por_cajas( uuid )
+   SQLUnidadesMedicionOperacionesModel():test_create_inventario_por_unidades( uuid )
 
    hBuffer  := ::loadBlankBuffer()
 
@@ -226,7 +226,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateArticuloConTarifaMayorista() CLASS SQLArticulosModel
+METHOD test_create_articulo_con_tarifa_mayorista() CLASS SQLArticulosModel
 
    local uuid
    local hBuffer

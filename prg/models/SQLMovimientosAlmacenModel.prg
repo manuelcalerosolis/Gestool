@@ -23,11 +23,11 @@ CLASS SQLConsolidacionesAlmacenModel FROM SQLCompanyModel
 
    METHOD totalPaid( uuidFactura )
 
-   METHOD testCreateFactura( uuid )
+   METHOD test_create_factura( uuid )
 
-   METHOD testCreateFacturaConRecargoDeEqivalencia( uuid )
+   METHOD test_create_facturaConRecargoDeEqivalencia( uuid )
 
-   METHOD testCreateFacturaConVariosPlazos( uuid )
+   METHOD test_create_facturaConVariosPlazos( uuid )
 
 #endif
 
@@ -173,7 +173,7 @@ RETURN ( ::getDatabase():getValue( cSql, 0 ) + 1 )
 
 #ifdef __TEST__
 
-METHOD testCreateFactura( uuid ) CLASS SQLConsolidacionesAlmacenModel
+METHOD test_create_factura( uuid ) CLASS SQLConsolidacionesAlmacenModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -189,7 +189,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateFacturaConRecargoDeEqivalencia( uuid ) CLASS SQLConsolidacionesAlmacenModel
+METHOD test_create_facturaConRecargoDeEqivalencia( uuid ) CLASS SQLConsolidacionesAlmacenModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -206,7 +206,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateFacturaConVariosPlazos( uuid ) CLASS SQLConsolidacionesAlmacenModel
+METHOD test_create_facturaConVariosPlazos( uuid ) CLASS SQLConsolidacionesAlmacenModel
 
    local hBuffer  := ::loadBlankBuffer()
 

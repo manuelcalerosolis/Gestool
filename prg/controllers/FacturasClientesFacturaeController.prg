@@ -355,7 +355,7 @@ METHOD testGenerateXml() CLASS TestFacturasClientesFacturaeController
 
    SQLTercerosModel():test_create_contado()
 
-   SQLFacturasClientesModel():testCreateFacturaConRecargoDeEqivalencia( uuid ) 
+   SQLFacturasClientesModel():test_create_facturaConRecargoDeEqivalencia( uuid ) 
 
    SQLFacturasClientesLineasModel():test_create_IVA_al_0_con_10_descuento( uuid ) 
    SQLFacturasClientesLineasModel():testCreateIVAal10ConRecargoEquivalencia( uuid ) 

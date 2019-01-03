@@ -410,17 +410,18 @@ RETURN ( ::hValidators )
 
 CLASS SQLMetodoPagoModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "metodos_pago"
+   DATA cTableName                     INIT "metodos_pago"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( codigo, deleted_at )"
 
    METHOD getColumns()
 
-   METHOD isCobrado()            INLINE ( ::getBuffer( 'cobrado' ) < 2 )
+   METHOD isCobrado()                  INLINE ( ::getBuffer( 'cobrado' ) < 2 )
 
    METHOD setBlankMedioPago()
 
-   METHOD getMedioPagoCodigo( CodigoMetodoPago )   INLINE ( ::getField( "codigo_medio_pago", "codigo", CodigoMetodoPago ) )
+   METHOD getMedioPagoCodigo( CodigoMetodoPago ) ;
+                                       INLINE ( ::getField( "codigo_medio_pago", "codigo", CodigoMetodoPago ) )
 
 #ifdef __TEST__
 

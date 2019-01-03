@@ -320,11 +320,11 @@ CLASS SQLUnidadesMedicionOperacionesModel FROM SQLCompanyModel
 
 #ifdef __TEST__
    
-   METHOD testCreateVentasPorCajas( uuidParent )
+   METHOD test_create_ventas_por_cajas( uuidParent )
 
-   METHOD testCreateComprasPorPalets( uuidParent )
+   METHOD test_create_compras_por_cajas( uuidParent )
 
-   METHOD testCreateInventarioPorUnidades( uuidParent )   
+   METHOD test_create_inventario_por_unidades( uuidParent )   
 
 #endif
 
@@ -521,7 +521,7 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 #ifdef __TEST__
 
-METHOD testCreateVentasPorCajas( uuidParent ) CLASS SQLUnidadesMedicionOperacionesModel
+METHOD test_create_ventas_por_cajas( uuidParent ) CLASS SQLUnidadesMedicionOperacionesModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -533,7 +533,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateComprasPorPalets( uuidParent ) CLASS SQLUnidadesMedicionOperacionesModel
+METHOD test_create_compras_por_cajas( uuidParent ) CLASS SQLUnidadesMedicionOperacionesModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -545,7 +545,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateInventarioPorUnidades( uuidParent ) CLASS SQLUnidadesMedicionOperacionesModel
+METHOD test_create_inventario_por_unidades( uuidParent ) CLASS SQLUnidadesMedicionOperacionesModel
 
    local hBuffer  := ::loadBlankBuffer()
 

@@ -462,15 +462,15 @@ METHOD test_create() CLASS SQLUnidadesMedicionGruposModel
 
    SQLUnidadesMedicionGruposLineasModel():truncateTable()
 
-   SQLUnidadesMedicionModel():testCreateUnidades()
-   SQLUnidadesMedicionModel():testCreateCajas() 
-   SQLUnidadesMedicionModel():testCreatePalets() 
+   SQLUnidadesMedicionModel():test_create_unidades()
+   SQLUnidadesMedicionModel():test_create_cajas() 
+   SQLUnidadesMedicionModel():test_create_palets() 
 
    uuid           := win_uuidcreatestring()
 
-   SQLUnidadesMedicionGruposLineasModel():testCreateUnidades( uuid )
-   SQLUnidadesMedicionGruposLineasModel():testCreateCajas( uuid )
-   SQLUnidadesMedicionGruposLineasModel():testCreatePalets( uuid )
+   SQLUnidadesMedicionGruposLineasModel():test_create_unidades( uuid )
+   SQLUnidadesMedicionGruposLineasModel():test_create_cajas( uuid )
+   SQLUnidadesMedicionGruposLineasModel():test_create_palets( uuid )
 
    hBuffer        := ::loadBlankBuffer()
 
@@ -524,9 +524,9 @@ METHOD initModels()
    SQLUnidadesMedicionGruposModel():truncateTable() 
    SQLUnidadesMedicionGruposLineasModel():truncateTable() 
 
-   SQLUnidadesMedicionModel():testCreateUnidades()
-   SQLUnidadesMedicionModel():testCreateCajas()
-   SQLUnidadesMedicionModel():testCreatePalets()
+   SQLUnidadesMedicionModel():test_create_unidades()
+   SQLUnidadesMedicionModel():test_create_cajas()
+   SQLUnidadesMedicionModel():test_create_palets()
 
 RETURN ( nil )
 
@@ -542,9 +542,9 @@ METHOD testAppend() CLASS TestUnidadesMedicionGruposController
 
    ::initModels()
 
-   SQLUnidadesMedicionGruposLineasModel():testCreateUnidades( uuid )
-   SQLUnidadesMedicionGruposLineasModel():testCreateCajas( uuid )
-   SQLUnidadesMedicionGruposLineasModel():testCreatePalets( uuid )
+   SQLUnidadesMedicionGruposLineasModel():test_create_unidades( uuid )
+   SQLUnidadesMedicionGruposLineasModel():test_create_cajas( uuid )
+   SQLUnidadesMedicionGruposLineasModel():test_create_palets( uuid )
 
    ::assert:notEquals( 0, SQLUnidadesMedicionGruposModel():insertBuffer( hBuffer ), "test id UnidadesMedicionGrupos distinto de cero" )
 
