@@ -133,6 +133,35 @@ CLASS TestFacturasClientesController FROM TestCase
    METHOD afterClass()
 
    METHOD Before() 
+
+   METHOD set_codigo_cliente( cCodigoCliente ) ;
+                                       INLINE ( self:getControl( 170, self:oFolder:aDialogs[1] ):cText( cCodigoCliente ),;
+                                                apoloWaitSeconds( 1 ),;
+                                                self:getControl( 170, self:oFolder:aDialogs[1] ):lValid(),;
+                                                apoloWaitSeconds( 1 ) )
+
+   METHOD set_codigo_forma_pago( cCodigoFormaPago ) ;
+                                       INLINE ( self:getControl( 240, self:oFolder:aDialogs[1] ):cText( "0" ),;
+                                                apoloWaitSeconds( 1 ),;
+                                                self:getControl( 240, self:oFolder:aDialogs[1] ):lValid(),;
+                                                apoloWaitSeconds( 1 ) )
+
+   METHOD set_codigo_articulo_en_linea() ;
+                                       INLINE ( eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "0", 0 ),;
+                                                apoloWaitSeconds( 1 ),;
+                                                ::refresh_linea_browse_view() )
+
+   METHOD set_codigo_ubicacion_en_linea() ;
+                                       INLINE ( eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoUbicacion:bOnPostEdit, , "0", 0 ),;
+                                                apoloWaitSeconds( 1 ),;
+                                                ::refresh_linea_browse_view() )
+
+   METHOD set_precio_en_linea()        INLINE ( eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , 100, 0 ),;
+                                                apoloWaitSeconds( 1 ),;
+                                                ::refresh_linea_browse_view() )
+
+   METHOD refresh_linea_browse_view()  INLINE ( ::oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
+                                                apoloWaitSeconds( 1 ) )
    
    METHOD test_calculo_con_descuento()                
 
@@ -155,7 +184,9 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD beforeClass() CLASS TestFacturasClientesController
-
+   
+   Company():setDefaultUsarUbicaciones( .t. )
+   
    ::oController  := FacturasClientesController():New()
 
 RETURN ( nil )
@@ -277,15 +308,8 @@ METHOD test_dialogo_sin_lineas() CLASS TestFacturasClientesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 170, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 170, self:oFolder:aDialogs[1] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 240, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 240, self:oFolder:aDialogs[1] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         ::set_codigo_cliente( "0" ),;
+         ::set_codigo_forma_pago( "0" ),;
          self:getControl( IDOK ):Click(),;
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
@@ -300,7 +324,6 @@ METHOD test_dialogo_ventas_por_cajas() CLASS TestFacturasClientesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
          self:getControl( 170, self:oFolder:aDialogs[1] ):cText( "0" ),;
          apoloWaitSeconds( 1 ),;
          self:getControl( 170, self:oFolder:aDialogs[1] ):lValid(),;
@@ -311,14 +334,9 @@ METHOD test_dialogo_ventas_por_cajas() CLASS TestFacturasClientesController
          apoloWaitSeconds( 1 ),;
          self:getControl( 501, self:oFolder:aDialogs[1] ):Click(),;
          apoloWaitSeconds( 1 ),;
-         eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "0", 0 ),;
-         apoloWaitSeconds( 1 ),;
-         ::oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
-         apoloWaitSeconds( 1 ),;
-         eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , 100, 0 ),;
-         apoloWaitSeconds( 1 ),;
-         ::oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
-         apoloWaitSeconds( 1 ),;
+         ::set_codigo_articulo_en_linea(),;
+         ::set_codigo_ubicacion_en_linea(),;
+         ::set_precio_en_linea(),;         
          self:getControl( IDOK ):Click() } )
 
    ::assert:true( ::oController:Append(), "test creación de factura con ventas por cajas" )
@@ -343,6 +361,10 @@ METHOD test_dialogo_tarifa_mayorista() CLASS TestFacturasClientesController
          self:getControl( 501, self:oFolder:aDialogs[1] ):Click(),;
          apoloWaitSeconds( 1 ),;
          eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "1", 0 ),;
+         apoloWaitSeconds( 1 ),;
+         ::oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
+         apoloWaitSeconds( 1 ),;
+         eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoUbicacion:bOnPostEdit, , "0", 0 ),;
          apoloWaitSeconds( 1 ),;
          ::oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
          apoloWaitSeconds( 1 ),;
@@ -377,6 +399,10 @@ METHOD test_dialogo_con_un_solo_pago() CLASS TestFacturasClientesController
          apoloWaitSeconds( 1 ),;
          ::oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
          apoloWaitSeconds( 1 ),;
+         eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoUbicacion:bOnPostEdit, , "0", 0 ),;
+         apoloWaitSeconds( 1 ),;
+         ::oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
+         apoloWaitSeconds( 1 ),;
          eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , 100, 0 ),;
          apoloWaitSeconds( 1 ),;
          ::oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
@@ -405,6 +431,10 @@ METHOD test_dialogo_con_varios_pagos() CLASS TestFacturasClientesController
          self:getControl( 501, self:oFolder:aDialogs[1] ):Click(),;
          apoloWaitSeconds( 1 ),;
          eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "1", 0 ),;
+         apoloWaitSeconds( 1 ),;
+         ::oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
+         apoloWaitSeconds( 1 ),;
+         eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoUbicacion:bOnPostEdit, , "0", 0 ),;
          apoloWaitSeconds( 1 ),;
          ::oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
          apoloWaitSeconds( 1 ),;
