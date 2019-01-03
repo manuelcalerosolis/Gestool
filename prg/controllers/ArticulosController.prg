@@ -336,7 +336,7 @@ METHOD testDialogAppendConUnidadDeMedicion() CLASS TestArticulosController
 
    SQLArticulosModel():truncateTable() 
 
-   SQLUnidadesMedicionGruposModel():testCreate()
+   SQLUnidadesMedicionGruposModel():test_create()
 
    oController := ArticulosController():New()
 

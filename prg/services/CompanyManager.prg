@@ -15,6 +15,8 @@ CLASS CompanyManager
    DATA registroMercantil
    DATA delegacionUuid
 
+   DATA lUsarUbicaciones
+
    METHOD New() CONSTRUCTOR
 
    METHOD Set( hCompany )              INLINE ( ::guard( hCompany ) )
@@ -34,7 +36,10 @@ CLASS CompanyManager
 
    METHOD getDefaultCertificado()      INLINE ( SQLAjustableModel():getCertificado( ::uuid ) )
 
-   METHOD getDefaultUsarUbicaciones()  INLINE ( SQLAjustableModel():getUsarUbicaciones( ::uuid ) )
+   METHOD getDefaultUsarUbicaciones()  INLINE ( if( hb_isnil( ::lUsarUbicaciones ), SQLAjustableModel():getUsarUbicaciones( ::uuid ), ::lUsarUbicaciones ) )
+   
+   METHOD setDefaultUsarUbicaciones( lValue ) ;
+                                       INLINE ( ::lUsarUbicaciones := lValue )
    
    METHOD getPathDocuments( cDirectory ) ;
                                        INLINE ( cCompanyPathDocuments( ::codigo, cDirectory ) )
@@ -74,23 +79,23 @@ METHOD guard( hCompany )
    end if 
 
    if hhaskey( hCompany, "id" )
-      ::id              := hget( hCompany, "id" ) 
+      ::id                 := hget( hCompany, "id" ) 
    end if 
 
    if hhaskey( hCompany, "uuid" )
-      ::uuid            := hget( hCompany, "uuid" ) 
+      ::uuid               := hget( hCompany, "uuid" ) 
    end if 
    
    if hhaskey( hCompany, "nombre" )
-      ::nombre          := hget( hCompany, "nombre" ) 
+      ::nombre             := hget( hCompany, "nombre" ) 
    end if 
 
    if hhaskey( hCompany, "codigo" )
-      ::codigo          := hget( hCompany, "codigo" ) 
+      ::codigo             := hget( hCompany, "codigo" ) 
    end if 
 
    if hhaskey( hCompany, "nif" )
-      ::nif             := hget( hCompany, "nif" ) 
+      ::nif                := hget( hCompany, "nif" ) 
    end if 
 
    if hhaskey( hCompany, "registro_mercantil" )

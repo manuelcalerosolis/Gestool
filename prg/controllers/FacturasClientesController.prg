@@ -193,7 +193,8 @@ METHOD Before() CLASS TestFacturasClientesController
    SQLTercerosModel():test_create_tarifa_mayorista()
    SQLTercerosModel():test_create_con_plazos()
 
-   SQLAlmacenesModel():testCreate()
+   SQLAlmacenesModel():test_create_almacen_principal()
+   SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_principal() )
 
    SQLMetodoPagoModel():test_create_contado()
    SQLMetodoPagoModel():test_create_reposicion()
@@ -202,8 +203,8 @@ METHOD Before() CLASS TestFacturasClientesController
    SQLArticulosModel():test_create_articulo_con_unidad_de_medicion_cajas_palets()
    SQLArticulosModel():test_create_articulo_con_tarifa_mayorista()
 
-   SQLArticulosTarifasModel():testCreateTarifaBase()
-   SQLArticulosTarifasModel():testCreateTarifaMayorista()
+   SQLArticulosTarifasModel():test_create_tarifa_base()
+   SQLArticulosTarifasModel():test_create_tarifa_mayorista()
 
 RETURN ( nil )
 
@@ -219,8 +220,8 @@ METHOD test_calculo_con_descuento() CLASS TestFacturasClientesController
    SQLFacturasClientesModel():test_create_factura( uuid )
 
    SQLFacturasClientesLineasModel():test_create_IVA_al_0_con_10_descuento( uuid )
-   SQLFacturasClientesLineasModel():testCreateIVAal10Con15PorcientoDescuento( uuid )
-   SQLFacturasClientesLineasModel():testCreateIVAal21Con20PorcientoDescuento( uuid )
+   SQLFacturasClientesLineasModel():test_create_IVA_al_10_con_15_porciento_descuento( uuid )
+   SQLFacturasClientesLineasModel():test_create_IVA_al_21_con_20_porciento_descuento( uuid )
 
    SQLFacturasClientesDescuentosModel():test_create_l0_por_ciento( uuid )
    SQLFacturasClientesDescuentosModel():test_create_20_por_ciento( uuid )
@@ -243,7 +244,7 @@ METHOD test_calculo_con_incremento() CLASS TestFacturasClientesController
 
    SQLFacturasClientesModel():test_create_factura( uuid )
 
-   SQLFacturasClientesLineasModel():testCreateIVAal21ConIncrememtoPrecio( uuid )
+   SQLFacturasClientesLineasModel():test_create_IVA_al_21_con_incrememto_precio( uuid )
 
    hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
 
@@ -262,7 +263,7 @@ METHOD test_con_unidades_de_medicion() CLASS TestFacturasClientesController
 
    SQLFacturasClientesModel():test_create_factura( uuid )
 
-   SQLFacturasClientesLineasModel():testCreate10PorCientoDescuento15Incremento( uuid )
+   SQLFacturasClientesLineasModel():test_create_10_porciento_descuento_15_incremento( uuid )
 
    hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
 
