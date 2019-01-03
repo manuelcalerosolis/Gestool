@@ -238,8 +238,8 @@ METHOD test_create_articulo_con_tarifa_mayorista() CLASS SQLArticulosModel
    SQLUnidadesMedicionGruposModel():truncateTable()
    SQLUnidadesMedicionOperacionesModel():truncateTable()
 
-   SQLArticulosTarifasModel():testCreateTarifaBase() 
-   SQLArticulosTarifasModel():testCreateTarifaMayorista() 
+   SQLArticulosTarifasModel():test_create_tarifa_base() 
+   SQLArticulosTarifasModel():test_create_tarifa_mayorista() 
 
    hBuffer  := ::loadBlankBuffer()
 

@@ -213,7 +213,7 @@ CLASS SQLUbicacionesModel FROM SQLCompanyModel
 
 #ifdef __TEST__
 
-   METHOD testCreate()
+   METHOD test_create_trhee_with_parent( uuidParent )
 
 #endif
 
@@ -288,10 +288,23 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 #ifdef __TEST__
 
-METHOD testCreate() CLASS SQLUbicacionesModel
+METHOD test_create_trhee_with_parent( uuidParent ) CLASS SQLUbicacionesModel
 
    local hBuffer  := ::loadBlankBuffer(   {  "codigo" => "0",;
-                                             "nombre" => "Test de ubicación" } )
+                                             "parent_uuid" => uuidParent,;
+                                             "nombre" => "Test de ubicación 0" } )
+
+   ::insertBuffer( hBuffer )
+
+   hBuffer        := ::loadBlankBuffer(   {  "codigo" => "1",;
+                                             "parent_uuid" => uuidParent,;
+                                             "nombre" => "Test de ubicación 1" } )
+
+   ::insertBuffer( hBuffer )
+
+   hBuffer        := ::loadBlankBuffer(   {  "codigo" => "2",;
+                                             "parent_uuid" => uuidParent,;
+                                             "nombre" => "Test de ubicación 2" } )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 

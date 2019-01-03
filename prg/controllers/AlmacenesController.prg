@@ -288,7 +288,9 @@ CLASS SQLAlmacenesModel FROM SQLCompanyModel
 
 #ifdef __TEST__
 
-   METHOD testCreate()
+   METHOD test_create_almacen_principal()
+
+   METHOD test_get_uuid_almacen_principal() 
 
 #endif
 
@@ -360,12 +362,20 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 #ifdef __TEST__
 
-METHOD testCreate() CLASS SQLAlmacenesModel
+METHOD test_create_almacen_principal() CLASS SQLAlmacenesModel
 
    local hBuffer  := ::loadBlankBuffer(   {  "codigo" => "0",;
-                                             "nombre" => "Test de almacen" } )
+                                             "nombre" => "Almacen principal" } )
 
 RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_get_uuid_almacen_principal() CLASS SQLAlmacenesModel
+
+RETURN ( ::getUuidWhereCodigo( "0" ) )
+
+//---------------------------------------------------------------------------//
 
 #endif
 

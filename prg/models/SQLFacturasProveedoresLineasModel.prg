@@ -12,22 +12,22 @@ CLASS SQLFacturasProveedoresLineasModel FROM SQLOperacionesComercialesLineasMode
 
 #ifdef __TEST__
 
-   METHOD testCreateIVAal0( uuid )
+   METHOD test_create_IVA_al_0_porciento( uuid )
    METHOD test_create_IVA_al_0_con_10_descuento( uuid )
 
-   METHOD testCreateIVAal10( uuid )
-   METHOD testCreateIVAal10ConRecargoEquivalencia( uuid )
+   METHOD test_create_IVA_al_10_porciento( uuid )
+   METHOD test_create_IVA_al_10_con_recargo_equivalencia( uuid )
    
-   METHOD testCreateIVAal10Con15PorcientoDescuento( uuid )
+   METHOD test_create_IVA_al_10_con_15_porciento_descuento( uuid )
 
-   METHOD testCreateIVAal21( uuid )
-   METHOD testCreateIVAal21ConRecargoEquivalencia( uuid )
+   METHOD test_create_IVA_al_21( uuid )
+   METHOD test_create_IVA_al_21_con_recargo_equivalencia( uuid )
    
-   METHOD testCreateIVAal21Con20PorcientoDescuento( uuid )   
+   METHOD test_create_IVA_al_21_con_20_porciento_descuento( uuid )   
 
-   METHOD testCreateIVAal21ConIncrememtoPrecio( uuid ) 
+   METHOD test_create_IVA_al_21_con_incrememto_precio( uuid ) 
 
-   METHOD testCreate10PorCientoDescuento15Incremento( uuid )
+   METHOD test_create_10_porciento_descuento_15_incremento( uuid )
 
 #endif
 
@@ -37,7 +37,7 @@ END CLASS
 
 #ifdef __TEST__
 
-METHOD testCreateIVAal0( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD test_create_IVA_al_0_porciento( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -68,7 +68,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreate10PorCientoDescuento15Incremento( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD test_create_10_porciento_descuento_15_incremento( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -86,7 +86,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 //---------------------------------------------------------------------------//
 
 
-METHOD testCreateIVAal10( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD test_create_IVA_al_10_porciento( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -102,7 +102,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal10ConRecargoEquivalencia( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD test_create_IVA_al_10_con_recargo_equivalencia( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -119,7 +119,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal10Con15PorcientoDescuento( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD test_create_IVA_al_10_con_15_porciento_descuento( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -136,7 +136,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal21( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD test_create_IVA_al_21( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -152,7 +152,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal21ConRecargoEquivalencia( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD test_create_IVA_al_21_con_recargo_equivalencia( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -169,7 +169,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal21Con20PorcientoDescuento( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD test_create_IVA_al_21_con_20_porciento_descuento( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -186,7 +186,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCreateIVAal21ConIncrememtoPrecio( uuid ) CLASS SQLFacturasProveedoresLineasModel
+METHOD test_create_IVA_al_21_con_incrememto_precio( uuid ) CLASS SQLFacturasProveedoresLineasModel
 
    local hBuffer  := ::loadBlankBuffer()
 

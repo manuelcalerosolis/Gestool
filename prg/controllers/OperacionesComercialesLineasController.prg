@@ -344,6 +344,10 @@ RETURN ( .t. )
 
 METHOD validLineUbicacion()
 
+   if !( Company():getDefaultUsarUbicaciones() )
+      RETURN ( .t. )
+   end if 
+
    if empty( ::getRowSet():fieldget( 'ubicacion_codigo' ) )
       ::getController():getDialogView():showMessage( "Ubicación no puede estar vacia en la línea" )   
       ::getBrowseView():setFocusColumnCodigoUbicacion()

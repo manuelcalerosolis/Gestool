@@ -358,8 +358,8 @@ METHOD testGenerateXml() CLASS TestFacturasClientesFacturaeController
    SQLFacturasClientesModel():test_create_facturaConRecargoDeEqivalencia( uuid ) 
 
    SQLFacturasClientesLineasModel():test_create_IVA_al_0_con_10_descuento( uuid ) 
-   SQLFacturasClientesLineasModel():testCreateIVAal10ConRecargoEquivalencia( uuid ) 
-   SQLFacturasClientesLineasModel():testCreateIVAal21ConRecargoEquivalencia( uuid ) 
+   SQLFacturasClientesLineasModel():test_create_IVA_al_10_con_recargo_equivalencia( uuid ) 
+   SQLFacturasClientesLineasModel():test_create_IVA_al_21_con_recargo_equivalencia( uuid ) 
 
    SQLFacturasClientesDescuentosModel():test_create_l0_por_ciento( uuid )   
    SQLFacturasClientesDescuentosModel():test_create_20_por_ciento( uuid )   
