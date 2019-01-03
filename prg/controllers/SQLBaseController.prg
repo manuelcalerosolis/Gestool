@@ -41,6 +41,8 @@ CLASS SQLBaseController
 
    DATA aSelected
 
+   METHOD isClient()                                  INLINE ( nil )
+
    METHOD New() CONSTRUCTOR
    METHOD End()
 

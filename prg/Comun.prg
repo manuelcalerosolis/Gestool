@@ -1321,7 +1321,7 @@ FUNCTION CreateMainSQLAcceso()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Facturas de compras'
    oItem:cMessage       := 'Facturas de compras'
-   oItem:bAction        := {|| FacturasProveedoresController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| FacturasComprasController():New():ActivateNavigatorView() }
    oItem:cId            := "facturas_compras"
    oItem:cBmp           := "gc_document_text_businessman_16"
    oItem:cBmpBig        := "gc_document_text_businessman_32"

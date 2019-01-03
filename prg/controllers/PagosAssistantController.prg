@@ -175,6 +175,7 @@ CLASS PagosAssistantView FROM SQLBaseView
    DATA nImporte                       INIT 0
   
    METHOD Activate()
+      METHOD Activating()
 
    METHOD startActivate()
 
@@ -267,6 +268,16 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
+METHOD Activating() CLASS PagosAssistantView
+
+   ::getController():cCodigoTercero := ""
+
+   ::nImporte:cText( 0 )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD StartActivate() CLASS PagosAssistantView
 
    ::oController:getTercerosController():getSelector():setFocus()
@@ -278,10 +289,6 @@ METHOD StartActivate() CLASS PagosAssistantView
    ::oController:getMediosPagoController():getSelector():Start()
 
    ::oController:getCuentasBancariasController():getSelector():Start()
-
-   ::getController():cCodigoTercero := ""
-
-   ::oImporte:cText( 0 )
 
 RETURN ( nil )
 

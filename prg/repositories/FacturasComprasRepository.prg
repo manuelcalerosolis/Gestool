@@ -3,9 +3,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasProveedoresRepository FROM SQLBaseRepository
+CLASS FacturasComprasRepository FROM SQLBaseRepository
 
-METHOD getTableName()               INLINE ( SQLFacturasProveedoresModel():getTableName() )
+METHOD getTableName()               INLINE ( SQLFacturasComprasModel():getTableName() )
 
    METHOD getSQLFunctions()            INLINE ( {  ::dropFunctionTotalSummaryWhereUuid(),;
                                                    ::createFunctionTotalSummaryWhereUuid(),;
@@ -65,7 +65,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceTotalesDocumentGroupByIVA( uuidFacturaProveedor ) CLASS FacturasProveedoresRepository
+METHOD getSentenceTotalesDocumentGroupByIVA( uuidFacturaProveedor ) CLASS FacturasComprasRepository
 
 RETURN ( ::getSentenceTotalesDocument( uuidFacturaProveedor ) + " GROUP BY totales.porcentaje_iva" )
 
@@ -75,7 +75,7 @@ RETURN ( ::getSentenceTotalesDocument( uuidFacturaProveedor ) + " GROUP BY total
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD createFunctionTotalSummaryWhereUuid() CLASS FacturasProveedoresRepository
+METHOD createFunctionTotalSummaryWhereUuid() CLASS FacturasComprasRepository
 
    local cSql
 
@@ -106,26 +106,26 @@ METHOD createFunctionTotalSummaryWhereUuid() CLASS FacturasProveedoresRepository
    ENDTEXT
 
    cSql  := hb_strformat(  cSql,;
-                           Company():getTableName( 'FacturaProveedorTotalSummaryWhereUuid' ),;
+                           Company():getTableName( 'FacturaComprasTotalSummaryWhereUuid' ),;
                            ::getSentenceTotales() )
 
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD dropFunctionTotalSummaryWhereUuid() CLASS FacturasProveedoresRepository  
+METHOD dropFunctionTotalSummaryWhereUuid() CLASS FacturasComprasRepository  
 
-RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'FacturaProveedorTotalSummaryWhereUuid' ) + ";" )
-
-//---------------------------------------------------------------------------//
-
-METHOD selectTotalSummaryWhereUuid( uuidFacturaProveedor, aplicarRecargo ) CLASS FacturasProveedoresRepository
-
-RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaProveedorTotalSummaryWhereUuid' ) + "( " + quotedUuid( uuidFacturaProveedor ) + ", " + toSqlString( aplicarRecargo ) + " )" ) )
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'FacturaComprasTotalSummaryWhereUuid' ) + ";" )
 
 //---------------------------------------------------------------------------//
 
-METHOD createFunctionRecargoEquivalenciaWhereUuid() CLASS FacturasProveedoresRepository
+METHOD selectTotalSummaryWhereUuid( uuidFacturaProveedor, aplicarRecargo ) CLASS FacturasComprasRepository
+
+RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaComprasTotalSummaryWhereUuid' ) + "( " + quotedUuid( uuidFacturaProveedor ) + ", " + toSqlString( aplicarRecargo ) + " )" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD createFunctionRecargoEquivalenciaWhereUuid() CLASS FacturasComprasRepository
 
    local cSql
 
@@ -163,19 +163,19 @@ RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD dropFunctionRecargoEquivalenciaWhereUuid() CLASS FacturasProveedoresRepository  
+METHOD dropFunctionRecargoEquivalenciaWhereUuid() CLASS FacturasComprasRepository  
 
 RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'FacturaProveedorRecargoEquivalenciaWhereUuid' ) + ";" )
 
 //---------------------------------------------------------------------------//
 
-METHOD selectRecargoEquivalenciaWhereUuid( uuidFacturaProveedor ) CLASS FacturasProveedoresRepository
+METHOD selectRecargoEquivalenciaWhereUuid( uuidFacturaProveedor ) CLASS FacturasComprasRepository
 
 RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaProveedorRecargoEquivalenciaWhereUuid' ) + "( " + quotedUuid( uuidFacturaProveedor ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceDescuento( uuidFacturaProveedor ) CLASS FacturasProveedoresRepository 
+METHOD getSentenceDescuento( uuidFacturaProveedor ) CLASS FacturasComprasRepository 
 
    local cSql
 
@@ -189,13 +189,13 @@ METHOD getSentenceDescuento( uuidFacturaProveedor ) CLASS FacturasProveedoresRep
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, SQLFacturasProveedoresDescuentosModel():getTableName(), if( empty( uuidFacturaProveedor ), 'uuid_factura_proveedor', quotedUuid( uuidFacturaProveedor ) ) )
+   cSql  := hb_strformat( cSql, SQLFacturasComprasDescuentosModel():getTableName(), if( empty( uuidFacturaProveedor ), 'uuid_factura_proveedor', quotedUuid( uuidFacturaProveedor ) ) )
 
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD createFunctionDescuentoWhereUuid() CLASS FacturasProveedoresRepository
+METHOD createFunctionDescuentoWhereUuid() CLASS FacturasComprasRepository
 
    local cSql
 
@@ -228,25 +228,25 @@ METHOD createFunctionDescuentoWhereUuid() CLASS FacturasProveedoresRepository
 
    cSql  := hb_strformat(  cSql,;
                            Company():getTableName( 'FacturaProveedorDescuentoWhereUuid' ),;
-                           SQLFacturasProveedoresDescuentosModel():getTableName() )
+                           SQLFacturasComprasDescuentosModel():getTableName() )
 
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD dropFunctionDescuentoWhereUuid() CLASS FacturasProveedoresRepository  
+METHOD dropFunctionDescuentoWhereUuid() CLASS FacturasComprasRepository  
 
 RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'FacturaProveedorDescuentoWhereUuid' ) + ";" )
 
 //---------------------------------------------------------------------------//
 
-METHOD selectDescuentoWhereUuid( uuidFacturaProveedor ) CLASS FacturasProveedoresRepository
+METHOD selectDescuentoWhereUuid( uuidFacturaProveedor ) CLASS FacturasComprasRepository
 
 RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaProveedorDescuentoWhereUuid' ) + "( " + quotedUuid( uuidFacturaProveedor ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD createFunctionTotalDescuentoWhereUuid() CLASS FacturasProveedoresRepository
+METHOD createFunctionTotalDescuentoWhereUuid() CLASS FacturasComprasRepository
 
    local cSql
 
@@ -279,25 +279,25 @@ METHOD createFunctionTotalDescuentoWhereUuid() CLASS FacturasProveedoresReposito
 
    cSql  := hb_strformat(  cSql,;
                            Company():getTableName( 'FacturaProveedorTotalDescuentoWhereUuid' ),;
-                           SQLFacturasProveedoresDescuentosModel():getTableName() )
+                           SQLFacturasComprasDescuentosModel():getTableName() )
 
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD dropFunctionTotalDescuentoWhereUuid() CLASS FacturasProveedoresRepository  
+METHOD dropFunctionTotalDescuentoWhereUuid() CLASS FacturasComprasRepository  
 
 RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'FacturaProveedorTotalDescuentoWhereUuid' ) + ";" )
 
 //---------------------------------------------------------------------------//
 
-METHOD selectTotalDescuentoWhereUuid( uuidFacturaProveedor, importeBruto ) CLASS FacturasProveedoresRepository
+METHOD selectTotalDescuentoWhereUuid( uuidFacturaProveedor, importeBruto ) CLASS FacturasComprasRepository
 
 RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( 'FacturaProveedorTotalDescuentoWhereUuid' ) + "( " + quotedUuid( uuidFacturaProveedor ) + ", " + toSqlString( importeBruto ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceLineas( uuidFacturaProveedor ) CLASS FacturasProveedoresRepository 
+METHOD getSentenceLineas( uuidFacturaProveedor ) CLASS FacturasComprasRepository 
 
    local cSql
 
@@ -321,7 +321,7 @@ METHOD getSentenceLineas( uuidFacturaProveedor ) CLASS FacturasProveedoresReposi
    ENDTEXT
 
    cSql  := hb_strformat(  cSql,;
-                           SQLFacturasProveedoresLineasModel():getTableName(),;
+                           SQLFacturasComprasLineasModel():getTableName(),;
                            ::getSentenceImporteBrutoLineas(),;
                            ::getSentenceUnidadesLineas(),;
                            if( empty( uuidFacturaProveedor ), 'uuid_factura_proveedor', quotedUuid( uuidFacturaProveedor ) ) )
@@ -330,13 +330,13 @@ RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getHashSentenceLineas( uuidFacturaProveedor ) CLASS FacturasProveedoresRepository
+METHOD getHashSentenceLineas( uuidFacturaProveedor ) CLASS FacturasComprasRepository
 
 RETURN ( getSQLDataBase():selectTrimedFetchHash( ::getSentenceLineas( uuidFacturaProveedor ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceImporteBrutoLineas() CLASS FacturasProveedoresRepository
+METHOD getSentenceImporteBrutoLineas() CLASS FacturasComprasRepository
 
    local cSql
 
@@ -350,7 +350,7 @@ RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceUnidadesLineas() CLASS FacturasProveedoresRepository
+METHOD getSentenceUnidadesLineas() CLASS FacturasComprasRepository
 
    local cSql
 
@@ -362,7 +362,7 @@ RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceTotales( uuidFacturaProveedor ) CLASS FacturasProveedoresRepository 
+METHOD getSentenceTotales( uuidFacturaProveedor ) CLASS FacturasComprasRepository 
 
    local cSql
 
@@ -399,7 +399,7 @@ RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceTotalesDocument( uuidFacturaProveedor ) CLASS FacturasProveedoresRepository
+METHOD getSentenceTotalesDocument( uuidFacturaProveedor ) CLASS FacturasComprasRepository
 
    local cSql
 
@@ -428,7 +428,7 @@ RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceTotalDocument( uuidFacturaProveedor ) CLASS FacturasProveedoresRepository
+METHOD getSentenceTotalDocument( uuidFacturaProveedor ) CLASS FacturasComprasRepository
 
    local cSql
 
@@ -446,7 +446,7 @@ RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTotalesDocument( uuidFacturaProveedor ) CLASS FacturasProveedoresRepository
+METHOD getTotalesDocument( uuidFacturaProveedor ) CLASS FacturasComprasRepository
 
    local aTotal   := ::getDatabase():selectFetchHash( ::getSentenceTotalesDocument( uuidFacturaProveedor ) ) 
 
@@ -454,7 +454,7 @@ RETURN ( if( hb_isarray( aTotal ), atail( aTotal ), nil ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTotalDocument( uuidFacturaProveedor ) CLASS FacturasProveedoresRepository
+METHOD getTotalDocument( uuidFacturaProveedor ) CLASS FacturasComprasRepository
 
    local nTotal   := ::getDatabase():getValue( ::getSentenceTotalDocument( uuidFacturaProveedor ) ) 
 
@@ -462,7 +462,7 @@ RETURN ( if( empty( nTotal ), 0, nTotal ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTotalesDocumentGroupByIVA( uuidFacturaProveedor ) CLASS FacturasProveedoresRepository
+METHOD getTotalesDocumentGroupByIVA( uuidFacturaProveedor ) CLASS FacturasComprasRepository
 
    local aTotal   := ::getDatabase():selectFetchHash( ::getSentenceTotalesDocumentGroupByIVA( uuidFacturaProveedor ) ) 
 
@@ -470,7 +470,7 @@ RETURN ( if( hb_isarray( aTotal ), aTotal, nil ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getClientMailWhereFacturaUuid( uuidFacturaProveedor ) CLASS FacturasProveedoresRepository
+METHOD getClientMailWhereFacturaUuid( uuidFacturaProveedor ) CLASS FacturasComprasRepository
 
    local cSQL
 
@@ -495,7 +495,7 @@ RETURN ( getSQLDatabase():getValue( cSql, "" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceRecargoEquivalenciaAsSelect( uuidFacturaProveedor ) CLASS FacturasProveedoresRepository 
+METHOD getSentenceRecargoEquivalenciaAsSelect( uuidFacturaProveedor ) CLASS FacturasComprasRepository 
 
    local cSql  
 
@@ -511,7 +511,7 @@ RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceDescuentosAsSelect( uuidFacturaProveedor ) CLASS FacturasProveedoresRepository 
+METHOD getSentenceDescuentosAsSelect( uuidFacturaProveedor ) CLASS FacturasComprasRepository 
 
    local cSql
 
@@ -527,7 +527,7 @@ RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceRecargoEquivalenciaAsParam() CLASS FacturasProveedoresRepository 
+METHOD getSentenceRecargoEquivalenciaAsParam() CLASS FacturasComprasRepository 
 
    local cSql
 
