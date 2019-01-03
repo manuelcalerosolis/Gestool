@@ -170,6 +170,7 @@ UbicacionesController.prg 													\
 DivisasMonetariasController.prg 											\
 ImpuestosEspecialesController.prg 										\
 IvaTipoController.prg 														\
+IvaDetalleView.prg 															\
 CuentasRemesaController.prg 												\
 CuentasBancariasController.prg 											\
 RutasController.prg 															\
@@ -537,6 +538,7 @@ UbicacionesController.obj       											\
 DivisasMonetariasController.obj       									\
 ImpuestosEspecialesController.obj       								\
 IvaTipoController.obj       												\
+IvaDetalleView.obj       													\
 CuentasRemesaController.obj       										\
 CuentasBancariasController.obj       									\
 RutasController.obj       													\
@@ -901,6 +903,7 @@ $(OBJ)\UbicacionesController.obj    									+
 $(OBJ)\DivisasMonetariasController.obj    							+
 $(OBJ)\ImpuestosEspecialesController.obj    							+
 $(OBJ)\IvaTipoController.obj    											+
+$(OBJ)\IvaDetalleView.obj    												+
 $(OBJ)\CuentasRemesaController.obj    									+
 $(OBJ)\CuentasBancariasController.obj    								+
 $(OBJ)\RutasController.obj    											+

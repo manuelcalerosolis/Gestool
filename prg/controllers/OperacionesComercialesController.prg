@@ -15,6 +15,8 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
 
    DATA oFacturasClientesFacturaeController
 
+   DATA oIvaDetalleView
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -100,6 +102,8 @@ CLASS OperacionesComercialesController FROM SQLNavigatorController
    // Contrucciones tardias----------------------------------------------------
 
    METHOD getName()                          VIRTUAL
+
+   METHOD getIvaDetalleView()                INLINE ( if( empty( ::oIvaDetalleView ), ::oIvaDetalleView := IvaDetalleView():New( self ), ), ::oIvaDetalleView )
    
    METHOD getContadoresModel()               INLINE ( if( empty( ::oContadoresModel ), ::oContadoresModel := SQLContadoresModel():New( self ), ), ::oContadoresModel )
 
