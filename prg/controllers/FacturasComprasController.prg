@@ -19,11 +19,11 @@ CLASS FacturasComprasController FROM OperacionesComercialesController
 
    // Impresiones--------------------------------------------------------------
 
-   METHOD getSubject()                 INLINE ( "Factura de proveedor número" )
+   METHOD getSubject()                 INLINE ( "Factura de compras número" )
 
    // Contrucciones tardias----------------------------------------------------
 
-   METHOD getName()                    INLINE ( "facturas_proveedor" )
+   METHOD getName()                    INLINE ( "facturas_compra" )
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasComprasModel():New( self ), ), ::oModel )
 
@@ -43,7 +43,7 @@ METHOD New( oController ) CLASS FacturasComprasController
 
    ::cTitle                            := "Facturas de compras"
 
-   ::cName                             := "facturas_proveedores" 
+   ::cName                             := "facturas_compra" 
 
    ::hImage                            := {  "16" => "gc_document_text_businessman_16",;
                                              "32" => "gc_document_text_businessman_32",;

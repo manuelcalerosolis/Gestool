@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasVentasController FROM OperacionesComercialesController
+CLASS FacturasVentasRectificativasController FROM OperacionesComercialesController
 
    METHOD New() CONSTRUCTOR
 
@@ -25,25 +25,25 @@ CLASS FacturasVentasController FROM OperacionesComercialesController
 
    METHOD getName()                    INLINE ( "facturas_venta" )
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasVentasModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasVentasRectificativasModel():New( self ), ), ::oModel )
 
-   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasVentasValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasVentasRectificativasValidator():New( self ), ), ::oValidator )
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasVentasBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasVentasRectificativasBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasVentasRepository():New( self ), ), ::oRepository )
+   //METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasVentasRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS FacturasVentasController
+METHOD New( oController ) CLASS FacturasVentasRectificativasController
 
    ::Super:New( oController )
 
-   ::cTitle                            := "Facturas de ventas"
+   ::cTitle                            := "Facturas de ventas rectificativas"
 
-   ::cName                             := "facturas_ventas"
+   ::cName                             := "facturas_ventas_rectificativas"
 
    ::hImage                            := {  "16" => "gc_document_text_user_16",;
                                              "32" => "gc_document_text_user_32",;
@@ -53,7 +53,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS FacturasVentasController
+METHOD End() CLASS FacturasVentasRectificativasController
 
    if !empty( ::oModel )
       ::oModel:End()
@@ -79,7 +79,7 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD addExtraButtons() CLASS FacturasVentasController
+METHOD addExtraButtons() CLASS FacturasVentasRectificativasController
 
    ::oNavigatorView:getMenuTreeView():addButton( "Generar facturae 3.2", "gc_document_text_earth_16", {|| ::getFacturasClientesFacturaeController():Run( ::getBrowseView():getBrowseSelected() ) } )
 
@@ -91,7 +91,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FacturasVentasValidator FROM OperacionesComercialesValidator
+CLASS FacturasVentasRectificativasValidator FROM OperacionesComercialesValidator
 
    METHOD New( oController )
 
@@ -101,13 +101,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS FacturasVentasValidator
+METHOD New( oController ) CLASS FacturasVentasRectificativasValidator
 
 RETURN ( ::Super:New( oController ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS FacturasVentasValidator
+METHOD getValidators() CLASS FacturasVentasRectificativasValidator
 
    hset( ::Super:getValidators(), "tercero_codigo",   {  "required"        => "El código del cliente es un dato requerido",;
                                                          "clienteExist"    => "El código del cliente no existe" } )
