@@ -3,11 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS OperacionesComercialesController FROM OperacionesController
-
-   DATA oFacturasClientesFacturaeController
-
-   DATA oIvaDetalleView
+CLASS ConsolidacionAlmacenController FROM OperacionesController
 
    METHOD New() CONSTRUCTOR
 
@@ -16,6 +12,10 @@ CLASS OperacionesComercialesController FROM OperacionesController
    METHOD editConfig()
 
    METHOD Editing()
+
+   METHOD loadedDuplicateBuffer() 
+
+   METHOD loadedBuffer()               INLINE ( ::getHistoryManager():Set( ::getModel():hBuffer ) )
 
    METHOD insertingBuffer()
 
@@ -89,7 +89,7 @@ CLASS OperacionesComercialesController FROM OperacionesController
    
    METHOD getContadoresModel()         INLINE ( if( empty( ::oContadoresModel ), ::oContadoresModel := SQLContadoresModel():New( self ), ), ::oContadoresModel )
 
-   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ConsolidacionAlmacenView():New( self ), ), ::oDialogView )
 
    METHOD getModel()                   VIRTUAL
 
@@ -119,7 +119,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS OperacionesComercialesController
+METHOD New( oController ) CLASS ConsolidacionAlmacenController
 
    ::Super:New( oController )
 
@@ -162,7 +162,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS OperacionesComercialesController
+METHOD End() CLASS ConsolidacionAlmacenController
 
    if !empty( ::oContadoresModel )
       ::oContadoresModel:End()
@@ -200,13 +200,13 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD editConfig() CLASS OperacionesComercialesController
+METHOD editConfig() CLASS ConsolidacionAlmacenController
 
 RETURN ( ::getConfiguracionesController():Edit() )
 
 //---------------------------------------------------------------------------//
 
-METHOD Editing( nId ) CLASS OperacionesComercialesController
+METHOD Editing( nId ) CLASS ConsolidacionAlmacenController
 
    local nTotalDocumento
    local nRecibosPagados   
@@ -224,7 +224,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedBlankBuffer() CLASS OperacionesComercialesController 
+METHOD loadedBlankBuffer() CLASS ConsolidacionAlmacenController 
 
    ::setModelBuffer( "serie", ::getContadoresModel():getLastSerie( ::getName() ) )
 
@@ -236,15 +236,15 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedDuplicateBuffer() CLASS OperacionesComercialesController 
+METHOD loadedDuplicateBuffer() CLASS ConsolidacionAlmacenController 
 
 RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertingBuffer() CLASS OperacionesComercialesController 
+METHOD insertingBuffer() CLASS ConsolidacionAlmacenController 
 
-   ::Super:insertingBuffer()
+   ::setModelBuffer( "numero", ::getContadoresModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) )
 
    ::getRecibosGeneratorController():generate()
 
@@ -252,19 +252,19 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD updatedBuffer() CLASS OperacionesComercialesController 
+METHOD updatedBuffer() CLASS ConsolidacionAlmacenController 
 
 RETURN ( ::getRecibosGeneratorController():update() )
 
 //---------------------------------------------------------------------------//
 
-METHOD getClientUuid() CLASS OperacionesComercialesController 
+METHOD getClientUuid() CLASS ConsolidacionAlmacenController 
 
 RETURN ( ::getTercerosController():getModel():getUuidWhereCodigo( ::getModelBuffer( "tercero_codigo" ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientesSettedHelpText() CLASS OperacionesComercialesController
+METHOD clientesSettedHelpText() CLASS ConsolidacionAlmacenController
 
    if ::getHistoryManager():isEqual( "tercero_codigo", ::getModelBuffer( "tercero_codigo" ) )
       RETURN ( nil )
@@ -288,7 +288,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetMetodoPago() CLASS OperacionesComercialesController
+METHOD clientSetMetodoPago() CLASS ConsolidacionAlmacenController
 
    local cCodigoMetodoPago
 
@@ -312,7 +312,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetTarifa() CLASS OperacionesComercialesController
+METHOD clientSetTarifa() CLASS ConsolidacionAlmacenController
 
    local cCodigoTarifa
 
@@ -336,7 +336,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetRuta() CLASS OperacionesComercialesController
+METHOD clientSetRuta() CLASS ConsolidacionAlmacenController
 
    local cCodigoRuta
 
@@ -356,7 +356,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetAgente() CLASS OperacionesComercialesController
+METHOD clientSetAgente() CLASS ConsolidacionAlmacenController
 
    local cCodigoAgente 
 
@@ -374,7 +374,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetDescuentos() CLASS OperacionesComercialesController
+METHOD clientSetDescuentos() CLASS ConsolidacionAlmacenController
 
    ::getTercerosDescuentosController():getModel():deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
 
@@ -388,7 +388,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetRecargo() CLASS OperacionesComercialesController
+METHOD clientSetRecargo() CLASS ConsolidacionAlmacenController
 
    if empty( ::getTercerosController():getSelector():uFields )
       RETURN ( nil )
@@ -400,7 +400,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientChangeRecargo() CLASS OperacionesComercialesController
+METHOD clientChangeRecargo() CLASS ConsolidacionAlmacenController
 
    ::getModel():updateFieldWhereId( ::getModel():getBufferColumnKey(), "recargo_equivalencia", ::getModelBuffer( "recargo_equivalencia" ) )
 
@@ -408,13 +408,13 @@ RETURN ( ::calculateTotals() )
 
 //---------------------------------------------------------------------------//
 
-METHOD changedSerie() CLASS OperacionesComercialesController 
+METHOD changedSerie() CLASS ConsolidacionAlmacenController 
 
 RETURN ( ::getNumeroDocumentoComponent():setValue( ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD calculateTotals( uuidFactura ) CLASS OperacionesComercialesController
+METHOD calculateTotals( uuidFactura ) CLASS ConsolidacionAlmacenController
 
    local hTotal
 
@@ -442,13 +442,13 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD hasLines() CLASS OperacionesComercialesController
+METHOD hasLines() CLASS ConsolidacionAlmacenController
 
 RETURN ( ::getTercerosLineasController():getModel():countLinesWhereUuidParent( ::getModelBuffer( 'uuid' ) ) > 0 )
 
 //---------------------------------------------------------------------------//
 
-METHOD hasNotPaid( uuidFactura ) CLASS OperacionesComercialesController 
+METHOD hasNotPaid( uuidFactura ) CLASS ConsolidacionAlmacenController 
 
    if ::getModel():totalPaid( uuidFactura ) > 0
       msgstop( "No puede eliminar facturas con pagos efectuados" )
@@ -459,7 +459,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD getConfigItems() CLASS OperacionesComercialesController
+METHOD getConfigItems() CLASS ConsolidacionAlmacenController
 
    local aItems   := {}
 
@@ -501,7 +501,7 @@ RETURN ( aItems )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS OperacionesComercialesValidator FROM SQLBaseValidator 
+CLASS ConsolidacionAlmacenValidator FROM SQLBaseValidator 
 
    METHOD getValidators()
 
@@ -513,7 +513,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS OperacionesComercialesValidator
+METHOD getValidators() CLASS ConsolidacionAlmacenValidator
 
    ::hValidators  := {  "metodo_pago_codigo" => {  "required"        => "El código del método de pago es un dato requerido",;
                                                    "formaPagoExist"  => "El código del método de pago no existe" } ,;  
@@ -528,13 +528,13 @@ RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
 
-METHOD emptyLines() CLASS OperacionesComercialesValidator     
+METHOD emptyLines() CLASS ConsolidacionAlmacenValidator     
 
 RETURN ( ::getController():hasLines() )
 
 //---------------------------------------------------------------------------//
 
-METHOD validLine() CLASS OperacionesComercialesValidator     
+METHOD validLine() CLASS ConsolidacionAlmacenValidator     
 
 RETURN ( ::getController():getTercerosLineasController():validLine() )
 
