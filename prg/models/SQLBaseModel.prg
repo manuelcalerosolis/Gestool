@@ -13,6 +13,8 @@ CLASS SQLBaseModel
 
    DATA cTableName
 
+   DATA cPackage
+
    DATA cAs
 
    DATA cConstraints
@@ -78,6 +80,8 @@ CLASS SQLBaseModel
    METHOD getDatabase()                               INLINE ( getSQLDatabase() )
 
    METHOD getTableName()                              INLINE ( "gestool." + ::cTableName )
+
+   METHOD getPackage( cContext )                      INLINE ( ::cPackage + cContext )
 
    // Columns-------------------------------------------------------------------
 

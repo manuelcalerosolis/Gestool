@@ -1418,7 +1418,7 @@ FUNCTION CreateMainSQLAcceso()
    oItem:lShow          := .f.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 1
+   oGrupo:nBigItems     := 2
    oGrupo:cPrompt       := 'Ventas'
    oGrupo:cLittleBitmap := "gc_notebook_user_16"
    oGrupo:cBigBitmap    := "gc_notebook_user_32"
