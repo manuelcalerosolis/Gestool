@@ -77,7 +77,7 @@ RETURN ( ::Super:End() )
 
 METHOD getUuid() CLASS DireccionTipoDocumentoController
 
-RETURN ( ::oController:getClientUuid() )
+RETURN ( ::oController:getTerceroUuid() )
 
 //---------------------------------------------------------------------------//
 
@@ -85,7 +85,7 @@ METHOD setDireccionesUuid() CLASS DireccionTipoDocumentoController
 
    local uuidDireccion
 
-   uuidDireccion  := ::getDireccionesController():oModel:getFieldWhere( 'uuid', { 'codigo' => ::oModel:getBuffer( 'direccion_uuid' ), 'parent_uuid' => ::oController:getClientUuid() } )
+   uuidDireccion  := ::getDireccionesController():oModel:getFieldWhere( 'uuid', { 'codigo' => ::oModel:getBuffer( 'direccion_uuid' ), 'parent_uuid' => ::oController:getTerceroUuid() } )
 
    if !empty( uuidDireccion )
       ::oModel:setBuffer( 'direccion_uuid', uuidDireccion )

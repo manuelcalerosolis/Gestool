@@ -21,27 +21,27 @@ CLASS ConsolidacionAlmacenController FROM OperacionesController
 
    METHOD updatedBuffer()
 
-   METHOD getClientUuid() 
+   METHOD getTerceroUuid() 
 
-   METHOD isClientFilled()             INLINE ( !empty( ::getModelBuffer( "tercero_codigo" ) ) )
+   METHOD isTerceroFilled()             INLINE ( !empty( ::getModelBuffer( "tercero_codigo" ) ) )
 
-   METHOD clientesSettedHelpText()
+   METHOD terceroSettedHelpText()
 
-   METHOD clientSetMetodoPago()   
+   METHOD terceroSetMetodoPago()   
 
-   METHOD clientSetTarifa()
+   METHOD terceroSetTarifa()
 
-   METHOD clientSetRuta()
+   METHOD terceroSetRuta()
 
-   METHOD clientSetAgente()
+   METHOD terceroSetAgente()
 
-   METHOD clientSetRecargo()
+   METHOD terceroSetRecargo()
 
-   METHOD clientChangeRecargo( lRecargo )
+   METHOD terceroChangeRecargo( lRecargo )
 
    METHOD changedSerie()  
 
-   METHOD clientSetDescuentos()
+   METHOD terceroSetDescuentos()
 
    METHOD hasLines()
 
@@ -146,15 +146,15 @@ METHOD New( oController ) CLASS ConsolidacionAlmacenController
    ::getModel():setEvent( 'updatedBuffer',         {|| ::updatedBuffer() } )
    ::getModel():setEvent( 'insertingBuffer',       {|| ::insertingBuffer() } )
 
-   ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',              {|| ::isClientFilled() } ) 
-   ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence',  {|| ::getClientUuid() } )
+   ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',              {|| ::isTerceroFilled() } ) 
+   ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence',  {|| ::getTerceroUuid() } )
 
-   ::getTercerosLineasController():setEvent( 'appending',          {|| ::isClientFilled() } )
+   ::getTercerosLineasController():setEvent( 'appending',          {|| ::isTerceroFilled() } )
    ::getTercerosLineasController():setEvent( 'deletedSelection',   {|| ::calculateTotals() } ) 
 
    ::getTercerosDescuentosController():setEvent( 'deletedSelection',  {|| ::calculateTotals() } ) 
 
-   ::getTercerosController():getSelector():setEvent( 'settedHelpText', {|| ::clientesSettedHelpText() } )
+   ::getTercerosController():getSelector():setEvent( 'settedHelpText', {|| ::terceroSettedHelpText() } )
 
    ::getSerieDocumentoComponent():setEvents( { 'inserted', 'changedAndExist' }, {|| ::changedSerie() } )
 
@@ -258,29 +258,29 @@ RETURN ( ::getRecibosGeneratorController():update() )
 
 //---------------------------------------------------------------------------//
 
-METHOD getClientUuid() CLASS ConsolidacionAlmacenController 
+METHOD getTerceroUuid() CLASS ConsolidacionAlmacenController 
 
 RETURN ( ::getTercerosController():getModel():getUuidWhereCodigo( ::getModelBuffer( "tercero_codigo" ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientesSettedHelpText() CLASS ConsolidacionAlmacenController
+METHOD terceroSettedHelpText() CLASS ConsolidacionAlmacenController
 
    if ::getHistoryManager():isEqual( "tercero_codigo", ::getModelBuffer( "tercero_codigo" ) )
       RETURN ( nil )
    end if         
 
-   ::clientSetMetodoPago()
+   ::terceroSetMetodoPago()
 
-   ::clientSetTarifa()
+   ::terceroSetTarifa()
    
-   ::clientSetRuta()
+   ::terceroSetRuta()
 
-   ::clientSetAgente()
+   ::terceroSetAgente()
 
-   ::clientSetDescuentos() 
+   ::terceroSetDescuentos() 
 
-   ::clientSetRecargo()
+   ::terceroSetRecargo()
 
    ::getHistoryManager():setkey( "tercero_codigo", ::getModelBuffer( "tercero_codigo" ) )
 
@@ -288,7 +288,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetMetodoPago() CLASS ConsolidacionAlmacenController
+METHOD terceroSetMetodoPago() CLASS ConsolidacionAlmacenController
 
    local cCodigoMetodoPago
 
@@ -312,7 +312,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetTarifa() CLASS ConsolidacionAlmacenController
+METHOD terceroSetTarifa() CLASS ConsolidacionAlmacenController
 
    local cCodigoTarifa
 
@@ -336,7 +336,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetRuta() CLASS ConsolidacionAlmacenController
+METHOD terceroSetRuta() CLASS ConsolidacionAlmacenController
 
    local cCodigoRuta
 
@@ -356,7 +356,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetAgente() CLASS ConsolidacionAlmacenController
+METHOD terceroSetAgente() CLASS ConsolidacionAlmacenController
 
    local cCodigoAgente 
 
@@ -374,7 +374,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetDescuentos() CLASS ConsolidacionAlmacenController
+METHOD terceroSetDescuentos() CLASS ConsolidacionAlmacenController
 
    ::getTercerosDescuentosController():getModel():deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
 
@@ -388,7 +388,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetRecargo() CLASS ConsolidacionAlmacenController
+METHOD terceroSetRecargo() CLASS ConsolidacionAlmacenController
 
    if empty( ::getTercerosController():getSelector():uFields )
       RETURN ( nil )
@@ -400,7 +400,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientChangeRecargo() CLASS ConsolidacionAlmacenController
+METHOD terceroChangeRecargo() CLASS ConsolidacionAlmacenController
 
    ::getModel():updateFieldWhereId( ::getModel():getBufferColumnKey(), "recargo_equivalencia", ::getModelBuffer( "recargo_equivalencia" ) )
 

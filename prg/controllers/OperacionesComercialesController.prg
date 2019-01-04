@@ -13,35 +13,31 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD End()
 
-   METHOD editConfig()
-
    METHOD Editing()
 
    METHOD insertingBuffer()
 
    METHOD updatedBuffer()
 
-   METHOD getClientUuid() 
+   METHOD getTerceroUuid() 
 
-   METHOD isClientFilled()             INLINE ( !empty( ::getModelBuffer( "tercero_codigo" ) ) )
+   METHOD isTerceroFilled()             INLINE ( !empty( ::getModelBuffer( "tercero_codigo" ) ) )
 
-   METHOD clientesSettedHelpText()
+   METHOD terceroSettedHelpText()
 
-   METHOD clientSetMetodoPago()   
+   METHOD terceroSetMetodoPago()   
 
-   METHOD clientSetTarifa()
+   METHOD terceroSetTarifa()
 
-   METHOD clientSetRuta()
+   METHOD terceroSetRuta()
 
-   METHOD clientSetAgente()
+   METHOD terceroSetAgente()
 
-   METHOD clientSetRecargo()
+   METHOD terceroSetRecargo()
 
-   METHOD clientChangeRecargo( lRecargo )
+   METHOD terceroChangeRecargo( lRecargo )
 
-   METHOD changedSerie()  
-
-   METHOD clientSetDescuentos()
+   METHOD terceroSetDescuentos()
 
    METHOD hasLines()
 
@@ -49,21 +45,21 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD getConfigItems()
 
-   METHOD calculateTotals( uuidFactura )  
+   METHOD calculateTotals( uuidDocumento )  
 
-   METHOD getTotalDocument( uuidFactura ) ;
-                                       INLINE ( ::getRepository():getTotalDocument( uuidFactura ) )
+   METHOD getTotalDocument( uuidDocumento ) ;
+                                       INLINE ( ::getRepository():getTotalDocument( uuidDocumento ) )
 
-   METHOD getTotalesDocument( uuidFactura ) ;
-                                       INLINE ( ::getRepository():getTotalesDocument( uuidFactura ) )
+   METHOD getTotalesDocument( uuidDocumento ) ;
+                                       INLINE ( ::getRepository():getTotalesDocument( uuidDocumento ) )
    
-   METHOD getTotalesDocumentGroupByIVA( uuidFactura ) ;
-                                       INLINE ( ::getRepository():getTotalesDocumentGroupByIVA( uuidFactura ) )
+   METHOD getTotalesDocumentGroupByIVA( uuidDocumento ) ;
+                                       INLINE ( ::getRepository():getTotalesDocumentGroupByIVA( uuidDocumento ) )
 
-   METHOD getHashSentenceLineas( uuidFactura ) ;
-                                       INLINE ( ::getRepository():getHashSentenceLineas( uuidFactura ) )
+   METHOD getHashSentenceLineas( uuidDocumento ) ;
+                                       INLINE ( ::getRepository():getHashSentenceLineas( uuidDocumento ) )
 
-   METHOD hasNotPaid( uuidFactura )
+   METHOD hasNotPaid( uuidDocumento )
 
    // Impresiones--------------------------------------------------------------
 
@@ -137,26 +133,15 @@ METHOD New( oController ) CLASS OperacionesComercialesController
 
    ::setEvent( 'editing', {|| ::Editing() } )
 
-   ::getNavigatorView():getMenuTreeView():setEvent( 'addingDeleteButton', { || .f. } )
-   ::getNavigatorView():getMenuTreeView():setEvent( 'addedPdfButton', {|| ::addExtraButtons() } )
+   ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',              {|| ::isTerceroFilled() } ) 
+   ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence',  {|| ::getTerceroUuid() } )
 
-   ::getModel():setEvent( 'loadedBuffer',          {|| ::loadedBuffer() } )
-   ::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )
-   ::getModel():setEvent( 'loadedDuplicateBuffer', {|| ::loadedDuplicateBuffer() } )
-   ::getModel():setEvent( 'updatedBuffer',         {|| ::updatedBuffer() } )
-   ::getModel():setEvent( 'insertingBuffer',       {|| ::insertingBuffer() } )
-
-   ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',              {|| ::isClientFilled() } ) 
-   ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence',  {|| ::getClientUuid() } )
-
-   ::getTercerosLineasController():setEvent( 'appending',          {|| ::isClientFilled() } )
+   ::getTercerosLineasController():setEvent( 'appending',          {|| ::isTerceroFilled() } )
    ::getTercerosLineasController():setEvent( 'deletedSelection',   {|| ::calculateTotals() } ) 
 
    ::getTercerosDescuentosController():setEvent( 'deletedSelection',  {|| ::calculateTotals() } ) 
 
-   ::getTercerosController():getSelector():setEvent( 'settedHelpText', {|| ::clientesSettedHelpText() } )
-
-   ::getSerieDocumentoComponent():setEvents( { 'inserted', 'changedAndExist' }, {|| ::changedSerie() } )
+   ::getTercerosController():getSelector():setEvent( 'settedHelpText', {|| ::terceroSettedHelpText() } )
 
 RETURN ( Self )
 
@@ -164,45 +149,11 @@ RETURN ( Self )
 
 METHOD End() CLASS OperacionesComercialesController
 
-   if !empty( ::oContadoresModel )
-      ::oContadoresModel:End()
-   end if 
-
-   if !empty( ::oDialogView )
-      ::oDialogView:End()
-   end if 
-
-   if !empty( ::oHistoryManager )
-      ::oHistoryManager:End()
-   end if 
-
-   if !empty( ::oReport )
-      ::oReport:End()
-   end if 
-
-   if !empty( ::oConfiguracionesModel )
-      ::oConfiguracionesModel:End()
-   end if 
-
-   if !empty( ::oNumeroDocumentoComponent )
-      ::oNumeroDocumentoComponent:End()
-   end if 
-
-   if !empty( ::oSerieDocumentoComponent )
-      ::oSerieDocumentoComponent:End()
-   end if 
-
    if !empty( ::oFacturasClientesFacturaeController )
       ::oFacturasClientesFacturaeController:End()
    end if 
 
 RETURN ( ::Super:End() )
-
-//---------------------------------------------------------------------------//
-
-METHOD editConfig() CLASS OperacionesComercialesController
-
-RETURN ( ::getConfiguracionesController():Edit() )
 
 //---------------------------------------------------------------------------//
 
@@ -224,24 +175,6 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedBlankBuffer() CLASS OperacionesComercialesController 
-
-   ::setModelBuffer( "serie", ::getContadoresModel():getLastSerie( ::getName() ) )
-
-   ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) )
-
-   ::setModelBuffer( "almacen_codigo", Store():getCodigo() )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadedDuplicateBuffer() CLASS OperacionesComercialesController 
-
-RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
-
-//---------------------------------------------------------------------------//
-
 METHOD insertingBuffer() CLASS OperacionesComercialesController 
 
    ::Super:insertingBuffer()
@@ -258,29 +191,29 @@ RETURN ( ::getRecibosGeneratorController():update() )
 
 //---------------------------------------------------------------------------//
 
-METHOD getClientUuid() CLASS OperacionesComercialesController 
+METHOD getTerceroUuid() CLASS OperacionesComercialesController 
 
 RETURN ( ::getTercerosController():getModel():getUuidWhereCodigo( ::getModelBuffer( "tercero_codigo" ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientesSettedHelpText() CLASS OperacionesComercialesController
+METHOD terceroSettedHelpText() CLASS OperacionesComercialesController
 
    if ::getHistoryManager():isEqual( "tercero_codigo", ::getModelBuffer( "tercero_codigo" ) )
       RETURN ( nil )
    end if         
 
-   ::clientSetMetodoPago()
+   ::terceroSetMetodoPago()
 
-   ::clientSetTarifa()
+   ::terceroSetTarifa()
    
-   ::clientSetRuta()
+   ::terceroSetRuta()
 
-   ::clientSetAgente()
+   ::terceroSetAgente()
 
-   ::clientSetDescuentos() 
+   ::terceroSetDescuentos() 
 
-   ::clientSetRecargo()
+   ::terceroSetRecargo()
 
    ::getHistoryManager():setkey( "tercero_codigo", ::getModelBuffer( "tercero_codigo" ) )
 
@@ -288,7 +221,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetMetodoPago() CLASS OperacionesComercialesController
+METHOD terceroSetMetodoPago() CLASS OperacionesComercialesController
 
    local cCodigoMetodoPago
 
@@ -312,7 +245,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetTarifa() CLASS OperacionesComercialesController
+METHOD terceroSetTarifa() CLASS OperacionesComercialesController
 
    local cCodigoTarifa
 
@@ -336,7 +269,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetRuta() CLASS OperacionesComercialesController
+METHOD terceroSetRuta() CLASS OperacionesComercialesController
 
    local cCodigoRuta
 
@@ -356,7 +289,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetAgente() CLASS OperacionesComercialesController
+METHOD terceroSetAgente() CLASS OperacionesComercialesController
 
    local cCodigoAgente 
 
@@ -374,7 +307,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetDescuentos() CLASS OperacionesComercialesController
+METHOD terceroSetDescuentos() CLASS OperacionesComercialesController
 
    ::getTercerosDescuentosController():getModel():deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
 
@@ -388,7 +321,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientSetRecargo() CLASS OperacionesComercialesController
+METHOD terceroSetRecargo() CLASS OperacionesComercialesController
 
    if empty( ::getTercerosController():getSelector():uFields )
       RETURN ( nil )
@@ -400,7 +333,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientChangeRecargo() CLASS OperacionesComercialesController
+METHOD terceroChangeRecargo() CLASS OperacionesComercialesController
 
    ::getModel():updateFieldWhereId( ::getModel():getBufferColumnKey(), "recargo_equivalencia", ::getModelBuffer( "recargo_equivalencia" ) )
 
@@ -408,19 +341,13 @@ RETURN ( ::calculateTotals() )
 
 //---------------------------------------------------------------------------//
 
-METHOD changedSerie() CLASS OperacionesComercialesController 
-
-RETURN ( ::getNumeroDocumentoComponent():setValue( ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD calculateTotals( uuidFactura ) CLASS OperacionesComercialesController
+METHOD calculateTotals( uuidDocumento ) CLASS OperacionesComercialesController
 
    local hTotal
 
-   DEFAULT uuidFactura  := ::getUuid()
+   DEFAULT uuidDocumento   := ::getUuid()
 
-   hTotal               := ::getRepository():getTotalesDocument( uuidFactura )
+   hTotal                  := ::getRepository():getTotalesDocument( uuidDocumento )
 
    if empty( hTotal )
       RETURN ( nil )
@@ -448,9 +375,9 @@ RETURN ( ::getTercerosLineasController():getModel():countLinesWhereUuidParent( :
 
 //---------------------------------------------------------------------------//
 
-METHOD hasNotPaid( uuidFactura ) CLASS OperacionesComercialesController 
+METHOD hasNotPaid( uuidDocumento ) CLASS OperacionesComercialesController 
 
-   if ::getModel():totalPaid( uuidFactura ) > 0
+   if ::getModel():totalPaid( uuidDocumento ) > 0
       msgstop( "No puede eliminar facturas con pagos efectuados" )
       RETURN ( .f. )
    end if

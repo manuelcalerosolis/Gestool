@@ -36,7 +36,7 @@ CLASS OperacionesController FROM SQLNavigatorController
    METHOD changedSerie()  
 
    METHOD hasLines()                   VIRTUAL
-   METHOD hasNotLines()                INLINE ( !::hasLines() )
+   METHOD hasNotLines()                VIRTUAL
 
    METHOD getConfigItems()
 
@@ -88,18 +88,6 @@ END CLASS
 METHOD New( oController ) CLASS OperacionesController
 
    ::Super:New( oController )
-
-   ::lTransactional                    := .t.
-
-   ::lInsertable                       := .t.
-
-   ::lConfig                           := .t.
-
-   ::lDocuments                        := .t.
-
-   ::lMail                             := .t.
-
-   ::lOthers                           := .t.
 
    ::getNavigatorView():getMenuTreeView():setEvent( 'addingDeleteButton', { || .f. } )
    ::getNavigatorView():getMenuTreeView():setEvent( 'addedPdfButton', {|| ::addExtraButtons() } )
@@ -187,12 +175,6 @@ RETURN ( nil )
 METHOD changedSerie() CLASS OperacionesController 
 
 RETURN ( ::getNumeroDocumentoComponent():setValue( ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD hasLines() CLASS OperacionesController
-
-RETURN ( ::getTercerosLineasController():getModel():countLinesWhereUuidParent( ::getModelBuffer( 'uuid' ) ) > 0 )
 
 //---------------------------------------------------------------------------//
 

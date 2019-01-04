@@ -355,6 +355,7 @@ SqlFacturasComprasModel.prg 												\
 SQLOperacionesComercialesLineasModel.prg								\
 SqlFacturasVentasLineasModel.prg											\
 SQLFacturasComprasLineasModel.prg										\
+OperacionesController.prg 													\
 OperacionesComercialesController.prg 									\
 FacturasVentasController.prg 												\
 FacturasComprasController.prg 											\
@@ -717,6 +718,7 @@ FacturasVentasRepository.obj 												\
 SQLOperacionesComercialesLineasModel.obj 								\
 SqlFacturasVentasLineasModel.obj 										\
 SQLFacturasComprasLineasModel.obj 										\
+OperacionesController.obj 													\
 OperacionesComercialesController.obj 									\
 FacturasVentasController.obj 												\
 FacturasComprasController.obj 											\
@@ -1076,6 +1078,7 @@ $(OBJ)\FacturasClientesLineasRepository.obj 				    		+
 $(OBJ)\SQLOperacionesComercialesLineasModel.obj 	    			+
 $(OBJ)\SqlFacturasVentasLineasModel.obj 	    						+
 $(OBJ)\SQLFacturasComprasLineasModel.obj 			  					+
+$(OBJ)\OperacionesController.obj 										+
 $(OBJ)\OperacionesComercialesController.obj 							+
 $(OBJ)\FacturasVentasController.obj 									+
 $(OBJ)\FacturasComprasController.obj 									+
