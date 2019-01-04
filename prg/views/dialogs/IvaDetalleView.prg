@@ -110,6 +110,8 @@ METHOD Activate( aIvaDetalle ) CLASS IvaDetalleView
       :cDataType           := "N"
    end with
 
+   ::oBrowseIva:MakeTotals()
+
    ApoloBtnFlat():Redefine( IDOK, {|| ::oDialog:end( IDOK ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ACTIVATE DIALOG ::oDialog CENTER
