@@ -11,7 +11,7 @@
 CLASS IvaDetalleView FROM SQLBaseView
 
    DATA oBrowseIva
-  
+
    METHOD Activate( aIvaDetalle )
 
 END CLASS
@@ -45,53 +45,69 @@ METHOD Activate( aIvaDetalle ) CLASS IvaDetalleView
    ::oBrowseIva:nMarqueeStyle          := 5
    ::oBrowseIva:lRecordSelector        := .f.
    ::oBrowseIva:lHScroll               := .f.
+   ::oBrowseIva:lFooter                := .t.
 
    ::oBrowseIva:CreateFromResource( 100 )
 
    with object ( ::oBrowseIva:AddCol() )
-      :cHeader          := "Base"
-      :bEditValue       := {|| hget( aIvaDetalle[ ::oBrowseIva:nArrayAt ], "total_neto" ) }
-      :cEditPicture     := "@E 99999999.999999"
-      :nWidth           := 76
-      :nDataStrAlign    := 1
-      :nHeadStrAlign    := 1
-      :nFootStrAlign    := 1
+      :cHeader             := "Base"
+      :bEditValue          := {|| hget( aIvaDetalle[ ::oBrowseIva:nArrayAt ], "total_neto" ) }
+      :cEditPicture        := "@E 99999999.999999"
+      :nWidth              := 120
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+      :nFootStrAlign       := 1
+      :nFootStyle          := :nDataStrAlign               
+      :nFooterType         := AGGR_SUM
+      :cFooterPicture      := :cEditPicture
+      :oFooterFont         := oFontBold()
+      :cDataType           := "N"
    end with
    
    with object ( ::oBrowseIva:AddCol() )
-      :cHeader          := "IVA %"
-      :bEditValue       := {|| hget( aIvaDetalle[ ::oBrowseIva:nArrayAt ], "porcentaje_iva" ) }
-      :cEditPicture     := "@E 999.99"
-      :nWidth           := 44
-      :nDataStrAlign    := 1
-      :nHeadStrAlign    := 1
+      :cHeader             := "IVA %"
+      :bEditValue          := {|| hget( aIvaDetalle[ ::oBrowseIva:nArrayAt ], "porcentaje_iva" ) }
+      :cEditPicture        := "@E 999.99"
+      :nWidth              := 120
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
    end with
 
    with object ( ::oBrowseIva:AddCol() )
-      :cHeader          := "IVA "
-      :bEditValue       := {|| hget( aIvaDetalle[ ::oBrowseIva:nArrayAt ], "total_iva" ) }
-      :cEditPicture     := "@E 99999999.999999"
-      :nWidth           := 76
-      :nDataStrAlign    := 1
-      :nHeadStrAlign    := 1
+      :cHeader             := "IVA "
+      :bEditValue          := {|| hget( aIvaDetalle[ ::oBrowseIva:nArrayAt ], "total_iva" ) }
+      :cEditPicture        := "@E 99999999.999999"
+      :nWidth              := 120
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+      :nFootStyle          := :nDataStrAlign
+      :nFooterType         := AGGR_SUM
+      :cFooterPicture      := :cEditPicture
+      :oFooterFont         := oFontBold()
+      :cDataType           := "N"
    end with
 
    with object ( ::oBrowseIva:AddCol() )
-      :cHeader          := "R.E. %"
-      :bEditValue       := {|| hget( aIvaDetalle[ ::oBrowseIva:nArrayAt ], "recargo_equivalencia" ) }
-      :cEditPicture     := "@E 999.99"
-      :nWidth           := 44
-      :nDataStrAlign    := 1
-      :nHeadStrAlign    := 1
+      :cHeader             := "R.E. %"
+      :bEditValue          := {|| hget( aIvaDetalle[ ::oBrowseIva:nArrayAt ], "recargo_equivalencia" ) }
+      :cEditPicture        := "@E 999.99"
+      :nWidth              := 120
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
    end with
 
    with object ( ::oBrowseIva:AddCol() )
-      :cHeader          := "R.E."
-      :bEditValue       := {|| hget( aIvaDetalle[ ::oBrowseIva:nArrayAt ], "total_recargo" ) }
-      :cEditPicture     := "@E 99999999.999999"
-      :nWidth           := 76
-      :nDataStrAlign    := 1
-      :nHeadStrAlign    := 1
+      :cHeader             := "R.E."
+      :bEditValue          := {|| hget( aIvaDetalle[ ::oBrowseIva:nArrayAt ], "total_recargo" ) }
+      :cEditPicture        := "@E 99999999.999999"
+      :nWidth              := 120
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+      :nFootStyle          := :nDataStrAlign
+      :nFooterType         := AGGR_SUM
+      :cFooterPicture      := :cEditPicture
+      :oFooterFont         := oFontBold()
+      :cDataType           := "N"
    end with
 
    ApoloBtnFlat():Redefine( IDOK, {|| ::oDialog:end( IDOK ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )

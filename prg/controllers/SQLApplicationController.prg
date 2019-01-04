@@ -112,7 +112,7 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oCombinacionesController
 
-   DATA oFacturasClientesDescuentosController
+   DATA oFacturasVentasDescuentosController
 
    DATA oFacturasComprasDescuentosController
 
@@ -120,11 +120,11 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oRelacionesEntidadesController
 
-   DATA oFacturasClientesLineasController
+   DATA oFacturasVentasLineasController
 
    DATA oFacturasComprasLineasController
 
-   DATA oFacturasClientesController
+   DATA oFacturasVentasController
 
    DATA oAlmacenesController
    
@@ -344,8 +344,8 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getCombinacionesController();
                                     INLINE ( if( empty( ::oCombinacionesController ), ::oCombinacionesController := CombinacionesController():New( self ), ), ::oCombinacionesController )
 
-   METHOD getFacturasClientesDescuentosController();
-                                    INLINE ( if( empty( ::oFacturasClientesDescuentosController ), ::oFacturasClientesDescuentosController := FacturasClientesDescuentosController():New( self ), ), ::oFacturasClientesDescuentosController )
+   METHOD getFacturasVentasDescuentosController();
+                                    INLINE ( if( empty( ::oFacturasVentasDescuentosController ), ::oFacturasVentasDescuentosController := FacturasVentasDescuentosController():New( self ), ), ::oFacturasVentasDescuentosController )
 
    METHOD getFacturasComprasDescuentosController();
                                     INLINE ( if( empty( ::oFacturasComprasDescuentosController ), ::oFacturasComprasDescuentosController := FacturasComprasDescuentosController():New( self ), ), ::oFacturasComprasDescuentosController )
@@ -356,14 +356,14 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getRelacionesEntidadesController();
                                     INLINE ( if( empty( ::oRelacionesEntidadesController ), ::oRelacionesEntidadesController := RelacionesEntidadesController():New( self ), ), ::oRelacionesEntidadesController )
 
-   METHOD getFacturasClientesLineasController();
-                                    INLINE ( if( empty( ::oFacturasClientesLineasController ), ::oFacturasClientesLineasController := FacturasClientesLineasController():New( self ), ), ::oFacturasClientesLineasController )
+   METHOD getFacturasVentasLineasController();
+                                    INLINE ( if( empty( ::oFacturasVentasLineasController ), ::oFacturasVentasLineasController := FacturasVentasLineasController():New( self ), ), ::oFacturasVentasLineasController )
 
    METHOD getFacturasComprasLineasController();
                                     INLINE ( if( empty( ::oFacturasComprasLineasController ), ::oFacturasComprasLineasController := FacturasComprasLineasController():New( self ), ), ::oFacturasComprasLineasController )
 
-   METHOD getFacturasClientesController();
-                                    INLINE ( if( empty( ::oFacturasClientesController ), ::oFacturasClientesController := FacturasClientesController():New( self ), ), ::oFacturasClientesController )
+   METHOD getFacturasVentasController();
+                                    INLINE ( if( empty( ::oFacturasVentasController ), ::oFacturasVentasController := FacturasVentasController():New( self ), ), ::oFacturasVentasController )
 
    METHOD getAlmacenesController()  INLINE ( if( empty( ::oAlmacenesController ), ::oAlmacenesController := AlmacenesController():New( self ), ), ::oAlmacenesController )
 
@@ -664,8 +664,8 @@ METHOD End() CLASS SQLApplicationController
       ::oCombinacionesController:End()
    end if    
 
-   if !empty( ::oFacturasClientesDescuentosController )   
-      ::oFacturasClientesDescuentosController:End()
+   if !empty( ::oFacturasVentasDescuentosController )   
+      ::oFacturasVentasDescuentosController:End()
    end if  
 
    if !empty( ::oFacturasComprasDescuentosController )   
@@ -680,16 +680,16 @@ METHOD End() CLASS SQLApplicationController
       ::oRelacionesEntidadesController:End()
    end if    
 
-   if !empty( ::oFacturasClientesLineasController )   
-      ::oFacturasClientesLineasController:End()
+   if !empty( ::oFacturasVentasLineasController )   
+      ::oFacturasVentasLineasController:End()
    end if
 
    if !empty( ::oFacturasComprasLineasController )   
       ::oFacturasComprasLineasController:End()
    end if   
 
-   if !empty( ::oFacturasClientesController )   
-      ::oFacturasClientesController:End()
+   if !empty( ::oFacturasVentasController )   
+      ::oFacturasVentasController:End()
    end if 
 
    if !empty( ::oAlmacenesController )   

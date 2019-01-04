@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesLineasValidator FROM SQLBaseValidator
+CLASS OperacionesComercialesLineasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

@@ -142,7 +142,7 @@ METHOD isInformationLoaded( uuid ) CLASS FacturasClientesFacturaeController
 
    aeval( ::hTotales, {|hTotal| nTotalBrutoLineas += hget( hTotal, "total_bruto_lineas" ) } )
 
-   ::hDiscounts            := SQLFacturasClientesDescuentosModel():selectDescuentosWhereUuid( uuid, nTotalBrutoLineas )
+   ::hDiscounts            := SQLFacturasVentasDescuentosModel():selectDescuentosWhereUuid( uuid, nTotalBrutoLineas )
 
    ::hClient               := SQLTercerosModel():getHashWhere( 'codigo', hget( ::hDocument, "tercero_codigo" ) )
    if empty( ::hClient )
@@ -349,23 +349,23 @@ METHOD testGenerateXml() CLASS TestFacturasClientesFacturaeController
    uuid        := win_uuidcreatestring()
 
    SQLTercerosModel():truncateTable()
-   SQLFacturasClientesModel():truncateTable() 
-   SQLFacturasClientesLineasModel():truncateTable() 
-   SQLFacturasClientesDescuentosModel():truncateTable()
+   SQLFacturasVentasModel():truncateTable() 
+   SQLFacturasVentasLineasModel():truncateTable() 
+   SQLFacturasVentasDescuentosModel():truncateTable()
 
    SQLTercerosModel():test_create_contado()
 
-   SQLFacturasClientesModel():test_create_facturaConRecargoDeEqivalencia( uuid ) 
+   SQLFacturasVentasModel():test_create_facturaConRecargoDeEqivalencia( uuid ) 
 
-   SQLFacturasClientesLineasModel():test_create_IVA_al_0_con_10_descuento( uuid ) 
-   SQLFacturasClientesLineasModel():test_create_IVA_al_10_con_recargo_equivalencia( uuid ) 
-   SQLFacturasClientesLineasModel():test_create_IVA_al_21_con_recargo_equivalencia( uuid ) 
+   SQLFacturasVentasLineasModel():test_create_IVA_al_0_con_10_descuento( uuid ) 
+   SQLFacturasVentasLineasModel():test_create_IVA_al_10_con_recargo_equivalencia( uuid ) 
+   SQLFacturasVentasLineasModel():test_create_IVA_al_21_con_recargo_equivalencia( uuid ) 
 
-   SQLFacturasClientesDescuentosModel():test_create_l0_por_ciento( uuid )   
-   SQLFacturasClientesDescuentosModel():test_create_20_por_ciento( uuid )   
-   SQLFacturasClientesDescuentosModel():test_create_30_por_ciento( uuid )   
+   SQLFacturasVentasDescuentosModel():test_create_l0_por_ciento( uuid )   
+   SQLFacturasVentasDescuentosModel():test_create_20_por_ciento( uuid )   
+   SQLFacturasVentasDescuentosModel():test_create_30_por_ciento( uuid )   
 
-   oController := FacturasClientesController():New()
+   oController := FacturasVentasController():New()
 
    oController:getFacturasClientesFacturaeController():Generate( uuid )   
 
