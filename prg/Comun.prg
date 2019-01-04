@@ -1434,6 +1434,17 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cBmpBig        := "gc_document_text_user_32"
    oItem:lShow          := .t.
 
+    oItem                := oItemVentas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Facturas rectificativa de ventas'
+   oItem:cMessage       := 'Facturas rectificativa de ventas'
+   oItem:bAction        := {|| FacturasVentasRectificativasController():New():ActivateNavigatorView() }
+   // oItem:bAction        := {|| FacturasVentasController1000() }
+   oItem:cId            := "facturas_ventas_rectificativa"
+   oItem:cBmp           := "gc_document_text_user_16"
+   oItem:cBmpBig        := "gc_document_text_user_32"
+   oItem:lShow          := .t.
+
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 3
    oGrupo:cPrompt       := 'Cobros'
