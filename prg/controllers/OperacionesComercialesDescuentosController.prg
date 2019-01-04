@@ -25,7 +25,6 @@ CLASS OperacionesComercialesDescuentosController FROM SQLBrowseController
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := OperacionesComercialesDescuentosRepository():New( self ), ), ::oRepository )
 
-   //METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasClientesDescuentosModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -380,7 +379,7 @@ METHOD getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) CLASS 
    ENDTEXT
 
    cSql  := hb_strformat(  cSql,;
-                           SQLFacturasClientesDescuentosModel():getTableName(),;
+                           SQLFacturasVentasDescuentosModel():getTableName(),;
                            quoted( uuidFacturaCliente ),;
                            toSqlString( importeBruto ) )
 

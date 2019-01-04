@@ -156,11 +156,11 @@ CLASS OperacionesComercialesLineasController FROM SQLBrowseController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesLineasBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesLineasBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := FacturasClientesLineasView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesLineasView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()               INLINE ( iif( empty( ::oValidator ), ::oValidator := FacturasClientesLineasValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( iif( empty( ::oValidator ), ::oValidator := OperacionesComercialesLineasValidator():New( self ), ), ::oValidator )
 
    METHOD getHistoryManager()          INLINE ( iif( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
 

@@ -3,15 +3,15 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesController FROM OperacionesComercialesController
+CLASS FacturasVentasController FROM OperacionesComercialesController
 
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
-   METHOD getTercerosLineasController()      INLINE ( ::getFacturasClientesLineasController() )
+   METHOD getTercerosLineasController()      INLINE ( ::getFacturasVentasLineasController() )
 
-   METHOD getTercerosDescuentosController()  INLINE ( ::getFacturasClientesDescuentosController() )
+   METHOD getTercerosDescuentosController()  INLINE ( ::getFacturasVentasDescuentosController() )
 
    METHOD isClient()                         INLINE ( .t. )
 
@@ -25,19 +25,19 @@ CLASS FacturasClientesController FROM OperacionesComercialesController
 
    METHOD getName()                    INLINE ( "facturas_clientes" )
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasClientesModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasVentasModel():New( self ), ), ::oModel )
 
-   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasClientesValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasVentasValidator():New( self ), ), ::oValidator )
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasVentasBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasClientesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasVentasRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS FacturasClientesController
+METHOD New( oController ) CLASS FacturasVentasController
 
    ::Super:New( oController )
 
@@ -53,7 +53,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS FacturasClientesController
+METHOD End() CLASS FacturasVentasController
 
    if !empty( ::oModel )
       ::oModel:End()
@@ -79,7 +79,7 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD addExtraButtons() CLASS FacturasClientesController
+METHOD addExtraButtons() CLASS FacturasVentasController
 
    ::oNavigatorView:getMenuTreeView():addButton( "Generar facturae 3.2", "gc_document_text_earth_16", {|| ::getFacturasClientesFacturaeController():Run( ::getBrowseView():getBrowseSelected() ) } )
 
@@ -91,7 +91,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesValidator FROM OperacionesComercialesValidator
+CLASS FacturasVentasValidator FROM OperacionesComercialesValidator
 
    METHOD New( oController )
 
@@ -101,13 +101,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS FacturasClientesValidator
+METHOD New( oController ) CLASS FacturasVentasValidator
 
 RETURN ( ::Super:New( oController ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS FacturasClientesValidator
+METHOD getValidators() CLASS FacturasVentasValidator
 
    hset( ::Super:getValidators(), "tercero_codigo",   {  "required"        => "El código del cliente es un dato requerido",;
                                                          "clienteExist"    => "El código del cliente no existe" } )
@@ -122,7 +122,7 @@ RETURN ( ::hValidators )
 
 #ifdef __TEST__
 
-CLASS TestFacturasClientesController FROM TestCase
+CLASS TestFacturasVentasController FROM TestCase
 
    DATA oController
 
@@ -150,26 +150,26 @@ CLASS TestFacturasClientesController FROM TestCase
                                                 apoloWaitSeconds( 1 ) )
 
    METHOD set_codigo_articulo_en_linea() ;
-                                       INLINE ( eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "0", 0 ),;
+                                       INLINE ( eval( ::oController:getFacturasVentasLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "0", 0 ),;
                                                 apoloWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_codigo_almacen_en_linea( cCodigoAlmacen ) ;
-                                       INLINE ( eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoAlmacen:bOnPostEdit, , cCodigoAlmacen, 0 ),;
+                                       INLINE ( eval( ::oController:getFacturasVentasLineasController():getBrowseView():oColumnCodigoAlmacen:bOnPostEdit, , cCodigoAlmacen, 0 ),;
                                                 apoloWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_codigo_ubicacion_en_linea( cCodigoUbicacion ) ;
-                                       INLINE ( eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoUbicacion:bOnPostEdit, , cCodigoUbicacion, 0 ),;
+                                       INLINE ( eval( ::oController:getFacturasVentasLineasController():getBrowseView():oColumnCodigoUbicacion:bOnPostEdit, , cCodigoUbicacion, 0 ),;
                                                 apoloWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_precio_en_linea( nPrecio ) ;
-                                       INLINE ( eval( ::oController:getFacturasClientesLineasController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , nPrecio, 0 ),;
+                                       INLINE ( eval( ::oController:getFacturasVentasLineasController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , nPrecio, 0 ),;
                                                 apoloWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
-   METHOD refresh_linea_browse_view()  INLINE ( ::oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
+   METHOD refresh_linea_browse_view()  INLINE ( ::oController:getFacturasVentasLineasController():getBrowseView():getRowSet():Refresh(),;
                                                 apoloWaitSeconds( 1 ) )
    
    METHOD test_calculo_con_descuento()                
@@ -198,23 +198,23 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD beforeClass() CLASS TestFacturasClientesController
+METHOD beforeClass() CLASS TestFacturasVentasController
    
    Company():setDefaultUsarUbicaciones( .t. )
    
-   ::oController  := FacturasClientesController():New()
+   ::oController  := FacturasVentasController():New()
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD afterClass() CLASS TestFacturasClientesController
+METHOD afterClass() CLASS TestFacturasVentasController
 
 RETURN ( ::oController:end() )
 
 //---------------------------------------------------------------------------//
 
-METHOD Before() CLASS TestFacturasClientesController
+METHOD Before() CLASS TestFacturasVentasController
 
    SQLTercerosModel():truncateTable()
    SQLDireccionesModel():truncateTable()
@@ -225,9 +225,9 @@ METHOD Before() CLASS TestFacturasClientesController
 
    SQLArticulosModel():truncateTable()
    
-   SQLFacturasClientesModel():truncateTable()
-   SQLFacturasClientesLineasModel():truncateTable()
-   SQLFacturasClientesDescuentosModel():truncateTable()
+   SQLFacturasVentasModel():truncateTable()
+   SQLFacturasVentasLineasModel():truncateTable()
+   SQLFacturasVentasDescuentosModel():truncateTable()
 
    SQLArticulosTarifasModel():truncateTable()
 
@@ -259,22 +259,22 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_calculo_con_descuento() CLASS TestFacturasClientesController
+METHOD test_calculo_con_descuento() CLASS TestFacturasVentasController
 
    local uuid
    local hTotal
 
    uuid        := win_uuidcreatestring()
 
-   SQLFacturasClientesModel():test_create_factura( uuid )
+   SQLFacturasVentasModel():test_create_factura( uuid )
 
-   SQLFacturasClientesLineasModel():test_create_IVA_al_0_con_10_descuento( uuid )
-   SQLFacturasClientesLineasModel():test_create_IVA_al_10_con_15_porciento_descuento( uuid )
-   SQLFacturasClientesLineasModel():test_create_IVA_al_21_con_20_porciento_descuento( uuid )
+   SQLFacturasVentasLineasModel():test_create_IVA_al_0_con_10_descuento( uuid )
+   SQLFacturasVentasLineasModel():test_create_IVA_al_10_con_15_porciento_descuento( uuid )
+   SQLFacturasVentasLineasModel():test_create_IVA_al_21_con_20_porciento_descuento( uuid )
 
-   SQLFacturasClientesDescuentosModel():test_create_l0_por_ciento( uuid )
-   SQLFacturasClientesDescuentosModel():test_create_20_por_ciento( uuid )
-   SQLFacturasClientesDescuentosModel():test_create_30_por_ciento( uuid )
+   SQLFacturasVentasDescuentosModel():test_create_l0_por_ciento( uuid )
+   SQLFacturasVentasDescuentosModel():test_create_20_por_ciento( uuid )
+   SQLFacturasVentasDescuentosModel():test_create_30_por_ciento( uuid )
 
    hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
 
@@ -284,16 +284,16 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_calculo_con_incremento() CLASS TestFacturasClientesController
+METHOD test_calculo_con_incremento() CLASS TestFacturasVentasController
 
    local uuid
    local hTotal
 
    uuid        := win_uuidcreatestring()
 
-   SQLFacturasClientesModel():test_create_factura( uuid )
+   SQLFacturasVentasModel():test_create_factura( uuid )
 
-   SQLFacturasClientesLineasModel():test_create_IVA_al_21_con_incrememto_precio( uuid )
+   SQLFacturasVentasLineasModel():test_create_IVA_al_21_con_incrememto_precio( uuid )
 
    hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
 
@@ -303,16 +303,16 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_con_unidades_de_medicion() CLASS TestFacturasClientesController
+METHOD test_con_unidades_de_medicion() CLASS TestFacturasVentasController
 
    local uuid
    local hTotal
 
    uuid        := win_uuidcreatestring()
 
-   SQLFacturasClientesModel():test_create_factura( uuid )
+   SQLFacturasVentasModel():test_create_factura( uuid )
 
-   SQLFacturasClientesLineasModel():test_create_10_porciento_descuento_15_incremento( uuid )
+   SQLFacturasVentasLineasModel():test_create_10_porciento_descuento_15_incremento( uuid )
 
    hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
 
@@ -322,7 +322,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_sin_lineas() CLASS TestFacturasClientesController
+METHOD test_dialogo_sin_lineas() CLASS TestFacturasVentasController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
@@ -338,7 +338,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_ventas_por_cajas() CLASS TestFacturasClientesController
+METHOD test_dialogo_ventas_por_cajas() CLASS TestFacturasVentasController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
@@ -356,7 +356,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_tarifa_mayorista() CLASS TestFacturasClientesController
+METHOD test_dialogo_tarifa_mayorista() CLASS TestFacturasVentasController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
@@ -374,7 +374,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_con_un_solo_pago() CLASS TestFacturasClientesController
+METHOD test_dialogo_con_un_solo_pago() CLASS TestFacturasVentasController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
@@ -394,7 +394,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_con_varios_pagos() CLASS TestFacturasClientesController
+METHOD test_dialogo_con_varios_pagos() CLASS TestFacturasVentasController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
@@ -414,19 +414,19 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_con_cambio_de_almacen() CLASS TestFacturasClientesController
+METHOD test_dialogo_con_cambio_de_almacen() CLASS TestFacturasVentasController
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_con_cambio_de_ubicacion() CLASS TestFacturasClientesController
+METHOD test_dialogo_con_cambio_de_ubicacion() CLASS TestFacturasVentasController
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_con_cambio_de_agente() CLASS TestFacturasClientesController
+METHOD test_dialogo_con_cambio_de_agente() CLASS TestFacturasVentasController
 
 RETURN ( nil )
 

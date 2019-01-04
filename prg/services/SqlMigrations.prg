@@ -408,17 +408,17 @@ METHOD addModels() CLASS SQLCompanyMigrations
     
    aadd( ::aModels, SQLArticulosPreciosDescuentosModel():New() )  
 
-   aadd( ::aModels, SQLFacturasClientesModel():New() ) 
+   aadd( ::aModels, SQLFacturasVentasModel():New() ) 
 
    aadd( ::aModels, SQLFacturasComprasModel():New() )  
 
-   aadd( ::aModels, SQLFacturasClientesLineasModel():New() ) 
+   aadd( ::aModels, SQLFacturasVentasLineasModel():New() ) 
 
    aadd( ::aModels, SQLConsolidacionesAlmacenLineasModel():New() ) 
 
    aadd( ::aModels, SQLFacturasComprasLineasModel():New() ) 
 
-   aadd( ::aModels, SQLFacturasClientesDescuentosModel():New() ) 
+   aadd( ::aModels, SQLFacturasVentasDescuentosModel():New() ) 
 
    aadd( ::aModels, SQLFacturasComprasDescuentosModel():New() ) 
 
@@ -464,7 +464,7 @@ METHOD addRepositories() CLASS SQLCompanyMigrations
 
    aadd( ::aRepositories, RecibosPagosRepository():New() )
    
-   aadd( ::aRepositories, FacturasClientesRepository():New() )
+   aadd( ::aRepositories, FacturasVentasRepository():New() )
 
    aadd( ::aRepositories, FacturasComprasRepository():New() )
 

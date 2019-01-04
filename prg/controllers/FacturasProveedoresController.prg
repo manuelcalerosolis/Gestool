@@ -135,9 +135,9 @@ METHOD initModels() CLASS TestFacturasProveedoresController
    SQLTercerosModel():truncateTable()
    SQLAlmacenesModel():truncateTable()
    SQLMetodoPagoModel():truncateTable()
-   SQLFacturasClientesModel():truncateTable() 
-   SQLFacturasClientesLineasModel():truncateTable() 
-   SQLFacturasClientesDescuentosModel():truncateTable()
+   SQLFacturasVentasModel():truncateTable() 
+   SQLFacturasVentasLineasModel():truncateTable() 
+   SQLFacturasVentasDescuentosModel():truncateTable()
    SQLArticulosModel():truncateTable()
    SQLArticulosTarifasModel():truncateTable()
 
@@ -162,17 +162,17 @@ METHOD testCalculoFacturaConDescuento() CLASS TestFacturasProveedoresController
 
    uuid        := win_uuidcreatestring()
 
-   SQLFacturasClientesModel():test_create_factura( uuid ) 
+   SQLFacturasVentasModel():test_create_factura( uuid ) 
 
-   SQLFacturasClientesLineasModel():test_create_IVA_al_0_con_10_descuento( uuid ) 
-   SQLFacturasClientesLineasModel():test_create_IVA_al_10_con_15_porciento_descuento( uuid ) 
-   SQLFacturasClientesLineasModel():test_create_IVA_al_21_con_20_porciento_descuento( uuid ) 
+   SQLFacturasVentasLineasModel():test_create_IVA_al_0_con_10_descuento( uuid ) 
+   SQLFacturasVentasLineasModel():test_create_IVA_al_10_con_15_porciento_descuento( uuid ) 
+   SQLFacturasVentasLineasModel():test_create_IVA_al_21_con_20_porciento_descuento( uuid ) 
 
-   SQLFacturasClientesDescuentosModel():test_create_l0_por_ciento( uuid )   
-   SQLFacturasClientesDescuentosModel():test_create_20_por_ciento( uuid )   
-   SQLFacturasClientesDescuentosModel():test_create_30_por_ciento( uuid )   
+   SQLFacturasVentasDescuentosModel():test_create_l0_por_ciento( uuid )   
+   SQLFacturasVentasDescuentosModel():test_create_20_por_ciento( uuid )   
+   SQLFacturasVentasDescuentosModel():test_create_30_por_ciento( uuid )   
 
-   oController := FacturasClientesController():New() 
+   oController := FacturasVentasController():New() 
 
    hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
 
@@ -194,11 +194,11 @@ METHOD testCalculoFacturaConIncremento() CLASS TestFacturasProveedoresController
 
    uuid        := win_uuidcreatestring()
 
-   SQLFacturasClientesModel():test_create_factura( uuid ) 
+   SQLFacturasVentasModel():test_create_factura( uuid ) 
 
-   SQLFacturasClientesLineasModel():test_create_IVA_al_21_con_incrememto_precio( uuid ) 
+   SQLFacturasVentasLineasModel():test_create_IVA_al_21_con_incrememto_precio( uuid ) 
 
-   oController := FacturasClientesController():New() 
+   oController := FacturasVentasController():New() 
 
    hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
 
@@ -220,11 +220,11 @@ METHOD testFacturaConUnidadesDeMedicion() CLASS TestFacturasProveedoresControlle
 
    uuid        := win_uuidcreatestring()
 
-   SQLFacturasClientesModel():test_create_factura( uuid ) 
+   SQLFacturasVentasModel():test_create_factura( uuid ) 
 
-   SQLFacturasClientesLineasModel():test_create_10_porciento_descuento_15_incremento( uuid ) 
+   SQLFacturasVentasLineasModel():test_create_10_porciento_descuento_15_incremento( uuid ) 
 
-   oController := FacturasClientesController():New() 
+   oController := FacturasVentasController():New() 
 
    hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
 
@@ -242,7 +242,7 @@ METHOD testDialogoWithNoLines() CLASS TestFacturasProveedoresController
 
    ::initModels()
 
-   oController             := FacturasClientesController():New()
+   oController             := FacturasVentasController():New()
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
@@ -273,7 +273,7 @@ METHOD testDialogoVentasPorCajas() CLASS TestFacturasProveedoresController
 
    ::initModels()
 
-   oController             := FacturasClientesController():New()
+   oController             := FacturasVentasController():New()
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
@@ -288,13 +288,13 @@ METHOD testDialogoVentasPorCajas() CLASS TestFacturasProveedoresController
          apoloWaitSeconds( 1 ),;
          self:getControl( 501, self:oFolder:aDialogs[1] ):Click(),;
          apoloWaitSeconds( 1 ),;
-         eval( oController:getFacturasClientesLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "0", 0 ),;
+         eval( oController:getFacturasVentasLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "0", 0 ),;
          apoloWaitSeconds( 1 ),;
-         oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
+         oController:getFacturasVentasLineasController():getBrowseView():getRowSet():Refresh(),;
          apoloWaitSeconds( 1 ),;
-         eval( oController:getFacturasClientesLineasController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , 100, 0 ),;
+         eval( oController:getFacturasVentasLineasController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , 100, 0 ),;
          apoloWaitSeconds( 1 ),;
-         oController:getFacturasClientesLineasController():getBrowseView():getRowSet():Refresh(),;
+         oController:getFacturasVentasLineasController():getBrowseView():getRowSet():Refresh(),;
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 

@@ -433,7 +433,7 @@ METHOD Before() CLASS TestPagosAssistantController
    SQLMediosPagoModel():truncateTable()
    SQLMetodoPagoModel():truncateTable()
    SQLRecibosPagosModel():truncateTable()
-   SQLFacturasClientesModel():truncateTable()
+   SQLFacturasVentasModel():truncateTable()
    SQLCuentasBancariasModel():truncateTable()
    SQLCuentasBancariasGestoolModel():truncateTable()
 
@@ -445,15 +445,15 @@ METHOD Before() CLASS TestPagosAssistantController
 
    SQLMetodoPagoModel():test_create_con_plazos()
 
-   SQLFacturasClientesModel():test_create_factura_con_varios_plazos() 
+   SQLFacturasVentasModel():test_create_factura_con_varios_plazos() 
 
    SQLCuentasBancariasModel():create_cuenta( SQLTercerosModel():test_get_uuid_contado() )
 
    SQLCuentasBancariasGestoolModel():create_cuenta( Company():Uuid() )
 
-   SQLRecibosModel():test_create_recibo_con_parent( SQLFacturasClientesModel():test_get_uuid_factura_con_varios_plazos() )
-   SQLRecibosModel():test_create_recibo_con_parent( SQLFacturasClientesModel():test_get_uuid_factura_con_varios_plazos() )
-   SQLRecibosModel():test_create_recibo_con_parent( SQLFacturasClientesModel():test_get_uuid_factura_con_varios_plazos() )
+   SQLRecibosModel():test_create_recibo_con_parent( SQLFacturasVentasModel():test_get_uuid_factura_con_varios_plazos() )
+   SQLRecibosModel():test_create_recibo_con_parent( SQLFacturasVentasModel():test_get_uuid_factura_con_varios_plazos() )
+   SQLRecibosModel():test_create_recibo_con_parent( SQLFacturasVentasModel():test_get_uuid_factura_con_varios_plazos() )
 
 RETURN ( nil )
 

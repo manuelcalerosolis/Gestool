@@ -34,9 +34,9 @@ CLASS FacturasClientesReport FROM SQLBaseReport
 
    METHOD setUserDataSet()
 
-   METHOD getFacturasClientesModel()         INLINE ( if( empty( ::oFacturasClientesModel ), ::oFacturasClientesModel := SQLFacturasClientesModel():New( self ), ), ::oFacturasClientesModel )
+   METHOD getFacturasClientesModel()         INLINE ( if( empty( ::oFacturasClientesModel ), ::oFacturasClientesModel := SQLFacturasVentasModel():New( self ), ), ::oFacturasClientesModel )
 
-   METHOD getFacturasClientesLineasModel()   INLINE ( if( empty( ::oFacturasClientesLineasModel ), ::oFacturasClientesLineasModel := SQLFacturasClientesLineasModel():New( self ), ), ::oFacturasClientesLineasModel )
+   METHOD getFacturasClientesLineasModel()   INLINE ( if( empty( ::oFacturasClientesLineasModel ), ::oFacturasClientesLineasModel := SQLFacturasVentasLineasModel():New( self ), ), ::oFacturasClientesLineasModel )
 
    METHOD getFacturasClientesRowSet()        INLINE ( if( empty( ::oFacturasClientesRowSet ), ::oFacturasClientesRowSet := SQLRowSet():New(), ), ::oFacturasClientesRowSet )
 

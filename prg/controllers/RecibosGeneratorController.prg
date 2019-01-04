@@ -167,13 +167,13 @@ RETURN ( ::updatePaid() )
 
 METHOD getTotalDocumento() CLASS RecibosGeneratorController
 
-RETURN ( ::hTotalDocument  := FacturasClientesRepository():getTotalesDocument( ::getController():getuuid() ) )
+RETURN ( ::hTotalDocument  := FacturasVentasRepository():getTotalesDocument( ::getController():getuuid() ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getTotalToPay() CLASS RecibosGeneratorController
 
-RETURN ( FacturasClientesRepository():getTotalDocument( ::getController():getuuid() ) - RecibosRepository():getImporteWhereFacturaUuid( ::getController():getuuid() ) )
+RETURN ( FacturasVentasRepository():getTotalDocument( ::getController():getuuid() ) - RecibosRepository():getImporteWhereFacturaUuid( ::getController():getuuid() ) )
 
 //---------------------------------------------------------------------------//
 

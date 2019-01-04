@@ -5,7 +5,7 @@
 
 CLASS FacturasClientesLineasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLFacturasClientesLineasModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLFacturasVentasLineasModel():getTableName() ) 
 
 END CLASS
 

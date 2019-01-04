@@ -1427,8 +1427,8 @@ FUNCTION CreateMainSQLAcceso()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Facturas de ventas'
    oItem:cMessage       := 'Facturas de ventas'
-   oItem:bAction        := {|| FacturasClientesController():New():ActivateNavigatorView() }
-   // oItem:bAction        := {|| FacturasClientesController1000() }
+   oItem:bAction        := {|| FacturasVentasController():New():ActivateNavigatorView() }
+   // oItem:bAction        := {|| FacturasVentasController1000() }
    oItem:cId            := "facturas_ventas"
    oItem:cBmp           := "gc_document_text_user_16"
    oItem:cBmpBig        := "gc_document_text_user_32"
@@ -4373,11 +4373,11 @@ static Function getScafolding()
                               {  "Directory"    => cPatDocuments(),;   
                                  "Backup"       => .t.,;
                                  "Subdirectory" => ;
-                                 {  "Directory"    => cPatDocuments() + FacturasClientesController():getName() + "\" } },;
+                                 {  "Directory"    => cPatDocuments() + FacturasVentasController():getName() + "\" } },;
                                  {  "Directory"    => cPatLabels(),;   
                                     "Backup"       => .t.,;
                                     "Subdirectory" => ;
-                                    {  "Directory"  => cPatLabels() + FacturasClientesController():getName() + "\" } },;
+                                    {  "Directory"  => cPatLabels() + FacturasVentasController():getName() + "\" } },;
                               {  "Directory"    => cPatReporting(),;  
                                  "Backup"       => .t. },;
                               {  "Directory"    => cPatUserReporting(),;   

@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesLineasView FROM SQLBaseView
+CLASS OperacionesComercialesLineasView FROM SQLBaseView
      
 END CLASS
 

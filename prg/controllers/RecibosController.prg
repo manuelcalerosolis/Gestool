@@ -118,13 +118,13 @@ METHOD pagosModelLoadedBlankBuffer() CLASS RecibosController
    local cMedioPagoCodigo
    local cMetodoPagoCodigo
    
-   cMetodoPagoCodigo := SQLFacturasClientesModel():getField( "metodo_pago_codigo", "uuid", ::getRowSet():fieldGet( 'parent_uuid' ) )
+   cMetodoPagoCodigo := SQLFacturasVentasModel():getField( "metodo_pago_codigo", "uuid", ::getRowSet():fieldGet( 'parent_uuid' ) )
 
    cMedioPagoCodigo  := SQLMetodoPagoModel():getField( "codigo_medio_pago", "codigo", cMetodoPagoCodigo )
    
    ::getPagosController():setModelBuffer( 'importe', ::getRowSet():fieldGet( 'diferencia' ) )
    
-   ::getPagosController():setModelBuffer( 'tercero_codigo', SQLFacturasClientesModel():getField( "tercero_codigo", "uuid", ::getRowSet():fieldGet( 'parent_uuid' ) ) )
+   ::getPagosController():setModelBuffer( 'tercero_codigo', SQLFacturasVentasModel():getField( "tercero_codigo", "uuid", ::getRowSet():fieldGet( 'parent_uuid' ) ) )
 
    ::getPagosController():setModelBuffer( 'medio_pago_codigo', cMedioPagoCodigo )
 
@@ -476,8 +476,8 @@ METHOD addLinksToExplorerBar() CLASS RecibosView
    if ::oController:isNotAppendOrDuplicateMode()
 
       oPanel:AddLink(   "Factura...",;
-                        {||::oController:getFacturasClientesController():ZoomUuid( ::oController:getModelBuffer( "parent_uuid" ) ) },;
-                           ::oController:getFacturasClientesController():getImage( "16" ) )
+                        {||::oController:getFacturasVentasController():ZoomUuid( ::oController:getModelBuffer( "parent_uuid" ) ) },;
+                           ::oController:getFacturasVentasController():getImage( "16" ) )
 
       oPanel:AddLink(   "Pagos...",;
                         {|| msgInfo( "to-do" ) },;
@@ -630,7 +630,7 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
                            ::getTableName(),;
                            SQLRecibosPagosModel():getTableName(),;
                            SQLPagosModel():getTableName(),;
-                           SQLFacturasClientesModel():getTableName(),;
+                           SQLFacturasVentasModel():getTableName(),;
                            SQLTercerosModel():getTableName(),;
                            Company():getTableName( 'RecibosPagosTotalPaidWhereUuid' ) )
 
@@ -721,7 +721,7 @@ METHOD getInitialSelect() CLASS SQLRecibosAssistantModel
    ENDTEXT
 
    cSql  := hb_strformat( cSql,  ::getTableName(),;
-                                 SQLFacturasClientesModel():getTableName(),;
+                                 SQLFacturasVentasModel():getTableName(),;
                                  SQLRecibosPagosModel():getTableName(),;
                                  SQLPagosModel():getTableName(),;
                                  quoted( tercero_codigo ) )

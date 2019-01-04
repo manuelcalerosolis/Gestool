@@ -344,7 +344,7 @@ METHOD InsertPagoReciboTemporal( uuidPago, cClienteCodigo ) CLASS SQLRecibosPago
 
    cSql  := hb_strformat( cSql,  SQLRecibosPagosModel():getTableName(),;
                                  SQLRecibosModel():getTableName(),;
-                                 SQLFacturasClientesModel():getTableName(),;
+                                 SQLFacturasVentasModel():getTableName(),;
                                  SQLPagosModel():getTableName(),;
                                  Company():getTableName( 'RecibosPagosTotalPaidWhereUuid' ),;
                                  ::getTableName(),;

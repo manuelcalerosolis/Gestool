@@ -3,9 +3,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLFacturasClientesModel FROM SQLOperacionesComercialesModel
+CLASS SQLFacturasVentasModel FROM SQLOperacionesComercialesModel
 
-   DATA cTableName                     INIT "facturas_clientes"
+   DATA cTableName                     INIT "facturas_ventas"
 
    METHOD getTercerosModel()           INLINE ( SQLTercerosModel() )
 
@@ -15,7 +15,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumnsSelect() CLASS SQLFacturasClientesModel
+METHOD getColumnsSelect() CLASS SQLFacturasVentasModel
 
    local cColumns
 
@@ -47,7 +47,7 @@ METHOD getColumnsSelect() CLASS SQLFacturasClientesModel
    ENDTEXT
 
    cColumns    := hb_strformat(  cColumns,;
-                                 Company():getTableName( 'FacturaClienteTotalSummaryWhereUuid' ),;
+                                 Company():getTableName( 'FacturaVentaTotalSummaryWhereUuid' ),;
                                  Company():getTableName( 'RecibosPagosTotalPaidWhereFacturaUuid' ) )
 
 RETURN ( cColumns )

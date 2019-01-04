@@ -4,7 +4,7 @@
 
 //------------------------------------------------------------------------//
 
-CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
+CLASS OperacionesComercialesLineasBrowseView FROM SQLBrowseView
 
    DATA lFastEdit                      INIT .t.
 
@@ -59,7 +59,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD Create( oWindow ) CLASS FacturasClientesLineasBrowseView 
+METHOD Create( oWindow ) CLASS OperacionesComercialesLineasBrowseView 
 
    ::Super:Create( oWindow )
 
@@ -75,13 +75,13 @@ RETURN ( ::oBrowse )
 
 //---------------------------------------------------------------------------//
 
-METHOD setOnCancelEdit() CLASS FacturasClientesLineasBrowseView
+METHOD setOnCancelEdit() CLASS OperacionesComercialesLineasBrowseView
 
 RETURN ( ::getController():validLine() )   
 
 //---------------------------------------------------------------------------//
 
-METHOD keyChar( nKey ) CLASS FacturasClientesLineasBrowseView
+METHOD keyChar( nKey ) CLASS OperacionesComercialesLineasBrowseView
 
    if nkey != VK_EXECUTE
       RETURN ( nil )
@@ -95,7 +95,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS FacturasClientesLineasBrowseView
+METHOD addColumns() CLASS OperacionesComercialesLineasBrowseView
 
    ::getColumnIdAndUuid()
 
@@ -408,7 +408,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD activateUbicacionesSelectorView() CLASS FacturasClientesLineasBrowseView
+METHOD activateUbicacionesSelectorView() CLASS OperacionesComercialesLineasBrowseView
 
    local hUbicacion
    local uuidAlmacen
