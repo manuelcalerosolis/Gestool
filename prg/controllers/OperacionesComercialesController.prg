@@ -93,7 +93,7 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD getBrowseView()              VIRTUAL
 
-   METHOD getRepository()              VIRTUAL  
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := OperacionesComercialesRepository():New( self ), ), ::oRepository )  
    
    METHOD getHistoryManager()          INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
    

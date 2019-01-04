@@ -31,8 +31,6 @@ CLASS FacturasVentasController FROM OperacionesComercialesController
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasVentasBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasVentasRepository():New( self ), ), ::oRepository )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -67,9 +65,9 @@ METHOD End() CLASS FacturasVentasController
       ::oValidator:End()
    end if
 
-   if !empty( ::oRepository )
+   /*if !empty( ::oRepository )
       ::oRepository:End()
-   end if
+   end if*/
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
