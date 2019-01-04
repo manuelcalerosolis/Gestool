@@ -273,7 +273,7 @@ METHOD Create( oWindow )
    ::oBrowse:lFastEdit        := ::lFastEdit
    ::oBrowse:lMultiSelect     := ::lMultiSelect
    ::oBrowse:nColSel          := ::nColSel
-   ::oBrowse:nFreeze          := ::nFreeze
+   // ::oBrowse:nFreeze          := ::nFreeze
 
    ::oBrowse:nMarqueeStyle    := ::nMarqueeStyle
 

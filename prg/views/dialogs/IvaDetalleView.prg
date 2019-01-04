@@ -10,7 +10,11 @@
 
 CLASS IvaDetalleView FROM SQLBaseView
 
+   DATA aIvaDetalle
+
    DATA oBrowseIva
+
+   METHOD Show()
 
    METHOD Activate( aIvaDetalle )
 
@@ -18,7 +22,20 @@ END CLASS
 
 //---------------------------------------------------------------------------//
  
-METHOD Activate( aIvaDetalle ) CLASS IvaDetalleView
+METHOD Show()
+
+   ::aIvaDetalle  := ::getController():getRepository():getTotalesDocumentGroupByIVA( ::getController():getUuid() )
+
+   if empty( ::aIvaDetalle )
+      msgInfo( "No hay registros de IVA" )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::Activate() )
+
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS IvaDetalleView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "DETALLE_IVA" ;
@@ -40,19 +57,20 @@ METHOD Activate( aIvaDetalle ) CLASS IvaDetalleView
    ::oBrowseIva:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrowseIva:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-   ::oBrowseIva:setArray( aIvaDetalle, , , .f. )
+   ::oBrowseIva:setArray( ::aIvaDetalle, , , .f. )
 
    ::oBrowseIva:nMarqueeStyle          := 5
    ::oBrowseIva:lRecordSelector        := .f.
    ::oBrowseIva:lHScroll               := .f.
    ::oBrowseIva:lFooter                := .t.
+   ::oBrowseIva:l2007                  := .f.
 
    ::oBrowseIva:CreateFromResource( 100 )
 
    with object ( ::oBrowseIva:AddCol() )
       :cHeader             := "Base"
-      :bEditValue          := {|| hget( aIvaDetalle[ ::oBrowseIva:nArrayAt ], "total_neto" ) }
-      :cEditPicture        := "@E 99999999.999999"
+      :bEditValue          := {|| hget( ::aIvaDetalle[ ::oBrowseIva:nArrayAt ], "total_neto" ) }
+      :cEditPicture        := "@E 99999999.99"
       :nWidth              := 120
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
@@ -66,7 +84,7 @@ METHOD Activate( aIvaDetalle ) CLASS IvaDetalleView
    
    with object ( ::oBrowseIva:AddCol() )
       :cHeader             := "IVA %"
-      :bEditValue          := {|| hget( aIvaDetalle[ ::oBrowseIva:nArrayAt ], "porcentaje_iva" ) }
+      :bEditValue          := {|| hget( ::aIvaDetalle[ ::oBrowseIva:nArrayAt ], "porcentaje_iva" ) }
       :cEditPicture        := "@E 999.99"
       :nWidth              := 120
       :nDataStrAlign       := 1
@@ -75,8 +93,8 @@ METHOD Activate( aIvaDetalle ) CLASS IvaDetalleView
 
    with object ( ::oBrowseIva:AddCol() )
       :cHeader             := "IVA "
-      :bEditValue          := {|| hget( aIvaDetalle[ ::oBrowseIva:nArrayAt ], "total_iva" ) }
-      :cEditPicture        := "@E 99999999.999999"
+      :bEditValue          := {|| hget( ::aIvaDetalle[ ::oBrowseIva:nArrayAt ], "total_iva" ) }
+      :cEditPicture        := "@E 99999999.99"
       :nWidth              := 120
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
@@ -89,7 +107,7 @@ METHOD Activate( aIvaDetalle ) CLASS IvaDetalleView
 
    with object ( ::oBrowseIva:AddCol() )
       :cHeader             := "R.E. %"
-      :bEditValue          := {|| hget( aIvaDetalle[ ::oBrowseIva:nArrayAt ], "recargo_equivalencia" ) }
+      :bEditValue          := {|| hget( ::aIvaDetalle[ ::oBrowseIva:nArrayAt ], "recargo_equivalencia" ) }
       :cEditPicture        := "@E 999.99"
       :nWidth              := 120
       :nDataStrAlign       := 1
@@ -98,8 +116,8 @@ METHOD Activate( aIvaDetalle ) CLASS IvaDetalleView
 
    with object ( ::oBrowseIva:AddCol() )
       :cHeader             := "R.E."
-      :bEditValue          := {|| hget( aIvaDetalle[ ::oBrowseIva:nArrayAt ], "total_recargo" ) }
-      :cEditPicture        := "@E 99999999.999999"
+      :bEditValue          := {|| hget( ::aIvaDetalle[ ::oBrowseIva:nArrayAt ], "total_recargo" ) }
+      :cEditPicture        := "@E 99999999.99"
       :nWidth              := 120
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1

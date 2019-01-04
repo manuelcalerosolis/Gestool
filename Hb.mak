@@ -201,7 +201,8 @@ TraduccionesController.prg 												\
 AgentesController.prg 														\
 EtiquetasSelectorView.prg													\
 SQLBaseReport.prg 															\
-FacturasClientesReport.prg													\
+FacturasVentasReport.prg													\
+OperacionesComercialesReport.prg											\
 ImprimirSeriesController.prg 												\
 SQLPrintController.prg 														\
 ImprimirSeriesView.prg 														\
@@ -576,7 +577,8 @@ AlbaranesClientesLineasModel.obj 										\
 RectificativasClientesLineasModel.obj 									\
 EtiquetasSelectorView.obj													\
 SQLBaseReport.obj 															\
-FacturasClientesReport.obj													\
+FacturasVentasReport.obj													\
+OperacionesComercialesReport.obj 										\
 ImprimirSeriesView.obj 														\
 ImprimirSeriesController.obj 												\
 SQLPrintController.obj 														\
@@ -941,7 +943,8 @@ $(OBJ)\UnidadesMedicionOperacionesController.obj    				+
 $(OBJ)\TraduccionesController.obj    									+
 $(OBJ)\AgentesController.obj    											+
 $(OBJ)\EtiquetasSelectorView.obj											+
-$(OBJ)\FacturasClientesReport.obj 										+
+$(OBJ)\FacturasVentasReport.obj 											+
+$(OBJ)\OperacionesComercialesReport.obj								+
 $(OBJ)\SQLBaseReport.obj 													+
 $(OBJ)\SQLTageableModel.obj 												+
 $(OBJ)\SQLAjustableModel.obj 												+

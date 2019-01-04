@@ -126,8 +126,11 @@ RETURN ( hb_gcall( .t. ) )
 METHOD closeActivate()
 
    if ::getController():isZoomMode() 
+
       ::oDialog:end()
+   
       RETURN ( nil )
+   
    end if 
 
    if validateDialog( ::oDialog )
@@ -178,7 +181,7 @@ METHOD RestoreMessage()
       ::oMessage:setText( ::cMessage )
    end if 
 
-   ::getTimer():DeActivate()
+   ::getTimer():deActivate()
 
 RETURN ( nil )
 

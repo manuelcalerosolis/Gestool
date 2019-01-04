@@ -216,7 +216,7 @@ RETURN ( cSql )
 
 METHOD getInitialWhereParentUuid( uuidParent ) CLASS SQLOperacionesComercialesLineasModel
 
-RETURN ( "WHERE facturas_clientes_lineas.parent_uuid = " + quoted( uuidParent ) )
+RETURN ( "WHERE facturas_ventas_lineas.parent_uuid = " + quoted( uuidParent ) )
 
 //---------------------------------------------------------------------------//
 
@@ -411,9 +411,9 @@ METHOD getSentenceCountLineas( uuidParent ) CLASS SQLOperacionesComercialesLinea
 
    SELECT COUNT(*)
 
-      FROM %1$s AS facturas_clientes_lineas
+      FROM %1$s AS facturas_ventas_lineas
 
-      WHERE facturas_clientes_lineas.parent_uuid = %2$s  
+      WHERE facturas_ventas_lineas.parent_uuid = %2$s  
 
    ENDTEXT
 

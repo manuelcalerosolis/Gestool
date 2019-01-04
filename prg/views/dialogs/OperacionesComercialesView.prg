@@ -320,7 +320,7 @@ METHOD addLinksToExplorerBar() CLASS OperacionesComercialesView
    end if
 
    oPanel:AddLink(   "Detalle IVA...",;
-                     {||   ::getController():getIvaDetalleView():Activate( ::getController():getRepository():getTotalesDocumentGroupByIVA( ::getController():getUuid() ) )  },;
+                     {||   ::getController():getIvaDetalleView():Show()  },;
                            ::getController():getTipoIvaController():getImage( "16" ) )
 
 RETURN ( nil )

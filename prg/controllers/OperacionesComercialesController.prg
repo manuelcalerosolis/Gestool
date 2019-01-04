@@ -97,7 +97,7 @@ CLASS OperacionesComercialesController FROM OperacionesController
    
    METHOD getHistoryManager()          INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
    
-   METHOD getReport()                  INLINE ( if( empty( ::oReport ), ::oReport := FacturasClientesReport():New( self ), ), ::oReport )
+   METHOD getReport()                  INLINE ( if( empty( ::oReport ), ::oReport := FacturasVentasReport():New( self ), ), ::oReport )
 
    METHOD getSerieDocumentoComponent() INLINE ( if( empty( ::oSerieDocumentoComponent ), ::oSerieDocumentoComponent := SerieDocumentoComponent():New( self ), ), ::oSerieDocumentoComponent )
 
@@ -133,15 +133,15 @@ METHOD New( oController ) CLASS OperacionesComercialesController
 
    ::setEvent( 'editing', {|| ::Editing() } )
 
-   ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',              {|| ::isTerceroFilled() } ) 
-   ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence',  {|| ::getTerceroUuid() } )
-
-   ::getTercerosLineasController():setEvent( 'appending',          {|| ::isTerceroFilled() } )
-   ::getTercerosLineasController():setEvent( 'deletedSelection',   {|| ::calculateTotals() } ) 
-
-   ::getTercerosDescuentosController():setEvent( 'deletedSelection',  {|| ::calculateTotals() } ) 
-
    ::getTercerosController():getSelector():setEvent( 'settedHelpText', {|| ::terceroSettedHelpText() } )
+
+   ::getTercerosLineasController():setEvent( 'appending', {|| ::isTerceroFilled() } )
+   ::getTercerosLineasController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
+
+   ::getTercerosDescuentosController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
+
+   ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView', {|| ::isTerceroFilled() } ) 
+   ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence', {|| ::getTerceroUuid() } )
 
 RETURN ( Self )
 
@@ -166,7 +166,7 @@ METHOD Editing( nId ) CLASS OperacionesComercialesController
 
    nTotalDocumento         := ::getTotalDocument( ::getUuidFromRowSet() )
 
-   if nRecibosPagados >= nTotalDocumento
+   if ( nTotalDocumento != 0 .and.  nRecibosPagados >= nTotalDocumento )
       msgstop( "La factura esta completamete pagada", "No esta permitida la edición" )
       RETURN ( .f. )
    end if 
