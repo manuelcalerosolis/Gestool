@@ -33,8 +33,8 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
                                  "pedidos_clientes" =>                     { "nombre" => "Pedidos a clientes",  "icono" => "gc_clipboard_empty_user_16"                   } ,;
                                  "albaranes_clientes" =>                   { "nombre" => "Albaranes a clientes",  "icono" => "gc_document_empty_16"                       } ,;
                                  "lineas_albaranes_clientes" =>            { "nombre" => "Líneas de albaranes a clientes",  "icono" => "gc_document_empty_16"             } ,;
-                                 "facturas_clientes" =>                    { "nombre" => "Facturas a clientes",  "icono" => "gc_document_text_user_16"                    } ,;
-                                 "lineas_facturas_clientes" =>             { "nombre" => "Líneas de facturas a clientes",  "icono" => "gc_document_text_user_16"          } ,;
+                                 "facturas_ventas" =>                      { "nombre" => "Facturas de ventas",  "icono" => "gc_document_text_user_16"                    } ,;
+                                 "lineas_facturas_vntas" =>                { "nombre" => "Líneas de facturas de ventas",  "icono" => "gc_document_text_user_16"          } ,;
                                  "facturas_anticipos_clientes" =>          { "nombre" => "Facturas de anticipos a clientes",  "icono" => "gc_document_text_money2_16"     } ,;
                                  "rectificativa_clientes" =>               { "nombre" => "Facturas rectificativa a clientes",  "icono" => "gc_document_text_delete_16"    } ,;
                                  "pedidos_proveedores" =>                  { "nombre" => "Pedidos a proveedores",  "icono" => "gc_clipboard_empty_businessman_16"         } ,;

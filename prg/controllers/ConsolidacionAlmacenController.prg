@@ -378,7 +378,7 @@ METHOD terceroSetDescuentos() CLASS ConsolidacionAlmacenController
 
    ::getTercerosDescuentosController():getModel():deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
 
-   ::getTercerosDescuentosController():getModel():insertWhereClienteCodigo( ::getModelBuffer( "tercero_codigo" ) )
+   ::getTercerosDescuentosController():getModel():insertWhereTerceroCodigo( ::getModelBuffer( "tercero_codigo" ) )
 
    ::getTercerosDescuentosController():refreshRowSetAndGoTop()
 

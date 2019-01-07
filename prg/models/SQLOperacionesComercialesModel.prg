@@ -5,8 +5,6 @@
 
 CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
 
-   DATA cConstraints                   // INIT "PRIMARY KEY ( numero, serie )"
-
    METHOD getColumns()
 
    METHOD getColumnsSelect()
@@ -105,16 +103,16 @@ METHOD getColumnsSelect() CLASS SQLOperacionesComercialesModel
    local cColumns
 
    TEXT INTO cColumns
-      operaciones_comerciales.id AS id,
-      operaciones_comerciales.uuid AS uuid,
-      CONCAT( operaciones_comerciales.serie, '-', operaciones_comerciales.numero ) AS numero,
-      operaciones_comerciales.fecha AS fecha,
-      operaciones_comerciales.delegacion_uuid AS delegacion_uuid,
-      operaciones_comerciales.sesion_uuid AS sesion_uuid,
-      operaciones_comerciales.recargo_equivalencia AS recargo_equivalencia,
-      operaciones_comerciales.tercero_codigo AS tercero_codigo,
-      operaciones_comerciales.created_at AS created_at,
-      operaciones_comerciales.updated_at AS updated_at,
+      %1$s.id AS id,
+      %1$s.uuid AS uuid,
+      CONCAT( %1$s.serie, '-', %1$s.numero ) AS numero,
+      %1$s.fecha AS fecha,
+      %1$s.delegacion_uuid AS delegacion_uuid,
+      %1$s.sesion_uuid AS sesion_uuid,
+      %1$s.recargo_equivalencia AS recargo_equivalencia,
+      %1$s.tercero_codigo AS tercero_codigo,
+      %1$s.created_at AS created_at,
+      %1$s.updated_at AS updated_at,
       terceros.nombre AS tercero_nombre,
       terceros.dni AS cliente_dni,
       direcciones.direccion AS direccion_direccion,
@@ -127,15 +125,12 @@ METHOD getColumnsSelect() CLASS SQLOperacionesComercialesModel
       direcciones.email AS direccion_email,
       tarifas.codigo AS tarifa_codigo,
       tarifas.nombre AS tarifa_nombre,
-      ( %1$s( operaciones_comerciales.uuid, operaciones_comerciales.recargo_equivalencia ) ) AS total
+      ( %2$s( %1$s.uuid, %1$s.recargo_equivalencia ) ) AS total
    ENDTEXT
 
-   cColumns    := hb_strformat( cColumns,;
-                                Company():getTableName( ::getPackage('TotalSummaryWhereUuid' ) ),;
-                                Company():getTableName( 'RecibosPagosTotalPaidWhereFacturaUuid' ) ) 
+   cColumns := hb_strformat( cColumns, ::cTableName, Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ) ) 
 
 RETURN ( cColumns )
-
 
 //---------------------------------------------------------------------------//
 
@@ -146,22 +141,23 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesModel
    TEXT INTO cSql
 
    SELECT
-      %5$s
+      %6$s
 
-   FROM %1$s AS operaciones_comerciales
+   FROM %2$s AS %1$s
 
-      LEFT JOIN %2$s terceros
-         ON operaciones_comerciales.tercero_codigo = terceros.codigo AND terceros.deleted_at = 0
+      LEFT JOIN %3$s AS terceros
+         ON %1$s.tercero_codigo = terceros.codigo AND terceros.deleted_at = 0
 
-      LEFT JOIN %3$s direcciones
+      LEFT JOIN %4$s AS direcciones
          ON terceros.uuid = direcciones.parent_uuid AND direcciones.codigo = 0
 
-      LEFT JOIN %4$s tarifas
-         ON operaciones_comerciales.tarifa_codigo = tarifas.codigo
+      LEFT JOIN %5$s AS tarifas
+         ON %1$s.tarifa_codigo = tarifas.codigo
 
    ENDTEXT
 
    cSql  := hb_strformat(  cSql,;
+                           ::cTableName,;
                            ::getTableName(),;
                            ::getTercerosModel():getTableName(),;
                            SQLDireccionesModel():getTableName(),;
@@ -199,24 +195,28 @@ METHOD totalPaid( uuidFactura ) CLASS SQLOperacionesComercialesModel
 
    TEXT INTO cSql
 
-   SELECT SUM( pagos.importe ) AS total_pagado
-      FROM %1$s AS facturas_clientes
+   SELECT 
+      SUM( pagos.importe ) AS total_pagado
 
-      INNER JOIN %2$s AS recibos
-         ON facturas_clientes.uuid = recibos.parent_uuid
+      FROM %2$s AS %1$s
 
-      INNER JOIN %3$s AS pagos_recibos
+      INNER JOIN %3$s AS recibos
+         ON  %1$s.uuid = recibos.parent_uuid
+
+      INNER JOIN %4$s AS pagos_recibos
          ON pagos_recibos.recibo_uuid = recibos.uuid
 
-      INNER JOIN %4$s AS pagos
+      INNER JOIN %5$s AS pagos
          ON pagos_recibos.pago_uuid = pagos.uuid
 
-      WHERE facturas_clientes.uuid = %5$s
+      WHERE  %1$s.uuid = %6$s
 
-      GROUP BY facturas_clientes.uuid
+      GROUP BY  %1$s.uuid
+
    ENDTEXT
 
    cSql  := hb_strformat(  cSql,;
+                           ::cTableName,;
                            ::getTableName(),;
                            SQLRecibosModel():getTableName(),;
                            SQLRecibosPagosModel():getTableName(),;

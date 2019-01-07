@@ -12,12 +12,6 @@ CLASS FacturasVentasReport FROM OperacionesComercialesReport
 
    METHOD getLinesModel()              INLINE ( if( empty( ::oLinesModel ), ::oLinesModel := SQLFacturasVentasLineasModel():New( self ), ), ::oLinesModel )
 
-   METHOD setDocumentGeneralWhere( uuid ) INLINE ;  
-                                       ( ::getDocumentModel():setGeneralWhere( "operaciones_comerciales.uuid = " + quoted( uuid ) ) )
-
-   METHOD setLinesGeneralWhere( uuid ) INLINE ;
-                                       ( ::getLinesModel():setGeneralWhere( "facturas_ventas_lineas.parent_uuid = " + quoted( uuid ) ) )
-
 END CLASS
 
 //---------------------------------------------------------------------------//

@@ -31,6 +31,8 @@ CLASS FacturasVentasController FROM OperacionesComercialesController
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasVentasBrowseView():New( self ), ), ::oBrowseView )
 
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasVentasRepository():New( self ), ), ::oRepository )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -65,9 +67,9 @@ METHOD End() CLASS FacturasVentasController
       ::oValidator:End()
    end if
 
-   /*if !empty( ::oRepository )
+   if !empty( ::oRepository )
       ::oRepository:End()
-   end if*/
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -124,7 +126,7 @@ CLASS TestFacturasVentasController FROM TestCase
 
    DATA oController
 
-   DATA aCategories                    INIT { "all", "facturas_clientes" }
+   DATA aCategories                    INIT { "all", "facturas_ventas" }
 
    METHOD beforeClass()
 
@@ -191,6 +193,8 @@ CLASS TestFacturasVentasController FROM TestCase
    METHOD test_dialogo_con_cambio_de_ubicacion() 
 
    METHOD test_dialogo_con_cambio_de_agente() 
+
+   METHOD test_dialogo_con_descuento_en_documento() 
 
 END CLASS
 
@@ -425,6 +429,12 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD test_dialogo_con_cambio_de_agente() CLASS TestFacturasVentasController
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_con_descuento_en_documento() CLASS TestFacturasVentasController
 
 RETURN ( nil )
 

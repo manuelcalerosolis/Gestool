@@ -353,7 +353,7 @@ METHOD getTipoRecibo() CLASS RecibosBrowseView
 
    local cTipo
 
-   if ::oController:getRowSet():fieldGet( 'parent_table' ) == "facturas_clientes"
+   if ::oController:getRowSet():fieldGet( 'parent_table' ) == "facturas_ventas"
       cTipo = "Cobro"
       RETURN ( cTipo )
    end if
@@ -618,11 +618,11 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
    LEFT JOIN %3$s AS pagos
       ON pagos.uuid = pagos_recibos.pago_uuid
 
-   LEFT JOIN %4$s AS facturas_clientes
-      ON recibos.parent_uuid = facturas_clientes.uuid 
+   LEFT JOIN %4$s AS facturas_ventas
+      ON recibos.parent_uuid = facturas_ventas.uuid 
 
    LEFT JOIN %5$s AS terceros 
-      ON facturas_clientes.tercero_codigo = terceros.codigo AND terceros.deleted_at = 0
+      ON facturas_ventas.tercero_codigo = terceros.codigo AND terceros.deleted_at = 0
 
    ENDTEXT
 
@@ -709,14 +709,16 @@ METHOD getInitialSelect() CLASS SQLRecibosAssistantModel
    
    FROM %1$s AS recibos
    
-   INNER JOIN %2$s AS facturas_clientes
-      ON recibos.parent_uuid = facturas_clientes.uuid AND facturas_clientes.tercero_codigo = %5$s 
+   INNER JOIN %2$s AS facturas_ventas
+      ON recibos.parent_uuid = facturas_ventas.uuid 
+         AND facturas_ventas.tercero_codigo = %5$s 
    
    LEFT JOIN %3$s AS pagos_recibos
       ON recibos.uuid = pagos_recibos.recibo_uuid
       
    LEFT JOIN %4$s AS pagos
-      ON pagos.uuid = pagos_recibos.pago_uuid AND pagos.estado <> "Rechazado"
+      ON pagos.uuid = pagos_recibos.pago_uuid 
+         AND pagos.estado <> "Rechazado"
 
    ENDTEXT
 

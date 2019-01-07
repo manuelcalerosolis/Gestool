@@ -28,8 +28,6 @@ CLASS OperacionesComercialesReport FROM SQLBaseReport
 
    METHOD getLinesModel()              VIRTUAL
 
-   METHOD setDocumentGeneralWhere( uuid ) VIRTUAL
-
    METHOD setLinesGeneralWhere( uuid ) VIRTUAL
 
    METHOD buidSentenceAndRowSetDocument( uIds )
@@ -83,22 +81,18 @@ METHOD buidSentenceAndRowSetDocument( uuid )
    if empty( uuid )
       ::getDocumentModel():setLimit( 1 )
    else
-      ::setDocumentGeneralWhere( uuid )
+      ::getDocumentModel():setGeneralWhere( ::getDocumentModel():cTableName + ".uuid = " + quoted( uuid ) )
    end if 
 
-   ::getDocumentRowSet():Build( ::getDocumentModel():getGeneralSelect() )
-
-RETURN ( nil )
+RETURN ( ::getDocumentRowSet():Build( ::getDocumentModel():getGeneralSelect() ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD buidSentenceAndRowSetLines( uuid )
 
-   ::setLinesGeneralWhere( uuid )
+   ::getLinesModel():setGeneralWhere( ::getLinesModel():cTableName + ".parent_uuid = " + quoted( uuid ) )
 
-   ::getLinesRowSet():Build( ::getLinesModel():getGeneralSelect() )
-
-RETURN ( nil )
+RETURN ( ::getLinesRowSet():Build( ::getLinesModel():getGeneralSelect() ) )
 
 //---------------------------------------------------------------------------//
 

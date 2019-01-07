@@ -13,13 +13,13 @@ CLASS SQLBaseModel
 
    DATA cTableName
 
-   DATA cPackage
+   DATA cPackage                       INIT ""
 
    DATA cAs
 
    DATA cConstraints
 
-   DATA hColumns                                      INIT {=>}
+   DATA hColumns                       INIT {=>}
 
    DATA cColumnOrientation
 
@@ -31,13 +31,13 @@ CLASS SQLBaseModel
 
    DATA nLimit
 
-   DATA cFilterWhere                                  INIT ""
+   DATA cFilterWhere                   INIT ""
 
    DATA cOthersWhere
 
-   DATA cColumnKey                                    INIT "id"
+   DATA cColumnKey                     INIT "id"
    
-   DATA cColumnCode                                   INIT "codigo"
+   DATA cColumnCode                    INIT "codigo"
 
    DATA hBuffer 
 
@@ -45,17 +45,17 @@ CLASS SQLBaseModel
 
    DATA cSQLUpdate
 
-   DATA cGroupBy                                      INIT ""
+   DATA cGroupBy                       INIT ""
 
-   DATA cOrderBy                                      INIT ""    
+   DATA cOrderBy                       INIT ""    
 
-   DATA cOrientation                                  INIT ""
+   DATA cOrientation                   INIT ""
 
    DATA cFind
 
-   DATA aColumns                                      INIT {}
+   DATA aColumns                       INIT {}
 
-   DATA lShowDeleted                                  INIT .f.
+   DATA lShowDeleted                   INIT .f.
 
    DATA aRecordsToDelete
 
@@ -66,28 +66,28 @@ CLASS SQLBaseModel
    METHOD New() CONSTRUCTOR
    METHOD End()
 
-   METHOD setSQLInsert( cSQLInsert )                  INLINE ( ::cSQLInsert := cSQLInsert )
-   METHOD getSQLInsert()                              INLINE ( ::cSQLInsert )
+   METHOD setSQLInsert( cSQLInsert )   INLINE ( ::cSQLInsert := cSQLInsert )
+   METHOD getSQLInsert()               INLINE ( ::cSQLInsert )
 
-   METHOD setSQLUpdate( cSQLUpdate )                  INLINE ( ::cSQLUpdate := cSQLUpdate )
-   METHOD getSQLUpdate()                              INLINE ( ::cSQLUpdate )
+   METHOD setSQLUpdate( cSQLUpdate )   INLINE ( ::cSQLUpdate := cSQLUpdate )
+   METHOD getSQLUpdate()               INLINE ( ::cSQLUpdate )
 
    METHOD setAttribute( key, value )
    METHOD getAttribute( key, value )
 
    // Facades -----------------------------------------------------------------
 
-   METHOD getDatabase()                               INLINE ( getSQLDatabase() )
+   METHOD getDatabase()                INLINE ( getSQLDatabase() )
 
-   METHOD getTableName()                              INLINE ( "gestool." + ::cTableName )
+   METHOD getTableName()               INLINE ( "gestool." + ::cTableName )
 
-   METHOD getPackage( cContext )                      INLINE ( ::cPackage + cContext )
+   METHOD getPackage( cContext )       INLINE ( ::cPackage + cContext )
 
    // Columns-------------------------------------------------------------------
 
-   METHOD getColumns()                                INLINE ( ::hColumns )
+   METHOD getColumns()                 INLINE ( ::hColumns )
 
-   METHOD getColumnsSelect()                          VIRTUAL
+   METHOD getColumnsSelect()           VIRTUAL
 
    METHOD getTableColumns() 
 
@@ -104,12 +104,12 @@ CLASS SQLBaseModel
    METHOD getHeadersForBrowse()
 
    METHOD getValueFromColumn( cColumn, cKey )
-   METHOD getHeaderFromColumn( cColumn )              INLINE ( ::getValueFromColumn( cColumn, "header" ) )
-   METHOD getHeaderFromColumnOrder()                  INLINE ( ::getValueFromColumn( ::cColumnOrder, "header" ) )
-   METHOD getLenFromColumn( cColumn )                 INLINE ( ::getValueFromColumn( cColumn, "len" ) )
+   METHOD getHeaderFromColumn( cColumn )  INLINE ( ::getValueFromColumn( cColumn, "header" ) )
+   METHOD getHeaderFromColumnOrder()   INLINE ( ::getValueFromColumn( ::cColumnOrder, "header" ) )
+   METHOD getLenFromColumn( cColumn )  INLINE ( ::getValueFromColumn( cColumn, "len" ) )
 
-   METHOD getId()                                     INLINE ( iif( !empty( ::hBuffer ), hget( ::hBuffer, "id" ), nil ) )
-   METHOD getUuid()                                   INLINE ( iif( !empty( ::hBuffer ), hget( ::hBuffer, "uuid" ), nil ) )
+   METHOD getId()                      INLINE ( iif( !empty( ::hBuffer ), hget( ::hBuffer, "id" ), nil ) )
+   METHOD getUuid()                    INLINE ( iif( !empty( ::hBuffer ), hget( ::hBuffer, "uuid" ), nil ) )
 
    // Sentences----------------------------------------------------------------
 
@@ -118,7 +118,7 @@ CLASS SQLBaseModel
    METHOD getAlterTableSentences()
    
    METHOD getGeneralSelect()
-   METHOD getInitialSelect()                          INLINE ( "SELECT * FROM " + ::getTableName() )
+   METHOD getInitialSelect()           INLINE ( "SELECT * FROM " + ::getTableName() )
 
    METHOD getField( cField, cBy, cId )
    METHOD getFieldWhere( cField, hWhere )
@@ -146,11 +146,11 @@ CLASS SQLBaseModel
    METHOD getUpdateSentence()
    METHOD getInsertOnDuplicateSentence( hBuffer )   
 
-   METHOD isDeletedAtColumn()                         INLINE ( hhaskey( ::hColumns, "deleted_at" ) )
+   METHOD isDeletedAtColumn()          INLINE ( hhaskey( ::hColumns, "deleted_at" ) )
    METHOD isDeleted( nId )                            
 
-   METHOD changeShowDeleted()                         INLINE ( ::lShowDeleted := !::lShowDeleted, ::lShowDeleted )
-   METHOD isShowDeleted()                             INLINE ( ::lShowDeleted )
+   METHOD changeShowDeleted()          INLINE ( ::lShowDeleted := !::lShowDeleted, ::lShowDeleted )
+   METHOD isShowDeleted()              INLINE ( ::lShowDeleted )
 
    METHOD getDeleteOrUpdateSentenceByUuid( aUuid )
       METHOD SQLUpdateDeletedAtSentenceWhereUuid( uUuid )

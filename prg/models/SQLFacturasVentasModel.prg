@@ -5,7 +5,7 @@
 
 CLASS SQLFacturasVentasModel FROM SQLOperacionesComercialesModel
 
-   DATA cPackage                       INIT "FacturaVentas"
+   DATA cPackage                       INIT "FacturasVentas"
 
    DATA cTableName                     INIT "facturas_ventas"
 

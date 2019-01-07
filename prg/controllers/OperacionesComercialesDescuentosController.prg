@@ -17,14 +17,15 @@ CLASS OperacionesComercialesDescuentosController FROM SQLBrowseController
 
    //Construcciones tardias----------------------------------------------------
    
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesDescuentosBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getModel                     VIRTUAL
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesDescuentosView():New( self ), ), ::oDialogView )
+   METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesDescuentosBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := OperacionesComercialesDescuentosValidator():New( self ), ), ::oValidator )
+   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesDescuentosView():New( self ), ), ::oDialogView )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := OperacionesComercialesDescuentosRepository():New( self ), ), ::oRepository )
+   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := OperacionesComercialesDescuentosValidator():New( self ), ), ::oValidator )
 
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := OperacionesComercialesDescuentosRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -34,17 +35,9 @@ METHOD New( oController ) CLASS OperacionesComercialesDescuentosController
 
    ::Super:New( oController )
 
-   ::cTitle                      := "Facturas clientes descuentos"
+   ::lTransactional  := .t.
 
-   ::cName                       := "facturas_clientes_descuentos"
-
-   ::hImage                      := {  "16" => "gc_symbol_percent_16",;
-                                       "32" => "gc_symbol_percent_32",;
-                                       "48" => "gc_symbol_percent_48" }
-
-   ::lTransactional              := .t.
-
-   ::setEvent( 'exitAppended',   {|| ::getBrowseView():selectCol( ::getBrowseView():oColumnNombre:nPos ) } )
+   ::setEvent( 'exitAppended', {|| ::getBrowseView():selectCol( ::getBrowseView():oColumnNombre:nPos ) } )
 
 RETURN ( Self )
 
@@ -106,7 +99,7 @@ METHOD validateNombre( oGet ) CLASS OperacionesComercialesDescuentosController
       RETURN ( .f. )
    end if
  
-   if !empty( ::getModel():CountNombreWhereFacturaUuid( cNombre ) )
+   if !empty( ::getModel():countNombreWhereOperacionUuid( cNombre ) )
       msgstop( "El nombre del descuento introducido ya existe" )
       RETURN ( .f. )
    end if
@@ -262,13 +255,13 @@ CLASS SQLOperacionesComercialesDescuentosModel FROM SQLCompanyModel
 
    METHOD getColumns() 
 
-   METHOD insertWhereClienteCodigo( cCodigoCliente )
+   METHOD insertWhereTerceroCodigo( cCodigoTercero )
 
-   METHOD countNombreWhereFacturaUuid( cNombre )
+   METHOD countNombreWhereOperacionUuid( cNombre )
 
-   METHOD getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) 
+   METHOD getSentenceDescuentosWhereUuid( uuidOperacionComercial, importeBruto ) 
 
-   METHOD selectDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) 
+   METHOD selectDescuentosWhereUuid( uuidOperacionComercial, importeBruto ) 
 
 #ifdef __TEST__   
 
@@ -307,7 +300,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertWhereClienteCodigo( cCodigoCliente ) CLASS SQLOperacionesComercialesDescuentosModel
+METHOD insertWhereTerceroCodigo( cCodigoTercero ) CLASS SQLOperacionesComercialesDescuentosModel
 
    local cSql
 
@@ -321,11 +314,11 @@ METHOD insertWhereClienteCodigo( cCodigoCliente ) CLASS SQLOperacionesComerciale
 
       FROM %2$s AS descuentos
 
-      INNER JOIN %3$s AS clientes 
-         ON clientes.codigo = %5$s    
+      INNER JOIN %3$s AS terceros 
+         ON terceros.codigo = %5$s    
 
       WHERE 
-         descuentos.parent_uuid = clientes.uuid
+         descuentos.parent_uuid = terceros.uuid
          AND ( descuentos.fecha_fin IS NULL 
                OR descuentos.fecha_fin >= curdate() 
                ) 
@@ -334,62 +327,59 @@ METHOD insertWhereClienteCodigo( cCodigoCliente ) CLASS SQLOperacionesComerciale
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(), SQLTercerosModel():getTableName(), quoted( ::getControllerParentUuid() ), quoted( cCodigoCliente ) )
+   cSql  := hb_strformat( cSql, ::getModel():getTableName(), SQLDescuentosModel():getTableName(), SQLTercerosModel():getTableName(), quoted( ::getControllerParentUuid() ), quoted( cCodigoTercero ) )
 
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD CountNombreWhereFacturaUuid( cNombre ) CLASS SQLOperacionesComercialesDescuentosModel
+METHOD countNombreWhereOperacionUuid( cNombre ) CLASS SQLOperacionesComercialesDescuentosModel
 
    local cSql
 
    TEXT INTO cSql
 
-      SELECT COUNT( facturas_clientes_descuentos.nombre )
+      SELECT COUNT( operaciones_comeciales_descuentos.nombre )
 
-      FROM %1$s AS facturas_clientes_descuentos
+      FROM %1$s AS operaciones_comeciales_descuentos
       
       WHERE parent_uuid = %2$s
-         AND facturas_clientes_descuentos.nombre = %3$s
-         AND facturas_clientes_descuentos.deleted_at = 0
+         AND operaciones_comeciales_descuentos.nombre = %3$s
+         AND operaciones_comeciales_descuentos.deleted_at = 0
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( ::getControllerParentUuid() ), quoted( cNombre ) )
+   cSql  := hb_strformat( cSql, ::getModel():getTableName(), quoted( ::getControllerParentUuid() ), quoted( cNombre ) )
 
 RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) CLASS SQLOperacionesComercialesDescuentosModel 
+METHOD getSentenceDescuentosWhereUuid( uuidOperacionComercial, importeBruto ) CLASS SQLOperacionesComercialesDescuentosModel 
 
    local cSql
  
    TEXT INTO cSql
 
    SELECT 
-      facturas_clientes_descuentos.nombre AS nombre_descuento,
-      facturas_clientes_descuentos.descuento AS porcentaje_descuento, 
-      ROUND( facturas_clientes_descuentos.descuento * %3$s / 100, 2 ) AS importe_descuento
-   FROM %1$s AS facturas_clientes_descuentos 
-      WHERE facturas_clientes_descuentos.parent_uuid = %2$s 
-         AND facturas_clientes_descuentos.deleted_at = 0; 
+      operaciones_comeciales_descuentos.nombre AS nombre_descuento,
+      operaciones_comeciales_descuentos.descuento AS porcentaje_descuento, 
+      ROUND( operaciones_comeciales_descuentos.descuento * %3$s / 100, 2 ) AS importe_descuento
+   FROM %1$s AS operaciones_comeciales_descuentos 
+      WHERE operaciones_comeciales_descuentos.parent_uuid = %2$s 
+         AND operaciones_comeciales_descuentos.deleted_at = 0; 
 
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql,;
-                           SQLFacturasVentasDescuentosModel():getTableName(),;
-                           quoted( uuidFacturaCliente ),;
-                           toSqlString( importeBruto ) )
+   cSql  := hb_strformat( cSql, ::getModel():getTableName(), quoted( uuidOperacionComercial ), toSqlString( importeBruto ) )
 
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD selectDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) CLASS SQLOperacionesComercialesDescuentosModel
+METHOD selectDescuentosWhereUuid( uuidOperacionComercial, importeBruto ) CLASS SQLOperacionesComercialesDescuentosModel
 
-RETURN ( ::getDatabase():selectTrimedFetchHash( ::getSentenceDescuentosWhereUuid( uuidFacturaCliente, importeBruto ) ) )
+RETURN ( ::getDatabase():selectTrimedFetchHash( ::getSentenceDescuentosWhereUuid( uuidOperacionComercial, importeBruto ) ) )
 
 //---------------------------------------------------------------------------//
 

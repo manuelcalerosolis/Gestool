@@ -166,7 +166,7 @@ METHOD getColumnsSelect() CLASS SQLOperacionesComercialesLineasModel
       %1$s.deleted_at AS deleted_at
    ENDTEXT
 
-   cColumns  := hb_strformat(  cColumns, ::cTableName )
+   cColumns  := hb_strformat( cColumns, ::cTableName )
       
 RETURN ( cColumns )
 

@@ -66,7 +66,7 @@ METHOD getColumnsSelect() CLASS SQLFacturasVentasRectificativasModel
    ENDTEXT
 
    cColumns    := hb_strformat(  cColumns,;
-                                 Company():getTableName( 'FacturaVentaTotalSummaryWhereUuid' ),;
+                                 Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ),;
                                  Company():getTableName( 'RecibosPagosTotalPaidWhereFacturaUuid' ) )
 
 RETURN ( cColumns )

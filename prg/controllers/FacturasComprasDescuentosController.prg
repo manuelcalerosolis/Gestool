@@ -11,7 +11,7 @@ CLASS FacturasComprasDescuentosController FROM OperacionesComercialesDescuentosC
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasComprasDescuentosModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasComprasDescuentosModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -21,13 +21,13 @@ METHOD New( oController ) CLASS FacturasComprasDescuentosController
 
    ::Super:New( oController )
 
-   ::cTitle                      := "Facturas proveedores descuentos"
+   ::cTitle                            := "Facturas proveedores descuentos"
 
-   ::cName                       := "facturas_proveedores_descuentos"
+   ::cName                             := "facturas_proveedores_descuentos"
 
-   ::hImage                      := {  "16" => "gc_symbol_percent_16",;
-                                       "32" => "gc_symbol_percent_32",;
-                                       "48" => "gc_symbol_percent_48" }
+   ::hImage                            := {  "16" => "gc_symbol_percent_16",;
+                                             "32" => "gc_symbol_percent_32",;
+                                             "48" => "gc_symbol_percent_48" }
 
 RETURN ( Self )
 

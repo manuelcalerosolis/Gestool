@@ -133,10 +133,10 @@ METHOD totalPaid( uuidFactura ) CLASS SQLConsolidacionesAlmacenModel
    TEXT INTO cSql
 
    SELECT SUM( pagos.importe ) AS total_pagado
-      FROM %1$s AS facturas_clientes
+      FROM %1$s AS facturas_ventas
 
       INNER JOIN %2$s AS recibos
-         ON facturas_clientes.uuid = recibos.parent_uuid
+         ON facturas_ventas.uuid = recibos.parent_uuid
 
       INNER JOIN %3$s AS pagos_recibos
          ON pagos_recibos.recibo_uuid = recibos.uuid
@@ -144,9 +144,9 @@ METHOD totalPaid( uuidFactura ) CLASS SQLConsolidacionesAlmacenModel
       INNER JOIN %4$s AS pagos
          ON pagos_recibos.pago_uuid = pagos.uuid
 
-      WHERE facturas_clientes.uuid = %5$s
+      WHERE facturas_ventas.uuid = %5$s
 
-      GROUP BY facturas_clientes.uuid
+      GROUP BY facturas_ventas.uuid
    ENDTEXT
 
    cSql  := hb_strformat(  cSql,;
