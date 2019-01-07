@@ -107,9 +107,9 @@ CLASS OperacionesComercialesController FROM OperacionesController
    METHOD getFacturasClientesFacturaeController() ;
                                        INLINE ( if( empty( ::oFacturasClientesFacturaeController ), ::oFacturasClientesFacturaeController := FacturasClientesFacturaeController():New( self ), ), ::oFacturasClientesFacturaeController )
 
-   METHOD getTercerosLineasController()      VIRTUAL
+   METHOD getLinesController()      VIRTUAL
 
-   METHOD getTercerosDescuentosController()  VIRTUAL
+   METHOD getDiscountController()  VIRTUAL
 
 END CLASS
 
@@ -135,10 +135,10 @@ METHOD New( oController ) CLASS OperacionesComercialesController
 
    ::getTercerosController():getSelector():setEvent( 'settedHelpText', {|| ::terceroSettedHelpText() } )
 
-   ::getTercerosLineasController():setEvent( 'appending', {|| ::isTerceroFilled() } )
-   ::getTercerosLineasController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
+   ::getLinesController():setEvent( 'appending', {|| ::isTerceroFilled() } )
+   ::getLinesController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
 
-   ::getTercerosDescuentosController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
+   ::getDiscountController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
 
    ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView', {|| ::isTerceroFilled() } ) 
    ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence', {|| ::getTerceroUuid() } )
@@ -309,13 +309,13 @@ RETURN ( nil )
 
 METHOD terceroSetDescuentos() CLASS OperacionesComercialesController
 
-   ::getTercerosDescuentosController():getModel():deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
+   ::getDiscountController():getModel():deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
 
-   ::getTercerosDescuentosController():getModel():insertWhereTerceroCodigo( ::getModelBuffer( "tercero_codigo" ) )
+   ::getDiscountController():getModel():insertWhereTerceroCodigo( ::getModelBuffer( "tercero_codigo" ) )
 
-   ::getTercerosDescuentosController():refreshRowSetAndGoTop()
+   ::getDiscountController():refreshRowSetAndGoTop()
 
-   ::getTercerosDescuentosController():refreshBrowseView()
+   ::getDiscountController():refreshBrowseView()
 
 RETURN ( nil )
 
@@ -371,7 +371,7 @@ RETURN ( nil )
 
 METHOD hasLines() CLASS OperacionesComercialesController
 
-RETURN ( ::getTercerosLineasController():getModel():countLinesWhereUuidParent( ::getModelBuffer( 'uuid' ) ) > 0 )
+RETURN ( ::getLinesController():getModel():countLinesWhereUuidParent( ::getModelBuffer( 'uuid' ) ) > 0 )
 
 //---------------------------------------------------------------------------//
 
@@ -463,7 +463,7 @@ RETURN ( ::getController():hasLines() )
 
 METHOD validLine() CLASS OperacionesComercialesValidator     
 
-RETURN ( ::getController():getTercerosLineasController():validLine() )
+RETURN ( ::getController():getLinesController():validLine() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

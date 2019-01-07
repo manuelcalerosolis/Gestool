@@ -9,9 +9,9 @@ CLASS FacturasVentasRectificativasController FROM OperacionesComercialesControll
 
    METHOD End()
 
-   METHOD getTercerosLineasController()      INLINE ( ::getFacturasVentasLineasController() )
+   METHOD getLinesController()      INLINE ( ::getFacturasVentasLineasController() )
 
-   METHOD getTercerosDescuentosController()  INLINE ( ::getFacturasVentasDescuentosController() )
+   METHOD getDiscountController()  INLINE ( ::getFacturasVentasDescuentosController() )
 
    METHOD isClient()                         INLINE ( .t. )
 

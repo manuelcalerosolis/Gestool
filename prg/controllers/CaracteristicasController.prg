@@ -131,7 +131,7 @@ CLASS CaracteristicasView FROM SQLBaseView
 
    METHOD Activate()
 
-   METHOD lineaAppend()
+   METHOD lineAppend()
 
    METHOD setShowDeleted()             INLINE ( ::getController():getCaracteristicasLineasController():setShowDeleted(),;
                                                 ::oBtnDeleted:Toggle(),;
@@ -183,7 +183,7 @@ METHOD Activate() CLASS CaracteristicasView
 
    // Lineas de propiedades -------------------------------------------------------
 
-   TBtnBmp():ReDefine( 130, "new16", , , , , {|| ::lineaAppend() }, ::oDialog, .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 130, "new16", , , , , {|| ::lineAppend() }, ::oDialog, .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
 
    TBtnBmp():ReDefine( 140, "del16",,,,, {|| ::getController():getCaracteristicasLineasController():Delete() }, ::oDialog, .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
 
@@ -208,7 +208,7 @@ METHOD Activate() CLASS CaracteristicasView
             case nKey == VK_F5
                if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), )
             case nKey == VK_F2
-               ::lineaAppend()
+               ::lineAppend()
             case nKey == VK_F4
                ::oController:getCaracteristicasLineasController():Delete()
          end 
@@ -225,7 +225,7 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD lineaAppend() CLASS CaracteristicasView
+METHOD lineAppend() CLASS CaracteristicasView
 
    if !::oController():getCaracteristicasLineasController():validLine()
       RETURN ( nil )
@@ -490,11 +490,11 @@ local oController
          apoloWaitSeconds( 1 ),;
          self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
          apoloWaitSeconds( 1 ),;
-         self:lineaAppend(),;
+         self:lineAppend(),;
          apoloWaitSeconds( 1 ),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
          apoloWaitSeconds( 1 ),;
-         self:lineaAppend(),;
+         self:lineAppend(),;
          apoloWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } ) 
 
@@ -519,11 +519,11 @@ local oController
          apoloWaitSeconds( 1 ),;
          self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
          apoloWaitSeconds( 1 ),;
-         self:lineaAppend(),;
+         self:lineAppend(),;
          apoloWaitSeconds( 1 ),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
          apoloWaitSeconds( 1 ),;
-         self:lineaAppend(),;
+         self:lineAppend(),;
          apoloWaitSeconds( 1 ),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 2" ),;
          oController:getCaracteristicasLineasController():getRowSet():goTop(),;
@@ -552,15 +552,15 @@ local oController
          apoloWaitSeconds( 1 ),;
          self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
          apoloWaitSeconds( 1 ),;
-         self:lineaAppend(),;
+         self:lineAppend(),;
          apoloWaitSeconds( 1 ),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
          apoloWaitSeconds( 1 ),;
-         self:lineaAppend(),;
+         self:lineAppend(),;
          apoloWaitSeconds( 1 ),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
          apoloWaitSeconds( 1 ),;
-         self:lineaAppend(),;
+         self:lineAppend(),;
          apoloWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } ) 
           

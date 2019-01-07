@@ -11,15 +11,15 @@ CLASS TipoIvaController FROM SQLNavigatorController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := TipoIvaBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := TipoIvaBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := TipoIvaView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := TipoIvaView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := TipoIvaValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := TipoIvaValidator():New( self ), ), ::oValidator )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := TipoIvaRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := TipoIvaRepository():New( self ), ), ::oRepository )
    
-   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLTiposIvaModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLTiposIvaModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -29,15 +29,15 @@ METHOD New( oController ) CLASS TipoIvaController
 
    ::Super:New( oController )
 
-   ::cTitle                         := "Tipos de IVA"
+   ::cTitle                            := "Tipos de IVA"
 
-   ::cName                          := "tipo_iva"
+   ::cName                             := "tipo_iva"
 
-   ::hImage                         := {  "16" => "gc_moneybag_16",;
-                                          "32" => "gc_moneybag_32",;
-                                          "48" => "gc_moneybag_48" }
+   ::hImage                            := {  "16" => "gc_moneybag_16",;
+                                             "32" => "gc_moneybag_32",;
+                                             "48" => "gc_moneybag_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                            := Auth():Level( ::cName )
 
 RETURN ( Self )
 
@@ -223,19 +223,13 @@ METHOD Activate() CLASS TipoIvaView
    ::oSayCamposExtra:lWantClick  := .t.
    ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| ::closeActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-   
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
-   end if
+   ::oDialog:bKeyDown            := {| nKey | if( nKey == VK_F5, ::closeActivate(), ) }
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-  ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 
@@ -269,17 +263,28 @@ RETURN ( ::hValidators )
 
 CLASS SQLTiposIvaModel FROM SQLCompanyModel
 
-   DATA cTableName                              INIT "tipos_iva"
+   DATA cTableName                     INIT "tipos_iva"
 
-   DATA cConstraints                            INIT "PRIMARY KEY ( codigo, deleted_at )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( codigo, deleted_at )"
 
    METHOD getColumns()
 
-   METHOD getPorcentajeWhereCodigo( cCodigo )   INLINE ( ::getField( "porcentaje", "codigo", cCodigo ) )
+   METHOD getPorcentajeWhereCodigo( cCodigo ) ;
+                                       INLINE ( ::getField( "porcentaje", "codigo", cCodigo ) )
 
    METHOD getIvaWhereArticuloCodigo( cCodigoArticulo )
 
    METHOD CountIvaWherePorcentaje( nPorcentaje )
+
+#ifdef __TEST__
+
+   METHOD test_create_iva_al_21()
+
+   METHOD test_create_iva_al_10()
+
+   METHOD test_create_iva_al_4()
+
+#endif
 
 END CLASS
 
@@ -287,29 +292,29 @@ END CLASS
 
 METHOD getColumns() CLASS SQLTiposIvaModel
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                          "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+                                          "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
-                                             "default"   => {|| space( 20 ) } }                        )
+   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 20 )"                            ,;
+                                          "default"   => {|| space( 20 ) } }                        )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 )"                          ,;
+                                          "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "porcentaje",        {  "create"    => "FLOAT( 5,2 )"                            ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "porcentaje",     {  "create"    => "FLOAT( 5,2 )"                            ,;
+                                          "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "recargo",           {  "create"    => "FLOAT( 5,2 )"                            ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "recargo",        {  "create"    => "FLOAT( 5,2 )"                            ,;
+                                          "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "cuenta_compra",     {  "create"    => "VARCHAR ( 20 )"                          ,;
-                                             "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "cuenta_compra",  {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                          "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "cuenta_venta",      {  "create"    => "VARCHAR ( 20 )"                          ,;
-                                             "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "cuenta_venta",   {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                          "default"   => {|| space( 20 ) } }                       )
 
    ::getDeletedStampColumn()
 
@@ -358,6 +363,29 @@ METHOD CountIvaWherePorcentaje( nPorcentaje ) CLASS SQLTiposIvaModel
 RETURN ( getSQLDatabase():getValue ( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+METHOD test_create_iva_al_21() CLASS SQLTiposIvaModel
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_iva_al_10() CLASS SQLTiposIvaModel
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_iva_al_4() CLASS SQLTiposIvaModel
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+#endif
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

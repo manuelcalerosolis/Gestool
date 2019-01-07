@@ -9,10 +9,10 @@ CLASS FacturasProveedoresController FROM OperacionesComercialesController
 
    METHOD End()
 
-   METHOD getTercerosLineasController();
+   METHOD getLinesController();
                                        INLINE ( ::getFacturasProveedoresLineasController() )
 
-   METHOD getTercerosDescuentosController();
+   METHOD getDiscountController();
                                        INLINE ( ::getFacturasProveedoresDescuentosController() )
 
    METHOD isClient()                   INLINE ( .f. )

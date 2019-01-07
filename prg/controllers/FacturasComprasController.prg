@@ -9,10 +9,10 @@ CLASS FacturasComprasController FROM OperacionesComercialesController
 
    METHOD End()
 
-   METHOD getTercerosLineasController();
+   METHOD getLinesController();
                                        INLINE ( ::getFacturasComprasLineasController() )
 
-   METHOD getTercerosDescuentosController();
+   METHOD getDiscountController();
                                        INLINE ( ::getFacturasComprasDescuentosController() )
 
    METHOD isClient()                   INLINE ( .f. )
@@ -31,7 +31,7 @@ CLASS FacturasComprasController FROM OperacionesComercialesController
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasComprasBrowseView():New( self ), ), ::oBrowseView )
 
-   //METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasComprasRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasComprasRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -63,13 +63,13 @@ METHOD End() CLASS FacturasComprasController
       ::oValidator:End()
    end if 
 
-   /*if !empty( ::oRepository )
-      ::oRepository:End()
-   end if*/
-
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
    end if 
+
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
 RETURN ( ::Super:End() )
 

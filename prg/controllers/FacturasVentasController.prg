@@ -9,11 +9,11 @@ CLASS FacturasVentasController FROM OperacionesComercialesController
 
    METHOD End()
 
-   METHOD getTercerosLineasController()      INLINE ( ::getFacturasVentasLineasController() )
+   METHOD getLinesController()         INLINE ( ::getFacturasVentasLineasController() )
 
-   METHOD getTercerosDescuentosController()  INLINE ( ::getFacturasVentasDescuentosController() )
+   METHOD getDiscountController()      INLINE ( ::getFacturasVentasDescuentosController() )
 
-   METHOD isClient()                         INLINE ( .t. )
+   METHOD isClient()                   INLINE ( .t. )
 
    // Impresiones--------------------------------------------------------------
 
@@ -219,6 +219,7 @@ RETURN ( ::oController:end() )
 METHOD Before() CLASS TestFacturasVentasController
 
    SQLTercerosModel():truncateTable()
+
    SQLDireccionesModel():truncateTable()
 
    SQLAlmacenesModel():truncateTable()
@@ -242,9 +243,9 @@ METHOD Before() CLASS TestFacturasVentasController
    SQLTercerosModel():test_create_con_plazos()
 
    SQLAlmacenesModel():test_create_almacen_principal()
-   SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_principal() )
-
    SQLAlmacenesModel():test_create_almacen_auxiliar()
+
+   SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_principal() )
    SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_auxiliar() )
 
    SQLMetodoPagoModel():test_create_contado()

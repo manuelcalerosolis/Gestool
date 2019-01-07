@@ -239,7 +239,7 @@ END CLASS
 
 METHOD getValidators() CLASS OperacionesComercialesDescuentosValidator
 
-   ::hValidators  := {  "descuento" =>           {  "required"              => "El porcentaje de descuento es un dato requerido" } }
+   ::hValidators  := {  "descuento" => {  "required"  => "El porcentaje de descuento es un dato requerido" } }
 
 RETURN ( ::hValidators )
 
@@ -306,28 +306,28 @@ METHOD insertWhereTerceroCodigo( cCodigoTercero ) CLASS SQLOperacionesComerciale
 
    TEXT INTO cSql
 
-      INSERT IGNORE INTO %1$s 
-         ( uuid, parent_uuid, nombre, descuento )
+   INSERT IGNORE INTO %1$s 
+      ( uuid, parent_uuid, nombre, descuento )
 
-      SELECT 
-         UUID(), %4$s, descuentos.nombre, descuentos.descuento
+   SELECT 
+      UUID(), %4$s, descuentos.nombre, descuentos.descuento
 
-      FROM %2$s AS descuentos
+   FROM %2$s AS descuentos
 
-      INNER JOIN %3$s AS terceros 
-         ON terceros.codigo = %5$s    
+   INNER JOIN %3$s AS terceros 
+      ON terceros.codigo = %5$s    
 
-      WHERE 
-         descuentos.parent_uuid = terceros.uuid
-         AND ( descuentos.fecha_fin IS NULL 
-               OR descuentos.fecha_fin >= curdate() 
-               ) 
-         AND ( descuentos.fecha_inicio IS NULL
-               OR descuentos.fecha_inicio <= curdate() )
+   WHERE 
+      descuentos.parent_uuid = terceros.uuid
+      AND ( descuentos.fecha_fin IS NULL 
+            OR descuentos.fecha_fin >= curdate() 
+            ) 
+      AND ( descuentos.fecha_inicio IS NULL
+            OR descuentos.fecha_inicio <= curdate() )
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getModel():getTableName(), SQLDescuentosModel():getTableName(), SQLTercerosModel():getTableName(), quoted( ::getControllerParentUuid() ), quoted( cCodigoTercero ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(), SQLTercerosModel():getTableName(), quoted( ::getControllerParentUuid() ), quoted( cCodigoTercero ) )
 
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 
@@ -339,17 +339,17 @@ METHOD countNombreWhereOperacionUuid( cNombre ) CLASS SQLOperacionesComercialesD
 
    TEXT INTO cSql
 
-      SELECT COUNT( operaciones_comeciales_descuentos.nombre )
+   SELECT COUNT( operaciones_comeciales_descuentos.nombre )
 
-      FROM %1$s AS operaciones_comeciales_descuentos
-      
-      WHERE parent_uuid = %2$s
-         AND operaciones_comeciales_descuentos.nombre = %3$s
-         AND operaciones_comeciales_descuentos.deleted_at = 0
+   FROM %1$s AS operaciones_comeciales_descuentos
+   
+   WHERE parent_uuid = %2$s
+      AND operaciones_comeciales_descuentos.nombre = %3$s
+      AND operaciones_comeciales_descuentos.deleted_at = 0
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getModel():getTableName(), quoted( ::getControllerParentUuid() ), quoted( cNombre ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( ::getControllerParentUuid() ), quoted( cNombre ) )
 
 RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
@@ -371,7 +371,7 @@ METHOD getSentenceDescuentosWhereUuid( uuidOperacionComercial, importeBruto ) CL
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getModel():getTableName(), quoted( uuidOperacionComercial ), toSqlString( importeBruto ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidOperacionComercial ), toSqlString( importeBruto ) )
 
 RETURN ( alltrim( cSql ) )
 

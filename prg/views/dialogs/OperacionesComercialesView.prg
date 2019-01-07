@@ -33,13 +33,13 @@ CLASS OperacionesComercialesView FROM SQLBaseView
 
    METHOD addLinksToExplorerBar()
 
-   METHOD lineaAppend()
+   METHOD lineAppend()
 
-   METHOD setLineasShowDeleted()       INLINE ( ::getController():getTercerosLineasController():setShowDeleted(),;
+   METHOD setLinesShowDeleted()        INLINE ( ::getController():getLinesController():setShowDeleted(),;
                                                 ::oBtnLineasDeleted:Toggle(),;
                                                 ::oBtnLineasDeleted:cTooltip := if( ::oBtnLineasDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
-   METHOD setDescuentoShowDeleted()    INLINE ( ::getController():getTercerosDescuentosController():setShowDeleted(),;
+   METHOD setDiscountShowDeleted()     INLINE ( ::getController():getDiscountController():setShowDeleted(),;
                                                 ::oBtnDescuentosDeleted:Toggle(),;
                                                 ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
@@ -189,29 +189,29 @@ METHOD Activate() CLASS OperacionesComercialesView
 
    // Lineas ------------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::lineaAppend() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::lineAppend() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
 
-   TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::getController():getTercerosLineasController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
+   TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::getController():getLinesController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
 
-   TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| ::getController():getTercerosLineasController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
+   TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| ::getController():getLinesController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
    
-   ::oBtnLineasDeleted := TBtnBmp():ReDefine( 504, "gc_deleted_16",,,,, {|| ::setLineasShowDeleted()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
+   ::oBtnLineasDeleted := TBtnBmp():ReDefine( 504, "gc_deleted_16",,,,, {|| ::setLinesShowDeleted()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
    
-   TBtnBmp():ReDefine( 505, "gc_object_cube_16",,,,, {|| ::getController():getTercerosLineasController():Edit()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar ficha de artículo" )
+   TBtnBmp():ReDefine( 505, "gc_object_cube_16",,,,, {|| ::getController():getLinesController():Edit()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar ficha de artículo" )
 
-   ::getController():getTercerosLineasController():Activate( 500, ::oFolder:aDialogs[1] )
+   ::getController():getLinesController():Activate( 500, ::oFolder:aDialogs[1] )
 
    // Descuentos---------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 601, "new16",,,,, {|| ::getController():getTercerosDescuentosController():AppendLineal() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 601, "new16",,,,, {|| ::getController():getDiscountController():AppendLineal() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
 
-   TBtnBmp():ReDefine( 602, "del16",,,,, {|| ::getController():getTercerosDescuentosController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
+   TBtnBmp():ReDefine( 602, "del16",,,,, {|| ::getController():getDiscountController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
 
-   TBtnBmp():ReDefine( 603, "refresh16",,,,, {|| ::getController():getTercerosDescuentosController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
+   TBtnBmp():ReDefine( 603, "refresh16",,,,, {|| ::getController():getDiscountController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
    
-   ::oBtnDescuentosDeleted := TBtnBmp():ReDefine( 604, "gc_deleted_16",,,,, {|| ::setDescuentoShowDeleted() }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
+   ::oBtnDescuentosDeleted := TBtnBmp():ReDefine( 604, "gc_deleted_16",,,,, {|| ::setDiscountShowDeleted() }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
 
-   ::getController():getTercerosDescuentosController():Activate( 600, ::oFolder:aDialogs[1] )   
+   ::getController():getDiscountController():Activate( 600, ::oFolder:aDialogs[1] )   
 
    // Botones generales--------------------------------------------------------
 
@@ -228,9 +228,9 @@ METHOD Activate() CLASS OperacionesComercialesView
             case nKey == VK_F5
                ::validActivate()
             case nKey == VK_F2
-               ::getController():getTercerosLineasController():AppendLineal()
+               ::getController():getLinesController():AppendLineal()
             case nKey == VK_F4
-               ::getController():getTercerosLineasController():Delete()
+               ::getController():getLinesController():Delete()
          end 
          RETURN ( 0 )
          >
@@ -261,9 +261,9 @@ METHOD startActivate() CLASS OperacionesComercialesView
 
    ::getController():getAlmacenesController():getSelector():Start()
 
-   ::getController():getTercerosLineasController():getBrowseView():Refresh()
+   ::getController():getLinesController():getBrowseView():Refresh()
    
-   ::getController():getTercerosDescuentosController():getBrowseView():Refresh()
+   ::getController():getDiscountController():getBrowseView():Refresh()
 
    ::getController():calculateTotals()
 
@@ -283,7 +283,7 @@ METHOD validActivate() CLASS OperacionesComercialesView
       RETURN ( nil )
    end if 
 
-   if !::getController():getTercerosLineasController():validLine()
+   if !::getController():getLinesController():validLine()
       RETURN( nil )
    end if
 
@@ -327,13 +327,13 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD lineaAppend() CLASS OperacionesComercialesView
+METHOD lineAppend() CLASS OperacionesComercialesView
 
-   if !::getController():getTercerosLineasController():validLine()
+   if !::getController():getLinesController():validLine()
       RETURN( nil )
    end if
 
-RETURN ( ::getController():getTercerosLineasController():AppendLineal() ) 
+RETURN ( ::getController():getLinesController():AppendLineal() ) 
 
 //---------------------------------------------------------------------------//
 

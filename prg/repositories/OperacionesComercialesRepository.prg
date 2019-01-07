@@ -317,15 +317,17 @@ METHOD getSentenceLineas( uuidOperacionComercial ) CLASS OperacionesComercialesR
       operaciones_comerciales_lineas.descuento,
       operaciones_comerciales_lineas.parent_uuid
 
-   FROM %1$s AS operaciones_comerciales_lineas 
+   FROM %1$s AS operaciones_comerciales_lineas
+
       WHERE operaciones_comerciales_lineas.parent_uuid = %4$s
          AND operaciones_comerciales_lineas.deleted_at = 0 
+
       GROUP BY operaciones_comerciales_lineas.iva
 
    ENDTEXT
 
    cSql  := hb_strformat(  cSql,;
-                           SQLFacturasComprasLineasModel():getTableName(),;
+                           ::getLinesTableName(),;
                            ::getSentenceImporteBrutoLineas(),;
                            ::getSentenceUnidadesLineas(),;
                            if( empty( uuidOperacionComercial ), 'uuid_operacion_comercial', quotedUuid( uuidOperacionComercial ) ) )
@@ -348,7 +350,7 @@ METHOD getSentenceImporteBrutoLineas() CLASS OperacionesComercialesRepository
       %1$s * ( operaciones_comerciales_lineas.articulo_precio + IFNULL( operaciones_comerciales_lineas.incremento_precio, 0 ) ) 
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql, ::getSentenceUnidadesLineas() )
+   cSql  := hb_strformat( cSql, ::getSentenceUnidadesLineas() )
 
 RETURN ( alltrim( cSql ) )
 
@@ -374,7 +376,7 @@ METHOD getSentenceTotales( uuidOperacionComercial ) CLASS OperacionesComerciales
 
    SELECT
       ROUND( operaciones_comerciales_lineas.importe_bruto, 2 ) AS importe_bruto,
-      ROUND( operaciones_comerciales_lineas.importe_bruto, 2 ) - ROUND( operaciones_comerciales_lineas.importe_descuento, 2 ) AS importe_bruto_lineas,
+      ROUND( operaciones_comerciales_lineas.importe_bruto, 2 ) - ROUND( operaciones_comerciales_lineas.importe_descuento, 2 ) AS importe_base,
       ( @descuento := ( %1$s ) ) AS total_descuentos_pie,
       ( @totalDescuento := IF( @descuento IS NULL, 0, ( operaciones_comerciales_lineas.importe_neto * @descuento / 100 ) ) ) AS total_descuento,
       ( @neto := ROUND( operaciones_comerciales_lineas.importe_neto - @totalDescuento, 2 ) ) AS importe_neto,
@@ -411,7 +413,7 @@ METHOD getSentenceTotalesDocument( uuidOperacionComercial ) CLASS OperacionesCom
 
    SELECT
       SUM( totales.importe_bruto ) AS total_bruto,
-      SUM( totales.importe_bruto_lineas ) AS total_bruto_lineas,
+      SUM( totales.importe_base ) AS importe_base,
       SUM( totales.total_descuento ) AS total_descuento,
       SUM( totales.importe_neto ) AS total_neto,
       SUM( totales.recargo_equivalencia ) AS recargo_equivalencia,
@@ -532,7 +534,7 @@ METHOD getSentenceRecargoAsParam() CLASS OperacionesComercialesRepository
    local cSql
 
    TEXT INTO cSql
-      IF( recargo_equivalencia_factura_proveedor = 0 OR lineas.recargo_equivalencia IS NULL, 0, ROUND( @neto * lineas.recargo_equivalencia / 100, 2 ) ) 
+      IF( recargo_equivalencia_operacion_comercial = 0 OR operaciones_comerciales_lineas.recargo_equivalencia IS NULL, 0, ROUND( @neto * operaciones_comerciales_lineas.recargo_equivalencia / 100, 2 ) ) 
    ENDTEXT
 
 RETURN ( alltrim( cSql ) )

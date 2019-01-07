@@ -33,13 +33,13 @@ CLASS FacturasClientesView FROM SQLBaseView
 
    METHOD addLinksToExplorerBar()
 
-   METHOD lineaAppend()
+   METHOD lineAppend()
 
-   METHOD setLineasShowDeleted()       INLINE ( ::getController():getFacturasVentasLineasController():setShowDeleted(),;
+   METHOD setLinesShowDeleted()       INLINE ( ::getController():getFacturasVentasLineasController():setShowDeleted(),;
                                                 ::oBtnLineasDeleted:Toggle(),;
                                                 ::oBtnLineasDeleted:cTooltip := if( ::oBtnLineasDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
-   METHOD setDescuentoShowDeleted()    INLINE ( ::getController():getFacturasVentasDescuentosController():setShowDeleted(),;
+   METHOD setDiscountShowDeleted()    INLINE ( ::getController():getFacturasVentasDescuentosController():setShowDeleted(),;
                                                 ::oBtnDescuentosDeleted:Toggle(),;
                                                 ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
@@ -187,13 +187,13 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Lineas ------------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::lineaAppend() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::lineAppend() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
 
    TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::getController():getFacturasVentasLineasController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
 
    TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| ::getController():getFacturasVentasLineasController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
    
-   ::oBtnLineasDeleted := TBtnBmp():ReDefine( 504, "gc_deleted_16",,,,, {|| ::setLineasShowDeleted()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
+   ::oBtnLineasDeleted := TBtnBmp():ReDefine( 504, "gc_deleted_16",,,,, {|| ::setLinesShowDeleted()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
    
    TBtnBmp():ReDefine( 505, "gc_object_cube_16",,,,, {|| ::getController():getFacturasVentasLineasController():Edit()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar ficha de artículo" )
 
@@ -207,7 +207,7 @@ METHOD Activate() CLASS FacturasClientesView
 
    TBtnBmp():ReDefine( 603, "refresh16",,,,, {|| ::getController():getFacturasVentasDescuentosController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
    
-   ::oBtnDescuentosDeleted := TBtnBmp():ReDefine( 604, "gc_deleted_16",,,,, {|| ::setDescuentoShowDeleted() }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
+   ::oBtnDescuentosDeleted := TBtnBmp():ReDefine( 604, "gc_deleted_16",,,,, {|| ::setDiscountShowDeleted() }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
 
    ::getController():getFacturasVentasDescuentosController():Activate( 600, ::oFolder:aDialogs[1] )   
 
@@ -321,7 +321,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD lineaAppend() CLASS FacturasClientesView
+METHOD lineAppend() CLASS FacturasClientesView
 
    if !::getController():getFacturasVentasLineasController():validLine()
       RETURN( nil )

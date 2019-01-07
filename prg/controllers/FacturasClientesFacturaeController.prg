@@ -140,7 +140,7 @@ METHOD isInformationLoaded( uuid ) CLASS FacturasClientesFacturaeController
       ::cError             += "No se puede calcular el total por tipos de IVA"
    end if 
 
-   aeval( ::hTotales, {|hTotal| nTotalBrutoLineas += hget( hTotal, "total_bruto_lineas" ) } )
+   aeval( ::hTotales, {|hTotal| nTotalBrutoLineas += hget( hTotal, "importe_base" ) } )
 
    ::hDiscounts            := SQLFacturasVentasDescuentosModel():selectDescuentosWhereUuid( uuid, nTotalBrutoLineas )
 
