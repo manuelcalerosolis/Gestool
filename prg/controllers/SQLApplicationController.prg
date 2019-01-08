@@ -122,6 +122,10 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oFacturasVentasLineasController
 
+   DATA oFacturasVentasRectificativasLineasController
+
+   DATA oFacturasVentasRectificativasDescuentosController
+
    DATA oFacturasComprasLineasController
 
    DATA oFacturasVentasController
@@ -358,6 +362,12 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getFacturasVentasLineasController();
                                     INLINE ( if( empty( ::oFacturasVentasLineasController ), ::oFacturasVentasLineasController := FacturasVentasLineasController():New( self ), ), ::oFacturasVentasLineasController )
+
+   METHOD getFacturasVentasRectificativasLineasController();
+                                    INLINE ( if( empty( ::oFacturasVentasRectificativasLineasController ), ::oFacturasVentasRectificativasLineasController := FacturasVentasRectificativasLineasController():New( self ), ), ::oFacturasVentasRectificativasLineasController )
+
+   METHOD getFacturasVentasRectificativasDescuentosController();
+                                    INLINE ( if( empty( ::oFacturasVentasRectificativasDescuentosController ), ::oFacturasVentasRectificativasDescuentosController := FacturasVentasRectificativasDescuentosController():New( self ), ), ::oFacturasVentasRectificativasDescuentosController )
 
    METHOD getFacturasComprasLineasController();
                                     INLINE ( if( empty( ::oFacturasComprasLineasController ), ::oFacturasComprasLineasController := FacturasComprasLineasController():New( self ), ), ::oFacturasComprasLineasController )
@@ -682,6 +692,14 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oFacturasVentasLineasController )   
       ::oFacturasVentasLineasController:End()
+   end if
+
+   if !empty( ::oFacturasVentasRectificativasLineasController )   
+      ::oFacturasVentasRectificativasLineasController:End()
+   end if
+
+   if !empty( ::oFacturasVentasRectificativasDescuentosController )   
+      ::oFacturasVentasRectificativasDescuentosController:End()
    end if
 
    if !empty( ::oFacturasComprasLineasController )   

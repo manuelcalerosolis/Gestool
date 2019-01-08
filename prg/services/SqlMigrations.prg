@@ -416,6 +416,10 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLFacturasVentasLineasModel():New() ) 
 
+   aadd( ::aModels, SQLFacturasVentasRectificativasLineasModel():New() ) 
+   
+   aadd( ::aModels, SQLFacturasVentasRectificativasDescuentosModel():New() ) 
+
    aadd( ::aModels, SQLConsolidacionesAlmacenLineasModel():New() ) 
 
    aadd( ::aModels, SQLFacturasComprasLineasModel():New() ) 

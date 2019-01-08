@@ -112,7 +112,6 @@ METHOD createFunctionTotalSummaryWhereUuid() CLASS OperacionesComercialesReposit
 
    cSql  := hb_strformat( cSql, Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ), ::getSentenceTotales() )
 
-msgalert( cSql )
 
 RETURN ( alltrim( cSql ) )
 
