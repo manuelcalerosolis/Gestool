@@ -11,19 +11,19 @@ CLASS FacturasVentasRectificativasController FROM OperacionesComercialesControll
 
    METHOD getLinesController()      INLINE ( ::getFacturasVentasLineasController() )
 
-   METHOD getDiscountController()  INLINE ( ::getFacturasVentasDescuentosController() )
+   METHOD getDiscountController()   INLINE ( ::getFacturasVentasDescuentosController() )
 
-   METHOD isClient()                         INLINE ( .t. )
+   METHOD isClient()                INLINE ( .t. )
 
    // Impresiones--------------------------------------------------------------
 
-   METHOD getSubject()                 INLINE ( "Factura de ventas número" )
+   METHOD getSubject()                 INLINE ( "Factura rectificativa de ventas número" )
 
    METHOD addExtraButtons()
 
    // Contrucciones tardias----------------------------------------------------
 
-   METHOD getName()                    INLINE ( "facturas_venta" )
+   METHOD getName()                    INLINE ( "facturas_venta_rectificativa" )
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasVentasRectificativasModel():New( self ), ), ::oModel )
 
@@ -31,7 +31,7 @@ CLASS FacturasVentasRectificativasController FROM OperacionesComercialesControll
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasVentasRectificativasBrowseView():New( self ), ), ::oBrowseView )
 
-   //METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasVentasRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasVentasRectificativasRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -120,7 +120,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-#ifdef __TEST__
+/*#ifdef __TEST__
 
 CLASS TestFacturasVentasController FROM TestCase
 
@@ -432,4 +432,4 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-#endif
+#endif*/

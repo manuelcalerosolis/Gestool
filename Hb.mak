@@ -263,6 +263,7 @@ RectificativasProveedoresLineasModel.prg 								\
 TransaccionesComercialesLineasModel.prg 								\
 FacturasClientesModel.prg 													\
 FacturasVentasRepository.prg 												\
+FacturasVentasRectificativasRepository.prg 							\
 FacturasComprasRepository.prg 											\
 OperacionesComercialesRepository.prg 									\
 FacturasClientesLineasRepository.prg									\
@@ -641,6 +642,7 @@ FacturasProveedoresLineasModel.obj 										\
 RectificativasProveedoresLineasModel.obj 								\
 FacturasClientesModel.obj 													\
 FacturasVentasRepository.obj												\
+FacturasVentasRectificativasRepository.obj							\
 FacturasComprasRepository.obj												\
 OperacionesComercialesRepository.obj									\
 FacturasClientesLineasRepository.obj									\
@@ -1085,6 +1087,7 @@ $(OBJ)\SqlFacturasVentasModel.obj 					    				+
 $(OBJ)\SqlFacturasVentasRectificativasModel.obj 					+
 $(OBJ)\SqlFacturasComprasModel.obj 						  				+
 $(OBJ)\FacturasVentasRepository.obj 				    				+
+$(OBJ)\FacturasVentasRectificativasRepository.obj 	  				+
 $(OBJ)\FacturasComprasRepository.obj 				  					+
 $(OBJ)\OperacionesComercialesRepository.obj 		  					+
 $(OBJ)\FacturasClientesLineasRepository.obj 				    		+

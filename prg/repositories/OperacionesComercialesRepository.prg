@@ -115,6 +115,8 @@ METHOD createFunctionTotalSummaryWhereUuid() CLASS OperacionesComercialesReposit
                            Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ),;
                            ::getSentenceTotales() )
 
+msgalert( cSql )
+
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
