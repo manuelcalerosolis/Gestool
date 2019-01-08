@@ -489,8 +489,14 @@ CLASS TestOperacionesComecialesController FROM TestCase
                                                 view:getControl( 170, view:oFolder:aDialogs[1] ):lValid(),;
                                                 apoloWaitSeconds( 1 ) )
 
+   METHOD set_codigo_agente( cCodigoAgente, view ) ;
+                                       INLINE ( view:getControl( 270, view:oFolder:aDialogs[1] ):cText( cCodigoAgente ),;
+                                                apoloWaitSeconds( 1 ),;
+                                                view:getControl( 270, view:oFolder:aDialogs[1] ):lValid(),;
+                                                apoloWaitSeconds( 1 ) )
+
    METHOD set_codigo_forma_pago( cCodigoFormaPago, view ) ;
-                                       INLINE ( view:getControl( 240, view:oFolder:aDialogs[1] ):cText( "0" ),;
+                                       INLINE ( view:getControl( 240, view:oFolder:aDialogs[1] ):cText( cCodigoFormaPago ),;
                                                 apoloWaitSeconds( 1 ),;
                                                 view:getControl( 240, view:oFolder:aDialogs[1] ):lValid(),;
                                                 apoloWaitSeconds( 1 ) )
@@ -499,26 +505,26 @@ CLASS TestOperacionesComecialesController FROM TestCase
                                                 apoloWaitSeconds( 1 ) )
 
    METHOD set_codigo_articulo_en_linea() ;
-                                       INLINE ( eval( ::oController:getFacturasVentasLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "0", 0 ),;
+                                       INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "0", 0 ),;
                                                 apoloWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_codigo_almacen_en_linea( cCodigoAlmacen ) ;
-                                       INLINE ( eval( ::oController:getFacturasVentasLineasController():getBrowseView():oColumnCodigoAlmacen:bOnPostEdit, , cCodigoAlmacen, 0 ),;
+                                       INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoAlmacen:bOnPostEdit, , cCodigoAlmacen, 0 ),;
                                                 apoloWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_codigo_ubicacion_en_linea( cCodigoUbicacion ) ;
-                                       INLINE ( eval( ::oController:getFacturasVentasLineasController():getBrowseView():oColumnCodigoUbicacion:bOnPostEdit, , cCodigoUbicacion, 0 ),;
+                                       INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoUbicacion:bOnPostEdit, , cCodigoUbicacion, 0 ),;
                                                 apoloWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_precio_en_linea( nPrecio ) ;
-                                       INLINE ( eval( ::oController:getFacturasVentasLineasController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , nPrecio, 0 ),;
+                                       INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , nPrecio, 0 ),;
                                                 apoloWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
-   METHOD refresh_linea_browse_view()  INLINE ( ::oController:getFacturasVentasLineasController():getBrowseView():getRowSet():Refresh(),;
+   METHOD refresh_linea_browse_view()  INLINE ( ::oController:getLinesController():getBrowseView():getRowSet():Refresh(),;
                                                 apoloWaitSeconds( 1 ) )
    
    METHOD test_calculo_con_descuento()                
@@ -590,12 +596,17 @@ METHOD Before() CLASS TestOperacionesComecialesController
       SQLPagosModel():truncateTable()
       SQLRecibosPagosModel():truncateTable()
 
+   SQLAlmacenesModel():truncateTable()
+
    SQLTercerosModel():test_create_contado()
    SQLTercerosModel():test_create_tarifa_mayorista()
    SQLTercerosModel():test_create_con_plazos()
 
    SQLAlmacenesModel():test_create_almacen_principal()
    SQLAlmacenesModel():test_create_almacen_auxiliar()
+
+   SQLAgentesModel():test_create_agente_principal()
+   SQLAgentesModel():test_create_agente_auxiliar()
 
    SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_principal() )
    SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_auxiliar() )
@@ -775,13 +786,49 @@ RETURN ( nil )
 
 METHOD test_dialogo_cambiando_almacen() CLASS TestOperacionesComecialesController
 
+   local cCodigo
 
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| view | ;
+         ::set_codigo_cliente( "1", view ),;
+         ::set_codigo_forma_pago( "0", view ),;
+         ::click_nueva_linea( view ),;
+         ::set_codigo_articulo_en_linea(),;
+         ::set_codigo_almacen_en_linea( "1" ),;
+         ::set_codigo_ubicacion_en_linea( "0" ),;
+         ::set_precio_en_linea( 200 ),;         
+         view:getControl( IDOK ):Click() } )
+
+   ::assert:true( ::oController:Append(), "test creación de factura con cambio de almacén" )
+
+   cCodigo  := ::oController:getLinesController():getModel():getFieldWhere( "almacen_codigo", { "parent_uuid" => ::oController:getModelBuffer( "uuid" ) } )
+   
+   ::assert:equals( "1", alltrim( cCodigo ), "test comprobacion cambio almacen en linea" )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD test_dialogo_cambiando_ubicacion() CLASS TestOperacionesComecialesController
+   
+   local cCodigo
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| view | ;
+         ::set_codigo_cliente( "1", view ),;
+         ::set_codigo_forma_pago( "0", view ),;
+         ::click_nueva_linea( view ),;
+         ::set_codigo_articulo_en_linea(),;
+         ::set_codigo_almacen_en_linea( "1" ),;
+         ::set_codigo_ubicacion_en_linea( "1" ),;
+         ::set_precio_en_linea( 200 ),;         
+         view:getControl( IDOK ):Click() } )
+
+   ::assert:true( ::oController:Append(), "test creación de factura con cambio de almacén" )
+   
+   cCodigo  := ::oController:getLinesController():getModel():getFieldWhere( "almacen_codigo", { "parent_uuid" => ::oController:getModelBuffer( "uuid" ) } )
+   
+   ::assert:equals( "1", alltrim( cCodigo ), "test comprobacion cambio almacen en linea" )
 
 RETURN ( nil )
 

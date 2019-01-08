@@ -56,7 +56,9 @@ USER FUNCTION hbunit_test()
 
    oSuite:addTest( TestFacturasVentasController():new() )
 
-   oSuite:setCategories( { "facturas_ventas" } )
+   oSuite:addTest( TestAgentesController():new() )
+
+   oSuite:setCategories( { "agentes" } )
 
    oRunner:run( oSuite )
 

@@ -250,21 +250,15 @@ METHOD Activate() CLASS AgentesView
 
    // Botones generales--------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| ::closeActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::closeActivate(), ) }
 
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
-   end if
-
-   ::oDialog:bStart  := {|| ::StartActivate() }
+   ::oDialog:bStart  := {|| ::startActivate(), ::paintedActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-   ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 
@@ -278,7 +272,7 @@ METHOD StartActivate() CLASS AgentesView
 
    ::oController:getDireccionesController():getDialogView():StartDialog()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -321,6 +315,18 @@ CLASS SQLAgentesModel FROM SQLCompanyModel
    METHOD CountAgenteWhereCodigo( cCodigoAgente )
 
    METHOD getComisionWhereAgenteCodigo( cCodigoAgente )
+
+#ifdef __TEST__
+
+   METHOD test_create_agente_principal()
+
+   METHOD test_get_uuid_agente_principal()
+   
+   METHOD test_create_agente_auxiliar()
+   
+   METHOD test_get_uuid_agente_auxiliar()   
+
+#endif
 
 END CLASS
 
@@ -416,9 +422,45 @@ local cSQL
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted(cCodigoAgente) ) 
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted (cCodigoAgente ) ) 
 
 RETURN ( getSQLDatabase():getValue ( cSql ) ) 
+
+//---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+METHOD test_create_agente_principal() CLASS SQLAgentesModel
+
+   local hBuffer  := ::loadBlankBuffer(   {  "codigo" => "0",;
+                                             "nombre" => "Agente principal" } )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_get_uuid_agente_principal() CLASS SQLAgentesModel
+
+RETURN ( ::getUuidWhereCodigo( "0" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_agente_auxiliar() CLASS SQLAgentesModel
+
+   local hBuffer  := ::loadBlankBuffer(   {  "codigo" => "1",;
+                                             "nombre" => "Agente auxiliar" } )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_get_uuid_agente_auxiliar() CLASS SQLAgentesModel
+
+RETURN ( ::getUuidWhereCodigo( "1" ) )
+
+//---------------------------------------------------------------------------//
+
+#endif
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -452,3 +494,92 @@ METHOD getNombres() CLASS AgentesRepository
 RETURN ( aResult )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+CLASS TestAgentesController FROM TestCase
+
+   DATA oController
+
+   DATA aCategories                    INIT { "all", "agentes" }
+
+   METHOD beforeClass()
+
+   METHOD afterClass()
+
+   METHOD test_dialogo_sin_codigo()
+
+   METHOD test_dialogo_sin_nombre() 
+
+   METHOD test_dialogo_creacion()   
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD beforeClass() CLASS TestAgentesController
+
+   SQLAgentesModel():truncateTable()
+
+   ::oController           := AgentesController():New()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD afterClass() CLASS TestAgentesController
+
+RETURN ( ::oController:end() )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_sin_codigo() CLASS TestAgentesController
+   
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDCANCEL ):Click() } )
+
+RETURN ( ::assert:false( ::oController:Append(), "test creación de agente sin código" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_sin_nombre() CLASS TestAgentesController
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100 ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDCANCEL ):Click() } )
+   
+RETURN ( ::assert:false( ::oController:Append(), "test creación de agente sin nombre" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_creacion() CLASS TestAgentesController
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| self | ;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 100 ):cText( "0" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( 110 ):cText( "Agente principal" ),;
+         apoloWaitSeconds( 1 ),;
+         self:getControl( IDOK ):Click() } )
+
+RETURN ( ::assert:true( ::oController:Append(), "test creación de agente" ) )
+
+//---------------------------------------------------------------------------//
+
+#endif
+
+

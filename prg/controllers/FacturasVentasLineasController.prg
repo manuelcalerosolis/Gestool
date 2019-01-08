@@ -9,11 +9,9 @@ CLASS FacturasVentasLineasController FROM OperacionesComercialesLineasController
 
    METHOD End()
 
-
    //Contrucciones tardias---------------------------------------------------//
 
    METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLFacturasVentasLineasModel():New( self ), ), ::oModel )
-
 
 END CLASS
 
