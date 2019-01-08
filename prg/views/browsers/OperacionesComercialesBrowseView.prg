@@ -204,7 +204,7 @@ METHOD addColumns() CLASS OperacionesComercialesBrowseView
       :cSortOrder          := "recargo_equivalencia"
       :cHeader             := "Recargo"
       :bStrData            := {|| "" }
-      :bEditValue          := {|| ::getRowSet():fieldGet( "recargo_equivalencia" ) == 1 }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "recargo_equivalencia" ) }
       :nWidth              := 60
       :SetCheck( { "Sel16", "Nil16" } )
    end with
