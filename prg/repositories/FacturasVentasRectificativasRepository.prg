@@ -7,9 +7,9 @@ CLASS FacturasVentasRectificativasRepository FROM OperacionesComercialesReposito
 
    METHOD getTableName()               INLINE ( SQLFacturasVentasRectificativasModel():getTableName() ) 
 
-   METHOD getLinesTableName()          INLINE ( SQLFacturasVentasLineasModel():getTableName() )
+   METHOD getLinesTableName()          INLINE ( SQLFacturasVentasRectificativasLineasModel():getTableName() )
 
-   METHOD getDiscountsTableName()      INLINE ( SQLFacturasVentasDescuentosModel():getTableName() )
+   METHOD getDiscountsTableName()      INLINE ( SQLFacturasVentasRectificativasDescuentosModel():getTableName() )
 
    METHOD getPackage( cContext )       INLINE ( SQLFacturasVentasRectificativasModel():getPackage( cContext ) )
 
