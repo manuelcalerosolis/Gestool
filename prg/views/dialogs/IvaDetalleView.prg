@@ -84,7 +84,7 @@ METHOD Activate() CLASS IvaDetalleView
    
    with object ( ::oBrowseIva:AddCol() )
       :cHeader             := "IVA %"
-      :bEditValue          := {|| hget( ::aIvaDetalle[ ::oBrowseIva:nArrayAt ], "porcentaje_iva" ) }
+      :bEditValue          := {|| hget( ::aIvaDetalle[ ::oBrowseIva:nArrayAt ], "iva" ) }
       :cEditPicture        := "@E 999.99"
       :nWidth              := 120
       :nDataStrAlign       := 1

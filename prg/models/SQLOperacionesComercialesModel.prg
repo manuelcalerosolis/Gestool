@@ -125,7 +125,7 @@ METHOD getColumnsSelect() CLASS SQLOperacionesComercialesModel
       direcciones.email AS direccion_email,
       tarifas.codigo AS tarifa_codigo,
       tarifas.nombre AS tarifa_nombre,
-      ( %2$s( %1$s.uuid, %1$s.recargo_equivalencia ) ) AS total
+      ( %2$s( %1$s.uuid ) ) AS total
    ENDTEXT
 
    cColumns := hb_strformat( cColumns, ::cTableName, Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ) ) 
@@ -163,6 +163,8 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesModel
                            SQLDireccionesModel():getTableName(),;
                            SQLArticulosTarifasModel():getTableName(),;
                            ::getColumnsSelect() )
+
+   logwrite( cSql )
 
 RETURN ( cSql )
 

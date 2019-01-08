@@ -171,7 +171,7 @@ CLASS TestFacturasVentasController FROM TestCase
 
    METHOD refresh_linea_browse_view()  INLINE ( ::oController:getFacturasVentasLineasController():getBrowseView():getRowSet():Refresh(),;
                                                 apoloWaitSeconds( 1 ) )
-   
+/*   
    METHOD test_calculo_con_descuento()                
 
    METHOD test_calculo_con_incremento()               
@@ -195,6 +195,8 @@ CLASS TestFacturasVentasController FROM TestCase
    METHOD test_dialogo_con_cambio_de_agente() 
 
    METHOD test_dialogo_con_descuento_en_documento() 
+*/
+   METHOD test_dialogo_con_recargo_en_documento()
 
 END CLASS
 
@@ -249,9 +251,9 @@ METHOD Before() CLASS TestFacturasVentasController
    SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_principal() )
    SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_auxiliar() )
 
-   SQLTiposIvaModel():test_create_iva_al_21()
-   SQLTiposIvaModel():test_create_iva_al_10()
    SQLTiposIvaModel():test_create_iva_al_4()
+   SQLTiposIvaModel():test_create_iva_al_10()
+   SQLTiposIvaModel():test_create_iva_al_21()
 
    SQLMetodoPagoModel():test_create_contado()
    SQLMetodoPagoModel():test_create_reposicion()
@@ -266,7 +268,7 @@ METHOD Before() CLASS TestFacturasVentasController
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
+/*
 METHOD test_calculo_con_descuento() CLASS TestFacturasVentasController
 
    local uuid
@@ -424,6 +426,8 @@ RETURN ( nil )
 
 METHOD test_dialogo_con_cambio_de_almacen() CLASS TestFacturasVentasController
 
+
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -445,5 +449,32 @@ METHOD test_dialogo_con_descuento_en_documento() CLASS TestFacturasVentasControl
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+*/
+METHOD test_dialogo_con_recargo_en_documento() CLASS TestFacturasVentasController
+
+   local uuid
+   local hTotal
+
+   uuid        := win_uuidcreatestring()
+
+   SQLFacturasVentasModel():test_create_factura_con_recargo_de_eqivalencia( uuid )
+
+   SQLFacturasVentasLineasModel():test_create_IVA_al_0_con_10_descuento( uuid )
+   SQLFacturasVentasLineasModel():test_create_IVA_al_10_con_15_porciento_descuento( uuid )
+   SQLFacturasVentasLineasModel():test_create_IVA_al_21_con_20_porciento_descuento( uuid )
+
+   SQLFacturasVentasDescuentosModel():test_create_l0_por_ciento( uuid )
+   SQLFacturasVentasDescuentosModel():test_create_20_por_ciento( uuid )
+   SQLFacturasVentasDescuentosModel():test_create_30_por_ciento( uuid )
+
+   hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
+
+   ::assert:equals( 114.260000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+
 
 #endif

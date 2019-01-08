@@ -606,7 +606,7 @@ METHOD BuildMenu( nRow, nCol, nFlags )
 
       MenuAddItem()
 
-      MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ExportToExcel() }, , "gc_spreadsheet_sum_16", oMenu )
+      MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::oBrowse:ExportToExcel() }, , "gc_spreadsheet_sum_16", oMenu )
 
       MenuAddItem()
 

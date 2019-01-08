@@ -51,7 +51,6 @@ CLASS OperacionesComercialesRepository FROM SQLBaseRepository
    METHOD getSentenceTotales()
 
    METHOD getSentenceRecargoEquivalenciaAsSelect()
-   METHOD getSentenceRecargoAsParam()
    METHOD getSentenceDescuentosAsSelect( uuidFactura ) 
 
    METHOD getTotalDocument( uuidOperacionComercial )
@@ -73,7 +72,7 @@ END CLASS
 
 METHOD getSentenceTotalesDocumentGroupByIVA( uuidOperacionComercial ) CLASS OperacionesComercialesRepository
 
-RETURN ( ::getSentenceTotalesDocument( uuidOperacionComercial ) + " GROUP BY totales.porcentaje_iva" )
+RETURN ( ::getSentenceTotalesDocument( uuidOperacionComercial ) + " GROUP BY totales.iva" )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -88,7 +87,7 @@ METHOD createFunctionTotalSummaryWhereUuid() CLASS OperacionesComercialesReposit
    TEXT INTO cSql
 
    CREATE DEFINER=`root`@`localhost` 
-   FUNCTION %1$s ( `uuid_operacion_comercial` CHAR( 40 ), `recargo_equivalencia_operacion_comercial` TINYINT( 1 ) )
+   FUNCTION %1$s ( `uuid_operacion_comercial` CHAR( 40 ) )
    RETURNS DECIMAL( 19, 6 )
    LANGUAGE SQL
    NOT DETERMINISTIC
@@ -111,9 +110,7 @@ METHOD createFunctionTotalSummaryWhereUuid() CLASS OperacionesComercialesReposit
 
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql,;
-                           Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ),;
-                           ::getSentenceTotales() )
+   cSql  := hb_strformat( cSql, Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ), ::getSentenceTotales() )
 
 RETURN ( alltrim( cSql ) )
 
@@ -161,9 +158,7 @@ METHOD createFunctionRecargoEquivalenciaWhereUuid() CLASS OperacionesComerciales
 
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql,;
-                           Company():getTableName( ::getPackage( 'RecargoEquivalenciaWhereUuid' ) ),;
-                           ::getTableName() )
+   cSql  := hb_strformat( cSql, Company():getTableName( ::getPackage( 'RecargoEquivalenciaWhereUuid' ) ), ::getTableName() )
 
 RETURN ( alltrim( cSql ) )
 
@@ -330,7 +325,9 @@ METHOD getSentenceLineas( uuidOperacionComercial ) CLASS OperacionesComercialesR
                            ::getLinesTableName(),;
                            ::getSentenceImporteBrutoLineas(),;
                            ::getSentenceUnidadesLineas(),;
-                           if( empty( uuidOperacionComercial ), 'uuid_operacion_comercial', quotedUuid( uuidOperacionComercial ) ) )
+                           if( empty( uuidOperacionComercial ),;
+                              'uuid_operacion_comercial',;
+                              quotedUuid( uuidOperacionComercial ) ) )
 
 RETURN ( alltrim( cSql ) )
 
@@ -375,31 +372,52 @@ METHOD getSentenceTotales( uuidOperacionComercial ) CLASS OperacionesComerciales
    TEXT INTO cSql
 
    SELECT
-      ROUND( operaciones_comerciales_lineas.importe_bruto, 2 ) AS importe_bruto,
-      ROUND( operaciones_comerciales_lineas.importe_bruto, 2 ) - ROUND( operaciones_comerciales_lineas.importe_descuento, 2 ) AS importe_base,
-      ( @descuento := ( %1$s ) ) AS total_descuentos_pie,
-      ( @totalDescuento := IF( @descuento IS NULL, 0, ( operaciones_comerciales_lineas.importe_neto * @descuento / 100 ) ) ) AS total_descuento,
-      ( @neto := ROUND( operaciones_comerciales_lineas.importe_neto - @totalDescuento, 2 ) ) AS importe_neto,
-      operaciones_comerciales_lineas.iva AS porcentaje_iva, 
-      operaciones_comerciales_lineas.recargo_equivalencia AS recargo_equivalencia,
-      ( @iva := IF( operaciones_comerciales_lineas.iva IS NULL, 0, ROUND( @neto * operaciones_comerciales_lineas.iva / 100, 2 ) ) ) AS importe_iva,  
-      ( @aplicarRecargo := %3$s ) AS aplicar_recargo, 
-      ( @recargo := IF( @aplicarRecargo = 0 OR operaciones_comerciales_lineas.recargo_equivalencia IS NULL, 0, ROUND( @neto * operaciones_comerciales_lineas.recargo_equivalencia / 100, 2 ) ) ) AS importe_recargo,
-      ROUND( ( @neto + @iva + @recargo ), 2 ) AS importe_total
+      totales.importe_bruto AS importe_bruto,
+      totales.importe_base AS importe_base,
+      totales.total_descuento AS total_descuento,
+      totales.importe_neto AS importe_neto,
+      totales.iva AS iva, 
+      totales.recargo_equivalencia AS recargo_equivalencia,
+      totales.importe_iva AS importe_iva,
+      totales.importe_recargo AS importe_recargo,
+      totales.importe_neto + totales.importe_iva + totales.importe_recargo AS importe_total
 
-   FROM 
-      ( %2$s ) AS operaciones_comerciales_lineas
-   
-   GROUP BY operaciones_comerciales_lineas.iva
+   FROM (
+      SELECT 
+         lineas.importe_bruto AS importe_bruto,
+         ROUND( lineas.importe_bruto, 2 ) - ROUND( lineas.importe_descuento, 2 ) AS importe_base,
+         lineas.total_descuento AS total_descuento,
+         lineas.iva AS iva, 
+         lineas.recargo_equivalencia AS recargo_equivalencia,
+         ( ROUND( lineas.importe_neto - lineas.total_descuento, 2 ) ) AS importe_neto,
+         ( IF( lineas.iva IS NULL, 0, ROUND( ROUND( lineas.importe_neto - lineas.total_descuento, 2 ) * lineas.iva / 100, 2 ) ) ) AS importe_iva,  
+         ( IF( lineas.aplicar_recargo = 0 OR lineas.recargo_equivalencia IS NULL, 0, ROUND( ROUND( lineas.importe_neto - lineas.total_descuento, 2 ) * lineas.recargo_equivalencia / 100, 2 ) ) ) AS importe_recargo
+
+      FROM (
+         SELECT
+            ROUND( operaciones_comerciales_lineas.importe_bruto, 2 ) AS importe_bruto,
+            ROUND( operaciones_comerciales_lineas.importe_descuento, 2 ) AS importe_descuento,
+            operaciones_comerciales_lineas.importe_neto AS importe_neto,
+            operaciones_comerciales_lineas.iva AS iva, 
+            operaciones_comerciales_lineas.recargo_equivalencia AS recargo_equivalencia,
+            ( IF( ( %1$s ) IS NULL, 0, ( operaciones_comerciales_lineas.importe_neto * ( %1$s ) / 100 ) ) ) AS total_descuento,
+            ( %3$s ) AS aplicar_recargo 
+
+         FROM 
+            ( %2$s ) AS operaciones_comerciales_lineas
+         
+         GROUP BY operaciones_comerciales_lineas.iva
+
+      ) AS lineas
+
+   ) AS totales
 
    ENDTEXT
 
    cSql  := hb_strformat(  cSql,;
                            ::getSentenceDescuentosAsSelect( uuidOperacionComercial ),; 
                            ::getSentenceLineas( uuidOperacionComercial ),;
-                           if( empty( uuidOperacionComercial ),;
-                              ::getSentenceRecargoAsParam(),;
-                              ::getSentenceRecargoEquivalenciaAsSelect( uuidOperacionComercial ) ) )
+                           ::getSentenceRecargoEquivalenciaAsSelect( uuidOperacionComercial ) )
 
 RETURN ( alltrim( cSql ) )
 
@@ -417,7 +435,7 @@ METHOD getSentenceTotalesDocument( uuidOperacionComercial ) CLASS OperacionesCom
       SUM( totales.total_descuento ) AS total_descuento,
       SUM( totales.importe_neto ) AS total_neto,
       SUM( totales.recargo_equivalencia ) AS recargo_equivalencia,
-      SUM( totales.porcentaje_iva ) AS porcentaje_iva,
+      SUM( totales.iva ) AS iva,
       SUM( totales.importe_iva ) AS total_iva,
       SUM( totales.importe_recargo ) AS total_recargo,
       SUM( totales.importe_total ) AS total_documento
@@ -425,10 +443,7 @@ METHOD getSentenceTotalesDocument( uuidOperacionComercial ) CLASS OperacionesCom
 
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql,;
-                           ::getSentenceTotales( uuidOperacionComercial ),;
-                           Company():getTableName( ::getPackage( 'TotalDescuentoWhereUuid' ) ),;
-                           quotedUuid( uuidOperacionComercial ) )
+   cSql  := hb_strformat( cSql, ::getSentenceTotales( uuidOperacionComercial ) )
 
 RETURN ( alltrim( cSql ) )
 
@@ -509,7 +524,7 @@ METHOD getSentenceRecargoEquivalenciaAsSelect( uuidOperacionComercial ) CLASS Op
       ( SELECT( %1$s( %2$s ) ) )
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, Company():getTableName( ::getPackage( 'RecargoEquivalenciaWhereUuid' ) ), quotedUuid( uuidOperacionComercial ) )
+   cSql  := hb_strformat( cSql, Company():getTableName( ::getPackage( 'RecargoEquivalenciaWhereUuid' ) ), if( empty( uuidOperacionComercial ), 'uuid_operacion_comercial', quotedUuid( uuidOperacionComercial ) ) )
 
 RETURN ( alltrim( cSql ) )
 
@@ -523,20 +538,9 @@ METHOD getSentenceDescuentosAsSelect( uuidOperacionComercial ) CLASS Operaciones
       ( SELECT( %1$s( %2$s ) ) )
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, Company():getTableName( ::getPackage( 'DescuentoWhereUuid' ) ), quotedUuid( uuidOperacionComercial ) )
+   cSql  := hb_strformat( cSql, Company():getTableName( ::getPackage( 'DescuentoWhereUuid' ) ), if( empty( uuidOperacionComercial ), 'uuid_operacion_comercial', quotedUuid( uuidOperacionComercial ) ) )
 
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceRecargoAsParam() CLASS OperacionesComercialesRepository 
-
-   local cSql
-
-   TEXT INTO cSql
-      IF( recargo_equivalencia_operacion_comercial = 0 OR operaciones_comerciales_lineas.recargo_equivalencia IS NULL, 0, ROUND( @neto * operaciones_comerciales_lineas.recargo_equivalencia / 100, 2 ) ) 
-   ENDTEXT
-
-RETURN ( alltrim( cSql ) )
-
-//---------------------------------------------------------------------------//
