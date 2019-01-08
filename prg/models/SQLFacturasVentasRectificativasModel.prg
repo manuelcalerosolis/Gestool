@@ -9,10 +9,7 @@ CLASS SQLFacturasVentasRectificativasModel FROM SQLOperacionesComercialesModel
 
    DATA cTableName                     INIT "facturas_ventas_rectificativas"
 
-   METHOD getTercerosModel()           INLINE ( SQLTercerosModel() )
-
    METHOD getColumns() 
-
 
 END CLASS
 

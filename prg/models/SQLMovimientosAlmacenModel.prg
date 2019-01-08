@@ -13,8 +13,6 @@ CLASS SQLConsolidacionesAlmacenModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
-   METHOD getTercerosModel()           VIRTUAL
-
    METHOD getNumeroWhereUuid( uuid )
 
    METHOD maxNumberWhereSerie( cSerie )
@@ -96,7 +94,7 @@ METHOD getInitialSelect() CLASS SQLConsolidacionesAlmacenModel
 
    cSql  := hb_strformat(  cSql,;
                            ::getTableName(),;
-                           ::getTercerosModel():getTableName(),;
+                           SQLTercerosModel():getTableName(),;
                            SQLDireccionesModel():getTableName(),;
                            SQLArticulosTarifasModel():getTableName(),;
                            ::getColumnsSelect() )

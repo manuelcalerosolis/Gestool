@@ -13,8 +13,6 @@ CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
-   METHOD getTercerosModel()           VIRTUAL
-
    METHOD getNumeroWhereUuid( uuid )
 
    METHOD maxNumberWhereSerie( cSerie )
@@ -159,7 +157,7 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesModel
    cSql  := hb_strformat(  cSql,;
                            ::cTableName,;
                            ::getTableName(),;
-                           ::getTercerosModel():getTableName(),;
+                           SQLTercerosModel():getTableName(),;
                            SQLDireccionesModel():getTableName(),;
                            SQLArticulosTarifasModel():getTableName(),;
                            ::getColumnsSelect() )

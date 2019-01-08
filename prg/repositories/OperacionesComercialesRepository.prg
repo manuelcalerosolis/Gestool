@@ -24,7 +24,7 @@ CLASS OperacionesComercialesRepository FROM SQLBaseRepository
 
    METHOD createFunctionTotalSummaryWhereUuid()
       METHOD dropFunctionTotalSummaryWhereUuid()
-      METHOD selectTotalSummaryWhereUuid( uuidOperacionComercial, aplicarRecargo )
+      METHOD selectTotalSummaryWhereUuid( uuidOperacionComercial )
 
    METHOD createFunctionRecargoEquivalenciaWhereUuid() 
       METHOD dropFunctionRecargoEquivalenciaWhereUuid()   
@@ -124,9 +124,9 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( ::getPackage( 'Tot
 
 //---------------------------------------------------------------------------//
 
-METHOD selectTotalSummaryWhereUuid( uuidOperacionComercial, aplicarRecargo ) CLASS OperacionesComercialesRepository
+METHOD selectTotalSummaryWhereUuid( uuidOperacionComercial ) CLASS OperacionesComercialesRepository
 
-RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ) + "( " + quotedUuid( uuidOperacionComercial ) + ", " + toSqlString( aplicarRecargo ) + " )" ) )
+RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ) + "( " + quotedUuid( uuidOperacionComercial ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 

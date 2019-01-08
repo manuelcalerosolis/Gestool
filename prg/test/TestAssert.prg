@@ -115,7 +115,7 @@ METHOD assert( xExp, xAct, cMsg, lInvert ) CLASS TAssert
    BEGIN SEQUENCE
       ::oResult:oData:incrementAssertCount()
 
-      if ( ( lInvert .and. ::isEqual( xExp, xAct )) .or. ( !( lInvert ) .and. ( !( ::isEqual( xExp, xAct ) ) ) ) )
+      if ( ( lInvert .and. ::isEqual( xExp, xAct ) ) .or. ( !( lInvert ) .and. ( !( ::isEqual( xExp, xAct ) ) ) ) )
 
          oError               := ErrorNew()
          oError:description   := cMsg
@@ -164,7 +164,7 @@ METHOD toStr( xVal, lUseQuote ) CLASS TAssert
    case ( valtype( xVal ) ==  "D" )
       cStr := DToC( xVal )
    case ( valtype( xVal ) == "N" )
-      cStr := ltrim( str( xVal ) )
+      cStr := alltrim( str( xVal ) )
    case ( valtype( xVal ) == "A" )
       cStr := hb_valtoexp( xVal )
    case ( valtype( xVal ) == "O" )
