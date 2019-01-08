@@ -368,19 +368,31 @@ RETURN ( getSQLDatabase():getValue ( cSql, 0 ) )
 
 METHOD test_create_iva_al_21() CLASS SQLTiposIvaModel
 
-RETURN ( nil )
+RETURN ( ::insertBuffer( ;
+            ::loadBlankBuffer( { "codigo"       => "0",;
+                                 "nombre"       => "IVA al 21%",;
+                                 "porcentaje"   => 21,;
+                                 "recargo"      => 5 } ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD test_create_iva_al_10() CLASS SQLTiposIvaModel
 
-RETURN ( nil )
+RETURN ( ::insertBuffer( ;
+            ::loadBlankBuffer( { "codigo"       => "0",;
+                                 "nombre"       => "IVA al 10%",;
+                                 "porcentaje"   => 10,;
+                                 "recargo"      => 1 } ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD test_create_iva_al_4() CLASS SQLTiposIvaModel
 
-RETURN ( nil )
+RETURN ( ::insertBuffer( ;
+            ::loadBlankBuffer( { "codigo"       => "0",;
+                                 "nombre"       => "IVA al 4%",;
+                                 "porcentaje"   => 4,;
+                                 "recargo"      => 0.5 } ) ) )
 
 //---------------------------------------------------------------------------//
 

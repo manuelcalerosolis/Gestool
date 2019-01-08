@@ -223,20 +223,21 @@ METHOD Before() CLASS TestFacturasVentasController
    SQLDireccionesModel():truncateTable()
 
    SQLAlmacenesModel():truncateTable()
+      SQLUbicacionesModel():truncateTable()
 
    SQLMetodoPagoModel():truncateTable()
 
    SQLArticulosModel():truncateTable()
    
    SQLFacturasVentasModel():truncateTable()
-   SQLFacturasVentasLineasModel():truncateTable()
-   SQLFacturasVentasDescuentosModel():truncateTable()
+      SQLFacturasVentasLineasModel():truncateTable()
+      SQLFacturasVentasDescuentosModel():truncateTable()
 
    SQLArticulosTarifasModel():truncateTable()
 
    SQLRecibosModel():truncateTable()
-   SQLPagosModel():truncateTable()
-   SQLRecibosPagosModel():truncateTable()
+      SQLPagosModel():truncateTable()
+      SQLRecibosPagosModel():truncateTable()
 
    SQLTercerosModel():test_create_contado()
    SQLTercerosModel():test_create_tarifa_mayorista()
@@ -247,6 +248,10 @@ METHOD Before() CLASS TestFacturasVentasController
 
    SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_principal() )
    SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_auxiliar() )
+
+   SQLTiposIvaModel():test_create_iva_al_21()
+   SQLTiposIvaModel():test_create_iva_al_10()
+   SQLTiposIvaModel():test_create_iva_al_4()
 
    SQLMetodoPagoModel():test_create_contado()
    SQLMetodoPagoModel():test_create_reposicion()
