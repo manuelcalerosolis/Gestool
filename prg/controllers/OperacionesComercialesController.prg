@@ -9,6 +9,8 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    DATA oIvaDetalleView
 
+   DATA oRectificativaDialogView
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -110,6 +112,11 @@ CLASS OperacionesComercialesController FROM OperacionesController
    METHOD getLinesController()         VIRTUAL
 
    METHOD getDiscountController()      VIRTUAL
+
+   METHOD getSelector()                INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
+
+   METHOD getRectificativaDialogView();
+                                       INLINE ( if( empty( ::oRectificativaDialogView ), ::oRectificativaDialogView := OperacionComercialRectificarView():New( self ), ), ::oRectificativaDialogView )
 
 END CLASS
 
@@ -449,7 +456,7 @@ METHOD getValidators() CLASS OperacionesComercialesValidator
                         "tarifa_codigo"      => {  "required"        => "El código de la tarifa es un dato requerido",; 
                                                    "tarifaExist"     => "El código de la tarifa no existe" },;
                         "formulario"         => {  "emptyLines"      => "Las líneas no pueden estar vacias",;
-                                                   "validLine"       => "" } }  
+                                                   "validLine"       => "" } }
 
 RETURN ( ::hValidators )
 

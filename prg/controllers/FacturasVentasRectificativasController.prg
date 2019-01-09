@@ -13,6 +13,8 @@ CLASS FacturasVentasRectificativasController FROM OperacionesComercialesControll
 
    METHOD getDiscountController()      INLINE ( ::getFacturasVentasRectificativasDescuentosController() )
 
+   METHOD getFacturasController()      INLINE ( ::getFacturasVentasController() )
+
    METHOD isClient()                   INLINE ( .t. )
 
    // Impresiones--------------------------------------------------------------
@@ -26,6 +28,8 @@ CLASS FacturasVentasRectificativasController FROM OperacionesComercialesControll
    METHOD getName()                    INLINE ( "facturas_venta_rectificativa" )
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasVentasRectificativasModel():New( self ), ), ::oModel )
+
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesRectificativasView():New( self ), ), ::oDialogView )
 
    METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasVentasRectificativasValidator():New( self ), ), ::oValidator )
 
@@ -433,3 +437,4 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 #endif*/
+

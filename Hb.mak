@@ -371,6 +371,7 @@ OperacionesController.prg 													\
 OperacionesComercialesController.prg 									\
 FacturasVentasController.prg 												\
 FacturasVentasRectificativasController.prg 							\
+OperacioncomercialRectificarView.Prg 									\
 FacturasComprasController.prg 											\
 FacturasComprasRectificativasController.prg 							\
 OperacionesComercialesLineasController.prg							\
@@ -391,6 +392,7 @@ FacturasComprasRectificativasBrowseView.prg 							\
 OperacionesComercialesBrowseView.prg 									\
 OperacionesComercialesLineasView.prg									\
 OperacionesComercialesView.prg 											\
+OperacionesComercialesRectificativasView.prg 						\
 ClientesTarifasController.prg 											\
 Server.prg 																		\
 BaseHttpService.prg 															\
@@ -755,6 +757,7 @@ OperacionesController.obj 													\
 OperacionesComercialesController.obj 									\
 FacturasVentasController.obj 												\
 FacturasVentasRectificativasController.obj 							\
+OperacioncomercialRectificarView.obj 									\
 FacturasComprasController.obj 											\
 FacturasComprasRectificativasController.obj 							\
 OperacionesComercialesLineasController.obj 							\
@@ -775,6 +778,7 @@ FacturasComprasRectificativasBrowseView.obj 							\
 OperacionesComercialesBrowseView.obj 									\
 OperacionesComercialesLineasView.obj 									\
 OperacionesComercialesView.obj 											\
+OperacionesComercialesRectificativasView.obj 						\
 ClientesTarifasController.obj 											\
 Server.obj 																		\
 BaseHttpService.obj 															\
@@ -1136,6 +1140,7 @@ $(OBJ)\OperacionesController.obj 										+
 $(OBJ)\OperacionesComercialesController.obj 							+
 $(OBJ)\FacturasVentasController.obj 									+
 $(OBJ)\FacturasVentasRectificativasController.obj 					+
+$(OBJ)\OperacioncomercialRectificarView.obj 							+
 $(OBJ)\FacturasComprasController.obj 									+
 $(OBJ)\FacturasComprasRectificativasController.obj 				+
 $(OBJ)\OperacionesComercialesLineasController.obj 					+
@@ -1156,6 +1161,7 @@ $(OBJ)\FacturasComprasRectificativasBrowseView.obj 				+
 $(OBJ)\OperacionesComercialesBrowseView.obj 							+
 $(OBJ)\OperacionesComercialesLineasView.obj 							+
 $(OBJ)\OperacionesComercialesView.obj 									+
+$(OBJ)\OperacionesComercialesRectificativasView.obj 				+
 $(OBJ)\ClientesTarifasController.obj 									+
 $(OBJ)\Server.obj 															+
 $(OBJ)\BaseHttpService.obj													+
