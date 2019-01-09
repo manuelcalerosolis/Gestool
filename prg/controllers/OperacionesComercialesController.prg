@@ -249,16 +249,16 @@ METHOD terceroSetTarifa() CLASS OperacionesComercialesController
 
    local cCodigoTarifa
 
-   cCodigoTarifa     := space( 20 )
+   cCodigoTarifa        := space( 20 )
 
    if empty( ::getTercerosController():getSelector():uFields )
       RETURN ( nil )
    end if 
 
-   cCodigoTarifa     := hget( ::getTercerosController():getSelector():uFields, "tarifa_codigo" )
+   cCodigoTarifa        := hget( ::getTercerosController():getSelector():uFields, "tarifa_codigo" )
 
    if empty( cCodigoTarifa )
-      cCodigoTarifa  := Company():getDefaultTarifa()
+      cCodigoTarifa     := Company():getDefaultTarifa()
    end if
 
    ::getArticulosTarifasController():getSelector():cText( cCodigoTarifa )
@@ -273,13 +273,13 @@ METHOD terceroSetRuta() CLASS OperacionesComercialesController
 
    local cCodigoRuta
 
-   cCodigoRuta       := space( 20 )
+   cCodigoRuta          := space( 20 )
 
    if empty( ::getTercerosController():getSelector():uFields )
       RETURN ( nil )
    end if 
 
-   cCodigoRuta       := hget( ::getTercerosController():getSelector():uFields, "ruta_codigo" )
+   cCodigoRuta          := hget( ::getTercerosController():getSelector():uFields, "ruta_codigo" )
 
    ::getRutasController():getSelector():cText( cCodigoRuta )
    

@@ -1361,6 +1361,16 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cBmpBig        := "gc_warehouse_32"
    oItem:lShow          := .f.
 
+   oItem                := oItemAlmacen:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Consolidaciones de almacenes'
+   oItem:cMessage       := 'Consolidaciones de almacenes'
+   oItem:bAction        := {|| ConsolidacionAlmacenController():New():ActivateNavigatorView() }
+   oItem:cId            := "consolidacion_almacen"
+   oItem:cBmp           := "gc_warehouse_16"
+   oItem:cBmpBig        := "gc_warehouse_32"
+   oItem:lShow          := .f.
+
    // Ventas-------------------------------------------------------------------
 
    oItemVentas          := oAcceso:Add()
