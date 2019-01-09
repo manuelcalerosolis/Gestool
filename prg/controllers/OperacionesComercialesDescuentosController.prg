@@ -35,7 +35,7 @@ METHOD New( oController ) CLASS OperacionesComercialesDescuentosController
 
    ::Super:New( oController )
 
-   ::lTransactional  := .t.
+   ::lTransactional                    := .t.
 
    ::setEvent( 'exitAppended', {|| ::getBrowseView():selectCol( ::getBrowseView():oColumnNombre:nPos ) } )
 
@@ -124,6 +124,8 @@ CLASS OperacionesComercialesDescuentosBrowseView FROM SQLBrowseView
 
    DATA oColumnNombre
 
+   DATA oColumnDescuento
+
    METHOD addColumns()                       
 
 ENDCLASS
@@ -145,7 +147,7 @@ METHOD addColumns() CLASS OperacionesComercialesDescuentosBrowseView
       :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'nombre', uNewValue ) }
    end with
 
-   with object ( ::oBrowse:AddCol() )
+   with object ( ::oColumnDescuento := ::oBrowse:AddCol() )
       :cSortOrder          := 'descuento'
       :cHeader             := 'Descuento %'
       :nWidth              := 100

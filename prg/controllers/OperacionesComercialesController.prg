@@ -504,8 +504,12 @@ CLASS TestOperacionesComecialesController FROM TestCase
    METHOD click_nueva_linea( view )    INLINE ( view:getControl( 501, view:oFolder:aDialogs[1] ):Click(),;
                                                 apoloWaitSeconds( 1 ) )
 
-   METHOD set_codigo_articulo_en_linea() ;
-                                       INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "0", 0 ),;
+   METHOD click_nuevo_descuento( view ) ;
+                                       INLINE ( view:getControl( 601, view:oFolder:aDialogs[1] ):Click(),;
+                                                apoloWaitSeconds( 1 ) )
+
+   METHOD set_codigo_articulo_en_linea( cCodigoArticulo ) ;
+                                       INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , cCodigoArticulo, 0 ),;
                                                 apoloWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
@@ -521,6 +525,16 @@ CLASS TestOperacionesComecialesController FROM TestCase
 
    METHOD set_precio_en_linea( nPrecio ) ;
                                        INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , nPrecio, 0 ),;
+                                                apoloWaitSeconds( 1 ),;
+                                                ::refresh_linea_browse_view() )
+
+   METHOD set_descripcion_descuento( cDescuento ) ;
+                                       INLINE ( eval( ::oController:getDiscountController():getBrowseView():oColumnNombre:bOnPostEdit, , cDescuento, 0 ),;
+                                                apoloWaitSeconds( 1 ),;
+                                                ::refresh_linea_browse_view() )
+
+   METHOD set_porcentaje_descuento( nDescuento ) ;
+                                       INLINE ( eval( ::oController:getDiscountController():getBrowseView():oColumnDescuento:bOnPostEdit, , nDescuento, 0 ),;
                                                 apoloWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
@@ -547,11 +561,11 @@ CLASS TestOperacionesComecialesController FROM TestCase
 
    METHOD test_dialogo_cambiando_agente() 
 
-   METHOD test_dialogo_con_descuento_en_documento() 
-
    METHOD test_dialogo_con_recargo_en_documento()
-   
+
    METHOD test_dialogo_con_varios_pagos()  
+   
+   METHOD test_dialogo_con_descuento_en_documento() 
 
 END CLASS
 
@@ -596,7 +610,7 @@ METHOD Before() CLASS TestOperacionesComecialesController
       SQLPagosModel():truncateTable()
       SQLRecibosPagosModel():truncateTable()
 
-   SQLAlmacenesModel():truncateTable()
+   SQLAgentesModel():truncateTable()
 
    SQLTercerosModel():test_create_contado()
    SQLTercerosModel():test_create_tarifa_mayorista()
@@ -715,7 +729,7 @@ METHOD test_dialogo_ventas_por_cajas() CLASS TestOperacionesComecialesController
          ::set_codigo_cliente( "0", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          ::click_nueva_linea( view ),;
-         ::set_codigo_articulo_en_linea(),;
+         ::set_codigo_articulo_en_linea( "1" ),;
          ::set_codigo_ubicacion_en_linea( "0" ),;
          ::set_precio_en_linea( 100 ),;         
          view:getControl( IDOK ):Click() } )
@@ -733,7 +747,7 @@ METHOD test_dialogo_tarifa_mayorista() CLASS TestOperacionesComecialesController
          ::set_codigo_cliente( "1", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          ::click_nueva_linea( view ),;
-         ::set_codigo_articulo_en_linea(),;
+         ::set_codigo_articulo_en_linea( "1" ),;
          ::set_codigo_ubicacion_en_linea( "0" ),;
          ::set_precio_en_linea( 100 ),;         
          view:getControl( IDOK ):Click() } )
@@ -751,7 +765,7 @@ METHOD test_dialogo_con_un_solo_pago() CLASS TestOperacionesComecialesController
          ::set_codigo_cliente( "1", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          ::click_nueva_linea( view ),;
-         ::set_codigo_articulo_en_linea(),;
+         ::set_codigo_articulo_en_linea( "1" ),;
          ::set_codigo_ubicacion_en_linea( "0" ),;
          ::set_precio_en_linea( 200 ),;         
          view:getControl( IDOK ):Click() } )
@@ -771,7 +785,7 @@ METHOD test_dialogo_con_varios_pagos() CLASS TestOperacionesComecialesController
          ::set_codigo_cliente( "2", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          ::click_nueva_linea( view ),;
-         ::set_codigo_articulo_en_linea(),;
+         ::set_codigo_articulo_en_linea( "1" ),;
          ::set_codigo_ubicacion_en_linea( "0" ),;
          ::set_precio_en_linea( 300 ),;         
          view:getControl( IDOK ):Click() } )
@@ -793,7 +807,7 @@ METHOD test_dialogo_cambiando_almacen() CLASS TestOperacionesComecialesControlle
          ::set_codigo_cliente( "1", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          ::click_nueva_linea( view ),;
-         ::set_codigo_articulo_en_linea(),;
+         ::set_codigo_articulo_en_linea( "1" ),;
          ::set_codigo_almacen_en_linea( "1" ),;
          ::set_codigo_ubicacion_en_linea( "0" ),;
          ::set_precio_en_linea( 200 ),;         
@@ -818,7 +832,7 @@ METHOD test_dialogo_cambiando_ubicacion() CLASS TestOperacionesComecialesControl
          ::set_codigo_cliente( "1", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          ::click_nueva_linea( view ),;
-         ::set_codigo_articulo_en_linea(),;
+         ::set_codigo_articulo_en_linea( "1" ),;
          ::set_codigo_almacen_en_linea( "1" ),;
          ::set_codigo_ubicacion_en_linea( "1" ),;
          ::set_precio_en_linea( 200 ),;         
@@ -836,11 +850,25 @@ RETURN ( nil )
 
 METHOD test_dialogo_cambiando_agente() CLASS TestOperacionesComecialesController
 
-RETURN ( nil )
+   local cCodigo
 
-//---------------------------------------------------------------------------//
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| view | ;
+         ::set_codigo_cliente( "1", view ),;
+         ::set_codigo_forma_pago( "0", view ),;
+         ::set_codigo_agente( "1", view ),;
+         ::click_nueva_linea( view ),;
+         ::set_codigo_articulo_en_linea( "1" ),;
+         ::set_codigo_almacen_en_linea( "1" ),;
+         ::set_codigo_ubicacion_en_linea( "0" ),;
+         ::set_precio_en_linea( 200 ),;         
+         view:getControl( IDOK ):Click() } )
 
-METHOD test_dialogo_con_descuento_en_documento() CLASS TestOperacionesComecialesController
+   ::assert:true( ::oController:Append(), "test creación de factura con cambio de almacén" )
+
+   cCodigo  := ::oController:getModel():getFieldWhere( "agente_codigo", { "uuid" => ::oController:getModelBuffer( "uuid" ) } )
+   
+   ::assert:equals( "1", alltrim( cCodigo ), "test comprobacion cambio agente" )
 
 RETURN ( nil )
 
@@ -865,6 +893,35 @@ METHOD test_dialogo_con_recargo_en_documento() CLASS TestOperacionesComecialesCo
    hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
 
    ::assert:equals( 199.950000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_con_descuento_en_documento() CLASS TestOperacionesComecialesController
+
+   local cCodigo
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| view | ;
+         ::set_codigo_cliente( "1", view ),;
+         ::set_codigo_forma_pago( "0", view ),;
+         ::set_codigo_agente( "1", view ),;
+         ::click_nueva_linea( view ),;
+         ::set_codigo_articulo_en_linea( "1" ),;
+         ::set_codigo_almacen_en_linea( "1" ),;
+         ::set_codigo_ubicacion_en_linea( "0" ),;
+         ::set_precio_en_linea( 200 ),;         
+         ::click_nuevo_descuento( view ),;
+         ::set_descripcion_descuento( "Descuento" ),;
+         ::set_porcentaje_descuento( 15 ),; 
+         view:getControl( IDOK ):Click() } )
+
+   ::assert:true( ::oController:Append(), "test creación de factura con cambio de almacén" )
+
+   cCodigo  := ::oController:getModel():getFieldWhere( "agente_codigo", { "uuid" => ::oController:getModelBuffer( "uuid" ) } )
+   
+   ::assert:equals( "1", alltrim( cCodigo ), "test comprobacion cambio agente" )
 
 RETURN ( nil )
 
