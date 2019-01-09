@@ -5,6 +5,7 @@
 
 CLASS FacturasComprasRectificativasController FROM OperacionesComercialesController
 
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -14,6 +15,8 @@ CLASS FacturasComprasRectificativasController FROM OperacionesComercialesControl
 
    METHOD getDiscountController();
                                        INLINE ( ::getFacturasComprasRectificativasDescuentosController() )
+
+   METHOD getFacturasController()      INLINE ( ::getFacturasComprasController() )
 
    METHOD isClient()                   INLINE ( .f. )
 
@@ -26,6 +29,8 @@ CLASS FacturasComprasRectificativasController FROM OperacionesComercialesControl
    METHOD getName()                    INLINE ( "facturas_compra_rectificativas" )
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasComprasRectificativasModel():New( self ), ), ::oModel )
+   
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesRectificativasView():New( self ), ), ::oDialogView )
 
    METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasCompraRectificativasValidator():New( self ), ), ::oValidator ) 
 

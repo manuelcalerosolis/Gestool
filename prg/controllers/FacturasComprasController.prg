@@ -33,6 +33,7 @@ CLASS FacturasComprasController FROM OperacionesComercialesController
 
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasComprasRepository():New( self ), ), ::oRepository )
 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
