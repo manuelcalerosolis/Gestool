@@ -272,7 +272,7 @@ METHOD Activating() CLASS PagosAssistantView
 
    ::getController():cCodigoTercero := ""
 
-   ::nImporte:cText( 0 )
+   //::nImporte:cText( 0 )
 
 RETURN ( nil )
 
