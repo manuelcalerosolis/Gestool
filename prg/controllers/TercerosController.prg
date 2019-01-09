@@ -7,7 +7,7 @@ CLASS TercerosController FROM SQLNavigatorController
 
    DATA cMessage
 
-   DATA isClient                      
+   //DATA isClient                      
 
    DATA oDireccionesController
 
@@ -89,7 +89,7 @@ METHOD New( oController) CLASS TercerosController
 
    ::cName                             := "terceros"
 
-   ::isClient                          := .t.
+   //::isClient                          := .t.
 
    ::hImage                            := {  "16" => "gc_user_16",;
                                              "32" => "gc_user_32",;
@@ -206,6 +206,8 @@ METHOD buildRowSetSentence( cType )
 
    local cColumnOrder         
    local cColumnOrientation  
+
+
 
    if !empty( ::getBrowseView() )
       cColumnOrder            := ::getBrowseView():getColumnOrderView( cType, ::getName() )

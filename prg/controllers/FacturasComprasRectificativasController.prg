@@ -3,95 +3,85 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasVentasRectificativasController FROM OperacionesComercialesController
+CLASS FacturasComprasRectificativasController FROM OperacionesComercialesController
 
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
-   METHOD getLinesController()         INLINE ( ::getFacturasVentasRectificativasLineasController() )
+   METHOD getLinesController();
+                                       INLINE ( ::getFacturasComprasRectificativasLineasController() )
 
-   METHOD getDiscountController()      INLINE ( ::getFacturasVentasRectificativasDescuentosController() )
+   METHOD getDiscountController();
+                                       INLINE ( ::getFacturasComprasRectificativasDescuentosController() )
 
-   METHOD isClient()                   INLINE ( .t. )
+   METHOD isClient()                   INLINE ( .f. )
 
    // Impresiones--------------------------------------------------------------
 
-   METHOD getSubject()                 INLINE ( "Factura rectificativa de ventas número" )
-
-   METHOD addExtraButtons()
+   METHOD getSubject()                 INLINE ( "Factura de compras rectificativa número" )
 
    // Contrucciones tardias----------------------------------------------------
 
-   METHOD getName()                    INLINE ( "facturas_venta_rectificativa" )
+   METHOD getName()                    INLINE ( "facturas_compra_rectificativas" )
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasVentasRectificativasModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasComprasRectificativasModel():New( self ), ), ::oModel )
 
-   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasVentasRectificativasValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasCompraRectificativasValidator():New( self ), ), ::oValidator ) 
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasVentasRectificativasBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasComprasRectificativasBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasVentasRectificativasRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasComprasRectificativasRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS FacturasVentasRectificativasController
+METHOD New( oController ) CLASS FacturasComprasRectificativasController
 
    ::Super:New( oController )
 
-   ::cTitle                            := "Facturas de ventas rectificativas"
+   ::cTitle                            := "Facturas rectificativa de compras"
 
-   ::cName                             := "facturas_ventas_rectificativas"
+   ::cName                             := "facturas_rectificativa_compra" 
 
-   ::hImage                            := {  "16" => "gc_document_text_user_16",;
-                                             "32" => "gc_document_text_user_32",;
-                                             "48" => "gc_document_text_user_48" }
+   ::hImage                            := {  "16" => "gc_document_text_businessman_16",;
+                                             "32" => "gc_document_text_businessman_32",;
+                                             "48" => "gc_document_text_businessman_48" }
 
-RETURN ( Self )
+RETURN ( Self ) 
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS FacturasVentasRectificativasController
+METHOD End() CLASS FacturasComprasRectificativasController
 
    if !empty( ::oModel )
       ::oModel:End()
-   end if
-
-   if !empty( ::oDialogView )
-      ::oDialogView:End()
-   end if
+   end if 
 
    if !empty( ::oValidator )
       ::oValidator:End()
-   end if
+   end if 
+
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
 
    if !empty( ::oRepository )
       ::oRepository:End()
    end if
 
-   if !empty( ::oBrowseView )
-      ::oBrowseView:End()
-   end if
-
 RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
-
-METHOD addExtraButtons() CLASS FacturasVentasRectificativasController
-
-   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturae 3.2", "gc_document_text_earth_16", {|| ::getFacturasClientesFacturaeController():Run( ::getBrowseView():getBrowseSelected() ) } )
-
-RETURN ( nil )
-
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FacturasVentasRectificativasValidator FROM OperacionesComercialesValidator
+CLASS FacturasCompraRectificativasValidator FROM OperacionesComercialesValidator 
 
    METHOD New( oController )
 
@@ -101,16 +91,16 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS FacturasVentasRectificativasValidator
+METHOD New( oController ) CLASS FacturasCompraRectificativasValidator
 
 RETURN ( ::Super:New( oController ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS FacturasVentasRectificativasValidator
+METHOD getValidators() CLASS FacturasCompraRectificativasValidator
 
-   hset( ::Super:getValidators(), "tercero_codigo",   {  "required"        => "El código del cliente es un dato requerido",;
-                                                         "clienteExist"    => "El código del cliente no existe" } )
+   hset( ::Super:getValidators(), "tercero_codigo",   {  "required"        => "El código del proveedor es un dato requerido",;
+                                                         "proveedorExist"  => "El código del proveedor no existe" } )
 
 RETURN ( ::hValidators )
 

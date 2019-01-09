@@ -1302,7 +1302,7 @@ FUNCTION CreateMainSQLAcceso()
    // Proveedores--------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 2
+   oGrupo:nBigItems     := 3
    oGrupo:cPrompt       := 'Proveedores'
    oGrupo:cLittleBitmap := "gc_businessmen2_16"
    oGrupo:cBigBitmap    := "gc_businessmen2_32"
@@ -1322,6 +1322,16 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cPrompt        := 'Facturas de compras'
    oItem:cMessage       := 'Facturas de compras'
    oItem:bAction        := {|| FacturasComprasController():New():ActivateNavigatorView() }
+   oItem:cId            := "facturas_compras"
+   oItem:cBmp           := "gc_document_text_businessman_16"
+   oItem:cBmpBig        := "gc_document_text_businessman_32"
+   oItem:lShow          := .t.
+
+   oItem                := oItemCompras:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Facturas rectificativas'
+   oItem:cMessage       := 'Facturas rectificativas'
+   oItem:bAction        := {|| FacturasComprasRectificativasController():New():ActivateNavigatorView() }
    oItem:cId            := "facturas_compras"
    oItem:cBmp           := "gc_document_text_businessman_16"
    oItem:cBmpBig        := "gc_document_text_businessman_32"
@@ -1436,8 +1446,8 @@ FUNCTION CreateMainSQLAcceso()
 
     oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Facturas rectificativa de ventas'
-   oItem:cMessage       := 'Facturas rectificativa de ventas'
+   oItem:cPrompt        := 'Facturas rectificativa'
+   oItem:cMessage       := 'Facturas rectificativa'
    oItem:bAction        := {|| FacturasVentasRectificativasController():New():ActivateNavigatorView() }
    // oItem:bAction        := {|| FacturasVentasController1000() }
    oItem:cId            := "facturas_ventas_rectificativa"
