@@ -19,6 +19,8 @@ CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
 
    METHOD totalPaid( uuidFactura )
 
+   METHOD getFieldWhereSerieAndNumero( cSerieAndNumero )
+
 #ifdef __TEST__
 
    METHOD test_create_factura( uuid )
@@ -235,6 +237,34 @@ METHOD maxNumberWhereSerie( cSerie ) CLASS SQLOperacionesComercialesModel
    cSql        +=    "WHERE serie = " + quoted( cSerie )
 
 RETURN ( ::getDatabase():getValue( cSql, 0 ) + 1 )
+
+//---------------------------------------------------------------------------//
+
+METHOD getFieldWhereSerieAndNumero( cSerieAndNumero ) CLASS SQLOperacionesComercialesModel
+
+local cSql
+
+   TEXT INTO cSql
+
+   SELECT 
+     terceros.nombre AS tercero
+
+   FROM %1$s AS operacion_comercial
+
+   INNER JOIN %2$s AS terceros
+      ON terceros.codigo = operacion_comercial.tercero_codigo
+   
+   WHERE CONCAT(operacion_comercial.serie, "-", operacion_comercial.numero) = %3$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql,;
+                           ::getTableName(),;
+                           SQLTercerosModel():getTableName(),;
+                           quoted( cSerieAndNumero ) )
+
+
+RETURN ( getSQLDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
 
