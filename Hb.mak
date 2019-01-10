@@ -235,7 +235,7 @@ TiposVentasView.prg    														\
 SQLBaseValidator.prg 														\
 TiposVentasValidator.prg 													\
 EtiquetasValidator.prg 														\
-OperacionesComercialesLineasValidator.prg 							\
+OperacionesLineasValidator.prg 											\
 SQLBaseRepository.prg 														\
 TiposVentasRepository.prg 													\
 ConfiguracionEmpresasRepository.prg 									\
@@ -633,7 +633,7 @@ SQLBaseView.obj 																\
 SQLBaseValidator.obj 														\
 TiposVentasValidator.obj 													\
 EtiquetasValidator.obj 														\
-OperacionesComercialesLineasValidator.obj 							\
+OperacionesLineasValidator.obj 											\
 SQLBaseRepository.obj 														\
 ConfiguracionEmpresasRepository.obj 									\
 TiposVentasRepository.obj 													\
@@ -1025,7 +1025,7 @@ $(OBJ)\SQLBaseView.obj 														+
 $(OBJ)\SQLBaseValidator.obj 												+
 $(OBJ)\TiposVentasValidator.obj											+
 $(OBJ)\EtiquetasValidator.obj												+
-$(OBJ)\OperacionesComercialesLineasValidator.obj					+
+$(OBJ)\OperacionesLineasValidator.obj									+
 $(OBJ)\SQLBaseRepository.obj 												+
 $(OBJ)\ConfiguracionEmpresasRepository.obj							+
 $(OBJ)\TiposVentasRepository.obj											+

@@ -11,11 +11,11 @@ CLASS ConsolidacionAlmacenLineasController FROM OperacionesLineasController
 
    METHOD updateArticuloUnidades( oCol, uValue )
 
+   METHOD validLine()
+   
    METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLConsolidacionesAlmacenesLineasModel():New( self ), ), ::oModel )
 
    METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := ConsolidacionAlmacenLineasBrowseView():New( self ), ), ::oBrowseView ) 
-
-   METHOD validLine()
 
 END CLASS
 

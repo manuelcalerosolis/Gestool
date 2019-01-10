@@ -33,6 +33,10 @@ CLASS OperacionesComercialesLineasController FROM OperacionesLineasController
 
    METHOD validLine()   
 
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesLineasBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesLineasView():New( self ), ), ::oDialogView )
+
 END CLASS
 
 //----------------------------------------------------------------------------//

@@ -91,7 +91,7 @@ METHOD getColumnsSelect() CLASS SQLConsolidacionesAlmacenesLineasModel
       ( %1$s.articulo_unidades * %1$s.unidad_medicion_factor ) AS total_unidades,
       %1$s.articulo_precio AS articulo_precio,
       %1$s.incremento_precio AS incremento_precio,
-      ( ROUND( ( %1$s.articulo_unidades * %1$s.unidad_medicion_factor ) * ( articulo_precio + incremento_precio ), 2 ) ) AS total_bruto,
+      ( ROUND( ( %1$s.articulo_unidades * %1$s.unidad_medicion_factor ) * ( articulo_precio + incremento_precio ), 2 ) ) AS total_precio,
       %1$s.unidad_medicion_codigo AS unidad_medicion_codigo,
       %1$s.ubicacion_codigo AS ubicacion_codigo,
       ubicaciones.nombre AS ubicacion_nombre,
@@ -134,8 +134,6 @@ METHOD getInitialSelect() CLASS SQLConsolidacionesAlmacenesLineasModel
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::cTableName, ::getTableName(), ::getColumnsSelect(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), SQLUbicacionesModel():getTableName(), SQLConsolidacionesAlmacenesModel():getTableName(), SQLAlmacenesModel():getTableName() )
-
-   msgalert( cSql, "cSql" )
 
 RETURN ( cSql )
 

@@ -307,16 +307,16 @@ METHOD activateUbicacionesSelectorView() CLASS ConsolidacionAlmacenLineasBrowseV
    local uuidAlmacen
    local cCodigoAlmacen
 
-   cCodigoAlmacen          := ""
+   cCodigoAlmacen          := ::getSuperController():getModelBuffer( 'almacen_codigo' )
 
    if empty( cCodigoAlmacen )
-      msgStop( "El código de almacén no puede estar vacio" )
+      ::getController():getDialogView():showMessage( "El código de almacén no puede estar vacio" )
       RETURN ( nil )
    end if 
 
    uuidAlmacen             := SQLAlmacenesModel():getUuidWhereCodigo( cCodigoAlmacen )
    if empty( uuidAlmacen )
-      msgStop( "No se ha podido obtener el identificador de almacén" )
+      ::getController():getDialogView():showMessage( "No se ha podido obtener el identificador de almacén" )
       RETURN ( nil )
    end if 
 

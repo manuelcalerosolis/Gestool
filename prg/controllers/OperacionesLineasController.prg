@@ -134,11 +134,11 @@ CLASS OperacionesLineasController FROM SQLBrowseController
 
    METHOD getModel()                   VIRTUAL
 
-   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesLineasBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              VIRTUAL
 
-   METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesLineasView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              VIRTUAL
 
-   METHOD getValidator()               INLINE ( iif( empty( ::oValidator ), ::oValidator := OperacionesComercialesLineasValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( iif( empty( ::oValidator ), ::oValidator := OperacionesLineasValidator():New( self ), ), ::oValidator )
 
    METHOD getHistoryManager()          INLINE ( iif( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
 
