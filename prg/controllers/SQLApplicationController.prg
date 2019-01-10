@@ -198,6 +198,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oCaracteristicasValoresArticulosController
 
+   DATA oConsolidacionAlmacenLineasController
+
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
    METHOD getCodigosPostalesController();
@@ -369,7 +371,10 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getFacturasVentasLineasController();
                                     INLINE ( if( empty( ::oFacturasVentasLineasController ), ::oFacturasVentasLineasController := FacturasVentasLineasController():New( self ), ), ::oFacturasVentasLineasController )
 
-   METHOD getFacturasVentasRectificativasLineasController();
+   METHOD getConsolidacionAlmacenLineasController();
+                                    INLINE ( if( empty( ::oConsolidacionAlmacenLineasController ), ::oConsolidacionAlmacenLineasController := ConsolidacionAlmacenLineasController():New( self ), ), ::oConsolidacionAlmacenLineasController )
+
+   METHOD getFacturasVentasRectificativasLineasController(); 
                                     INLINE ( if( empty( ::oFacturasVentasRectificativasLineasController ), ::oFacturasVentasRectificativasLineasController := FacturasVentasRectificativasLineasController():New( self ), ), ::oFacturasVentasRectificativasLineasController )
 
    METHOD getFacturasVentasRectificativasDescuentosController();
@@ -704,6 +709,10 @@ METHOD End() CLASS SQLApplicationController
    if !empty( ::oRelacionesEntidadesController )   
       ::oRelacionesEntidadesController:End()
    end if    
+
+   if !empty( ::oConsolidacionAlmacenLineasController )   
+      ::oConsolidacionAlmacenLineasController:End()
+   end if
 
    if !empty( ::oFacturasVentasLineasController )   
       ::oFacturasVentasLineasController:End()

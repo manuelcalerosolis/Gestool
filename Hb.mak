@@ -209,6 +209,10 @@ ImprimirSeriesView.prg 														\
 ConsolidacionAlmacenBrowseView.prg 										\
 ConsolidacionAlmacenView.prg 												\
 ConsolidacionAlmacenController.prg										\
+ConsolidacionAlmacenLineasController.prg								\
+OperacionesLineasController.obj 											\
+OperacionesLineasController.prg												\
+ConsolidacionAlmacenLineasBrowse.prg									\
 SQLConsolidacionesAlmacenesModel.prg									\
 ConsolidacionAlmacenRepository.prg										\
 SQLConfiguracionesModel.prg 												\
@@ -323,7 +327,8 @@ PedidosClientesLineasModel.prg 											\
 Events.prg 																		\
 Seeders.prg    																\
 SqlMigrations.prg 															\
-SQLConsolidacionesAlmacenLineasModel.prg 					\
+SQLConsolidacionesAlmacenesLineasModel.prg 								\
+SQLOperacionesLineasModel.prg 											\
 NumerosSeriesController.prg 								  				\
 NumerosSeriesView.prg 														\
 SQLExportableModel.prg 														\
@@ -340,7 +345,6 @@ TercerosController.prg 														\
 ClientesController.prg 														\
 ProveedoresController.prg 													\
 SQLTercerosModel.prg 														\
-SQLClientesModel.prg 														\
 SQLProveedoresModel.prg 		  											\
 TercerosView.prg 																\
 TercerosValidator.prg 														\
@@ -604,6 +608,9 @@ SQLConfiguracionesModel.obj 												\
 ConsolidacionAlmacenBrowseView.obj										\
 ConsolidacionAlmacenView.obj 												\
 ConsolidacionAlmacenController.obj 										\
+ConsolidacionAlmacenLineasController.obj 								\
+OperacionesLineasController.obj 											\
+ConsolidacionAlmacenLineasBrowse.obj 									\
 SQLConsolidacionesAlmacenesModel.obj 									\
 ConsolidacionAlmacenRepository.obj 										\
 ConfiguracionesController.obj												\
@@ -707,7 +714,8 @@ ColumnasUsuariosModel.obj 													\
 Events.obj 																		\
 Seeders.obj 																	\
 SqlMigrations.obj 															\
-SQLConsolidacionesAlmacenLineasModel.obj 								\
+SQLConsolidacionesAlmacenesLineasModel.obj 								\
+SQLOperacionesLineasModel.obj 											\
 NumerosSeriesController.obj 												\
 NumerosSeriesView.obj 														\
 SQLExportableModel.obj 														\
@@ -725,7 +733,6 @@ TercerosController.obj 														\
 ClientesController.obj 														\
 ProveedoresController.obj 													\
 SQLTercerosModel.obj 														\
-SQLclientesModel.obj 														\
 SQLProveedoresModel.obj 		  											\
 TercerosView.obj 																\
 TercerosValidator.obj 														\
@@ -994,6 +1001,9 @@ $(OBJ)\ConsolidacionAlmacenRepository.obj 							+
 $(OBJ)\ConsolidacionAlmacenBrowseView.obj								+
 $(OBJ)\ConsolidacionAlmacenView.obj 									+
 $(OBJ)\ConsolidacionAlmacenController.obj 							+
+$(OBJ)\ConsolidacionAlmacenLineasController.obj 					+
+$(OBJ)\OperacionesLineasController.obj 								+
+$(OBJ)\ConsolidacionAlmacenLineasBrowse.obj 							+
 $(OBJ)\ConfiguracionesController.obj 									+
 $(OBJ)\RecordController.obj 												+
 $(OBJ)\ConfiguracionesRepository.obj 									+
@@ -1085,7 +1095,8 @@ $(OBJ)\SQLConfiguracionVistasController.obj 							+
 $(OBJ)\PedidosClientesLineasModel.obj 									+
 $(OBJ)\Seeders.obj 															+
 $(OBJ)\SqlMigrations.obj 													+
-$(OBJ)\SQLConsolidacionesAlmacenLineasModel.obj 		+
+$(OBJ)\SQLConsolidacionesAlmacenesLineasModel.obj 					+
+$(OBJ)\SQLOperacionesLineasModel.obj 									+
 $(OBJ)\NumerosSeriesController.obj 										+
 $(OBJ)\NumerosSeriesView.obj 												+
 $(OBJ)\SQLRowSet.obj 														+
@@ -1103,7 +1114,6 @@ $(OBJ)\TercerosController.obj 											+
 $(OBJ)\ClientesController.obj 											+
 $(OBJ)\ProveedoresController.obj 										+
 $(OBJ)\SQLTercerosModel.obj 												+
-$(OBJ)\SQLclientesModel.obj 												+
 $(OBJ)\SQLProveedoresModel.obj 		  									+
 $(OBJ)\TercerosView.obj 													+
 $(OBJ)\TercerosValidator.obj 												+

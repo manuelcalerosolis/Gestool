@@ -18,17 +18,15 @@ CLASS ConsolidacionAlmacenView FROM SQLBaseView
 
    METHOD addLinksToExplorerBar()
 
-   METHOD lineAppend()
-
-   METHOD setLinesShowDeleted()       INLINE ( ::getController():getFacturasVentasLineasController():setShowDeleted(),;
+   METHOD setLinesShowDeleted()        INLINE ( ::getController():getLinesController():setShowDeleted(),;
                                                 ::oBtnLineasDeleted:Toggle(),;
                                                 ::oBtnLineasDeleted:cTooltip := if( ::oBtnLineasDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
-   METHOD setDiscountShowDeleted()    INLINE ( ::getController():getFacturasVentasDescuentosController():setShowDeleted(),;
+   METHOD setDiscountShowDeleted()     INLINE ( ::getController():getFacturasVentasDescuentosController():setShowDeleted(),;
                                                 ::oBtnDescuentosDeleted:Toggle(),;
                                                 ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
-METHOD defaultTitle()
+   METHOD defaultTitle()
 
 END CLASS
 
@@ -103,17 +101,17 @@ METHOD Activate() CLASS ConsolidacionAlmacenView
 
    // Lineas ------------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::lineAppend() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::getController():appendLine() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
 
-   TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::getController():getFacturasVentasLineasController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
+   TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::getController():getLinesController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
 
-   TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| ::getController():getFacturasVentasLineasController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
+   TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| ::getController():getLinesController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
    
    ::oBtnLineasDeleted := TBtnBmp():ReDefine( 504, "gc_deleted_16",,,,, {|| ::setLinesShowDeleted()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
    
-   TBtnBmp():ReDefine( 505, "gc_object_cube_16",,,,, {|| ::getController():getFacturasVentasLineasController():Edit()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar ficha de artículo" )
+   TBtnBmp():ReDefine( 505, "gc_object_cube_16",,,,, {|| ::getController():getLinesController():Edit()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar ficha de artículo" )
 
-   ::getController():getFacturasVentasLineasController():Activate( 500, ::oFolder:aDialogs[1] )
+   ::getController():getLinesController():Activate( 500, ::oFolder:aDialogs[1] )
 
    // Botones generales--------------------------------------------------------
 
@@ -130,9 +128,9 @@ METHOD Activate() CLASS ConsolidacionAlmacenView
             case nKey == VK_F5
                ::validActivate()
             case nKey == VK_F2
-               ::getController():getFacturasVentasLineasController():AppendLineal()
+               ::getController():appendLine()
             case nKey == VK_F4
-               ::getController():getFacturasVentasLineasController():Delete()
+               ::getController():getLinesController():Delete()
          end 
          RETURN ( 0 )
          >
@@ -167,7 +165,7 @@ METHOD validActivate() CLASS ConsolidacionAlmacenView
       RETURN ( nil )
    end if
 
-   if !::getController():getFacturasVentasLineasController():validLine()
+   if !::getController():getLinesController():validLine()
       RETURN( nil )
    end if
 
@@ -196,16 +194,6 @@ METHOD addLinksToExplorerBar() CLASS ConsolidacionAlmacenView
    end if
 
 RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD lineAppend() CLASS ConsolidacionAlmacenView
-
-   if !::getController():getFacturasVentasLineasController():validLine()
-      RETURN( nil )
-   end if
-
-RETURN ( ::getController():getFacturasVentasLineasController():AppendLineal() ) 
 
 //---------------------------------------------------------------------------//
 

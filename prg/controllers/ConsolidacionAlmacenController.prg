@@ -21,6 +21,8 @@ CLASS ConsolidacionAlmacenController FROM OperacionesController
 
    METHOD updatedBuffer()
 
+   METHOD appendLine()
+
    METHOD changedSerie()  
 
    METHOD getConfigItems()
@@ -36,7 +38,7 @@ CLASS ConsolidacionAlmacenController FROM OperacionesController
 
    METHOD getName()                    INLINE ( "consolidacion_almacen" )
 
-   METHOD getLinesController()         INLINE ( ::getFacturasVentasLineasController() )
+   METHOD getLinesController()         INLINE ( ::getConsolidacionAlmacenLineasController() )
 
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ConsolidacionAlmacenView():New( self ), ), ::oDialogView )
 
@@ -150,6 +152,17 @@ RETURN ( ::getRecibosGeneratorController():update() )
 
 //---------------------------------------------------------------------------//
 
+METHOD appendLine() CLASS ConsolidacionAlmacenController
+
+   if empty( ::getModelBuffer( "almacen_codigo" ) )
+      msgStop( "El código del almacén es un dato requerido" )
+      RETURN( nil )
+   end if 
+
+RETURN ( ::Super:appendLine() ) 
+
+//---------------------------------------------------------------------------//
+
 METHOD changedSerie() CLASS ConsolidacionAlmacenController 
 
 RETURN ( ::getNumeroDocumentoComponent():setValue( ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
@@ -230,10 +243,10 @@ END CLASS
 
 METHOD getValidators() CLASS ConsolidacionAlmacenValidator
 
-   ::hValidators  := {  "almacen_codigo"     => {  "required"        => "El código del almacén es un dato requerido",;
-                                                   "almacenExist"    => "El código del almacén no existe" } ,;  
-                        "formulario"         => {  "emptyLines"      => "Las líneas no pueden estar vacias",;
-                                                   "validLine"       => "" } }  
+   ::hValidators  := {  "almacen_codigo"  => {  "required"        => "El código del almacén es un dato requerido",;
+                                                "almacenExist"    => "El código del almacén no existe" } ,;  
+                        "formulario"      => {  "emptyLines"      => "Las líneas no pueden estar vacias",;
+                                                "validLine"       => "" } }  
 
 RETURN ( ::hValidators )
 

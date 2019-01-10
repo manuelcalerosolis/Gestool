@@ -33,7 +33,9 @@ CLASS OperacionesController FROM SQLNavigatorController
 
    METHOD updatedBuffer()              VIRTUAL
 
-   METHOD changedSerie()  
+   METHOD changedSerie() 
+
+   METHOD appendLine()    
 
    METHOD hasLines()                   VIRTUAL
    METHOD hasNotLines()                VIRTUAL
@@ -175,6 +177,16 @@ RETURN ( nil )
 METHOD changedSerie() CLASS OperacionesController 
 
 RETURN ( ::getNumeroDocumentoComponent():setValue( ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD appendLine() CLASS OperacionesController
+
+   if !( ::getLinesController():validLine() )
+      RETURN( nil )
+   end if
+
+RETURN ( ::getLinesController():AppendLineal() ) 
 
 //---------------------------------------------------------------------------//
 

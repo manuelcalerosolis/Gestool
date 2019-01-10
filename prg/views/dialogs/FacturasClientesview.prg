@@ -187,7 +187,7 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Lineas ------------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::lineAppend() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::getController():appendLine() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
 
    TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::getController():getFacturasVentasLineasController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
 
@@ -318,16 +318,6 @@ METHOD addLinksToExplorerBar() CLASS FacturasClientesView
    end if
 
 RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD lineAppend() CLASS FacturasClientesView
-
-   if !::getController():getFacturasVentasLineasController():validLine()
-      RETURN( nil )
-   end if
-
-RETURN ( ::getController():getFacturasVentasLineasController():AppendLineal() ) 
 
 //---------------------------------------------------------------------------//
 

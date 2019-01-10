@@ -420,7 +420,7 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLConsolidacionesAlmacenesModel():New() )
 
-   aadd( ::aModels, SQLConsolidacionesAlmacenLineasModel():New() ) 
+   aadd( ::aModels, SQLConsolidacionesAlmacenesLineasModel():New() ) 
 
    aadd( ::aModels, SQLFacturasComprasLineasModel():New() ) 
 

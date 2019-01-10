@@ -211,7 +211,7 @@ METHOD MakeTotals() CLASS SQLXBrowse
    eval( ::bGoTop )
 
    do 
-      aeval( aCols, {|oCol| oCol:nTotal  += oCol:Value, oCol:nCount++ } )
+      aeval( aCols, {|oCol| if( hb_isnumeric( oCol:Value ), oCol:nTotal += oCol:Value, ), oCol:nCount++ } )
    until ( ::skip( 1 ) < 1 )
 
    eval( ::bBookMark, uBm )
