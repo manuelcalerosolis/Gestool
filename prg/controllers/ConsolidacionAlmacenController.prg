@@ -64,8 +64,6 @@ METHOD New( oController ) CLASS ConsolidacionAlmacenController
 
    ::lMail                             := .t.
 
-   ::lOthers                           := .t.
-
    ::cTitle                            := "Consolidaciones de almacén"
 
    ::cName                             := "consolidacion_almacen"
@@ -73,9 +71,6 @@ METHOD New( oController ) CLASS ConsolidacionAlmacenController
    ::hImage                            := {  "16" => "gc_warehouse_16",;
                                              "32" => "gc_warehouse_32",;
                                              "48" => "gc_warehouse_48" }
-
-   ::getNavigatorView():getMenuTreeView():setEvent( 'addingDeleteButton', { || .f. } )
-   ::getNavigatorView():getMenuTreeView():setEvent( 'addedPdfButton', {|| ::addExtraButtons() } )
 
    ::getModel():setEvent( 'loadedBuffer',          {|| ::loadedBuffer() } )
    ::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )

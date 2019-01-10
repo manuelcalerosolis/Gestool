@@ -17,7 +17,7 @@ CLASS OperacionesComercialesDescuentosController FROM SQLBrowseController
 
    //Construcciones tardias----------------------------------------------------
    
-   METHOD getModel                     VIRTUAL
+   METHOD getModel()                   VIRTUAL
 
    METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesDescuentosBrowseView():New( self ), ), ::oBrowseView ) 
 
@@ -341,13 +341,14 @@ METHOD countNombreWhereOperacionUuid( cNombre ) CLASS SQLOperacionesComercialesD
 
    TEXT INTO cSql
 
-   SELECT COUNT( operaciones_comeciales_descuentos.nombre )
+   SELECT 
+      COUNT( operaciones_comeciales_descuentos.nombre )
 
-   FROM %1$s AS operaciones_comeciales_descuentos
-   
-   WHERE parent_uuid = %2$s
-      AND operaciones_comeciales_descuentos.nombre = %3$s
-      AND operaciones_comeciales_descuentos.deleted_at = 0
+      FROM %1$s AS operaciones_comeciales_descuentos
+      
+      WHERE parent_uuid = %2$s
+         AND operaciones_comeciales_descuentos.nombre = %3$s
+         AND operaciones_comeciales_descuentos.deleted_at = 0
 
    ENDTEXT
 
@@ -367,7 +368,9 @@ METHOD getSentenceDescuentosWhereUuid( uuidOperacionComercial, importeBruto ) CL
       operaciones_comeciales_descuentos.nombre AS nombre_descuento,
       operaciones_comeciales_descuentos.descuento AS porcentaje_descuento, 
       ROUND( operaciones_comeciales_descuentos.descuento * %3$s / 100, 2 ) AS importe_descuento
-   FROM %1$s AS operaciones_comeciales_descuentos 
+
+      FROM %1$s AS operaciones_comeciales_descuentos 
+   
       WHERE operaciones_comeciales_descuentos.parent_uuid = %2$s 
          AND operaciones_comeciales_descuentos.deleted_at = 0; 
 
