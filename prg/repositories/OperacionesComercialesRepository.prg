@@ -64,7 +64,7 @@ CLASS OperacionesComercialesRepository FROM SQLBaseRepository
 
    //Envio de emails-----------------------------------------------------------
 
-   METHOD getTerceroMailWhereOperacionUuid( uuidFactura ) 
+   METHOD getMailWhereOperacionUuid( uuidFactura ) 
 
 END CLASS
 
@@ -492,7 +492,7 @@ RETURN ( if( hb_isarray( aTotal ), aTotal, nil ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTerceroMailWhereOperacionUuid( uuidOperacionComercial ) CLASS OperacionesComercialesRepository
+METHOD getMailWhereOperacionUuid( uuidOperacionComercial ) CLASS OperacionesComercialesRepository
 
    local cSQL
 
@@ -505,7 +505,7 @@ METHOD getTerceroMailWhereOperacionUuid( uuidOperacionComercial ) CLASS Operacio
          ON terceros.codigo = operaciones_comerciales.tercero_codigo
       
       INNER JOIN %3$s AS direcciones
-         ON terceros.uuid = direcciones.parent_uuid AND direcciones.principal = 0
+         ON terceros.uuid = direcciones.parent_uuid AND direcciones.codigo = 0
 
       WHERE operaciones_comerciales.uuid = %4$s
 

@@ -206,7 +206,11 @@ OperacionesComercialesReport.prg											\
 ImprimirSeriesController.prg 												\
 SQLPrintController.prg 														\
 ImprimirSeriesView.prg 														\
-SQLConsolidacionesAlmacenModel.prg 										\
+ConsolidacionAlmacenBrowseView.prg 										\
+ConsolidacionAlmacenView.prg 												\
+ConsolidacionAlmacenController.prg										\
+SQLConsolidacionesAlmacenesModel.prg									\
+ConsolidacionAlmacenRepository.prg										\
 SQLConfiguracionesModel.prg 												\
 ConfiguracionesController.prg												\
 RecordController.prg															\
@@ -597,6 +601,11 @@ ImprimirSeriesView.obj 														\
 ImprimirSeriesController.obj 												\
 SQLPrintController.obj 														\
 SQLConfiguracionesModel.obj 												\
+ConsolidacionAlmacenBrowseView.obj										\
+ConsolidacionAlmacenView.obj 												\
+ConsolidacionAlmacenController.obj 										\
+SQLConsolidacionesAlmacenesModel.obj 									\
+ConsolidacionAlmacenRepository.obj 										\
 ConfiguracionesController.obj												\
 RecordController.obj															\
 ConfiguracionesRepository.obj 											\
@@ -980,6 +989,11 @@ $(OBJ)\ImprimirSeriesView.obj												+
 $(OBJ)\ImprimirSeriesController.obj										+
 $(OBJ)\SQLPrintController.obj												+
 $(OBJ)\SQLConfiguracionesModel.obj 										+
+$(OBJ)\SQLConsolidacionesAlmacenesModel.obj 							+
+$(OBJ)\ConsolidacionAlmacenRepository.obj 							+
+$(OBJ)\ConsolidacionAlmacenBrowseView.obj								+
+$(OBJ)\ConsolidacionAlmacenView.obj 									+
+$(OBJ)\ConsolidacionAlmacenController.obj 							+
 $(OBJ)\ConfiguracionesController.obj 									+
 $(OBJ)\RecordController.obj 												+
 $(OBJ)\ConfiguracionesRepository.obj 									+

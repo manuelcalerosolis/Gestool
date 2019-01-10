@@ -49,7 +49,7 @@ CLASS MailController
 
    METHOD hasMail()                    INLINE ( !empty( ::getMail() ) )
 
-   METHOD getMail( uuid )              INLINE ( ::getController():getRepository():getTerceroMailWhereOperacionUuid( uuid ) )
+   METHOD getMail( uuid )              INLINE ( ::getController():getRepository():getMailWhereOperacionUuid( uuid ) )
 
    METHOD getSelectedMail()            INLINE ( ::getMail( afirst( ::getUuidIdentifiers() ) ) )
 

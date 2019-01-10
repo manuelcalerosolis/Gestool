@@ -270,6 +270,8 @@ METHOD Default()
 
    ::oTreeView:bChanged := {|| ::onChange() }
 
+   
+
    if !empty( ::getSuperController():getImage( "16" ) )
       ::oButtonMain     := ::oTreeView:Add( ::getSuperController():cTitle, ::addImage( ::getSuperController():getImage( "16" ) ) )
    end if 
