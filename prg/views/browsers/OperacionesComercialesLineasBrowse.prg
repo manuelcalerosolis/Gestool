@@ -88,7 +88,7 @@ METHOD keyChar( nKey ) CLASS OperacionesComercialesLineasBrowseView
    end if 
 
    if !empty( ::oBrowse:SelectedCol() ) .and. !empty( ::oBrowse:SelectedCol():bEditBlock )
-      eval( ::oBrowse:SelectedCol():bEditBlock )
+      ::oBrowse:SelectedCol():runBtnAction( nKey )
    end if 
 
 RETURN ( nil )   

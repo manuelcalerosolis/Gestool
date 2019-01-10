@@ -83,12 +83,12 @@ RETURN ( ::getController():validLine() )
 
 METHOD keyChar( nKey ) CLASS ConsolidacionAlmacenLineasBrowseView
 
-   if nkey != VK_EXECUTE
+   if nKey != VK_EXECUTE
       RETURN ( nil )
    end if 
 
    if !empty( ::oBrowse:SelectedCol() ) .and. !empty( ::oBrowse:SelectedCol():bEditBlock )
-      eval( ::oBrowse:SelectedCol():bEditBlock )
+      ::oBrowse:SelectedCol():runBtnAction( nKey )
    end if 
 
 RETURN ( nil )   
@@ -323,6 +323,8 @@ METHOD activateUbicacionesSelectorView() CLASS ConsolidacionAlmacenLineasBrowseV
    ::getSuperController():getUbicacionesController():setControllerParentUuid( uuidAlmacen )
 
    hUbicacion              := ::getSuperController():getUbicacionesController():ActivateSelectorView()
+
+   msgalert( hb_valtoexp( hUbicacion ), "hUbicacion" )
 
 RETURN ( hUbicacion )
 

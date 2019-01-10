@@ -41,6 +41,7 @@ CLASS SQLBrowseView
    DATA lDeletedColored                      INIT .t.
 
    METHOD New( oController ) CONSTRUCTOR
+   
    METHOD End()
 
    METHOD Create()
@@ -287,7 +288,7 @@ METHOD Create( oWindow )
 
    ::oBrowse:setName( ::getName() )
 
-   ::oBrowse:bKeyChar         := {|nKey| ::getController():onKeyChar( nKey ) }
+   ::oBrowse:bKeyChar         := {| nKey | ::getController():onKeyChar( nKey ) }
 
    if ::isNotSenderControllerZoomMode() 
       ::setLDblClick( {|| ::onDblClick() } )
