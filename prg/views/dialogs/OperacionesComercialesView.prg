@@ -64,7 +64,7 @@ METHOD Activate() CLASS OperacionesComercialesView
       OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
-      PROMPT      ::getPrompt() ;
+      PROMPT      ::oController:cTitle();
       ID          800 ;
       FONT        oFontBold() ;
       OF          ::oDialog

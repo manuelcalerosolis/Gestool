@@ -13,11 +13,6 @@ END CLASS
 
 METHOD Activate() CLASS OperacionComercialRectificarView
 
-   local oBmpGeneral
-   local oSayCamposExtra
-   msgalert( ::oController:className(), "padre")
-
-
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "FACTURA_RECTIFICATIVA" ;
       TITLE       "Rectificar factura"
@@ -33,15 +28,21 @@ METHOD Activate() CLASS OperacionComercialRectificarView
       FONT        oFontBold() ;
       OF          ::oDialog ;
 
-   ::oController:getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "parent_uuid" ] ) )
-   //::oController:getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
-   //::getController():oController:getFacturasController():getSelector():setValid( {|| ::getController():validate( "factura" ) } )
+   ::oController:getFacturasController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "parent_uuid" ] ) )
+   ::oController:getFacturasController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
+   ::oController:getFacturasController():getSelector():setValid( {||msgalert( ::oController:getRectifictivaValidator():validate("factura"), "validacion de factura" ), ::oController:getRectifictivaValidator():validate( "factura" ) } )
    
-   /*REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
-      ID          110 ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;*/
+   REDEFINE COMBOBOX ::getController():getModel():hBuffer[ "causa" ];
+      ITEMS    RECTIFICATIVA_ITEMS ;
+      ID       110 ;
+      WHEN     ( ::getController():isNotZoomMode() ) ;
+      OF       ::oDialog ;
+
+      REDEFINE COMBOBOX ::getController():getModel():hBuffer[ "motivo" ];
+      ITEMS    RECTIFICATIVA_ITEMS ;
+      ID       120 ;
+      WHEN     ( ::getController():isNotZoomMode() ) ;
+      OF       ::oDialog ;
 
    /*ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
@@ -68,6 +69,7 @@ CLASS OperacionComercialRectificarValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
+   METHOD sayMessage( cMessage )
  
 END CLASS
 
@@ -81,6 +83,19 @@ METHOD getValidators() CLASS OperacionComercialRectificarValidator
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
+
+METHOD sayMessage( cMessage )
+
+   local cText    := strtran( cMessage, "{value}", alltrim( cvaltostr( ::uValue ) ) )
+
+   if empty( ::oController:getRectificativaDialogView() ) .or. empty( ::oController:getRectificativaDialogView():oMessage )
+      msgstop( cText, "Error" )
+      RETURN ( nil )
+   end if 
+   ::oController:getRectificativaDialogView():showMessage( cText )
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
