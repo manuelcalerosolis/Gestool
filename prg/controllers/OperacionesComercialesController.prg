@@ -11,6 +11,8 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    DATA oRectificativaDialogView
 
+   DATA oRectificativaValidator
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -117,6 +119,8 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD getRectificativaDialogView();
                                        INLINE ( if( empty( ::oRectificativaDialogView ), ::oRectificativaDialogView := OperacionComercialRectificarView():New( self ), ), ::oRectificativaDialogView )
+
+   METHOD getRectifictivaValidator()   INLINE (if( empty( ::oRectificativaValidator ), ::oRectificativaValidator := OperacionComercialRectificarValidator():New( self ), ), ::oRectificativaValidator )
 
 END CLASS
 

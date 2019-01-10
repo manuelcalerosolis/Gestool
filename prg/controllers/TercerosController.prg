@@ -214,6 +214,11 @@ METHOD buildRowSetSentence( cType )
       cColumnOrientation      := ::getBrowseView():getColumnOrientationView( cType, ::getName() )
    end if 
 
+   if empty(::oController)
+      ::getRowSet():Build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
+      RETURN ( nil )
+   end if
+
    if ::oController:isClient()
       ::getRowSet():Build( ::getModel():getSelectClient( cColumnOrder, cColumnOrientation ) )
       RETURN ( nil )

@@ -34,8 +34,8 @@ METHOD Activate() CLASS OperacionComercialRectificarView
       OF          ::oDialog ;
 
    ::oController:getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "parent_uuid" ] ) )
-   //::oController:getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
-   //::getController():oController:getFacturasController():getSelector():setValid( {|| ::getController():validate( "factura" ) } )
+   ::oController:getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
+   ::oController():getSelector():setValid( {|| ::oController:getRectifictivaValidator():validate( "factura" ) } )
    
    /*REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
