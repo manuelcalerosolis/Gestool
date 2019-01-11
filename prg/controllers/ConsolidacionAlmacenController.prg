@@ -260,3 +260,86 @@ RETURN ( ::getController():getLinesController():validLine() )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
+#ifdef __TEST__
+
+CLASS TestConsolidacionAlmacenController FROM TestOperacionesController
+
+   DATA aCategories                    INIT { "all", "consolidaciones_almacenes" }
+
+   METHOD beforeClass()
+
+   METHOD click_nueva_linea( view )    INLINE ( view:getControl( 501, view:oFolder:aDialogs[1] ):Click(),;
+                                                apoloWaitSeconds( 1 ) )
+
+   METHOD set_codigo_almacen( cCodigoAlmacen, view ) ;
+                                       INLINE ( view:getControl( 130, view:oFolder:aDialogs[1] ):cText( cCodigoAlmacen ),;
+                                                apoloWaitSeconds( 1 ),;
+                                                view:getControl( 130, view:oFolder:aDialogs[1] ):lValid(),;
+                                                apoloWaitSeconds( 1 ) )
+
+   METHOD set_codigo_articulo_en_linea( cCodigoArticulo ) ;
+                                       INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , cCodigoArticulo, 0 ),;
+                                                apoloWaitSeconds( 1 ),;
+                                                ::refresh_linea_browse_view() )
+
+   METHOD set_codigo_ubicacion_en_linea( cCodigoUbicacion ) ;
+                                       INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoUbicacion:bOnPostEdit, , cCodigoUbicacion, 0 ),;
+                                                apoloWaitSeconds( 1 ),;
+                                                ::refresh_linea_browse_view() )
+
+   METHOD set_precio_en_linea( nPrecio ) ;
+                                       INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , nPrecio, 0 ),;
+                                                apoloWaitSeconds( 1 ),;
+                                                ::refresh_linea_browse_view() )
+
+   METHOD refresh_linea_browse_view()  INLINE ( ::oController:getLinesController():getBrowseView():getRowSet():Refresh(),;
+                                                apoloWaitSeconds( 1 ) )
+   
+   METHOD test_dialogo_sin_almacen()                
+   
+   METHOD test_dialogo_sin_lineas()                   
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD beforeClass() CLASS TestConsolidacionAlmacenController
+   
+   Company():setDefaultUsarUbicaciones( .t. )
+   
+   ::oController  := ConsolidacionAlmacenController():New()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_sin_almacen() CLASS TestConsolidacionAlmacenController
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| view | ;
+         view:getControl( IDOK ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         view:getControl( IDCANCEL ):Click() } )
+
+   ::assert:false( ::oController:Append(), "test creación de consolidación sin código almacén" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_sin_lineas() CLASS TestConsolidacionAlmacenController
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| view | ;
+         ::set_codigo_almacen( "0", view ),;
+         view:getControl( IDOK ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         view:getControl( IDCANCEL ):Click() } )
+
+   ::assert:false( ::oController:Append(), "test creación de factura sin lineas" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+#endif

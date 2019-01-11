@@ -499,15 +499,7 @@ RETURN ( ::getController():getLinesController():validLine() )
 
 #ifdef __TEST__
 
-CLASS TestOperacionesComecialesController FROM TestCase
-
-   DATA oController
-
-   METHOD beforeClass()
-
-   METHOD afterClass()
-
-   METHOD Before() 
+CLASS TestOperacionesComercialesController FROM TestOperacionesController
 
    METHOD set_codigo_cliente( cCodigoCliente, view ) ;
                                        INLINE ( view:getControl( 170, view:oFolder:aDialogs[1] ):cText( cCodigoCliente ),;
@@ -597,79 +589,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD beforeClass() CLASS TestOperacionesComecialesController
-   
-   Company():setDefaultUsarUbicaciones( .t. )
-   
-   ::oController  := FacturasVentasController():New()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD afterClass() CLASS TestOperacionesComecialesController
-
-RETURN ( ::oController:end() )
-
-//---------------------------------------------------------------------------//
-
-METHOD Before() CLASS TestOperacionesComecialesController
-
-   SQLTercerosModel():truncateTable()
-
-   SQLDireccionesModel():truncateTable()
-
-   SQLAlmacenesModel():truncateTable()
-      SQLUbicacionesModel():truncateTable()
-
-   SQLMetodoPagoModel():truncateTable()
-
-   SQLArticulosModel():truncateTable()
-   
-   SQLFacturasVentasModel():truncateTable()
-      SQLFacturasVentasLineasModel():truncateTable()
-      SQLFacturasVentasDescuentosModel():truncateTable()
-
-   SQLArticulosTarifasModel():truncateTable()
-
-   SQLRecibosModel():truncateTable()
-      SQLPagosModel():truncateTable()
-      SQLRecibosPagosModel():truncateTable()
-
-   SQLAgentesModel():truncateTable()
-
-   SQLTercerosModel():test_create_contado()
-   SQLTercerosModel():test_create_tarifa_mayorista()
-   SQLTercerosModel():test_create_con_plazos()
-
-   SQLAlmacenesModel():test_create_almacen_principal()
-   SQLAlmacenesModel():test_create_almacen_auxiliar()
-
-   SQLAgentesModel():test_create_agente_principal()
-   SQLAgentesModel():test_create_agente_auxiliar()
-
-   SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_principal() )
-   SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_auxiliar() )
-
-   SQLTiposIvaModel():test_create_iva_al_4()
-   SQLTiposIvaModel():test_create_iva_al_10()
-   SQLTiposIvaModel():test_create_iva_al_21()
-
-   SQLMetodoPagoModel():test_create_contado()
-   SQLMetodoPagoModel():test_create_reposicion()
-   SQLMetodoPagoModel():test_create_con_plazos()
-
-   SQLArticulosModel():test_create_articulo_con_unidad_de_medicion_cajas_palets()
-   SQLArticulosModel():test_create_articulo_con_tarifa_mayorista()
-
-   SQLArticulosTarifasModel():test_create_tarifa_base()
-   SQLArticulosTarifasModel():test_create_tarifa_mayorista()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD test_calculo_con_descuento() CLASS TestOperacionesComecialesController
+METHOD test_calculo_con_descuento() CLASS TestOperacionesComercialesController
 
    local uuid
    local hTotal
@@ -694,7 +614,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_calculo_con_incremento() CLASS TestOperacionesComecialesController
+METHOD test_calculo_con_incremento() CLASS TestOperacionesComercialesController
 
    local uuid
    local hTotal
@@ -713,7 +633,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_con_unidades_de_medicion() CLASS TestOperacionesComecialesController
+METHOD test_con_unidades_de_medicion() CLASS TestOperacionesComercialesController
 
    local uuid
    local hTotal
@@ -732,7 +652,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_sin_lineas() CLASS TestOperacionesComecialesController
+METHOD test_dialogo_sin_lineas() CLASS TestOperacionesComercialesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
@@ -748,7 +668,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_ventas_por_cajas() CLASS TestOperacionesComecialesController
+METHOD test_dialogo_ventas_por_cajas() CLASS TestOperacionesComercialesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
@@ -766,7 +686,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_tarifa_mayorista() CLASS TestOperacionesComecialesController
+METHOD test_dialogo_tarifa_mayorista() CLASS TestOperacionesComercialesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
@@ -784,7 +704,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_con_un_solo_pago() CLASS TestOperacionesComecialesController
+METHOD test_dialogo_con_un_solo_pago() CLASS TestOperacionesComercialesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
@@ -804,7 +724,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_con_varios_pagos() CLASS TestOperacionesComecialesController
+METHOD test_dialogo_con_varios_pagos() CLASS TestOperacionesComercialesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
@@ -824,7 +744,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_cambiando_almacen() CLASS TestOperacionesComecialesController
+METHOD test_dialogo_cambiando_almacen() CLASS TestOperacionesComercialesController
 
    local cCodigo
 
@@ -849,7 +769,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_cambiando_ubicacion() CLASS TestOperacionesComecialesController
+METHOD test_dialogo_cambiando_ubicacion() CLASS TestOperacionesComercialesController
    
    local cCodigo
 
@@ -874,7 +794,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_cambiando_agente() CLASS TestOperacionesComecialesController
+METHOD test_dialogo_cambiando_agente() CLASS TestOperacionesComercialesController
 
    local cCodigo
 
@@ -900,7 +820,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_con_recargo_en_documento() CLASS TestOperacionesComecialesController
+METHOD test_dialogo_con_recargo_en_documento() CLASS TestOperacionesComercialesController
 
    local uuid
    local hTotal
@@ -924,7 +844,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_con_descuento_en_documento() CLASS TestOperacionesComecialesController
+METHOD test_dialogo_con_descuento_en_documento() CLASS TestOperacionesComercialesController
 
    local cCodigo
 

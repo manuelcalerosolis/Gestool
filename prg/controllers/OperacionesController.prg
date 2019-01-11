@@ -232,3 +232,87 @@ RETURN ( aItems )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
+#ifdef __TEST__
+
+CLASS TestOperacionesController FROM TestCase
+
+   DATA oController
+
+   METHOD beforeClass()                VIRTUAL
+
+   METHOD afterClass()
+
+   METHOD Before() 
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD afterClass() CLASS TestOperacionesController
+
+RETURN ( ::oController:end() )
+
+//---------------------------------------------------------------------------//
+
+METHOD Before() CLASS TestOperacionesController
+
+   SQLTercerosModel():truncateTable()
+
+   SQLDireccionesModel():truncateTable()
+
+   SQLAlmacenesModel():truncateTable()
+      SQLUbicacionesModel():truncateTable()
+
+   SQLMetodoPagoModel():truncateTable()
+
+   SQLArticulosModel():truncateTable()
+   
+   SQLFacturasVentasModel():truncateTable()
+      SQLFacturasVentasLineasModel():truncateTable()
+      SQLFacturasVentasDescuentosModel():truncateTable()
+
+   SQLArticulosTarifasModel():truncateTable()
+
+   SQLRecibosModel():truncateTable()
+      SQLPagosModel():truncateTable()
+      SQLRecibosPagosModel():truncateTable()
+
+   SQLAgentesModel():truncateTable()
+
+   SQLUnidadesMedicionGruposModel():truncateTable()
+   SQLUnidadesMedicionOperacionesModel():truncateTable()
+
+   SQLTercerosModel():test_create_contado()
+   SQLTercerosModel():test_create_tarifa_mayorista()
+   SQLTercerosModel():test_create_con_plazos()
+
+   SQLAlmacenesModel():test_create_almacen_principal()
+   SQLAlmacenesModel():test_create_almacen_auxiliar()
+
+   SQLAgentesModel():test_create_agente_principal()
+   SQLAgentesModel():test_create_agente_auxiliar()
+
+   SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_principal() )
+   SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_auxiliar() )
+
+   SQLTiposIvaModel():test_create_iva_al_4()
+   SQLTiposIvaModel():test_create_iva_al_10()
+   SQLTiposIvaModel():test_create_iva_al_21()
+
+   SQLMetodoPagoModel():test_create_contado()
+   SQLMetodoPagoModel():test_create_reposicion()
+   SQLMetodoPagoModel():test_create_con_plazos()
+
+   SQLUnidadesMedicionGruposModel():test_create()
+
+   SQLArticulosModel():test_create_articulo_con_unidad_de_medicion_cajas_palets()
+   SQLArticulosModel():test_create_articulo_con_tarifa_mayorista()
+
+   SQLArticulosTarifasModel():test_create_tarifa_base()
+   SQLArticulosTarifasModel():test_create_tarifa_mayorista()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+#endif

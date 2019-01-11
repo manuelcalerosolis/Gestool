@@ -330,7 +330,7 @@ CLASS SQLUnidadesMedicionOperacionesModel FROM SQLCompanyModel
    
    METHOD test_create_ventas_por_cajas( uuidParent )
 
-   METHOD test_create_compras_por_cajas( uuidParent )
+   METHOD test_create_compras_por_palets( uuidParent )
 
    METHOD test_create_inventario_por_unidades( uuidParent )   
 
@@ -445,6 +445,8 @@ RETURN ( ::getUnidadWhereArticulo( cCodigoArticulo, "Ventas" ) )
 
 METHOD getUnidadInventarioWhereArticulo( cCodigoArticulo ) CLASS SQLUnidadesMedicionOperacionesModel
    
+   msgalert( cCodigoArticulo, "cCodigoArticulo" )
+
 RETURN ( ::getUnidadWhereArticulo( cCodigoArticulo, "Inventarios" ) )
 
 //---------------------------------------------------------------------------//
@@ -472,7 +474,7 @@ METHOD getUnidadWhereArticulo( cCodigoArticulo, cOperacion ) CLASS SQLUnidadesMe
       INNER JOIN %3$s AS unidades_medicion
          ON unidades_medicion.codigo = unidades_medicion_operacion.unidad_medicion_codigo      
 
-      WHERE unidades_medicion_operacion.operacion = %4$s AND unidades_medicion_operacion.deleted_at = 0
+      WHERE unidades_medicion_operacion.operacion = %5$s AND unidades_medicion_operacion.deleted_at = 0
 
    ENDTEXT
 
@@ -481,7 +483,6 @@ METHOD getUnidadWhereArticulo( cCodigoArticulo, cOperacion ) CLASS SQLUnidadesMe
 RETURN ( getSQLDatabase():getValue( cSql, "" ) )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD getUnidad() CLASS SQLUnidadesMedicionOperacionesModel
 
@@ -561,7 +562,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_create_compras_por_cajas( uuidParent ) CLASS SQLUnidadesMedicionOperacionesModel
+METHOD test_create_compras_por_palets( uuidParent ) CLASS SQLUnidadesMedicionOperacionesModel
 
    local hBuffer  := ::loadBlankBuffer()
 

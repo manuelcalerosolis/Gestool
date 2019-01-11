@@ -82,7 +82,7 @@ CLASS OperacionesLineasController FROM SQLBrowseController
 
    METHOD getUnidadMedicion( cCodigoArticulo )  VIRTUAL
 
-   METHOD stampArticuloPrecio()        
+   METHOD stampArticuloPrecio()        VIRTUAL        
 
    METHOD updateArticuloFactor( uValue )
 

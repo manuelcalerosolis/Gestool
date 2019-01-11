@@ -122,11 +122,25 @@ RETURN ( ::hValidators )
 
 #ifdef __TEST__
 
-CLASS TestFacturasVentasController FROM TestOperacionesComecialesController
+CLASS TestFacturasVentasController FROM TestOperacionesComercialesController
 
    DATA aCategories                    INIT { "all", "facturas_ventas" }
 
+   METHOD beforeClass()
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD beforeClass() CLASS TestFacturasVentasController
+   
+   Company():setDefaultUsarUbicaciones( .t. )
+   
+   ::oController  := FacturasVentasController():New()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 
 #endif
 

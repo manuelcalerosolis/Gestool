@@ -15,8 +15,6 @@ CLASS OperacionesComercialesLineasController FROM OperacionesLineasController
 
    METHOD stampArticuloPrecio()
 
-   METHOD getArticuloUnidadMedicion()   
-   
    METHOD updateArticuloUnidades( oCol, uValue )
 
    METHOD postValidateAgenteCodigo( oCol, uValue, nKey )

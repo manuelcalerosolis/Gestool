@@ -284,7 +284,7 @@ METHOD validActivate() CLASS OperacionesComercialesView
    end if 
 
    if !::getController():getLinesController():validLine()
-      RETURN( nil )
+      RETURN ( nil )
    end if
 
 RETURN ( ::oDialog:end( IDOK ) )

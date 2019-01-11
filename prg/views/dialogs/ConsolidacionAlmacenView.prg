@@ -165,6 +165,10 @@ METHOD validActivate() CLASS ConsolidacionAlmacenView
       RETURN ( nil )
    end if
 
+   if ::getController():notValidate( "formulario" )
+      RETURN ( nil )
+   end if 
+
    if !::getController():getLinesController():validLine()
       RETURN( nil )
    end if

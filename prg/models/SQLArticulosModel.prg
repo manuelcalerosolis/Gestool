@@ -205,13 +205,9 @@ METHOD test_create_articulo_con_unidad_de_medicion_cajas_palets() CLASS SQLArtic
 
    uuid     := win_uuidcreatestring()
 
-   SQLArticulosModel():truncateTable()
-   SQLUnidadesMedicionGruposModel():truncateTable()
-   SQLUnidadesMedicionOperacionesModel():truncateTable()
-
    SQLUnidadesMedicionGruposModel():test_create()
    SQLUnidadesMedicionOperacionesModel():test_create_ventas_por_cajas( uuid )
-   SQLUnidadesMedicionOperacionesModel():test_create_ventas_por_cajas( uuid )
+   SQLUnidadesMedicionOperacionesModel():test_create_compras_por_palets( uuid )
    SQLUnidadesMedicionOperacionesModel():test_create_inventario_por_unidades( uuid )
 
    hBuffer  := ::loadBlankBuffer()
@@ -232,11 +228,6 @@ METHOD test_create_articulo_con_tarifa_mayorista() CLASS SQLArticulosModel
    local hBuffer
 
    uuid     := win_uuidcreatestring()
-
-   SQLArticulosModel():truncateTable()
-   SQLArticulosTarifasModel():truncateTable() 
-   SQLUnidadesMedicionGruposModel():truncateTable()
-   SQLUnidadesMedicionOperacionesModel():truncateTable()
 
    SQLArticulosTarifasModel():test_create_tarifa_base() 
    SQLArticulosTarifasModel():test_create_tarifa_mayorista() 
