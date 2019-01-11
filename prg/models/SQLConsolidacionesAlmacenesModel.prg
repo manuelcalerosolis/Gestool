@@ -79,7 +79,8 @@ METHOD getInitialSelect() CLASS SQLConsolidacionesAlmacenesModel
       consolidaciones_almacenes.fecha_valor_stock AS fecha_valor_stock,
       consolidaciones_almacenes.comentario AS comentario,
       consolidaciones_almacenes.almacen_codigo AS almacen_codigo,
-      almacenes.nombre AS almacen_nombre
+      almacenes.nombre AS almacen_nombre,
+      ( %3$s( consolidaciones_almacenes.uuid ) ) AS total
 
    FROM %1$s AS consolidaciones_almacenes
 
@@ -88,7 +89,7 @@ METHOD getInitialSelect() CLASS SQLConsolidacionesAlmacenesModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName() )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName(), Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ) )
 
 RETURN ( cSql )
 

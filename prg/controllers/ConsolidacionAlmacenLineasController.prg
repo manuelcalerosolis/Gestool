@@ -9,6 +9,8 @@ CLASS ConsolidacionAlmacenLineasController FROM OperacionesLineasController
 
    METHOD stampArticulo( hArticulo )
 
+   METHOD stampArticuloPrecio()
+
    METHOD updateArticuloUnidades( oCol, uValue )
 
    METHOD validLine()
@@ -74,5 +76,18 @@ METHOD validLine() CLASS ConsolidacionAlmacenLineasController
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
+
+METHOD stampArticuloPrecio() CLASS ConsolidacionAlmacenLineasController
+
+   local nPrecioBase    := SQLArticulosModel():getFieldWhere( "precio_costo", { "codigo" => ::getRowSet():fieldget( "articulo_codigo" ) } )
+
+   if hb_isnumeric( nPrecioBase )
+      ::updateField( 'articulo_precio', nPrecioBase )
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
 
 

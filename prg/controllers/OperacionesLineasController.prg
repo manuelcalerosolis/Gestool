@@ -80,7 +80,7 @@ CLASS OperacionesLineasController FROM SQLBrowseController
 
    METHOD stampArticuloUnidadMedicionVentas()
 
-   METHOD stampArticuloPrecio()
+   METHOD stampArticuloPrecio()        VIRTUAL
 
    METHOD updateArticuloFactor( uValue )
 
@@ -523,16 +523,6 @@ METHOD updateArticuloFactor( oCol, uValue )
    ::getBrowseView():makeTotals( oCol )
 
 RETURN ( ::oController:calculateTotals() )
-
-//---------------------------------------------------------------------------//
-
-METHOD stampArticuloPrecio()
-
-   local nPrecioBase    := SQLArticulosPreciosModel():getPrecioBaseWhereArticuloCodigoAndTarifaCodigo( ::getRowSet():fieldget( "articulo_codigo" ), ::oController:getModelBuffer( "tarifa_codigo" ) )
-
-   ::updateField( 'articulo_precio', nPrecioBase )
-
-RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 

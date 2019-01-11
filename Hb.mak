@@ -215,7 +215,7 @@ OperacionesLineasController.prg											\
 ConsolidacionAlmacenLineasBrowse.prg									\
 OperacionesLineasBrowse.prg												\
 SQLConsolidacionesAlmacenesModel.prg									\
-ConsolidacionAlmacenRepository.prg										\
+ConsolidacionesAlmacenesRepository.prg									\
 SQLConfiguracionesModel.prg 												\
 ConfiguracionesController.prg												\
 RecordController.prg															\
@@ -615,7 +615,7 @@ OperacionesLineasController.obj 											\
 ConsolidacionAlmacenLineasBrowse.obj 									\
 OperacionesLineasBrowse.obj 												\
 SQLConsolidacionesAlmacenesModel.obj 									\
-ConsolidacionAlmacenRepository.obj 										\
+ConsolidacionesAlmacenesRepository.obj 								\
 ConfiguracionesController.obj												\
 RecordController.obj															\
 ConfiguracionesRepository.obj 											\
@@ -1001,7 +1001,7 @@ $(OBJ)\ImprimirSeriesController.obj										+
 $(OBJ)\SQLPrintController.obj												+
 $(OBJ)\SQLConfiguracionesModel.obj 										+
 $(OBJ)\SQLConsolidacionesAlmacenesModel.obj 							+
-$(OBJ)\ConsolidacionAlmacenRepository.obj 							+
+$(OBJ)\ConsolidacionesAlmacenesRepository.obj 						+
 $(OBJ)\ConsolidacionAlmacenBrowseView.obj								+
 $(OBJ)\ConsolidacionAlmacenView.obj 									+
 $(OBJ)\ConsolidacionAlmacenController.obj 							+
