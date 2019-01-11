@@ -862,7 +862,6 @@ $(OBJ)\SQLPermisosOpcionesModel.obj										+
 $(OBJ)\PermisosController.obj												+
 $(OBJ)\SQLFiltrosValidator.obj											+
 $(OBJ)\SQLFiltrosController.obj											+
-$(OBJ)\RocolumnC3.obj            										+
 $(OBJ)\Rfile.obj                 										+
 $(OBJ)\Animat.obj                										+
 $(OBJ)\Printer.obj               										+

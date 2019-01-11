@@ -97,7 +97,7 @@ CLASS SQLDatabase
    METHOD checkModels()   
    METHOD checkModel( oModel ) 
 
-   METHOD getSchemaColumns()
+   METHOD getSchemaColumns() 
 
    METHOD getListTables()
 
