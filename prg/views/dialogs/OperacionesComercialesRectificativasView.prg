@@ -17,8 +17,8 @@ METHOD addLinksToExplorerBar() CLASS OperacionesComercialesRectificativasView
 
    oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-   oPanel:AddLink(   "Rectificar...",;
-                     {|| ::getController:getRectificativaDialogView():Activate() },;
+   oPanel:AddLink(   "Importar factura...",;
+                     {|| ::getController():importFactura() },;
                          ::getController():getFacturasController():getImage( "16" ) )
 
 

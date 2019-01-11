@@ -14,6 +14,8 @@ CLASS OperacionesComercialesLineasController FROM OperacionesLineasController
    METHOD stampArticuloIva()
 
    METHOD stampArticuloPrecio()
+
+   METHOD getArticuloUnidadMedicion()   
    
    METHOD updateArticuloUnidades( oCol, uValue )
 
@@ -35,6 +37,8 @@ CLASS OperacionesComercialesLineasController FROM OperacionesLineasController
 
    METHOD validLine()   
 
+   METHOD getUnidadMedicion( cCodigoArticulo ) ;
+                                       INLINE ( SQLUnidadesMedicionOperacionesModel():getUnidadVentaWhereArticulo( cCodigoArticulo ) )
 
    METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesLineasBrowseView():New( self ), ), ::oBrowseView ) 
 
@@ -50,7 +54,7 @@ METHOD stampArticulo( hArticulo ) CLASS OperacionesComercialesLineasController
 
    ::stampArticuloCodigoNombre( hArticulo )
 
-   ::stampArticuloUnidadMedicionVentas()
+   ::stampArticuloUnidadMedicion()
 
    ::stampArticuloPrecio()
 

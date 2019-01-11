@@ -310,6 +310,14 @@ CLASS SQLUnidadesMedicionOperacionesModel FROM SQLCompanyModel
 
    METHOD getUnidadVentaWhereArticulo( cCodigoArticulo )
 
+   METHOD getUnidadVentaWhereArticulo( cCodigoArticulo )
+      
+   METHOD getUnidadInventarioWhereArticulo( cCodigoArticulo )
+      
+   METHOD getUnidadCompraWhereArticulo( cCodigoArticulo ) 
+
+   METHOD getUnidadWhereArticulo( cCodigoArticulo, cOperacion ) 
+
    METHOD getUnidad() 
 
    METHOD getNumeroOperacionesWhereArticulo( cCodigoArticulo )  
@@ -363,11 +371,11 @@ METHOD getSentenceUnidadesWhereGrupo( cCodigoGrupo ) CLASS SQLUnidadesMedicionOp
 
    TEXT INTO cSql
 
-      SELECT 
-
-         unidades_medicion.*     
+   SELECT 
+      unidades_medicion.*     
       
-      FROM %1$s AS unidades_medicion_grupos                                               
+      FROM 
+         %1$s AS unidades_medicion_grupos                                               
 
       INNER JOIN %2$s AS unidades_medicion_grupos_lineas         
          ON unidades_medicion_grupos.uuid = unidades_medicion_grupos_lineas.parent_uuid                             
@@ -408,13 +416,13 @@ METHOD getInitialSelect() CLASS SQLUnidadesMedicionOperacionesModel
 
    TEXT INTO cSql
 
-      SELECT 
-         unidades_medicion_operacion.id as id,
-         unidades_medicion_operacion.uuid as uuid,     
-         unidades_medicion_operacion.operacion as operacion,
-         unidades_medicion_operacion.deleted_at as deleted_at,
-         unidades_medicion_operacion.unidad_medicion_codigo as unidad_medicion_codigo,
-         unidades_medicion.nombre as unidad_medicion_nombre
+   SELECT 
+      unidades_medicion_operacion.id as id,
+      unidades_medicion_operacion.uuid as uuid,     
+      unidades_medicion_operacion.operacion as operacion,
+      unidades_medicion_operacion.deleted_at as deleted_at,
+      unidades_medicion_operacion.unidad_medicion_codigo as unidad_medicion_codigo,
+      unidades_medicion.nombre as unidad_medicion_nombre
       
       FROM %1$s AS unidades_medicion_operacion
       
@@ -431,6 +439,24 @@ RETURN ( cSql )
 
 METHOD getUnidadVentaWhereArticulo( cCodigoArticulo ) CLASS SQLUnidadesMedicionOperacionesModel
    
+RETURN ( ::getUnidadWhereArticulo( cCodigoArticulo, "Ventas" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getUnidadInventarioWhereArticulo( cCodigoArticulo ) CLASS SQLUnidadesMedicionOperacionesModel
+   
+RETURN ( ::getUnidadWhereArticulo( cCodigoArticulo, "Inventarios" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getUnidadCompraWhereArticulo( cCodigoArticulo ) CLASS SQLUnidadesMedicionOperacionesModel
+   
+RETURN ( ::getUnidadWhereArticulo( cCodigoArticulo, "Compras" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getUnidadWhereArticulo( cCodigoArticulo, cOperacion ) CLASS SQLUnidadesMedicionOperacionesModel
+   
    local cSql
 
    TEXT INTO cSql
@@ -446,15 +472,16 @@ METHOD getUnidadVentaWhereArticulo( cCodigoArticulo ) CLASS SQLUnidadesMedicionO
       INNER JOIN %3$s AS unidades_medicion
          ON unidades_medicion.codigo = unidades_medicion_operacion.unidad_medicion_codigo      
 
-      WHERE unidades_medicion_operacion.operacion = "Ventas"
+      WHERE unidades_medicion_operacion.operacion = %4$s AND unidades_medicion_operacion.deleted_at = 0
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLArticulosModel():getTableName(), SQLUnidadesMedicionModel():getTableName(), quoted( cCodigoArticulo ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLArticulosModel():getTableName(), SQLUnidadesMedicionModel():getTableName(), quoted( cCodigoArticulo ), quoted( cOperacion ) )
 
 RETURN ( getSQLDatabase():getValue( cSql, "" ) )
 
 //---------------------------------------------------------------------------//
+
 
 METHOD getUnidad() CLASS SQLUnidadesMedicionOperacionesModel
 
@@ -462,8 +489,9 @@ METHOD getUnidad() CLASS SQLUnidadesMedicionOperacionesModel
 
    TEXT INTO cSql
 
-      SELECT 
-         unidades_medicion.codigo
+   SELECT 
+      unidades_medicion.codigo
+         
       FROM %1$s AS unidades_medicion
          WHERE unidades_medicion.sistema = 1
 
@@ -481,8 +509,8 @@ METHOD getNumeroOperacionesWhereArticulo( cCodigoArticulo ) CLASS SQLUnidadesMed
 
    TEXT INTO cSql
 
-      SELECT 
-         COUNT(*) 
+   SELECT 
+      COUNT(*) 
 
       FROM %1$s AS unidades_medicion_operacion
 
@@ -503,13 +531,13 @@ METHOD countOperacionWhereUuidParent( cOperacion, uuidParent ) CLASS SQLUnidades
 
    TEXT INTO cSql
 
-      SELECT 
-         COUNT(*) 
+   SELECT 
+      COUNT(*) 
 
       FROM %1$s AS unidades_medicion_operacion
 
       WHERE 
-         operacion = %2$s AND parent_uuid = %3$s
+         operacion = %2$s AND parent_uuid = %3$s AND deleted_at = 0
 
    ENDTEXT
 
@@ -571,4 +599,8 @@ CLASS UnidadesMedicionOperacionesRepository FROM SQLBaseRepository
 
 END CLASS
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

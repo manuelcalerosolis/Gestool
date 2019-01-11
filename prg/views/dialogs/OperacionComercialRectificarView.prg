@@ -5,17 +5,18 @@
 
 CLASS OperacionComercialRectificarView FROM SQLBaseView
   
-
-   DATA cNumeroAndSerie
+   DATA cNumeroDocumento
 
    DATA cCausa
 
-   DATA cMotivo
    DATA oMotivo
+   DATA cMotivo
+
+   METHOD InitActivate()               INLINE ( ::Activating(), ::Activate() )
 
    METHOD Activate()
-
-   METHOD startActivate()
+      METHOD Activating()
+      METHOD startActivate()
 
 END CLASS
 
@@ -38,9 +39,9 @@ METHOD Activate() CLASS OperacionComercialRectificarView
       FONT        oFontBold() ;
       OF          ::oDialog ;
 
-   ::oController:getFacturasController():getSelector():Bind( bSETGET( ::cNumeroAndSerie ) )
+   ::oController:getFacturasController():getSelector():Bind( bSETGET( ::cNumeroDocumento ) )
    ::oController:getFacturasController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
-   ::oController:getFacturasController():getSelector():setValid( {|| ::oController:getRectifictivaValidator():validate( "factura", ::cNumeroAndSerie ) } )
+   ::oController:getFacturasController():getSelector():setValid( {|| ::oController:getRectifictivaValidator():validate( "factura", ::cNumeroDocumento ) } )
    
    REDEFINE COMBOBOX ::cCausa;
       ITEMS       RECTIFICATIVA_ITEMS ;
@@ -60,15 +61,23 @@ METHOD Activate() CLASS OperacionComercialRectificarView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-    ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
-   end if
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD Activating() CLASS OperacionComercialRectificarView
+
+   MSGALERT( "Activating" )
+
+   ::cNumeroDocumento   := space( 20 )
+   ::cCausa             := ""
+   ::cMotivo            := space( 200 )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -79,7 +88,6 @@ METHOD startActivate() CLASS OperacionComercialRectificarView
    ::oController:getFacturasController():getSelector():setFocus()
 
 RETURN ( nil )
-
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -92,7 +100,7 @@ CLASS OperacionComercialRectificarValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
-   METHOD sayMessage( cMessage )
+   METHOD getView()                    INLINE ( ::oController:getRectificativaDialogView() )
  
 END CLASS
 
@@ -100,29 +108,15 @@ END CLASS
 
 METHOD getValidators() CLASS OperacionComercialRectificarValidator
 
-   ::hValidators  := {  "factura"   =>               {  "required"           => "La factura es un dato requerido"},;
-                        "causa"     =>               {  "required"           => "La causa es un dato requerido"},;
-                        "motivo"    =>               {  "required"           => "El motivo es un dato requerido"} }
+   ::hValidators  := {  "factura"   => {  "required"  => "La factura es un dato requerido" },;
+                        "causa"     => {  "required"  => "La causa es un dato requerido" },;
+                        "motivo"    => {  "required"  => "El motivo es un dato requerido" } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-METHOD sayMessage( cMessage )
-
-   local cText    := strtran( cMessage, "{value}", alltrim( cvaltostr( ::uValue ) ) )
-
-   if empty( ::oController:getRectificativaDialogView() ) .or. empty( ::oController:getRectificativaDialogView():oMessage )
-      msgstop( cText, "Error" )
-      RETURN ( nil )
-   end if 
-   ::oController:getRectificativaDialogView():showMessage( cText )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//

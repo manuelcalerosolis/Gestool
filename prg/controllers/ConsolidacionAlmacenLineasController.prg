@@ -13,7 +13,14 @@ CLASS ConsolidacionAlmacenLineasController FROM OperacionesLineasController
 
    METHOD updateArticuloUnidades( oCol, uValue )
 
+   METHOD stampArticuloUnidadMedicion()
+
+   METHOD getArticuloUnidadMedicion()   
+
    METHOD validLine()
+
+   METHOD getUnidadMedicion( cCodigoArticulo ) ;
+                                       INLINE ( SQLUnidadesMedicionOperacionesModel():getUnidadInventarioWhereArticulo( cCodigoArticulo ) )
    
    METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLConsolidacionesAlmacenesLineasModel():New( self ), ), ::oModel )
 

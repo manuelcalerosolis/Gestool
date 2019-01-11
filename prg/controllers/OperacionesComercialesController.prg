@@ -65,6 +65,8 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD hasNotPaid( uuidDocumento )
 
+   METHOD importFactura()
+
    // Impresiones--------------------------------------------------------------
 
    METHOD getDocumentPrint()           INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_impresion', '' ) )
@@ -394,6 +396,19 @@ METHOD hasNotPaid( uuidDocumento ) CLASS OperacionesComercialesController
    end if
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD importFactura()
+
+   if ::getRectificativaDialogView():InitActivate() == IDOK
+      msgalert( ::getRectificativaDialogView():cNumeroDocumento )
+
+      // Importar factura
+      
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

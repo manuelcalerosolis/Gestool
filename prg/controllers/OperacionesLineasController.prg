@@ -76,11 +76,13 @@ CLASS OperacionesLineasController FROM SQLBrowseController
 
    METHOD stampIncrement( nIncrementoPrecio ) 
 
-   METHOD getArticuloUnidadMedicionVentas()
+   METHOD stampArticuloUnidadMedicion()   
 
-   METHOD stampArticuloUnidadMedicionVentas()
+   METHOD getArticuloUnidadMedicion()    
 
-   METHOD stampArticuloPrecio()        VIRTUAL
+   METHOD getUnidadMedicion( cCodigoArticulo )  VIRTUAL
+
+   METHOD stampArticuloPrecio()        
 
    METHOD updateArticuloFactor( uValue )
 
@@ -450,27 +452,25 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validColumnNombreArticulo( oCol, uValue, nKey ) 
+METHOD stampArticuloUnidadMedicion() 
 
-   if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
-      RETURN ( .t. )
-   end if
+   local cUnidadMedicion   := ::getArticuloUnidadMedicion()
 
-   if !( ::validate( "articulo_nombre", uValue ) )
-      RETURN .f.
+   if !empty( cUnidadMedicion )
+      RETURN ( ::stampArticuloUnidadMed( cUnidadMedicion ) )
    end if 
 
-RETURN ( ::stampArticuloNombre( uValue ) )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getArticuloUnidadMedicionVentas()
+METHOD getArticuloUnidadMedicion()
 
    local cUnidadMedicion   
 
    // Unidad de medición para ventas de este articulo--------------------------
 
-   cUnidadMedicion         := SQLUnidadesMedicionOperacionesModel():getUnidadVentaWhereArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) ) 
+   cUnidadMedicion         := ::getUnidadMedicion( ::getRowSet():fieldGet( 'articulo_codigo' ) ) 
 
    if !empty( cUnidadMedicion )
       RETURN ( cUnidadMedicion ) 
@@ -504,15 +504,18 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampArticuloUnidadMedicionVentas()
 
-   local cUnidadMedicion   := ::getArticuloUnidadMedicionVentas()
+METHOD validColumnNombreArticulo( oCol, uValue, nKey ) 
 
-   if !empty( cUnidadMedicion )
-      RETURN ( ::stampArticuloUnidadMed( cUnidadMedicion ) )
+   if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
+      RETURN ( .t. )
+   end if
+
+   if !( ::validate( "articulo_nombre", uValue ) )
+      RETURN .f.
    end if 
 
-RETURN ( nil )
+RETURN ( ::stampArticuloNombre( uValue ) )
 
 //---------------------------------------------------------------------------//
 
