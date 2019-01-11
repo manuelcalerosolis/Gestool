@@ -3,44 +3,74 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ConsolidacionAlmacenRepository FROM SQLBaseRepository
+CLASS ConsolidacionesAlmacenesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()               INLINE ( SQLConsolidacionesAlmacenesModel():getTableName() ) 
+   METHOD getPackage( cContext )       INLINE ( SQLConsolidacionAlmacenModel():getPackage( cContext ) )
 
-   METHOD getPackage( cContext )       INLINE ( SQLConsolidacionesAlmacenesModel():getPackage( cContext ) )
+   METHOD getSQLFunctions()            INLINE ( {  ::dropFunctionTotalSummaryWhereUuid(),;
+                                                   ::createFunctionTotalSummaryWhereUuid() } )
 
-   METHOD getSQLFunctions()            INLINE ( {} )
+   METHOD createFunctionTotalSummaryWhereUuid()
+      METHOD dropFunctionTotalSummaryWhereUuid()
+      METHOD selectTotalSummaryWhereUuid( uuidOperacion )
 
-   METHOD getMailWhereOperacionUuid( uuidOperacionComercial )
+   METHOD getMailWhereOperacionUuid( uuidFactura ) 
 
 END CLASS
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-METHOD getMailWhereOperacionUuid( uuidOperacionComercial ) CLASS ConsolidacionAlmacenRepository
+METHOD createFunctionTotalSummaryWhereUuid() CLASS ConsolidacionesAlmacenesRepository
 
-   local cSQL
+   local cSql
 
    TEXT INTO cSql
 
-   SELECT direcciones.email
+   CREATE DEFINER=`root`@`localhost` 
+   FUNCTION %1$s ( `uuid_operacion_comercial` CHAR( 40 ) )
+   RETURNS DECIMAL( 19, 6 )
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
 
-      FROM %1$s AS consolidacion_almacen
+   BEGIN
 
-      INNER JOIN %2$s AS almacenes
-         ON almacenes.codigo = consolidacion_almacen.almacen_codigo
+      DECLARE TotalSummary DECIMAL( 19, 6 );
+
+      SELECT
+         SUM( ROUND( ( lineas.articulo_unidades * lineas.unidad_medicion_factor ) * ( lineas.articulo_precio + lineas.incremento_precio ), 2 ) ) INTO TotalSummary
+      FROM 
+         ( %2$s ) AS lineas
+      WHERE 
+         lineas.parent_uuid = uuid_operacion_comercial AND lineas.deleted_at = 0;
       
-      INNER JOIN %3$s AS direcciones
-         ON almacenes.uuid = direcciones.parent_uuid AND direcciones.codigo = 0
+      RETURN TotalSummary;
 
-      WHERE consolidacion_almacen.uuid = %4$s
+   END
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName(), SQLDireccionesModel():getTableName(), quotedUuid( uuidOperacionComercial ) ) 
+   cSql  := hb_strformat( cSql, Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ), SQLConsolidacionesAlmacenesLineasModel():getTableName() )
 
-RETURN ( getSQLDatabase():getValue( cSql, "" ) ) 
+RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD dropFunctionTotalSummaryWhereUuid() CLASS ConsolidacionesAlmacenesRepository  
+
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ) + ";" )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectTotalSummaryWhereUuid( uuidOperacion ) CLASS ConsolidacionesAlmacenesRepository
+
+RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ) + "( " + quotedUuid( uuidOperacion ) + " )" ) )
+
+//---------------------------------------------------------------------------//
 

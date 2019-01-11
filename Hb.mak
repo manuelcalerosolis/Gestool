@@ -211,8 +211,9 @@ ConsolidacionAlmacenView.prg 												\
 ConsolidacionAlmacenController.prg										\
 ConsolidacionAlmacenLineasController.prg								\
 OperacionesLineasController.obj 											\
-OperacionesLineasController.prg												\
+OperacionesLineasController.prg											\
 ConsolidacionAlmacenLineasBrowse.prg									\
+OperacionesLineasBrowse.prg												\
 SQLConsolidacionesAlmacenesModel.prg									\
 ConsolidacionAlmacenRepository.prg										\
 SQLConfiguracionesModel.prg 												\
@@ -612,6 +613,7 @@ ConsolidacionAlmacenController.obj 										\
 ConsolidacionAlmacenLineasController.obj 								\
 OperacionesLineasController.obj 											\
 ConsolidacionAlmacenLineasBrowse.obj 									\
+OperacionesLineasBrowse.obj 												\
 SQLConsolidacionesAlmacenesModel.obj 									\
 ConsolidacionAlmacenRepository.obj 										\
 ConfiguracionesController.obj												\
@@ -1006,6 +1008,7 @@ $(OBJ)\ConsolidacionAlmacenController.obj 							+
 $(OBJ)\ConsolidacionAlmacenLineasController.obj 					+
 $(OBJ)\OperacionesLineasController.obj 								+
 $(OBJ)\ConsolidacionAlmacenLineasBrowse.obj 							+
+$(OBJ)\OperacionesLineasBrowse.obj 										+
 $(OBJ)\ConfiguracionesController.obj 									+
 $(OBJ)\RecordController.obj 												+
 $(OBJ)\ConfiguracionesRepository.obj 									+

@@ -5,6 +5,8 @@
 
 CLASS SQLConsolidacionesAlmacenesModel FROM SQLCompanyModel
 
+   DATA cPackage                       INIT "ConsolidacionesAlmacenes"
+
    DATA cTableName                     INIT  "consolidaciones_almacenes"
 
    METHOD getColumns()

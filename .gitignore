@@ -22,6 +22,9 @@
 [Cc]lient/
 [Ii]ss/[Ee]xe/
 [Ii]nclude/
+[Pr]rg/[Ss]amples/
+[Bb]mp/
+[Bb]in/
 [Bb]in/[Ii]magen/
 [Bb]in/[Bb]mp/
 [Bb]in/[Dd]atabase/
@@ -87,6 +90,7 @@
 *.oxps
 *.sql
 *.fr3
+*.
 
 ############
 ## Windows

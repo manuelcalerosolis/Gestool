@@ -70,9 +70,9 @@ METHOD New( oController ) CLASS ConsolidacionAlmacenController
 
    ::cName                             := "consolidacion_almacen"
 
-   ::hImage                            := {  "16" => "gc_warehouse_16",;
-                                             "32" => "gc_warehouse_32",;
-                                             "48" => "gc_warehouse_48" }
+   ::hImage                            := {  "16" => "gc_consolidacion_16",;
+                                             "32" => "gc_consolidacion_32",;
+                                             "48" => "gc_consolidacion_48" }
 
    ::getModel():setEvent( 'loadedBuffer',          {|| ::loadedBuffer() } )
    ::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )
