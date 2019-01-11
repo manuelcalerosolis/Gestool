@@ -48,7 +48,7 @@ CLASS ConsolidacionAlmacenController FROM OperacionesController
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := ConsolidacionAlmacenBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := ConsolidacionAlmacenRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := ConsolidacionesAlmacenesRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -70,9 +70,9 @@ METHOD New( oController ) CLASS ConsolidacionAlmacenController
 
    ::cName                             := "consolidacion_almacen"
 
-   ::hImage                            := {  "16" => "gc_warehouse_16",;
-                                             "32" => "gc_warehouse_32",;
-                                             "48" => "gc_warehouse_48" }
+   ::hImage                            := {  "16" => "gc_consolidacion_16",;
+                                             "32" => "gc_consolidacion_32",;
+                                             "48" => "gc_consolidacion_48" }
 
    ::getModel():setEvent( 'loadedBuffer',          {|| ::loadedBuffer() } )
    ::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )
@@ -171,17 +171,9 @@ RETURN ( ::getNumeroDocumentoComponent():setValue( ::getContadoresModel():getLas
 
 METHOD calculateTotals( uuidDocumento ) CLASS ConsolidacionAlmacenController
 
-   local hTotal
-
    DEFAULT uuidDocumento   := ::getUuid()
 
-   hTotal                  := 0  // ::getRepository():getTotalesDocument( uuidDocumento )
-
-   if empty( hTotal )
-      RETURN ( nil )
-   end if 
-
-   ::getDialogView():oTotalImporte:setText( hget( hTotal, "total_documento" ) )
+   ::getDialogView():oTotalImporte:setText( ::getRepository():selectTotalSummaryWhereUuid( uuidDocumento ) )
 
 RETURN ( nil )
 

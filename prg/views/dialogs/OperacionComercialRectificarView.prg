@@ -5,7 +5,17 @@
 
 CLASS OperacionComercialRectificarView FROM SQLBaseView
   
+
+   DATA cNumeroAndSerie
+
+   DATA cCausa
+
+   DATA cMotivo
+   DATA oMotivo
+
    METHOD Activate()
+
+   METHOD startActivate()
 
 END CLASS
 
@@ -28,23 +38,25 @@ METHOD Activate() CLASS OperacionComercialRectificarView
       FONT        oFontBold() ;
       OF          ::oDialog ;
 
-   ::oController:getFacturasController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "parent_uuid" ] ) )
+   ::oController:getFacturasController():getSelector():Bind( bSETGET( ::cNumeroAndSerie ) )
    ::oController:getFacturasController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
-   ::oController:getFacturasController():getSelector():setValid( {||msgalert( ::oController:getRectifictivaValidator():validate("factura"), "validacion de factura" ), ::oController:getRectifictivaValidator():validate( "factura" ) } )
+   ::oController:getFacturasController():getSelector():setValid( {|| ::oController:getRectifictivaValidator():validate( "factura", ::cNumeroAndSerie ) } )
    
-   REDEFINE COMBOBOX ::getController():getModel():hBuffer[ "causa" ];
-      ITEMS    RECTIFICATIVA_ITEMS ;
-      ID       110 ;
-      WHEN     ( ::getController():isNotZoomMode() ) ;
-      OF       ::oDialog ;
+   REDEFINE COMBOBOX ::cCausa;
+      ITEMS       RECTIFICATIVA_ITEMS ;
+      ID          110 ;
+      VALID       ::oController:getRectifictivaValidator():validate( "causa", ::cCausa ) ;
+      WHEN        ( ::getController():isNotZoomMode() ) ;
+      OF          ::oDialog ;
 
-      REDEFINE COMBOBOX ::getController():getModel():hBuffer[ "motivo" ];
-      ITEMS    RECTIFICATIVA_ITEMS ;
-      ID       120 ;
-      WHEN     ( ::getController():isNotZoomMode() ) ;
-      OF       ::oDialog ;
+   REDEFINE GET   ::oMotivo ;
+      VAR         ::cMotivo ;
+      ID          120 ;
+      VALID       ::oController:getRectifictivaValidator():validate( "motivo", ::cMotivo ) ;
+      WHEN        ( ::getController():isNotZoomMode() ) ;
+      OF          ::oDialog ;
 
-   /*ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
@@ -52,11 +64,22 @@ METHOD Activate() CLASS OperacionComercialRectificarView
 
    if ::oController:isNotZoomMode() 
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
-   end if*/
+   end if
 
    ACTIVATE DIALOG ::oDialog CENTER
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD startActivate() CLASS OperacionComercialRectificarView
+
+   ::oController:getFacturasController():getSelector():Start()
+
+   ::oController:getFacturasController():getSelector():setFocus()
+
+RETURN ( nil )
+
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

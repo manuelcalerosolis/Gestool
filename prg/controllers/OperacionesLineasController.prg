@@ -80,7 +80,7 @@ CLASS OperacionesLineasController FROM SQLBrowseController
 
    METHOD stampArticuloUnidadMedicionVentas()
 
-   METHOD stampArticuloPrecio()
+   METHOD stampArticuloPrecio()        VIRTUAL
 
    METHOD updateArticuloFactor( uValue )
 
@@ -230,8 +230,6 @@ RETURN ( .t. )
 
 METHOD validUbicacionCodigo( oGet, oCol )
 
-   msgalert( oGet:varGet(), "validUbicacionCodigo" )
-
    if SQLUbicacionesModel():CountUbicacionWhereCodigo( oGet:varGet() ) <= 0 
       
       ::getController():getDialogView():showMessage( "La ubicación introducida no existe" )
@@ -346,8 +344,6 @@ RETURN ( ::stampAlmacen( cCodigo ) )
 METHOD postValidateUbicacionCodigo( oCol, uValue, nKey )
 
    local cCodigo
-
-   msgalert( hb_valtoexp( uValue ), "postValidateUbicacionCodigo" )
 
    if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
       RETURN ( .t. )
@@ -527,16 +523,6 @@ METHOD updateArticuloFactor( oCol, uValue )
    ::getBrowseView():makeTotals( oCol )
 
 RETURN ( ::oController:calculateTotals() )
-
-//---------------------------------------------------------------------------//
-
-METHOD stampArticuloPrecio()
-
-   local nPrecioBase    := SQLArticulosPreciosModel():getPrecioBaseWhereArticuloCodigoAndTarifaCodigo( ::getRowSet():fieldget( "articulo_codigo" ), ::oController:getModelBuffer( "tarifa_codigo" ) )
-
-   ::updateField( 'articulo_precio', nPrecioBase )
-
-RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 

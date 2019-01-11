@@ -52,6 +52,17 @@ METHOD addColumns() CLASS ConsolidacionAlmacenBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'total'
+      :cHeader             := 'Total'
+      :nWidth              := 100
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'total' ) }
+      :cEditPicture        := "@E 9999.9999"
+   end with
+
    ::getColumnsCreatedUpdatedAt()
    
    ::getColumnDeletedAt()

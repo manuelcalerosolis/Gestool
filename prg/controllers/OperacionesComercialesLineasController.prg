@@ -13,6 +13,8 @@ CLASS OperacionesComercialesLineasController FROM OperacionesLineasController
 
    METHOD stampArticuloIva()
 
+   METHOD stampArticuloPrecio()
+   
    METHOD updateArticuloUnidades( oCol, uValue )
 
    METHOD postValidateAgenteCodigo( oCol, uValue, nKey )
@@ -32,6 +34,7 @@ CLASS OperacionesComercialesLineasController FROM OperacionesLineasController
    METHOD getHashAgenteWhereCodigo()
 
    METHOD validLine()   
+
 
    METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesLineasBrowseView():New( self ), ), ::oBrowseView ) 
 
@@ -210,5 +213,14 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD stampArticuloPrecio() CLASS OperacionesComercialesLineasController
+
+   local nPrecioBase    := SQLArticulosPreciosModel():getPrecioBaseWhereArticuloCodigoAndTarifaCodigo( ::getRowSet():fieldget( "articulo_codigo" ), ::oController:getModelBuffer( "tarifa_codigo" ) )
+
+   ::updateField( 'articulo_precio', nPrecioBase )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
 
 
