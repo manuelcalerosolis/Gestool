@@ -71,8 +71,6 @@ RETURN ( ::oDialog:nResult )
 
 METHOD Activating() CLASS OperacionComercialRectificarView
 
-   MSGALERT( "Activating" )
-
    ::cNumeroDocumento   := space( 20 )
    ::cCausa             := ""
    ::cMotivo            := space( 200 )

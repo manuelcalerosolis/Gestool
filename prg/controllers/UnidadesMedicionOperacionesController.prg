@@ -332,7 +332,9 @@ CLASS SQLUnidadesMedicionOperacionesModel FROM SQLCompanyModel
 
    METHOD test_create_compras_por_palets( uuidParent )
 
-   METHOD test_create_inventario_por_unidades( uuidParent )   
+   METHOD test_create_inventario_unidades( uuidParent ) 
+
+   METHOD test_create_inventario_cajas( uuidParent )  
 
 #endif
 
@@ -445,8 +447,6 @@ RETURN ( ::getUnidadWhereArticulo( cCodigoArticulo, "Ventas" ) )
 
 METHOD getUnidadInventarioWhereArticulo( cCodigoArticulo ) CLASS SQLUnidadesMedicionOperacionesModel
    
-   msgalert( cCodigoArticulo, "cCodigoArticulo" )
-
 RETURN ( ::getUnidadWhereArticulo( cCodigoArticulo, "Inventarios" ) )
 
 //---------------------------------------------------------------------------//
@@ -574,13 +574,25 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_create_inventario_por_unidades( uuidParent ) CLASS SQLUnidadesMedicionOperacionesModel
+METHOD test_create_inventario_unidades( uuidParent ) CLASS SQLUnidadesMedicionOperacionesModel
 
    local hBuffer  := ::loadBlankBuffer()
 
    hset( hBuffer, "parent_uuid", uuidParent )
    hset( hBuffer, "operacion", "Inventarios" )
    hset( hBuffer, "unidad_medicion_codigo", "UDS" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_inventario_cajas( uuidParent ) CLASS SQLUnidadesMedicionOperacionesModel
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid", uuidParent )
+   hset( hBuffer, "operacion", "Inventarios" )
+   hset( hBuffer, "unidad_medicion_codigo", "CAJAS" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 

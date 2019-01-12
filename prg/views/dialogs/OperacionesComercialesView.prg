@@ -297,7 +297,6 @@ METHOD addLinksToExplorerBar() CLASS OperacionesComercialesView
 
    oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-
    oPanel:AddLink(   "Incidencias...",;
                      {|| ::getController():getIncidenciasController():activateDialogView() },;
                          ::getController():getIncidenciasController():getImage( "16" ) )

@@ -162,15 +162,15 @@ RETURN ( nil )
 METHOD validActivate() CLASS ConsolidacionAlmacenView
 
    if notValidateDialog( ::oFolder:aDialogs )
-      RETURN ( nil )
+      RETURN ( .f. )
    end if
 
    if ::getController():notValidate( "formulario" )
-      RETURN ( nil )
+      RETURN ( .f. )
    end if 
 
    if !::getController():getLinesController():validLine()
-      RETURN( nil )
+      RETURN( .f. )
    end if
 
 RETURN ( ::oDialog:end( IDOK ) )

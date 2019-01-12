@@ -43,10 +43,6 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD terceroSetDescuentos()
 
-   METHOD hasLines()
-
-   METHOD hasNotLines()                INLINE ( !::hasLines() )
-
    METHOD getConfigItems()
 
    METHOD calculateTotals( uuidDocumento )  
@@ -382,12 +378,6 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD hasLines() CLASS OperacionesComercialesController
-
-RETURN ( ::getLinesController():getModel():countLinesWhereUuidParent( ::getModelBuffer( 'uuid' ) ) > 0 )
-
-//---------------------------------------------------------------------------//
-
 METHOD hasNotPaid( uuidDocumento ) CLASS OperacionesComercialesController 
 
    if ::getModel():totalPaid( uuidDocumento ) > 0
@@ -399,9 +389,10 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD importFactura()
+METHOD importFactura() CLASS OperacionesComercialesController
 
    if ::getRectificativaDialogView():InitActivate() == IDOK
+
       msgalert( ::getRectificativaDialogView():cNumeroDocumento )
 
       // Importar factura

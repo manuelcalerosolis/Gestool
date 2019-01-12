@@ -297,7 +297,11 @@ CLASS TestConsolidacionAlmacenController FROM TestOperacionesController
    
    METHOD test_dialogo_sin_almacen()                
    
-   METHOD test_dialogo_sin_lineas()                   
+   METHOD test_dialogo_sin_lineas()   
+
+   METHOD test_dialogo_sin_ubicacion()  
+
+   METHOD test_dialogo_articulo_por_cajas_con_ubicacion()              
 
 END CLASS
 
@@ -336,7 +340,40 @@ METHOD test_dialogo_sin_lineas() CLASS TestConsolidacionAlmacenController
          apoloWaitSeconds( 1 ),;
          view:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( ::oController:Append(), "test creación de factura sin lineas" )
+   ::assert:false( ::oController:Append(), "test creación de consolidación sin lineas" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_sin_ubicacion() CLASS TestConsolidacionAlmacenController
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| view | ;
+         ::set_codigo_almacen( "0", view ),;
+         ::click_nueva_linea( view ),;
+         ::set_codigo_articulo_en_linea( "1" ),;
+         view:getControl( IDOK ):Click(),;
+         apoloWaitSeconds( 1 ),;
+         view:getControl( IDCANCEL ):Click() } )
+
+   ::assert:false( ::oController:Append(), "test creación de consolidación sin ubicacion" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_articulo_por_cajas_con_ubicacion() CLASS TestConsolidacionAlmacenController
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      {| view | ;
+         ::set_codigo_almacen( "0", view ),;
+         ::click_nueva_linea( view ),;
+         ::set_codigo_articulo_en_linea( "0" ),;
+         ::set_codigo_ubicacion_en_linea( "0" ),;
+         view:getControl( IDOK ):Click() } )
+
+   ::assert:true( ::oController:Append(), "test creación de consolidación por cajas y con ubicacion" )
 
 RETURN ( nil )
 

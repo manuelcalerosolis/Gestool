@@ -208,9 +208,10 @@ METHOD test_create_articulo_con_unidad_de_medicion_cajas_palets() CLASS SQLArtic
    SQLUnidadesMedicionGruposModel():test_create()
    SQLUnidadesMedicionOperacionesModel():test_create_ventas_por_cajas( uuid )
    SQLUnidadesMedicionOperacionesModel():test_create_compras_por_palets( uuid )
-   SQLUnidadesMedicionOperacionesModel():test_create_inventario_por_unidades( uuid )
+   SQLUnidadesMedicionOperacionesModel():test_create_inventario_cajas( uuid )
 
    hBuffer  := ::loadBlankBuffer()
+
 
    hset( hBuffer, "uuid", uuid )
    hset( hBuffer, "codigo", "0" )

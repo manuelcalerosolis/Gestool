@@ -37,8 +37,8 @@ CLASS OperacionesController FROM SQLNavigatorController
 
    METHOD appendLine()    
 
-   METHOD hasLines()                   VIRTUAL
-   METHOD hasNotLines()                VIRTUAL
+   METHOD hasLines()                   
+   METHOD hasNotLines()                INLINE ( !::hasLines() )
 
    METHOD getConfigItems()
 
@@ -160,17 +160,13 @@ RETURN ( nil )
 
 METHOD loadedDuplicateBuffer() CLASS OperacionesController 
 
-   ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) 
-
-RETURN ( nil )
+RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD insertingBuffer() CLASS OperacionesController 
 
-   ::setModelBuffer( "numero", ::getContadoresModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) )
-
-RETURN ( nil )
+RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -187,6 +183,12 @@ METHOD appendLine() CLASS OperacionesController
    end if
 
 RETURN ( ::getLinesController():AppendLineal() ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD hasLines() CLASS OperacionesController
+
+RETURN ( ::getLinesController():getModel():countLinesWhereUuidParent( ::getModelBuffer( 'uuid' ) ) > 0 )
 
 //---------------------------------------------------------------------------//
 
