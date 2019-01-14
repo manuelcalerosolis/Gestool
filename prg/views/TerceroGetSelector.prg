@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch"
 
-CLASS ClientGetSelector FROM GetSelector
+CLASS TerceroGetSelector FROM GetSelector
 
    DATA idGet
    DATA idText
@@ -48,13 +48,11 @@ CLASS ClientGetSelector FROM GetSelector
 
    METHOD setHelpText( value )
 
-   METHOD getLinkText()                
-
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Build( hBuilder ) CLASS ClientGetSelector
+METHOD Build( hBuilder ) CLASS TerceroGetSelector
 
    ::idGet           := if( hhaskey( hBuilder, "idGet" ),            hBuilder[ "idGet" ],          nil )
    ::idText          := if( hhaskey( hBuilder, "idText" ),           hBuilder[ "idText" ],         nil )
@@ -73,7 +71,7 @@ RETURN ( ::Activate() )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS ClientGetSelector
+METHOD Activate() CLASS TerceroGetSelector
 
    ::Super:Activate( ::idGet, ::idText, ::oDlg, ::idSay, ::idLink )
 
@@ -151,7 +149,7 @@ RETURN ( ::oGet )
 
 //---------------------------------------------------------------------------//
 
-METHOD cleanHelpText()
+METHOD cleanHelpText()  CLASS TerceroGetSelector
 
    ::Super():cleanHelpText()
 
@@ -173,7 +171,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD setHelpText( value )
+METHOD setHelpText( value )  CLASS TerceroGetSelector
 
    if !( hb_ishash( value ) )
       RETURN ( nil )
@@ -195,12 +193,6 @@ METHOD setHelpText( value )
 
 
 RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD getLinkText()
-
-RETURN ( {|| "Tercero" } )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

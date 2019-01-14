@@ -9,7 +9,7 @@ CLASS GetSelector
 
    DATA bValue
 
-   DATA cPicture                                INIT "@!"                                  
+   DATA cPicture                       INIT "@!"                                  
 
    DATA oLink
    
@@ -21,7 +21,7 @@ CLASS GetSelector
 
    DATA cOriginal
 
-   DATA cKey                                    INIT  "codigo"
+   DATA cKey                           INIT  "codigo"
 
    DATA uFields
 
@@ -33,20 +33,21 @@ CLASS GetSelector
    METHOD New( oController ) CONSTRUCTOR
    METHOD End()                                 
 
-   METHOD setKey( cKey )                        INLINE ( ::cKey := cKey )
-   METHOD getKey()                              INLINE ( ::cKey )
+   METHOD setKey( cKey )               INLINE ( ::cKey := cKey )
+   METHOD getKey()                     INLINE ( ::cKey )
 
-   METHOD setPrompt( cPrompt )                  INLINE ( ::cPrompt := cPrompt )
-   METHOD getPrompt()                           INLINE ( if( empty( ::cPrompt ), ::getKey(), ::cPrompt ) )
+   METHOD setPrompt( cPrompt )         INLINE ( ::cPrompt := cPrompt )
+   METHOD getPrompt()                  INLINE ( if( empty( ::cPrompt ), ::getKey(), ::cPrompt ) )
 
    METHOD getLinkText()                VIRTUAL
+   METHOD setLinkText( cText )         INLINE ( if( !empty( ::oLink ), ::oLink:setText( cText ), ) )
    
-   METHOD cText( value )                        INLINE ( if( !empty( ::oGet ), ::oGet:cText( value ), ) )
+   METHOD cText( value )               INLINE ( if( !empty( ::oGet ), ::oGet:cText( value ), ) )
    
-   METHOD Disable()                             INLINE ( if( !empty( ::oGet ), ::oGet:Disable(), ) )
-   METHOD Enable()                              INLINE ( if( !empty( ::oGet ), ::oGet:Enable(), ) )
+   METHOD Disable()                    INLINE ( if( !empty( ::oGet ), ::oGet:Disable(), ) )
+   METHOD Enable()                     INLINE ( if( !empty( ::oGet ), ::oGet:Enable(), ) )
 
-   METHOD getView()                             INLINE ( ::oController:oController:getDialogView() )
+   METHOD getView()                    INLINE ( ::oController:oController:getDialogView() )
 
    METHOD Build( hBuilder )
 
@@ -54,9 +55,10 @@ CLASS GetSelector
 
    METHOD addGetSelector( cLink, oTaskPanel ) 
 
-   METHOD Bind( bValue )                        INLINE ( ::bValue := bValue )
+   METHOD Bind( bValue )               INLINE ( ::bValue := bValue )
    
-   METHOD setValid( bValid )                    INLINE ( ::bValid := bValid )
+   METHOD setValid( bValid )           INLINE ( ::bValid := bValid )
+   METHOD setWhen( bWhen )             INLINE ( ::bWhen := bWhen, if( !empty( ::oGet ), ::oGet:bWhen := ::bWhen, ) )
 
    METHOD helpAction()
    METHOD validAction()
@@ -67,38 +69,36 @@ CLASS GetSelector
       METHOD cleanHelpText()                    
       METHOD setHelpText( value )               
 
-   METHOD getFields()                           INLINE ( ::uFields := ::oController:getModel():getField( "nombre", ::getKey(), ::oGet:varGet() ) )
+   METHOD getFields()                  INLINE ( ::uFields := ::oController:getModel():getField( "nombre", ::getKey(), ::oGet:varGet() ) )
    
-   METHOD start()                               INLINE ( ::loadHelpText( .t. ) )
+   METHOD start()                      INLINE ( ::loadHelpText( .t. ) )
 
    METHOD showMessage()
 
-   METHOD varGet()                              INLINE ( if( !empty( ::oGet ), ::oGet:varGet(), ) )
+   METHOD varGet()                     INLINE ( if( !empty( ::oGet ), ::oGet:varGet(), ) )
   
    METHOD Hide()
    METHOD Show()
   
-   METHOD setFocus()                            INLINE ( if( !empty( ::oGet ), ::oGet:setFocus(), ) )
+   METHOD setFocus()                   INLINE ( if( !empty( ::oGet ), ::oGet:setFocus(), ) )
   
-   METHOD Refresh()                             INLINE ( if( !empty( ::oGet ), ::oGet:Refresh(), ) )
+   METHOD Refresh()                    INLINE ( if( !empty( ::oGet ), ::oGet:Refresh(), ) )
   
-   METHOD lValid()                              INLINE ( if( !empty( ::oGet ), ::oGet:lValid(), ) )
-   METHOD evalWhen()                            INLINE ( if( !empty( ::oGet ) .and. !empty( ::bWhen ), ( if( eval( ::bWhen ), ::oGet:Enable(), ::oGet:Disable() ) ), ) )
+   METHOD lValid()                     INLINE ( if( !empty( ::oGet ), ::oGet:lValid(), ) )
+   METHOD evalWhen()                   INLINE ( if( !empty( ::oGet ) .and. !empty( ::bWhen ), ( if( eval( ::bWhen ), ::oGet:Enable(), ::oGet:Disable() ) ), ) )
 
-   METHOD getHelp()                             INLINE ( if( empty( ::oHelp ), ::oGet:oHelpText, ::oHelp ) )
+   METHOD getHelp()                    INLINE ( if( empty( ::oHelp ), ::oGet:oHelpText, ::oHelp ) )
 
    // Events-------------------------------------------------------------------
 
-   METHOD setEvent( cEvent, bEvent )            INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
-   METHOD fireEvent( cEvent, uValue )           INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent, uValue ), ) )
+   METHOD setEvent( cEvent, bEvent )   INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
+   METHOD fireEvent( cEvent, uValue )  INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent, uValue ), ) )
 
-   METHOD setWhen( bWhen )                      INLINE ( ::bWhen := bWhen, if( !empty( ::oGet ), ::oGet:bWhen := ::bWhen, ) )
+   METHOD isChangeGet()                INLINE ( ::varGet() != ::getOriginal() )
+   METHOD isNotChangeGet()             INLINE ( ::varGet() == ::getOriginal() )
 
-   METHOD isChangeGet()                         INLINE ( ::varGet() != ::getOriginal() )
-   METHOD isNotChangeGet()                      INLINE ( ::varGet() == ::getOriginal() )
-
-   METHOD setOriginal( cOriginal )              INLINE ( ::cOriginal := cOriginal )
-   METHOD getOriginal()                         INLINE ( ::cOriginal )
+   METHOD setOriginal( cOriginal )     INLINE ( ::cOriginal := cOriginal )
+   METHOD getOriginal()                INLINE ( ::cOriginal )
 
    METHOD setBlank()
 
@@ -113,7 +113,7 @@ METHOD New( oController ) CLASS GetSelector
    ::oEvents      := Events():New()
 
    if !empty( ::oController:getController() )
-      ::bWhen        := {|| ::oController:getController():isNotZoomMode() } 
+      ::bWhen     := {|| ::oController:getController():isNotZoomMode() } 
    end if
 
 RETURN ( Self )
@@ -358,6 +358,10 @@ METHOD Hide() CLASS GetSelector
       ::oLink:Hide()
    end if
 
+   if !empty( ::oHelp )
+      ::oHelp:Hide()
+   end if
+
 RETURN ( nil )                                
 
 //---------------------------------------------------------------------------//
@@ -370,6 +374,10 @@ METHOD Show() CLASS GetSelector
 
    if !empty( ::oLink )
       ::oLink:Show()
+   end if
+
+   if !empty( ::oHelp )
+      ::oHelp:Show()
    end if
 
 RETURN ( nil )                                

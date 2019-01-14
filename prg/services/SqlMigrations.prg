@@ -422,6 +422,8 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLConsolidacionesAlmacenesLineasModel():New() ) 
 
+   aadd( ::aModels, SQLMovimientosAlmacenesModel():New() )
+
    aadd( ::aModels, SQLFacturasComprasLineasModel():New() ) 
 
    aadd( ::aModels, SQLFacturasComprasRectificativasModel():New() ) 
@@ -485,6 +487,8 @@ METHOD addRepositories() CLASS SQLCompanyMigrations
    aadd( ::aRepositories, FacturasComprasRectificativasRepository():New() )
    
    aadd( ::aRepositories, ConsolidacionesAlmacenesRepository():New() )
+
+   aadd( ::aRepositories, MovimientosAlmacenesRepository():New() )
 
 RETURN ( nil )
 

@@ -3,7 +3,11 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ConsolidacionAlmacenController FROM OperacionesController
+CLASS MovimientoAlmacenController FROM OperacionesController
+
+   DATA oAlmacenOrigenController
+
+   DATA oAlmacenDestinoController
 
    METHOD New() CONSTRUCTOR
 
@@ -32,29 +36,34 @@ CLASS ConsolidacionAlmacenController FROM OperacionesController
    METHOD getTotalDocument( uuidDocumento ) ;
                                        INLINE ( ::getRepository():getTotalDocument( uuidDocumento ) )
 
-   METHOD getSubject()                 INLINE ( "Consolidación de almacén" )
+   METHOD getSubject()                 INLINE ( "Movimiento de almacén" )
 
    // Contrucciones tardias----------------------------------------------------
 
-   METHOD getName()                    INLINE ( "consolidacion_almacen" )
+   METHOD getName()                    INLINE ( "movimiento_almacen" )
 
    METHOD getLinesController()         INLINE ( ::getConsolidacionAlmacenLineasController() )
 
-   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ConsolidacionAlmacenView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := MovimientoAlmacenView():New( self ), ), ::oDialogView )
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLConsolidacionesAlmacenesModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLMovimientosAlmacenesModel():New( self ), ), ::oModel )
 
-   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := ConsolidacionAlmacenValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := MovimientoAlmacenValidator():New( self ), ), ::oValidator )
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := ConsolidacionAlmacenBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := MovimientoAlmacenBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := ConsolidacionesAlmacenesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := MovimientosAlmacenesRepository():New( self ), ), ::oRepository )
+
+   METHOD getAlmacenOrigenController() INLINE ( if( empty( ::oAlmacenOrigenController ), ::oAlmacenOrigenController := AlmacenesController():New( self ), ), ::oAlmacenOrigenController )
+
+   METHOD getAlmacenDestinoController();
+                                       INLINE ( if( empty( ::oAlmacenDestinoController ), ::oAlmacenDestinoController := AlmacenesController():New( self ), ), ::oAlmacenDestinoController )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS ConsolidacionAlmacenController
+METHOD New( oController ) CLASS MovimientoAlmacenController
 
    ::Super:New( oController )
 
@@ -66,9 +75,9 @@ METHOD New( oController ) CLASS ConsolidacionAlmacenController
 
    ::lMail                             := .t.
 
-   ::cTitle                            := "Consolidaciones de almacén"
+   ::cTitle                            := "Movimientos de almacén"
 
-   ::cName                             := "consolidacion_almacen"
+   ::cName                             := "movimiento_almacen"
 
    ::hImage                            := {  "16" => "gc_consolidacion_16",;
                                              "32" => "gc_consolidacion_32",;
@@ -88,7 +97,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS ConsolidacionAlmacenController
+METHOD End() CLASS MovimientoAlmacenController
 
    if !empty( ::oDialogView )
       ::oDialogView:End()
@@ -114,17 +123,25 @@ METHOD End() CLASS ConsolidacionAlmacenController
       ::oSerieDocumentoComponent:End()
    end if 
 
+   if !empty( ::oAlmacenOrigenController )
+      ::oAlmacenOrigenController:End()
+   end if 
+
+   if !empty( ::oAlmacenDestinoController )
+      ::oAlmacenDestinoController:End()
+   end if 
+
 RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD editConfig() CLASS ConsolidacionAlmacenController
+METHOD editConfig() CLASS MovimientoAlmacenController
 
 RETURN ( ::getConfiguracionesController():Edit() )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedBlankBuffer() CLASS ConsolidacionAlmacenController 
+METHOD loadedBlankBuffer() CLASS MovimientoAlmacenController 
 
    ::setModelBuffer( "serie", ::getContadoresModel():getLastSerie( ::getName() ) )
 
@@ -134,28 +151,33 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedDuplicateBuffer() CLASS ConsolidacionAlmacenController 
+METHOD loadedDuplicateBuffer() CLASS MovimientoAlmacenController 
 
 RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertingBuffer() CLASS ConsolidacionAlmacenController 
+METHOD insertingBuffer() CLASS MovimientoAlmacenController 
 
 RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD updatedBuffer() CLASS ConsolidacionAlmacenController 
+METHOD updatedBuffer() CLASS MovimientoAlmacenController 
 
 RETURN ( ::getRecibosGeneratorController():update() )
 
 //---------------------------------------------------------------------------//
 
-METHOD appendLine() CLASS ConsolidacionAlmacenController
+METHOD appendLine() CLASS MovimientoAlmacenController
 
-   if empty( ::getModelBuffer( "almacen_codigo" ) )
-      msgStop( "El código del almacén es un dato requerido" )
+   if empty( ::getModelBuffer( "almacen_origen_codigo" ) )
+      msgStop( "El código del almacén origen es un dato requerido" )
+      RETURN( nil )
+   end if 
+
+   if empty( ::getModelBuffer( "almacen_destino_codigo" ) )
+      msgStop( "El código del almacén destino es un dato requerido" )
       RETURN( nil )
    end if 
 
@@ -163,13 +185,13 @@ RETURN ( ::Super:appendLine() )
 
 //---------------------------------------------------------------------------//
 
-METHOD changedSerie() CLASS ConsolidacionAlmacenController 
+METHOD changedSerie() CLASS MovimientoAlmacenController 
 
 RETURN ( ::getNumeroDocumentoComponent():setValue( ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD calculateTotals( uuidDocumento ) CLASS ConsolidacionAlmacenController
+METHOD calculateTotals( uuidDocumento ) CLASS MovimientoAlmacenController
 
    DEFAULT uuidDocumento   := ::getUuid()
 
@@ -179,7 +201,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getConfigItems() CLASS ConsolidacionAlmacenController
+METHOD getConfigItems() CLASS MovimientoAlmacenController
 
    local aItems   := {}
 
@@ -220,7 +242,7 @@ RETURN ( aItems )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ConsolidacionAlmacenValidator FROM SQLBaseValidator 
+CLASS MovimientoAlmacenValidator FROM SQLBaseValidator 
 
    METHOD getValidators()
 
@@ -232,24 +254,26 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS ConsolidacionAlmacenValidator
+METHOD getValidators() CLASS MovimientoAlmacenValidator
 
-   ::hValidators  := {  "almacen_codigo"  => {  "required"        => "El código del almacén es un dato requerido",;
-                                                "almacenExist"    => "El código del almacén no existe" } ,;  
-                        "formulario"      => {  "emptyLines"      => "Las líneas no pueden estar vacias",;
-                                                "validLine"       => "" } }  
+   ::hValidators  := {  "almacen_origen_codigo"    => {  "required"        => "El código del almacén origen es un dato requerido",;
+                                                         "almacenExist"    => "El código del almacén origen no existe" } ,;  
+                        "almacen_destino_codigo"   => {  "required"        => "El código del almacén destino es un dato requerido",;
+                                                         "almacenExist"    => "El código del almacén destino no existe" } ,;  
+                        "formulario"               => {  "emptyLines"      => "Las líneas no pueden estar vacias",;
+                                                         "validLine"       => "" } }  
 
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
 
-METHOD emptyLines() CLASS ConsolidacionAlmacenValidator     
+METHOD emptyLines() CLASS MovimientoAlmacenValidator     
 
 RETURN ( ::getController():hasLines() )
 
 //---------------------------------------------------------------------------//
 
-METHOD validLine() CLASS ConsolidacionAlmacenValidator     
+METHOD validLine() CLASS MovimientoAlmacenValidator     
 
 RETURN ( ::getController():getLinesController():validLine() )
 
@@ -261,9 +285,9 @@ RETURN ( ::getController():getLinesController():validLine() )
 
 #ifdef __TEST__
 
-CLASS TestConsolidacionAlmacenController FROM TestOperacionesController
+CLASS TestMovimientoAlmacenController FROM TestOperacionesController
 
-   DATA aCategories                    INIT { "all", "consolidaciones_almacenes" }
+   DATA aCategories                    INIT { "all", "movimientos_almacenes" }
 
    METHOD beforeClass()
 
@@ -306,28 +330,28 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD beforeClass() CLASS TestConsolidacionAlmacenController
+METHOD beforeClass() CLASS TestMovimientoAlmacenController
    
    Company():setDefaultUsarUbicaciones( .t. )
    
-   ::oController  := ConsolidacionAlmacenController():New()
+   ::oController  := MovimientoAlmacenController():New()
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_sin_almacen() CLASS TestConsolidacionAlmacenController
+METHOD test_dialogo_sin_almacen() CLASS TestMovimientoAlmacenController
 
    ::oController:getDialogView():setEvent( 'painted',;
       <| view | 
       
       view:getControl( IDOK ):Click()
       
-         apoloWaitSeconds( 1 )
-      
-         view:getControl( IDCANCEL ):Click()
+      apoloWaitSeconds( 1 )
+   
+      view:getControl( IDCANCEL ):Click()
 
-         RETURN ( nil )
+      RETURN ( nil )
       > )
 
    ::assert:false( ::oController:Append(), "test creación de consolidación sin código almacén" )
@@ -336,14 +360,21 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_sin_lineas() CLASS TestConsolidacionAlmacenController
+METHOD test_dialogo_sin_lineas() CLASS TestMovimientoAlmacenController
 
    ::oController:getDialogView():setEvent( 'painted',;
-      {| view | ;
-         ::set_codigo_almacen( "0", view ),;
-         view:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
-         view:getControl( IDCANCEL ):Click() } )
+      <| view | 
+
+      ::set_codigo_almacen( "0", view )
+
+      view:getControl( IDOK ):Click()
+
+      apoloWaitSeconds( 1 )
+
+      view:getControl( IDCANCEL ):Click()
+
+      RETURN ( nil )
+      > )
 
    ::assert:false( ::oController:Append(), "test creación de consolidación sin lineas" )
 
@@ -351,7 +382,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_sin_ubicacion() CLASS TestConsolidacionAlmacenController
+METHOD test_dialogo_sin_ubicacion() CLASS TestMovimientoAlmacenController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
@@ -368,7 +399,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_articulo_por_cajas_con_ubicacion() CLASS TestConsolidacionAlmacenController
+METHOD test_dialogo_articulo_por_cajas_con_ubicacion() CLASS TestMovimientoAlmacenController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
