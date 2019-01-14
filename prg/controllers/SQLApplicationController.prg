@@ -114,7 +114,15 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oFacturasVentasDescuentosController
 
+   DATA oPresupuestosVentasDescuentosController
+
+   DATA oPedidosVentasDescuentosController
+
    DATA oFacturasComprasDescuentosController
+
+   DATA oPedidosComprasDescuentosController
+
+   DATA oPresupuestosComprasDescuentosController
 
    DATA oDireccionTipoDocumentoController
 
@@ -122,11 +130,19 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oFacturasVentasLineasController
 
+   DATA oPedidosVentasLineasController
+
    DATA oFacturasVentasRectificativasLineasController
 
    DATA oFacturasVentasRectificativasDescuentosController
 
    DATA oFacturasComprasLineasController
+
+   DATA oPedidosComprasLineasController
+
+   DATA oPresupuestosComprasLineasController
+
+   DATA oPresupuestosVentasLineasController
 
    DATA oFacturasComprasRectificativasLineasController
 
@@ -134,7 +150,11 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oFacturasVentasController
 
+   DATA oPresupuestosVentasController
+
    DATA oFacturasComprasController
+
+   DATA oPresupuestosComprasController
 
    DATA oAlmacenesController
    
@@ -359,8 +379,20 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getFacturasVentasDescuentosController();
                                     INLINE ( if( empty( ::oFacturasVentasDescuentosController ), ::oFacturasVentasDescuentosController := FacturasVentasDescuentosController():New( self ), ), ::oFacturasVentasDescuentosController )
 
+   METHOD getPresupuestosVentasDescuentosController();
+                                    INLINE ( if( empty( ::oPresupuestosVentasDescuentosController ), ::oPresupuestosVentasDescuentosController := PresupuestosVentasDescuentosController():New( self ), ), ::oPresupuestosVentasDescuentosController )
+
+   METHOD getPedidosVentasDescuentosController();
+                                    INLINE ( if( empty( ::oPedidosVentasDescuentosController ), ::oPedidosVentasDescuentosController := PedidosVentasDescuentosController():New( self ), ), ::oPedidosVentasDescuentosController )
+
    METHOD getFacturasComprasDescuentosController();
                                     INLINE ( if( empty( ::oFacturasComprasDescuentosController ), ::oFacturasComprasDescuentosController := FacturasComprasDescuentosController():New( self ), ), ::oFacturasComprasDescuentosController )
+
+   METHOD getPedidosComprasDescuentosController();
+                                    INLINE ( if( empty( ::oPedidosComprasDescuentosController ), ::oPedidosComprasDescuentosController := PedidosComprasDescuentosController():New( self ), ), ::oPedidosComprasDescuentosController )
+
+   METHOD getPresupuestosComprasDescuentosController();
+                                    INLINE ( if( empty( ::oPresupuestosComprasDescuentosController ), ::oPresupuestosComprasDescuentosController := PresupuestosComprasDescuentosController():New( self ), ), ::oPresupuestosComprasDescuentosController )
 
    METHOD getDireccionTipoDocumentoController();
                                     INLINE ( if( empty( ::oDireccionTipoDocumentoController ), ::oDireccionTipoDocumentoController := DireccionTipoDocumentoController():New( self ), ), ::oDireccionTipoDocumentoController )
@@ -370,6 +402,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getFacturasVentasLineasController();
                                     INLINE ( if( empty( ::oFacturasVentasLineasController ), ::oFacturasVentasLineasController := FacturasVentasLineasController():New( self ), ), ::oFacturasVentasLineasController )
+
+   METHOD getPedidosVentasLineasController();
+                                    INLINE ( if( empty( ::oPedidosVentasLineasController ), ::oPedidosVentasLineasController := PedidosVentasLineasController():New( self ), ), ::oPedidosVentasLineasController )
 
    METHOD getConsolidacionAlmacenLineasController();
                                     INLINE ( if( empty( ::oConsolidacionAlmacenLineasController ), ::oConsolidacionAlmacenLineasController := ConsolidacionAlmacenLineasController():New( self ), ), ::oConsolidacionAlmacenLineasController )
@@ -383,6 +418,15 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getFacturasComprasLineasController();
                                     INLINE ( if( empty( ::oFacturasComprasLineasController ), ::oFacturasComprasLineasController := FacturasComprasLineasController():New( self ), ), ::oFacturasComprasLineasController )
 
+   METHOD getPedidosComprasLineasController();
+                                    INLINE ( if( empty( ::oPedidosComprasLineasController ), ::oPedidosComprasLineasController := PedidosComprasLineasController():New( self ), ), ::oPedidosComprasLineasController )
+
+   METHOD getPresupuestosComprasLineasController();
+                                    INLINE ( if( empty( ::oPresupuestosComprasLineasController ), ::oPresupuestosComprasLineasController := PresupuestosComprasLineasController():New( self ), ), ::oPresupuestosComprasLineasController )
+
+   METHOD getPresupuestosVentasLineasController();
+                                    INLINE ( if( empty( ::oPresupuestosVentasLineasController ), ::oPresupuestosVentasLineasController := PresupuestosVentasLineasController():New( self ), ), ::oPresupuestosVentasLineasController )
+
    METHOD getFacturasComprasRectificativasLineasController();
                                     INLINE ( if( empty( ::oFacturasComprasRectificativasLineasController ), ::oFacturasComprasRectificativasLineasController := FacturasComprasRectificativasLineasController():New( self ), ), ::oFacturasComprasRectificativasLineasController )
 
@@ -392,8 +436,14 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getFacturasVentasController();
                                     INLINE ( if( empty( ::oFacturasVentasController ), ::oFacturasVentasController := FacturasVentasController():New( self ), ), ::oFacturasVentasController ) 
 
+   METHOD getPresupuestosVentasController();
+                                    INLINE ( if( empty( ::oPresupuestosVentasController ), ::oPresupuestosVentasController := PresupuestosVentasController():New( self ), ), ::oPresupuestosVentasController ) 
+
    METHOD getFacturasComprasController();
                                     INLINE ( if( empty( ::oFacturasComprasController ), ::oFacturasComprasController := FacturasComprasController():New( self ), ), ::oFacturasComprasController )
+
+   METHOD getFacturasComprasController();
+                                    INLINE ( if( empty( ::oPresupuestosComprasController ), ::oPresupuestosComprasController := PresupuestosComprasController():New( self ), ), ::oPresupuestosComprasController )
 
    METHOD getAlmacenesController()  INLINE ( if( empty( ::oAlmacenesController ), ::oAlmacenesController := AlmacenesController():New( self ), ), ::oAlmacenesController )
 
@@ -698,8 +748,24 @@ METHOD End() CLASS SQLApplicationController
       ::oFacturasVentasDescuentosController:End()
    end if  
 
+   if !empty( ::oPresupuestosVentasDescuentosController )   
+      ::oPresupuestosVentasDescuentosController:End()
+   end if  
+
+   if !empty( ::oPedidosVentasDescuentosController )   
+      ::oPedidosVentasDescuentosController:End()
+   end if  
+
    if !empty( ::oFacturasComprasDescuentosController )   
       ::oFacturasComprasDescuentosController:End()
+   end if 
+
+   if !empty( ::oPedidosComprasDescuentosController )   
+      ::oPedidosComprasDescuentosController:End()
+   end if    
+
+   if !empty( ::oPresupuestosComprasDescuentosController )   
+      ::oPresupuestosComprasDescuentosController:End()
    end if    
 
    if !empty( ::oDireccionTipoDocumentoController )   
@@ -718,6 +784,10 @@ METHOD End() CLASS SQLApplicationController
       ::oFacturasVentasLineasController:End()
    end if
 
+   if !empty( ::oPedidosVentasLineasController )   
+      ::oPedidosVentasLineasController:End()
+   end if
+
    if !empty( ::oFacturasVentasRectificativasLineasController )   
       ::oFacturasVentasRectificativasLineasController:End()
    end if
@@ -728,6 +798,18 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oFacturasComprasLineasController )   
       ::oFacturasComprasLineasController:End()
+   end if
+
+   if !empty( ::oPedidosComprasLineasController )   
+      ::oPedidosComprasLineasController:End()
+   end if
+
+   if !empty( ::oPresupuestosComprasLineasController )   
+      ::oPresupuestosComprasLineasController:End()
+   end if
+
+   if !empty( ::oPresupuestosVentasLineasController )   
+      ::oPresupuestosVentasLineasController:End()
    end if
 
    if !empty( ::oFacturasComprasRectificativasLineasController )   
@@ -742,8 +824,16 @@ METHOD End() CLASS SQLApplicationController
       ::oFacturasVentasController:End()
    end if
 
+   if !empty( ::oPresupuestosVentasController )   
+      ::oPresupuestosVentasController:End()
+   end if
+
    if !empty( ::oFacturasComprasController )   
       ::oFacturasComprasController:End()
+   end if 
+
+   if !empty( ::oPresupuestosComprasController )   
+      ::oPresupuestosComprasController:End()
    end if 
 
    if !empty( ::oAlmacenesController )   
