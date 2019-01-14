@@ -408,11 +408,23 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLFacturasVentasModel():New() )
 
+   aadd( ::aModels, SQLPedidosVentasModel():New() )
+
+   aadd( ::aModels, SQLPresupuestosVentasModel():New() )
+
    aadd( ::aModels, SQLFacturasVentasRectificativasModel():New() ) 
 
-   aadd( ::aModels, SQLFacturasComprasModel():New() )  
+   aadd( ::aModels, SQLFacturasComprasModel():New() )
 
-   aadd( ::aModels, SQLFacturasVentasLineasModel():New() ) 
+   aadd( ::aModels, SQLPedidosComprasModel():New() ) 
+
+   aadd( ::aModels, SQLPresupuestosComprasModel():New() )   
+
+   aadd( ::aModels, SQLPresupuestosComprasDescuentosModel():New() ) 
+
+   aadd( ::aModels, SQLPresupuestosComprasLineasModel():New() )  
+
+   aadd( ::aModels, SQLFacturasComprasLineasModel():New() ) 
 
    aadd( ::aModels, SQLFacturasVentasRectificativasLineasModel():New() ) 
    
@@ -422,13 +434,25 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLConsolidacionesAlmacenesLineasModel():New() ) 
 
-   aadd( ::aModels, SQLFacturasComprasLineasModel():New() ) 
+   aadd( ::aModels, SQLFacturasVentasLineasModel():New() )
+
+   aadd( ::aModels, SQLPedidosComprasLineasModel():New() )
+
+   aadd( ::aModels, SQLPedidosComprasDescuentosModel():New() )
+
+   aadd( ::aModels, SQLPedidosVentasLineasModel():New() ) 
+
+   aadd( ::aModels, SQLPedidosVentasDescuentosModel():New() ) 
+
+   aadd( ::aModels, SQLPresupuestosVentasLineasModel():New() ) 
 
    aadd( ::aModels, SQLFacturasComprasRectificativasModel():New() ) 
 
    aadd( ::aModels, SQLFacturasComprasRectificativasLineasModel():New() ) 
 
    aadd( ::aModels, SQLFacturasVentasDescuentosModel():New() ) 
+
+   aadd( ::aModels, SQLPresupuestosVentasDescuentosModel():New() ) 
 
    aadd( ::aModels, SQLFacturasComprasDescuentosModel():New() ) 
    
@@ -478,9 +502,17 @@ METHOD addRepositories() CLASS SQLCompanyMigrations
    
    aadd( ::aRepositories, FacturasVentasRepository():New() )
 
+   aadd( ::aRepositories, PresupuestosVentasRepository():New() )
+
+   aadd( ::aRepositories, PedidosVentasRepository():New() )
+
    aadd( ::aRepositories, FacturasVentasRectificativasRepository():New() )
 
    aadd( ::aRepositories, FacturasComprasRepository():New() )
+
+   aadd( ::aRepositories, PedidosComprasRepository():New() )
+
+   aadd( ::aRepositories, PresupuestosComprasRepository():New() )
 
    aadd( ::aRepositories, FacturasComprasRectificativasRepository():New() )
    
