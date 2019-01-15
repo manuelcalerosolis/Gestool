@@ -71,7 +71,7 @@ CLASS TercerosController FROM SQLNavigatorController
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLTercerosModel():New( self ), ), ::oModel )
 
-   METHOD getSelector()                INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := ClientGetSelector():New( self ), ), ::oGetSelector )
+   METHOD getSelector()                INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := TerceroGetSelector():New( self ), ), ::oGetSelector )
 
 END CLASS
 

@@ -1366,7 +1366,7 @@ FUNCTION CreateMainSQLAcceso()
    // Almacenes----------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 2
+   oGrupo:nBigItems     := 3
    oGrupo:cPrompt       := 'Almacenes'
    oGrupo:cLittleBitmap := "gc_package_16"
    oGrupo:cBigBitmap    := "gc_package_16"
@@ -1386,6 +1386,16 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cPrompt        := 'Consolidaciones de almacenes'
    oItem:cMessage       := 'Consolidaciones de almacenes'
    oItem:bAction        := {|| ConsolidacionAlmacenController():New():ActivateNavigatorView() }
+   oItem:cId            := "consolidacion_almacen"
+   oItem:cBmp           := "gc_consolidacion_16"
+   oItem:cBmpBig        := "gc_consolidacion_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAlmacen:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Movimientos de almacenes'
+   oItem:cMessage       := 'Movimientos de almacenes'
+   oItem:bAction        := {|| MovimientoAlmacenController():New():ActivateNavigatorView() }
    oItem:cId            := "consolidacion_almacen"
    oItem:cBmp           := "gc_warehouse_16"
    oItem:cBmpBig        := "gc_warehouse_32"

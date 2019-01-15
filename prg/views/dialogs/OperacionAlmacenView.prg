@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ConsolidacionAlmacenView FROM SQLBaseView
+CLASS OperacionAlmacenView FROM SQLBaseView
   
    DATA oExplorerBar
 
@@ -13,8 +13,10 @@ CLASS ConsolidacionAlmacenView FROM SQLBaseView
    DATA nTotalImporte                  INIT 0
    
    METHOD Activate()
-      METHOD startActivate()
+      METHOD startActivate()           VIRTUAL
       METHOD validActivate()
+
+   METHOD defineAlmacenSelector()      VIRTUAL
 
    METHOD addLinksToExplorerBar()
 
@@ -32,11 +34,11 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS ConsolidacionAlmacenView
+METHOD Activate() CLASS OperacionAlmacenView
    
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "TRANSACION_COMERCIAL" ;
-      TITLE       ::LblTitle() + "consolidación"
+      TITLE       ::LblTitle() + lower( ::oController:getTitle() )
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -45,7 +47,7 @@ METHOD Activate() CLASS ConsolidacionAlmacenView
       OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
-      PROMPT      "Consolidaciones de almacén" ;
+      PROMPT      ::oController:getTitle() ;
       ID          800 ;
       FONT        oFontBold() ;
       OF          ::oDialog
@@ -54,7 +56,7 @@ METHOD Activate() CLASS ConsolidacionAlmacenView
       ID          500 ;
       OF          ::oDialog ;
       PROMPT      "General" ;
-      DIALOGS     "CONSOLIDACION_ALMACEN"
+      DIALOGS     "OPERACIONES_ALMACEN"
 
    ::redefineExplorerBar()
 
@@ -77,16 +79,12 @@ METHOD Activate() CLASS ConsolidacionAlmacenView
       WHEN        ( ::getController():isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   // Almacenes----------------------------------------------------------------
-
-   ::getController():getAlmacenesController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "almacen_codigo" ] ) )
-   ::getController():getAlmacenesController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::getController():getAlmacenesController():getSelector():setValid( {|| ::getController():validate( "almacen_codigo" ) } )
+   ::defineAlmacenSelector()
 
    // Comentario---------------------------------------------------------------
 
    REDEFINE GET   ::getController():getModel():hBuffer[ "comentario" ] ;
-      ID          140 ;
+      ID          150 ;
       WHEN        ( ::getController():isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
@@ -145,21 +143,7 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD startActivate() CLASS ConsolidacionAlmacenView
-
-   ::addLinksToExplorerBar()
-
-   ::getController():getAlmacenesController():getSelector():Start()
-
-   ::getController():calculateTotals()
-
-   // ::getController():getSerieDocumentoComponent()::setFocus()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD validActivate() CLASS ConsolidacionAlmacenView
+METHOD validActivate() CLASS OperacionAlmacenView
 
    if notValidateDialog( ::oFolder:aDialogs )
       RETURN ( .f. )
@@ -177,12 +161,11 @@ RETURN ( ::oDialog:end( IDOK ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD addLinksToExplorerBar() CLASS ConsolidacionAlmacenView
+METHOD addLinksToExplorerBar() CLASS OperacionAlmacenView
 
    local oPanel
 
    oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
-
 
    oPanel:AddLink(   "Incidencias...",;
                      {|| ::getController():getIncidenciasController():activateDialogView() },;
@@ -201,7 +184,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD defaultTitle() CLASS ConsolidacionAlmacenView
+METHOD defaultTitle() CLASS OperacionAlmacenView
 
    local cTitle  := ::oController:getTitle() + " : " 
 
@@ -227,4 +210,83 @@ RETURN ( cTitle )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
+CLASS ConsolidacionAlmacenView FROM OperacionAlmacenView 
+
+   METHOD defineAlmacenSelector()
+
+   METHOD startActivate()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD defineAlmacenSelector() CLASS ConsolidacionAlmacenView
+
+   ::getController():getAlmacenesController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "almacen_codigo" ] ) )
+   ::getController():getAlmacenesController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::getController():getAlmacenesController():getSelector():setValid( {|| ::getController():validate( "almacen_codigo" ) } )
+   ::getController():getAlmacenesController():getSelector():setWhen( {|| ::getController():hasNotLines() } )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD startActivate() CLASS ConsolidacionAlmacenView
+
+   ::addLinksToExplorerBar()
+
+   ::getController():getAlmacenesController():getSelector():Start()
+
+   ::getController():calculateTotals()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS MovimientoAlmacenView FROM OperacionAlmacenView 
+
+   METHOD defineAlmacenSelector()
+
+   METHOD startActivate()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD defineAlmacenSelector() CLASS MovimientoAlmacenView
+
+   ::getController():getAlmacenOrigenController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "almacen_origen_codigo" ] ) )
+   ::getController():getAlmacenOrigenController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::getController():getAlmacenOrigenController():getSelector():setLinkText( "Almacén origen" ) 
+   ::getController():getAlmacenOrigenController():getSelector():setValid( {|| ::getController():validate( "almacen_origen_codigo" ) } )
+   ::getController():getAlmacenOrigenController():getSelector():setWhen( {|| ::getController():hasNotLines() } )
+
+   ::getController():getAlmacenDestinoController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "almacen_destino_codigo" ] ) )
+   ::getController():getAlmacenDestinoController():getSelector():Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::getController():getAlmacenDestinoController():getSelector():setValid( {|| ::getController():validate( "almacen_destino_codigo" ) } )
+   ::getController():getAlmacenDestinoController():getSelector():setWhen( {|| ::getController():hasNotLines() } )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD startActivate() CLASS MovimientoAlmacenView
+
+   ::addLinksToExplorerBar()
+
+   ::getController():getAlmacenOrigenController():getSelector():Start()
+
+   ::getController():getAlmacenDestinoController():getSelector():Show()
+   ::getController():getAlmacenDestinoController():getSelector():Start()
+
+   ::getController():calculateTotals()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//

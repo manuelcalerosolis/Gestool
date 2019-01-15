@@ -262,7 +262,7 @@ METHOD getSentenceCountLines( uuidParent ) CLASS SQLOperacionesLineasModel
 
       FROM %1$s AS operaciones_lineas
 
-      WHERE operaciones_lineas.parent_uuid = %2$s  
+      WHERE operaciones_lineas.parent_uuid = %2$s AND operaciones_lineas.deleted_at = 0 
 
    ENDTEXT
 
