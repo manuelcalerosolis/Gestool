@@ -1353,8 +1353,8 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cMessage       := 'Pedidos de compras'
    oItem:bAction        := {|| PedidosComprasController():New():ActivateNavigatorView() }
    oItem:cId            := "pedidos_compras"
-   oItem:cBmp           := "gc_document_text_businessman_16"
-   oItem:cBmpBig        := "gc_document_text_businessman_32"
+   oItem:cBmp           := "gc_movimientos_16"
+   oItem:cBmpBig        := "gc_movimientos_32"
    oItem:lShow          := .t.
 
    oItemAlmacen         := oAcceso:Add()
