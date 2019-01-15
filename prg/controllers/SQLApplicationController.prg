@@ -114,6 +114,10 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oFacturasVentasDescuentosController
 
+   DATA oFacturasSimplificadasVentasDescuentosController
+
+   DATA oAlbaranesVentasDescuentosController
+
    DATA oPresupuestosVentasDescuentosController
 
    DATA oPedidosVentasDescuentosController
@@ -129,6 +133,10 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oRelacionesEntidadesController
 
    DATA oFacturasVentasLineasController
+
+   DATA oFacturasSimplificadasVentasLineasController
+
+   DATA oAlbaranesVentasLineasController
 
    DATA oPedidosVentasLineasController
 
@@ -379,6 +387,12 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getFacturasVentasDescuentosController();
                                     INLINE ( if( empty( ::oFacturasVentasDescuentosController ), ::oFacturasVentasDescuentosController := FacturasVentasDescuentosController():New( self ), ), ::oFacturasVentasDescuentosController )
 
+   METHOD getFacturasSimplificadasVentasDescuentosController();
+                                    INLINE ( if( empty( ::oFacturasSimplificadasVentasDescuentosController ), ::oFacturasSimplificadasVentasDescuentosController := FacturasSimplificadasVentasDescuentosController():New( self ), ), ::oFacturasSimplificadasVentasDescuentosController )
+
+   METHOD getAlbaranesVentasDescuentosController();
+                                    INLINE ( if( empty( ::oAlbaranesVentasDescuentosController ), ::oAlbaranesVentasDescuentosController := AlbaranesVentasDescuentosController():New( self ), ), ::oAlbaranesVentasDescuentosController )
+
    METHOD getPresupuestosVentasDescuentosController();
                                     INLINE ( if( empty( ::oPresupuestosVentasDescuentosController ), ::oPresupuestosVentasDescuentosController := PresupuestosVentasDescuentosController():New( self ), ), ::oPresupuestosVentasDescuentosController )
 
@@ -402,6 +416,12 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getFacturasVentasLineasController();
                                     INLINE ( if( empty( ::oFacturasVentasLineasController ), ::oFacturasVentasLineasController := FacturasVentasLineasController():New( self ), ), ::oFacturasVentasLineasController )
+
+   METHOD getFacturasSimplificadasVentasLineasController();
+                                    INLINE ( if( empty( ::oFacturasSimplificadasVentasLineasController ), ::oFacturasSimplificadasVentasLineasController := FacturasSimplificadasVentasLineasController():New( self ), ), ::oFacturasSimplificadasVentasLineasController )
+
+   METHOD getAlbaranesVentasLineasController();
+                                    INLINE ( if( empty( ::oAlbaranesVentasLineasController ), ::oAlbaranesVentasLineasController := AlbaranesVentasLineasController():New( self ), ), ::oAlbaranesVentasLineasController )
 
    METHOD getPedidosVentasLineasController();
                                     INLINE ( if( empty( ::oPedidosVentasLineasController ), ::oPedidosVentasLineasController := PedidosVentasLineasController():New( self ), ), ::oPedidosVentasLineasController )
@@ -744,8 +764,16 @@ METHOD End() CLASS SQLApplicationController
       ::oCombinacionesController:End()
    end if    
 
+   if !empty( ::oAlbaranesVentasDescuentosController )   
+      ::oAlbaranesVentasDescuentosController:End()
+   end if  
+
    if !empty( ::oFacturasVentasDescuentosController )   
       ::oFacturasVentasDescuentosController:End()
+   end if  
+
+   if !empty( ::oFacturasSimplificadasVentasDescuentosController )   
+      ::oFacturasSimplificadasVentasDescuentosController:End()
    end if  
 
    if !empty( ::oPresupuestosVentasDescuentosController )   
@@ -782,6 +810,14 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oFacturasVentasLineasController )   
       ::oFacturasVentasLineasController:End()
+   end if 
+
+   if !empty( ::oFacturasSimplificadasVentasLineasController )   
+      ::oFacturasSimplificadasVentasLineasController:End()
+   end if 
+
+   if !empty( ::oAlbaranesVentasLineasController )   
+      ::oAlbaranesVentasLineasController:End()
    end if
 
    if !empty( ::oPedidosVentasLineasController )   

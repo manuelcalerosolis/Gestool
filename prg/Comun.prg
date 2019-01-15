@@ -1458,7 +1458,7 @@ FUNCTION CreateMainSQLAcceso()
    oItem:lShow          := .f.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 4
+   oGrupo:nBigItems     := 6
    oGrupo:cPrompt       := 'Ventas'
    oGrupo:cLittleBitmap := "gc_notebook_user_16"
    oGrupo:cBigBitmap    := "gc_notebook_user_32"
@@ -1503,6 +1503,28 @@ FUNCTION CreateMainSQLAcceso()
    oItem:bAction        := {|| PedidosVentasController():New():ActivateNavigatorView() }
    // oItem:bAction        := {|| FacturasVentasController1000() }
    oItem:cId            := "pedidos_ventas"
+   oItem:cBmp           := "gc_document_text_user_16"
+   oItem:cBmpBig        := "gc_document_text_user_32"
+   oItem:lShow          := .t.
+
+   oItem                := oItemVentas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Albaranes de ventas'
+   oItem:cMessage       := 'Albaranes de ventas'
+   oItem:bAction        := {|| AlbaranesVentasController():New():ActivateNavigatorView() }
+   // oItem:bAction        := {|| FacturasVentasController1000() }
+   oItem:cId            := "alvaranes_ventas"
+   oItem:cBmp           := "gc_document_text_user_16"
+   oItem:cBmpBig        := "gc_document_text_user_32"
+   oItem:lShow          := .t.
+
+   oItem                := oItemVentas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Facturas simplificadas de ventas'
+   oItem:cMessage       := 'Facturas simplificadas de ventas'
+   oItem:bAction        := {|| FacturasSimplificadasVentasController():New():ActivateNavigatorView() }
+   // oItem:bAction        := {|| FacturasVentasController1000() }
+   oItem:cId            := "facturas_simplificadas_ventas"
    oItem:cBmp           := "gc_document_text_user_16"
    oItem:cBmpBig        := "gc_document_text_user_32"
    oItem:lShow          := .t.

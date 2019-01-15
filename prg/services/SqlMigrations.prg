@@ -408,6 +408,8 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLFacturasVentasModel():New() )
 
+   aadd( ::aModels, SQLAlbaranesVentasModel():New() )
+
    aadd( ::aModels, SQLPedidosVentasModel():New() )
 
    aadd( ::aModels, SQLPresupuestosVentasModel():New() )
@@ -436,6 +438,8 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLFacturasVentasLineasModel():New() )
 
+   aadd( ::aModels, SQLAlbaranesVentasLineasModel():New() )
+
    aadd( ::aModels, SQLPedidosComprasLineasModel():New() )
 
    aadd( ::aModels, SQLPedidosComprasDescuentosModel():New() )
@@ -452,9 +456,17 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLFacturasVentasDescuentosModel():New() ) 
 
+   aadd( ::aModels, SQLFacturasSimplificadasVentasModel():New() ) 
+
+   aadd( ::aModels, SQLFacturasSimplificadasVentasLineasModel():New() ) 
+
+   aadd( ::aModels, SQLFacturasSimplificadasVentasDescuentosModel():New() ) 
+
    aadd( ::aModels, SQLPresupuestosVentasDescuentosModel():New() ) 
 
    aadd( ::aModels, SQLFacturasComprasDescuentosModel():New() ) 
+
+   aadd( ::aModels, SQLAlbaranesVentasDescuentosModel():New() ) 
    
    aadd( ::aModels, SQLFacturasComprasRectificativasDescuentosModel():New() ) 
 
@@ -502,9 +514,13 @@ METHOD addRepositories() CLASS SQLCompanyMigrations
    
    aadd( ::aRepositories, FacturasVentasRepository():New() )
 
+   aadd( ::aRepositories, FacturasSimplificadasVentasRepository():New() )
+
    aadd( ::aRepositories, PresupuestosVentasRepository():New() )
 
    aadd( ::aRepositories, PedidosVentasRepository():New() )
+
+   aadd( ::aRepositories, AlbaranesVentasRepository():New() )
 
    aadd( ::aRepositories, FacturasVentasRectificativasRepository():New() )
 
