@@ -46,9 +46,9 @@ METHOD New( oController ) CLASS PedidosComprasController
 
    ::cName                             := "pedidos_compra" 
 
-   ::hImage                            := {  "16" => "gc_movimientos_16",;
-                                             "32" => "gc_movimientos_32",;
-                                             "48" => "gc_movimientos_48" }
+   ::hImage                            := {  "16" => "gc_pedidos_proveedor_16",;
+                                             "32" => "gc_pedidos_proveedor_32",;
+                                             "48" => "gc_pedidos_proveedor_48" }
 
 RETURN ( Self ) 
 

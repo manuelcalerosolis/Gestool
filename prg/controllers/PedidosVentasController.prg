@@ -45,9 +45,9 @@ METHOD New( oController ) CLASS PedidosVentasController
 
    ::cName                             := "pedidos_ventas"
 
-   ::hImage                            := {  "16" => "gc_document_text_user_16",;
-                                             "32" => "gc_document_text_user_32",;
-                                             "48" => "gc_document_text_user_48" }
+   ::hImage                            := {  "16" => "gc_pedidos_cliente_16",;
+                                             "32" => "gc_pedidos_cliente_32",;
+                                             "48" => "gc_pedidos_cliente_48" }
 
 RETURN ( Self )
 

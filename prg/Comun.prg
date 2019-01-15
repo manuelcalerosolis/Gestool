@@ -1333,8 +1333,8 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cMessage       := 'Facturas rectificativas compra'
    oItem:bAction        := {|| FacturasComprasRectificativasController():New():ActivateNavigatorView() }
    oItem:cId            := "facturas_compras"
-   oItem:cBmp           := "gc_document_text_businessman_16"
-   oItem:cBmpBig        := "gc_document_text_businessman_32"
+   oItem:cBmp           := "gc_rectificativa_proveedor_16"
+   oItem:cBmpBig        := "gc_rectificativa_proveedor_32"
    oItem:lShow          := .t.
 
    oItem                := oItemCompras:Add()
@@ -1353,8 +1353,8 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cMessage       := 'Pedidos de compras'
    oItem:bAction        := {|| PedidosComprasController():New():ActivateNavigatorView() }
    oItem:cId            := "pedidos_compras"
-   oItem:cBmp           := "gc_movimientos_16"
-   oItem:cBmpBig        := "gc_movimientos_32"
+   oItem:cBmp           := "gc_pedidos_proveedor_16"
+   oItem:cBmpBig        := "gc_pedidos_proveedor_32"
    oItem:lShow          := .t.
 
    oItemAlmacen         := oAcceso:Add()
@@ -1491,8 +1491,8 @@ FUNCTION CreateMainSQLAcceso()
    oItem:bAction        := {|| FacturasVentasRectificativasController():New():ActivateNavigatorView() }
    // oItem:bAction        := {|| FacturasVentasController1000() }
    oItem:cId            := "facturas_ventas_rectificativa"
-   oItem:cBmp           := "gc_document_text_user_16"
-   oItem:cBmpBig        := "gc_document_text_user_32"
+   oItem:cBmp           := "gc_rectificativa_cliente_16"
+   oItem:cBmpBig        := "gc_rectificativa_cliente_32"
    oItem:lShow          := .t.
 
    oItem                := oItemVentas:Add()
@@ -1513,8 +1513,8 @@ FUNCTION CreateMainSQLAcceso()
    oItem:bAction        := {|| PedidosVentasController():New():ActivateNavigatorView() }
    // oItem:bAction        := {|| FacturasVentasController1000() }
    oItem:cId            := "pedidos_ventas"
-   oItem:cBmp           := "gc_document_text_user_16"
-   oItem:cBmpBig        := "gc_document_text_user_32"
+   oItem:cBmp           := "gc_pedidos_cliente_16"
+   oItem:cBmpBig        := "gc_pedidos_cliente_32"
    oItem:lShow          := .t.
 
    oItem                := oItemVentas:Add()
@@ -1524,8 +1524,8 @@ FUNCTION CreateMainSQLAcceso()
    oItem:bAction        := {|| AlbaranesVentasController():New():ActivateNavigatorView() }
    // oItem:bAction        := {|| FacturasVentasController1000() }
    oItem:cId            := "alvaranes_ventas"
-   oItem:cBmp           := "gc_document_text_user_16"
-   oItem:cBmpBig        := "gc_document_text_user_32"
+   oItem:cBmp           := "gc_albaran_cliente_16"
+   oItem:cBmpBig        := "gc_albaran_cliente_32"
    oItem:lShow          := .t.
 
    oItem                := oItemVentas:Add()

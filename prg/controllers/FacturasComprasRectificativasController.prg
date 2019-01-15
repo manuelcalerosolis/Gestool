@@ -50,9 +50,9 @@ METHOD New( oController ) CLASS FacturasComprasRectificativasController
 
    ::cName                             := "facturas_rectificativa_compra" 
 
-   ::hImage                            := {  "16" => "gc_document_text_businessman_16",;
-                                             "32" => "gc_document_text_businessman_32",;
-                                             "48" => "gc_document_text_businessman_48" }
+   ::hImage                            := {  "16" => "gc_rectificativa_proveedor_16",;
+                                             "32" => "gc_rectificativa_proveedor_32",;
+                                             "48" => "gc_rectificativa_proveedor_48" }
 
 RETURN ( Self ) 
 
