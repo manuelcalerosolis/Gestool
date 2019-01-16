@@ -60,6 +60,8 @@ METHOD New( oController ) CLASS ConsolidacionAlmacenController
 
    ::lTransactional                    := .t.
 
+   ::lInsertable                       := .t.
+
    ::lConfig                           := .t.
 
    ::lDocuments                        := .t.

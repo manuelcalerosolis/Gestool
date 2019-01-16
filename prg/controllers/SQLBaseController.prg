@@ -7,7 +7,7 @@ CLASS SQLBaseController
 
    DATA oController
 
-   DATA oExportableController                            
+   DATA nId                            
 
    DATA oEvents                                       
 
@@ -40,8 +40,6 @@ CLASS SQLBaseController
    DATA hImage                                        INIT {=>}
 
    DATA aSelected
-
-   METHOD isClient()                                  INLINE ( nil )
 
    METHOD New() CONSTRUCTOR
    METHOD End()
@@ -81,18 +79,19 @@ CLASS SQLBaseController
    
    // Rowset-------------------------------------------------------------------
 
-   METHOD saveRowSetRecno()                           INLINE ( ::getRowSet():saveRecno() )
-   METHOD restoreRowSetRecno()                        INLINE ( ::getRowSet():restoreRecno() )
-   METHOD gotoRowSetRecno( nRecno )                   INLINE ( iif( hb_isnumeric( nRecno ), ::getRowSet():gotoRecno( nRecno ), ) )
-   METHOD findRowSet( nId )                           INLINE ( ::getRowSet():find( nId ) )
-   METHOD refreshRowSet()                             INLINE ( ::getRowSet():refresh() )
-   METHOD refreshRowSetAndGoTop()                     INLINE ( ::getRowSet():refreshAndGoTop() )
-   METHOD refreshRowSetAndFindId( nId )               INLINE ( ::getRowSet():refreshAndFindId( nId ) )
-   METHOD goDownRowSet()                              INLINE ( ::getRowSet():goDown() )
-   METHOD goUpRowSet()                                INLINE ( ::getRowSet():goUp() )
+   METHOD saveRowSetRecno()            INLINE ( ::getRowSet():saveRecno() )
+   METHOD restoreRowSetRecno()         INLINE ( ::getRowSet():restoreRecno() )
+   METHOD gotoRowSetRecno( nRecno )    INLINE ( iif( hb_isnumeric( nRecno ), ::getRowSet():gotoRecno( nRecno ), ) )
+   METHOD findRowSet( nId )            INLINE ( ::getRowSet():find( nId ) )
+   METHOD refreshRowSet()              INLINE ( ::getRowSet():refresh() )
+   METHOD refreshRowSetAndGoTop()      INLINE ( ::getRowSet():refreshAndGoTop() )
+   METHOD refreshRowSetAndFindId()     INLINE ( iif( empty( ::nId ), ::refreshRowSet(), ::getRowSet():refreshAndFindId( ::nId ) ) )
+   METHOD goDownRowSet()               INLINE ( ::getRowSet():goDown() )
+   METHOD goUpRowSet()                 INLINE ( ::getRowSet():goUp() )
 
-   METHOD getIdFromRecno( aSelected )                 INLINE ( ::getRowSet():IdFromRecno( aSelected ) )
-   METHOD getUuidFromRecno( aSelected )               INLINE ( ::getRowSet():UuidFromRecno( aSelected ) )
+   METHOD getIdFromRecno( aSelected )  INLINE ( ::getRowSet():IdFromRecno( aSelected ) )
+   METHOD getUuidFromRecno( aSelected ) ;
+                                       INLINE ( ::getRowSet():UuidFromRecno( aSelected ) )
 
    METHOD getIdFromRowSet()                           INLINE ( ::getRowSet():fieldGet( ::getModel():cColumnKey ) )
    METHOD getUuidFromRowSet()                         INLINE ( ::getRowSet():fieldGet( "uuid" ) )
@@ -168,6 +167,8 @@ CLASS SQLBaseController
 
    METHOD Insert()
 
+   METHOD insertOrUpdateBuffer()
+
    METHOD Duplicate()
       METHOD setDuplicateMode()                       INLINE ( ::setMode( __duplicate_mode__ ) )
       METHOD isDuplicateMode()                        INLINE ( ::nMode == __duplicate_mode__ )
@@ -202,9 +203,9 @@ CLASS SQLBaseController
 
    // Transactional system-----------------------------------------------------
 
-   METHOD beginTransactionalMode()                    INLINE ( if( ::lTransactional, getSQLDatabase():BeginTransaction(), ) )
-   METHOD commitTransactionalMode()                   INLINE ( if( ::lTransactional, getSQLDatabase():Commit(), ) )
-   METHOD rollbackTransactionalMode()                 INLINE ( if( ::lTransactional, getSQLDatabase():Rollback(), ) )
+   METHOD beginTransactionalMode()                    INLINE ( msgalert( "beginTransactionalMode" ), iif( ::lTransactional, getSQLDatabase():BeginTransaction(), ) )
+   METHOD commitTransactionalMode()                   INLINE ( msgalert( "commitTransactionalMode" ), iif( ::lTransactional, getSQLDatabase():Commit(), ) )
+   METHOD rollbackTransactionalMode()                 INLINE ( msgalert( "rollbackTransactionalMode" ), iif( ::lTransactional, getSQLDatabase():Rollback(), ) )
 
    // Events-------------------------------------------------------------------
 
@@ -218,22 +219,6 @@ CLASS SQLBaseController
 
    METHOD setDirectory( cDirectory )                  INLINE ( ::cDirectory := cDirectory )
    METHOD getDirectory()                              INLINE ( ::cDirectory )
-
-   // Fachadas para q responda ExportableController----------------------------
-
-   METHOD load()                                      INLINE ( ::oExportableController:load() )
-   METHOD save()                                      INLINE ( ::oExportableController:save() )
-
-   METHOD setSelectSend( lSelect )                    INLINE ( ::oExportableController:setSelectSend( lSelect ) )
-   METHOD getSelectSend()                             INLINE ( ::oExportableController:getSelectSend() )
-
-   METHOD setSelectRecive( lSelect )                  INLINE ( ::oExportableController:setSelectRecive( lSelect ) )
-   METHOD getSelectRecive()                           INLINE ( ::oExportableController:getSelectRecive() )
-
-   METHOD createData()                                INLINE ( ::buildNotSentJson(), ::zipNotSentJson() )
-   METHOD restoreData( oInternet )                    INLINE ( ::setSentFromFetch() )
-   
-   METHOD sendData( oInternet )                       INLINE ( ::oExportableController:isSendData( oInternet ) )
 
    // Validador para las columnas editables del browseview---------------------
 
@@ -284,10 +269,20 @@ RETURN ( hb_gcall( .t. ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD insertOrUpdateBuffer()
+
+   if empty( ::nId )
+      ::nId          := ::getModel():insertBuffer()
+   else 
+      ::getModel():updateBuffer()
+   end if 
+
+RETURN ( ::nId )
+
+//---------------------------------------------------------------------------//
+
 METHOD Append()
 
-   local nId
-   local uResult
    local lAppend     := .t.   
 
    if ::notUserAppend()
@@ -303,6 +298,8 @@ METHOD Append()
 
    while .t.
 
+      ::nId          := 0
+
       ::beginTransactionalMode()
 
       ::saveRowSetRecno()
@@ -315,15 +312,11 @@ METHOD Append()
 
          ::fireEvent( 'closedDialog' )  
 
-         nId         := ::getModel():insertBuffer()    
+         ::insertOrUpdateBuffer()    
          
          ::commitTransactionalMode()
 
-         if !empty( nId )
-            ::refreshRowSetAndFindId( nId )
-         else 
-            ::refreshRowSet()
-         end if 
+         ::refreshRowSetAndFindId()
          
          if !empty( ::getBrowseView() )
             ::refreshBrowseView()
@@ -339,13 +332,13 @@ METHOD Append()
 
       else
          
+         ::rollbackTransactionalMode()
+
          lAppend     := .f.
 
          ::fireEvent( 'cancelAppended' ) 
 
          ::restoreRowSetRecno()
-
-         ::rollbackTransactionalMode()
 
          exit
 
@@ -361,9 +354,7 @@ RETURN ( lAppend )
 
 METHOD Insert()
 
-   local nId
-   local uResult
-   local lAppend     := .t.   
+   local lInsert     := .t.   
 
    if ::notUserAppend()
       msgStop( "Acceso no permitido." )
@@ -378,11 +369,13 @@ METHOD Insert()
 
    while .t.
 
+      ::nId          := 0
+
       ::beginTransactionalMode()
 
       ::saveRowSetRecno()
 
-      nId            := ::getModel():insertBlankBuffer()
+      ::nId          := ::getModel():insertBlankBuffer()
 
       ::fireEvent( 'openingDialog' )     
 
@@ -394,11 +387,7 @@ METHOD Insert()
          
          ::commitTransactionalMode()
 
-         if !empty( nId )
-            ::refreshRowSetAndFindId( nId )
-         else 
-            ::refreshRowSet()
-         end if 
+         ::refreshRowSetAndFindId()
 
          ::refreshBrowseView()
 
@@ -412,13 +401,13 @@ METHOD Insert()
 
       else
          
-         lAppend     := .f.
+         lInsert     := .f.
 
          ::fireEvent( 'cancelAppended' ) 
 
-         ::restoreRowSetRecno()
-
          ::rollbackTransactionalMode()
+
+         ::restoreRowSetRecno()
 
          exit
 
@@ -428,7 +417,7 @@ METHOD Insert()
 
    ::fireEvent( 'exitAppended' ) 
 
-RETURN ( lAppend )
+RETURN ( lInsert )
 
 //----------------------------------------------------------------------------//
 
@@ -436,11 +425,13 @@ METHOD Duplicate( nId )
 
    local lDuplicate  := .t. 
 
-   if empty( nId )
-      nId            := ::getIdFromRowSet()
+   ::nId             := nId
+
+   if empty( ::nId )
+      ::nId          := ::getIdFromRowSet()
    end if 
 
-   if empty( nId )
+   if empty( ::nId )
       RETURN ( .f. )
    end if 
 
@@ -463,7 +454,7 @@ METHOD Duplicate( nId )
 
    ::saveRowSetRecno()
 
-   ::getModel():loadDuplicateBuffer( nId )
+   ::getModel():loadDuplicateBuffer( ::nId )
 
    ::fireEvent( 'openingDialog' )
 
@@ -471,13 +462,11 @@ METHOD Duplicate( nId )
 
       ::fireEvent( 'closedDialog' )    
 
-      nId            := ::getModel():insertBuffer()
+      ::insertOrUpdateBuffer()
 
       ::commitTransactionalMode()
       
-      if !empty( nId )
-         ::refreshRowSetAndFindId( nId )
-      end if 
+      ::refreshRowSetAndFindId()
       
       ::fireEvent( 'duplicated' ) 
 
@@ -553,7 +542,7 @@ METHOD Edit( nId )
 
       ::commitTransactionalMode()
 
-      ::refreshRowSetAndFindId( nId )
+      ::refreshRowSetAndFindId()
 
       ::refreshBrowseView()
 

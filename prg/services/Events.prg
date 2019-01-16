@@ -87,6 +87,8 @@ METHOD Fire( cEvent, uOther )
    end if 
 
    for each bEvent in hget( ::hEvents, cEvent )
+
+      msgalert( cEvent, "evento lanzado")
       
       lEvent      := eval( bEvent, uOther )
 

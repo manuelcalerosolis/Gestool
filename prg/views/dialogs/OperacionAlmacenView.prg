@@ -287,6 +287,8 @@ METHOD startActivate() CLASS MovimientoAlmacenView
 
    ::getController():calculateTotals()
 
+   ::getController():getAlmacenOrigenController():getSelector():setFocus()
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

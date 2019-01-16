@@ -31,7 +31,7 @@ CLASS OperacionesLineasController FROM SQLBrowseController
 
    METHOD postValidateAlmacenCodigo( oCol, uValue, nKey )
 
-   METHOD postValidateUbicacionCodigo( oCol, uValue, nKey )
+   METHOD postValidateUbicacionCodigo( oCol, uValue, nKey, cField )
 
    METHOD postValidateCombinacionesUuid( oCol, uValue, nKey )
 
@@ -263,25 +263,35 @@ RETURN ( .t. )
 METHOD validLineAlmacen()
 
    if empty( ::getRowSet():fieldget( 'almacen_codigo' ) )
+
       ::getController():getDialogView():showMessage( "Almacén no puede estar vacio en la línea" )   
+   
       ::getBrowseView():setFocusColumnCodigoAlmacen()
+   
       RETURN ( .f. )
+   
    end if
 
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validLineUbicacion()
+METHOD validLineUbicacion( cField )
+
+   DEFAULT cField    := 'ubicacion_codigo'
 
    if !( Company():getDefaultUsarUbicaciones() )
       RETURN ( .t. )
    end if 
 
-   if empty( ::getRowSet():fieldget( 'ubicacion_codigo' ) )
+   if empty( ::getRowSet():fieldget( cField ) )
+
       ::getController():getDialogView():showMessage( "Ubicación no puede estar vacia en la línea" )   
+   
       ::getBrowseView():setFocusColumnCodigoUbicacion()
+   
       RETURN ( .f. )
+   
    end if
 
 RETURN ( .t. )
@@ -343,9 +353,11 @@ RETURN ( ::stampAlmacen( cCodigo ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD postValidateUbicacionCodigo( oCol, uValue, nKey )
+METHOD postValidateUbicacionCodigo( oCol, uValue, nKey, cField )
 
    local cCodigo
+
+   DEFAULT cField    := "ubicacion_codigo"
 
    if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
       RETURN ( .t. )
@@ -358,11 +370,11 @@ METHOD postValidateUbicacionCodigo( oCol, uValue, nKey )
          cCodigo     := uValue
    end case 
 
-   if ::getHistoryManager():isEqual( "ubicacion_codigo", cCodigo )
+   if ::getHistoryManager():isEqual( cField, cCodigo )
       RETURN ( .t. )
    end if 
 
-RETURN ( ::stampUbicacion( cCodigo ) )
+RETURN ( ::stampUbicacion( cCodigo, cField ) )
 
 //---------------------------------------------------------------------------//
 
@@ -444,9 +456,11 @@ RETURN ( ::stampUbicacion( space( 20 ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampUbicacion( cCodigoUbicacion )
+METHOD stampUbicacion( cCodigoUbicacion, cField )
 
-   ::updateField( "ubicacion_codigo", cCodigoUbicacion )
+   DEFAULT cField    := "ubicacion_codigo"
+
+   ::updateField( cField, cCodigoUbicacion )
 
 RETURN ( .t. )
 

@@ -17,21 +17,21 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
 
    DATA oRadioTipoMovimento
 
-   DATA idGoTo                      INIT     0
+   DATA idGoTo                         INIT     0
 
    METHOD Activate()
       METHOD startActivate()
       METHOD initActivate()
 
-   METHOD changeTipoMovimiento()    INLINE   (  iif(  ::oRadioTipoMovimento:nOption() == __tipo_movimiento_entre_almacenes__,;
-                                                      ::oGetAlmacenOrigen:Show(),;
-                                                      ::oGetAlmacenOrigen:Hide() ) )
+   METHOD changeTipoMovimiento()       INLINE   (  iif(  ::oRadioTipoMovimento:nOption() == __tipo_movimiento_entre_almacenes__,;
+                                                         ::oGetAlmacenOrigen:Show(),;
+                                                         ::oGetAlmacenOrigen:Hide() ) )
 
-   METHOD getUsuario()              INLINE   (  SQLUsuariosModel():getNombreWhereUuid( ::oController:oModel:hBuffer[ "usuario_uuid" ] ) )
+   METHOD getUsuario()                 INLINE   (  SQLUsuariosModel():getNombreWhereUuid( ::oController:oModel:hBuffer[ "usuario_uuid" ] ) )
 
    METHOD validateAndGoTo()         
-   METHOD validateAndGoDown()       INLINE   (  iif( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDDOWN ), ) )
-   METHOD validateAndGoUp()         INLINE   (  iif( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDUP ), ) )
+   METHOD validateAndGoDown()          INLINE   (  iif( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDDOWN ), ) )
+   METHOD validateAndGoUp()            INLINE   (  iif( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDUP ), ) )
 
 END CLASS
 
@@ -139,9 +139,12 @@ METHOD startActivate()
    ::oController:getTagsController():getDialogView():Start()
 
    ::oController:oLineasController:oBrowseView:getBrowse():makeTotals()
+
    ::oController:oLineasController:oBrowseView:getBrowse():goTop()
 
-RETURN ( Self )
+   ::oGetAlmacenOrigen:setFocus()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

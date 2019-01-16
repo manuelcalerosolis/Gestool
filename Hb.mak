@@ -215,6 +215,7 @@ ConsolidacionAlmacenLineasController.prg								\
 OperacionesLineasController.obj 											\
 OperacionesLineasController.prg											\
 ConsolidacionAlmacenLineasBrowse.prg									\
+MovimientoAlmacenLineasBrowse.prg										\
 OperacionesLineasBrowse.prg												\
 SQLConsolidacionesAlmacenesModel.prg									\
 SQLMovimientosAlmacenesModel.prg											\
@@ -335,7 +336,8 @@ PedidosClientesLineasModel.prg 											\
 Events.prg 																		\
 Seeders.prg    																\
 SqlMigrations.prg 															\
-SQLConsolidacionesAlmacenesLineasModel.prg 								\
+SQLConsolidacionesAlmacenesLineasModel.prg 							\
+SQLMovimientosAlmacenesLineasModel.prg 								\
 SQLOperacionesLineasModel.prg 											\
 NumerosSeriesController.prg 								  				\
 NumerosSeriesView.prg 														\
@@ -646,6 +648,7 @@ MovimientoAlmacenController.obj 											\
 ConsolidacionAlmacenLineasController.obj 								\
 OperacionesLineasController.obj 											\
 ConsolidacionAlmacenLineasBrowse.obj 									\
+MovimientoAlmacenLineasBrowse.obj 										\
 OperacionesLineasBrowse.obj 												\
 SQLConsolidacionesAlmacenesModel.obj 									\
 SQLMovimientosAlmacenesModel.obj 										\
@@ -754,7 +757,8 @@ ColumnasUsuariosModel.obj 													\
 Events.obj 																		\
 Seeders.obj 																	\
 SqlMigrations.obj 															\
-SQLConsolidacionesAlmacenesLineasModel.obj 								\
+SQLConsolidacionesAlmacenesLineasModel.obj 							\
+SQLMovimientosAlmacenesLineasModel.obj 								\
 SQLOperacionesLineasModel.obj 											\
 NumerosSeriesController.obj 												\
 NumerosSeriesView.obj 														\
@@ -1072,6 +1076,7 @@ $(OBJ)\MovimientoAlmacenController.obj 								+
 $(OBJ)\ConsolidacionAlmacenLineasController.obj 					+
 $(OBJ)\OperacionesLineasController.obj 								+
 $(OBJ)\ConsolidacionAlmacenLineasBrowse.obj 							+
+$(OBJ)\MovimientoAlmacenLineasBrowse.obj 								+
 $(OBJ)\OperacionesLineasBrowse.obj 										+
 $(OBJ)\ConfiguracionesController.obj 									+
 $(OBJ)\RecordController.obj 												+
@@ -1165,6 +1170,7 @@ $(OBJ)\PedidosClientesLineasModel.obj 									+
 $(OBJ)\Seeders.obj 															+
 $(OBJ)\SqlMigrations.obj 													+
 $(OBJ)\SQLConsolidacionesAlmacenesLineasModel.obj 					+
+$(OBJ)\SQLMovimientosAlmacenesLineasModel.obj 						+
 $(OBJ)\SQLOperacionesLineasModel.obj 									+
 $(OBJ)\NumerosSeriesController.obj 										+
 $(OBJ)\NumerosSeriesView.obj 												+

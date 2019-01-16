@@ -4,19 +4,21 @@
 
 //------------------------------------------------------------------------//
 
-CLASS OperacionesComercialesLineasBrowseView FROM OperacionesLineasBrowseView
-
-   DATA oColumnCodigoAlmacen
-
-   DATA oColumnCodigoAgente
+CLASS MovimientoAlmacenLineasBrowseView FROM OperacionesLineasBrowseView
 
    METHOD addColumns()
+
+   METHOD activateUbicacionesOrigenSelectorView() ;
+                                       INLINE ( ::activateUbicacionesSelectorView( 'almacen_origen_codigo' ) )
+
+   METHOD activateUbicacionesDestinoSelectorView() ;
+                                       INLINE ( ::activateUbicacionesSelectorView( 'almacen_destino_codigo' ) )
 
 ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS OperacionesComercialesLineasBrowseView
+METHOD addColumns() CLASS MovimientoAlmacenLineasBrowseView
 
    ::getColumnIdAndUuid()
 
@@ -164,58 +166,6 @@ METHOD addColumns() CLASS OperacionesComercialesLineasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'total_bruto'
-      :cHeader             := 'Total bruto'
-      :nWidth              := 80
-      :cEditPicture        := "@E 99,999,999.999999"
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'total_bruto' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :nFootStyle          := :nDataStrAlign               
-      :nFooterType         := AGGR_SUM
-      :cFooterPicture      := :cEditPicture
-      :oFooterFont         := oFontBold()
-      :cDataType           := "N"
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'descuento'
-      :cHeader             := '% Descuento'
-      :nWidth              := 80
-      :cEditPicture        := "@E 999.9999"
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'descuento' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :cDataType           := "N"
-      :nEditType           := ::getEditGet()
-      :bEditValid          := {| oGet | ::getController():validateDescuento( oGet ) }
-      :bOnPostEdit         := {| oCol, uNewValue | ::getController():updateDescuento( uNewValue ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'iva'
-      :cHeader             := '% IVA'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'iva' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :cEditPicture        := "@E 999.9999"
-      :cDataType           := "N"
-      :nEditType           := ::getEditGet()
-      :bEditValid          := {| oGet | ::getController():validateIva( oGet ) }
-      :bOnPostEdit         := {| oCol, uNewValue | ::getController():updateImpuestos( uNewValue ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'recargo_equivalencia'
-      :cHeader             := '% R.E.'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'recargo_equivalencia' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :cEditPicture        := "@E 999.9999"
-      :cDataType           := "N"
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'total_precio'
       :cHeader             := 'Total precio'
       :nWidth              := 80
@@ -242,86 +192,53 @@ METHOD addColumns() CLASS OperacionesComercialesLineasBrowseView
       :bOnPostEdit         := {|oCol, uNewValue | ::getController():postValidateCombinacionesUuid( oCol, uNewValue ) }
    end with
 
-   with object ( ::oColumnCodigoAlmacen := ::oBrowse:AddCol() )
-      :cSortOrder          := 'almacen_codigo'
-      :cHeader             := 'Código almacén'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'almacen_codigo' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :nEditType           := EDIT_GET_BUTTON
-      :bEditValid          := {|oGet, oCol| ::getController():validAlmacenCodigo( oGet, oCol ) }
-      :bEditBlock          := {|| ::getController():oController:getAlmacenesController():ActivateSelectorView() }
-      :nBtnBmp             := 1
-      :AddResource( "Lupa" )
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::getController():postValidateAlmacenCodigo( oCol, uNewValue, nKey ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'almacen_nombre'
-      :cHeader             := 'Nombre almacén'
-      :nWidth              := 180
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'almacen_nombre' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
    if Company():getDefaultUsarUbicaciones()
 
    with object ( ::oColumnCodigoUbicacion := ::oBrowse:AddCol() )
-      :cSortOrder          := 'ubicacion_codigo'
-      :cHeader             := 'Código ubicación'
+      :cSortOrder          := 'ubicacion_origen_codigo'
+      :cHeader             := 'Ubicación origen'
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'ubicacion_codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'ubicacion_origen_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := EDIT_GET_BUTTON
       :bEditValid          := {|oGet, oCol| ::getController():validUbicacionCodigo( oGet, oCol ) }
-      :bEditBlock          := {|| ::activateUbicacionesSelectorView() }
+      :bEditBlock          := {|| ::activateUbicacionesOrigenSelectorView() }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::getController():postValidateUbicacionCodigo( oCol, uNewValue, nKey ) }
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::getController():postValidateUbicacionOrigenCodigo( oCol, uNewValue, nKey ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'ubicacion_nombre'
-      :cHeader             := 'Nombre ubicación'
+      :cSortOrder          := 'ubicacion_origen_nombre'
+      :cHeader             := 'Nombre ubicación origen'
       :nWidth              := 180
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'ubicacion_nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'ubicacion_origen_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oColumnCodigoUbicacion := ::oBrowse:AddCol() )
+      :cSortOrder          := 'ubicacion_destino_codigo'
+      :cHeader             := 'Ubicación destino'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'ubicacion_destino_codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nEditType           := EDIT_GET_BUTTON
+      :bEditValid          := {|oGet, oCol| ::getController():validUbicacionCodigo( oGet, oCol ) }
+      :bEditBlock          := {|| ::activateUbicacionesDestinoSelectorView() }
+      :nBtnBmp             := 1
+      :AddResource( "Lupa" )
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::getController():postValidateUbicacionDestinoCodigo( oCol, uNewValue, nKey ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'ubicacion_destino_nombre'
+      :cHeader             := 'Nombre ubicación destino'
+      :nWidth              := 180
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'ubicacion_destino_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    end if 
-
-   with object ( ::oColumnCodigoAgente := ::oBrowse:AddCol() )
-      :cSortOrder          := 'agente_codigo'
-      :cHeader             := 'Código agente'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'agente_codigo' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :nEditType           := ::getEditButton()
-      :bEditValid          := {|oGet, oCol| ::getController():validAgenteCodigo( oGet, oCol ) }
-      :bEditBlock          := {|| ::getController():oController:getAgentesController():ActivateSelectorView() }
-      :nBtnBmp             := 1
-      :AddResource( "Lupa" )
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::getController():postValidateAgenteCodigo( oCol, uNewValue, nKey ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'agente_nombre'
-      :cHeader             := 'Nombre agente'
-      :nWidth              := 180
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'agente_nombre' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'agente_comision'
-      :cHeader             := '% Comisión agente'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'agente_comision' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :cEditPicture        := "@E 999.99"
-      :nEditType           := ::getEditGet()
-      :bOnPostEdit         := {| oCol, uNewValue | ::getController():updateAgenteComision( uNewValue ) }
-   end with
 
    ::getColumnDeletedAt()
 

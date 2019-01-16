@@ -123,17 +123,19 @@ RETURN ( hb_gcall( .t. ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD closeActivate()
+METHOD closeActivate( oDialogValidate )
+
+   DEFAULT oDialogValidate := ::oDialog
 
    if ::getController():isZoomMode() 
 
       ::oDialog:end()
    
       RETURN ( nil )
-   
+
    end if 
 
-   if validateDialog( ::oDialog )
+   if validateDialog( oDialogValidate )
       ::oDialog:end( IDOK )
    end if
 

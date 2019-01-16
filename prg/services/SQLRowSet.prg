@@ -17,50 +17,50 @@ CLASS SQLRowSet
 
    METHOD New()
    METHOD End()
-   METHOD Free()                                      INLINE ( ::End() )
+   METHOD Free()                       INLINE ( ::End() )
 
-   METHOD Get()                                       INLINE ( ::oRowSet )
+   METHOD Get()                        INLINE ( ::oRowSet )
 
-   METHOD fieldGet( uField )                          INLINE ( if( !empty( ::oRowSet ), ::oRowSet:fieldget( uField ), ) )
-   METHOD fieldpos( uField )                          INLINE ( if( !empty( ::oRowSet ), ::oRowSet:fieldpos( uField ), ) )
-   METHOD fieldGetDeteletedAt()                       INLINE ( if( !empty( ::oRowSet ), ::oRowSet:fieldget( 'deleted_at' ), ) )
+   METHOD fieldGet( uField )           INLINE ( if( !empty( ::oRowSet ), ::oRowSet:fieldget( uField ), ) )
+   METHOD fieldpos( uField )           INLINE ( if( !empty( ::oRowSet ), ::oRowSet:fieldpos( uField ), ) )
+   METHOD fieldGetDeteletedAt()        INLINE ( if( !empty( ::oRowSet ), ::oRowSet:fieldget( 'deleted_at' ), ) )
    
-   METHOD fieldValueByName( cColumn )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:getValueByName( cColumn ), ) )
+   METHOD fieldValueByName( cColumn )  INLINE ( if( !empty( ::oRowSet ), ::oRowSet:getValueByName( cColumn ), ) )
    
-   METHOD recCount()                                  INLINE ( if( !empty( ::oRowSet ), ::oRowSet:reccount(), ) )
+   METHOD recCount()                   INLINE ( if( !empty( ::oRowSet ), ::oRowSet:reccount(), ) )
 
-   METHOD saveRecno()                                 INLINE ( if( !empty( ::oRowSet ), ::nRecno := ::oRowSet:recno(), ) ) 
-   METHOD restoreRecno()                              INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goto( ::nRecno ), ) ) 
-   METHOD gotoRecno( nRecno )                         INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goto( nRecno ), ) ) 
+   METHOD saveRecno()                  INLINE ( if( !empty( ::oRowSet ), ::nRecno := ::oRowSet:recno(), ) ) 
+   METHOD restoreRecno()               INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goto( ::nRecno ), ) ) 
+   METHOD gotoRecno( nRecno )          INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goto( nRecno ), ) ) 
 
    // XBrowse move-------------------------------------------------------------
 
-   METHOD goTop()                                     INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goTop(), ) )
-   METHOD goBottom()                                  INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goBottom(), ) )
-   METHOD Skipper( n )                                INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Skipper( n ), ) )
-   METHOD Eof()                                       INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Eof(), ) ) 
-   METHOD Bof()                                       INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Bof(), ) ) 
-   METHOD keyCount()                                  INLINE ( if( !empty( ::oRowSet ) .and. !hb_isnil( ::oRowSet:RecCount() ), ::oRowSet:RecCount(), 0 ) ) 
-   METHOD bookMark( n )                               INLINE ( if( !empty( ::oRowSet ) .and. !hb_isnil( ::oRowSet:RecNo() ), if( n == nil, ::oRowSet:RecNo(), ::oRowSet:goTo( n ) ), 0 ) ) 
+   METHOD goTop()                      INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goTop(), ) )
+   METHOD goBottom()                   INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goBottom(), ) )
+   METHOD Skipper( n )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Skipper( n ), 0 ) )
+   METHOD Eof()                        INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Eof(), ) ) 
+   METHOD Bof()                        INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Bof(), ) ) 
+   METHOD keyCount()                   INLINE ( if( !empty( ::oRowSet ) .and. !hb_isnil( ::oRowSet:RecCount() ), ::oRowSet:RecCount(), 0 ) ) 
+   METHOD bookMark( n )                INLINE ( if( !empty( ::oRowSet ) .and. !hb_isnil( ::oRowSet:RecNo() ), if( n == nil, ::oRowSet:RecNo(), ::oRowSet:goTo( n ) ), 0 ) ) 
 
-   METHOD Skip()                                      INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Skip(), ) )
-   METHOD Recno( nRecno )                             INLINE ( if( !empty( ::oRowSet ) .and. empty( nRecno ), ::oRowSet:Recno(), ::oRowSet:goto( nRecno ) ) )
+   METHOD Skip()                       INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Skip(), ) )
+   METHOD Recno( nRecno )              INLINE ( if( !empty( ::oRowSet ) .and. empty( nRecno ), ::oRowSet:Recno(), ::oRowSet:goto( nRecno ) ) )
 
-   METHOD goDown()                                    INLINE ( if( !empty( ::oRowSet ), ::oRowSet:skip(1), ) ) 
-   METHOD goUp()                                      INLINE ( if( !empty( ::oRowSet ), ::oRowSet:skip(-1), ) ) 
+   METHOD goDown()                     INLINE ( if( !empty( ::oRowSet ), ::oRowSet:skip(1), ) ) 
+   METHOD goUp()                       INLINE ( if( !empty( ::oRowSet ), ::oRowSet:skip(-1), ) ) 
 
    METHOD findString( nId )
    METHOD findId( nId )
 
-   METHOD getValuesAsHash()                           INLINE ( if( !empty( ::oRowSet ), ::oRowSet:getValuesAsHash(), ) ) 
+   METHOD getValuesAsHash()            INLINE ( if( !empty( ::oRowSet ), ::oRowSet:getValuesAsHash(), ) ) 
 
    METHOD Build( cSentence )          
-   METHOD BuildPad( cSentence )                       INLINE ::Build( cSentence, .t. )          
+   METHOD BuildPad( cSentence )        INLINE ::Build( cSentence, .t. )          
 
-   METHOD refreshAndGoTop()                           INLINE ( ::Refresh(), ::goTop() )
+   METHOD refreshAndGoTop()            INLINE ( ::Refresh(), ::goTop() )
    
-   METHOD refreshAndFindId( nId )                     INLINE ( ::Refresh(), ::findId( nId ) )
-   METHOD buildAndFindId( nId )                       INLINE ( ::Build(), ::FindId( nId ) )
+   METHOD refreshAndFindId( nId )      INLINE ( ::Refresh(), ::findId( nId ) )
+   METHOD buildAndFindId( nId )        INLINE ( ::Build(), ::FindId( nId ) )
 
    METHOD refreshAndFindString( cFind, cColumn )      INLINE ( ::Refresh(), ::FindString( cFind, cColumn ) )
    METHOD buildAndFindString( cFind, cColumn )        INLINE ( ::Build(), ::FindString( cFind, cColumn ) )

@@ -8,8 +8,6 @@ CLASS ConsolidacionAlmacenLineasBrowseView FROM OperacionesLineasBrowseView
 
    METHOD addColumns()
 
-   METHOD activateUbicacionesSelectorView()
-
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -220,29 +218,3 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD activateUbicacionesSelectorView() CLASS ConsolidacionAlmacenLineasBrowseView
-
-   local hUbicacion
-   local uuidAlmacen
-   local cCodigoAlmacen
-
-   cCodigoAlmacen          := ::getSuperController():getModelBuffer( 'almacen_codigo' )
-
-   if empty( cCodigoAlmacen )
-      ::getController():getDialogView():showMessage( "El código de almacén no puede estar vacio" )
-      RETURN ( nil )
-   end if 
-
-   uuidAlmacen             := SQLAlmacenesModel():getUuidWhereCodigo( cCodigoAlmacen )
-   if empty( uuidAlmacen )
-      ::getController():getDialogView():showMessage( "No se ha podido obtener el identificador de almacén" )
-      RETURN ( nil )
-   end if 
-
-   ::getSuperController():getUbicacionesController():setControllerParentUuid( uuidAlmacen )
-
-   hUbicacion              := ::getSuperController():getUbicacionesController():ActivateSelectorView()
-
-RETURN ( hUbicacion )
-
-//---------------------------------------------------------------------------//

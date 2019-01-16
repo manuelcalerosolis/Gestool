@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ConsolidacionAlmacenLineasController FROM OperacionesLineasController
+CLASS OperacionAlmacenLineasController FROM OperacionesLineasController
 
    METHOD loadedBlankBuffer()
 
@@ -13,28 +13,26 @@ CLASS ConsolidacionAlmacenLineasController FROM OperacionesLineasController
 
    METHOD updateArticuloUnidades( oCol, uValue )
 
-   METHOD validLine()
-
    METHOD getUnidadMedicion( cCodigoArticulo ) ;
                                        INLINE ( SQLUnidadesMedicionOperacionesModel():getUnidadInventarioWhereArticulo( cCodigoArticulo ) )
 
-   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLConsolidacionesAlmacenesLineasModel():New( self ), ), ::oModel )
+   METHOD validLine()                  VIRTUAL
+   
+   METHOD getModel()                   VIRTUAL  
 
-   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := ConsolidacionAlmacenLineasBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              VIRTUAL
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedBlankBuffer() CLASS ConsolidacionAlmacenLineasController
+METHOD loadedBlankBuffer() CLASS OperacionAlmacenLineasController
 
-   ::setModelBuffer( 'unidad_medicion_codigo', UnidadesMedicionGruposLineasRepository():getCodigoDefault() )
-
-RETURN ( nil )
+RETURN ( ::setModelBuffer( 'unidad_medicion_codigo', UnidadesMedicionGruposLineasRepository():getCodigoDefault() ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampArticulo( hArticulo ) CLASS ConsolidacionAlmacenLineasController
+METHOD stampArticulo( hArticulo ) CLASS OperacionAlmacenLineasController
 
    cursorWait()
 
@@ -52,13 +50,41 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD updateArticuloUnidades( oCol, uValue ) CLASS ConsolidacionAlmacenLineasController
+METHOD updateArticuloUnidades( oCol, uValue ) CLASS OperacionAlmacenLineasController
 
    ::updateField( 'articulo_unidades', uValue )
 
    ::getBrowseView():makeTotals( oCol )
 
 RETURN ( ::oController:calculateTotals() )
+
+//---------------------------------------------------------------------------//
+
+METHOD stampArticuloPrecio() CLASS OperacionAlmacenLineasController
+
+   local nPrecioBase    := SQLArticulosModel():getFieldWhere( "precio_costo", { "codigo" => ::getRowSet():fieldget( "articulo_codigo" ) } )
+
+   if hb_isnumeric( nPrecioBase )
+      ::updateField( 'articulo_precio', nPrecioBase )
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS ConsolidacionAlmacenLineasController FROM OperacionAlmacenLineasController
+
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLConsolidacionesAlmacenesLineasModel():New( self ), ), ::oModel )
+
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := ConsolidacionAlmacenLineasBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD validLine()
+
+END CLASS
 
 //---------------------------------------------------------------------------//
 
@@ -80,17 +106,56 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampArticuloPrecio() CLASS ConsolidacionAlmacenLineasController
 
-   local nPrecioBase    := SQLArticulosModel():getFieldWhere( "precio_costo", { "codigo" => ::getRowSet():fieldget( "articulo_codigo" ) } )
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-   if hb_isnumeric( nPrecioBase )
-      ::updateField( 'articulo_precio', nPrecioBase )
+CLASS MovimientoAlmacenLineasController FROM OperacionAlmacenLineasController
+
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLMovimientosAlmacenesLineasModel():New( self ), ), ::oModel )
+
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := MovimientoAlmacenLineasBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD postValidateUbicacionOrigenCodigo( oCol, uValue, nKey, cField ) ;
+                                       INLINE ( ::postValidateUbicacionCodigo( oCol, uValue, nKey, "ubicacion_origen_codigo" ) )  
+
+   METHOD postValidateUbicacionDestinoCodigo( oCol, uValue, nKey, cField ) ;
+                                       INLINE ( ::postValidateUbicacionCodigo( oCol, uValue, nKey, "ubicacion_destino_codigo" ) )  
+
+   METHOD validLineUbicacionOrigen()   INLINE ( ::validLineUbicacion( 'ubicacion_origen_codigo' ) )
+
+   METHOD validLineUbicacionDestino()  INLINE ( ::validLineUbicacion( 'ubicacion_destino_codigo' ) )
+
+   METHOD validLine()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD validLine() CLASS MovimientoAlmacenLineasController
+
+   if empty( ::getRowSet():fieldget( 'articulo_codigo' ) )
+      RETURN ( .t. )
    end if 
+
+   if !( ::validLineCombinacion() )
+      RETURN ( .f. )
+   end if
+
+   if !( ::validLineUbicacionOrigen() )
+      RETURN ( .f. )
+   end if
+
+   if !( ::validLineUbicacionDestino() )
+      RETURN ( .f. )
+   end if
 
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-
-
-
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//

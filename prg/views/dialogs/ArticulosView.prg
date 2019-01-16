@@ -37,6 +37,8 @@ CLASS ArticulosView FROM SQLBaseView
 
    METHOD addLinksToExplorerBar()
 
+   METHOD changeFolder( nOption )      INLINE ( iif( nOption > 1, ::oController:insertOrUpdateBuffer(), ) )
+
    METHOD changeLote()                 INLINE ( iif( ::oController:oModel:hBuffer[ "lote" ], ::oGetLoteActual:Show(), ::oGetLoteActual:Hide() ) )
 
    METHOD changeNombre()               INLINE ( ::oMessage:setText( "Artículo : " + alltrim( ::oController:oModel:hBuffer[ "nombre" ] ) ) ) 
@@ -77,7 +79,9 @@ METHOD Activate() CLASS ArticulosView
       PROMPT      "&General",;
                   "&Precios" ;
       DIALOGS     "ARTICULO_GENERAL",;
-                  "ARTICULO_PRECIO"    
+                  "ARTICULO_PRECIO"   
+
+   ::oFolder:bChange    := {| nOption| ::changeFolder( nOption ) } 
 
    REDEFINE GET   ::oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
@@ -94,7 +98,7 @@ METHOD Activate() CLASS ArticulosView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oFolder:aDialogs[1]
       
-   ::oGetNombre:bChange   := {|| ::changeNombre() }
+   ::oGetNombre:bChange := {|| ::changeNombre() }
 
    // Familias de articulos ---------------------------------------------------
 
@@ -204,17 +208,15 @@ METHOD Activate() CLASS ArticulosView
 
    // Botones generales--------------------------------------------------------
 
-   ::oBtnAceptar           := ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ::oBtnAceptar        := ApoloBtnFlat():Redefine( IDOK, {|| ::closeActivate( ::oFolder:aDialogs ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   ::oBtnCancelar          := ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+   ::oBtnCancelar       := ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }
-   end if
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::closeActivate( ::oFolder:aDialogs ), ) }
 
-   ::oDialog:bStart        := {|| ::startActivate() }
+   ::oDialog:bStart     := {|| ::startActivate(), ::paintedActivate() }
 
-   ::oDialog:Activate( , , {|| ::paintedActivate() }, .t. )
+   ::oDialog:Activate( , , , .t. )
 
    ::oController:getArticulosPreciosController():saveState()
 

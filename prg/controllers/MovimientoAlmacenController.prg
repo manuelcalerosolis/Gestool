@@ -42,7 +42,7 @@ CLASS MovimientoAlmacenController FROM OperacionesController
 
    METHOD getName()                    INLINE ( "movimiento_almacen" )
 
-   METHOD getLinesController()         INLINE ( ::getConsolidacionAlmacenLineasController() )
+   METHOD getLinesController()         INLINE ( ::getMovimientoAlmacenLineasController() )
 
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := MovimientoAlmacenView():New( self ), ), ::oDialogView )
 

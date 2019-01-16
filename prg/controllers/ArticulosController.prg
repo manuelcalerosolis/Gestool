@@ -73,7 +73,7 @@ METHOD New( oController ) CLASS ArticulosController
 
    ::cName                             := "articulos"
 
-   ::lInsertable                       := .t.
+   ::lInsertable                       := .f.
 
    ::hImage                            := {  "16" => "gc_object_cube_16",;
                                              "32" => "gc_object_cube_32",;
@@ -258,23 +258,57 @@ END CLASS
 
 CLASS TestArticulosController FROM TestCase
 
-   METHOD testAppend()
+   DATA oController
+
+   DATA aCategories                    INIT { "all", "articulos" }
+
+   METHOD beforeClass() 
+
+   METHOD afterClass() 
+
+   METHOD Before()
+/*
+   METHOD test_append()
    
-   METHOD testDialogAppend()
+   METHOD test_dialog_append()
 
-   METHOD testDialogEmptyNombre()
+   METHOD test_dialog_empty_nombre()
 
-   METHOD testDialogAppendConUnidadDeMedicion() 
+   METHOD test_dialog_append_con_unidad_de_medicion() 
+
+   METHOD test_dialog_cancel_append() 
+*/
+   METHOD test_controller_rollback()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD testAppend() CLASS TestArticulosController
+METHOD beforeClass() CLASS TestArticulosController
+
+   ::oController           := ArticulosController():New()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD afterClass() CLASS TestArticulosController
+
+RETURN ( ::oController:end() )
+
+//---------------------------------------------------------------------------//
+
+METHOD Before() CLASS TestArticulosController
+
+   SQLArticulosModel():truncateTable()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+/*
+METHOD test_append() CLASS TestArticulosController
 
    local nId
-
-   SQLArticulosModel():truncateTable() 
 
    nId   := SQLArticulosModel():insertBuffer(   {  'uuid' => win_uuidcreatestring(),;
                                                    'codigo' => '000',;
@@ -286,73 +320,141 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testDialogAppend() CLASS TestArticulosController
+METHOD test_dialog_append() CLASS TestArticulosController
 
-   local oController
+   ::oController:getDialogView():setEvent( 'painted',;
+      <| view | 
 
-   SQLArticulosModel():truncateTable() 
+         view:oGetCodigo:cText( '001' )
 
-   oController := ArticulosController():New()
+         apoloWaitSeconds( 1 )
 
-   oController:getDialogView():setEvent( 'painted',;
-      {| self | ;
-         self:oGetCodigo:cText( '001' ),;
-         apoloWaitSeconds( 1 ),;
-         self:oGetNombre:cText( 'Test 1' ),;
-         apoloWaitSeconds( 1 ),;
-         self:oBtnAceptar:Click() } )
+         view:oGetNombre:cText( 'Test 1' )
 
-   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+         apoloWaitSeconds( 1 )
 
-RETURN ( nil )
+         view:oBtnAceptar:Click()
 
-//---------------------------------------------------------------------------//
+         RETURN ( nil )
+      
+      > )
 
-METHOD testDialogEmptyNombre() CLASS TestArticulosController
-
-   local oController
-
-   SQLArticulosModel():truncateTable() 
-
-   oController := ArticulosController():New()
-
-   oController:getDialogView():setEvent( 'painted',;
-      {| self | ;
-         ::oGetCodigo:cText( '002' ),;
-         apoloWaitSeconds( 1 ),;
-         ::oBtnAceptar:Click(),;
-         apoloWaitSeconds( 1 ),;
-         ::oBtnCancelar:Click() } )
-
-   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+   ::assert:true( ::oController:Insert(), "test ::assert:true with .t." )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testDialogAppendConUnidadDeMedicion() CLASS TestArticulosController
+METHOD test_dialog_empty_nombre() CLASS TestArticulosController
 
-   local oController
+   ::oController:getDialogView():setEvent( 'painted',;
+      <| view | 
 
-   SQLArticulosModel():truncateTable() 
+         view:oGetCodigo:cText( '001' )
+
+         apoloWaitSeconds( 1 )
+
+         view:oBtnAceptar:Click()
+
+         apoloWaitSeconds( 1 )
+
+         view:oBtnCancelar:Click()
+
+         RETURN ( nil )
+      
+      > )
+
+   ::assert:false( ::oController:Insert(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialog_append_con_unidad_de_medicion() CLASS TestArticulosController
 
    SQLUnidadesMedicionGruposModel():test_create()
 
-   oController := ArticulosController():New()
+   ::oController:getDialogView():setEvent( 'painted',;
+      <| view | 
+         
+         view:oGetCodigo:cText( '001' )
+         
+         apoloWaitSeconds( 1 )
+         
+         view:oGetNombre:cText( 'Test producto venta con caja y palets' )
+         
+         apoloWaitSeconds( 1 )
+         
+         ::oController:getUnidadesMedicionGruposController():getSelector():cText( "0" )
+         
+         apoloWaitSeconds( 1 )
+         
+         view:oBtnAceptar:Click() 
 
-   oController:getDialogView():setEvent( 'painted',;
-      {| self | ;
-         self:oGetCodigo:cText( '001' ),;
-         apoloWaitSeconds( 1 ),;
-         self:oGetNombre:cText( 'Test producto venta con caja y palets' ),;
-         apoloWaitSeconds( 1 ),;
-         ::getController():getUnidadesMedicionGruposController():getSelector():cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
-         self:oBtnAceptar:Click() } )
+         RETURN ( nil )
 
-   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+      > )
+
+   ::assert:true( ::oController:Insert(), "test ::assert:true with .t." )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD test_dialog_cancel_append() CLASS TestArticulosController
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      <| view |
+
+         view:oGetCodigo:cText( '001' )
+
+         apoloWaitSeconds( 1 )
+
+         view:oGetNombre:cText( 'Test 1' )
+
+         apoloWaitSeconds( 1 )
+
+         view:oBtnCancelar:Click() 
+
+         RETURN ( nil )
+      > )
+
+   ::assert:false( ::oController:Insert(), "test cancelar la insercion de registro" )
+
+RETURN ( nil )
+*/
+//---------------------------------------------------------------------------//
+
+METHOD test_controller_rollback() CLASS TestArticulosController
+
+   local nId
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      <| view |
+
+         apoloWaitSeconds( 1 )
+
+         view:oBtnCancelar:Click() 
+
+         RETURN ( nil )
+      > )
+
+   ::oController:setAppendMode()
+
+   ::oController:beginTransactionalMode()
+
+   nId            := ::oController:getModel():insertBlankBuffer()
+
+   ::oController:getModel():insertBlankBuffer()
+
+   ::oController:dialogViewActivate()
+
+   ::oController:rollbackTransactionalMode()
+
+   ::assert:notEquals( ::oController:getModel():getFieldWhere( 'id', { 'id' => nId } ), 0, "test cancelar la insercion de registro" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 

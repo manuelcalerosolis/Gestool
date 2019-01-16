@@ -89,7 +89,9 @@ CLASS MenuTreeView
 
    METHOD addCloseButton()
 
-   METHOD addAppendOrInsertButton()       INLINE ( if( ::getSuperController():lInsertable, ::addInsertButton(), ::addAppendButton() ) )
+   METHOD addAppendOrInsertButton()       INLINE ( iif(  ::getSuperController():lInsertable,;
+                                                         ::addInsertButton(),;
+                                                         ::addAppendButton() ) )
 
    METHOD addGeneralButton()              
 

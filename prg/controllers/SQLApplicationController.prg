@@ -220,6 +220,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oConsolidacionAlmacenLineasController
 
+   DATA oMovimientoAlmacenLineasController
+
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
    METHOD getCodigosPostalesController();
@@ -408,6 +410,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getConsolidacionAlmacenLineasController();
                                     INLINE ( if( empty( ::oConsolidacionAlmacenLineasController ), ::oConsolidacionAlmacenLineasController := ConsolidacionAlmacenLineasController():New( self ), ), ::oConsolidacionAlmacenLineasController )
+   
+   METHOD getMovimientoAlmacenLineasController();
+                                    INLINE ( if( empty( ::oMovimientoAlmacenLineasController ), ::oMovimientoAlmacenLineasController := MovimientoAlmacenLineasController():New( self ), ), ::oMovimientoAlmacenLineasController )
 
    METHOD getFacturasVentasRectificativasLineasController(); 
                                     INLINE ( if( empty( ::oFacturasVentasRectificativasLineasController ), ::oFacturasVentasRectificativasLineasController := FacturasVentasRectificativasLineasController():New( self ), ), ::oFacturasVentasRectificativasLineasController )
@@ -778,6 +783,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oConsolidacionAlmacenLineasController )   
       ::oConsolidacionAlmacenLineasController:End()
+   end if
+
+   if !empty( ::oMovimientoAlmacenLineasController )   
+      ::oMovimientoAlmacenLineasController:End()
    end if
 
    if !empty( ::oFacturasVentasLineasController )   

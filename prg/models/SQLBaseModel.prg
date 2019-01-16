@@ -104,7 +104,8 @@ CLASS SQLBaseModel
    METHOD getHeadersForBrowse()
 
    METHOD getValueFromColumn( cColumn, cKey )
-   METHOD getHeaderFromColumn( cColumn )  INLINE ( ::getValueFromColumn( cColumn, "header" ) )
+   METHOD getHeaderFromColumn( cColumn ) ;
+                                       INLINE ( ::getValueFromColumn( cColumn, "header" ) )
    METHOD getHeaderFromColumnOrder()   INLINE ( ::getValueFromColumn( ::cColumnOrder, "header" ) )
    METHOD getLenFromColumn( cColumn )  INLINE ( ::getValueFromColumn( cColumn, "len" ) )
 
@@ -138,11 +139,13 @@ CLASS SQLBaseModel
    Method setDeletedTimeStamp( hBuffer )
 
    METHOD isBufferSystemRegister( hBuffer )   
-   METHOD isNotBufferSystemRegister( hBuffer )        INLINE ( !( ::isBufferSystemRegister( hBuffer ) ) )
+   METHOD isNotBufferSystemRegister( hBuffer ) ;
+                                       INLINE ( !( ::isBufferSystemRegister( hBuffer ) ) )
 
    METHOD getInsertSentence()
       METHOD writeInsertSentence( key, value )
-   METHOD getInsertIgnoreSentence( hBuffer )          INLINE ( ::getInsertSentence( hBuffer, .t. ) )
+   METHOD getInsertIgnoreSentence( hBuffer ) ;
+                                       INLINE ( ::getInsertSentence( hBuffer, .t. ) )
    METHOD getUpdateSentence()
    METHOD getInsertOnDuplicateSentence( hBuffer )   
 
@@ -311,20 +314,23 @@ CLASS SQLBaseModel
 
    METHOD getWhereNombre( uValue )               
    METHOD getColumnWhereNombre( uValue, cColumn, uDefault ) 
-   METHOD getCodigoWhereNombre( uValue )              INLINE ( ::getColumnWhereNombre( uValue, 'codigo', '' ) )
+   METHOD getCodigoWhereNombre( uValue ) ;
+                                       INLINE ( ::getColumnWhereNombre( uValue, 'codigo', '' ) )
 
    METHOD getColumnWhereId( id, cColumn )
-   METHOD getNombreWhereId( id )                      INLINE ( ::getColumnWhereId( id, 'nombre' ) )
+   METHOD getNombreWhereId( id )       INLINE ( ::getColumnWhereId( id, 'nombre' ) )
 
    METHOD getColumnWhereUuid( uuid, cColumn ) 
-   METHOD getNombreWhereUuid( uuid )                  INLINE ( ::getColumnWhereUuid( uuid, 'nombre' ) )
-   METHOD getCodigoWhereUuid( uuid )                  INLINE ( ::getColumnWhereUuid( uuid, 'codigo' ) )
+   METHOD getNombreWhereUuid( uuid )   INLINE ( ::getColumnWhereUuid( uuid, 'nombre' ) )
+   METHOD getCodigoWhereUuid( uuid )   INLINE ( ::getColumnWhereUuid( uuid, 'codigo' ) )
 
    METHOD getColumnWhereId( id, cColumn ) 
 
    METHOD getColumnWhereCodigo( codigo, cColumn ) 
-   METHOD getNombreWhereCodigo( codigo )              INLINE ( ::getColumnWhereCodigo( codigo, 'nombre' ) )
-   METHOD getCodigoWhereCodigo( codigo )              INLINE ( ::getColumnWhereCodigo( codigo, 'codigo' ) )
+   METHOD getNombreWhereCodigo( codigo ) ;
+                                       INLINE ( ::getColumnWhereCodigo( codigo, 'nombre' ) )
+   METHOD getCodigoWhereCodigo( codigo ) ;
+                                       INLINE ( ::getColumnWhereCodigo( codigo, 'codigo' ) )
 
    METHOD getColumn( cColumn ) 
    METHOD getColumnWhere( cColumn, cField, cCondition, cValue )
@@ -469,6 +475,8 @@ METHOD getGeneralSelect()
    cSQLSelect              := ::addGeneralHaving( cSQLSelect )
 
    cSQLSelect              := ::addLimit( cSQLSelect )
+
+   logwrite( cSQLSelect )
 
 RETURN ( cSQLSelect )
 
@@ -1573,6 +1581,8 @@ METHOD updateBuffer( hBuffer )
    if !empty( ::cSQLUpdate )
       ::getDatabase():Querys( ::cSQLUpdate )
    end if
+
+   msgalert( ::cSQLUpdate, "cSQLUpdate" )
 
    ::fireEvent( 'updatedBuffer' )
 

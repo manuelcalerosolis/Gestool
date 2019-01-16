@@ -227,12 +227,14 @@ RETURN ( oMenu )
 
 PROCEDURE loggedTest()
 /*
-   local cFicheroOrigen  := '"c:\Fw195\Gestool\bin\XML\TEST1.xml"'
-   local cFicheroDestino := '"c:\Fw195\Gestool\bin\XML\TEST1-signed.xml"'
-   local cNif            := '"' + SELCERT() + '"'
+   msgalert( "hola")
 
-   logwrite( fullcurdir() + 'autofirma\autofirmacommandline sign -i ' + cFicheroOrigen + ' -o ' + cFicheroDestino + ' -format facturae -store windows -alias ' + cNif )
-   waitRun( fullcurdir() + 'autofirma\autofirmacommandline sign -i ' + cFicheroOrigen + ' -o ' + cFicheroDestino + ' -format facturae -store windows -alias ' + cNif )
+   getSQLDatabase():BeginTransaction()
+
+   SQLAgentesModel():insertBuffer(  {  'codigo' => '9',;
+                                       'nombre' => 'Test' } )
+
+   getSQLDatabase():RollBack()
 */
 RETURN 
 

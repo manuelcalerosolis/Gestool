@@ -51,7 +51,7 @@ CLASS OperacionesLineasBrowseView FROM SQLBrowseView
 
    METHOD setFocusColumnPropiedades()  INLINE ( ::oBrowse:setFocus(), ::oBrowse:goToCol( ::oColumnPropiedades ) )
 
-   METHOD activateUbicacionesSelectorView()  VIRTUAL  
+   METHOD activateUbicacionesSelectorView( cField )    
 
 ENDCLASS
 
@@ -93,3 +93,33 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD activateUbicacionesSelectorView( cField ) CLASS OperacionesLineasBrowseView
+
+   local hUbicacion
+   local uuidAlmacen
+   local cCodigoAlmacen
+
+   DEFAULT cField          := 'almacen_codigo'
+
+   cCodigoAlmacen          := ::getSuperController():getModelBuffer( cField )
+
+   msgalert( cCodigoAlmacen, "cCodigoAlmacen" )
+
+   if empty( cCodigoAlmacen )
+      ::getController():getDialogView():showMessage( "El código de almacén no puede estar vacio" )
+      RETURN ( nil )
+   end if 
+
+   uuidAlmacen             := SQLAlmacenesModel():getUuidWhereCodigo( cCodigoAlmacen )
+   if empty( uuidAlmacen )
+      ::getController():getDialogView():showMessage( "No se ha podido obtener el identificador de almacén" )
+      RETURN ( nil )
+   end if 
+
+   ::getSuperController():getUbicacionesController():setControllerParentUuid( uuidAlmacen )
+
+   hUbicacion              := ::getSuperController():getUbicacionesController():ActivateSelectorView()
+
+RETURN ( hUbicacion )
+
+//---------------------------------------------------------------------------//
