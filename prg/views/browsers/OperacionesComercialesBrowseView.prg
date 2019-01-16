@@ -10,11 +10,7 @@ CLASS OperacionesComercialesBrowseView FROM SQLBrowseView
 
    DATA lDeletedColored                INIT .f.
 
-   METHOD addColumns()    
-
-   METHOD addTercerosNombreLabel()     VIRTUAL
-
-   METHOD addTercerosCodigoLabel()     VIRTUAL                  
+   METHOD addColumns()                     
 
 ENDCLASS
 
@@ -64,7 +60,7 @@ METHOD addColumns() CLASS OperacionesComercialesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := "tercero_codigo"
-      :cHeader             := ::addTercerosCodigoLabel()
+      :cHeader             := "Código tercero"
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( "tercero_codigo" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -72,7 +68,7 @@ METHOD addColumns() CLASS OperacionesComercialesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := "tercero_nombre"
-      :cHeader             := ::addTercerosNombreLabel()
+      :cHeader             := "Nombre tercero"
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( "tercero_nombre" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }

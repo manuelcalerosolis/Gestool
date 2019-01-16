@@ -29,7 +29,7 @@ CLASS AlbaranesVentasController FROM OperacionesComercialesController
 
    METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := AlbaranesVentasValidator():New( self ), ), ::oValidator )
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := AlbaranesVentasBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesBrowseView():New( self ), ), ::oBrowseView )
 
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := AlbaranesVentasRepository():New( self ), ), ::oRepository )
 

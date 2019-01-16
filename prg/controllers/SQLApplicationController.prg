@@ -219,6 +219,8 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oRecibosPagosController 
 
    DATA oRecibosPagosTemporalController 
+
+   DATA oAlbaranesComprasLineasController 
    
    DATA oPermisosController 
    
@@ -601,6 +603,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oAgentesController )
       ::oAgentesController:End()
+   end if
+
+   if !empty( ::oAlbaranesComprasLineasController )
+      ::oAlbaranesComprasLineasController:End()
    end if 
 
    if !empty( ::oArticulosTarifasController )
