@@ -227,8 +227,6 @@ RETURN ( oMenu )
 
 PROCEDURE loggedTest()
 /*
-   msgalert( "hola")
-
    getSQLDatabase():BeginTransaction()
 
    SQLAgentesModel():insertBuffer(  {  'codigo' => '9',;

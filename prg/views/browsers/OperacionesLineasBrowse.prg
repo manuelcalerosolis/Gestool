@@ -103,8 +103,6 @@ METHOD activateUbicacionesSelectorView( cField ) CLASS OperacionesLineasBrowseVi
 
    cCodigoAlmacen          := ::getSuperController():getModelBuffer( cField )
 
-   msgalert( cCodigoAlmacen, "cCodigoAlmacen" )
-
    if empty( cCodigoAlmacen )
       ::getController():getDialogView():showMessage( "El código de almacén no puede estar vacio" )
       RETURN ( nil )

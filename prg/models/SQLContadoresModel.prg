@@ -111,8 +111,7 @@ RETURN ( ::getFieldWhere( 'contador', { 'documento' => cDocument, 'serie' => cSe
    
 METHOD incrementCounter( cDocument, cSerial )
 
-RETURN ( ::updateFieldsWhereTransactional(   { 'contador' => 'contador + 1', 'updated_at' => 'NOW()' },;
-                                             { 'documento' => cDocument, 'serie' => cSerial } ) )
+RETURN ( ::updateFieldsWhere( { 'contador' => 'contador + 1', 'updated_at' => 'NOW()' }, { 'documento' => cDocument, 'serie' => cSerial } ) )
 
 //---------------------------------------------------------------------------//
 

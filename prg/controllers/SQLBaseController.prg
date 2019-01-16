@@ -93,132 +93,134 @@ CLASS SQLBaseController
    METHOD getUuidFromRecno( aSelected ) ;
                                        INLINE ( ::getRowSet():UuidFromRecno( aSelected ) )
 
-   METHOD getIdFromRowSet()                           INLINE ( ::getRowSet():fieldGet( ::getModel():cColumnKey ) )
-   METHOD getUuidFromRowSet()                         INLINE ( ::getRowSet():fieldGet( "uuid" ) )
+   METHOD getIdFromRowSet()            INLINE ( ::getRowSet():fieldGet( ::getModel():cColumnKey ) )
+   METHOD getUuidFromRowSet()          INLINE ( ::getRowSet():fieldGet( "uuid" ) )
 
    METHOD isRowSetSystemRegister()                          
-   METHOD isNotRowSetSystemRegister()                 INLINE ( !( ::isRowSetSystemRegister() ) )
+   METHOD isNotRowSetSystemRegister()  INLINE ( !( ::isRowSetSystemRegister() ) )
 
-   METHOD setMultiDelete( lMultiDelete )              INLINE ( ::lMultiDelete := lMultiDelete )                          
-   METHOD isMultiDelete()                             INLINE ( ::lMultiDelete )
+   METHOD setMultiDelete( lMultiDelete ) ;
+                                       INLINE ( ::lMultiDelete := lMultiDelete )                          
+   METHOD isMultiDelete()              INLINE ( ::lMultiDelete )
 
    METHOD findInRowSet( uValue, cColumn )             
-   METHOD findByIdInRowSet( uValue )                  INLINE ( ::getRowSet():find( uValue, "id", .t. ) )
+   METHOD findByIdInRowSet( uValue )   INLINE ( ::getRowSet():find( uValue, "id", .t. ) )
 
-   METHOD refreshBrowseView()                         VIRTUAL
+   METHOD refreshBrowseView()          VIRTUAL
 
    // Dialogo------------------------------------------------------------------
 
-   METHOD getDialogView()                             INLINE ( ::oDialogView )
+   METHOD getDialogView()              INLINE ( ::oDialogView )
       METHOD dialogViewActivate()  
       METHOD dialogViewEnd()                   
       METHOD dialogViewDestroy()
 
-   METHOD isContinuousAppend()                        INLINE ( hb_isnumeric( ::uDialogResult ) .and. ::uDialogResult == IDOKANDNEW )
+   METHOD isContinuousAppend()         INLINE ( hb_isnumeric( ::uDialogResult ) .and. ::uDialogResult == IDOKANDNEW )
 
    // Repositorio--------------------------------------------------------------
 
-   METHOD getRepository()                             INLINE ( ::oRepository )
+   METHOD getRepository()              INLINE ( ::oRepository )
 
    // Validator----------------------------------------------------------------
 
-   METHOD getValidator()                              INLINE ( ::oValidator )
+   METHOD getValidator()               INLINE ( ::oValidator )
 
-   METHOD Validate( cColumn, uValue )                 INLINE ( ::getValidator():Validate( cColumn, uValue ) )
-   METHOD notValidate( cColumn, uValue )              INLINE ( !( ::getValidator():Validate( cColumn, uValue ) ) )
+   METHOD Validate( cColumn, uValue )  INLINE ( ::getValidator():Validate( cColumn, uValue ) )
+   METHOD notValidate( cColumn, uValue ) ;
+                                       INLINE ( !( ::getValidator():Validate( cColumn, uValue ) ) )
    
-   METHOD Assert( cColumn, uValue )                   INLINE ( ::getValidator():Assert( cColumn, uValue ) )
+   METHOD Assert( cColumn, uValue )    INLINE ( ::getValidator():Assert( cColumn, uValue ) )
 
    // Access -----------------------------------------------------------------
 
-   METHOD isUserAccess()                              INLINE ( nAnd( ::nLevel, __permission_access__ ) != 0 )
-   METHOD notUserAccess()                             INLINE ( !::isUserAccess() )
-   METHOD isUserAppend()                              INLINE ( nAnd( ::nLevel, __permission_append__ ) != 0 )
-   METHOD notUserAppend()                             INLINE ( !::isUserAppend() )
-   METHOD isUserDuplicate()                           INLINE ( nAnd( ::nLevel, __permission_append__ ) != 0 )
-   METHOD notUserDuplicate()                          INLINE ( !::isUserDuplicate() )
-   METHOD isUserEdit()                                INLINE ( nAnd( ::nLevel, __permission_edit__ ) != 0 )
-   METHOD notUserEdit()                               INLINE ( !::isUserEdit() )
-   METHOD isUserDelete()                              INLINE ( nAnd( ::nLevel, __permission_delete__ ) != 0 )
-   METHOD notUserDelete()                             INLINE ( !::isUserDelete() )
-   METHOD isUserZoom()                                INLINE ( nAnd( ::nLevel, __permission_zoom__ ) != 0 )
-   METHOD notUserZoom()                               INLINE ( !::isUserZoom() )
+   METHOD isUserAccess()               INLINE ( nAnd( ::nLevel, __permission_access__ ) != 0 )
+   METHOD notUserAccess()              INLINE ( !::isUserAccess() )
+   METHOD isUserAppend()               INLINE ( nAnd( ::nLevel, __permission_append__ ) != 0 )
+   METHOD notUserAppend()              INLINE ( !::isUserAppend() )
+   METHOD isUserDuplicate()            INLINE ( nAnd( ::nLevel, __permission_append__ ) != 0 )
+   METHOD notUserDuplicate()           INLINE ( !::isUserDuplicate() )
+   METHOD isUserEdit()                 INLINE ( nAnd( ::nLevel, __permission_edit__ ) != 0 )
+   METHOD notUserEdit()                INLINE ( !::isUserEdit() )
+   METHOD isUserDelete()               INLINE ( nAnd( ::nLevel, __permission_delete__ ) != 0 )
+   METHOD notUserDelete()              INLINE ( !::isUserDelete() )
+   METHOD isUserZoom()                 INLINE ( nAnd( ::nLevel, __permission_zoom__ ) != 0 )
+   METHOD notUserZoom()                INLINE ( !::isUserZoom() )
 
    // Image--------------------------------------------------------------------
 
-   METHOD getImage( cResolution )                     INLINE ( iif( hhaskey( ::hImage, cResolution ), hget( ::hImage, cResolution ), "" ) )
+   METHOD getImage( cResolution )      INLINE ( iif( hhaskey( ::hImage, cResolution ), hget( ::hImage, cResolution ), "" ) )
 
    // Title -------------------------------------------------------------------
 
-   METHOD setTitle( cTitle )                          INLINE ( ::cTitle := cTitle )
-   METHOD getTitle()                                  INLINE ( ::cTitle )
+   METHOD setTitle( cTitle )           INLINE ( ::cTitle := cTitle )
+   METHOD getTitle()                   INLINE ( ::cTitle )
 
    // Modes--------------------------------------------------------------------
 
-   METHOD setMode( nMode )                            INLINE ( ::nMode := nMode )
-   METHOD getMode()                                   INLINE ( ::nMode )
+   METHOD setMode( nMode )             INLINE ( ::nMode := nMode )
+   METHOD getMode()                    INLINE ( ::nMode )
 
    // Actions------------------------------------------------------------------
 
    METHOD Append()
-      METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
-      METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
-      METHOD isNotAppendMode()                        INLINE ( ::nMode != __append_mode__ )
+      METHOD setAppendMode()           INLINE ( ::setMode( __append_mode__ ) )
+      METHOD isAppendMode()            INLINE ( ::nMode == __append_mode__ )
+      METHOD isNotAppendMode()         INLINE ( ::nMode != __append_mode__ )
 
    METHOD Insert()
 
    METHOD insertOrUpdateBuffer()
 
    METHOD Duplicate()
-      METHOD setDuplicateMode()                       INLINE ( ::setMode( __duplicate_mode__ ) )
-      METHOD isDuplicateMode()                        INLINE ( ::nMode == __duplicate_mode__ )
+      METHOD setDuplicateMode()        INLINE ( ::setMode( __duplicate_mode__ ) )
+      METHOD isDuplicateMode()         INLINE ( ::nMode == __duplicate_mode__ )
 
-   METHOD isAppendOrDuplicateMode()                   INLINE ( ::isAppendMode() .or. ::isDuplicateMode() )
-   METHOD isNotAppendOrDuplicateMode()                INLINE ( !( ::isAppendOrDuplicateMode() ) )
+   METHOD isAppendOrDuplicateMode()    INLINE ( ::isAppendMode() .or. ::isDuplicateMode() )
+   METHOD isNotAppendOrDuplicateMode() INLINE ( !( ::isAppendOrDuplicateMode() ) )
 
    METHOD Edit()
    METHOD EditReturn()
-      METHOD setEditMode()                            INLINE ( ::setMode( __edit_mode__ ) )
-      METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
-      METHOD isNotEditMode()                          INLINE ( ::nMode != __edit_mode__ )
+      METHOD setEditMode()             INLINE ( ::setMode( __edit_mode__ ) )
+      METHOD isEditMode()              INLINE ( ::nMode == __edit_mode__ )
+      METHOD isNotEditMode()           INLINE ( ::nMode != __edit_mode__ )
 
    METHOD Zoom( nId )
-   METHOD ZoomUuid( uuid )                            INLINE ( ::Zoom( ::getModel():getIdWhereUuid( uuid ) ) )
+   METHOD ZoomUuid( uuid )             INLINE ( ::Zoom( ::getModel():getIdWhereUuid( uuid ) ) )
 
-      METHOD setZoomMode()                            INLINE ( ::setMode( __zoom_mode__ ) )
-      METHOD isZoomMode()                             INLINE ( ::nMode == __zoom_mode__ )
-      METHOD isNotZoomMode()                          INLINE ( ::nMode != __zoom_mode__ )
+      METHOD setZoomMode()             INLINE ( ::setMode( __zoom_mode__ ) )
+      METHOD isZoomMode()              INLINE ( ::nMode == __zoom_mode__ )
+      METHOD isNotZoomMode()           INLINE ( ::nMode != __zoom_mode__ )
 
    METHOD Delete()
       METHOD priorRecnoToDelete( aSelectedRecno )
 
-   METHOD dialgOkAndGoTo()                            INLINE ( ::uDialogResult == IDOKANDGOTO )
-   METHOD dialgOkAndDown()                            INLINE ( ::uDialogResult == IDOKANDDOWN )
-   METHOD dialgOkAndUp()                              INLINE ( ::uDialogResult == IDOKANDUP )
+   METHOD dialgOkAndGoTo()             INLINE ( ::uDialogResult == IDOKANDGOTO )
+   METHOD dialgOkAndDown()             INLINE ( ::uDialogResult == IDOKANDDOWN )
+   METHOD dialgOkAndUp()               INLINE ( ::uDialogResult == IDOKANDUP )
 
    METHOD postEdit( nId )
 
-   METHOD isDeleted( nId )                            INLINE ( ::getModel():isDeletedAtColumn() .and. ::getModel:isDeleted( nId ) ) 
-   METHOD isNotDeleted()                              INLINE ( !::isDeleted() )
+   METHOD isDeleted( nId )             INLINE ( ::getModel():isDeletedAtColumn() .and. ::getModel:isDeleted( nId ) ) 
+   METHOD isNotDeleted()               INLINE ( !::isDeleted() )
 
    // Transactional system-----------------------------------------------------
 
-   METHOD beginTransactionalMode()                    INLINE ( msgalert( "beginTransactionalMode" ), iif( ::lTransactional, getSQLDatabase():BeginTransaction(), ) )
-   METHOD commitTransactionalMode()                   INLINE ( msgalert( "commitTransactionalMode" ), iif( ::lTransactional, getSQLDatabase():Commit(), ) )
-   METHOD rollbackTransactionalMode()                 INLINE ( msgalert( "rollbackTransactionalMode" ), iif( ::lTransactional, getSQLDatabase():Rollback(), ) )
+   METHOD beginTransactionalMode()     INLINE ( iif( ::lTransactional, getSQLDatabase():BeginTransaction(), ) )
+   METHOD commitTransactionalMode()    INLINE ( iif( ::lTransactional, getSQLDatabase():Commit(), ) )
+   METHOD rollbackTransactionalMode()  INLINE ( iif( ::lTransactional, getSQLDatabase():Rollback(), ) )
 
    // Events-------------------------------------------------------------------
 
    METHOD setEvents( aEvents, bEvent )                
-   METHOD setEvent( cEvent, bEvent )                  INLINE ( ::getEvents():set( cEvent, bEvent ) )
-   METHOD fireEvent( cEvent, uValue )                 INLINE ( ::getEvents():fire( cEvent, uValue ) )
+   METHOD setEvent( cEvent, bEvent )   INLINE ( ::getEvents():set( cEvent, bEvent ) )
+   METHOD fireEvent( cEvent, uValue )  INLINE ( ::getEvents():fire( cEvent, uValue ) )
 
-   METHOD onKeyChar()                                 VIRTUAL
+   METHOD onKeyChar()                  VIRTUAL
 
    // Directorio para documentos y etiquetas-----------------------------------
 
-   METHOD setDirectory( cDirectory )                  INLINE ( ::cDirectory := cDirectory )
-   METHOD getDirectory()                              INLINE ( ::cDirectory )
+   METHOD setDirectory( cDirectory )   INLINE ( ::cDirectory := cDirectory )
+   METHOD getDirectory()               INLINE ( ::cDirectory )
 
    // Validador para las columnas editables del browseview---------------------
 
@@ -227,21 +229,28 @@ CLASS SQLBaseController
    // Filters------------------------------------------------------------------
 
    METHOD buildFilter( cExpresion )
-   METHOD buildInFilter( cField, cValue )             INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " IN (" + toSqlString( cValue ) + ")", "" ) ) )
-   METHOD buildNotInFilter( cField, cValue )          INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " NOT IN (" + toSqlString( cValue ) + ")", "" ) ) )
-   METHOD buildBiggerFilter( cField, cValue )         INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " > " + toSqlString( cValue ), "" ) ) )
-   METHOD buildSmallerFilter( cField, cValue )        INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " < " + toSqlString( cValue ), "" ) ) )
-   METHOD buildStartLikeFilter( cField, cValue )      INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( alltrim( cstr( cValue ) ) + "%" ), "" ) ) )
-   METHOD buildEndLikeFilter( cField, cValue )        INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( "%" + alltrim( cstr( cValue ) ) ), "" ) ) )
-   METHOD buildLikeFilter( cField, cValue )           INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( "%" + alltrim( cstr( cValue ) ) + "%" ), "" ) ) )
+   METHOD buildInFilter( cField, cValue ) ;
+                                       INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " IN (" + toSqlString( cValue ) + ")", "" ) ) )
+   METHOD buildNotInFilter( cField, cValue ) ;
+                                       INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " NOT IN (" + toSqlString( cValue ) + ")", "" ) ) )
+   METHOD buildBiggerFilter( cField, cValue ) ;
+                                       INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " > " + toSqlString( cValue ), "" ) ) )
+   METHOD buildSmallerFilter( cField, cValue ) ;
+                                       INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " < " + toSqlString( cValue ), "" ) ) )
+   METHOD buildStartLikeFilter( cField, cValue ) ;
+                                       INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( alltrim( cstr( cValue ) ) + "%" ), "" ) ) )
+   METHOD buildEndLikeFilter( cField, cValue ) ;
+                                       INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( "%" + alltrim( cstr( cValue ) ) ), "" ) ) )
+   METHOD buildLikeFilter( cField, cValue ) ;
+                                       INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( "%" + alltrim( cstr( cValue ) ) + "%" ), "" ) ) )
 
    METHOD clearFilter()
 
    METHOD reBuildRowSet()   
 
-   METHOD getRowSet()                                 INLINE ( iif( empty( ::oRowSet ), ::oRowSet := SQLRowSet():New( self ), ), ::oRowSet )
+   METHOD getRowSet()                  INLINE ( iif( empty( ::oRowSet ), ::oRowSet := SQLRowSet():New( self ), ), ::oRowSet )
    
-   METHOD getEvents()                                 INLINE ( iif( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
+   METHOD getEvents()                  INLINE ( iif( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
 
 END CLASS
 

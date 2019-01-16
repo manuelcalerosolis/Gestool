@@ -88,8 +88,6 @@ METHOD Fire( cEvent, uOther )
 
    for each bEvent in hget( ::hEvents, cEvent )
 
-      msgalert( cEvent, "evento lanzado")
-      
       lEvent      := eval( bEvent, uOther )
 
       if hb_islogical( lEvent ) .and. !lEvent
