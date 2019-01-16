@@ -278,7 +278,7 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
 
    cSentence            := chgAtEnd( cSentence, '', 2 )
 
-   getSQLDatabase():TransactionalExec( cSentence  )
+   getSQLDatabase():TransactionalQuery( cSentence  )
 
 RETURN ( nil )
 
@@ -292,7 +292,7 @@ METHOD delete( cViewType, cViewName ) CLASS SQLConfiguracionVistasModel
                                  "view_name = " + quoted( cViewName ) + " AND "                 + ;
                                  "usuario_uuid = " + quoted( Auth():Uuid() )
 
-   getSQLDatabase():TransactionalExec( cSentence  )
+   getSQLDatabase():TransactionalQuery( cSentence  )
 
 RETURN ( nil )
        

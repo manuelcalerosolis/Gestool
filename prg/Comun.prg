@@ -4075,7 +4075,7 @@ FUNCTION InfoStack()
       i++
    enddo
 
-   MsgInfo( cStack )
+   msgInfo( cStack )
 
 RETURN nil
 

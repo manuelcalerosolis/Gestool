@@ -5,18 +5,18 @@
 
 CLASS SQLAjustableGestoolModel FROM SQLAjustableModel
 
-   METHOD getTableName()         INLINE ( "gestool." + ::cTableName )
+   METHOD getTableName()               INLINE ( "gestool." + ::cTableName )
   
-   METHOD getAjusteModel()       INLINE ( iif( empty( ::oAjusteModel ), ::oAjusteModel := SQLAjustesGestoolModel():New(), ), ::oAjusteModel )
+   METHOD getAjusteModel()             INLINE ( iif( empty( ::oAjusteModel ), ::oAjusteModel := SQLAjustesGestoolModel():New(), ), ::oAjusteModel )
 
    METHOD getUsuarioCajaExclusiva( cUuid ) ;
-                                 INLINE ( ::getValue( cUuid, 'usuarios', 'caja_exclusiva', space( 40 ) ) )   
+                                       INLINE ( ::getValue( cUuid, 'usuarios', 'caja_exclusiva', space( 40 ) ) )   
    METHOD getUsuarioPcEnUso( cUuid ) ;
-                                 INLINE ( ::getValue( cUuid, 'usuarios', 'pc_en_uso', '' ) )
+                                       INLINE ( ::getValue( cUuid, 'usuarios', 'pc_en_uso', '' ) )
    METHOD getUsuarioEmpresaEnUso( cUuid ) ;
-                                 INLINE ( ::getValue( cUuid, 'usuarios', 'empresa_en_uso', '' ) )
+                                       INLINE ( ::getValue( cUuid, 'usuarios', 'empresa_en_uso', '' ) )
    METHOD getUsuarioEmpresaExclusiva( cUuid ) ;
-                                 INLINE ( ::getValue( cUuid, 'usuarios', 'empresa_exclusiva', space( 40 ) ) )   
+                                       INLINE ( ::getValue( cUuid, 'usuarios', 'empresa_exclusiva', space( 40 ) ) )   
    
    METHOD getUsuarioEmpresa( cUuid )   
 
@@ -261,7 +261,7 @@ METHOD set( cAjusteUuid, uAjusteValue, cAjustableTipo, cAjustableUuid ) CLASS SQ
    hset( hBuffer, "ajustable_tipo", cAjustableTipo )
    hset( hBuffer, "ajustable_uuid", cAjustableUuid )
 
-RETURN ( ::insertOnDuplicate( hBuffer, .t. ) )
+RETURN ( ::insertOnDuplicate( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 

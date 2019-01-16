@@ -218,7 +218,7 @@ METHOD Activate() CLASS ArticulosView
 
    ::oDialog:Activate( , , , .t. )
 
-   ::oController:getArticulosPreciosController():saveState()
+   // ::oController:getArticulosPreciosController():saveState()
 
 RETURN ( ::oDialog:nResult )
 

@@ -47,11 +47,14 @@ CLASS SQLDatabase
    METHOD Execs( aSql ) 
    METHOD ExecsWithOutParse( aSql )    INLINE ( ::Execs( aSql, .f. ) )
 
-   METHOD TransactionalExec( cSql )    INLINE ( msgalert( "TransactionalExec" ), ::BeginTransaction(), ::Exec( cSql ), ::Commit() )            
+   // METHOD TransactionalExec( cSql )    INLINE ( msgalert( "TransactionalExec" ), InfoStack(), ::BeginTransaction(), ::Exec( cSql ), ::Commit() )            
+   METHOD TransactionalExec( cSql )    INLINE ( ::Exec( cSql ) )            
    
    METHOD Query( cSql )                
-   METHOD Querys( aSql )                
-   METHOD TransactionalQuery( cSql )   INLINE ( msgalert( "TransactionalQuery" ), ::BeginTransaction(), ::Query( cSql ), ::Commit() )            
+   METHOD Querys( aSql )  
+
+   // METHOD TransactionalQuery( cSql )   INLINE ( msgalert( "TransactionalQuery" ), InfoStack(), ::BeginTransaction(), ::Query( cSql ), ::Commit() )            
+   METHOD TransactionalQuery( cSql )   INLINE ( ::Query( cSql ) )            
 
    METHOD Prepare( cSql )              INLINE ( if( !empty( ::oConexion ), ::oConexion:Prepare( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
    METHOD Parse( cSql )                INLINE ( if( !empty( ::oConexion ), ::oConexion:Parse( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
@@ -85,9 +88,9 @@ CLASS SQLDatabase
 
    METHOD lastInsertId()               INLINE ( iif( !empty( ::oConexion ), ::oConexion:lastInsertId(), msgstop( "No ha conexiones disponibles" ) ) )
 
-   METHOD beginTransaction()           INLINE ( msgalert( "beginTransaction" ), iif( !empty( ::oConexion ), ::oConexion:beginTransaction(),  msgstop( "No ha conexiones disponibles" ) ) )
-   METHOD Commit()                     INLINE ( msgalert( "Commit" ), iif( !empty( ::oConexion ), ::oConexion:Commit(), msgstop( "No ha conexiones disponibles" ) ) )
-   METHOD rollBack()                   INLINE ( msgalert( "rollBack" ), iif( !empty( ::oConexion ), ::oConexion:rollBack(),  msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD beginTransaction()           INLINE ( iif( !empty( ::oConexion ), ::oConexion:beginTransaction(),  msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD Commit()                     INLINE ( iif( !empty( ::oConexion ), ::oConexion:Commit(), msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD rollBack()                   INLINE ( iif( !empty( ::oConexion ), ::oConexion:rollBack(),  msgstop( "No ha conexiones disponibles" ) ) )
 
    METHOD errorInfo()                  INLINE ( iif( !empty( ::oConexion ), ::oConexion:errorInfo(), ) )
 
