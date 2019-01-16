@@ -474,7 +474,13 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLAlbaranesVentasDescuentosModel():New() ) 
    
-   aadd( ::aModels, SQLFacturasComprasRectificativasDescuentosModel():New() ) 
+   aadd( ::aModels, SQLFacturasComprasRectificativasDescuentosModel():New() )
+
+   aadd( ::aModels, SQLAlbaranesComprasLineasModel():New() ) 
+   
+   aadd( ::aModels, SQLAlbaranesComprasDescuentosModel():New() ) 
+
+   aadd( ::aModels, SQLAlbaranesComprasModel():New() ) 
 
    aadd( ::aModels, SQLCamposExtraModel():New() )
 
@@ -541,6 +547,8 @@ METHOD addRepositories() CLASS SQLCompanyMigrations
    aadd( ::aRepositories, ConsolidacionesAlmacenesRepository():New() )
 
    aadd( ::aRepositories, MovimientosAlmacenesRepository():New() )
+
+   aadd( ::aRepositories, AlbaranesComprasRepository():New() )
 
 RETURN ( nil )
 
