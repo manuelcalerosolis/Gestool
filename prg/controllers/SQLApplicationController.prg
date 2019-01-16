@@ -124,6 +124,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oFacturasComprasDescuentosController
 
+   DATA oAlbaranesComprasDescuentosController
+
    DATA oPedidosComprasDescuentosController
 
    DATA oPresupuestosComprasDescuentosController
@@ -161,6 +163,8 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oPresupuestosVentasController
 
    DATA oFacturasComprasController
+
+   DATA AlbaranesComprasLineasController
 
    DATA oPresupuestosComprasController
 
@@ -404,6 +408,9 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getFacturasComprasDescuentosController();
                                     INLINE ( if( empty( ::oFacturasComprasDescuentosController ), ::oFacturasComprasDescuentosController := FacturasComprasDescuentosController():New( self ), ), ::oFacturasComprasDescuentosController )
 
+   METHOD getAlbaranesComprasDescuentosController();
+                                    INLINE ( if( empty( ::oAlbaranesComprasDescuentosController ), ::oAlbaranesComprasDescuentosController := AlbaranesComprasDescuentosController():New( self ), ), ::oAlbaranesComprasDescuentosController )
+
    METHOD getPedidosComprasDescuentosController();
                                     INLINE ( if( empty( ::oPedidosComprasDescuentosController ), ::oPedidosComprasDescuentosController := PedidosComprasDescuentosController():New( self ), ), ::oPedidosComprasDescuentosController )
 
@@ -466,6 +473,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getFacturasComprasController();
                                     INLINE ( if( empty( ::oFacturasComprasController ), ::oFacturasComprasController := FacturasComprasController():New( self ), ), ::oFacturasComprasController )
+
+   METHOD getAlbaranesComprasLineasController();
+                                    INLINE ( if( empty( ::oAlbaranesComprasLineasController ), ::oAlbaranesComprasLineasController := AlbaranesComprasLineasController():New( self ), ), ::oAlbaranesComprasLineasController )
 
    METHOD getFacturasComprasController();
                                     INLINE ( if( empty( ::oPresupuestosComprasController ), ::oPresupuestosComprasController := PresupuestosComprasController():New( self ), ), ::oPresupuestosComprasController )

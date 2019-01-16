@@ -45,9 +45,9 @@ METHOD New( oController ) CLASS FacturasSimplificadasVentasController
 
    ::cName                             := "facturas_simplificadas_ventas"
 
-   ::hImage                            := {  "16" => "gc_document_text_user_16",;
-                                             "32" => "gc_document_text_user_32",;
-                                             "48" => "gc_document_text_user_48" }
+   ::hImage                            := {  "16" => "gc_ticket_16",;
+                                             "32" => "gc_ticket_32",;
+                                             "48" => "gc_ticket_48" }
 
 RETURN ( Self )
 
