@@ -29,10 +29,9 @@ CLASS PedidosComprasController FROM OperacionesComercialesController
 
    METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := PedidosCompraValidator():New( self ), ), ::oValidator ) 
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := PedidosComprasBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesBrowseView():New( self ), ), ::oBrowseView )
 
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := PedidosComprasRepository():New( self ), ), ::oRepository )
-
 
 END CLASS
 

@@ -29,7 +29,7 @@ CLASS FacturasSimplificadasVentasController FROM OperacionesComercialesControlle
 
    METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasSimplicadasVentasValidator():New( self ), ), ::oValidator )
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasSimplicadasVentasBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesBrowseView():New( self ), ), ::oBrowseView )
 
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasSimplificadasVentasRepository():New( self ), ), ::oRepository )
 

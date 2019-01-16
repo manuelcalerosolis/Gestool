@@ -33,7 +33,7 @@ CLASS FacturasVentasRectificativasController FROM OperacionesComercialesControll
 
    METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasVentasRectificativasValidator():New( self ), ), ::oValidator )
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasVentasRectificativasBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesBrowseView():New( self ), ), ::oBrowseView )
 
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasVentasRectificativasRepository():New( self ), ), ::oRepository )
 
