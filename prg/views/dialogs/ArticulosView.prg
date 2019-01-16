@@ -81,7 +81,7 @@ METHOD Activate() CLASS ArticulosView
       DIALOGS     "ARTICULO_GENERAL",;
                   "ARTICULO_PRECIO"   
 
-   ::oFolder:bChange    := {| nOption| ::changeFolder( nOption ) } 
+   // ::oFolder:bChange    := {| nOption| ::changeFolder( nOption ) } 
 
    REDEFINE GET   ::oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
@@ -218,7 +218,7 @@ METHOD Activate() CLASS ArticulosView
 
    ::oDialog:Activate( , , , .t. )
 
-   ::oController:getArticulosPreciosController():saveState()
+   // ::oController:getArticulosPreciosController():saveState()
 
 RETURN ( ::oDialog:nResult )
 

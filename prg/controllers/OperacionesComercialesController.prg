@@ -393,8 +393,6 @@ METHOD importFactura() CLASS OperacionesComercialesController
 
    if ::getRectificativaDialogView():InitActivate() == IDOK
 
-      msgalert( ::getRectificativaDialogView():cNumeroDocumento )
-
       // Importar factura
       
    end if 

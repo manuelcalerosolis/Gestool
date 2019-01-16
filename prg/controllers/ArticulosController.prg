@@ -72,14 +72,14 @@ METHOD New( oController ) CLASS ArticulosController
    ::cTitle                            := "Artículos"
 
    ::cName                             := "articulos"
+   
+   ::lTransactional                    := .t.
 
-   ::lInsertable                       := .f.
+   ::lInsertable                       := .t.
 
    ::hImage                            := {  "16" => "gc_object_cube_16",;
                                              "32" => "gc_object_cube_32",;
                                              "48" => "gc_object_cube_48" }
-
-   ::lTransactional                    := .t.
 
    ::nLevel                            := Auth():Level( ::cName )
 

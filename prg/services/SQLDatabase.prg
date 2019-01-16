@@ -47,11 +47,14 @@ CLASS SQLDatabase
    METHOD Execs( aSql ) 
    METHOD ExecsWithOutParse( aSql )    INLINE ( ::Execs( aSql, .f. ) )
 
-   METHOD TransactionalExec( cSql )    INLINE ( ::BeginTransaction(), ::Exec( cSql ), ::Commit() )            
+   // METHOD TransactionalExec( cSql )    INLINE ( msgalert( "TransactionalExec" ), InfoStack(), ::BeginTransaction(), ::Exec( cSql ), ::Commit() )            
+   METHOD TransactionalExec( cSql )    INLINE ( ::Exec( cSql ) )            
    
    METHOD Query( cSql )                
-   METHOD Querys( aSql )                
-   METHOD TransactionalQuery( cSql )   INLINE ( ::BeginTransaction(), ::Query( cSql ), ::Commit() )            
+   METHOD Querys( aSql )  
+
+   // METHOD TransactionalQuery( cSql )   INLINE ( msgalert( "TransactionalQuery" ), InfoStack(), ::BeginTransaction(), ::Query( cSql ), ::Commit() )            
+   METHOD TransactionalQuery( cSql )   INLINE ( ::Query( cSql ) )            
 
    METHOD Prepare( cSql )              INLINE ( if( !empty( ::oConexion ), ::oConexion:Prepare( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
    METHOD Parse( cSql )                INLINE ( if( !empty( ::oConexion ), ::oConexion:Parse( cSql ), msgstop( "No ha conexiones disponibles" ) ) )

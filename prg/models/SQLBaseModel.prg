@@ -284,7 +284,7 @@ CLASS SQLBaseModel
 
    // Updates------------------------------------------------------------------
 
-   METHOD updateFieldsWhere( hFields, hWhere )
+   METHOD updateFieldsWhere( hFields, hWhere, lTransactional )
    METHOD updateFieldsWhereTransactional( hFields, hWhere ) ;
                                        INLINE ( ::updateFieldsWhere( hFields, hWhere, .t. ) )   
 
@@ -1581,8 +1581,6 @@ METHOD updateBuffer( hBuffer )
    if !empty( ::cSQLUpdate )
       ::getDatabase():Querys( ::cSQLUpdate )
    end if
-
-   msgalert( ::cSQLUpdate, "cSQLUpdate" )
 
    ::fireEvent( 'updatedBuffer' )
 

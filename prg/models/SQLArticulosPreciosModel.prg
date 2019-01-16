@@ -70,7 +70,7 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
    METHOD getSQLInsertPreciosWhereArticulo( uuidArticulo )
 
    METHOD insertPreciosWhereArticulo( uuidArticulo ) ;     
-                                       INLINE ( ::getDatabase():Execs( ::getSQLInsertPreciosWhereArticulo( uuidArticulo ) ) )
+                                       INLINE ( ::getDatabase():Querys( ::getSQLInsertPreciosWhereArticulo( uuidArticulo ) ) )
 
    METHOD getPrecioBaseWhereArticuloUuidAndTarifaCodigo( uuidArticulo, cCodigoTarifa ) ;
                                        INLINE ( ::getDatabase():getValue( ::getSQLPrecioBaseWhereArticuloUuidAndTarifaCodigo( uuidArticulo, cCodigoTarifa ) ) )

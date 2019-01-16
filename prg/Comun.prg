@@ -227,8 +227,6 @@ RETURN ( oMenu )
 
 PROCEDURE loggedTest()
 /*
-   msgalert( "hola")
-
    getSQLDatabase():BeginTransaction()
 
    SQLAgentesModel():insertBuffer(  {  'codigo' => '9',;
@@ -4077,7 +4075,7 @@ FUNCTION InfoStack()
       i++
    enddo
 
-   MsgInfo( cStack )
+   msgInfo( cStack )
 
 RETURN nil
 
