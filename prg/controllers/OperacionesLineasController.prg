@@ -25,9 +25,9 @@ CLASS OperacionesLineasController FROM SQLBrowseController
 
    METHOD validArticuloCodigo( oGet, oCol )
 
-   METHOD postValidateArticuloCodigo( oCol, uValue, nKey )  
-
    METHOD validColumnNombreArticulo( oCol, uValue, nKey )  
+
+   METHOD postValidateArticuloCodigo( oCol, uValue, nKey )  
 
    METHOD postValidateAlmacenCodigo( oCol, uValue, nKey )
 
@@ -78,11 +78,23 @@ CLASS OperacionesLineasController FROM SQLBrowseController
 
    METHOD stampArticuloUnidadMedicion()   
 
+   METHOD stampArticuloPrecio()        VIRTUAL        
+
+   METHOD stampArticuloCodigoNombre( hArticulo ) ;
+                                       INLINE ( ::updateField( "articulo_codigo", hget( hArticulo, "codigo" ) ),;
+                                                ::updateField( "articulo_nombre", hget( hArticulo, "nombre" ) ) )
+
+   METHOD stampArticuloDescuento()     VIRTUAL
+
    METHOD getArticuloUnidadMedicion()    
 
-   METHOD getUnidadMedicion( cCodigoArticulo )  VIRTUAL
+   METHOD stampArticuloUnidadMed( uValue )
 
-   METHOD stampArticuloPrecio()        VIRTUAL        
+   METHOD stampArticuloUnidadMedFac()
+
+   METHOD stampCombinationAndIncrement( hCombination )
+
+   METHOD getUnidadMedicion( cCodigoArticulo )  VIRTUAL
 
    METHOD updateArticuloFactor( uValue )
 
@@ -96,23 +108,11 @@ CLASS OperacionesLineasController FROM SQLBrowseController
 
    METHOD updateDescuento( nDescuento )
 
-   METHOD stampArticuloCodigoNombre( hArticulo ) ;
-                                       INLINE ( ::updateField( "articulo_codigo", hget( hArticulo, "codigo" ) ),;
-                                                ::updateField( "articulo_nombre", hget( hArticulo, "nombre" ) ) )
-
-   METHOD stampArticuloDescuento()     VIRTUAL
-
    METHOD getHashArticuloWhereCodigo( cCodigo )
 
    METHOD getHashAlmacenWhereCodigo( cCodigo )
 
    METHOD getHashUbicacionWhereCodigo( cCodigo )
-
-   METHOD stampArticuloUnidadMed( uValue )
-
-   METHOD stampArticuloUnidadMedFac()
-
-   METHOD stampCombinationAndIncrement( hCombination )
    
    // Dialogos-----------------------------------------------------------------
 

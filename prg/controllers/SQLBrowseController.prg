@@ -273,7 +273,6 @@ RETURN ( nil )
 
 METHOD AppendLineal() CLASS SQLBrowseController
 
-   local nId
    local lAppend     := .t.   
 
    if ::notUserAppend()
@@ -289,21 +288,19 @@ METHOD AppendLineal() CLASS SQLBrowseController
 
    ::saveRowSetRecno()
 
-   nId               := ::getModel():insertBlankBuffer()
+   ::nId             := ::getModel():insertBlankBuffer()
 
-   if !empty( nId )
+   if empty( ::nId )
 
-      ::fireEvent( 'appended' ) 
-
-      ::refreshRowSetAndFindId( nId )
+      lAppend        := .f.
 
    else 
       
-      lAppend        := .f.
-
-      ::refreshRowSet()
+      ::fireEvent( 'appended' ) 
 
    end if 
+
+   ::refreshRowSetAndFindId()
 
    ::refreshBrowseView()
 

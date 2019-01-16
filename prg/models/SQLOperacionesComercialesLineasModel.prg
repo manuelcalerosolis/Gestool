@@ -87,38 +87,6 @@ RETURN ( ::hColumns )
 METHOD getColumnsSelect() CLASS SQLOperacionesComercialesLineasModel
 
    local cColumns
-/*
-   TEXT INTO cColumns
-      %1$s.id AS id,
-      %1$s.uuid AS uuid,
-      %1$s.parent_uuid AS parent_uuid,
-      %1$s.articulo_codigo AS articulo_codigo,
-      %1$s.articulo_nombre AS articulo_nombre,
-      %1$s.fecha_caducidad AS fecha_caducidad,
-      %1$s.lote AS lote,
-      %1$s.articulo_unidades AS articulo_unidades,
-      %1$s.unidad_medicion_factor AS unidad_medicion_factor,
-      ( @total_unidades := articulo_unidades * unidad_medicion_factor ) AS total_unidades,
-      %1$s.articulo_precio AS articulo_precio,
-      %1$s.incremento_precio AS incremento_precio,
-      ( @total_bruto := ROUND( @total_unidades * ( articulo_precio + incremento_precio ), 2 ) ) AS total_bruto,
-      %1$s.unidad_medicion_codigo AS unidad_medicion_codigo,
-      %1$s.descuento AS descuento,
-      ( @importe_descuento := IF( descuento IS NULL OR descuento = 0, 0, @total_bruto * descuento / 100 ) ) AS importe_descuento,
-      ( @total_bruto - @importe_descuento ) AS total_precio,
-      %1$s.iva AS iva,
-      %1$s.recargo_equivalencia AS recargo_equivalencia,
-      %1$s.almacen_codigo AS almacen_codigo,
-      almacenes.nombre AS almacen_nombre,
-      %1$s.ubicacion_codigo AS ubicacion_codigo,
-      ubicaciones.nombre AS ubicacion_nombre,
-      %1$s.agente_codigo AS agente_codigo,
-      %1$s.agente_comision AS agente_comision, 
-      agentes.nombre AS agente_nombre, 
-      RTRIM( GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) ) AS articulos_propiedades_nombre,
-      %1$s.deleted_at AS deleted_at
-   ENDTEXT
-*/
 
    TEXT INTO cColumns
       %1$s.id AS id,
