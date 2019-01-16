@@ -94,8 +94,8 @@ METHOD New( oController ) CLASS OperacionesController
    ::getNavigatorView():getMenuTreeView():setEvent( 'addingDeleteButton', { || .f. } )
    ::getNavigatorView():getMenuTreeView():setEvent( 'addedPdfButton', {|| ::addExtraButtons() } )
 
-   //::getModel():setEvent( 'loadedBuffer',          {|| ::loadedBuffer() } )
-   // ::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )
+   ::getModel():setEvent( 'loadedBuffer',          {|| ::loadedBuffer() } )
+   //::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )
    //::getModel():setEvent( 'loadedDuplicateBuffer', {|| ::loadedDuplicateBuffer() } )
    //::getModel():setEvent( 'updatedBuffer',         {|| ::updatedBuffer() } )
    //::getModel():setEvent( 'insertingBuffer',       {|| ::insertingBuffer() } )
