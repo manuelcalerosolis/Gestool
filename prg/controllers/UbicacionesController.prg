@@ -176,7 +176,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UbicacionesValidator FROM SQLBaseValidator
+CLASS UbicacionesValidator FROM SQLParentValidator
 
    METHOD getValidators()
 

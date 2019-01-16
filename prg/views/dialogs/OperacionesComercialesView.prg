@@ -171,7 +171,7 @@ METHOD Activate() CLASS OperacionesComercialesView
       WHEN        ( ::getController():isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   ::oRecargoEquivalencia:bChange   := {|| ::getController():terceroChangeRecargo() }
+   ::oRecargoEquivalencia:bChange   := {|| ::getController():changeRecargo() }
 
    REDEFINE SAY   ::oTotalRecargo ;
       VAR         ::nTotalRecargo ;
