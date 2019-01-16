@@ -3,57 +3,57 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS PedidosVentasController FROM OperacionesComercialesController
+CLASS FacturasSimplificadasVentasController FROM OperacionesComercialesController
 
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
-   METHOD getLinesController()         INLINE ( ::getPedidosVentasLineasController() )
+   METHOD getLinesController()         INLINE ( ::getFacturasSimplificadasVentasLineasController() )
 
-   METHOD getDiscountController()      INLINE ( ::getPedidosVentasDescuentosController() )
+   METHOD getDiscountController()      INLINE ( ::getFacturasSimplificadasVentasDescuentosController() )
 
    METHOD isClient()                   INLINE ( .t. )
 
    // Impresiones--------------------------------------------------------------
 
-   METHOD getSubject()                 INLINE ( "Pedido de ventas número" )
+   METHOD getSubject()                 INLINE ( "Factura simplificada de ventas número" )
 
    METHOD addExtraButtons()
 
    // Contrucciones tardias----------------------------------------------------
 
-   METHOD getName()                    INLINE ( "pedidos_venta" )
+   METHOD getName()                    INLINE ( "facturas_simplificadas_venta" )
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLPedidosVentasModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasSimplificadasVentasModel():New( self ), ), ::oModel )
 
-   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := PedidosVentasValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasSimplicadasVentasValidator():New( self ), ), ::oValidator )
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := PedidosVentasBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasSimplicadasVentasBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := PedidosVentasRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasSimplificadasVentasRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS PedidosVentasController
+METHOD New( oController ) CLASS FacturasSimplificadasVentasController
 
    ::Super:New( oController )
 
-   ::cTitle                            := "Pedidos de ventas"
+   ::cTitle                            := "Facturas simplificadas de ventas"
 
-   ::cName                             := "pedidos_ventas"
+   ::cName                             := "facturas_simplificadas_ventas"
 
-   ::hImage                            := {  "16" => "gc_pedidos_cliente_16",;
-                                             "32" => "gc_pedidos_cliente_32",;
-                                             "48" => "gc_pedidos_cliente_48" }
+   ::hImage                            := {  "16" => "gc_document_text_user_16",;
+                                             "32" => "gc_document_text_user_32",;
+                                             "48" => "gc_document_text_user_48" }
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS PedidosVentasController
+METHOD End() CLASS FacturasSimplificadasVentasController
 
    if !empty( ::oModel )
       ::oModel:End()
@@ -79,7 +79,7 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD addExtraButtons() CLASS PedidosVentasController
+METHOD addExtraButtons() CLASS FacturasSimplificadasVentasController
 
    ::oNavigatorView:getMenuTreeView():addButton( "Generar facturae 3.2", "gc_document_text_earth_16", {|| ::getFacturasClientesFacturaeController():Run( ::getBrowseView():getBrowseSelected() ) } )
 
@@ -91,7 +91,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS PedidosVentasValidator FROM OperacionesComercialesValidator
+CLASS FacturasSimplicadasVentasValidator FROM OperacionesComercialesValidator
 
    METHOD New( oController )
 
@@ -101,13 +101,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS PedidosVentasValidator
+METHOD New( oController ) CLASS FacturasSimplicadasVentasValidator
 
 RETURN ( ::Super:New( oController ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS PedidosVentasValidator
+METHOD getValidators() CLASS FacturasSimplicadasVentasValidator
 
    hset( ::Super:getValidators(),   "tercero_codigo", {  "required"        => "El código del cliente es un dato requerido",;
                                                          "clienteExist"    => "El código del cliente no existe" } )

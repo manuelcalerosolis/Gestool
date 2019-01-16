@@ -276,6 +276,7 @@ RectificativasProveedoresLineasModel.prg 								\
 TransaccionesComercialesLineasModel.prg 								\
 FacturasClientesModel.prg 													\
 FacturasVentasRepository.prg 												\
+FacturasSimplificadasVentasRepository.prg 							\
 PedidosVentasRepository.prg 												\
 PresupuestosVentasRepository.prg 										\
 FacturasVentasRectificativasRepository.prg 							\
@@ -374,6 +375,8 @@ ProveedoresBrowseView.prg 													\
 TercerosBrowseView.prg 														\
 SQLOperacionesComercialesModel.prg 										\
 SqlFacturasVentasModel.prg 												\
+SQLFacturasSimplificadasVentasModel.prg 								\
+SQLAlbaranesVentasModel.prg 												\
 SQLPedidosVentasModel.prg 													\
 SQLPresupuestosVentasModel.prg 											\
 SqlFacturasVentasRectificativasModel.prg 								\
@@ -383,6 +386,8 @@ SQLPresupuestosComprasModel.prg 											\
 SQLFacturasComprasRectificativasModel.prg 							\
 SQLOperacionesComercialesLineasModel.prg								\
 SqlFacturasVentasLineasModel.prg											\
+SQLFacturasSimplificadasVentasLineasModel.prg						\
+SQLAlbaranesVentasLineasModel.prg										\
 SQLPedidosVentasLineasModel.prg											\
 SQLPedidosComprasLineasModel.prg											\
 SQLPresupuestosVentasLineasModel.prg									\
@@ -393,6 +398,8 @@ SQLFacturasComprasRectificativasLineasModel.prg						\
 OperacionesController.prg 													\
 OperacionesComercialesController.prg 									\
 FacturasVentasController.prg 												\
+FacturasSimplificadasVentasController.prg 							\
+AlbaranesVentasController.prg 											\
 PedidosVentasController.prg 												\
 PresupuestosVentasController.prg 										\
 FacturasVentasRectificativasController.prg 							\
@@ -403,6 +410,8 @@ PresupuestosComprasController.prg 										\
 FacturasComprasRectificativasController.prg 							\
 OperacionesComercialesLineasController.prg							\
 FacturasVentasLineasController.prg										\
+FacturasSimplificadasVentasLineasController.prg						\
+AlbaranesVentasLineasController.prg										\
 PedidosVentasLineasController.prg										\
 PresupuestosVentasLineasController.prg									\
 FacturasVentasRectificativasLineasController.prg					\
@@ -413,6 +422,8 @@ PresupuestosComprasLineasController.prg								\
 FacturasComprasRectificativasLineasController.prg					\
 OperacionesComercialesDescuentosController.prg						\
 FacturasVentasDescuentosController.prg									\
+FacturasSimplificadasVentasDescuentosController.prg				\
+AlbaranesVentasDescuentosController.prg								\
 PedidosVentasDescuentosController.prg									\
 PresupuestosVentasDescuentosController.prg							\
 FacturasComprasDescuentosController.prg								\
@@ -421,6 +432,8 @@ PresupuestosComprasDescuentosController.prg							\
 FacturasComprasRectificativasDescuentosController.prg				\
 OperacionesComercialesLineasBrowse.prg									\
 FacturasVentasBrowseView.prg 												\
+FacturasSimplificadasVentasBrowseView.prg 							\
+AlbaranesVentasBrowseView.prg 											\
 PedidosVentasBrowseView.prg 												\
 PresupuestosVentasBrowseView.prg 										\
 FacturasVentasRectificativasBrowseView.prg 							\
@@ -710,6 +723,8 @@ FacturasProveedoresLineasModel.obj 										\
 RectificativasProveedoresLineasModel.obj 								\
 FacturasClientesModel.obj 													\
 FacturasVentasRepository.obj												\
+FacturasSimplificadasVentasRepository.obj								\
+AlbaranesVentasRepository.obj												\
 PedidosVentasRepository.obj												\
 FacturasVentasRectificativasRepository.obj							\
 FacturasComprasRepository.obj												\
@@ -796,6 +811,8 @@ ProveedoresBrowseView.obj 													\
 TercerosBrowseView.obj 														\
 SQLOperacionesComercialesModel.obj 										\
 SQLFacturasVentasModel.obj 												\
+SQLFacturasSimplificadasVentasModel.obj 								\
+SQLAlbaranesVentasModel.obj 												\
 SQLPedidosVentasModel.obj 													\
 SQLPresupuestosVentasModel.obj 											\
 SqlFacturasVentasRectificativasModel.obj 								\
@@ -804,9 +821,13 @@ SQLPedidosComprasModel.obj 												\
 SQLPresupuestosComprasModel.obj 											\
 SQLFacturasComprasRectificativasModel.obj 							\
 FacturasVentasRepository.obj 												\
+FacturasSimplificadasVentasRepository.obj 							\
+AlbaranesVentasRepository.obj 											\
 PresupuestosVentasRepository.obj 										\
 SQLOperacionesComercialesLineasModel.obj 								\
 SqlFacturasVentasLineasModel.obj 										\
+SQLFacturasSimplificadasVentasLineasModel.obj 						\
+SQLAlbaranesVentasLineasModel.obj 										\
 SQLPedidosVentasLineasModel.obj 											\
 SQLPedidosComprasLineasModel.obj 										\
 SQLPresupuestosVentasLineasModel.obj 									\
@@ -817,6 +838,8 @@ SQLFacturasComprasRectificativasLineasModel.obj 					\
 OperacionesController.obj 													\
 OperacionesComercialesController.obj 									\
 FacturasVentasController.obj 												\
+FacturasSimplificadasVentasController.obj 							\
+AlbaranesVentasController.obj 											\
 PedidosVentasController.obj 												\
 PresupuestosVentasController.obj 										\
 FacturasVentasRectificativasController.obj 							\
@@ -827,6 +850,8 @@ PresupuestosComprasController.obj 										\
 FacturasComprasRectificativasController.obj 							\
 OperacionesComercialesLineasController.obj 							\
 FacturasVentasLineasController.obj 										\
+FacturasSimplificadasVentasLineasController.obj 					\
+AlbaranesVentasLineasController.obj 									\
 PedidosVentasLineasController.obj 										\
 PresupuestosVentasLineasController.obj 								\
 FacturasVentasRectificativasLineasController.obj 					\
@@ -837,6 +862,8 @@ PresupuestosComprasLineasController.obj 								\
 FacturasComprasRectificativasLineasController.obj 					\
 OperacionesComercialesDescuentosController.obj 						\
 FacturasVentasDescuentosController.obj 								\
+FacturasSimplificadasVentasDescuentosController.obj 				\
+AlbaranesVentasDescuentosController.obj 								\
 PedidosVentasDescuentosController.obj 									\
 PresupuestosVentasDescuentosController.obj 							\
 FacturasComprasDescuentosController.obj 								\
@@ -845,6 +872,8 @@ PresupuestosComprasDescuentosController.obj 							\
 FacturasComprasRectificativasDescuentosController.obj 			\
 OperacionesComercialesLineasBrowse.obj 								\
 FacturasVentasBrowseView.obj 												\
+FacturasSimplificadasVentasBrowseView.obj 							\
+AlbaranesVentasBrowseView.obj 											\
 PedidosVentasBrowseView.obj 												\
 PresupuestosVentasBrowseView.obj 										\
 FacturasVentasRectificativasBrowseView.obj 							\
@@ -1208,6 +1237,8 @@ $(OBJ)\ProveedoresBrowseView.obj 										+
 $(OBJ)\TercerosBrowseView.obj 											+
 $(OBJ)\SQLOperacionesComercialesModel.obj 							+
 $(OBJ)\SqlFacturasVentasModel.obj 					    				+
+$(OBJ)\SQLFacturasSimplificadasVentasModel.obj 						+
+$(OBJ)\SQLAlbaranesVentasModel.obj 					    				+
 $(OBJ)\SQLPedidosVentasModel.obj 					    				+
 $(OBJ)\SQLPresupuestosVentasModel.obj 					   			+
 $(OBJ)\SqlFacturasVentasRectificativasModel.obj 					+
@@ -1216,6 +1247,8 @@ $(OBJ)\SQLPedidosComprasModel.obj 						  				+
 $(OBJ)\SQLPresupuestosComprasModel.obj 				  				+
 $(OBJ)\SQLFacturasComprasRectificativasModel.obj 					+
 $(OBJ)\FacturasVentasRepository.obj 				    				+
+$(OBJ)\FacturasSimplificadasVentasRepository.obj 					+
+$(OBJ)\AlbaranesVentasRepository.obj 				    				+
 $(OBJ)\PedidosVentasRepository.obj 					    				+
 $(OBJ)\PresupuestosVentasRepository.obj 			    				+
 $(OBJ)\FacturasVentasRectificativasRepository.obj 	  				+
@@ -1227,6 +1260,8 @@ $(OBJ)\OperacionesComercialesRepository.obj 		  					+
 $(OBJ)\FacturasClientesLineasRepository.obj 				    		+
 $(OBJ)\SQLOperacionesComercialesLineasModel.obj 	    			+
 $(OBJ)\SqlFacturasVentasLineasModel.obj 	    						+
+$(OBJ)\SQLFacturasSimplificadasVentasLineasModel.obj 	    		+
+$(OBJ)\SQLAlbaranesVentasLineasModel.obj 	    						+
 $(OBJ)\SqlpedidosVentasLineasModel.obj 	    						+
 $(OBJ)\SQLPedidosComprasLineasModel.obj 	    						+
 $(OBJ)\SQLPresupuestosVentasLineasModel.obj 	  						+
@@ -1237,6 +1272,8 @@ $(OBJ)\SQLFacturasComprasRectificativasLineasModel.obj 			+
 $(OBJ)\OperacionesController.obj 										+
 $(OBJ)\OperacionesComercialesController.obj 							+
 $(OBJ)\FacturasVentasController.obj 									+
+$(OBJ)\FacturasSimplificadasVentasController.obj 					+
+$(OBJ)\AlbaranesVentasController.obj 									+
 $(OBJ)\PedidosVentasController.obj 										+
 $(OBJ)\PresupuestosVentasController.obj 								+
 $(OBJ)\FacturasVentasRectificativasController.obj 					+
@@ -1247,6 +1284,8 @@ $(OBJ)\PresupuestosComprasController.obj 								+
 $(OBJ)\FacturasComprasRectificativasController.obj 				+
 $(OBJ)\OperacionesComercialesLineasController.obj 					+
 $(OBJ)\FacturasVentasLineasController.obj 							+
+$(OBJ)\FacturasSimplificadasVentasLineasController.obj 			+
+$(OBJ)\AlbaranesVentasLineasController.obj 							+
 $(OBJ)\PedidosVentasLineasController.obj 								+
 $(OBJ)\PresupuestosVentasLineasController.obj 						+
 $(OBJ)\FacturasVentasRectificativasLineasController.obj 			+
@@ -1257,6 +1296,8 @@ $(OBJ)\PresupuestosComprasLineasController.obj 						+
 $(OBJ)\FacturasComprasRectificativasLineasController.obj 		+
 $(OBJ)\OperacionesComercialesDescuentosController.obj 			+
 $(OBJ)\FacturasVentasDescuentosController.obj 						+
+$(OBJ)\FacturasSimplificadasVentasDescuentosController.obj 		+
+$(OBJ)\AlbaranesVentasDescuentosController.obj 						+
 $(OBJ)\PedidosVentasDescuentosController.obj 						+
 $(OBJ)\PresupuestosVentasDescuentosController.obj 					+
 $(OBJ)\FacturasComprasDescuentosController.obj 						+
@@ -1265,6 +1306,8 @@ $(OBJ)\PresupuestosComprasDescuentosController.obj 				+
 $(OBJ)\FacturasComprasRectificativasDescuentosController.obj 	+
 $(OBJ)\OperacionesComercialesLineasBrowse.obj 						+
 $(OBJ)\FacturasVentasBrowseView.obj 									+
+$(OBJ)\FacturasSimplificadasVentasBrowseView.obj 					+
+$(OBJ)\AlbaranesVentasBrowseView.obj 									+
 $(OBJ)\PedidosVentasBrowseView.obj 										+
 $(OBJ)\PresupuestosVentasBrowseView.obj 								+
 $(OBJ)\FacturasVentasRectificativasBrowseView.obj 					+

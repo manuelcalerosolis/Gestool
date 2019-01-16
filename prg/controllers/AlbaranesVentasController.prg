@@ -3,57 +3,57 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS PedidosVentasController FROM OperacionesComercialesController
+CLASS AlbaranesVentasController FROM OperacionesComercialesController
 
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
-   METHOD getLinesController()         INLINE ( ::getPedidosVentasLineasController() )
+   METHOD getLinesController()         INLINE ( ::getAlbaranesVentasLineasController() )
 
-   METHOD getDiscountController()      INLINE ( ::getPedidosVentasDescuentosController() )
+   METHOD getDiscountController()      INLINE ( ::getAlbaranesVentasDescuentosController() )
 
    METHOD isClient()                   INLINE ( .t. )
 
    // Impresiones--------------------------------------------------------------
 
-   METHOD getSubject()                 INLINE ( "Pedido de ventas número" )
+   METHOD getSubject()                 INLINE ( "Albarán de ventas número" )
 
    METHOD addExtraButtons()
 
    // Contrucciones tardias----------------------------------------------------
 
-   METHOD getName()                    INLINE ( "pedidos_venta" )
+   METHOD getName()                    INLINE ( "albaranes_venta" )
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLPedidosVentasModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLAlbaranesVentasModel():New( self ), ), ::oModel )
 
-   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := PedidosVentasValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := AlbaranesVentasValidator():New( self ), ), ::oValidator )
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := PedidosVentasBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := AlbaranesVentasBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := PedidosVentasRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := AlbaranesVentasRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS PedidosVentasController
+METHOD New( oController ) CLASS AlbaranesVentasController
 
    ::Super:New( oController )
 
-   ::cTitle                            := "Pedidos de ventas"
+   ::cTitle                            := "Albaranes de ventas"
 
-   ::cName                             := "pedidos_ventas"
+   ::cName                             := "albaranes_ventas"
 
-   ::hImage                            := {  "16" => "gc_pedidos_cliente_16",;
-                                             "32" => "gc_pedidos_cliente_32",;
-                                             "48" => "gc_pedidos_cliente_48" }
+   ::hImage                            := {  "16" => "gc_albaran_cliente_16",;
+                                             "32" => "gc_albaran_cliente_32",;
+                                             "48" => "gc_albaran_cliente_48" }
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS PedidosVentasController
+METHOD End() CLASS AlbaranesVentasController
 
    if !empty( ::oModel )
       ::oModel:End()
@@ -79,7 +79,7 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD addExtraButtons() CLASS PedidosVentasController
+METHOD addExtraButtons() CLASS AlbaranesVentasController
 
    ::oNavigatorView:getMenuTreeView():addButton( "Generar facturae 3.2", "gc_document_text_earth_16", {|| ::getFacturasClientesFacturaeController():Run( ::getBrowseView():getBrowseSelected() ) } )
 
@@ -91,7 +91,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS PedidosVentasValidator FROM OperacionesComercialesValidator
+CLASS AlbaranesVentasValidator FROM OperacionesComercialesValidator
 
    METHOD New( oController )
 
@@ -101,13 +101,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS PedidosVentasValidator
+METHOD New( oController ) CLASS AlbaranesVentasValidator
 
 RETURN ( ::Super:New( oController ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS PedidosVentasValidator
+METHOD getValidators() CLASS AlbaranesVentasValidator
 
    hset( ::Super:getValidators(),   "tercero_codigo", {  "required"        => "El código del cliente es un dato requerido",;
                                                          "clienteExist"    => "El código del cliente no existe" } )
