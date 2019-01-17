@@ -79,6 +79,8 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD getSubject()                 VIRTUAL
 
+   METHOD addExtraButtons()
+
    // Contrucciones tardias----------------------------------------------------
 
    METHOD getName()                    VIRTUAL
@@ -119,6 +121,8 @@ CLASS OperacionesComercialesController FROM OperacionesController
                                        INLINE ( if( empty( ::oRectificativaDialogView ), ::oRectificativaDialogView := OperacionComercialRectificarView():New( self ), ), ::oRectificativaDialogView )
 
    METHOD getRectifictivaValidator()   INLINE (if( empty( ::oRectificativaValidator ), ::oRectificativaValidator := OperacionComercialRectificarValidator():New( self ), ), ::oRectificativaValidator )
+
+   METHOD convertDocument()
 
 END CLASS
 
@@ -435,6 +439,22 @@ METHOD getConfigItems() CLASS OperacionesComercialesController
                      'lista'  =>  ::loadTemplatesHTML() } )
 
 RETURN ( aItems )
+
+//---------------------------------------------------------------------------//
+
+METHOD addExtraButtons() CLASS OperacionesComercialesController
+
+   ::super:addExtraButtons()
+
+   ::oNavigatorView:getMenuTreeView():addButton( "Convertir documento", "gc_document_text_earth_16", {|| ::getConvertirDocumentosController():Run() } )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD convertDocument() CLASS OperacionesComercialesController
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

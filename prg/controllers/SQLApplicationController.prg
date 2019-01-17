@@ -9,6 +9,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oCodigosPostalesController
 
+   DATA oConvertirDocumentosController
+
    DATA oDireccionesController
    
    DATA oDireccionesTiposController
@@ -239,7 +241,10 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
    METHOD getCodigosPostalesController();
-                                    INLINE ( if( empty( ::oCodigosPostalesController ), ::oCodigosPostalesController := CodigosPostalesController():New( self ), ), ::oCodigosPostalesController )
+                                    INLINE ( if( empty( ::oCodigosPostalesController ), ::oCodigosPostalesController := CodigosPostalesController():New( self ), ), ::oCodigosPostalesController ) 
+
+   METHOD getConvertirDocumentosController();
+                                    INLINE ( if( empty( ::oConvertirDocumentosController ), ::oConvertirDocumentosController := ConvertirDocumentosController():New( self ), ), ::oConvertirDocumentosController )
 
    METHOD getDireccionesController();
                                     INLINE ( if( empty( ::oDireccionesController ), ::oDireccionesController := DireccionesController():New( self ), ), ::oDireccionesController )
@@ -575,6 +580,10 @@ METHOD End() CLASS SQLApplicationController
    
    if !empty( ::oCodigosPostalesController )
       ::oCodigosPostalesController:End()
+   end if 
+
+   if !empty( ::oConvertirDocumentosController )
+      ::oConvertirDocumentosController:End()
    end if 
 
    if !empty( ::oDireccionesController )
