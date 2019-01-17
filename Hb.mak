@@ -1,22 +1,23 @@
 HB                   = 	\harbour_bcc7\
 
 HBINCLUDE            = 	\harbour_bcc7\include
-FWINCLUDE            = 	\fwh1801\include
+FWINCLUDE            = 	\fwh1811\include
+GESTOOLINCLUDE       = 	\fw195\gestool\include
 
 HBLIB                = 	\harbour_bcc7\lib
-FWLIB                = 	\fwh1801\lib
+FWLIB                = 	\fwh1811\lib
 
 RESOURCE             = 	.\resource
 
 BORLAND              = 	\bcc73
 BORLANDLIB           = 	\bcc73\lib
 
-OBJ                  = 	obj1801
+OBJ                  = 	obj1811
 
 SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Commands;.\Prg\Services;.\Prg\Http;.\Prg\Reports;.\Prg\Test;
 SOURCEC 				   =	.\C
 
-PPO 					   = 	ppo1801
+PPO 					   = 	ppo1811
 
 EXE 					   = 	bin\$(TARGET).exe
 
@@ -892,7 +893,7 @@ TestAssert.obj                                                 \
 TestAllSuite.obj                                               \
 
 .PRG.OBJ:
-  	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /d__TEST__ /w /es2 /gc0 /i$(FWINCLUDE) /i$(HBINCLUDE) /o$(OBJ)\$&.c
+  	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /d__TEST__ /w /es2 /gc0 /i$(GESTOOLINCLUDE) /i$(FWINCLUDE) /i$(HBINCLUDE) /o$(OBJ)\$&.c
   	$(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
 
 $(EXE)                  : $( PRG:.PRG=.OBJ )
