@@ -409,6 +409,7 @@ PresupuestosVentasController.prg 										\
 FacturasVentasRectificativasController.prg 							\
 OperacioncomercialRectificarView.Prg 									\
 FacturasComprasController.prg 											\
+ConvertirDocumentosController.prg 										\
 PedidosComprasController.prg 												\
 PresupuestosComprasController.prg 										\
 FacturasComprasRectificativasController.prg 							\
@@ -845,6 +846,7 @@ PresupuestosVentasController.obj 										\
 FacturasVentasRectificativasController.obj 							\
 OperacioncomercialRectificarView.obj 									\
 FacturasComprasController.obj 											\
+ConvertirDocumentosController.obj 										\
 PedidosComprasController.obj 												\
 PresupuestosComprasController.obj 										\
 FacturasComprasRectificativasController.obj 							\
@@ -1275,6 +1277,7 @@ $(OBJ)\PresupuestosVentasController.obj 								+
 $(OBJ)\FacturasVentasRectificativasController.obj 					+
 $(OBJ)\OperacioncomercialRectificarView.obj 							+
 $(OBJ)\FacturasComprasController.obj 									+
+$(OBJ)\ConvertirDocumentosController.obj 								+
 $(OBJ)\PedidosComprasController.obj 									+
 $(OBJ)\PresupuestosComprasController.obj 								+
 $(OBJ)\FacturasComprasRectificativasController.obj 				+

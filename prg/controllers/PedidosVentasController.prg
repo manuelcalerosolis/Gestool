@@ -81,6 +81,8 @@ RETURN ( ::Super:End() )
 
 METHOD addExtraButtons() CLASS PedidosVentasController
 
+   ::super:addExtraButtons()
+
    ::oNavigatorView:getMenuTreeView():addButton( "Generar facturae 3.2", "gc_document_text_earth_16", {|| ::getFacturasClientesFacturaeController():Run( ::getBrowseView():getBrowseSelected() ) } )
 
 RETURN ( nil )
