@@ -39,7 +39,7 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD terceroSetRecargo()
 
-   METHOD terceroChangeRecargo( lRecargo )
+   METHOD changeRecargo( lRecargo )
 
    METHOD terceroSetDescuentos()
 
@@ -342,7 +342,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD terceroChangeRecargo() CLASS OperacionesComercialesController
+METHOD changeRecargo() CLASS OperacionesComercialesController
 
    ::getModel():updateFieldWhereId( ::getModel():getBufferColumnKey(), "recargo_equivalencia", ::getModelBuffer( "recargo_equivalencia" ) )
 

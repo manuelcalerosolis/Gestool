@@ -5,15 +5,17 @@
 
 CLASS DireccionesGestoolController FROM DireccionesController
 
-   METHOD getModel()                            INLINE ( if( empty( ::oModel ), ::oModel := SQLDireccionesGestoolModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLDireccionesGestoolModel():New( self ), ), ::oModel )
 
-   METHOD getCodigosPostalesController()        INLINE ( if( empty( ::oCodigosPostalesController ), ::oCodigosPostalesController := CodigosPostalesGestoolController():New( self ), ), ::oCodigosPostalesController )
+   METHOD getCodigosPostalesController() ;
+                                       INLINE ( if( empty( ::oCodigosPostalesController ), ::oCodigosPostalesController := CodigosPostalesGestoolController():New( self ), ), ::oCodigosPostalesController )
 
-   METHOD getPaisesController()                 INLINE ( if( empty( ::oPaisesController ), ::oPaisesController := PaisesGestoolController():New( self ), ), ::oPaisesController )
+   METHOD getPaisesController()        INLINE ( if( empty( ::oPaisesController ), ::oPaisesController := PaisesGestoolController():New( self ), ), ::oPaisesController )
 
-   METHOD getProvinciasController()             INLINE ( if( empty( ::oProvinciasController ), ::oProvinciasController := ProvinciasGestoolController():New( self ), ), ::oProvinciasController )
+   METHOD getProvinciasController()    INLINE ( if( empty( ::oProvinciasController ), ::oProvinciasController := ProvinciasGestoolController():New( self ), ), ::oProvinciasController )
 
-   METHOD getConfiguracionVistasController()    INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
+   METHOD getConfiguracionVistasController() ;
+                                       INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
 
 END CLASS
 
@@ -457,7 +459,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesValidator FROM SQLBaseValidator
+CLASS DireccionesValidator FROM SQLParentValidator
 
    METHOD getValidators()
 
@@ -474,7 +476,8 @@ END CLASS
 METHOD getValidators() CLASS DireccionesValidator
 
    ::hValidators  := {  "codigo" =>             {  "required"        => "El código es un dato requerido" ,;
-                                                   "notPrincipal"    => "El código debe ser distinto de 0" } ,;
+                                                   "notPrincipal"    => "El código debe ser distinto de 0",;
+                                                   "unique"          => "El código introducido ya existe" },;
                         "codigo_postal" =>      {  "codigoPostal"    => "" },;
                         "codigo_provincia" =>   {  "codigoProvincia" => "" },;
                         "codigo_pais" =>        {  "codigoPais"      => "" },;

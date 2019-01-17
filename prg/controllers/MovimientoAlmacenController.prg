@@ -69,6 +69,8 @@ METHOD New( oController ) CLASS MovimientoAlmacenController
 
    ::lTransactional                    := .t.
 
+   ::lInsertable                       := .t.
+
    ::lConfig                           := .t.
 
    ::lDocuments                        := .t.

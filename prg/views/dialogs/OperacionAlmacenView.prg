@@ -30,6 +30,8 @@ CLASS OperacionAlmacenView FROM SQLBaseView
 
    METHOD defaultTitle()
 
+   METHOD validateAlmacen( cField )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -207,6 +209,22 @@ METHOD defaultTitle() CLASS OperacionAlmacenView
 RETURN ( cTitle )
 
 //---------------------------------------------------------------------------//
+
+METHOD validateAlmacen( cField ) CLASS OperacionAlmacenView
+
+   DEFAULT cField    := "almacen_codigo"
+
+   if ::getController():validate( cField )
+      
+      ::getController():getModel():updateFieldWhereId( ::getController():getModel():getBufferColumnKey(), cField, ::getController():getModelBuffer( cField ) )
+      
+      RETURN ( .t. )
+   
+   end if 
+
+RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -226,7 +244,7 @@ METHOD defineAlmacenSelector() CLASS ConsolidacionAlmacenView
 
    ::getController():getAlmacenesController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "almacen_codigo" ] ) )
    ::getController():getAlmacenesController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::getController():getAlmacenesController():getSelector():setValid( {|| ::getController():validate( "almacen_codigo" ) } )
+   ::getController():getAlmacenesController():getSelector():setValid( {|| ::validateAlmacen() } )
    ::getController():getAlmacenesController():getSelector():setWhen( {|| ::getController():hasNotLines() } )
 
 RETURN ( nil )
@@ -240,6 +258,8 @@ METHOD startActivate() CLASS ConsolidacionAlmacenView
    ::getController():getAlmacenesController():getSelector():Start()
 
    ::getController():calculateTotals()
+
+   ::getController():getAlmacenesController():getSelector():setFocus()
 
 RETURN ( nil )
 
@@ -255,6 +275,10 @@ CLASS MovimientoAlmacenView FROM OperacionAlmacenView
 
    METHOD startActivate()
 
+   METHOD validateAlmacenOrigen()      INLINE ( ::validateAlmacen( "almacen_origen_codigo" ) )
+
+   METHOD validateAlmacenDestino()     INLINE ( ::validateAlmacen( "almacen_destino_codigo" ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -264,12 +288,12 @@ METHOD defineAlmacenSelector() CLASS MovimientoAlmacenView
    ::getController():getAlmacenOrigenController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "almacen_origen_codigo" ] ) )
    ::getController():getAlmacenOrigenController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[1] } )
    ::getController():getAlmacenOrigenController():getSelector():setLinkText( "Almacén origen" ) 
-   ::getController():getAlmacenOrigenController():getSelector():setValid( {|| ::getController():validate( "almacen_origen_codigo" ) } )
+   ::getController():getAlmacenOrigenController():getSelector():setValid( {|| ::validateAlmacenOrigen() } )
    ::getController():getAlmacenOrigenController():getSelector():setWhen( {|| ::getController():hasNotLines() } )
 
    ::getController():getAlmacenDestinoController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "almacen_destino_codigo" ] ) )
    ::getController():getAlmacenDestinoController():getSelector():Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::getController():getAlmacenDestinoController():getSelector():setValid( {|| ::getController():validate( "almacen_destino_codigo" ) } )
+   ::getController():getAlmacenDestinoController():getSelector():setValid( {|| ::validateAlmacenDestino() } )
    ::getController():getAlmacenDestinoController():getSelector():setWhen( {|| ::getController():hasNotLines() } )
 
 RETURN ( nil )
@@ -292,3 +316,4 @@ METHOD startActivate() CLASS MovimientoAlmacenView
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+

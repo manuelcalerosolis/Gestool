@@ -23998,9 +23998,9 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 503, "TBtnBmp", 0x00000000, 88, 46, 14, 14
   CONTROL "", 504, "TBtnBmp", 0x00000000, 102, 46, 14, 14
   CONTROL "", 505, "TBtnBmp", 0x00000000, 116, 46, 14, 14
-  CONTROL "", 500, "SQLXBrowse", WS_TABSTOP|0x00300000, 3, 63, 633, 269
-  CONTROL "Total", -1, "Static", WS_GROUP, 463, 342, 71, 8
-  CONTROL "0", 330, "Static", SS_RIGHT|WS_GROUP, 545, 342, 90, 8
+  CONTROL "", 500, "SQLXBrowse", WS_TABSTOP|0x00300000, 3, 63, 633, 280
+  CONTROL "Total", -1, "Static", WS_GROUP, 463, 350, 71, 8
+  CONTROL "0", 330, "Static", SS_RIGHT|WS_GROUP, 545, 350, 90, 8
   CONTROL "Número", -1, "Static", WS_GROUP, 4, 22, 52, 8
   CONTROL "Almacén", 132, "Static", WS_GROUP, 157, 8, 72, 8
   CONTROL "Fecha", -1, "Static", WS_GROUP, 4, 36, 52, 8
