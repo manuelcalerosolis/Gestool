@@ -267,6 +267,8 @@ CLASS TestConsolidacionAlmacenController FROM TestOperacionesController
 
    DATA aCategories                    INIT { "all", "consolidaciones_almacenes" }
 
+   METHOD Before()
+
    METHOD beforeClass()
 
    METHOD click_nueva_linea( view )    INLINE ( view:getControl( 501, view:oFolder:aDialogs[1] ):Click(),;
@@ -313,6 +315,18 @@ METHOD beforeClass() CLASS TestConsolidacionAlmacenController
    Company():setDefaultUsarUbicaciones( .t. )
    
    ::oController  := ConsolidacionAlmacenController():New()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD Before() CLASS TestConsolidacionAlmacenController
+
+   SQLConsolidacionesAlmacenesModel():truncateTable()
+
+   SQLConsolidacionesAlmacenesLineasModel():truncateTable()
+
+   ::Super:Before()
 
 RETURN ( nil )
 

@@ -5,23 +5,27 @@
 
 CLASS SQLArticulosModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "articulos"
+   DATA cTableName                     INIT "articulos"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( codigo, deleted_at )"
 
    METHOD getColumns()
 
    METHOD getInitialSelect()
 
+   METHOD isLote( cCodigoArticulo )    INLINE ( ::getFieldWhere( "lote", { "codigo" => cCodigoArticulo }, , .f. ) )
+
 #ifdef __TEST__   
 
    METHOD test_create_precio_con_descuentos() 
 
-   METHOD test_create_articulo_con_uuid( uuid )
+   METHOD test_create_con_uuid( uuid )
 
-   METHOD test_create_articulo_con_unidad_de_medicion_cajas_palets( uuid )
+   METHOD test_create_con_unidad_de_medicion_cajas_palets( uuid )
 
-   METHOD test_create_articulo_con_tarifa_mayorista() 
+   METHOD test_create_con_tarifa_mayorista() 
+
+   METHOD test_create_con_lote() 
 
 #endif
 
@@ -186,7 +190,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_create_articulo_con_uuid( uuid ) CLASS SQLArticulosModel
+METHOD test_create_con_uuid( uuid ) CLASS SQLArticulosModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -198,7 +202,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_create_articulo_con_unidad_de_medicion_cajas_palets() CLASS SQLArticulosModel
+METHOD test_create_con_unidad_de_medicion_cajas_palets() CLASS SQLArticulosModel
 
    local uuid
    local hBuffer
@@ -223,7 +227,7 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_create_articulo_con_tarifa_mayorista() CLASS SQLArticulosModel
+METHOD test_create_con_tarifa_mayorista() CLASS SQLArticulosModel
 
    local uuid
    local hBuffer
@@ -239,6 +243,28 @@ METHOD test_create_articulo_con_tarifa_mayorista() CLASS SQLArticulosModel
    hset( hBuffer, "codigo", "1" )
    hset( hBuffer, "nombre", "Artículo con tarifa mayorista" )
    hset( hBuffer, "precio_costo", 50 )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_con_lote() CLASS SQLArticulosModel
+
+   local uuid
+   local hBuffer
+
+   uuid     := win_uuidcreatestring()
+
+   SQLArticulosTarifasModel():test_create_tarifa_base() 
+   SQLArticulosTarifasModel():test_create_tarifa_mayorista() 
+
+   hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "uuid", uuid )
+   hset( hBuffer, "codigo", "2" )
+   hset( hBuffer, "nombre", "Artículo con lote" )
+   hset( hBuffer, "precio_costo", 50 )
+   hset( hBuffer, "lote", .t. )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 

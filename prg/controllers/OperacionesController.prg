@@ -307,8 +307,9 @@ METHOD Before() CLASS TestOperacionesController
 
    SQLUnidadesMedicionGruposModel():test_create()
 
-   SQLArticulosModel():test_create_articulo_con_unidad_de_medicion_cajas_palets()
-   SQLArticulosModel():test_create_articulo_con_tarifa_mayorista()
+   SQLArticulosModel():test_create_con_unidad_de_medicion_cajas_palets()
+   SQLArticulosModel():test_create_con_tarifa_mayorista()
+   SQLArticulosModel():test_create_con_lote()
 
    SQLArticulosTarifasModel():test_create_tarifa_base()
    SQLArticulosTarifasModel():test_create_tarifa_mayorista()

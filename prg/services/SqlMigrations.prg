@@ -476,7 +476,7 @@ METHOD addModels() CLASS SQLCompanyMigrations
    
    aadd( ::aModels, SQLFacturasComprasRectificativasDescuentosModel():New() )
    
-   aadd( ::aModels, SQLConvertirDocumentosModel():New() )
+   aadd( ::aModels, SQLConversorDocumentosModel():New() )
 
    aadd( ::aModels, SQLAlbaranesComprasLineasModel():New() ) 
    

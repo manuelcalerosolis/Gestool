@@ -51,11 +51,11 @@ CLASS ArticulosController FROM SQLNavigatorController
    
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := ArticulosView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ArticulosView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := ArticulosValidator():New( self  ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := ArticulosValidator():New( self  ), ), ::oValidator )
 
    METHOD getRepository()              INLINE ( if( empty( ::Repository ), ::oRepository := ArticulosRepository():New( self ), ), ::oRepository )
 
@@ -267,7 +267,7 @@ CLASS TestArticulosController FROM TestCase
    METHOD afterClass() 
 
    METHOD Before()
-/*
+
    METHOD test_append()
    
    METHOD test_dialog_append()
@@ -277,7 +277,7 @@ CLASS TestArticulosController FROM TestCase
    METHOD test_dialog_append_con_unidad_de_medicion() 
 
    METHOD test_dialog_cancel_append() 
-*/
+
    METHOD test_controller_rollback()
 
 END CLASS
@@ -305,7 +305,7 @@ METHOD Before() CLASS TestArticulosController
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-/*
+
 METHOD test_append() CLASS TestArticulosController
 
    local nId
@@ -422,7 +422,7 @@ METHOD test_dialog_cancel_append() CLASS TestArticulosController
    ::assert:false( ::oController:Insert(), "test cancelar la insercion de registro" )
 
 RETURN ( nil )
-*/
+
 //---------------------------------------------------------------------------//
 
 METHOD test_controller_rollback() CLASS TestArticulosController
@@ -442,8 +442,6 @@ METHOD test_controller_rollback() CLASS TestArticulosController
    ::oController:setAppendMode()
 
    ::oController:beginTransactionalMode()
-
-   nId            := ::oController:getModel():insertBlankBuffer()
 
    ::oController:getModel():insertBlankBuffer()
 

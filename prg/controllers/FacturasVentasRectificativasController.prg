@@ -255,8 +255,8 @@ METHOD Before() CLASS TestFacturasVentasController
    SQLMetodoPagoModel():test_create_reposicion()
    SQLMetodoPagoModel():test_create_con_plazos()
 
-   SQLArticulosModel():test_create_articulo_con_unidad_de_medicion_cajas_palets()
-   SQLArticulosModel():test_create_articulo_con_tarifa_mayorista()
+   SQLArticulosModel():test_create_con_unidad_de_medicion_cajas_palets()
+   SQLArticulosModel():test_create_con_tarifa_mayorista()
 
    SQLArticulosTarifasModel():test_create_tarifa_base()
    SQLArticulosTarifasModel():test_create_tarifa_mayorista()

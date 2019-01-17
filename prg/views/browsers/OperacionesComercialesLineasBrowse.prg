@@ -66,7 +66,7 @@ METHOD addColumns() CLASS OperacionesComercialesLineasBrowseView
       :bOnPostEdit         := {|oCol, uNewValue, nKey| ::getController():updateField( 'fecha_caducidad', uNewValue ) }
    end with
 
-   with object ( ::oBrowse:AddCol() )
+   with object ( ::oColumnLote := ::oBrowse:AddCol() )
       :cSortOrder          := 'lote'
       :cHeader             := 'Lote'
       :lHide               := .t.      

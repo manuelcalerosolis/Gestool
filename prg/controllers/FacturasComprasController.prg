@@ -142,12 +142,11 @@ METHOD initModels() CLASS TestFacturasComprasController
    SQLArticulosModel():truncateTable()
    SQLArticulosTarifasModel():truncateTable()
 
-   SQLTercerosModel():testCreateContado()
+   SQLTercerosModel():test_create_contado()
    SQLAlmacenesModel():test_create()
    SQLMetodoPagoModel():test_create_contado()
-   SQLArticulosModel():test_create_articulo_con_unidad_de_medicion_cajas_palets()
-
-   SQLArticulosTarifasModel():insertArticulosTarifasBase() 
+   
+   SQLArticulosModel():test_create_con_unidad_de_medicion_cajas_palets()
 
 RETURN ( nil )
 

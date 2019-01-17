@@ -51,6 +51,8 @@ CLASS OperacionesLineasController FROM SQLBrowseController
 
    METHOD validLineCombinacion( cCodigoArticulo )
 
+   METHOD validLineLote( cCodigoArticulo )
+
    METHOD validLineAlmacen()
 
    METHOD validLineUbicacion()
@@ -64,7 +66,6 @@ CLASS OperacionesLineasController FROM SQLBrowseController
    METHOD stampAlmacen( hAlmacen )
 
    METHOD stampUbicacion( hUbicacion )
-
    METHOD stampArticuloCodigo( cCodigoArticulo ) ;
                                        INLINE ( ::updateField( "articulo_codigo", cCodigoArticulo ) ) 
 
@@ -88,7 +89,7 @@ CLASS OperacionesLineasController FROM SQLBrowseController
 
    METHOD getArticuloUnidadMedicion()    
 
-   METHOD stampArticuloUnidadMed( uValue )
+   METHOD stampArticuloUnidadMedicionCodigo( uValue )
 
    METHOD stampArticuloUnidadMedFac()
 
@@ -260,6 +261,22 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD validLineLote()
+
+   if !empty( ::getRowSet():fieldget( 'lote' ) )
+      RETURN ( .t. )
+   end if
+
+   if !empty( ::getArticulosController():getModel():isLote( ::getRowSet():fieldget( 'articulo_codigo' ) ) )
+      ::getController():getDialogView():showMessage( "Debe seleccionar un lote" )      
+      ::getBrowseView():setFocusColumnLote()
+      RETURN ( .f. )
+   end if
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
 METHOD validLineAlmacen()
 
    if empty( ::getRowSet():fieldget( 'almacen_codigo' ) )
@@ -410,7 +427,7 @@ METHOD postValidateUnidadMedicion( oCol, uValue, nKey )
       RETURN ( .t. )
    end if          
    
-   ::stampArticuloUnidadMed( uValue )
+   ::stampArticuloUnidadMedicionCodigo( uValue )
 
 RETURN ( .f. )
 
@@ -458,7 +475,7 @@ RETURN ( ::stampUbicacion( space( 20 ) ) )
 
 METHOD stampUbicacion( cCodigoUbicacion, cField )
 
-   DEFAULT cField    := "ubicacion_codigo"
+   DEFAULT cField          := "ubicacion_codigo"
 
    ::updateField( cField, cCodigoUbicacion )
 
@@ -471,7 +488,7 @@ METHOD stampArticuloUnidadMedicion()
    local cUnidadMedicion   := ::getArticuloUnidadMedicion()
 
    if !empty( cUnidadMedicion )
-      RETURN ( ::stampArticuloUnidadMed( cUnidadMedicion ) )
+      RETURN ( ::stampArticuloUnidadMedicionCodigo( cUnidadMedicion ) )
    end if 
 
 RETURN ( nil )
@@ -551,7 +568,7 @@ RETURN ( ::oController:calculateTotals() )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampArticuloUnidadMed( uValue )
+METHOD stampArticuloUnidadMedicionCodigo( uValue )
 
    ::updateField( 'unidad_medicion_codigo', uValue )
 

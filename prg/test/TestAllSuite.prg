@@ -60,7 +60,7 @@ USER FUNCTION hbunit_test()
 
    oSuite:addTest( TestConsolidacionAlmacenController():new() )
 
-   oSuite:setCategories( { "articulos" } )
+   oSuite:setCategories( { "consolidaciones_almacenes" } )
 
    oRunner:run( oSuite )
 

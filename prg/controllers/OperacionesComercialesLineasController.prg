@@ -82,7 +82,7 @@ RETURN ( nil )
 
 METHOD stampArticuloDescuento() CLASS OperacionesComercialesLineasController
 
-   local nDescuento     := SQLArticulosPreciosDescuentosModel():getDescuentoWhereArticuloCodigo( ::getRowSet():fieldGet( 'articulo_codigo' ), ::oController:getModelBuffer( 'tarifa_codigo' ), ::getRowSet():fieldGet( 'total_unidades' ), ::oController:getModelBuffer( 'fecha' ) )
+   local nDescuento        := SQLArticulosPreciosDescuentosModel():getDescuentoWhereArticuloCodigo( ::getRowSet():fieldGet( 'articulo_codigo' ), ::oController:getModelBuffer( 'tarifa_codigo' ), ::getRowSet():fieldGet( 'total_unidades' ), ::oController:getModelBuffer( 'fecha' ) )
 
    ::updateField( 'descuento', nDescuento )
 
@@ -200,6 +200,10 @@ METHOD validLine() CLASS OperacionesComercialesLineasController
    end if 
 
    if !( ::validLineCombinacion() )
+      RETURN ( .f. )
+   end if
+
+   if !( ::validLineLote() )
       RETURN ( .f. )
    end if
 

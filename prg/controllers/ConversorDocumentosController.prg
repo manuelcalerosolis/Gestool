@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ConvertirDocumentosController FROM SQLNavigatorController
+CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    METHOD New() CONSTRUCTOR
 
@@ -11,34 +11,43 @@ CLASS ConvertirDocumentosController FROM SQLNavigatorController
 
    METHOD Run()
 
-   DATA aComboDocumentoDestino   INIT  {  "Albarán de compras"             => {|| AlbaranesComprasController():New( ::getSuperController() ) },;
-                                          "Albarán de ventas"              => {|| AlbaranesComprasController():New( ::getSuperController() ) },;
-                                          "Factura de compras"             => {|| AlbaranesComprasController():New( ::getSuperController() ) },;
-                                          "Factura de ventas"              => {|| AlbaranesComprasController():New( ::getSuperController() ) },;
-                                          "Factura de ventas simplificada" => {|| AlbaranesComprasController():New( ::getSuperController() ) },;
-                                          "Pedido de compras"              => {|| AlbaranesComprasController():New( ::getSuperController() ) },;
-                                          "Pedido de ventas"               => {|| AlbaranesComprasController():New( ::getSuperController() ) },;
-                                          "Presupuesto de ventas"          => {|| AlbaranesComprasController():New( ::getSuperController() ) } }
+   DATA aDocumentosDestino       // INIT  {  "Albarán de compras"             => {|| AlbaranesComprasController():New( ::getController() ):Append() },;
+                                 //          "Albarán de ventas"              => {|| msgalert( "albaran de ventas" ) },;
+                                 //          "Factura de compras"             => {|| msgalert( "albaran de ventas" ) },;
+                                 //          "Factura de ventas"              => {|| msgalert( "albaran de ventas" ) },;
+                                 //          "Factura de ventas simplificada" => {|| msgalert( "albaran de ventas" ) },;
+                                 //          "Pedido de compras"              => {|| msgalert( "albaran de ventas" ) },;
+                                 //          "Pedido de ventas"               => {|| msgalert( "albaran de ventas" ) },;
+                                 //          "Presupuesto de ventas"          => {|| msgalert( "albaran de ventas" ) } }
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLConvertirDocumentosModel():New( self ), ), ::oModel ) 
+   METHOD getModel()             INLINE ( if( empty( ::oModel ), ::oModel := SQLConversorDocumentosModel():New( self ), ), ::oModel ) 
 
-   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := ConvertirDocumentoView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()        INLINE ( if( empty( ::oDialogView ), ::oDialogView := ConversorDocumentoView():New( self ), ), ::oDialogView )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS ConvertirDocumentosController
-   
+METHOD New( oController ) CLASS ConversorDocumentosController
+
+   ::aDocumentosDestino := {  "Albarán de compras"             => {|| AlbaranesComprasController():New( ::getController() ):Append() },;
+                              "Albarán de ventas"              => {|| msgalert( "Albarán de ventas" ) },;
+                              "Factura de compras"             => {|| msgalert( "Factura de compras" ) },;
+                              "Factura de ventas"              => {|| msgalert( "Factura de ventas" ) },;
+                              "Factura de ventas simplificada" => {|| msgalert( "Factura de ventas simplificada" ) },;
+                              "Pedido de compras"              => {|| msgalert( "Pedido de compras" ) },;
+                              "Pedido de ventas"               => {|| msgalert( "Pedido de ventas" ) },;
+                              "Presupuesto de ventas"          => {|| msgalert( "Presupuesto de ventas" ) } }
+
    ::Super:New( oController )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS ConvertirDocumentosController
+METHOD End() CLASS ConversorDocumentosController
 
    if !empty( ::oModel )
       ::oModel:End()
@@ -48,42 +57,42 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD Run()
+METHOD Run() CLASS ConversorDocumentosController
 
-   if ::getDialogView():Activate() == IDOK
-      msgalert( ::getDialogView():cDocumentoDestino )
-      do case 
-         case ::getDialogView():cDocumentoDestino == ""
-
-      end case
+   if ::getDialogView():Activate() != IDOK
+      RETURN ( nil )
    end if 
 
+   msgalert( ::getDialogView():getDocumentoDestino(), "getDocumentoDestino" )
+
+   if hhaskey( ::aDocumentosDestino, ::getDialogView():getDocumentoDestino() )
+      eval( hget( ::aDocumentosDestino, ::getDialogView():getDocumentoDestino() ) )
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-CLASS ConvertirDocumentoView FROM SQLBaseView
+CLASS ConversorDocumentoView FROM SQLBaseView
 
-   DATA oComboDocumentoDestino
    DATA cDocumentoDestino
 
+   DATA oComboDocumentoDestino
                                           
    METHOD Activate()
       METHOD Activating()
 
-   METHOD getNombresDocumentos()
-
-   METHOD getNombreWhereDocumento( cEntidad )
-
-   METHOD getControllerWhereNombre( cNombre )
+   METHOD getDocumentoDestino()        INLINE ( alltrim( ::cDocumentoDestino ) )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS ConvertirDocumentoView
+METHOD Activate() CLASS ConversorDocumentoView
 
    DEFINE DIALOG  ::oDialog;
       RESOURCE    "CONVERTIR_DOCUMENTO"; 
@@ -103,9 +112,8 @@ METHOD Activate() CLASS ConvertirDocumentoView
 
    REDEFINE COMBOBOX ::oComboDocumentoDestino ;
       VAR         ::cDocumentoDestino ;
-      ITEMS       ( ::getController():getNombresDocumentos() ) ;
+      ITEMS       ( hgetkeys( ::getController():aDocumentosDestino ) ) ;
       ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
    // Botones------------------------------------------------------------------
@@ -122,49 +130,19 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activating() CLASS ConvertirDocumentoView
+METHOD Activating() CLASS ConversorDocumentoView
 
-   ::cDocumentoDestino := ""
+   ::cDocumentoDestino  := ""
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
-METHOD getNombreWhereDocumento( cDocumento ) CLASS ConvertirDocumentoView
-
-   local cNombre     := ""
-
-   heval( ::aComboDocumentoDestino, {|k,v| iif( k == alltrim( cDocumento ), cNombre := hget( v, "nombre" ), ) } )
-
-RETURN ( cNombre )
-   
-//---------------------------------------------------------------------------//
-
-METHOD getNombresDocumentos() CLASS ConvertirDocumentoView
-
-   local aNombres    := {}
-
-   heval( ::aComboDocumentoDestino, {|k,v| aadd( aNombres, hget( v, "nombre" ) ) } )
-
-RETURN ( aNombres )
-
-//---------------------------------------------------------------------------//
-
-METHOD getControllerWhereNombre( cNombre ) CLASS ConvertirDocumentoView
-
-   local cDocumento    := ""
-
-   heval( ::aComboDocumentoDestino, {|k,v| iif( hget( v, "nombre" ) == cNombre, cDocumento := k, ) } )
-   
-RETURN ( cDocumento )
-
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLConvertirDocumentosModel FROM SQLCompanyModel
+CLASS SQLConversorDocumentosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "documentos_conversion"
 
@@ -178,7 +156,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLConvertirDocumentosModel
+METHOD getColumns() CLASS SQLConversorDocumentosModel
 
    hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
                                                       "default"   => {|| 0 } }                                    )
@@ -204,7 +182,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD InsertDocumentoConversion( uuidOrigen, cTableOrigen, cTableDestino ) CLASS SQLConvertirDocumentosModel
+METHOD InsertDocumentoConversion( uuidOrigen, cTableOrigen, cTableDestino ) CLASS SQLConversorDocumentosModel
 
    local cSql
 

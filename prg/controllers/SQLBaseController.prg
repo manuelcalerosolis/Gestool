@@ -23,59 +23,63 @@ CLASS SQLBaseController
 
    DATA oRepository
 
-   DATA lTransactional                                INIT .f.
+   DATA lTransactional                 INIT .f.
 
-   DATA lInsertable                                   INIT .f.
+   DATA lInsertable                    INIT .f.
 
-   DATA lMultiDelete                                  INIT .t.
+   DATA lMultiDelete                   INIT .t.
 
-   DATA nLevel                                        INIT __permission_full__ 
+   DATA nLevel                         INIT __permission_full__ 
 
-   DATA nMode                                         AS NUMERIC
+   DATA nMode                          AS NUMERIC
 
-   DATA cTitle                                        INIT ""
+   DATA cTitle                         INIT ""
 
-   DATA cName                                         INIT ""
+   DATA cName                          INIT ""
 
-   DATA hImage                                        INIT {=>}
+   DATA hImage                         INIT {=>}
 
    DATA aSelected
 
    METHOD New() CONSTRUCTOR
    METHOD End()
 
-   METHOD setName( cName )                            INLINE ( ::cName := cName )
-   METHOD getName()                                   INLINE ( ::cName )
+   METHOD setName( cName )             INLINE ( ::cName := cName )
+   METHOD getName()                    INLINE ( ::cName )
 
-   METHOD getController()                             INLINE ( ::oController ) 
-   METHOD getControllerParentUuid()                   INLINE ( iif( !empty( ::oController ), ::oController:getUuid(), space( 40 ) ) ) 
+   METHOD getController()              INLINE ( ::oController ) 
+   METHOD getControllerParentUuid()    INLINE ( iif( !empty( ::oController ), ::oController:getUuid(), space( 40 ) ) ) 
 
    // Modelo -----------------------------------------------------------------
 
-   METHOD getModel()                                  VIRTUAL
-   METHOD setModel( oModel )                          INLINE ( ::oModel := oModel )
+   METHOD getModel()                   VIRTUAL
+   METHOD setModel( oModel )           INLINE ( ::oModel := oModel )
 
-   METHOD getModelColumnKey()                         INLINE ( iif( !empty( ::getModel() ), ::getModel():cColumnKey, ) )
-   METHOD getModelTableName()                         INLINE ( iif( !empty( ::getModel() ), ::getModel():getTableName(), ) )
-   METHOD getModelColumns()                           INLINE ( iif( !empty( ::getModel() ) .and. !empty( ::getModel():hColumns ), ( ::getModel():hColumns ), ) )
-   METHOD getModelExtraColumns()                      INLINE ( iif( !empty( ::getModel() ) .and. !empty( ::getModel():hExtraColumns ), ( ::getModel():hExtraColumns ), ) )
+   METHOD getModelColumnKey()          INLINE ( iif( !empty( ::getModel() ), ::getModel():cColumnKey, ) )
+   METHOD getModelTableName()          INLINE ( iif( !empty( ::getModel() ), ::getModel():getTableName(), ) )
+   METHOD getModelColumns()            INLINE ( iif( !empty( ::getModel() ) .and. !empty( ::getModel():hColumns ), ( ::getModel():hColumns ), ) )
+   METHOD getModelExtraColumns()       INLINE ( iif( !empty( ::getModel() ) .and. !empty( ::getModel():hExtraColumns ), ( ::getModel():hExtraColumns ), ) )
    
-   METHOD isEmptyModelBuffer()                        INLINE ( empty( ::getModel() ) .or. empty( ::getModel():hBuffer ) )
+   METHOD isEmptyModelBuffer()         INLINE ( empty( ::getModel() ) .or. empty( ::getModel():hBuffer ) )
    
-   METHOD getModelBuffer( cColumn )                   INLINE ( iif( !empty( ::getModel() ), ::getModel():getBuffer( cColumn ), ) )
-   METHOD setModelBuffer( cColumn, uValue )           INLINE ( iif( !empty( ::getModel() ), ::getModel():setBuffer( cColumn, uValue ), ) )
-   METHOD setModelBufferPadr( cColumn, uValue )       INLINE ( iif( !empty( ::getModel() ), ::getModel():setBufferPadr( cColumn, uValue ), ) )
+   METHOD getModelBuffer( cColumn )    INLINE ( iif( !empty( ::getModel() ), ::getModel():getBuffer( cColumn ), ) )
+   METHOD setModelBuffer( cColumn, uValue ) ;
+                                       INLINE ( iif( !empty( ::getModel() ), ::getModel():setBuffer( cColumn, uValue ), ) )
+   METHOD setModelBufferPadr( cColumn, uValue ) ;
+                                       INLINE ( iif( !empty( ::getModel() ), ::getModel():setBufferPadr( cColumn, uValue ), ) )
 
-   METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::getModel():cColumnKey ) ) )
-   METHOD getModelgetValue( cSentence )               INLINE ( iif( !empty( ::getModel() ), ::getModel():getValue( cSentence ), ) )
+   METHOD getModelBufferColumnKey()    INLINE ( ::getModelBuffer( ( ::getModel():cColumnKey ) ) )
+   METHOD getModelgetValue( cSentence ) ;
+                                       INLINE ( iif( !empty( ::getModel() ), ::getModel():getValue( cSentence ), ) )
 
    METHOD findInModel()
 
    METHOD changeModelOrderAndOrientation()            
-   METHOD getModelHeaderFromColumnOrder()             INLINE ( ::getModel():getHeaderFromColumnOrder() )
+   METHOD getModelHeaderFromColumnOrder() ;
+                                       INLINE ( ::getModel():getHeaderFromColumnOrder() )
 
-   METHOD getId()                                     INLINE ( iif( !empty( ::getModel() ), ::getModel():getId(), nil ) )
-   METHOD getUuid()                                   INLINE ( iif( !empty( ::getModel() ), ::getModel():getUuid(), nil ) )
+   METHOD getId()                      INLINE ( iif( !empty( ::getModel() ), ::getModel():getId(), nil ) )
+   METHOD getUuid()                    INLINE ( iif( !empty( ::getModel() ), ::getModel():getUuid(), nil ) )
    
    // Rowset-------------------------------------------------------------------
 
@@ -217,6 +221,8 @@ CLASS SQLBaseController
 
    METHOD onKeyChar()                  VIRTUAL
 
+   METHOD prepareDialogView()          VIRTUAL
+
    // Directorio para documentos y etiquetas-----------------------------------
 
    METHOD setDirectory( cDirectory )   INLINE ( ::cDirectory := cDirectory )
@@ -315,7 +321,9 @@ METHOD Append()
 
       ::getModel():loadBlankBuffer()
 
-      ::fireEvent( 'openingDialog' )     
+      ::fireEvent( 'openingDialog' )   
+
+      ::prepareDialogView()  
 
       if ::dialogViewActivate()
 

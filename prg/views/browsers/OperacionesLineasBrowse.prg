@@ -24,6 +24,8 @@ CLASS OperacionesLineasBrowseView FROM SQLBrowseView
 
    DATA oColumnCodigoUbicacion
 
+   DATA oColumnLote
+
    DATA oColumnPropiedades
 
    METHOD Create( oWindow )
@@ -41,15 +43,19 @@ CLASS OperacionesLineasBrowseView FROM SQLBrowseView
    METHOD getEditListBox()             INLINE ( if( ::getSuperController():isNotZoomMode(), EDIT_GET_LISTBOX, 0 ) )
 
    METHOD setFocusColumnCodigoArticulo() ;
-                                       INLINE ( ::oBrowse:setFocus(), ::oBrowse:goToCol( ::oColumnCodigoArticulo ) )
+                                       INLINE ( ::setFocusInColumn( ::oColumnCodigoArticulo ) )
 
    METHOD setFocusColumnCodigoAlmacen() ;
-                                       INLINE ( ::oBrowse:setFocus(), ::oBrowse:goToCol( ::oColumnCodigoAlmacen ) )
+                                       INLINE ( ::setFocusInColumn( ::oColumnCodigoAlmacen ) )
 
    METHOD setFocusColumnCodigoUbicacion() ;
-                                       INLINE ( ::oBrowse:setFocus(), ::oBrowse:goToCol( ::oColumnCodigoUbicacion ) )
+                                       INLINE ( ::setFocusInColumn( ::oColumnCodigoUbicacion ) )
 
-   METHOD setFocusColumnPropiedades()  INLINE ( ::oBrowse:setFocus(), ::oBrowse:goToCol( ::oColumnPropiedades ) )
+   METHOD setFocusColumnPropiedades()  INLINE ( ::setFocusInColumn( ::oColumnPropiedades ) )
+
+   METHOD setFocusColumnLote()         INLINE ( ::setFocusInColumn( ::oColumnLote ) )
+
+   METHOD setFocusInColumn( oColumn )  INLINE ( ::oBrowse:setFocus(), if( oColumn:lHide, oColumn:Show(), ), ::oBrowse:goToCol( oColumn ) )
 
    METHOD activateUbicacionesSelectorView( cField )    
 
