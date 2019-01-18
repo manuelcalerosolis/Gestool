@@ -15,6 +15,8 @@ CLASS OperacionesComercialesDescuentosController FROM SQLBrowseController
 
    METHOD validateDescuento( uValue )
 
+   METHOD insertDiscontConversion( UuidOrigen )
+
    //Construcciones tardias----------------------------------------------------
    
    METHOD getModel()                   VIRTUAL
@@ -105,6 +107,14 @@ METHOD validateNombre( oGet ) CLASS OperacionesComercialesDescuentosController
    end if
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertDiscontConversion( UuidOrigen ) CLASS OperacionesComercialesDescuentosController
+
+   msgalert( UuidOrigen, "descuentos")
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

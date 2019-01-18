@@ -35,6 +35,8 @@ CLASS OperacionesComercialesLineasController FROM OperacionesLineasController
 
    METHOD validLine()   
 
+   METHOD insertLineasConversion( UuidOrigen )
+
    METHOD getUnidadMedicion( cCodigoArticulo ) ;
                                        INLINE ( SQLUnidadesMedicionOperacionesModel():getUnidadVentaWhereArticulo( cCodigoArticulo ) )
 
@@ -226,6 +228,17 @@ METHOD stampArticuloPrecio() CLASS OperacionesComercialesLineasController
    ::updateField( 'articulo_precio', nPrecioBase )
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertLineasConversion( UuidOrigen ) CLASS OperacionesComercialesLineasController
+
+   local hLines := ::getModel():getHashLineasWhereUuid( uuidOrigen )
+
+msgalert(UuidOrigen, "lineas")
+msgalert( hb_valtoexp( hLines ) )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

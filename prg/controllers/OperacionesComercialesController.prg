@@ -47,17 +47,17 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD calculateTotals( uuidDocumento )  
 
-   METHOD getTotalDocument( uuidDocumento ) ;
-                                       INLINE ( ::getRepository():getTotalDocument( uuidDocumento ) )
+   //METHOD getTotalDocument( uuidDocumento ) ;
+                                       //INLINE ( ::getRepository():getTotalDocument( uuidDocumento ) )
 
-   METHOD getTotalesDocument( uuidDocumento ) ;
-                                       INLINE ( ::getRepository():getTotalesDocument( uuidDocumento ) )
+   //METHOD getTotalesDocument( uuidDocumento ) ;
+                                       //INLINE ( ::getRepository():getTotalesDocument( uuidDocumento ) )
    
-   METHOD getTotalesDocumentGroupByIVA( uuidDocumento ) ;
-                                       INLINE ( ::getRepository():getTotalesDocumentGroupByIVA( uuidDocumento ) )
+   //METHOD getTotalesDocumentGroupByIVA( uuidDocumento ) ;
+                                       //INLINE ( ::getRepository():getTotalesDocumentGroupByIVA( uuidDocumento ) )
 
-   METHOD getHashSentenceLineas( uuidDocumento ) ;
-                                       INLINE ( ::getRepository():getHashSentenceLineas( uuidDocumento ) )
+   //METHOD getHashSentenceLineas( uuidDocumento ) ;
+                                       //INLINE ( ::getRepository():getHashSentenceLineas( uuidDocumento ) )
 
    METHOD hasNotPaid( uuidDocumento )
 
@@ -124,6 +124,8 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD convertDocument()
 
+   METHOD prepareDocument()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -177,12 +179,12 @@ METHOD Editing( nId ) CLASS OperacionesComercialesController
 
    nRecibosPagados         := RecibosPagosRepository():selectFunctionTotalPaidWhereFacturaUuid( ::getUuidFromRowSet() )
 
-   nTotalDocumento         := ::getTotalDocument( ::getUuidFromRowSet() )
+   //nTotalDocumento         := ::getTotalDocument( ::getUuidFromRowSet() )
 
-   if ( nTotalDocumento != 0 .and. nRecibosPagados >= nTotalDocumento )
+   /*if ( nTotalDocumento != 0 .and. nRecibosPagados >= nTotalDocumento )
       msgstop( "La factura esta completamete pagada", "No esta permitida la edición" )
       RETURN ( .f. )
-   end if 
+   end if */
    
 RETURN ( .t. )
 
@@ -356,7 +358,7 @@ RETURN ( ::calculateTotals() )
 
 METHOD calculateTotals( uuidDocumento ) CLASS OperacionesComercialesController
 
-   local hTotal
+   /*local hTotal
 
    DEFAULT uuidDocumento   := ::getUuid()
 
@@ -376,7 +378,7 @@ METHOD calculateTotals( uuidDocumento ) CLASS OperacionesComercialesController
 
    ::getDialogView():oTotalRecargo:setText( hget( hTotal, "total_recargo" ) )
 
-   ::getDialogView():oTotalImporte:setText( hget( hTotal, "total_documento" ) )
+   ::getDialogView():oTotalImporte:setText( hget( hTotal, "total_documento" ) )*/
 
 RETURN ( nil )
 
@@ -456,6 +458,31 @@ METHOD convertDocument() CLASS OperacionesComercialesController
 
 RETURN ( nil )
 
+//---------------------------------------------------------------------------//
+
+METHOD prepareDocument() CLASS OperacionesComercialesController
+   
+   if empty(::oController)
+      RETURN ( nil )
+   end if
+   /*creamos el buffer y lo insertamos*/
+   ::getModel():loadBlankBuffer()
+   ::getModel:insertBuffer()
+
+   msgalert( ::getController():getRowset:fieldGet("uuid") , "documento padre" )
+   msgalert( ::getModelBuffer("uuid"), "documento hijo" )
+   /*actualizamos el registro recien creado*/
+   ::getModel():UpdateCabeceraConversion( ::getController():getRowset:fieldGet("uuid"), ::getModelBuffer("uuid") )
+   /*Llamamos al metodo que duplicara las lineas*/
+   ::getLinesController:insertLineasConversion( ::getController():getRowset:fieldGet("uuid") )
+   /*Llamamos al metodo que duplicara los decuentos*/
+   ::getDiscountController:insertDiscontConversion( ::getController():getRowset:fieldGet("uuid") )
+   /*lanzamos edit pasandole el id*/
+   ::Edit( ::getModelBuffer("id") )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -615,7 +642,7 @@ METHOD test_calculo_con_descuento() CLASS TestOperacionesComercialesController
    SQLFacturasVentasDescuentosModel():test_create_20_por_ciento( uuid )
    SQLFacturasVentasDescuentosModel():test_create_30_por_ciento( uuid )
 
-   hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
+   //hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
 
    ::assert:equals( 112.120000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
 
@@ -634,7 +661,7 @@ METHOD test_calculo_con_incremento() CLASS TestOperacionesComercialesController
 
    SQLFacturasVentasLineasModel():test_create_IVA_al_21_con_incrememto_precio( uuid )
 
-   hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
+   //hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
 
    ::assert:equals( 7.720000, hget( hTotal, "total_documento" ), "test creacion de factura con incremento" )
 

@@ -12,6 +12,8 @@ CLASS SQLOperacionesComercialesLineasModel FROM SQLOperacionesLineasModel
 
    METHOD getInitialSelect()
 
+   METHOD getHashLineasWhereUuid( uuidOrigen )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -164,6 +166,26 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesLineasModel
                            ::getColumnsSelect() )
 
 RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getHashLineasWhereUuid( uuidOrigen ) CLASS SQLOperacionesComercialesLineasModel
+
+local cSql
+
+   TEXT INTO cSql
+
+      SELECT 
+        *  
+      FROM %1$s
+
+      WHERE parent_uuid = %2$s
+       
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql, ::getTableName(), quoted( uuidOrigen ) )
+
+RETURN ( ::getSQLDatabase():selectTrimedFetchHash( cSql ) )
 
 //---------------------------------------------------------------------------//
 

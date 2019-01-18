@@ -187,6 +187,7 @@ CLASS SQLBaseController
       METHOD setEditMode()             INLINE ( ::setMode( __edit_mode__ ) )
       METHOD isEditMode()              INLINE ( ::nMode == __edit_mode__ )
       METHOD isNotEditMode()           INLINE ( ::nMode != __edit_mode__ )
+      METHOD prepareDocument           VIRTUAL
 
    METHOD Zoom( nId )
    METHOD ZoomUuid( uuid )             INLINE ( ::Zoom( ::getModel():getIdWhereUuid( uuid ) ) )
