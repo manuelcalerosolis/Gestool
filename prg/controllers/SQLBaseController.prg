@@ -378,7 +378,7 @@ METHOD Insert()
       RETURN ( .f. )
    end if 
 
-   if isFalse( ::fireEvent( 'appending' ) )
+   if isFalse( ::fireEvent( 'inserting' ) )
       RETURN ( .f. )
    end if
 
@@ -408,7 +408,7 @@ METHOD Insert()
 
          ::refreshBrowseView()
 
-         ::fireEvent( 'appended' ) 
+         ::fireEvent( 'inserted' ) 
 
          if ::isContinuousAppend()
             loop
@@ -420,7 +420,7 @@ METHOD Insert()
          
          lInsert     := .f.
 
-         ::fireEvent( 'cancelAppended' ) 
+         ::fireEvent( 'cancelInserted' ) 
 
          ::rollbackTransactionalMode()
 
@@ -432,7 +432,7 @@ METHOD Insert()
 
    end while
 
-   ::fireEvent( 'exitAppended' ) 
+   ::fireEvent( 'exitInserted' ) 
 
 RETURN ( lInsert )
 

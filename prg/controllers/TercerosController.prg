@@ -9,7 +9,7 @@ CLASS TercerosController FROM SQLNavigatorController
 
    DATA isClient                      
 
-   DATA oDireccionesController
+   DATA oDireccionesController 
 
    DATA oPaisesController
 

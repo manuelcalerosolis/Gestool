@@ -21,6 +21,10 @@ CLASS FacturasVentasController FROM OperacionesComercialesController
 
    METHOD addExtraButtons()
 
+   METHOD Inserted()
+
+   METHOD Edited()
+
    // Contrucciones tardias----------------------------------------------------
 
    METHOD getName()                    INLINE ( "facturas_venta" )
@@ -49,6 +53,9 @@ METHOD New( oController ) CLASS FacturasVentasController
                                              "32" => "gc_document_text_user_32",;
                                              "48" => "gc_document_text_user_48" }
 
+   ::setEvent( 'inserted', {|| ::Inserted() } )
+   ::setEvent( 'edited',   {|| ::Edited() } )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -76,6 +83,22 @@ METHOD End() CLASS FacturasVentasController
    end if
 
 RETURN ( ::Super:End() )
+
+//---------------------------------------------------------------------------//
+
+METHOD Inserted() CLASS FacturasVentasController
+
+   msgalert( "getRecibosGeneratorController generate" )
+
+RETURN ( ::getRecibosGeneratorController():generate() )
+
+//---------------------------------------------------------------------------//
+
+METHOD Edited() CLASS FacturasVentasController 
+
+   msgalert( "getRecibosGeneratorController update" )
+
+RETURN ( ::getRecibosGeneratorController():update() )
 
 //---------------------------------------------------------------------------//
 

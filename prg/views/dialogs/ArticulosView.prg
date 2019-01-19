@@ -272,15 +272,15 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
 
    oPanel:AddLink(   "Combinaciones...",;
                      {||   ::oController:getCombinacionesController():runViewGenerate() },;
-                     ::oController:getCombinacionesController():getImage( "16" ) )
+                           ::oController:getCombinacionesController():getImage( "16" ) )
 
    oPanel:AddLink(   "Codificación de proveedores...",;
                      {||   msgInfo( "to-do" ) },;
-                     ::oController:getArticulosUnidadesMedicionController():getImage( "16" ) )
+                           ::oController:getArticulosUnidadesMedicionController():getImage( "16" ) )
  
    oPanel:AddLink(   "Imagenes...",;
                      {||   ::oController:getImagenesController():activateDialogView() },;
-                     ::oController:getImagenesController():getImage( "16" ) )
+                           ::oController:getImagenesController():getImage( "16" ) )
 
    oPanel:AddLink(   "Traducciones...",;
                      {||   ::oController:getTraduccionesController():activateDialogView() },;

@@ -11,14 +11,7 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    METHOD Run()
 
-   DATA aDocumentosDestino       // INIT  {  "Albarán de compras"             => {|| AlbaranesComprasController():New( ::getController() ):Append() },;
-                                 //          "Albarán de ventas"              => {|| msgalert( "albaran de ventas" ) },;
-                                 //          "Factura de compras"             => {|| msgalert( "albaran de ventas" ) },;
-                                 //          "Factura de ventas"              => {|| msgalert( "albaran de ventas" ) },;
-                                 //          "Factura de ventas simplificada" => {|| msgalert( "albaran de ventas" ) },;
-                                 //          "Pedido de compras"              => {|| msgalert( "albaran de ventas" ) },;
-                                 //          "Pedido de ventas"               => {|| msgalert( "albaran de ventas" ) },;
-                                 //          "Presupuesto de ventas"          => {|| msgalert( "albaran de ventas" ) } }
+   DATA aDocumentosDestino 
 
    //Construcciones tardias----------------------------------------------------
 

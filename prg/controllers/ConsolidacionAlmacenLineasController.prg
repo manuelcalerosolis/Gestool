@@ -94,6 +94,10 @@ METHOD validLine() CLASS ConsolidacionAlmacenLineasController
       RETURN ( .t. )
    end if 
 
+   if !( ::validLineLote() )
+      RETURN ( .f. )
+   end if
+
    if !( ::validLineCombinacion() )
       RETURN ( .f. )
    end if
@@ -105,8 +109,6 @@ METHOD validLine() CLASS ConsolidacionAlmacenLineasController
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -139,6 +141,10 @@ METHOD validLine() CLASS MovimientoAlmacenLineasController
    if empty( ::getRowSet():fieldget( 'articulo_codigo' ) )
       RETURN ( .t. )
    end if 
+
+   if !( ::validLineLote() )
+      RETURN ( .f. )
+   end if
 
    if !( ::validLineCombinacion() )
       RETURN ( .f. )

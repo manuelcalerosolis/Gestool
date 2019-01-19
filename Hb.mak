@@ -283,6 +283,7 @@ PresupuestosVentasRepository.prg 										\
 FacturasVentasRectificativasRepository.prg 							\
 FacturasComprasRepository.prg 											\
 AlbaranesComprasRepository.prg 											\
+StocksRepository.prg 														\
 PedidosComprasRepository.prg 												\
 PresupuestosComprasRepository.prg 										\
 FacturasComprasRectificativasRepository.prg 							\
@@ -727,6 +728,7 @@ PedidosVentasRepository.obj												\
 FacturasVentasRectificativasRepository.obj							\
 FacturasComprasRepository.obj												\
 AlbaranesComprasRepository.obj											\
+StocksRepository.obj															\
 PedidosComprasRepository.obj												\
 PresupuestosComprasRepository.obj										\
 FacturasComprasRectificativasRepository.obj							\
@@ -1250,6 +1252,7 @@ $(OBJ)\PresupuestosVentasRepository.obj 			    				+
 $(OBJ)\FacturasVentasRectificativasRepository.obj 	  				+
 $(OBJ)\FacturasComprasRepository.obj 				  					+
 $(OBJ)\AlbaranesComprasRepository.obj 				  					+
+$(OBJ)\StocksRepository.obj 				  								+
 $(OBJ)\PedidosComprasRepository.obj 				  					+
 $(OBJ)\PresupuestosComprasRepository.obj 								+
 $(OBJ)\FacturasComprasRectificativasRepository.obj 				+

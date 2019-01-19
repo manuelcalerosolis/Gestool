@@ -280,6 +280,8 @@ CLASS TestArticulosController FROM TestCase
 
    METHOD test_controller_rollback()
 
+   METHOD test_dialog_append_con_propiedades() 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -301,6 +303,14 @@ RETURN ( ::oController:end() )
 METHOD Before() CLASS TestArticulosController
 
    SQLArticulosModel():truncateTable()
+
+   SQLPropiedadesModel():truncateTable()
+
+   SQLPropiedadesLineasModel():truncateTable()
+
+   SQLPropiedadesModel():test_create_tallas()
+   SQLPropiedadesModel():test_create_colores()
+   SQLPropiedadesModel():test_create_texturas()
 
 RETURN ( nil )
 
@@ -455,4 +465,54 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD test_dialog_append_con_propiedades() CLASS TestArticulosController
+
+   SQLUnidadesMedicionGruposModel():test_create()
+
+   ::oController:getCombinacionesController():getDialogView():setEvent( 'painted',;
+      <| view | 
+         
+         apoloWaitSeconds( 1 )
+
+         aeval( view:oExplorerBar:aPanels,;
+            {|a| aeval( a:aControls,;
+               {|o| o:Click() } ) } )
+
+         apoloWaitSeconds( 1 )
+
+         view:oButtonGenerate:Click()
+
+         apoloWaitSeconds( 1 )
+
+         view:oButtonAceptar:Click()
+
+         RETURN ( nil )
+      > )
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      <| view | 
+         
+         view:oGetCodigo:cText( '001' )
+         
+         apoloWaitSeconds( 1 )
+         
+         view:oGetNombre:cText( 'Test producto con propiedades' )
+         
+         apoloWaitSeconds( 1 )
+         
+         ::oController:getCombinacionesController():runViewGenerate()
+         
+         apoloWaitSeconds( 1 )
+         
+         view:oBtnAceptar:Click() 
+
+         RETURN ( nil )
+
+      > )
+
+   ::assert:true( ::oController:Insert(), "test ::assert:true with .t." )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 
