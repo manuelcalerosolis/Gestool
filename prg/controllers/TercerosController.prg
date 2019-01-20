@@ -7,8 +7,6 @@ CLASS TercerosController FROM SQLNavigatorController
 
    DATA cMessage
 
-   DATA isClient                      
-
    DATA oDireccionesController 
 
    DATA oPaisesController
@@ -88,8 +86,6 @@ METHOD New( oController) CLASS TercerosController
    ::cMessage                          := "Tercero"
 
    ::cName                             := "terceros"
-
-   ::isClient                          := .t.
 
    ::hImage                            := {  "16" => "gc_user_16",;
                                              "32" => "gc_user_32",;
@@ -207,37 +203,22 @@ METHOD buildRowSetSentence( cType )
    local cColumnOrder         
    local cColumnOrientation  
 
-
-
    if !empty( ::getBrowseView() )
       cColumnOrder            := ::getBrowseView():getColumnOrderView( cType, ::getName() )
       cColumnOrientation      := ::getBrowseView():getColumnOrientationView( cType, ::getName() )
    end if 
 
-   if empty(::oController)
+   if empty( ::oController )
       ::getRowSet():Build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
       RETURN ( nil )
    end if
 
    if ::oController:isClient()
       ::getRowSet():Build( ::getModel():getSelectClient( cColumnOrder, cColumnOrientation ) )
-      RETURN ( nil )
-   end if
-   if !::oController:isClient()
+   else
       ::getRowSet():Build( ::getModel():getSelectProveedor( cColumnOrder, cColumnOrientation ) )
-      RETURN ( nil )
    end if
 
-   if empty(::oController)
-      ::getRowSet():Build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
-      RETURN ( nil )
-   end if
-
-   if empty( ::oController:isCLient() )
-      ::getRowSet():Build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
-      RETURN ( nil )
-   end if
-   
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -321,7 +302,7 @@ METHOD test_dialogo_sin_codigo() CLASS TestTercerosController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( ::oController:Append(), "test creación de factura sin lineas" )
+   ::assert:false( ::oController:Append(), "test creación de tercero sin codigo" )
 
 RETURN ( nil )
 

@@ -88,15 +88,11 @@ RETURN ( ::Super:End() )
 
 METHOD Inserted() CLASS FacturasVentasController
 
-   msgalert( "getRecibosGeneratorController generate" )
-
 RETURN ( ::getRecibosGeneratorController():generate() )
 
 //---------------------------------------------------------------------------//
 
 METHOD Edited() CLASS FacturasVentasController 
-
-   msgalert( "getRecibosGeneratorController update" )
 
 RETURN ( ::getRecibosGeneratorController():update() )
 

@@ -21,7 +21,7 @@ CLASS PagosAssistantController FROM SQLNavigatorController
 
    METHOD resetImporteAndCliente()
 
-   METHOD isClient()                   INLINE ( nil )
+   METHOD isClient()                   INLINE ( .t. )
 
    METHOD gettingSelectSentenceTercero()
    METHOD gettingSelectSentenceEmpresa()
@@ -44,15 +44,15 @@ METHOD New( oController ) CLASS PagosAssistantController
 
    ::Super:New( oController )
 
-   ::cTitle                         := "Cobros"
+   ::cTitle                            := "Cobros"
 
-   ::cName                          := "cobros"
+   ::cName                             := "cobros"
 
-   ::hImage                         := {  "16" => "gc_hand_money_16",;
-                                          "32" => "gc_hand_money_32",;
-                                          "48" => "gc_hand_money_48" }
+   ::hImage                            := {  "16" => "gc_hand_money_16",;
+                                             "32" => "gc_hand_money_32",;
+                                             "48" => "gc_hand_money_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                            := Auth():Level( ::cName )
 
    ::getTercerosController():getSelector():setEvent( 'validated', {|| ::isLoadRecibos() } )
    
@@ -96,17 +96,13 @@ RETURN ( nil )
 
 METHOD gettingSelectSentenceTercero() CLASS PagosAssistantController
 
-   ::getCuentasBancariasController():getModel():setGeneralWhere( "parent_uuid = " + quoted( SQLtercerosModel():getuuidWhereCodigo( ::getModelBuffer( "tercero_codigo" ) ) ) )
-
-RETURN ( nil )
+RETURN ( ::getCuentasBancariasController():getModel():setGeneralWhere( "parent_uuid = " + quoted( SQLtercerosModel():getuuidWhereCodigo( ::getModelBuffer( "tercero_codigo" ) ) ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD gettingSelectSentenceEmpresa() CLASS PagosAssistantController
 
-   ::getCuentasBancariasGestoolController():getModel():setGeneralWhere( "parent_uuid = " + quoted( Company():Uuid() ) )
-
-RETURN ( nil )
+RETURN ( ::getCuentasBancariasGestoolController():getModel():setGeneralWhere( "parent_uuid = " + quoted( Company():Uuid() ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -250,17 +246,13 @@ METHOD Activate() CLASS PagosAssistantView
 
    // Botones------------------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| ::closeActivate( ::oFolder:aDialogs ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-   
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }
-   end if
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::closeActivate( ::oFolder:aDialogs ), ) }
 
-   ::oDialog:bStart  := {|| ::startActivate(), ::paintedActivate() }
+   ::oDialog:bStart     := {|| ::startActivate(), ::paintedActivate() }
 
    ::oDialog:Activate( , , , .t. )
 
@@ -271,8 +263,6 @@ RETURN ( ::oDialog:nResult )
 METHOD Activating() CLASS PagosAssistantView
 
    ::getController():cCodigoTercero := ""
-
-   //::nImporte:cText( 0 )
 
 RETURN ( nil )
 
@@ -308,7 +298,6 @@ METHOD addLinksToExplorerBar() CLASS PagosAssistantView
                         {||::oController:getDocumentosController():activateDialogView( ::oController:getUuid() ) },;
                            ::oController:getDocumentosController():getImage( "16" ) )
 
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -336,6 +325,7 @@ RETURN ( cTitle )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
 CLASS PagosAssistantValidator FROM SQLBaseValidator
 
    METHOD getValidators()
