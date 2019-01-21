@@ -551,6 +551,7 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getCaracteristicasController();
                                     INLINE ( if( empty( ::oCaracteristicasController ), ::oCaracteristicasController := CaracteristicasController():New( self ), ), ::oCaracteristicasController ) 
+
    METHOD getCaracteristicasLineasController();
                                     INLINE ( if( empty( ::oCaracteristicasLineasController ), ::oCaracteristicasLineasController := CaracteristicasLineasController():New( self ), ), ::oCaracteristicasLineasController )
 
