@@ -23,6 +23,10 @@ CLASS FacturasVentasRectificativasController FROM OperacionesComercialesControll
 
    METHOD addExtraButtons()
 
+   METHOD Inserted() 
+
+   METHOD Edited()
+
    // Contrucciones tardias----------------------------------------------------
 
    METHOD getName()                    INLINE ( "facturas_venta_rectificativa" )
@@ -80,6 +84,18 @@ METHOD End() CLASS FacturasVentasRectificativasController
    end if
 
 RETURN ( ::Super:End() )
+
+//---------------------------------------------------------------------------//
+
+METHOD Inserted() CLASS FacturasVentasRectificativasController
+
+RETURN ( ::getRecibosGeneratorController():generateNegative() )
+
+//---------------------------------------------------------------------------//
+
+METHOD Edited() CLASS FacturasVentasRectificativasController 
+
+RETURN ( ::getRecibosGeneratorController():updateNegative() )
 
 //---------------------------------------------------------------------------//
 

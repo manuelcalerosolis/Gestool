@@ -35,17 +35,28 @@ CLASS RecibosGeneratorController
 
    DATA uuidRecibo
 
-   DATA uuidPago               
+   DATA uuidPago 
+
+   DATA lPositive                      INIT .t.              
 
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
+   METHOD isPaid()                     INLINE ( hget( ::hPaymentMethod, "cobrado" ) < 2 )
+
+   METHOD getTerms()                   INLINE ( hget( ::hPaymentMethod, "numero_plazos" ) )
+
+   METHOD isPositive()                 INLINE ( ::lPositive )
+   METHOD isNegative()                 INLINE ( !::lPositive )
+
    METHOD getMetodoPago()
 
    METHOD Generate()
+   METHOD GenerateNegative()           INLINE ( ::Generate( .f. ) )
 
    METHOD Update()
+   METHOD UpdateNegative()             INLINE ( ::Update( .f. ) )
 
    METHOD insertRecibo( nTermAmount )
 
@@ -123,8 +134,12 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
- METHOD Generate() CLASS RecibosGeneratorController
+ METHOD Generate( lPositive ) CLASS RecibosGeneratorController
    
+   DEFAULT lPositive    := .t.
+
+   ::lPositive          := lPositive
+
    ::nReceiptNumber     := 1
 
    ::nTotalTermAmount   := 0
@@ -153,8 +168,12 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD Update() CLASS RecibosGeneratorController
+METHOD Update( lPositive ) CLASS RecibosGeneratorController
    
+   DEFAULT lPositive    := .t.
+
+   ::lPositive          := lPositive
+
    ::nTotalToPaid       := ::getTotalToPay()
 
    if empty( ::nTotalToPaid )
@@ -274,11 +293,15 @@ METHOD getTermAmount( nTotalToPaid, nTerm ) CLASS RecibosGeneratorController
    
       ::nTotalTermAmount   += ::nTermAmount
 
-      RETURN ( ::nTermAmount )
+   else
+
+      ::nTermAmount        := Round( nTotalDocument - ::nTotalTermAmount, 2 )
 
    end if
 
-   ::nTermAmount           := Round( nTotalDocument - ::nTotalTermAmount, 2 )
+   if ::isNegative()
+      ::nTermAmount        := ::nTermAmount * - 1      
+   end if 
       
 RETURN ( ::nTermAmount )
 
