@@ -606,10 +606,13 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
       recibos.vencimiento AS vencimiento,
       recibos.importe AS importe,
       recibos.concepto AS concepto,
-      terceros.codigo AS tercero_codigo,
+      (  SELECT tercero_codigo FROM %4$s WHERE UUID = recibos.parent_uuid
+         UNION
+         SELECT tercero_codigo FROM %5$s WHERE UUID = recibos.parent_uuid ) AS tercero_codigo,
       terceros.nombre AS tercero_nombre,
-      @total_pagado:=( SELECT %6$s(recibos.uuid) ) AS total_pagado,
-      ( recibos.importe - @total_pagado ) AS diferencia
+      ( SELECT %7$s( recibos.uuid ) ) AS total_pagado,
+      ( recibos.importe - ( SELECT %7$s( recibos.uuid ) ) ) AS diferencia
+
    FROM %1$s AS recibos
 
    LEFT JOIN %2$s AS pagos_recibos
@@ -618,11 +621,8 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
    LEFT JOIN %3$s AS pagos
       ON pagos.uuid = pagos_recibos.pago_uuid
 
-   LEFT JOIN %4$s AS facturas_ventas
-      ON recibos.parent_uuid = facturas_ventas.uuid 
-
-   LEFT JOIN %5$s AS terceros 
-      ON facturas_ventas.tercero_codigo = terceros.codigo AND terceros.deleted_at = 0
+   LEFT JOIN %6$s AS terceros 
+      ON terceros.codigo = recibos.tercero_codigo  AND terceros.deleted_at = 0
 
    ENDTEXT
 
@@ -631,8 +631,11 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
                            SQLRecibosPagosModel():getTableName(),;
                            SQLPagosModel():getTableName(),;
                            SQLFacturasVentasModel():getTableName(),;
+                           SQLFacturasVentasRectificativasModel():getTableName(),;
                            SQLTercerosModel():getTableName(),;
                            Company():getTableName( 'RecibosPagosTotalPaidWhereUuid' ) )
+
+   logwrite( cSql )
 
 RETURN ( cSql )
 
