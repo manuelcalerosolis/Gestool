@@ -17,6 +17,8 @@ CLASS TestSuite FROM Test
 
    DATA aTests
 
+   DATA aMethods
+
    DATA aCategories
 
    METHOD New() CONSTRUCTOR
@@ -29,6 +31,8 @@ CLASS TestSuite FROM Test
 
    METHOD isInCategories( aTestCategories )
 
+   METHOD setMethods( uMethods )
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -40,6 +44,8 @@ METHOD New() CLASS TestSuite
   ::aTests        := {}
 
   ::aCategories   := { "all" }
+
+  ::aMethods      := {}
 
 RETURN ( self )
 
@@ -89,3 +95,18 @@ METHOD isInCategories( aTestCategories ) CLASS TestSuite
 RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
+
+METHOD setMethods( uMethods ) CLASS TestSuite
+
+   if hb_ischar( uMethods )
+      aadd( ::aMethods, uMethods )
+   end if 
+
+   if hb_isarray( uMethods )
+      ::aMethods  := uMethods
+   end if 
+
+RETURN ( ::aMethods )
+
+//---------------------------------------------------------------------------//
+
