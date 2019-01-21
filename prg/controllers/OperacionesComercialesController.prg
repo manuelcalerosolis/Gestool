@@ -126,7 +126,9 @@ CLASS OperacionesComercialesController FROM OperacionesController
       METHOD convertHeader()
       METHOD insertheaderRelation()
       METHOD convertLines()
+      METHOD insertLinesRelation( uuidLineOringin, uuidLineDestiny )
       METHOD convertDiscounts()
+      METHOD insertDiscountsRelation( uuidLineOringin, uuidLineDestiny )
 
 END CLASS
 
@@ -452,6 +454,8 @@ METHOD convertDocument() CLASS OperacionesComercialesController
 
    ::convertDiscounts()
 
+   //::Edit( ::uuidDocumentoDestino )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -480,7 +484,7 @@ RETURN ( nil )
 
 Method insertheaderRelation()
 
-::getController():
+ SQLConversorDocumentosModel():InsertRelationDocument(  ::uuidDocumentoOrigen, ::getController():getModel():cTableName, ::uuidDocumentoDestino ,::getModel():cTableName )
 
 RETURN ( nil )
 
@@ -490,6 +494,7 @@ METHOD convertLines() CLASS OperacionesComercialesController
 
    local hLine
    local aLinesDocumentoOrigen
+   local uuidOriginLine
 
    aLinesDocumentoOrigen   := ::getController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
 
@@ -499,20 +504,26 @@ METHOD convertLines() CLASS OperacionesComercialesController
 
    for each hLine in aLinesDocumentoOrigen
 
+         uuidOriginLine := hget( hLine, "uuid" )
+
          hdel( hLine, 'id' )
          hdel( hLine, 'uuid' )
          hset( hLine, 'parent_uuid', ::uuidDocumentoDestino )
 
          ::getLinesController():getModel():insertBlankBuffer( hLine )
 
-         //::insertLinesRelation()
+         ::insertLinesRelation( uuidOriginLine, ::getModelBuffer("uuid") )
    next
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD insertLinesRelation( uuidLineOringin, uuidLineDestiny ) CLASS OperacionesComercialesController
 
+ SQLConversorDocumentosModel():InsertRelationDocument( uuidLineOringin, ::getController():getLinesController():getModel():cTableName, uuidLineDestiny, ::getLinesController():getModel():cTableName )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -520,6 +531,7 @@ METHOD convertDiscounts() CLASS OperacionesComercialesController
 
    local hDiscount
    local aDiscountsDocumentoOrigen
+   local uuidOriginDiscount
 
    aDiscountsDocumentoOrigen   := ::getController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
    
@@ -528,22 +540,26 @@ METHOD convertDiscounts() CLASS OperacionesComercialesController
    end if
 
    for each hDiscount in aDiscountsDocumentoOrigen
-         msgalert(hb_valtoexp(hDiscount, "Descuento" ) )
+
+         uuidOriginDiscount:= hget(hDiscount, "uuid")
          hdel( hDiscount, 'id' )
          hdel( hDiscount, 'uuid' )
          hset( hDiscount, 'parent_uuid', ::uuidDocumentoDestino )
 
          ::getDiscountController():getModel():insertBlankBuffer( hDiscount )
 
-         //::insertDiscountsRelation()
+         ::insertDiscountsRelation( uuidOriginDiscount, ::getModelBuffer( "uuid" ) )
    next
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD insertDiscountsRelation( uuidDiscountOringin, uuidDiscountDestiny ) CLASS OperacionesComercialesController
 
+SQLConversorDocumentosModel():InsertRelationDocument( uuidDiscountOringin, ::getController():getDiscountController():getModel():cTableName, uuidDiscountDestiny, ::getDiscountController():getModel():cTableName )
 
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

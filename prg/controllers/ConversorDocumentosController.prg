@@ -141,7 +141,7 @@ CLASS SQLConversorDocumentosModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD InsertHeaderRelation( uuidOrigen, cTableOrigen, cTableDestino )
+   METHOD InsertRelationDocument( uuidOrigin, cTableOrigin, uuidDestiny, cTableDestiny )
 
 END CLASS
 
@@ -173,7 +173,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD InsertHeaderRelation( uuidOrigen, cTableOrigen, cTableDestino ) CLASS SQLConversorDocumentosModel
+METHOD InsertRelationDocument( uuidOrigin, cTableOrigin, uuidDestiny, cTableDestiny ) CLASS SQLConversorDocumentosModel
 
    local cSql
 
@@ -183,17 +183,19 @@ METHOD InsertHeaderRelation( uuidOrigen, cTableOrigen, cTableDestino ) CLASS SQL
       ( uuid, documento_origen_tabla, documento_origen_uuid, documento_destino_tabla, documento_destino_uuid ) 
 
    VALUES
-   ( UUID(), %2$s, %3$s, ::getEntidadWhereNombre(::cDocumentoDestino), %4$s, UUID() )
+   ( UUID(), %2$s, %3$s,%4$s , %5$s )
       
    ENDTEXT
 
    cSql  := hb_strformat(  cSql, ::getTableName(),;
-                                 quoted( cTableOrigen ),;
-                                 quoted( uuidOrigen ),;
-                                 quoted( cTableDestino ) )
+                                 quoted( cTableOrigin ),;
+                                 quoted( uuidOrigin ),;
+                                 quoted( cTableDestiny ),;
+                                 quoted( uuidDestiny ) )
                                  
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
