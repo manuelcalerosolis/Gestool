@@ -237,9 +237,7 @@ METHOD redefineExplorerBar( idExplorerBar )
 
    DEFAULT idExplorerBar         := 100
 
-   REDEFINE EXPLORERBAR          ::oExplorerBar ;
-      ID                         idExplorerBar ;
-      OF                         ::oDialog
+   ::oExplorerBar                := TExplorerBar():Redefine( idExplorerBar, ::oDialog )
 
    ::oExplorerBar:nBottomColor   := rgb( 255, 255, 255 )
    ::oExplorerBar:nTopColor      := rgb( 255, 255, 255 )

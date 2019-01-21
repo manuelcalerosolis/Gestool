@@ -156,7 +156,7 @@ METHOD setUserDataSet()
                                     {|| nil },;
                                     {|| nil },;
                                     {|| nil },;
-                                    {|cField| hget( ::hTotal, cField ) } )
+                                    {|cField| if( hhaskey( ::hTotal, cField ), hget( ::hTotal, cField ), "" ) } )
 
    ::oFastReport:setUserDataSet(   "Totales por impuestos ",;
                                     serializeArray( hgetKeys( ::hTotal ), ";" ),;
@@ -164,7 +164,7 @@ METHOD setUserDataSet()
                                     {|| nRow++ },;
                                     {|| nRow-- },;
                                     {|| nRow > len( ::aTotalsByIVA ) },;
-                                    {|cField| hget( ::aTotalsByIVA[ nRow ], cField ) } )
+                                    {|cField| if( hhaskey( ::aTotalsByIVA[ nRow ], cField ), hget( ::aTotalsByIVA[ nRow ], cField ), "" ) } )
 
 RETURN ( nil )
 

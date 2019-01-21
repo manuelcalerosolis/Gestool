@@ -28,8 +28,6 @@ METHOD New( oController ) CLASS ClientesController
 
    ::cName                             := "clientes_sql"
 
-   ::isClient                          := .t.
-
    ::hImage                            := {  "16" => "gc_user_16",;
                                              "32" => "gc_user_32",;
                                              "48" => "gc_user2_48" }

@@ -103,7 +103,7 @@ METHOD addColumns()
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-   with object ( ::oBrowse:AddCol() )
+   with object ( ::oColumnLote := ::oBrowse:AddCol() )
       :cSortOrder          := 'lote'
       :cHeader             := 'Lote'
       :lHide               := .t.      

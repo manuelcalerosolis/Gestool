@@ -19,10 +19,6 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD Editing()
 
-   METHOD insertingBuffer()
-
-   METHOD updatedBuffer()
-
    METHOD getTerceroUuid() 
 
    METHOD isTerceroFilled()            INLINE ( !empty( ::getModelBuffer( "tercero_codigo" ) ) )
@@ -85,12 +81,6 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD getName()                    VIRTUAL
 
-   METHOD getIvaDetalleView()          INLINE ( if( empty( ::oIvaDetalleView ), ::oIvaDetalleView := IvaDetalleView():New( self ), ), ::oIvaDetalleView )
-   
-   METHOD getContadoresModel()         INLINE ( if( empty( ::oContadoresModel ), ::oContadoresModel := SQLContadoresModel():New( self ), ), ::oContadoresModel )
-
-   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesView():New( self ), ), ::oDialogView )
-
    METHOD getModel()                   VIRTUAL
 
    METHOD getValidator()               VIRTUAL  
@@ -98,6 +88,12 @@ CLASS OperacionesComercialesController FROM OperacionesController
    METHOD getBrowseView()              VIRTUAL
 
    METHOD getRepository()              VIRTUAL  
+
+   METHOD getIvaDetalleView()          INLINE ( if( empty( ::oIvaDetalleView ), ::oIvaDetalleView := IvaDetalleView():New( self ), ), ::oIvaDetalleView )
+   
+   METHOD getContadoresModel()         INLINE ( if( empty( ::oContadoresModel ), ::oContadoresModel := SQLContadoresModel():New( self ), ), ::oContadoresModel )
+
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesView():New( self ), ), ::oDialogView )
    
    METHOD getHistoryManager()          INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
    
@@ -187,22 +183,6 @@ METHOD Editing( nId ) CLASS OperacionesComercialesController
    end if */
    
 RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertingBuffer() CLASS OperacionesComercialesController 
-
-   ::Super:insertingBuffer()
-
-   ::getRecibosGeneratorController():generate()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD updatedBuffer() CLASS OperacionesComercialesController 
-
-RETURN ( ::getRecibosGeneratorController():update() )
 
 //---------------------------------------------------------------------------//
 

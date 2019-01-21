@@ -274,6 +274,16 @@ CLASS SQLPropiedadesModel FROM SQLCompanyModel
 
    METHOD getPropertyList()
 
+#ifdef __TEST__   
+
+   METHOD test_create_tallas() 
+
+   METHOD test_create_colores()
+
+   METHOD test_create_texturas()
+
+#endif
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -307,20 +317,21 @@ METHOD getPropertyList() CLASS SQLPropiedadesModel
 
    TEXT INTO cSql
 
-   SELECT grupos.id AS grupo_id,
-          grupos.uuid AS grupo_uuid,
-          grupos.nombre AS grupo_nombre,                  
-          grupos.color AS grupo_color,                   
-          lineas.uuid AS propiedad_uuid,
-          lineas.parent_uuid AS parent_uuid,
-          lineas.nombre AS propiedad_nombre,
-          lineas.color_rgb AS propiedad_color_rgb,
-          lineas.orden AS orden
+   SELECT 
+      grupos.id AS grupo_id,
+      grupos.uuid AS grupo_uuid,
+      grupos.nombre AS grupo_nombre,                  
+      grupos.color AS grupo_color,                   
+      lineas.uuid AS propiedad_uuid,
+      lineas.parent_uuid AS parent_uuid,
+      lineas.nombre AS propiedad_nombre,
+      lineas.color_rgb AS propiedad_color_rgb,
+      lineas.orden AS orden
       
    FROM %1$s AS grupos  
 
-     INNER JOIN %2$s AS lineas
-           ON grupos.uuid = lineas.parent_uuid
+      INNER JOIN %2$s AS lineas
+         ON grupos.uuid = lineas.parent_uuid
 
    ORDER by grupo_id, orden      
 
@@ -330,6 +341,79 @@ METHOD getPropertyList() CLASS SQLPropiedadesModel
 
 RETURN ( cSql )
 
+//---------------------------------------------------------------------------//
+
+#ifdef __TEST__   
+
+METHOD test_create_tallas() CLASS SQLPropiedadesModel
+
+   ::insertBlankBuffer( {  "codigo" => "TALLA",;
+                           "nombre" => "Talla",;
+                           "color"  => 0 } )
+
+   SQLPropiedadesLineasModel():insertBlankBuffer(  {  "parent_uuid"  => hget( ::hBuffer, "uuid" ),;
+                                                      "nombre"       => "XS" } )
+
+   SQLPropiedadesLineasModel():insertBlankBuffer(  {  "parent_uuid"  => hget( ::hBuffer, "uuid" ),;
+                                                      "nombre"       => "S" } )
+
+   SQLPropiedadesLineasModel():insertBlankBuffer(  {  "parent_uuid"  => hget( ::hBuffer, "uuid" ),;
+                                                      "nombre"       => "M" } )
+
+   SQLPropiedadesLineasModel():insertBlankBuffer(  {  "parent_uuid"  => hget( ::hBuffer, "uuid" ),;
+                                                      "nombre"       => "L" } )
+
+   SQLPropiedadesLineasModel():insertBlankBuffer(  {  "parent_uuid"  => hget( ::hBuffer, "uuid" ),;
+                                                      "nombre"       => "XL" } )
+
+   SQLPropiedadesLineasModel():insertBlankBuffer(  {  "parent_uuid"  => hget( ::hBuffer, "uuid" ),;
+                                                      "nombre"       => "XXL" } )
+ 
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_colores() CLASS SQLPropiedadesModel
+
+   ::insertBlankBuffer( {  "codigo" => "COLOR",;
+                           "nombre" => "Color",;
+                           "color"  => 1 } )
+
+   SQLPropiedadesLineasModel():insertBlankBuffer(  {  "parent_uuid"  => hget( ::hBuffer, "uuid" ),;
+                                                      "nombre"       => "Rojo",;
+                                                      "color_rgb"    => 255 } )
+
+   SQLPropiedadesLineasModel():insertBlankBuffer(  {  "parent_uuid"  => hget( ::hBuffer, "uuid" ),;
+                                                      "nombre"       => "Azul",;
+                                                      "color_rgb"    => 16711680 } )
+
+   SQLPropiedadesLineasModel():insertBlankBuffer(  {  "parent_uuid"  => hget( ::hBuffer, "uuid" ),;
+                                                      "nombre"       => "Verde",;
+                                                      "color_rgb"    => 65280 } )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_texturas() CLASS SQLPropiedadesModel
+
+   ::insertBlankBuffer( {  "codigo" => "TEXTURAS",;
+                           "nombre" => "Texturas",;
+                           "color"  => 0 } )
+
+   SQLPropiedadesLineasModel():insertBlankBuffer(  {  "parent_uuid"  => hget( ::hBuffer, "uuid" ),;
+                                                      "nombre"       => "Denim" } )
+
+   SQLPropiedadesLineasModel():insertBlankBuffer(  {  "parent_uuid"  => hget( ::hBuffer, "uuid" ),;
+                                                      "nombre"       => "Chino" } )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+#endif
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

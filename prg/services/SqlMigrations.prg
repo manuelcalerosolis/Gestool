@@ -552,6 +552,8 @@ METHOD addRepositories() CLASS SQLCompanyMigrations
 
    aadd( ::aRepositories, AlbaranesComprasRepository():New() )
 
+   aadd( ::aRepositories, StocksRepository():New() )
+
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//

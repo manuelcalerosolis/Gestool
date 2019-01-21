@@ -361,18 +361,21 @@ RETURN ( nil )
 
 CLASS CombinacionesView FROM SQLBaseView
 
+   DATA oPanel
+
    DATA cGroupProperty
 
    DATA aCombinations
 
-   DATA oPanel
-
+   DATA oButtonAceptar
+   DATA oButtonCancelar
+   
    DATA oButtonDelete
    DATA oButtonGenerate
 
    METHOD Activate()
 
-   METHOD redefineBrowse()                      INLINE ( ::oController:Activate( 100, ::oDialog ) )
+   METHOD redefineBrowse()             INLINE ( ::oController:Activate( 100, ::oDialog ) )
 
    METHOD startActivate()
 
@@ -424,11 +427,11 @@ METHOD Activate() CLASS CombinacionesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       ACTION      ( ::generateCombinations() )
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ::oButtonAceptar  := ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+   ::oButtonCancelar := ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bStart  := {|| ::startActivate() }
+   ::oDialog:bStart  := {|| ::startActivate(), ::paintedActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER 
 
