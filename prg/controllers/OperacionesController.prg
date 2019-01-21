@@ -152,7 +152,7 @@ METHOD loadedBlankBuffer() CLASS OperacionesController
 
    ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) )
 
-   ::setModelBuffer( "almacen_codigo", Store():getCodigo() )
+   // ::setModelBuffer( "almacen_codigo", Store():getCodigo() )
 
 RETURN ( nil )
 

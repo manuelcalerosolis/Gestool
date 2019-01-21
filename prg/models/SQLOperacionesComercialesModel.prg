@@ -21,8 +21,6 @@ CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
 
    METHOD getFieldWhereSerieAndNumero( cSerieAndNumero )
 
-   METHOD updateCabeceraConversion( uuidOrigen, uuidDestino )
-
 #ifdef __TEST__
 
    METHOD test_create_factura( uuid )
@@ -78,7 +76,7 @@ METHOD getColumns() CLASS SQLOperacionesComercialesModel
                                                          "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "almacen_codigo",                {  "create"    => "VARCHAR( 20 )"                        ,;
-                                                         "default"   => {|| space( 20 ) } }                    )
+                                                         "default"   => {|| Store():getCodigo() } }            )
 
    hset( ::hColumns, "agente_codigo",                 {  "create"    => "VARCHAR( 20 )"                        ,;
                                                          "default"   => {|| space( 20 ) } }                    )
@@ -97,41 +95,6 @@ METHOD getColumns() CLASS SQLOperacionesComercialesModel
    ::getClosedColumns()
 
 RETURN ( ::hColumns )
-
-//---------------------------------------------------------------------------//
-
-METHOD UpdateCabeceraConversion( uuidOrigen, uuidDestino ) CLASS SQLOperacionesComercialesModel
-
-   local cSql
-
-      TEXT INTO cSql
-
-      UPDATE %1$s
-
-      SET delegacion_uuid = ( SELECT delegacion_uuid FROM %2$s WHERE uuid= %4$s ),
-          sesion_uuid = ( SELECT sesion_uuid FROM %2$s WHERE uuid= %4$s ),
-          fecha = ( SELECT fecha FROM %2$s WHERE uuid= %4$s ),
-          fecha_valor_stock = ( SELECT fecha_valor_stock FROM %2$s WHERE uuid= %4$s ),
-          tercero_codigo = ( SELECT tercero_codigo FROM %2$s WHERE uuid= %4$s ),
-          recargo_equivalencia = ( SELECT recargo_equivalencia FROM %2$s WHERE uuid= %4$s ),
-          direccion_principal_uuid = ( SELECT direccion_principal_uuid FROM %2$s WHERE uuid= %4$s ),
-          metodo_pago_codigo = ( SELECT metodo_pago_codigo FROM %2$s WHERE uuid= %4$s ),
-          almacen_codigo = ( SELECT almacen_codigo FROM %2$s WHERE uuid= %4$s ),
-          agente_codigo = ( SELECT agente_codigo FROM %2$s WHERE uuid= %4$s ) ,
-          ruta_codigo = ( SELECT ruta_codigo FROM %2$s WHERE uuid= %4$s ),
-          transportista_codigo = ( SELECT ruta_codigo FROM %2$s WHERE uuid= %4$s ),
-          tarifa_codigo = ( SELECT tarifa_codigo FROM %2$s WHERE uuid= %4$s )
-
-      WHERE uuid= %3$s
-         
-      ENDTEXT
-
-      cSql  := hb_strformat(  cSql, ::getTableName() ,;
-                                    ::getSuperController():getModel():getTableName() ,;
-                                    quoted( uuidDestino ) ,;
-                                    quoted( uuidOrigen ) )
-                                    
-RETURN ( getSQLDatabase():Exec ( cSql ) )
 
 //---------------------------------------------------------------------------//
 

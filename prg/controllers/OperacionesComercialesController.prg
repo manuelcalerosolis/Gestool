@@ -442,23 +442,45 @@ RETURN ( nil )
 
 METHOD prepareDocument() CLASS OperacionesComercialesController
    
-   if empty(::oController)
+   local hLine
+   local uuidDocumentoOrigen
+   local uuidDocumentoDestino
+   local aLinesDocumentoOrigen
+   local hBufferDocumentoOrigen
+
+   if empty( ::getController() )
       RETURN ( nil )
    end if
-   /*creamos el buffer y lo insertamos*/
-   ::getModel():loadBlankBuffer()
-   ::getModel:insertBuffer()
 
-   /*msgalert( ::getController():getRowset:fieldGet("uuid") , "documento padre" )
-   msgalert( ::getModelBuffer("uuid"), "documento hijo" )*/
-   /*actualizamos el registro recien creado*/
-   ::getModel():UpdateCabeceraConversion( ::getController():getRowset:fieldGet("uuid"), ::getModelBuffer("uuid") )
-   /*Llamamos al metodo que duplicara las lineas*/
-   ::getLinesController:insertLineasConversion( ::getController():getRowset:fieldGet("uuid"), ::getModelBuffer("uuid") )
-   /*Llamamos al metodo que duplicara los decuentos*/
-   //::getDiscountController:insertDiscontConversion( ::getController():getRowset:fieldGet("uuid") )
-   /*lanzamos edit pasandole el id*/
-   //::Edit( ::getModelBuffer("id") )
+   uuidDocumentoOrigen     := ::getController():getRowSet():fieldGet( "uuid" )
+
+   hBufferDocumentoOrigen  := ::getController():getModel():getHashWhere( "uuid", uuidDocumentoOrigen )
+
+   hdel( hBufferDocumentoOrigen, 'id' )
+   hdel( hBufferDocumentoOrigen, 'uuid' )
+   hdel( hBufferDocumentoOrigen, 'fecha' )
+
+   ::getModel():insertBlankBuffer( hBufferDocumentoOrigen )
+      
+   uuidDocumentoDestino    := ::getModelBuffer( "uuid" )
+
+   // Creacion de relacion entre cabeceras-------------------
+
+   aLinesDocumentoOrigen   := ::getController():getLinesController():getModel():getHashWhereUuid( uuidDocumentoOrigen )
+
+   //msgalert( hb_valtoexp( hLines ) )
+
+   for each hLine in aLinesDocumentoOrigen
+
+      hdel( hLine, 'id' )
+      hdel( hLine, 'uuid' )
+      hset( hLine, 'parent_uuid', uuidDocumentoDestino )
+
+      ::getLinesController():getModel():insertBlankBuffer( hLine )
+
+      // Creacion de la relacion de las lineas---------------------------------
+
+   next
 
 RETURN ( nil )
 

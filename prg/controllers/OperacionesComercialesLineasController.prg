@@ -35,8 +35,6 @@ CLASS OperacionesComercialesLineasController FROM OperacionesLineasController
 
    METHOD validLine()   
 
-   METHOD insertLineasConversion( UuidOrigen )
-
    METHOD getUnidadMedicion( cCodigoArticulo ) ;
                                        INLINE ( SQLUnidadesMedicionOperacionesModel():getUnidadVentaWhereArticulo( cCodigoArticulo ) )
 
@@ -231,27 +229,3 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertLineasConversion( UuidOrigen, uuidDestino ) CLASS OperacionesComercialesLineasController
-
-   local hLine
-   local hLines := ::getModel():getHashLineasWhereUuid( uuidOrigen )
-   local uuidNew
-   local id
-
-   //msgalert( hb_valtoexp( hLines ) )
-
-   for each hLine in hLines
-      uuidNew  := win_uuidcreatestring()
-      
-
-      hset(hLine, "id", 0 )
-      hset(hLine, "uuid", uuidNew )
-      hset(hLine, "parent_uuid", uuidDestino )
-      msgalert(hb_valtoexp( hLine ),"lineas" )
-      ::getModel():insertBuffer( hLine )
-      //msgalert( id , "insertada linea " )
-      next
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
