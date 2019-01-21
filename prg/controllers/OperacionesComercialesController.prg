@@ -13,6 +13,10 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    DATA oRectificativaValidator
 
+   DATA uuidDocumentoOrigen
+
+   DATA uuidDocumentoDestino
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -43,17 +47,17 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD calculateTotals( uuidDocumento )  
 
-   //METHOD getTotalDocument( uuidDocumento ) ;
-                                       //INLINE ( ::getRepository():getTotalDocument( uuidDocumento ) )
+   METHOD getTotalDocument( uuidDocumento ) ;
+                                       INLINE ( ::getRepository():getTotalDocument( uuidDocumento ) )
 
-   //METHOD getTotalesDocument( uuidDocumento ) ;
-                                       //INLINE ( ::getRepository():getTotalesDocument( uuidDocumento ) )
+   METHOD getTotalesDocument( uuidDocumento ) ;
+                                       INLINE ( ::getRepository():getTotalesDocument( uuidDocumento ) )
    
-   //METHOD getTotalesDocumentGroupByIVA( uuidDocumento ) ;
-                                       //INLINE ( ::getRepository():getTotalesDocumentGroupByIVA( uuidDocumento ) )
+   METHOD getTotalesDocumentGroupByIVA( uuidDocumento ) ;
+                                       INLINE ( ::getRepository():getTotalesDocumentGroupByIVA( uuidDocumento ) )
 
-   //METHOD getHashSentenceLineas( uuidDocumento ) ;
-                                       //INLINE ( ::getRepository():getHashSentenceLineas( uuidDocumento ) )
+   METHOD getHashSentenceLineas( uuidDocumento ) ;
+                                       INLINE ( ::getRepository():getHashSentenceLineas( uuidDocumento ) )
 
    METHOD hasNotPaid( uuidDocumento )
 
@@ -119,8 +123,10 @@ CLASS OperacionesComercialesController FROM OperacionesController
    METHOD getRectifictivaValidator()   INLINE (if( empty( ::oRectificativaValidator ), ::oRectificativaValidator := OperacionComercialRectificarValidator():New( self ), ), ::oRectificativaValidator )
 
    METHOD convertDocument()
-
-   METHOD prepareDocument()
+      METHOD convertHeader()
+      METHOD insertheaderRelation()
+      METHOD convertLines()
+      METHOD convertDiscounts()
 
 END CLASS
 
@@ -175,12 +181,12 @@ METHOD Editing( nId ) CLASS OperacionesComercialesController
 
    nRecibosPagados         := RecibosPagosRepository():selectFunctionTotalPaidWhereFacturaUuid( ::getUuidFromRowSet() )
 
-   //nTotalDocumento         := ::getTotalDocument( ::getUuidFromRowSet() )
+   nTotalDocumento         := ::getTotalDocument( ::getUuidFromRowSet() )
 
-   /*if ( nTotalDocumento != 0 .and. nRecibosPagados >= nTotalDocumento )
+   if ( nTotalDocumento != 0 .and. nRecibosPagados >= nTotalDocumento )
       msgstop( "La factura esta completamete pagada", "No esta permitida la edición" )
       RETURN ( .f. )
-   end if */
+   end if 
    
 RETURN ( .t. )
 
@@ -338,7 +344,7 @@ RETURN ( ::calculateTotals() )
 
 METHOD calculateTotals( uuidDocumento ) CLASS OperacionesComercialesController
 
-   /*local hTotal
+   local hTotal
 
    DEFAULT uuidDocumento   := ::getUuid()
 
@@ -358,7 +364,7 @@ METHOD calculateTotals( uuidDocumento ) CLASS OperacionesComercialesController
 
    ::getDialogView():oTotalRecargo:setText( hget( hTotal, "total_recargo" ) )
 
-   ::getDialogView():oTotalImporte:setText( hget( hTotal, "total_documento" ) )*/
+   ::getDialogView():oTotalImporte:setText( hget( hTotal, "total_documento" ) )
 
 RETURN ( nil )
 
@@ -435,26 +441,28 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD convertDocument() CLASS OperacionesComercialesController
+   
+   if empty( ::getController() )
+      RETURN ( nil )
+   end if
+
+   ::convertHeader()
+
+   ::convertLines()
+
+   ::convertDiscounts()
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD prepareDocument() CLASS OperacionesComercialesController
-   
-   local hLine
-   local uuidDocumentoOrigen
-   local uuidDocumentoDestino
-   local aLinesDocumentoOrigen
+METHOD convertHeader() CLASS OperacionesComercialesController
+
    local hBufferDocumentoOrigen
 
-   if empty( ::getController() )
-      RETURN ( nil )
-   end if
+   ::uuidDocumentoOrigen     := ::getController():getRowSet():fieldGet( "uuid" )
 
-   uuidDocumentoOrigen     := ::getController():getRowSet():fieldGet( "uuid" )
-
-   hBufferDocumentoOrigen  := ::getController():getModel():getHashWhere( "uuid", uuidDocumentoOrigen )
+   hBufferDocumentoOrigen  := ::getController():getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
 
    hdel( hBufferDocumentoOrigen, 'id' )
    hdel( hBufferDocumentoOrigen, 'uuid' )
@@ -462,29 +470,81 @@ METHOD prepareDocument() CLASS OperacionesComercialesController
 
    ::getModel():insertBlankBuffer( hBufferDocumentoOrigen )
       
-   uuidDocumentoDestino    := ::getModelBuffer( "uuid" )
+   ::uuidDocumentoDestino    := ::getModelBuffer( "uuid" )
 
-   // Creacion de relacion entre cabeceras-------------------
+   ::insertheaderRelation()
 
-   aLinesDocumentoOrigen   := ::getController():getLinesController():getModel():getHashWhereUuid( uuidDocumentoOrigen )
+RETURN ( nil )
 
-   //msgalert( hb_valtoexp( hLines ) )
+//---------------------------------------------------------------------------//
+
+Method insertheaderRelation()
+
+::getController():
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD convertLines() CLASS OperacionesComercialesController
+
+   local hLine
+   local aLinesDocumentoOrigen
+
+   aLinesDocumentoOrigen   := ::getController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
+
+   if aLinesDocumentoOrigen == nil
+      RETURN ( nil )
+   end if
 
    for each hLine in aLinesDocumentoOrigen
 
-      hdel( hLine, 'id' )
-      hdel( hLine, 'uuid' )
-      hset( hLine, 'parent_uuid', uuidDocumentoDestino )
+         hdel( hLine, 'id' )
+         hdel( hLine, 'uuid' )
+         hset( hLine, 'parent_uuid', ::uuidDocumentoDestino )
 
-      ::getLinesController():getModel():insertBlankBuffer( hLine )
+         ::getLinesController():getModel():insertBlankBuffer( hLine )
 
-      // Creacion de la relacion de las lineas---------------------------------
-
+         //::insertLinesRelation()
    next
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+
+
+//---------------------------------------------------------------------------//
+
+METHOD convertDiscounts() CLASS OperacionesComercialesController
+
+   local hDiscount
+   local aDiscountsDocumentoOrigen
+
+   aDiscountsDocumentoOrigen   := ::getController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
+   
+   if aDiscountsDocumentoOrigen == nil
+      RETURN ( nil )
+   end if
+
+   for each hDiscount in aDiscountsDocumentoOrigen
+         msgalert(hb_valtoexp(hDiscount, "Descuento" ) )
+         hdel( hDiscount, 'id' )
+         hdel( hDiscount, 'uuid' )
+         hset( hDiscount, 'parent_uuid', ::uuidDocumentoDestino )
+
+         ::getDiscountController():getModel():insertBlankBuffer( hDiscount )
+
+         //::insertDiscountsRelation()
+   next
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+
+
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -164,7 +164,6 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesModel
                            SQLArticulosTarifasModel():getTableName(),;
                            ::getColumnsSelect() )
 
-   logwrite( cSql )
 
 RETURN ( cSql )
 

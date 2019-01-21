@@ -963,10 +963,6 @@ METHOD getInsertSentence( hBuffer, lIgnore )
    DEFAULT hBuffer   := ::hBuffer
    DEFAULT lIgnore   := .f.
 
-   msgalert(hb_valtoexp( hBuffer),"contruyendo sentencia" )
-   
-   msgalert( valtype( hBuffer), "valtype" )
-
    if !hb_ishash( hBuffer )
       RETURN ( nil )
    end if 
@@ -1534,8 +1530,6 @@ METHOD insertBuffer( hBuffer )
    ::fireEvent( 'insertingBuffer' )
 
    ::getInsertSentence( hBuffer )
-
-   msgalert(::cSQLInsert, "sentencia insert" )
 
    ::getDatabase():Query( ::cSQLInsert )
 

@@ -25,14 +25,14 @@ END CLASS
 
 METHOD New( oController ) CLASS ConversorDocumentosController
 
-   ::aDocumentosDestino := {  "Albarán de compras"             => {|| AlbaranesComprasController():New( ::getController() ):prepareDocument() },;
-                              "Albarán de ventas"              => {|| AlbaranesVentasController():New( ::getController() ):prepareDocument() },;
-                              "Factura de compras"             => {|| FacturasComprasController():New( ::getController() ):prepareDocument() },;
-                              "Factura de ventas"              => {|| FacturasVentasController():New( ::getController() ):prepareDocument() },;
-                              "Factura de ventas simplificada" => {|| FacturasSimplificadasVentasController():New( ::getController() ):prepareDocument() },;
-                              "Pedido de compras"              => {|| PedidosComprasController():New( ::getController() ):prepareDocument() },;
-                              "Pedido de ventas"               => {|| PedidosVentasController():New( ::getController() ):prepareDocument() },;
-                              "Presupuesto de ventas"          => {|| PresupuestosVentasController():New( ::getController() ):prepareDocument() } }
+   ::aDocumentosDestino := {  "Albarán de compras"             => {|| AlbaranesComprasController():New( ::getController() ):convertDocument() },;
+                              "Albarán de ventas"              => {|| AlbaranesVentasController():New( ::getController() ):convertDocument() },;
+                              "Factura de compras"             => {|| FacturasComprasController():New( ::getController() ):convertDocument() },;
+                              "Factura de ventas"              => {|| FacturasVentasController():New( ::getController() ):convertDocument() },;
+                              "Factura de ventas simplificada" => {|| FacturasSimplificadasVentasController():New( ::getController() ):convertDocument() },;
+                              "Pedido de compras"              => {|| PedidosComprasController():New( ::getController() ):convertDocument() },;
+                              "Pedido de ventas"               => {|| PedidosVentasController():New( ::getController() ):convertDocument() },;
+                              "Presupuesto de ventas"          => {|| PresupuestosVentasController():New( ::getController() ):convertDocument() } }
 
    ::Super:New( oController )
 
@@ -55,8 +55,6 @@ METHOD Run() CLASS ConversorDocumentosController
    if ::getDialogView():Activate() != IDOK
       RETURN ( nil )
    end if 
-
-   //msgalert( ::getDialogView():getDocumentoDestino(), "getDocumentoDestino" )
 
    if hhaskey( ::aDocumentosDestino, ::getDialogView():getDocumentoDestino() )
       eval( hget( ::aDocumentosDestino, ::getDialogView():getDocumentoDestino() ) )
@@ -143,7 +141,7 @@ CLASS SQLConversorDocumentosModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD InsertDocumentoConversion()
+   METHOD InsertHeaderRelation( uuidOrigen, cTableOrigen, cTableDestino )
 
 END CLASS
 
@@ -175,7 +173,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD InsertDocumentoConversion( uuidOrigen, cTableOrigen, cTableDestino ) CLASS SQLConversorDocumentosModel
+METHOD InsertHeaderRelation( uuidOrigen, cTableOrigen, cTableDestino ) CLASS SQLConversorDocumentosModel
 
    local cSql
 

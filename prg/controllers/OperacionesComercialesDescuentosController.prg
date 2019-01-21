@@ -15,8 +15,6 @@ CLASS OperacionesComercialesDescuentosController FROM SQLBrowseController
 
    METHOD validateDescuento( uValue )
 
-   METHOD insertDiscontConversion( UuidOrigen )
-
    //Construcciones tardias----------------------------------------------------
    
    METHOD getModel()                   VIRTUAL
@@ -109,13 +107,6 @@ METHOD validateNombre( oGet ) CLASS OperacionesComercialesDescuentosController
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-
-METHOD insertDiscontConversion( UuidOrigen ) CLASS OperacionesComercialesDescuentosController
-
-   msgalert( UuidOrigen, "descuentos")
-
-RETURN ( nil )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -275,6 +266,8 @@ CLASS SQLOperacionesComercialesDescuentosModel FROM SQLCompanyModel
 
    METHOD selectDescuentosWhereUuid( uuidOperacionComercial, importeBruto ) 
 
+   METHOD getHashWhereUuid( uuidOrigen )
+
 #ifdef __TEST__   
 
    METHOD test_create_l0_por_ciento( uuid ) 
@@ -395,6 +388,26 @@ RETURN ( alltrim( cSql ) )
 METHOD selectDescuentosWhereUuid( uuidOperacionComercial, importeBruto ) CLASS SQLOperacionesComercialesDescuentosModel
 
 RETURN ( ::getDatabase():selectTrimedFetchHash( ::getSentenceDescuentosWhereUuid( uuidOperacionComercial, importeBruto ) ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getHashWhereUuid( uuidOrigen ) CLASS SQLOperacionesComercialesDescuentosModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+      SELECT 
+         *  
+      FROM %1$s
+
+      WHERE parent_uuid = %2$s AND deleted_at = 0
+       
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql, ::getTableName(), quoted( uuidOrigen ) )
+
+RETURN ( ::getDatabase():selectTrimedFetchHash( cSql ) ) 
 
 //---------------------------------------------------------------------------//
 
