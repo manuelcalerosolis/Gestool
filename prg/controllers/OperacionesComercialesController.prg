@@ -469,16 +469,16 @@ METHOD prepareDocument() CLASS OperacionesComercialesController
    ::getModel():loadBlankBuffer()
    ::getModel:insertBuffer()
 
-   msgalert( ::getController():getRowset:fieldGet("uuid") , "documento padre" )
-   msgalert( ::getModelBuffer("uuid"), "documento hijo" )
+   /*msgalert( ::getController():getRowset:fieldGet("uuid") , "documento padre" )
+   msgalert( ::getModelBuffer("uuid"), "documento hijo" )*/
    /*actualizamos el registro recien creado*/
    ::getModel():UpdateCabeceraConversion( ::getController():getRowset:fieldGet("uuid"), ::getModelBuffer("uuid") )
    /*Llamamos al metodo que duplicara las lineas*/
-   ::getLinesController:insertLineasConversion( ::getController():getRowset:fieldGet("uuid") )
+   ::getLinesController:insertLineasConversion( ::getController():getRowset:fieldGet("uuid"), ::getModelBuffer("uuid") )
    /*Llamamos al metodo que duplicara los decuentos*/
-   ::getDiscountController:insertDiscontConversion( ::getController():getRowset:fieldGet("uuid") )
+   //::getDiscountController:insertDiscontConversion( ::getController():getRowset:fieldGet("uuid") )
    /*lanzamos edit pasandole el id*/
-   ::Edit( ::getModelBuffer("id") )
+   //::Edit( ::getModelBuffer("id") )
 
 RETURN ( nil )
 

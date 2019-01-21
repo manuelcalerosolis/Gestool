@@ -14,6 +14,8 @@ CLASS SQLOperacionesComercialesLineasModel FROM SQLOperacionesLineasModel
 
    METHOD getHashLineasWhereUuid( uuidOrigen )
 
+  METHOD getLastId( uuidDestino )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -179,13 +181,37 @@ local cSql
         *  
       FROM %1$s
 
-      WHERE parent_uuid = %2$s
+      WHERE parent_uuid = %2$s 
+      AND deleted_at = 0
        
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql, ::getTableName(), quoted( uuidOrigen ) )
+   cSql  := hb_strformat(  cSql, ::getSuperController():oController:getLinesController():getModel():getTableName(), quoted( uuidOrigen ) )
 
-RETURN ( ::getSQLDatabase():selectTrimedFetchHash( cSql ) )
+RETURN ( ::getDatabase():selectTrimedFetchHash( cSql ) ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD getLastId( uuidDestino ) CLASS SQLOperacionesComercialesLineasModel
+   
+   local cSql
+
+   TEXT INTO cSql
+
+      SELECT 
+        id  
+      FROM %1$s
+
+      WHERE parent_uuid = %2$s 
+      AND deleted_at = 0
+      ORDER BY id DESC
+      LIMIT 1
+       
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql, ::getTableName(), quoted( uuidDestino ) )
+
+RETURN ( ::getDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 
