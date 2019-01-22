@@ -371,14 +371,14 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'RecibosPagosTotal
 
 //---------------------------------------------------------------------------//
 
-METHOD createFunctionGetTerceroCodigoWhereUuid( uuidRecibo ) CLASS RecibosPagosRepository  
+METHOD createFunctionGetTerceroCodigoWhereUuid( uuidDocumento ) CLASS RecibosPagosRepository  
 
    local cSql
 
    TEXT INTO cSql
 
    CREATE DEFINER=`root`@`localhost` 
-   FUNCTION %1$s ( `uuid_recibo` CHAR( 40 ) )
+   FUNCTION %1$s ( `uuid_documento` CHAR( 40 ) )
    RETURNS DECIMAL(19,6)
    LANGUAGE SQL
    NOT DETERMINISTIC
@@ -390,20 +390,14 @@ METHOD createFunctionGetTerceroCodigoWhereUuid( uuidRecibo ) CLASS RecibosPagosR
 
       DECLARE terceroCodigo CHAR;
 
-      SELECT parent_uuid 
+      SELECT ventas.tercero_codigo INTO terceroCodigo
 
-      FROM SQLRecibosModel():getTableName() 
-
-      INNER JOIN
+      FROM 
          (
-            SELECT tercero_codigo FROM %2$s WHERE uuid = uuid_document
+            SELECT tercero_codigo FROM %2$s WHERE uuid = uuid_documento
             UNION
-            SELECT tercero_codigo FROM %3$s WHERE uuid = uuid_document 
+            SELECT tercero_codigo FROM %3$s WHERE uuid = uuid_documento 
          ) AS ventas
-
-
-      INNER JOIN 
-         ventas.tercero_codigo INTO terceroCodigo
 
       LIMIT 1
 
