@@ -129,7 +129,7 @@ METHOD Convert() CLASS ConversorDocumentosController
 
    ::uuidDocumentoOrigen     := ::getController():getRowSet():fieldGet( "uuid" )
 
-   if empty(::uuidDocumentoOrigen)
+   if empty( ::uuidDocumentoOrigen )
       RETURN( nil )
    end if
 
@@ -170,8 +170,8 @@ RETURN ( nil )
 METHOD convertLines() CLASS ConversorDocumentosController
 
    local hLine
-   local aLinesDocumentoOrigen
    local uuidOriginLine
+   local aLinesDocumentoOrigen
 
    aLinesDocumentoOrigen   := ::getController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
 

@@ -176,12 +176,25 @@ RETURN ( ::Super:End() )
 
 METHOD Editing( nId ) CLASS OperacionesComercialesController
 
+   local uuid
    local nTotalDocumento
    local nRecibosPagados
 
-   /*cambie los parametros de ::getUuidFromRowSet() a ::uuidDocumentoDestino*/
+   uuid                    := ::getUuidFromRowSet()
 
-   nRecibosPagados         := RecibosPagosRepository():selectFunctionTotalPaidWhereFacturaUuid( ::uuidDocumentoDestino )
+   if empty( uuid )
+      uuid                 := getModel():getField()
+   end if 
+
+   if empty( uuid )
+      RETURN ( .f. )
+   end if 
+
+   /*
+   cambie los parametros de  a ::uuidDocumentoDestino
+   */
+
+   nRecibosPagados         := RecibosPagosRepository():selectFunctionTotalPaidWhereFacturaUuid( uuid )
 
    nTotalDocumento         := ::getTotalDocument( ::uuidDocumentoDestino )
 

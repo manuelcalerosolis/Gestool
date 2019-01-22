@@ -98,7 +98,7 @@ CLASS SQLBaseController
                                        INLINE ( ::getRowSet():UuidFromRecno( aSelected ) )
 
    METHOD getIdFromRowSet()            INLINE ( ::getRowSet():fieldGet( ::getModel():cColumnKey ) )
-   METHOD getUuidFromRowSet()          INLINE ( ::getRowSet():fieldGet( "uuid" ) )
+   METHOD getUuidFromRowSet()          INLINE ( if( empty( ::getRowset() ), nil, ::getRowSet():fieldGet( "uuid" ) ) )
 
    METHOD isRowSetSystemRegister()                          
    METHOD isNotRowSetSystemRegister()  INLINE ( !( ::isRowSetSystemRegister() ) )
