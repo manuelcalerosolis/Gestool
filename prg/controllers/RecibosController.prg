@@ -606,10 +606,13 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
       recibos.vencimiento AS vencimiento,
       recibos.importe AS importe,
       recibos.concepto AS concepto,
-      terceros.codigo AS tercero_codigo,
+      (  SELECT tercero_codigo FROM %4$s WHERE UUID = recibos.parent_uuid
+         UNION
+         SELECT tercero_codigo FROM %5$s WHERE UUID = recibos.parent_uuid ) AS tercero_codigo,
       terceros.nombre AS tercero_nombre,
-      @total_pagado:=( SELECT %6$s(recibos.uuid) ) AS total_pagado,
-      ( recibos.importe - @total_pagado ) AS diferencia
+      ( SELECT %7$s( recibos.uuid ) ) AS total_pagado,
+      ( recibos.importe - ( SELECT %7$s( recibos.uuid ) ) ) AS diferencia
+
    FROM %1$s AS recibos
 
    LEFT JOIN %2$s AS pagos_recibos
@@ -618,11 +621,8 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
    LEFT JOIN %3$s AS pagos
       ON pagos.uuid = pagos_recibos.pago_uuid
 
-   LEFT JOIN %4$s AS facturas_ventas
-      ON recibos.parent_uuid = facturas_ventas.uuid 
-
-   LEFT JOIN %5$s AS terceros 
-      ON facturas_ventas.tercero_codigo = terceros.codigo AND terceros.deleted_at = 0
+   LEFT JOIN %6$s AS terceros 
+      ON terceros.codigo = recibos.tercero_codigo  AND terceros.deleted_at = 0
 
    ENDTEXT
 
@@ -631,8 +631,11 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
                            SQLRecibosPagosModel():getTableName(),;
                            SQLPagosModel():getTableName(),;
                            SQLFacturasVentasModel():getTableName(),;
+                           SQLFacturasVentasRectificativasModel():getTableName(),;
                            SQLTercerosModel():getTableName(),;
                            Company():getTableName( 'RecibosPagosTotalPaidWhereUuid' ) )
+
+   logwrite( cSql )
 
 RETURN ( cSql )
 
@@ -740,26 +743,26 @@ CLASS RecibosRepository FROM SQLBaseRepository
 
    METHOD getTableName()               INLINE ( SQLRecibosModel():getTableName() ) 
 
-   METHOD getSentenceImporteWhereFacturaUuid( uuidFactura ) 
+   METHOD getSentenceImporteWhereDocumentUuid( uuidDocument ) 
 
-   METHOD getImporteWhereFacturaUuid( uuidFactura ) ;
-                                       INLINE ( ::getDatabase():getValue( ::getSentenceImporteWhereFacturaUuid( uuidFactura ), 0 ) )
+   METHOD getImporteWhereDocumentUuid( uuidDocument ) ;
+                                       INLINE ( ::getDatabase():getValue( ::getSentenceImporteWhereDocumentUuid( uuidDocument ), 0 ) )
 
-   METHOD getSentenceLastNoPaidWhereFacturaUuid( uuidFactura )
+   METHOD getSentenceLastNoPaidWhereDocumentUuid( uuidDocument )
 
-   METHOD getLastNoPaidWhereFacturaUuid( uuidFactura ) ;
-                                       INLINE ( ::getDatabase():getValue( ::getSentenceLastNoPaidWhereFacturaUuid( uuidFactura ) ) )
+   METHOD getLastNoPaidWhereDocumentUuid( uuidDocument ) ;
+                                       INLINE ( ::getDatabase():getValue( ::getSentenceLastNoPaidWhereDocumentUuid( uuidDocument ) ) )
 
-   METHOD getSentenceCountWhereFacturaUuid( uuidFactura )
+   METHOD getSentenceCountWhereDocumentUuid( uuidDocument )
 
-   METHOD getCountWhereFacturaUuid( uuidFactura ) ;
-                                       INLINE ( ::getDatabase():getValue( ::getSentenceCountWhereFacturaUuid( uuidFactura ), 0 ) )
+   METHOD getCountWhereDocumentUuid( uuidDocument ) ;
+                                       INLINE ( ::getDatabase():getValue( ::getSentenceCountWhereDocumentUuid( uuidDocument ), 0 ) )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceImporteWhereFacturaUuid( uuidFactura ) CLASS RecibosRepository
+METHOD getSentenceImporteWhereDocumentUuid( uuidDocument ) CLASS RecibosRepository
 
    local cSql
 
@@ -770,17 +773,17 @@ METHOD getSentenceImporteWhereFacturaUuid( uuidFactura ) CLASS RecibosRepository
 
    FROM %1$s AS recibos
 
-   WHERE recibos.parent_uuid = %2$s
+      WHERE recibos.parent_uuid = %2$s
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidFactura ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidDocument ) )
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceCountWhereFacturaUuid( uuidFactura ) CLASS RecibosRepository
+METHOD getSentenceCountWhereDocumentUuid( uuidDocument ) CLASS RecibosRepository
 
    local cSql
 
@@ -791,18 +794,17 @@ METHOD getSentenceCountWhereFacturaUuid( uuidFactura ) CLASS RecibosRepository
 
    FROM %1$s AS recibos
 
-   WHERE recibos.parent_uuid = %2$s
+      WHERE recibos.parent_uuid = %2$s
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidFactura ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidDocument ) )
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-
-METHOD getSentenceLastNoPaidWhereFacturaUuid( uuidFactura ) CLASS RecibosRepository
+METHOD getSentenceLastNoPaidWhereDocumentUuid( uuidDocument ) CLASS RecibosRepository
 
    local cSql
 
@@ -813,21 +815,21 @@ METHOD getSentenceLastNoPaidWhereFacturaUuid( uuidFactura ) CLASS RecibosReposit
 
    FROM %1$s AS recibos
 
-   LEFT JOIN %2$s AS recibos_pagos
-      ON recibos_pagos.recibo_uuid = recibos.uuid
+      LEFT JOIN %2$s AS recibos_pagos
+         ON recibos_pagos.recibo_uuid = recibos.uuid
 
-   LEFT JOIN %3$s AS pagos
-      ON pagos.uuid = recibos_pagos.pago_uuid
+      LEFT JOIN %3$s AS pagos
+         ON pagos.uuid = recibos_pagos.pago_uuid
 
-   WHERE recibos.parent_uuid = %4$s
-      AND IFNULL( recibos_pagos.importe, 0 ) = 0 
-      AND IFNULL( pagos.estado, '' ) <> 'Presentado'
+      WHERE recibos.parent_uuid = %4$s
+         AND IFNULL( recibos_pagos.importe, 0 ) = 0 
+         AND IFNULL( pagos.estado, '' ) <> 'Presentado'
 
-   ORDER BY recibos.id DESC LIMIT 1
+      ORDER BY recibos.id DESC LIMIT 1
 
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql, ::getTableName(), SQLRecibosPagosModel():getTableName(), SQLPagosModel():getTableName(), quoted( uuidFactura ) )
+   cSql  := hb_strformat(  cSql, ::getTableName(), SQLRecibosPagosModel():getTableName(), SQLPagosModel():getTableName(), quoted( uuidDocument ) )
 
 RETURN ( cSql )
 

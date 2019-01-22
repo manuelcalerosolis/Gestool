@@ -21,6 +21,8 @@ CLASS RecibosGeneratorController
 
    DATA oController
 
+   DATA oRepository
+
    DATA hTotalDocument
 
    DATA nTermAmount 
@@ -100,6 +102,8 @@ CLASS RecibosGeneratorController
 
    METHOD getRecibosPagosModel()       INLINE ( if( empty( ::oRecibosPagosModel ), ::oRecibosPagosModel := SQLRecibosPagosModel():New( self ), ), ::oRecibosPagosModel ) 
 
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := RecibosRepository():New( self ), ), ::oRepository )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -128,6 +132,10 @@ METHOD End() CLASS RecibosGeneratorController
 
    if !empty( ::oRecibosPagosModel )
       ::oRecibosPagosModel:End()
+   end if
+
+   if !empty( ::oRepository )
+      ::oRepository:End()
    end if
 
 RETURN ( nil )
@@ -160,7 +168,9 @@ RETURN ( nil )
 
    ::hPaymentDays       := SQLTercerosModel():getPaymentDays( ::oController:getModelBuffer( 'tercero_codigo' ) )
 
-   ::aPaymentDays       := { hget( ::hPaymentDays, "primer_dia_pago" ), hget( ::hPaymentDays, "segundo_dia_pago" ), hget( ::hPaymentDays, "tercer_dia_pago" ) }
+   ::aPaymentDays       := {  hget( ::hPaymentDays, "primer_dia_pago" ),;
+                              hget( ::hPaymentDays, "segundo_dia_pago" ),;
+                              hget( ::hPaymentDays, "tercer_dia_pago" ) }
    
    ::generatePaids()
    
@@ -186,13 +196,13 @@ RETURN ( ::updatePaid() )
 
 METHOD getTotalDocumento() CLASS RecibosGeneratorController
 
-RETURN ( ::hTotalDocument  := FacturasVentasRepository():getTotalesDocument( ::getController():getuuid() ) )
+RETURN ( ::hTotalDocument  := ::getController():getRepository():getTotalesDocument( ::getController():getuuid() ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getTotalToPay() CLASS RecibosGeneratorController
 
-RETURN ( FacturasVentasRepository():getTotalDocument( ::getController():getuuid() ) - RecibosRepository():getImporteWhereFacturaUuid( ::getController():getuuid() ) )
+RETURN ( ::getController():getRepository():getTotalDocument( ::getController():getuuid() ) - ::getRepository():getImporteWhereDocumentUuid( ::getController():getuuid() ) )
 
 //---------------------------------------------------------------------------//
 
@@ -390,7 +400,7 @@ RETURN ( nil )
 
 METHOD updatePaid() CLASS RecibosGeneratorController
    
-   local uuidRecibo     := RecibosRepository():getLastNoPaidWhereFacturaUuid( ::getController():getuuid() )
+   local uuidRecibo     := ::getRepository():getLastNoPaidWhereDocumentUuid( ::getController():getuuid() )
 
    if !empty( uuidRecibo )
       ::getModel():updateFieldsWhere( { 'importe' => 'importe + ' + toSQLString( ::nTotalToPaid ) }, { 'uuid' => uuidRecibo } )

@@ -57,6 +57,9 @@ METHOD New( oController ) CLASS FacturasVentasRectificativasController
                                              "32" => "gc_rectificativa_cliente_32",;
                                              "48" => "gc_rectificativa_cliente_48" }
 
+   ::setEvent( 'inserted', {|| ::Inserted() } )
+   ::setEvent( 'edited',   {|| ::Edited() } )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -410,7 +413,7 @@ METHOD test_dialogo_con_un_solo_pago() CLASS TestFacturasVentasController
 
    ::assert:true( ::oController:Append(), "test creación de factura con un recibo pagado" )
    
-   ::assert:equals( 1, RecibosRepository():getCountWhereFacturaUuid( ::oController:getModelBuffer( "uuid" ) ), "test comprobacion numeros de recibos" )
+   ::assert:equals( 1, RecibosRepository():getCountWhereDocumentUuid( ::oController:getModelBuffer( "uuid" ) ), "test comprobacion numeros de recibos" )
 
 RETURN ( nil )
 
@@ -430,7 +433,7 @@ METHOD test_dialogo_con_varios_pagos() CLASS TestFacturasVentasController
 
    ::assert:true( ::oController:Append(), "test creación de factura con varios recibos pagados" )
 
-   ::assert:equals( 3, RecibosRepository():getCountWhereFacturaUuid( ::oController:getModelBuffer( "uuid" ) ), "test comprobacion numeros de recibos" )
+   ::assert:equals( 3, RecibosRepository():getCountWhereDocumentUuid( ::oController:getModelBuffer( "uuid" ) ), "test comprobacion numeros de recibos" )
 
 RETURN ( nil )
 
