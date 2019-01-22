@@ -82,6 +82,8 @@ CLASS RecibosGeneratorController
 
    METHOD getConcept()
 
+   METHOD getType()                    INLINE ( if( ::getController():isClient(), 'Cobro', 'Pago' ) )
+
    METHOD getExpirationDate()
 
    METHOD getTermDays( nTerm )
@@ -327,7 +329,7 @@ METHOD insertRecibo( nTotalToPaid, nTerm ) CLASS RecibosGeneratorController
 
    ::getModel():setBuffer( "vencimiento", ::getExpirationDate( nTerm ) )
 
-   ::getModel():setBuffer( "parent_table", ::oController:getName() )
+   ::getModel():setBuffer( "tipo", ::getType() )
 
    ::getModel():insertBuffer()
 
@@ -353,19 +355,15 @@ RETURN ( ::getPagosModel():getBuffer( "uuid" ) )
 
 METHOD insertReciboPago( nTotalToPaid ) CLASS RecibosGeneratorController
 
-   with object ( ::getRecibosPagosModel() )
+   ::getRecibosPagosModel():loadBlankBuffer()
 
-      :loadBlankBuffer()
+   ::getRecibosPagosModel():setBuffer( "recibo_uuid", ::uuidRecibo )
 
-      :setBuffer( "recibo_uuid", ::uuidRecibo )
+   ::getRecibosPagosModel():setBuffer( "pago_uuid", ::uuidPago )
 
-      :setBuffer( "pago_uuid", ::uuidPago )
+   ::getRecibosPagosModel():setBuffer( "importe", nTotalToPaid ) 
 
-      :setBuffer( "importe", nTotalToPaid ) 
-
-      :insertBuffer()
-
-   end with
+   ::getRecibosPagosModel():insertBuffer()
 
 RETURN ( nil )
 

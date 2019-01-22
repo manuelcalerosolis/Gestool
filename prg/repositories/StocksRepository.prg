@@ -20,8 +20,8 @@ END CLASS
 
 METHOD createFunctionStockWhereCodigo() CLASS StocksRepository
 
-   local cSql  := ""
-/*
+   local cSql  
+
    TEXT INTO cSql
 
    CREATE DEFINER=`root`@`localhost` 
@@ -35,10 +35,10 @@ METHOD createFunctionStockWhereCodigo() CLASS StocksRepository
 
    BEGIN
 
-      DECLARE TotalStock DECIMAL( 19, 6 );
+   DECLARE TotalStock DECIMAL( 19, 6 );
 
    SELECT
-       + IFNULL( movimientos_almacenes_lineas.unidad_medicion_factor, 1 ) * movimientos_almacenes_lineas.articulo_unidades AS total_unidades, 
+      IFNULL( movimientos_almacenes_lineas.unidad_medicion_factor, 1 ) * movimientos_almacenes_lineas.articulo_unidades AS total_unidades, 
 
    FROM %7$s AS movimientos_almacenes_lineas 
 
@@ -70,7 +70,8 @@ METHOD createFunctionStockWhereCodigo() CLASS StocksRepository
             
             LIMIT 1;
          ) 
-            AS consolidaciones_almacenes
+         AS consolidaciones_almacenes
+
          ON movimientos_almacenes_lineas.articulo_codigo = consolidaciones_almacenes.articulo_codigo  AND
             (  movimientos_almacenes.almacen_origen = consolidaciones_almacenes.almacen_codigo OR 
                movimientos_almacenes.almacen_destino = consolidaciones_almacenes.almacen_codigo ) AND
@@ -89,8 +90,14 @@ METHOD createFunctionStockWhereCodigo() CLASS StocksRepository
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, Company():getTableName( 'StockWhereCodigo' ), SQLConsolidacionesAlmacenesLineasModel():getTableName(), SQLConsolidacionesAlmacenesModel():getTableName(), SQLAlmacenesModel():getTableName() )
-*/
+   cSql  := hb_strformat(  cSql,;
+                           Company():getTableName( 'StockWhereCodigo' ),;
+                           SQLConsolidacionesAlmacenesLineasModel():getTableName(),;
+                           SQLConsolidacionesAlmacenesModel():getTableName(),;
+                           SQLAlmacenesModel():getTableName() )
+
+   logwrite( cSql )
+
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//

@@ -58,6 +58,7 @@ METHOD New( oController ) CLASS FacturasVentasRectificativasController
                                              "48" => "gc_rectificativa_cliente_48" }
 
    ::setEvent( 'inserted', {|| ::Inserted() } )
+   
    ::setEvent( 'edited',   {|| ::Edited() } )
 
 RETURN ( Self )

@@ -176,11 +176,9 @@ CLASS RecibosBrowseView FROM SQLBrowseView
 
    METHOD Paid()  
 
-   METHOD PaidIcon()
+   METHOD paidIcon()
 
-   METHOD getFooter()                  INLINE ( !empty(::oController:oController ) )
-
-   METHOD getTipoRecibo()
+   METHOD hasFooter()                  INLINE ( !empty( ::oController:oController ) )
 
 END CLASS
 
@@ -226,7 +224,7 @@ METHOD addColumns() CLASS RecibosBrowseView
 
    with object ( ::oBrowse:AddCol()  )
       :cHeader          := "Tipo"
-      :bStrData         := {|| ::getTipoRecibo() }
+      :bStrData         := {|| ::getRowSet():fieldGet( 'tipo' ) }
       :nWidth           := 120
    end with
 
@@ -248,7 +246,7 @@ METHOD addColumns() CLASS RecibosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'importe' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       
-      if ::getFooter()
+      if ::hasFooter()
          :nFootStyle       := :nDataStrAlign               
          :nFooterType      := AGGR_SUM
          :cFooterPicture   := :cEditPicture
@@ -265,7 +263,7 @@ METHOD addColumns() CLASS RecibosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'total_pagado' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
 
-      if ::getFooter()
+      if ::hasFooter()
          :nFootStyle       := :nDataStrAlign               
          :nFooterType      := AGGR_SUM
          :cFooterPicture   := :cEditPicture
@@ -282,7 +280,7 @@ METHOD addColumns() CLASS RecibosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'diferencia' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
 
-      if ::getFooter()
+      if ::hasFooter()
          :nFootStyle       := :nDataStrAlign               
          :nFooterType      := AGGR_SUM
          :cFooterPicture   := :cEditPicture
@@ -312,7 +310,7 @@ METHOD addColumns() CLASS RecibosBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'concepto'
       :cHeader             := 'Concepto'
-      :nWidth              := 200
+      :nWidth              := 400
       :bEditValue          := {|| ::getRowSet():fieldGet( 'concepto' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -348,21 +346,6 @@ METHOD PaidIcon() CLASS RecibosBrowseView
    end if 
 
 RETURN ( 3 )
-
-//---------------------------------------------------------------------------//
-
-METHOD getTipoRecibo() CLASS RecibosBrowseView
-
-   local cTipo
-
-   if ::oController:getRowSet():fieldGet( 'parent_table' ) == "facturas_ventas"
-      cTipo = "Cobro"
-      RETURN ( cTipo )
-   end if
-
-   cTipo = "Pago"
-
-RETURN ( cTipo )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -435,17 +418,13 @@ METHOD Activate() CLASS RecibosView
 
    // Botones------------------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| ::closeActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
+   ::oDialog:bKeyDown   := {| nKey | {|| ::closeActivate() } }
    
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
-   end if
-
-   ::oDialog:bStart  := {|| ::startActivate() }
+   ::oDialog:bStart     := {|| ::startActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -504,7 +483,7 @@ METHOD defaultTitle() CLASS RecibosView
    end if 
 
    if hhaskey( ::oController:oModel:hBuffer, "concepto" )
-      cTitle      :=  alltrim( ::oController:oModel:hBuffer[ "concepto" ] )
+      cTitle      := alltrim( ::oController:oModel:hBuffer[ "concepto" ] )
    end if
 
 RETURN ( cTitle )
@@ -528,11 +507,9 @@ METHOD getValidators() CLASS RecibosValidator
                                           "unique"             => "EL código introducido ya existe" },;
                         "nombre" =>    {  "required"           => "El nombre es un dato requerido"    ,;
                                           "unique"             => "El nombre introducido ya existe"   }  }
+
 RETURN ( ::hValidators )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -570,8 +547,8 @@ METHOD getColumns() CLASS SQLRecibosModel
    hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 )"                              ,;
                                           "default"   => {|| ::getControllerParentUuid() } }          )
 
-   hset( ::hColumns, "parent_table",   {  "create"    => "VARCHAR( 200 )"                             ,;
-                                          "default"   => {|| space( 200 ) } }                         )
+   hset( ::hColumns, "tipo",           {  "create"     => "ENUM( 'Cobro', 'Pago' )"                   ,;
+                                          "default"    => {|| 'Cobro' }  }                            )
 
    hset( ::hColumns, "expedicion",     {  "create"    => "DATE"                                       ,;
                                           "default"   => {|| hb_date() } }                            )
@@ -597,47 +574,13 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
 
    local cSql
 
-/*
-
-   SELECT 
-         recibos.uuid AS uuid,
-         recibos.parent_uuid AS parent_uuid,
-         recibos.expedicion AS expedicion,
-         recibos.vencimiento AS vencimiento,
-         recibos.importe AS importe,
-         ( recibos.importe - recibos.total_pagado ) AS diferencia,
-         recibos.concepto AS concepto,
-         terceros.nombre AS tercero_nombre,
-
-      FROM (
-
-         SELECT 
-            recibos_raw.id AS id,
-            recibos_raw.uuid AS uuid,
-            recibos_raw.parent_uuid AS parent_uuid,
-            recibos_raw.expedicion AS expedicion,
-            recibos_raw.vencimiento AS vencimiento,
-            recibos_raw.importe AS importe,
-            recibos_raw.concepto AS concepto,
-            recibos.importe AS importe,
-            (  SELECT tercero_codigo FROM %4$s WHERE UUID = recibos_raw.parent_uuid
-               UNION
-               SELECT tercero_codigo FROM %5$s WHERE UUID = recibos_raw.parent_uuid ) AS tercero_codigo,
-            ( SELECT %7$s( recibos_raw.uuid ) ) AS total_pagado
-
-         FROM %1$s AS recibos_raw
-
-      ) AS recibos
-
-
-*/
-
    TEXT INTO cSql
 
    SELECT 
       recibos.id AS id,
       recibos.uuid AS uuid,
       recibos.parent_uuid AS parent_uuid,
+      recibos.tipo AS tipo,
       recibos.expedicion AS expedicion,
       recibos.vencimiento AS vencimiento,
       recibos.concepto AS concepto,
@@ -653,6 +596,7 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
          raw.id AS id,
          raw.uuid AS uuid,
          raw.parent_uuid AS parent_uuid,
+         raw.tipo AS tipo,
          raw.expedicion AS expedicion,
          raw.vencimiento AS vencimiento,
          raw.importe AS importe,
@@ -789,8 +733,8 @@ CLASS RecibosRepository FROM SQLBaseRepository
 
    METHOD getTableName()               INLINE ( SQLRecibosModel():getTableName() ) 
 
-   METHOD getSQLFunctions()               INLINE ( {  ::dropFunctionTerceroCodigoWhereUuid(),;
-                                                      ::createFunctionTerceroCodigoWhereUuid() } )
+   METHOD getSQLFunctions()            INLINE ( {  ::dropFunctionTerceroCodigoWhereUuid(),;
+                                                   ::createFunctionTerceroCodigoWhereUuid() } )
 
    METHOD getSentenceImporteWhereDocumentUuid( uuidDocument ) 
 
@@ -920,6 +864,8 @@ METHOD createFunctionTerceroCodigoWhereUuid( uuidDocumento ) CLASS RecibosReposi
                SELECT tercero_codigo FROM %2$s WHERE uuid = uuid_documento
                UNION
                SELECT tercero_codigo FROM %3$s WHERE uuid = uuid_documento 
+               UNION
+               SELECT tercero_codigo FROM %4$s WHERE uuid = uuid_documento 
             ) AS ventas
 
       LIMIT 1;
@@ -933,7 +879,8 @@ METHOD createFunctionTerceroCodigoWhereUuid( uuidDocumento ) CLASS RecibosReposi
    cSql  := hb_strformat(  cSql,; 
                            Company():getTableName( 'RecibosTerceroCodigoWhereUuid' ),;
                            SQLFacturasVentasModel():getTableName(),;
-                           SQLFacturasVentasRectificativasModel():getTableName() )
+                           SQLFacturasVentasRectificativasModel():getTableName(),;
+                           SQLFacturasSimplificadasVentasModel():getTableName() )
 
 RETURN ( cSql )
 

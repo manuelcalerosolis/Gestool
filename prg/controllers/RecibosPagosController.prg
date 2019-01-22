@@ -180,10 +180,6 @@ CLASS RecibosPagosRepository FROM SQLBaseRepository
 
    METHOD selectFunctionTotalPaidWhereFacturaUuid( uuidFactura )
 
-   METHOD dropFunctionGetTerceroCodigoWhereUuid()
-
-   METHOD createFunctionGetTerceroCodigoWhereUuid( uuidDocumento )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -196,7 +192,7 @@ METHOD createFunctionTotalPaidWhereUuid() CLASS RecibosPagosRepository
 
    CREATE DEFINER=`root`@`localhost` 
    FUNCTION %1$s( `uuid_recibo_cliente` CHAR( 40 ) )
-   RETURNS DECIMAL(19,6)
+   RETURNS DECIMAL( 19, 6 )
    LANGUAGE SQL
    NOT DETERMINISTIC
    CONTAINS SQL
@@ -363,56 +359,3 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD dropFunctionGetTerceroCodigoWhereUuid() CLASS RecibosPagosRepository  
-
-RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'GetTerceroCodigoWhereUuid' ) + ";" )
-
-//---------------------------------------------------------------------------//
-
-METHOD createFunctionGetTerceroCodigoWhereUuid( uuidDocumento ) CLASS RecibosPagosRepository  
-
-   local cSql
-
-   TEXT INTO cSql
-
-   CREATE DEFINER=`root`@`localhost` 
-   FUNCTION %1$s ( `uuid_documento` CHAR( 40 ) )
-   RETURNS DECIMAL(19,6)
-   LANGUAGE SQL
-   NOT DETERMINISTIC
-   CONTAINS SQL
-   SQL SECURITY DEFINER
-   COMMENT ''
-
-   BEGIN
-
-      DECLARE terceroCodigo CHAR( 20 );
-
-      SELECT ventas.tercero_codigo INTO terceroCodigo
-
-         FROM 
-            (
-               SELECT tercero_codigo FROM %2$s WHERE uuid = uuid_documento
-               UNION
-               SELECT tercero_codigo FROM %3$s WHERE uuid = uuid_documento 
-               UNION
-               SELECT tercero_codigo FROM %4$s WHERE uuid = uuid_documento 
-            ) AS ventas
-
-      LIMIT 1;
-
-      RETURN terceroCodigo;
-
-   END
-
-   ENDTEXT
-
-   cSql  := hb_strformat(  cSql,; 
-                           Company():getTableName( 'GetTerceroCodigoWhereUuid' ),;
-                           SQLFacturasVentasModel():getTableName(),;
-                           SQLFacturasVentasRectificativasModel():getTableName(),;
-                           SQLFacturasSimplificadasVentasModel():getTableName() )
-
-RETURN ( cSql )
-
-//---------------------------------------------------------------------------//

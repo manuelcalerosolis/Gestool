@@ -21,6 +21,10 @@ CLASS FacturasSimplificadasVentasController FROM OperacionesComercialesControlle
 
    METHOD addExtraButtons()
 
+   METHOD Inserted() 
+
+   METHOD Edited()
+
    // Contrucciones tardias----------------------------------------------------
 
    METHOD getName()                    INLINE ( "facturas_simplificadas_venta" )
@@ -49,6 +53,10 @@ METHOD New( oController ) CLASS FacturasSimplificadasVentasController
                                              "32" => "gc_ticket_32",;
                                              "48" => "gc_ticket_48" }
 
+   ::setEvent( 'inserted', {|| ::Inserted() } )
+
+   ::setEvent( 'edited',   {|| ::Edited() } )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -76,6 +84,18 @@ METHOD End() CLASS FacturasSimplificadasVentasController
    end if
 
 RETURN ( ::Super:End() )
+
+//---------------------------------------------------------------------------//
+
+METHOD Inserted() CLASS FacturasSimplificadasVentasController
+
+RETURN ( ::getRecibosGeneratorController():generate() )
+
+//---------------------------------------------------------------------------//
+
+METHOD Edited() CLASS FacturasSimplificadasVentasController 
+
+RETURN ( ::getRecibosGeneratorController():update() )
 
 //---------------------------------------------------------------------------//
 
