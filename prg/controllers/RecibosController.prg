@@ -595,6 +595,41 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
 
    local cSql
 
+/*
+
+   SELECT 
+         recibos.uuid AS uuid,
+         recibos.parent_uuid AS parent_uuid,
+         recibos.expedicion AS expedicion,
+         recibos.vencimiento AS vencimiento,
+         recibos.importe AS importe,
+         ( recibos.importe - recibos.total_pagado ) AS diferencia,
+         recibos.concepto AS concepto,
+         terceros.nombre AS tercero_nombre,
+
+      FROM (
+
+         SELECT 
+            recibos_raw.id AS id,
+            recibos_raw.uuid AS uuid,
+            recibos_raw.parent_uuid AS parent_uuid,
+            recibos_raw.expedicion AS expedicion,
+            recibos_raw.vencimiento AS vencimiento,
+            recibos_raw.importe AS importe,
+            recibos_raw.concepto AS concepto,
+            recibos.importe AS importe,
+            (  SELECT tercero_codigo FROM %4$s WHERE UUID = recibos_raw.parent_uuid
+               UNION
+               SELECT tercero_codigo FROM %5$s WHERE UUID = recibos_raw.parent_uuid ) AS tercero_codigo,
+            ( SELECT %7$s( recibos_raw.uuid ) ) AS total_pagado
+
+         FROM %1$s AS recibos_raw
+
+      ) AS recibos
+
+
+*/
+
    TEXT INTO cSql
 
    SELECT 
@@ -615,7 +650,7 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
 
    FROM %1$s AS recibos
 
-   LEFT JOIN %2$s AS pagos_recibos
+      LEFT JOIN %2$s AS pagos_recibos
       ON pagos_recibos.recibo_uuid = recibos.uuid
 
    LEFT JOIN %3$s AS pagos
