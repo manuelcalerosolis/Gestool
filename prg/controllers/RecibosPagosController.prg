@@ -162,7 +162,9 @@ CLASS RecibosPagosRepository FROM SQLBaseRepository
                                                       ::dropFunctionTotalDifferenceWhereUuid(),;
                                                       ::createFunctionTotalDifferenceWhereUuid(),;
                                                       ::dropFunctionTotalPaidWhereFacturaUuid(),;
-                                                      ::createFunctionTotalPaidWhereFacturaUuid() } )
+                                                      ::createFunctionTotalPaidWhereFacturaUuid(),;
+                                                      ::dropFunctionGetTerceroCodigoWhereUuid(),;
+                                                      ::createFunctionGetTerceroCodigoWhereUuid() } )
 
    METHOD dropFunctionTotalPaidWhereUuid()
 
@@ -179,6 +181,10 @@ CLASS RecibosPagosRepository FROM SQLBaseRepository
    METHOD selectFunctionTotalPaidWhereUuid( uuidRecibo )   
 
    METHOD selectFunctionTotalPaidWhereFacturaUuid( uuidFactura )
+
+   METHOD dropFunctionGetTerceroCodigoWhereUuid()
+
+   METHOD createFunctionGetTerceroCodigoWhereUuid( uuidDocumento )
 
 END CLASS
 
@@ -292,7 +298,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'RecibosPagosTotal
 
 METHOD createFunctionTotalDifferenceWhereUuid()
 
- local cSql
+   local cSql
 
    TEXT INTO cSql
 
@@ -345,7 +351,7 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD dropFunctionTotalDifferenceWhereUuid()
+METHOD dropFunctionTotalDifferenceWhereUuid() CLASS RecibosPagosRepository  
 
 RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'RecibosPagosTotalDifferenceWhereUuid' ) + ";" )
 
@@ -359,3 +365,59 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD dropFunctionGetTerceroCodigoWhereUuid() CLASS RecibosPagosRepository  
+
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'RecibosPagosTotalDifferenceWhereUuid' ) + ";" )
+
+//---------------------------------------------------------------------------//
+
+METHOD createFunctionGetTerceroCodigoWhereUuid( uuidRecibo ) CLASS RecibosPagosRepository  
+
+   local cSql
+
+   TEXT INTO cSql
+
+   CREATE DEFINER=`root`@`localhost` 
+   FUNCTION %1$s ( `uuid_recibo` CHAR( 40 ) )
+   RETURNS DECIMAL(19,6)
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
+
+   BEGIN
+
+      DECLARE terceroCodigo CHAR;
+
+      SELECT parent_uuid 
+
+      FROM SQLRecibosModel():getTableName() 
+
+      INNER JOIN
+         (
+            SELECT tercero_codigo FROM %2$s WHERE uuid = uuid_document
+            UNION
+            SELECT tercero_codigo FROM %3$s WHERE uuid = uuid_document 
+         ) AS ventas
+
+
+      INNER JOIN 
+         ventas.tercero_codigo INTO terceroCodigo
+
+      LIMIT 1
+
+      RETURN terceroCodigo;
+
+   END
+
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql,; 
+                           Company():getTableName( 'GetTerceroCodigoWhereUuid' ),;
+                           SQLFacturasVentasModel():getTableName(),;
+                           SQLFacturasVentasRectificativasModel():getTableName() )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//

@@ -563,7 +563,7 @@ METHOD addDeletedAtWhere( cSQLSelect )
    end if
 
    if ::isDeletedAtColumn()
-      cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".deleted_at = 0" 
+      cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cTableName + ".deleted_at = 0" 
    end if 
 
 RETURN ( cSQLSelect )
