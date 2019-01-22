@@ -474,7 +474,6 @@ RETURN ( nil )
 
 METHOD convertDocument() CLASS OperacionesComercialesController
 
-
    if empty( ::getController() )
       RETURN ( nil )
    end if
@@ -526,7 +525,7 @@ RETURN ( nil )
 
 METHOD insertheaderRelation()
 
- SQLConversorDocumentosModel():InsertRelationDocument(  ::uuidDocumentoOrigen, ::getController():getModel():cTableName, ::uuidDocumentoDestino ,::getModel():cTableName )
+   SQLConversorDocumentosModel():InsertRelationDocument(  ::uuidDocumentoOrigen, ::getController():getModel():cTableName, ::uuidDocumentoDestino ,::getModel():cTableName )
 
 RETURN ( nil )
 
