@@ -17,7 +17,7 @@ CLASS FacturasVentasController FROM OperacionesComercialesController
 
    // Impresiones--------------------------------------------------------------
 
-   METHOD getSubject()                 INLINE ( "Factura de ventas número" )
+   METHOD getSubject()                 INLINE ( "Factura de venta número" )
 
    METHOD addExtraButtons()
 

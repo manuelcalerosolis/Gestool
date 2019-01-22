@@ -162,9 +162,7 @@ CLASS RecibosPagosRepository FROM SQLBaseRepository
                                                       ::dropFunctionTotalDifferenceWhereUuid(),;
                                                       ::createFunctionTotalDifferenceWhereUuid(),;
                                                       ::dropFunctionTotalPaidWhereFacturaUuid(),;
-                                                      ::createFunctionTotalPaidWhereFacturaUuid(),;
-                                                      ::dropFunctionGetTerceroCodigoWhereUuid(),;
-                                                      ::createFunctionGetTerceroCodigoWhereUuid() } )
+                                                      ::createFunctionTotalPaidWhereFacturaUuid() } )
 
    METHOD dropFunctionTotalPaidWhereUuid()
 
@@ -367,7 +365,7 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 METHOD dropFunctionGetTerceroCodigoWhereUuid() CLASS RecibosPagosRepository  
 
-RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'RecibosPagosTotalDifferenceWhereUuid' ) + ";" )
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'GetTerceroCodigoWhereUuid' ) + ";" )
 
 //---------------------------------------------------------------------------//
 
@@ -388,18 +386,20 @@ METHOD createFunctionGetTerceroCodigoWhereUuid( uuidDocumento ) CLASS RecibosPag
 
    BEGIN
 
-      DECLARE terceroCodigo CHAR;
+      DECLARE terceroCodigo CHAR( 20 );
 
       SELECT ventas.tercero_codigo INTO terceroCodigo
 
-      FROM 
-         (
-            SELECT tercero_codigo FROM %2$s WHERE uuid = uuid_documento
-            UNION
-            SELECT tercero_codigo FROM %3$s WHERE uuid = uuid_documento 
-         ) AS ventas
+         FROM 
+            (
+               SELECT tercero_codigo FROM %2$s WHERE uuid = uuid_documento
+               UNION
+               SELECT tercero_codigo FROM %3$s WHERE uuid = uuid_documento 
+               UNION
+               SELECT tercero_codigo FROM %4$s WHERE uuid = uuid_documento 
+            ) AS ventas
 
-      LIMIT 1
+      LIMIT 1;
 
       RETURN terceroCodigo;
 
@@ -410,7 +410,8 @@ METHOD createFunctionGetTerceroCodigoWhereUuid( uuidDocumento ) CLASS RecibosPag
    cSql  := hb_strformat(  cSql,; 
                            Company():getTableName( 'GetTerceroCodigoWhereUuid' ),;
                            SQLFacturasVentasModel():getTableName(),;
-                           SQLFacturasVentasRectificativasModel():getTableName() )
+                           SQLFacturasVentasRectificativasModel():getTableName(),;
+                           SQLFacturasSimplificadasVentasModel():getTableName() )
 
 RETURN ( cSql )
 

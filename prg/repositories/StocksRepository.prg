@@ -20,8 +20,8 @@ END CLASS
 
 METHOD createFunctionStockWhereCodigo() CLASS StocksRepository
 
-   local cSql
-
+   local cSql  := ""
+/*
    TEXT INTO cSql
 
    CREATE DEFINER=`root`@`localhost` 
@@ -90,7 +90,7 @@ METHOD createFunctionStockWhereCodigo() CLASS StocksRepository
    ENDTEXT
 
    cSql  := hb_strformat( cSql, Company():getTableName( 'StockWhereCodigo' ), SQLConsolidacionesAlmacenesLineasModel():getTableName(), SQLConsolidacionesAlmacenesModel():getTableName(), SQLAlmacenesModel():getTableName() )
-
+*/
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//

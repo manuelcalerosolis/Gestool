@@ -183,9 +183,7 @@ METHOD Editing( nId ) CLASS OperacionesComercialesController
    uuid                    := ::getUuidFromRowSet()
 
    if empty( uuid )
-
       uuid                 := ::getModel():getUuidWhereColumn( nId, "id" )
-   
    end if 
 
    if empty( uuid )

@@ -53,11 +53,11 @@ METHOD New( oController ) CLASS RecibosController
 
    ::getNavigatorView():getMenuTreeView():setEvent( 'addingExitButton', {|| ::addExtraButtons() } )
 
+   ::getBrowseView:setEvent( 'activatedDialog', {|| ::getBrowseView:refresh() } )
+
    ::getPagosController():setEvent( 'appended', {|| ::pagosModelAppend() } )
    
    ::getPagosController():getModel():setEvent( 'loadedBlankBuffer', {|| ::pagosModelLoadedBlankBuffer() } )
-
-   ::getBrowseView:setEvent( 'activatedDialog', {|| ::getBrowseView:refresh() } )
 
 RETURN ( Self )
 
@@ -109,7 +109,9 @@ METHOD generatePayIfHasDiference() CLASS RecibosController
    
    end if
 
-RETURN ( msgstop( "El recibo seleccionado ya está totalmente pagado" ) )
+   msgstop( "El recibo seleccionado ya está totalmente pagado" )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -142,7 +144,7 @@ METHOD pagosModelAppend() CLASS RecibosController
 
       :setBuffer( "recibo_uuid", ::getRowSet():fieldGet( 'uuid' ) )
 
-      :setBuffer( "pago_uuid", ::getPagosController():getModelBuffer('uuid') )
+      :setBuffer( "pago_uuid", ::getPagosController():getModelBuffer( 'uuid' ) )
 
       :setBuffer( "importe", ::getPagosController():getImporte() ) 
 
@@ -300,7 +302,7 @@ METHOD addColumns() CLASS RecibosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'cliente_nombre'
+      :cSortOrder          := 'tercero_nombre'
       :cHeader             := 'Nombre tercero'
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'tercero_nombre' ) }
@@ -636,28 +638,40 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
       recibos.id AS id,
       recibos.uuid AS uuid,
       recibos.parent_uuid AS parent_uuid,
-      recibos.parent_table AS parent_table,
       recibos.expedicion AS expedicion,
       recibos.vencimiento AS vencimiento,
-      recibos.importe AS importe,
       recibos.concepto AS concepto,
-      (  SELECT tercero_codigo FROM %4$s WHERE UUID = recibos.parent_uuid
-         UNION
-         SELECT tercero_codigo FROM %5$s WHERE UUID = recibos.parent_uuid ) AS tercero_codigo,
-      terceros.nombre AS tercero_nombre,
-      ( SELECT %7$s( recibos.uuid ) ) AS total_pagado,
-      ( recibos.importe - ( SELECT %7$s( recibos.uuid ) ) ) AS diferencia
+      recibos.importe AS importe,
+      recibos.total_pagado AS total_pagado,
+      ( recibos.importe - recibos.total_pagado ) AS diferencia,
+      recibos.tercero_codigo AS tercero_codigo,
+      terceros.nombre AS tercero_nombre
 
-   FROM %1$s AS recibos
+   FROM
+      (
+      SELECT 
+         raw.id AS id,
+         raw.uuid AS uuid,
+         raw.parent_uuid AS parent_uuid,
+         raw.expedicion AS expedicion,
+         raw.vencimiento AS vencimiento,
+         raw.importe AS importe,
+         raw.concepto AS concepto,
+         raw.deleted_at,
+         ( SELECT %7$s( raw.uuid ) ) AS total_pagado,
+         ( SELECT %8$s( raw.parent_uuid ) ) AS tercero_codigo
 
-      LEFT JOIN %2$s AS pagos_recibos
+      FROM %1$s AS raw
+      ) AS recibos
+
+   LEFT JOIN %2$s AS pagos_recibos
       ON pagos_recibos.recibo_uuid = recibos.uuid
 
    LEFT JOIN %3$s AS pagos
       ON pagos.uuid = pagos_recibos.pago_uuid
 
    LEFT JOIN %6$s AS terceros 
-      ON terceros.codigo = recibos.tercero_codigo  AND terceros.deleted_at = 0
+      ON terceros.codigo = recibos.tercero_codigo AND terceros.deleted_at = 0
 
    ENDTEXT
 
@@ -668,9 +682,8 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
                            SQLFacturasVentasModel():getTableName(),;
                            SQLFacturasVentasRectificativasModel():getTableName(),;
                            SQLTercerosModel():getTableName(),;
-                           Company():getTableName( 'RecibosPagosTotalPaidWhereUuid' ) )
-
-   logwrite( cSql )
+                           Company():getTableName( 'RecibosPagosTotalPaidWhereUuid' ),;
+                           Company():getTableName( 'RecibosTerceroCodigoWhereUuid' ) )
 
 RETURN ( cSql )
 
@@ -748,15 +761,13 @@ METHOD getInitialSelect() CLASS SQLRecibosAssistantModel
    FROM %1$s AS recibos
    
    INNER JOIN %2$s AS facturas_ventas
-      ON recibos.parent_uuid = facturas_ventas.uuid 
-         AND facturas_ventas.tercero_codigo = %5$s 
+      ON recibos.parent_uuid = facturas_ventas.uuid AND facturas_ventas.tercero_codigo = %5$s 
    
    LEFT JOIN %3$s AS pagos_recibos
       ON recibos.uuid = pagos_recibos.recibo_uuid
       
    LEFT JOIN %4$s AS pagos
-      ON pagos.uuid = pagos_recibos.pago_uuid 
-         AND pagos.estado <> "Rechazado"
+      ON pagos.uuid = pagos_recibos.pago_uuid AND pagos.estado <> "Rechazado"
 
    ENDTEXT
 
@@ -778,6 +789,9 @@ CLASS RecibosRepository FROM SQLBaseRepository
 
    METHOD getTableName()               INLINE ( SQLRecibosModel():getTableName() ) 
 
+   METHOD getSQLFunctions()               INLINE ( {  ::dropFunctionTerceroCodigoWhereUuid(),;
+                                                      ::createFunctionTerceroCodigoWhereUuid() } )
+
    METHOD getSentenceImporteWhereDocumentUuid( uuidDocument ) 
 
    METHOD getImporteWhereDocumentUuid( uuidDocument ) ;
@@ -792,6 +806,10 @@ CLASS RecibosRepository FROM SQLBaseRepository
 
    METHOD getCountWhereDocumentUuid( uuidDocument ) ;
                                        INLINE ( ::getDatabase():getValue( ::getSentenceCountWhereDocumentUuid( uuidDocument ), 0 ) )
+
+   METHOD dropFunctionTerceroCodigoWhereUuid()
+
+   METHOD createFunctionTerceroCodigoWhereUuid( uuidDocumento )
 
 END CLASS
 
@@ -865,6 +883,57 @@ METHOD getSentenceLastNoPaidWhereDocumentUuid( uuidDocument ) CLASS RecibosRepos
    ENDTEXT
 
    cSql  := hb_strformat(  cSql, ::getTableName(), SQLRecibosPagosModel():getTableName(), SQLPagosModel():getTableName(), quoted( uuidDocument ) )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD dropFunctionTerceroCodigoWhereUuid() CLASS RecibosRepository  
+
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'RecibosTerceroCodigoWhereUuid' ) + ";" )
+
+//---------------------------------------------------------------------------//
+
+METHOD createFunctionTerceroCodigoWhereUuid( uuidDocumento ) CLASS RecibosRepository  
+
+   local cSql
+
+   TEXT INTO cSql
+
+   CREATE DEFINER=`root`@`localhost` 
+   FUNCTION %1$s ( `uuid_documento` CHAR( 40 ) )
+   RETURNS CHAR( 20 )
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
+
+   BEGIN
+
+      DECLARE terceroCodigo CHAR( 20 );
+
+      SELECT ventas.tercero_codigo INTO terceroCodigo
+
+         FROM 
+            (
+               SELECT tercero_codigo FROM %2$s WHERE uuid = uuid_documento
+               UNION
+               SELECT tercero_codigo FROM %3$s WHERE uuid = uuid_documento 
+            ) AS ventas
+
+      LIMIT 1;
+
+      RETURN terceroCodigo;
+
+   END
+
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql,; 
+                           Company():getTableName( 'RecibosTerceroCodigoWhereUuid' ),;
+                           SQLFacturasVentasModel():getTableName(),;
+                           SQLFacturasVentasRectificativasModel():getTableName() )
 
 RETURN ( cSql )
 

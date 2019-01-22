@@ -17,7 +17,7 @@ CLASS FacturasSimplificadasVentasController FROM OperacionesComercialesControlle
 
    // Impresiones--------------------------------------------------------------
 
-   METHOD getSubject()                 INLINE ( "Factura simplificada de ventas número" )
+   METHOD getSubject()                 INLINE ( "Factura simplificada de venta número" )
 
    METHOD addExtraButtons()
 

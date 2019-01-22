@@ -19,7 +19,7 @@ CLASS FacturasVentasRectificativasController FROM OperacionesComercialesControll
 
    // Impresiones--------------------------------------------------------------
 
-   METHOD getSubject()                 INLINE ( "Factura rectificativa de ventas número" )
+   METHOD getSubject()                 INLINE ( "Factura rectificativa de venta número" )
 
    METHOD addExtraButtons()
 

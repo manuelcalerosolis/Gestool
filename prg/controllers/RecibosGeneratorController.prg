@@ -110,7 +110,7 @@ END CLASS
 
 METHOD New( oController ) CLASS RecibosGeneratorController
 
-   ::oController     := oController
+   ::oController                       := oController
 
 RETURN ( Self )
 
@@ -220,9 +220,9 @@ METHOD getConcept() CLASS RecibosGeneratorController
 
    local cConcept
 
-   cConcept    := "Recibo " + toSQLString( ::nReceiptNumber ) + " de la factura " 
-   cConcept    +=  alltrim( ::oController:getModelBuffer( 'serie' ) ) + "/"
-   cConcept    +=  toSQLString( ::oController:getModelBuffer( 'numero' ) ) 
+   cConcept    := "Recibo " + toSQLString( ::nReceiptNumber ) + " de " + lower( ::oController:getSubject() ) + " "
+   cConcept    += alltrim( ::oController:getModelBuffer( 'serie' ) ) + "/"
+   cConcept    += toSQLString( ::oController:getModelBuffer( 'numero' ) ) 
    
 RETURN ( cConcept )
 
