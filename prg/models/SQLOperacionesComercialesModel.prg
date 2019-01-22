@@ -21,6 +21,8 @@ CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
 
    METHOD getFieldWhereSerieAndNumero( cSerieAndNumero )
 
+   METHOD deleteWhereUiid( Uuid )
+
 #ifdef __TEST__
 
    METHOD test_create_factura( uuid )
@@ -264,6 +266,25 @@ local cSql
 
 
 RETURN ( getSQLDatabase():getValue( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteWhereUiid( Uuid ) CLASS SQLOperacionesComercialesModel
+
+local cSql
+
+   TEXT INTO cSql
+
+   DELETE FROM %1$s
+   WHERE uuid= %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql,;
+                           ::getTableName(),;
+                           quoted( Uuid ) )
+logwrite(cSql)
+RETURN ( getSQLDatabase():Exec( cSql ) )
 
 //---------------------------------------------------------------------------//
 

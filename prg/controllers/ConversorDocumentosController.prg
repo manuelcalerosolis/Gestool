@@ -5,19 +5,30 @@
 
 CLASS ConversorDocumentosController FROM SQLNavigatorController
 
+   DATA aDocumentosDestino 
+
+   DATA oDestinoController
+
+   DATA oAlbaranesComprasController
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    METHOD Run()
 
-   DATA aDocumentosDestino 
+   METHOD getDestinoController()       INLINE ( ::oDestinoController )
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getModel()             INLINE ( if( empty( ::oModel ), ::oModel := SQLConversorDocumentosModel():New( self ), ), ::oModel ) 
+   METHOD getAlbaranesComprasController() ;
+                                       INLINE ( if( empty( ::oDestinoController ), ::oDestinoController := AlbaranesComprasController():New( self ), ), ::oDestinoController ) 
 
-   METHOD getDialogView()        INLINE ( if( empty( ::oDialogView ), ::oDialogView := ConversorDocumentoView():New( self ), ), ::oDialogView )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLConversorDocumentosModel():New( self ), ), ::oModel ) 
+
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ConversorDocumentoView():New( self ), ), ::oDialogView )
+
+   METHOD Convert()
 
 END CLASS
 
@@ -25,7 +36,7 @@ END CLASS
 
 METHOD New( oController ) CLASS ConversorDocumentosController
 
-   ::aDocumentosDestino := {  "Albarán de compras"             => {|| AlbaranesComprasController():New( ::getController() ):convertDocument() },;
+   ::aDocumentosDestino := {  "Albarán de compras"             => {|| ::getAlbaranesComprasController() },;
                               "Albarán de ventas"              => {|| AlbaranesVentasController():New( ::getController() ):convertDocument() },;
                               "Factura de compras"             => {|| FacturasComprasController():New( ::getController() ):convertDocument() },;
                               "Factura de ventas"              => {|| FacturasVentasController():New( ::getController() ):convertDocument() },;
@@ -46,6 +57,10 @@ METHOD End() CLASS ConversorDocumentosController
       ::oModel:End()
    end if
 
+   if !empty( ::oDestinoController )
+      ::oDestinoController:End()
+   end if 
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -57,10 +72,24 @@ METHOD Run() CLASS ConversorDocumentosController
    end if 
 
    if hhaskey( ::aDocumentosDestino, ::getDialogView():getDocumentoDestino() )
-      eval( hget( ::aDocumentosDestino, ::getDialogView():getDocumentoDestino() ) )
+      ::oDestinoController    := eval( hget( ::aDocumentosDestino, ::getDialogView():getDocumentoDestino() ) )
+   end if 
+
+   if !empty( ::oDestinoController )
+      ::Convert()
    end if 
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD Convert() CLASS ConversorDocumentosController
+
+   msgalert( ::getController():className(), "getController className" )
+
+   msgalert( ::getDestinoController():className(), "getDestinoController className" )
+
+RETURN ( nil )   
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

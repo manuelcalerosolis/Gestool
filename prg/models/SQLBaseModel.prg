@@ -1131,7 +1131,7 @@ RETURN ( ::SQLDeletedSentenceWhereParentUuid( uuid ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD SQLDeletedSentenceWhereParentUuid( uuid)
+METHOD SQLDeletedSentenceWhereParentUuid( uuid )
 
    local cSentence
 
@@ -1156,7 +1156,6 @@ METHOD SQLUpdateDeletedAtSentenceWhereParentUuid( uuid )
    aeval( uuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
 
    cSentence   := chgAtEnd( cSentence, ' )', 2 )
-
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//

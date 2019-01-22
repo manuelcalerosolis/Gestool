@@ -1,4 +1,4 @@
-#include "FiveWin.Ch"
+﻿#include "FiveWin.Ch"
 #include "Factu.ch"
 
 //---------------------------------------------------------------------------//
@@ -16,6 +16,8 @@ CLASS OperacionesComercialesController FROM OperacionesController
    DATA uuidDocumentoOrigen
 
    DATA uuidDocumentoDestino
+
+   DATA idDocumentoDestino
 
    METHOD New() CONSTRUCTOR
 
@@ -130,6 +132,8 @@ CLASS OperacionesComercialesController FROM OperacionesController
       METHOD convertDiscounts()
       METHOD insertDiscountsRelation( uuidLineOringin, uuidLineDestiny )
 
+   METHOD cancelEdited()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -151,6 +155,8 @@ METHOD New( oController ) CLASS OperacionesComercialesController
    ::lOthers                           := .t.
 
    ::setEvent( 'editing', {|| ::Editing() } )
+
+   ::setEvent( 'cancelEdited',{|| ::cancelEdited() } )
 
    ::getTercerosController():getSelector():setEvent( 'settedHelpText', {|| ::terceroSettedHelpText() } )
 
@@ -181,9 +187,11 @@ METHOD Editing( nId ) CLASS OperacionesComercialesController
    local nTotalDocumento
    local nRecibosPagados
 
-   nRecibosPagados         := RecibosPagosRepository():selectFunctionTotalPaidWhereFacturaUuid( ::getUuidFromRowSet() )
+   /*cambie los parametros de ::getUuidFromRowSet() a ::uuidDocumentoDestino*/
 
-   nTotalDocumento         := ::getTotalDocument( ::getUuidFromRowSet() )
+   nRecibosPagados         := RecibosPagosRepository():selectFunctionTotalPaidWhereFacturaUuid( ::uuidDocumentoDestino )
+
+   nTotalDocumento         := ::getTotalDocument( ::uuidDocumentoDestino )
 
    if ( nTotalDocumento != 0 .and. nRecibosPagados >= nTotalDocumento )
       msgstop( "La factura esta completamete pagada", "No esta permitida la edici�n" )
@@ -194,7 +202,29 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTerceroUuid() CLASS OperacionesComercialesController
+METHOD cancelEdited() CLASS OperacionesComercialesController
+
+   local uuidDocumentoDestino
+
+   if empty( ::getController() )
+      RETURN ( nil )
+   end if
+
+   uuidDocumentoDestino := ::getModelBuffer("uuid")
+
+   ::getModel():deleteWhereUiid( uuidDocumentoDestino )
+
+   ::getLinesController():getModel():deleteWhereParentUuid( uuidDocumentoDestino )
+
+   ::getDiscountController():getModel():deleteWhereParentUuid( uuidDocumentoDestino )
+
+   ::commitTransactionalMode()
+
+RETURN( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTerceroUuid() CLASS OperacionesComercialesController 
 
 RETURN ( ::getTercerosController():getModel():getUuidWhereCodigo( ::getModelBuffer( "tercero_codigo" ) ) )
 
@@ -448,13 +478,24 @@ METHOD convertDocument() CLASS OperacionesComercialesController
       RETURN ( nil )
    end if
 
+   if ::getController:className() == ::className()
+      msgstop("No puede seleccionar el mismo tipo de documento")
+      RETURN ( nil )
+   end if
+
+   ::uuidDocumentoOrigen     := ::getController():getRowSet():fieldGet( "uuid" )
+
+   if empty(::uuidDocumentoOrigen)
+      RETURN( nil )
+   end if
+
    ::convertHeader()
 
    ::convertLines()
 
    ::convertDiscounts()
 
-   //::Edit( ::uuidDocumentoDestino )
+   ::Edit( ::idDocumentoDestino )
 
 RETURN ( nil )
 
@@ -463,8 +504,6 @@ RETURN ( nil )
 METHOD convertHeader() CLASS OperacionesComercialesController
 
    local hBufferDocumentoOrigen
-
-   ::uuidDocumentoOrigen     := ::getController():getRowSet():fieldGet( "uuid" )
 
    hBufferDocumentoOrigen  := ::getController():getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
 
@@ -476,6 +515,8 @@ METHOD convertHeader() CLASS OperacionesComercialesController
 
    ::uuidDocumentoDestino    := ::getModelBuffer( "uuid" )
 
+   ::idDocumentoDestino      := ::getModelBuffer( "id" )
+
    ::insertheaderRelation()
 
 RETURN ( nil )
@@ -484,7 +525,7 @@ RETURN ( nil )
 
 METHOD insertheaderRelation()
 
- SQLConversorDocumentosModel():InsertRelationDocument(  ::uuidDocumentoOrigen, ::getController():getModel():cTableName, ::uuidDocumentoDestino ,::getModel():cTableName )
+   SQLConversorDocumentosModel():InsertRelationDocument(  ::uuidDocumentoOrigen, ::getController():getModel():cTableName, ::uuidDocumentoDestino ,::getModel():cTableName )
 
 RETURN ( nil )
 
