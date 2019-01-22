@@ -378,11 +378,7 @@ METHOD startActivate() CLASS TercerosView
 
    ::getController():getTercerosGruposController():getSelector():Start()
 
-   if ::getController():isClient()
-      ::getController():getArticulosTarifasController():getSelector():Start()
-   else
-      ::getController():getArticulosTarifasController():getSelector():Hide()
-   end if 
+   ::getController():getArticulosTarifasController():getSelector():Start()
 
    if !::getController():getModelBuffer( "bloqueado" )
       ::oGetFechaBloqueo:Hide()
@@ -411,22 +407,28 @@ METHOD addLinksToExplorerBar() CLASS TercerosView
 
    if ::getController():isNotZoomMode()
 
-      if ::getController():isClient
-         oPanel:AddLink( "Descuentos...",       {|| ::getController():getDescuentosController():activateDialogView( ::getController():getUuid() ) }, ::getController():getDescuentosController():getImage( "16" ) )
-      end if 
-      
+      oPanel:AddLink( "Descuentos...",          {|| ::getController():getDescuentosController():activateDialogView( ::getController():getUuid() ) }, ::getController():getDescuentosController():getImage( "16" ) )
+
       oPanel:AddLink( "Direcciones...",         {|| ::getController():getDireccionesController():activateDialogView() }, ::getController():getDireccionesController():getImage( "16" ) )
+
       oPanel:AddLink( "Contactos...",           {|| ::getController():getContactosController():activateDialogView() }, ::getController():getContactosController():getImage( "16" ) )
+
       oPanel:AddLink( "Cuentas bancarias...",   {|| ::getController():getCuentasBancariasController():activateDialogView() }, ::getController():getCuentasBancariasController():getImage( "16" ) )
+
       oPanel:AddLink( "Incidencias...",         {|| ::getController():getIncidenciasController():activateDialogView() }, ::getController():getIncidenciasController():getImage( "16" ) )
+
       oPanel:AddLink( "Documentos...",          {|| ::getController():getDocumentosController():activateDialogView() }, ::getController():getDocumentosController():getImage( "16" ) )
+
       oPanel:AddLink( "Entidades facturae...",  {|| ::getController():getTercerosEntidadesController():activateDialogView() }, ::getController():getTercerosEntidadesController():getImage( "16" ) )
+
    end if
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
 
    if ::getController():isNotZoomMode()
+
       oPanel:AddLink( "Campos extra...",        {|| ::getController:getCamposExtraValoresController():Edit( ::getController():getUuid() ) }, ::getController():getCamposExtraValoresController():getImage( "16" ) )
+
    end if
 
 RETURN ( nil )
