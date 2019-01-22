@@ -309,7 +309,7 @@ CLASS SQLConversorDocumentosModel FROM SQLCompanyModel
 
    METHOD insertRelationDocument( uuidOrigin, cTableOrigin, uuidDestiny, cTableDestiny )
 
-   METHOD deleteWhereUuid( Uuid )
+   METHOD deleteWhereDestinoUuid( Uuid )
 
 END CLASS
 
@@ -363,7 +363,7 @@ RETURN ( getSQLDatabase():Exec ( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD deleteWhereUuid( Uuid ) CLASS SQLConversorDocumentosModel
+METHOD deleteWhereDestinoUuid( Uuid ) CLASS SQLConversorDocumentosModel
 
 local cSql
 

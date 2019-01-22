@@ -217,7 +217,7 @@ METHOD cancelEdited() CLASS OperacionesComercialesController
 
    ::getModel():deleteWhereUuid( uuidDocumentoDestino )
 
-   SQLConversorDocumentosModel():deleteWhereUuid( uuidDocumentoDestino )
+   SQLConversorDocumentosModel():deleteWhereDestinoUuid( uuidDocumentoDestino )
 
    ::getLinesController():getModel():deleteWhereParentUuid( uuidDocumentoDestino )
 
