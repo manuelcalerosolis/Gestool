@@ -171,6 +171,7 @@ METHOD convertLines() CLASS ConversorDocumentosController
 
    local hLine
    local uuidOriginLine
+   local uuidDestinyLine
    local aLinesDocumentoOrigen
 
    aLinesDocumentoOrigen   := ::getController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
@@ -189,7 +190,9 @@ METHOD convertLines() CLASS ConversorDocumentosController
 
          ::oDestinoController:getLinesController():getModel():insertBlankBuffer( hLine )
 
-         ::getModel():insertRelationDocument( uuidOriginLine, ::getController():getLinesController():getModel():cTableName, ::oDestinoController:getModelBuffer("uuid"), ::oDestinoController:getLinesController():getModel():cTableName )
+         uuidDestinyLine := ::oDestinoController:getLinesController():getModelBuffer( "uuid" )
+
+         ::getModel():insertRelationDocument( uuidOriginLine, ::getController():getLinesController():getModel():cTableName, uuidDestinyLine, ::oDestinoController:getLinesController():getModel():cTableName )
    next
 
 RETURN ( nil )
@@ -201,6 +204,7 @@ METHOD convertDiscounts() CLASS ConversorDocumentosController
    local hDiscount
    local aDiscountsDocumentoOrigen
    local uuidOriginDiscount
+   local uuidDestinyDiscount
 
    aDiscountsDocumentoOrigen   := ::getController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
 
@@ -217,7 +221,9 @@ METHOD convertDiscounts() CLASS ConversorDocumentosController
 
          ::oDestinoController:getDiscountController():getModel():insertBlankBuffer( hDiscount )
 
-         ::getModel():insertRelationDocument( uuidOriginDiscount, ::getController:getDiscountController():getModel():cTableName, ::oDestinoController:getModelBuffer( "uuid" ), ::oDestinoController:getDiscountController():getModel():cTableName )
+         uuidDestinyDiscount := ::oDestinoController:getDiscountController():getModelBuffer( "uuid" )
+
+         ::getModel():insertRelationDocument( uuidOriginDiscount, ::getController:getDiscountController():getModel():cTableName, uuidDestinyDiscount, ::oDestinoController:getDiscountController():getModel():cTableName )
    next
 
 RETURN ( nil )
@@ -303,6 +309,8 @@ CLASS SQLConversorDocumentosModel FROM SQLCompanyModel
 
    METHOD insertRelationDocument( uuidOrigin, cTableOrigin, uuidDestiny, cTableDestiny )
 
+   METHOD deleteWhereUuid( Uuid )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -354,6 +362,24 @@ METHOD insertRelationDocument( uuidOrigin, cTableOrigin, uuidDestiny, cTableDest
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD deleteWhereUuid( Uuid ) CLASS SQLConversorDocumentosModel
+
+local cSql
+
+   TEXT INTO cSql
+
+   DELETE FROM %1$s
+   WHERE documento_destino_uuid= %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql,;
+                           ::getTableName(),;
+                           quoted( Uuid ) )
+   
+RETURN ( getSQLDatabase():Exec( cSql ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

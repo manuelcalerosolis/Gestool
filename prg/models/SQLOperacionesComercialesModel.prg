@@ -21,7 +21,7 @@ CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
 
    METHOD getFieldWhereSerieAndNumero( cSerieAndNumero )
 
-   METHOD deleteWhereUiid( Uuid )
+   METHOD deleteWhereUuid( Uuid )
 
 #ifdef __TEST__
 
@@ -269,7 +269,7 @@ RETURN ( getSQLDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD deleteWhereUiid( Uuid ) CLASS SQLOperacionesComercialesModel
+METHOD deleteWhereUuid( Uuid ) CLASS SQLOperacionesComercialesModel
 
 local cSql
 
@@ -283,7 +283,7 @@ local cSql
    cSql  := hb_strformat(  cSql,;
                            ::getTableName(),;
                            quoted( Uuid ) )
-logwrite(cSql)
+
 RETURN ( getSQLDatabase():Exec( cSql ) )
 
 //---------------------------------------------------------------------------//
