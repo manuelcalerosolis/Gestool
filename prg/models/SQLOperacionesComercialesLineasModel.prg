@@ -14,8 +14,6 @@ CLASS SQLOperacionesComercialesLineasModel FROM SQLOperacionesLineasModel
 
    METHOD getHashWhereUuid( uuidOrigen )
 
-  METHOD getLastId( uuidDestino )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -191,28 +189,4 @@ RETURN ( ::getDatabase():selectTrimedFetchHash( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getLastId( uuidDestino ) CLASS SQLOperacionesComercialesLineasModel
-   
-   local cSql
-
-   TEXT INTO cSql
-
-      SELECT 
-        id  
-      
-      FROM %1$s
-
-      WHERE parent_uuid = %2$s AND deleted_at = 0
-         
-         ORDER BY id DESC
-         
-         LIMIT 1
-       
-   ENDTEXT
-
-   cSql  := hb_strformat(  cSql, ::getTableName(), quoted( uuidDestino ) )
-
-RETURN ( ::getDatabase():getValue( cSql, 0 ) )
-
-//---------------------------------------------------------------------------//
 
