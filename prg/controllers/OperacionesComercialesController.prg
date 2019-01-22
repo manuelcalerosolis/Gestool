@@ -124,14 +124,6 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD getRectifictivaValidator()   INLINE (if( empty( ::oRectificativaValidator ), ::oRectificativaValidator := OperacionComercialRectificarValidator():New( self ), ), ::oRectificativaValidator )
 
-   METHOD convertDocument()
-      METHOD convertHeader()
-      METHOD insertheaderRelation()
-      METHOD convertLines()
-      METHOD insertLinesRelation( uuidLineOringin, uuidLineDestiny )
-      METHOD convertDiscounts()
-      METHOD insertDiscountsRelation( uuidLineOringin, uuidLineDestiny )
-
    METHOD cancelEdited()
 
 END CLASS
@@ -194,7 +186,7 @@ METHOD Editing( nId ) CLASS OperacionesComercialesController
    nTotalDocumento         := ::getTotalDocument( ::uuidDocumentoDestino )
 
    if ( nTotalDocumento != 0 .and. nRecibosPagados >= nTotalDocumento )
-      msgstop( "La factura esta completamete pagada", "No esta permitida la edici�n" )
+      msgstop( "La factura esta completamete pagada", "No esta permitida la edición" )
       RETURN ( .f. )
    end if
 
@@ -467,138 +459,6 @@ METHOD addExtraButtons() CLASS OperacionesComercialesController
    ::super:addExtraButtons()
 
    ::oNavigatorView:getMenuTreeView():addButton( "Convertir documento", "gc_document_text_earth_16", {|| ::getConversorDocumentosController():Run() } )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD convertDocument() CLASS OperacionesComercialesController
-
-   if empty( ::getController() )
-      RETURN ( nil )
-   end if
-
-   if ::getController:className() == ::className()
-      msgstop("No puede seleccionar el mismo tipo de documento")
-      RETURN ( nil )
-   end if
-
-   ::uuidDocumentoOrigen     := ::getController():getRowSet():fieldGet( "uuid" )
-
-   if empty(::uuidDocumentoOrigen)
-      RETURN( nil )
-   end if
-
-   ::convertHeader()
-
-   ::convertLines()
-
-   ::convertDiscounts()
-
-   ::Edit( ::idDocumentoDestino )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD convertHeader() CLASS OperacionesComercialesController
-
-   local hBufferDocumentoOrigen
-
-   hBufferDocumentoOrigen  := ::getController():getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
-
-   hdel( hBufferDocumentoOrigen, 'id' )
-   hdel( hBufferDocumentoOrigen, 'uuid' )
-   hdel( hBufferDocumentoOrigen, 'fecha' )
-
-   ::getModel():insertBlankBuffer( hBufferDocumentoOrigen )
-
-   ::uuidDocumentoDestino    := ::getModelBuffer( "uuid" )
-
-   ::idDocumentoDestino      := ::getModelBuffer( "id" )
-
-   ::insertheaderRelation()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertheaderRelation()
-
-   SQLConversorDocumentosModel():InsertRelationDocument(  ::uuidDocumentoOrigen, ::getController():getModel():cTableName, ::uuidDocumentoDestino ,::getModel():cTableName )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD convertLines() CLASS OperacionesComercialesController
-
-   local hLine
-   local aLinesDocumentoOrigen
-   local uuidOriginLine
-
-   aLinesDocumentoOrigen   := ::getController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
-
-   if aLinesDocumentoOrigen == nil
-      RETURN ( nil )
-   end if
-
-   for each hLine in aLinesDocumentoOrigen
-
-         uuidOriginLine := hget( hLine, "uuid" )
-
-         hdel( hLine, 'id' )
-         hdel( hLine, 'uuid' )
-         hset( hLine, 'parent_uuid', ::uuidDocumentoDestino )
-
-         ::getLinesController():getModel():insertBlankBuffer( hLine )
-
-         ::insertLinesRelation( uuidOriginLine, ::getModelBuffer("uuid") )
-   next
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertLinesRelation( uuidLineOringin, uuidLineDestiny ) CLASS OperacionesComercialesController
-
- SQLConversorDocumentosModel():InsertRelationDocument( uuidLineOringin, ::getController():getLinesController():getModel():cTableName, uuidLineDestiny, ::getLinesController():getModel():cTableName )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD convertDiscounts() CLASS OperacionesComercialesController
-
-   local hDiscount
-   local aDiscountsDocumentoOrigen
-   local uuidOriginDiscount
-
-   aDiscountsDocumentoOrigen   := ::getController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
-
-   if empty( aDiscountsDocumentoOrigen )
-      RETURN ( nil )
-   end if
-
-   for each hDiscount in aDiscountsDocumentoOrigen
-
-         uuidOriginDiscount:= hget(hDiscount, "uuid")
-         hdel( hDiscount, 'id' )
-         hdel( hDiscount, 'uuid' )
-         hset( hDiscount, 'parent_uuid', ::uuidDocumentoDestino )
-
-         ::getDiscountController():getModel():insertBlankBuffer( hDiscount )
-
-         ::insertDiscountsRelation( uuidOriginDiscount, ::getModelBuffer( "uuid" ) )
-   next
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertDiscountsRelation( uuidDiscountOringin, uuidDiscountDestiny ) CLASS OperacionesComercialesController
-
-SQLConversorDocumentosModel():InsertRelationDocument( uuidDiscountOringin, ::getController():getDiscountController():getModel():cTableName, uuidDiscountDestiny, ::getDiscountController():getModel():cTableName )
 
 RETURN ( nil )
 

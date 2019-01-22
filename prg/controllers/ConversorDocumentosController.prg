@@ -11,6 +11,12 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    DATA oAlbaranesComprasController
 
+   DATA uuidDocumentoOrigen
+
+   DATA uuidDocumentoDestino
+
+   DATA idDocumentoDestino
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -19,16 +25,43 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    METHOD getDestinoController()       INLINE ( ::oDestinoController )
 
+   METHOD Convert()
+      METHOD convertHeader()
+      METHOD convertLines()
+      METHOD convertDiscounts()
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getAlbaranesComprasController() ;
-                                       INLINE ( if( empty( ::oDestinoController ), ::oDestinoController := AlbaranesComprasController():New( self ), ), ::oDestinoController ) 
+                                       INLINE ( ::oDestinoController := AlbaranesComprasController():New( self ), ::oDestinoController ) 
+
+   METHOD getAlbaranesVentasController() ;
+                                       INLINE ( ::oDestinoController := AlbaranesVentasController():New( self ), ::oDestinoController ) 
+
+   METHOD getFacturasComprasController() ;
+                                       INLINE ( ::oDestinoController := FacturasComprasController():New( self ), ::oDestinoController ) 
+
+   METHOD getFacturasVentasController() ;
+                                       INLINE ( ::oDestinoController := FacturasVentasController():New( self ), ::oDestinoController ) 
+
+   METHOD getFacturasSimplificadasVentasController() ;
+                                       INLINE ( ::oDestinoController := FacturasSimplificadasVentasController():New( self ), ::oDestinoController ) 
+
+   METHOD getPedidosComprasController() ;
+                                       INLINE ( ::oDestinoController := PedidosComprasController():New( self ), ::oDestinoController ) 
+
+   METHOD getPedidosVentasController() ;
+                                       INLINE ( ::oDestinoController := PedidosVentasController():New( self ), ::oDestinoController ) 
+
+   METHOD getPresupuestosVentasController() ;
+                                       INLINE ( ::oDestinoController := PresupuestosVentasController():New( self ), ::oDestinoController ) 
+   
+
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLConversorDocumentosModel():New( self ), ), ::oModel ) 
 
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ConversorDocumentoView():New( self ), ), ::oDialogView )
 
-   METHOD Convert()
 
 END CLASS
 
@@ -37,13 +70,13 @@ END CLASS
 METHOD New( oController ) CLASS ConversorDocumentosController
 
    ::aDocumentosDestino := {  "Albarán de compras"             => {|| ::getAlbaranesComprasController() },;
-                              "Albarán de ventas"              => {|| AlbaranesVentasController():New( ::getController() ):convertDocument() },;
-                              "Factura de compras"             => {|| FacturasComprasController():New( ::getController() ):convertDocument() },;
-                              "Factura de ventas"              => {|| FacturasVentasController():New( ::getController() ):convertDocument() },;
-                              "Factura de ventas simplificada" => {|| FacturasSimplificadasVentasController():New( ::getController() ):convertDocument() },;
-                              "Pedido de compras"              => {|| PedidosComprasController():New( ::getController() ):convertDocument() },;
-                              "Pedido de ventas"               => {|| PedidosVentasController():New( ::getController() ):convertDocument() },;
-                              "Presupuesto de ventas"          => {|| PresupuestosVentasController():New( ::getController() ):convertDocument() } }
+                              "Albarán de ventas"              => {|| ::getAlbaranesVentasController() },;
+                              "Factura de compras"             => {|| ::getFacturasComprasController() },;
+                              "Factura de ventas"              => {|| ::getFacturasventasController() },;
+                              "Factura de ventas simplificada" => {|| ::getFacturasSimplificadasVentasController() },;
+                              "Pedido de compras"              => {|| ::getPedidosComprasController() },;
+                              "Pedido de ventas"               => {|| ::getPedidosVentasController() },;
+                              "Presupuesto de ventas"          => {|| ::getPresupuestosVentasController() } }
 
    ::Super:New( oController )
 
@@ -85,11 +118,109 @@ RETURN ( nil )
 
 METHOD Convert() CLASS ConversorDocumentosController
 
-   msgalert( ::getController():className(), "getController className" )
+   if empty( ::getController() )
+      RETURN ( nil )
+   end if
 
-   msgalert( ::getDestinoController():className(), "getDestinoController className" )
+   if ::getController:className() == ::oDestinoController:className()
+      msgstop("No puede seleccionar el mismo tipo de documento")
+      RETURN ( nil )
+   end if
+
+   ::uuidDocumentoOrigen     := ::getController():getRowSet():fieldGet( "uuid" )
+
+   if empty(::uuidDocumentoOrigen)
+      RETURN( nil )
+   end if
+
+   ::convertHeader()
+
+   ::convertLines()
+
+   ::convertDiscounts()
+
+   ::oDestinoController:Edit( ::idDocumentoDestino )
 
 RETURN ( nil )   
+
+//---------------------------------------------------------------------------//
+
+METHOD convertHeader() CLASS ConversorDocumentosController
+
+   local hBufferDocumentoOrigen
+
+   hBufferDocumentoOrigen  := ::getController():getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
+
+   hdel( hBufferDocumentoOrigen, 'id' )
+   hdel( hBufferDocumentoOrigen, 'uuid' )
+   hdel( hBufferDocumentoOrigen, 'fecha' )
+
+   ::oDestinoController:getModel():insertBlankBuffer( hBufferDocumentoOrigen )
+
+   ::uuidDocumentoDestino    := ::oDestinoController:getModelBuffer( "uuid" )
+
+   ::idDocumentoDestino      := ::oDestinoController:getModelBuffer( "id" )
+
+   ::getModel():insertRelationDocument( ::uuidDocumentoOrigen, ::getController():getModel():cTableName, ::uuidDocumentoDestino ,::oDestinoController:getModel():cTableName )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD convertLines() CLASS ConversorDocumentosController
+
+   local hLine
+   local aLinesDocumentoOrigen
+   local uuidOriginLine
+
+   aLinesDocumentoOrigen   := ::getController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
+
+   if aLinesDocumentoOrigen == nil
+      RETURN ( nil )
+   end if
+
+   for each hLine in aLinesDocumentoOrigen
+
+         uuidOriginLine := hget( hLine, "uuid" )
+
+         hdel( hLine, 'id' )
+         hdel( hLine, 'uuid' )
+         hset( hLine, 'parent_uuid', ::uuidDocumentoDestino )
+
+         ::oDestinoController:getLinesController():getModel():insertBlankBuffer( hLine )
+
+         ::getModel():insertRelationDocument( uuidOriginLine, ::getController():getLinesController():getModel():cTableName, ::oDestinoController:getModelBuffer("uuid"), ::oDestinoController:getLinesController():getModel():cTableName )
+   next
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD convertDiscounts() CLASS ConversorDocumentosController
+
+   local hDiscount
+   local aDiscountsDocumentoOrigen
+   local uuidOriginDiscount
+
+   aDiscountsDocumentoOrigen   := ::getController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
+
+   if empty( aDiscountsDocumentoOrigen )
+      RETURN ( nil )
+   end if
+
+   for each hDiscount in aDiscountsDocumentoOrigen
+
+         uuidOriginDiscount:= hget(hDiscount, "uuid")
+         hdel( hDiscount, 'id' )
+         hdel( hDiscount, 'uuid' )
+         hset( hDiscount, 'parent_uuid', ::uuidDocumentoDestino )
+
+         ::oDestinoController:getDiscountController():getModel():insertBlankBuffer( hDiscount )
+
+         ::getModel():insertRelationDocument( uuidOriginDiscount, ::getController:getDiscountController():getModel():cTableName, ::oDestinoController:getModelBuffer( "uuid" ), ::oDestinoController:getDiscountController():getModel():cTableName )
+   next
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -170,7 +301,7 @@ CLASS SQLConversorDocumentosModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD InsertRelationDocument( uuidOrigin, cTableOrigin, uuidDestiny, cTableDestiny )
+   METHOD insertRelationDocument( uuidOrigin, cTableOrigin, uuidDestiny, cTableDestiny )
 
 END CLASS
 
@@ -196,13 +327,11 @@ METHOD getColumns() CLASS SQLConversorDocumentosModel
    hset( ::hColumns, "documento_destino_uuid",      {  "create"    => "VARCHAR( 40 )"                              ,;
                                                       "default"   => {|| space( 40 ) } }                          )
 
-
-
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD InsertRelationDocument( uuidOrigin, cTableOrigin, uuidDestiny, cTableDestiny ) CLASS SQLConversorDocumentosModel
+METHOD insertRelationDocument( uuidOrigin, cTableOrigin, uuidDestiny, cTableDestiny ) CLASS SQLConversorDocumentosModel
 
    local cSql
 
