@@ -146,7 +146,7 @@ METHOD New( oController ) CLASS OperacionesComercialesController
 
    ::lOthers                           := .t.
 
-   ::setEvent( 'editing', {|| ::Editing() } )
+   ::setEvent( 'editing', {|nId| ::Editing( nId ) } )
 
    ::setEvent( 'cancelEdited',{|| ::cancelEdited() } )
 
@@ -183,20 +183,18 @@ METHOD Editing( nId ) CLASS OperacionesComercialesController
    uuid                    := ::getUuidFromRowSet()
 
    if empty( uuid )
-      uuid                 := getModel():getField()
+
+      uuid                 := ::getModel():getUuidWhereColumn( nId, "id" )
+   
    end if 
 
    if empty( uuid )
       RETURN ( .f. )
    end if 
 
-   /*
-   cambie los parametros de  a ::uuidDocumentoDestino
-   */
-
    nRecibosPagados         := RecibosPagosRepository():selectFunctionTotalPaidWhereFacturaUuid( uuid )
 
-   nTotalDocumento         := ::getTotalDocument( ::uuidDocumentoDestino )
+   nTotalDocumento         := ::getTotalDocument( uuid )
 
    if ( nTotalDocumento != 0 .and. nRecibosPagados >= nTotalDocumento )
       msgstop( "La factura esta completamete pagada", "No esta permitida la edición" )
@@ -217,7 +215,9 @@ METHOD cancelEdited() CLASS OperacionesComercialesController
 
    uuidDocumentoDestino := ::getModelBuffer("uuid")
 
-   ::getModel():deleteWhereUiid( uuidDocumentoDestino )
+   ::getModel():deleteWhereUuid( uuidDocumentoDestino )
+
+   SQLConversorDocumentosModel():deleteWhereDestinoUuid( uuidDocumentoDestino )
 
    ::getLinesController():getModel():deleteWhereParentUuid( uuidDocumentoDestino )
 
