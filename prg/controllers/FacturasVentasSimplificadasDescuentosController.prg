@@ -3,25 +3,25 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasSimplificadasVentasDescuentosController FROM OperacionesComercialesDescuentosController
+CLASS FacturasVentasSimplificadasDescuentosController FROM OperacionesComercialesDescuentosController
 
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasSimplificadasVentasDescuentosModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasVentasSimplificadasDescuentosModel():New( self ), ), ::oModel )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS FacturasSimplificadasVentasDescuentosController
+METHOD New( oController ) CLASS FacturasVentasSimplificadasDescuentosController
 
    ::Super:New( oController )
 
-   ::cTitle                            := "Facturas simplificadas ventas descuentos"
+   ::cTitle                            := "Facturas de ventas simplificadas  descuentos"
 
-   ::cName                             := "facturas_simplificadas_ventas_descuentos"
+   ::cName                             := "facturas_ventas_simplificadas_descuentos"
 
    ::hImage                            := {  "16" => "gc_symbol_percent_16",;
                                              "32" => "gc_symbol_percent_32",;
@@ -31,7 +31,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS FacturasSimplificadasVentasDescuentosController
+METHOD End() CLASS FacturasventasSimplificadasDescuentosController
 
    if !empty( ::oModel )
       ::oModel:End()
@@ -45,11 +45,11 @@ RETURN ( ::Super:End() )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLFacturasSimplificadasVentasDescuentosModel FROM SQLOperacionesComercialesDescuentosModel
+CLASS SQLFacturasventasSimplificadasDescuentosModel FROM SQLOperacionesComercialesDescuentosModel
 
-   DATA cTableName                     INIT "facturas_simplificadas_ventas_descuentos"
+   DATA cTableName                     INIT "facturas_ventas_simplificadas_descuentos"
 
-   DATA cOrderBy                       INIT "facturas_simplificadas_ventas_descuentos.id"
+   DATA cOrderBy                       INIT "facturas_ventas_simplificadas_descuentos.id"
    
 END CLASS
 

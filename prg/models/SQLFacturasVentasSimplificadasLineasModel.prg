@@ -4,11 +4,11 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLFacturasSimplificadasVentasLineasModel FROM SQLOperacionesComercialesLineasModel
+CLASS SQLFacturasVentasSimplificadasLineasModel FROM SQLOperacionesComercialesLineasModel
 
-   DATA cTableName            INIT  "facturas_simplificadas_ventas_lineas"
+   DATA cTableName            INIT  "facturas_ventas_simplificadas_lineas"
 
-   DATA cGroupBy              INIT  "facturas_simplificadas_ventas_lineas.id" 
+   DATA cGroupBy              INIT  "facturas_ventas_simplificadas_lineas.id" 
 
 /*#ifdef __TEST__
 

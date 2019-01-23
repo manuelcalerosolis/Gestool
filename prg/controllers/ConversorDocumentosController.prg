@@ -44,8 +44,8 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
    METHOD getFacturasVentasController() ;
                                        INLINE ( ::oDestinoController := FacturasVentasController():New( self ), ::oDestinoController ) 
 
-   METHOD getFacturasSimplificadasVentasController() ;
-                                       INLINE ( ::oDestinoController := FacturasSimplificadasVentasController():New( self ), ::oDestinoController ) 
+   METHOD getFacturasVentasSimplificadasController() ;
+                                       INLINE ( ::oDestinoController := FacturasVentasSimplificadasController():New( self ), ::oDestinoController ) 
 
    METHOD getPedidosComprasController() ;
                                        INLINE ( ::oDestinoController := PedidosComprasController():New( self ), ::oDestinoController ) 
@@ -73,7 +73,7 @@ METHOD New( oController ) CLASS ConversorDocumentosController
                               "Albarán de ventas"              => {|| ::getAlbaranesVentasController() },;
                               "Factura de compras"             => {|| ::getFacturasComprasController() },;
                               "Factura de ventas"              => {|| ::getFacturasventasController() },;
-                              "Factura de ventas simplificada" => {|| ::getFacturasSimplificadasVentasController() },;
+                              "Factura de ventas simplificada" => {|| ::getFacturasVentasSimplificadasController() },;
                               "Pedido de compras"              => {|| ::getPedidosComprasController() },;
                               "Pedido de ventas"               => {|| ::getPedidosVentasController() },;
                               "Presupuesto de ventas"          => {|| ::getPresupuestosVentasController() } }

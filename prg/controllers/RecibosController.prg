@@ -880,7 +880,7 @@ METHOD createFunctionTerceroCodigoWhereUuid( uuidDocumento ) CLASS RecibosReposi
                            Company():getTableName( 'RecibosTerceroCodigoWhereUuid' ),;
                            SQLFacturasVentasModel():getTableName(),;
                            SQLFacturasVentasRectificativasModel():getTableName(),;
-                           SQLFacturasSimplificadasVentasModel():getTableName() )
+                           SQLFacturasVentasSimplificadasModel():getTableName() )
 
 RETURN ( cSql )
 

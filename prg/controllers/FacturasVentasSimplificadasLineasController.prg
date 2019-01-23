@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasSimplificadasVentasLineasController FROM OperacionesComercialesLineasController
+CLASS FacturasVentasSimplificadasLineasController FROM OperacionesComercialesLineasController
 
    METHOD New() CONSTRUCTOR
 
@@ -11,25 +11,25 @@ CLASS FacturasSimplificadasVentasLineasController FROM OperacionesComercialesLin
 
    //Contrucciones tardias---------------------------------------------------//
 
-   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLFacturasSimplificadasVentasLineasModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLFacturasVentasSimplificadasLineasModel():New( self ), ), ::oModel )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController )
+METHOD New( oController ) CLASS FacturasVentasSimplificadasLineasController
 
    ::Super:New( oController )
 
    ::cTitle                            := "Facturas simplificadas ventas líneas"
 
-   ::cName                             := "lineas_facturas_simplificadas_ventas" 
+   ::cName                             := "lineas_facturas_ventas_simplificadas" 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End()
+METHOD End() CLASS FacturasVentasSimplificadasLineasController
 
    if !empty( ::oModel )
       ::oModel():End()

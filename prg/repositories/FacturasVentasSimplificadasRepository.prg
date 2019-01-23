@@ -3,15 +3,15 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasSimplificadasVentasRepository FROM OperacionesComercialesRepository
+CLASS FacturasVentasSimplificadasRepository FROM OperacionesComercialesRepository
 
-   METHOD getTableName()               INLINE ( SQLFacturasSimplificadasVentasModel():getTableName() ) 
+   METHOD getTableName()               INLINE ( SQLFacturasVentasSimplificadasModel():getTableName() ) 
 
-   METHOD getLinesTableName()          INLINE ( SQLFacturasSimplificadasVentasLineasModel():getTableName() )
+   METHOD getLinesTableName()          INLINE ( SQLFacturasVentasSimplificadasLineasModel():getTableName() )
 
-   METHOD getDiscountsTableName()      INLINE ( SQLFacturasSimplificadasVentasDescuentosModel():getTableName() )
+   METHOD getDiscountsTableName()      INLINE ( SQLFacturasVentasSimplificadasDescuentosModel():getTableName() )
 
-   METHOD getPackage( cContext )       INLINE ( SQLFacturasSimplificadasVentasModel():getPackage( cContext ) )
+   METHOD getPackage( cContext )       INLINE ( SQLFacturasVentasSimplificadasModel():getPackage( cContext ) )
 
 END CLASS
 
