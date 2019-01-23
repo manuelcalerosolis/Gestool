@@ -3,15 +3,15 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasSimplificadasVentasController FROM OperacionesComercialesController
+CLASS FacturasVentasSimplificadasController FROM OperacionesComercialesController
 
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
-   METHOD getLinesController()         INLINE ( ::getFacturasSimplificadasVentasLineasController() )
+   METHOD getLinesController()         INLINE ( ::getFacturasVentasSimplificadasLineasController() )
 
-   METHOD getDiscountController()      INLINE ( ::getFacturasSimplificadasVentasDescuentosController() )
+   METHOD getDiscountController()      INLINE ( ::getFacturasVentasSimplificadasDescuentosController() )
 
    METHOD isClient()                   INLINE ( .t. )
 
@@ -27,21 +27,21 @@ CLASS FacturasSimplificadasVentasController FROM OperacionesComercialesControlle
 
    // Contrucciones tardias----------------------------------------------------
 
-   METHOD getName()                    INLINE ( "facturas_simplificadas_venta" )
+   METHOD getName()                    INLINE ( "facturas_venta_simplificadas" )
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasSimplificadasVentasModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasVentasSimplificadasModel():New( self ), ), ::oModel )
 
-   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasSimplicadasVentasValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasVentasSimplicadasValidator():New( self ), ), ::oValidator )
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasSimplificadasVentasRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasVentasSimplificadasRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS FacturasSimplificadasVentasController
+METHOD New( oController ) CLASS FacturasVentasSimplificadasController
 
    ::Super:New( oController )
 
@@ -61,7 +61,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS FacturasSimplificadasVentasController
+METHOD End() CLASS FacturasVentasSimplificadasController
 
    if !empty( ::oModel )
       ::oModel:End()
@@ -87,19 +87,19 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD Inserted() CLASS FacturasSimplificadasVentasController
+METHOD Inserted() CLASS FacturasVentasSimplificadasController
 
 RETURN ( ::getRecibosGeneratorController():generate() )
 
 //---------------------------------------------------------------------------//
 
-METHOD Edited() CLASS FacturasSimplificadasVentasController 
+METHOD Edited() CLASS FacturasVentasSimplificadasController 
 
 RETURN ( ::getRecibosGeneratorController():update() )
 
 //---------------------------------------------------------------------------//
 
-METHOD addExtraButtons() CLASS FacturasSimplificadasVentasController
+METHOD addExtraButtons() CLASS FacturasVentasSimplificadasController
 
    ::super:addExtraButtons()
 
@@ -113,7 +113,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FacturasSimplicadasVentasValidator FROM OperacionesComercialesValidator
+CLASS FacturasVentasSimplicadasValidator FROM OperacionesComercialesValidator
 
    METHOD New( oController )
 
@@ -123,13 +123,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS FacturasSimplicadasVentasValidator
+METHOD New( oController ) CLASS FacturasVentasSimplicadasValidator
 
 RETURN ( ::Super:New( oController ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS FacturasSimplicadasVentasValidator
+METHOD getValidators() CLASS FacturasVentasSimplicadasValidator
 
    hset( ::Super:getValidators(),   "tercero_codigo", {  "required"        => "El código del cliente es un dato requerido",;
                                                          "clienteExist"    => "El código del cliente no existe" } )

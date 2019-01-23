@@ -17,6 +17,8 @@ CLASS AlbaranesComprasController FROM OperacionesComercialesController
 
    METHOD isClient()                   INLINE ( .f. )
 
+   METHOD addExtraButtons()
+
    // Impresiones--------------------------------------------------------------
 
    METHOD getSubject()                 INLINE ( "Albarán de compras número" )
@@ -72,6 +74,16 @@ METHOD End() CLASS AlbaranesComprasController
    end if
 
 RETURN ( ::Super:End() )
+
+//---------------------------------------------------------------------------//
+
+METHOD addExtraButtons() CLASS AlbaranesComprasController
+
+   ::super:addExtraButtons()
+
+   ::oNavigatorView:getMenuTreeView():addButton( "Crear facturas", "gc_document_text_earth_16", {|| ::getConversorDocumentosController():convertAlbaranCompras( ::getUuids() ) } )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

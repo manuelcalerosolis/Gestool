@@ -3,11 +3,11 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLFacturasSimplificadasVentasModel FROM SQLOperacionesComercialesModel
+CLASS SQLFacturasVentasSimplificadasModel FROM SQLOperacionesComercialesModel
 
    DATA cPackage                       INIT "FacturasSimplificadasVentas"
 
-   DATA cTableName                     INIT "facturas_simplificadas_ventas"
+   DATA cTableName                     INIT "facturas_ventas_simplificadas"
 
 END CLASS
 

@@ -116,7 +116,7 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oFacturasVentasDescuentosController
 
-   DATA oFacturasSimplificadasVentasDescuentosController
+   DATA oFacturasVentasSimplificadasDescuentosController
 
    DATA oAlbaranesVentasDescuentosController
 
@@ -138,7 +138,7 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oFacturasVentasLineasController
 
-   DATA oFacturasSimplificadasVentasLineasController
+   DATA oFacturasVentasSimplificadasLineasController
 
    DATA oAlbaranesVentasLineasController
 
@@ -400,8 +400,8 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getFacturasVentasDescuentosController();
                                     INLINE ( if( empty( ::oFacturasVentasDescuentosController ), ::oFacturasVentasDescuentosController := FacturasVentasDescuentosController():New( self ), ), ::oFacturasVentasDescuentosController )
 
-   METHOD getFacturasSimplificadasVentasDescuentosController();
-                                    INLINE ( if( empty( ::oFacturasSimplificadasVentasDescuentosController ), ::oFacturasSimplificadasVentasDescuentosController := FacturasSimplificadasVentasDescuentosController():New( self ), ), ::oFacturasSimplificadasVentasDescuentosController )
+   METHOD getFacturasVentasSimplificadasDescuentosController();
+                                    INLINE ( if( empty( ::oFacturasVentasSimplificadasDescuentosController ), ::oFacturasVentasSimplificadasDescuentosController := FacturasVentasSimplificadasDescuentosController():New( self ), ), ::oFacturasVentasSimplificadasDescuentosController )
 
    METHOD getAlbaranesVentasDescuentosController();
                                     INLINE ( if( empty( ::oAlbaranesVentasDescuentosController ), ::oAlbaranesVentasDescuentosController := AlbaranesVentasDescuentosController():New( self ), ), ::oAlbaranesVentasDescuentosController )
@@ -433,8 +433,8 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getFacturasVentasLineasController();
                                     INLINE ( if( empty( ::oFacturasVentasLineasController ), ::oFacturasVentasLineasController := FacturasVentasLineasController():New( self ), ), ::oFacturasVentasLineasController )
 
-   METHOD getFacturasSimplificadasVentasLineasController();
-                                    INLINE ( if( empty( ::oFacturasSimplificadasVentasLineasController ), ::oFacturasSimplificadasVentasLineasController := FacturasSimplificadasVentasLineasController():New( self ), ), ::oFacturasSimplificadasVentasLineasController )
+   METHOD getFacturasVentasSimplificadasLineasController();
+                                    INLINE ( if( empty( ::oFacturasVentasSimplificadasLineasController ), ::oFacturasVentasSimplificadasLineasController := FacturasVentasSimplificadasLineasController():New( self ), ), ::oFacturasVentasSimplificadasLineasController )
 
    METHOD getAlbaranesVentasLineasController();
                                     INLINE ( if( empty( ::oAlbaranesVentasLineasController ), ::oAlbaranesVentasLineasController := AlbaranesVentasLineasController():New( self ), ), ::oAlbaranesVentasLineasController )
@@ -803,8 +803,8 @@ METHOD End() CLASS SQLApplicationController
       ::oFacturasVentasDescuentosController:End()
    end if  
 
-   if !empty( ::oFacturasSimplificadasVentasDescuentosController )   
-      ::oFacturasSimplificadasVentasDescuentosController:End()
+   if !empty( ::oFacturasVentasSimplificadasDescuentosController )   
+      ::oFacturasVentasSimplificadasDescuentosController:End()
    end if  
 
    if !empty( ::oPresupuestosVentasDescuentosController )   
@@ -847,8 +847,8 @@ METHOD End() CLASS SQLApplicationController
       ::oFacturasVentasLineasController:End()
    end if 
 
-   if !empty( ::oFacturasSimplificadasVentasLineasController )   
-      ::oFacturasSimplificadasVentasLineasController:End()
+   if !empty( ::oFacturasVentasSimplificadasLineasController )   
+      ::oFacturasVentasSimplificadasLineasController:End()
    end if 
 
    if !empty( ::oAlbaranesVentasLineasController )   

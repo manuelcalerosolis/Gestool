@@ -51,6 +51,9 @@ METHOD New( oController ) CLASS RecibosController
 
    ::nLevel                      := Auth():Level( ::cName )
 
+   ::getNavigatorView():getMenuTreeView():setEvent( 'addingDeleteButton',     { || .f. } )
+   ::getNavigatorView():getMenuTreeView():setEvent( 'addingShowDeleteButton', { || .f. } )
+
    ::getNavigatorView():getMenuTreeView():setEvent( 'addingExitButton', {|| ::addExtraButtons() } )
 
    ::getBrowseView:setEvent( 'activatedDialog', {|| ::getBrowseView:refresh() } )
@@ -628,7 +631,7 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
                            SQLTercerosModel():getTableName(),;
                            Company():getTableName( 'RecibosPagosTotalPaidWhereUuid' ),;
                            Company():getTableName( 'RecibosTerceroCodigoWhereUuid' ) )
-
+logwrite(cSql)
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
@@ -865,7 +868,12 @@ METHOD createFunctionTerceroCodigoWhereUuid( uuidDocumento ) CLASS RecibosReposi
                UNION
                SELECT tercero_codigo FROM %3$s WHERE uuid = uuid_documento 
                UNION
-               SELECT tercero_codigo FROM %4$s WHERE uuid = uuid_documento 
+               SELECT tercero_codigo FROM %4$s WHERE uuid = uuid_documento
+               UNION
+               SELECT tercero_codigo FROM %5$s WHERE uuid = uuid_documento 
+               UNION
+               SELECT tercero_codigo FROM %6$s WHERE uuid = uuid_documento
+   
             ) AS ventas
 
       LIMIT 1;
@@ -880,7 +888,9 @@ METHOD createFunctionTerceroCodigoWhereUuid( uuidDocumento ) CLASS RecibosReposi
                            Company():getTableName( 'RecibosTerceroCodigoWhereUuid' ),;
                            SQLFacturasVentasModel():getTableName(),;
                            SQLFacturasVentasRectificativasModel():getTableName(),;
-                           SQLFacturasSimplificadasVentasModel():getTableName() )
+                           SQLFacturasVentasSimplificadasModel():getTableName(),;
+                           SQLFacturasComprasModel():getTableName(),;
+                           SQLfacturasComprasRectificativasModel():getTableName )
 
 RETURN ( cSql )
 

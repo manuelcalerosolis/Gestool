@@ -1543,7 +1543,7 @@ FUNCTION CreateMainSQLAcceso()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Facturas simplificadas'
    oItem:cMessage       := 'Facturas simplificadas'
-   oItem:bAction        := {|| FacturasSimplificadasVentasController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| FacturasVentasSimplificadasController():New():ActivateNavigatorView() }
    // oItem:bAction        := {|| FacturasVentasController1000() }
    oItem:cId            := "facturas_simplificadas_ventas"
    oItem:cBmp           := "gc_ticket_16"
