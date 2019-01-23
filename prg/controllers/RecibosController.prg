@@ -51,6 +51,9 @@ METHOD New( oController ) CLASS RecibosController
 
    ::nLevel                      := Auth():Level( ::cName )
 
+   ::getNavigatorView():getMenuTreeView():setEvent( 'addingDeleteButton',     { || .f. } )
+   ::getNavigatorView():getMenuTreeView():setEvent( 'addingShowDeleteButton', { || .f. } )
+
    ::getNavigatorView():getMenuTreeView():setEvent( 'addingExitButton', {|| ::addExtraButtons() } )
 
    ::getBrowseView:setEvent( 'activatedDialog', {|| ::getBrowseView:refresh() } )

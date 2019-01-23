@@ -17,6 +17,10 @@ CLASS FacturasComprasController FROM OperacionesComercialesController
 
    METHOD isClient()                   INLINE ( .f. )
 
+   METHOD Inserted()
+
+   METHOD Edited()
+
    // Impresiones--------------------------------------------------------------
 
    METHOD getSubject()                 INLINE ( "Factura de compras número" )
@@ -50,6 +54,10 @@ METHOD New( oController ) CLASS FacturasComprasController
                                              "32" => "gc_document_text_businessman_32",;
                                              "48" => "gc_document_text_businessman_48" }
 
+   ::setEvent( 'inserted', {|| ::Inserted() } )
+
+   ::setEvent( 'edited',   {|| ::Edited() } )
+
 RETURN ( Self ) 
 
 //---------------------------------------------------------------------------//
@@ -75,6 +83,17 @@ METHOD End() CLASS FacturasComprasController
 RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
+
+METHOD Inserted() CLASS FacturasComprasController
+
+RETURN ( ::getRecibosGeneratorController():generate(.f.) )
+
+//---------------------------------------------------------------------------//
+
+METHOD Edited() CLASS FacturasComprasController 
+
+RETURN ( ::getRecibosGeneratorController():update(.f.) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
