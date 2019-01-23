@@ -86,13 +86,13 @@ RETURN ( ::Super:End() )
 
 METHOD Inserted() CLASS FacturasComprasController
 
-RETURN ( ::getRecibosGeneratorController():generate(.f.) )
+RETURN ( ::getRecibosGeneratorController():GenerateNegative() )
 
 //---------------------------------------------------------------------------//
 
 METHOD Edited() CLASS FacturasComprasController 
 
-RETURN ( ::getRecibosGeneratorController():update(.f.) )
+RETURN ( ::getRecibosGeneratorController():GenerateNegative() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
