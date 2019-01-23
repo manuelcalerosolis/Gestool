@@ -362,6 +362,8 @@ CLASS TTaskPanel FROM TControl
 
    METHOD addLink( cPrompt, bAction, cBitmap )
 
+   METHOD addLinkAndData( cLink, cData, bAction, cBitmap )
+
    METHOD addGetSelector( cPrompt, cGet ) 
 
    METHOD addGetAction( cPrompt, cGet, bAction )
@@ -485,6 +487,31 @@ METHOD AddLink( cPrompt, bAction, cBitmap ) CLASS TTaskPanel
    endif
 
    ::setHeight( oUrlLink:nTop, oUrlLink:nHeight )
+
+RETURN nil
+
+//----------------------------------------------------------------------------//
+
+METHOD addLinkAndData( cLink, cData, bAction, cBitmap ) CLASS TTaskPanel
+
+   local oLink
+   local oData
+
+   oLink                := TUrlLink():New( ::getTopControl(), 33, Self, .t., .F., ::oFont, "", cLink )
+
+   oLink:SetColor( ::nClrLink, ::nClrPane )
+   oLink:nClrInit       := ::nClrLink
+   oLink:nClrOver       := ::nClrLink
+   oLink:nClrVisit      := ::nClrLink
+   oLink:bAction        := bAction
+
+   oData                := TSay():New( ::getTopControl(), 33, {|| cData }, Self, , ::oFont, .f., .t., .f., .t., , , Self:nWidth, , .f., .f., .f., .f., .f., .f., "cData", .f., .f. )
+
+   if !empty( cBitmap )
+      oLink:hBmp        := LoadBitmap( GetResources(), cBitmap )
+   endif
+
+   ::setHeight( oLink:nTop, oLink:nHeight )
 
 RETURN nil
 

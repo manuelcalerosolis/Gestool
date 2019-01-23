@@ -305,12 +305,6 @@ METHOD addLinksToExplorerBar() CLASS OperacionesComercialesView
                      {|| ::getController():getDireccionTipoDocumentoController():activateDialogView() },;
                          ::getController():getDireccionTipoDocumentoController():getImage( "16" ) )
 
-   oPanel:AddLink(   "Recibos...",;
-                     {|| ::getController():getRecibosController():activateDialogView() },;
-                         ::getController():getRecibosController():getImage( "16" ) )
-
-   oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
-
    if ::getController():isNotZoomMode()
 
       oPanel:AddLink(   "Campos extra...",;
@@ -321,6 +315,16 @@ METHOD addLinksToExplorerBar() CLASS OperacionesComercialesView
    oPanel:AddLink(   "Detalle IVA...",;
                      {||   ::getController():getIvaDetalleView():Show()  },;
                            ::getController():getTipoIvaController():getImage( "16" ) )
+
+   oPanel:AddLink(   "Recibos...",;
+                     {|| ::getController():getRecibosController():activateDialogView() },;
+                         ::getController():getRecibosController():getImage( "16" ) )
+
+   oPanel            := ::oExplorerBar:AddPanel( "Datos del elemento", nil, 1 ) 
+
+   oPanel:AddLink(   "Stock global :",;
+                     {|| nil },;
+                         ::getController():getRecibosController():getImage( "16" ) )
 
 RETURN ( nil )
 
