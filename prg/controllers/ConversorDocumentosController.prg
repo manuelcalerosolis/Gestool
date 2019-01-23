@@ -17,6 +17,10 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    DATA idDocumentoDestino
 
+   DATA oResumenView
+
+   DATA cTerceroCodigo
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -29,6 +33,8 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
       METHOD convertHeader()
       METHOD convertLines()
       METHOD convertDiscounts()
+
+   METHOD convertAlbaranCompras()
 
    //Construcciones tardias----------------------------------------------------
 
@@ -61,6 +67,8 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLConversorDocumentosModel():New( self ), ), ::oModel ) 
 
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ConversorDocumentoView():New( self ), ), ::oDialogView )
+
+   METHOD getResumenView()             INLINE ( if( empty( ::oResumenView ), ::oResumenView := ConversorResumenView():New( self ), ), ::oResumenView )
 
 
 END CLASS
@@ -229,6 +237,38 @@ METHOD convertDiscounts() CLASS ConversorDocumentosController
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD convertAlbaranCompras( aSelecteds )
+
+   local aSelected
+
+   if empty( ::getController() )
+      RETURN ( nil )
+   end if
+
+   ::oDestinoController := ::getFacturasComprasController()
+
+   msgalert("convertir albaranes")
+
+   msgalert( hb_valtoexp( aSelecteds ) )
+
+   for each aSelected in aSelecteds
+
+   ::uuidDocumentoOrigen     := aSelected
+
+   ::convertHeader()
+
+   //::convertLines()
+
+   //::convertDiscounts()
+
+   next
+
+   ::getResumenView():Activate()
+
+RETURN( nil )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -293,6 +333,52 @@ METHOD Activating() CLASS ConversorDocumentoView
 
 RETURN ( nil )
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS ConversorResumenView FROM SQLBaseView
+                                          
+   METHOD Activate()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS ConversorResumenView
+
+   DEFINE DIALOG  ::oDialog;
+      RESOURCE    "RESUMEN_CONVERSION"; 
+      TITLE       "Resumen de la conversión ..."
+
+   REDEFINE BITMAP ::oBitmap ;
+      ID          900 ;
+      RESOURCE    "gc_tags_48" ;
+      TRANSPARENT ;
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      PROMPT      "Resumen de la conversión a facturas" ;
+      ID          800 ;
+      FONT        oFontBold() ;
+      OF          ::oDialog
+
+   ::getController():getFacturasComprasController():Activate( 100, ::oDialog )
+
+
+   // Botones------------------------------------------------------------------
+
+
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+   
+   ::oDialog:Activate( , , , .t. )
+
+RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
