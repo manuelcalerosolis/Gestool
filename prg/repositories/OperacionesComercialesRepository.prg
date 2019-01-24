@@ -125,7 +125,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( ::getPackage( 'Tot
 
 METHOD selectTotalSummaryWhereUuid( uuidOperacionComercial ) CLASS OperacionesComercialesRepository
 
-RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ) + "( " + quotedUuid( uuidOperacionComercial ) + " )" ) )
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ) + "( " + quotedUuid( uuidOperacionComercial ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -150,6 +150,7 @@ METHOD createFunctionRecargoEquivalenciaWhereUuid() CLASS OperacionesComerciales
 
    SELECT 
       operaciones_comerciales.recargo_equivalencia INTO RecargoEquivalencia
+      
    FROM %2$s AS operaciones_comerciales 
       WHERE operaciones_comerciales.uuid = uuid_operacion_comercial;
 

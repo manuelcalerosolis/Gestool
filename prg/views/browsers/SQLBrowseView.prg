@@ -28,7 +28,7 @@ CLASS SQLBrowseView
 
    DATA bSelectedColumnDblClick
 
-   DATA bChange
+   DATA bChange                              INIT {|| nil }
 
    DATA cType 
 
@@ -55,6 +55,8 @@ CLASS SQLBrowseView
 
    METHOD setFooter( lFooter )               INLINE ( ::lFooter := lFooter )
    METHOD getFooter()                        INLINE ( ::lFooter )
+
+   METHOD setChange( bChange )               INLINE ( ::bChange := bChange )
 
    // Type and name -----------------------------------------------------------
 
@@ -274,7 +276,7 @@ METHOD Create( oWindow )
    ::oBrowse:lFastEdit        := ::lFastEdit
    ::oBrowse:lMultiSelect     := ::lMultiSelect
    ::oBrowse:nColSel          := ::nColSel
-   // ::oBrowse:nFreeze          := ::nFreeze
+   ::oBrowse:bChange          := ::bChange
 
    ::oBrowse:nMarqueeStyle    := ::nMarqueeStyle
 

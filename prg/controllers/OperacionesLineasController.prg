@@ -66,6 +66,7 @@ CLASS OperacionesLineasController FROM SQLBrowseController
    METHOD stampAlmacen( hAlmacen )
 
    METHOD stampUbicacion( hUbicacion )
+
    METHOD stampArticuloCodigo( cCodigoArticulo ) ;
                                        INLINE ( ::updateField( "articulo_codigo", cCodigoArticulo ) ) 
 
@@ -129,6 +130,8 @@ CLASS OperacionesLineasController FROM SQLBrowseController
 
    METHOD refreshBrowse()              INLINE ( iif(  !empty( ::getBrowseView() ), ::getBrowseView():Refresh(), ) )
 
+   METHOD loadInformation()            
+
    METHOD loadUnidadesMedicion()
 
    METHOD loadedBlankBuffer()          VIRTUAL
@@ -153,7 +156,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController )
+METHOD New( oController ) CLASS OperacionesLineasController
 
    ::Super:New( oController )
 
@@ -171,7 +174,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End()
+METHOD End() CLASS OperacionesLineasController
 
    if !empty( ::oModel )
       ::oModel:End()
@@ -205,7 +208,7 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD validArticuloCodigo( oGet, oCol )
+METHOD validArticuloCodigo( oGet, oCol ) CLASS OperacionesLineasController
 
    local uValue   := oGet:varGet()
 
@@ -217,7 +220,7 @@ RETURN ( ::validate( 'articulo_codigo', uValue ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD validAlmacenCodigo( oGet, oCol )
+METHOD validAlmacenCodigo( oGet, oCol ) CLASS OperacionesLineasController
 
    if SQLAlmacenesModel():CountAlmacenWhereCodigo( oGet:varGet() ) <= 0 
 
@@ -231,7 +234,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validUbicacionCodigo( oGet, oCol )
+METHOD validUbicacionCodigo( oGet, oCol ) CLASS OperacionesLineasController
 
    if SQLUbicacionesModel():CountUbicacionWhereCodigo( oGet:varGet() ) <= 0 
       
@@ -245,39 +248,47 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validLineCombinacion()
+METHOD validLineCombinacion() CLASS OperacionesLineasController
 
    if !empty( ::getRowSet():fieldget( 'articulos_propiedades_nombre' ) )
       RETURN ( .t. )
    end if
 
    if !empty( ::getCombinacionesController():getModel():CountCombinacionesWhereArticulo( ::getRowSet():fieldget( 'articulo_codigo' ) ) )
+      
       ::getController():getDialogView():showMessage( "Debe seleccionar propiedades" )      
+      
       ::getBrowseView():setFocusColumnPropiedades()
+      
       RETURN ( .f. )
+
    end if
 
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validLineLote()
+METHOD validLineLote() CLASS OperacionesLineasController
 
    if !empty( ::getRowSet():fieldget( 'lote' ) )
       RETURN ( .t. )
    end if
 
    if !empty( ::getArticulosController():getModel():isLote( ::getRowSet():fieldget( 'articulo_codigo' ) ) )
+      
       ::getController():getDialogView():showMessage( "Debe seleccionar un lote" )      
+      
       ::getBrowseView():setFocusColumnLote()
+      
       RETURN ( .f. )
+
    end if
 
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validLineAlmacen()
+METHOD validLineAlmacen() CLASS OperacionesLineasController
 
    if empty( ::getRowSet():fieldget( 'almacen_codigo' ) )
 
@@ -293,7 +304,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validLineUbicacion( cField )
+METHOD validLineUbicacion( cField ) CLASS OperacionesLineasController
 
    DEFAULT cField    := 'ubicacion_codigo'
 
@@ -315,7 +326,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD postValidateArticuloCodigo( oCol, uValue, nKey )
+METHOD postValidateArticuloCodigo( oCol, uValue, nKey ) CLASS OperacionesLineasController
 
    local hArticulo 
 
@@ -347,7 +358,7 @@ RETURN ( ::stampArticulo( hArticulo ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD postValidateAlmacenCodigo( oCol, uValue, nKey )
+METHOD postValidateAlmacenCodigo( oCol, uValue, nKey ) CLASS OperacionesLineasController
 
    local cCodigo
 
@@ -370,7 +381,7 @@ RETURN ( ::stampAlmacen( cCodigo ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD postValidateUbicacionCodigo( oCol, uValue, nKey, cField )
+METHOD postValidateUbicacionCodigo( oCol, uValue, nKey, cField ) CLASS OperacionesLineasController
 
    local cCodigo
 
@@ -395,7 +406,7 @@ RETURN ( ::stampUbicacion( cCodigo, cField ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD postValidateCombinacionesUuid( oCol, uValue )
+METHOD postValidateCombinacionesUuid( oCol, uValue ) CLASS OperacionesLineasController
 
    local hCombination         
 
@@ -417,7 +428,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD postValidateUnidadMedicion( oCol, uValue, nKey )
+METHOD postValidateUnidadMedicion( oCol, uValue, nKey ) CLASS OperacionesLineasController
 
    if !hb_ischar( uValue )
       RETURN ( .f. )
@@ -433,25 +444,25 @@ RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
-METHOD getHashArticuloWhereCodigo( cCodigo )
+METHOD getHashArticuloWhereCodigo( cCodigo ) CLASS OperacionesLineasController
    
 RETURN ( SQLArticulosModel():getHashWhere( "codigo", cCodigo ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getHashAlmacenWhereCodigo( cCodigo )
+METHOD getHashAlmacenWhereCodigo( cCodigo ) CLASS OperacionesLineasController
    
 RETURN ( SQLAlmacenesModel():getHashWhere( "codigo", cCodigo ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getHashUbicacionWhereCodigo( cCodigo )
+METHOD getHashUbicacionWhereCodigo( cCodigo ) CLASS OperacionesLineasController
    
 RETURN ( SQLUbicacionesModel():getHashWhere( "codigo", cCodigo ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD updateField( cField, uValue )
+METHOD updateField( cField, uValue ) CLASS OperacionesLineasController
 
    ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cField, uValue )
    
@@ -465,7 +476,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampAlmacen( cCodigoAlmacen )
+METHOD stampAlmacen( cCodigoAlmacen ) CLASS OperacionesLineasController
 
    ::updateField( "almacen_codigo", cCodigoAlmacen )
 
@@ -473,7 +484,7 @@ RETURN ( ::stampUbicacion( space( 20 ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampUbicacion( cCodigoUbicacion, cField )
+METHOD stampUbicacion( cCodigoUbicacion, cField ) CLASS OperacionesLineasController
 
    DEFAULT cField          := "ubicacion_codigo"
 
@@ -483,7 +494,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampArticuloUnidadMedicion() 
+METHOD stampArticuloUnidadMedicion() CLASS OperacionesLineasController 
 
    local cUnidadMedicion   := ::getArticuloUnidadMedicion()
 
@@ -495,7 +506,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getArticuloUnidadMedicion()
+METHOD getArticuloUnidadMedicion() CLASS OperacionesLineasController
 
    local cUnidadMedicion   
 
@@ -536,7 +547,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 
-METHOD validColumnNombreArticulo( oCol, uValue, nKey ) 
+METHOD validColumnNombreArticulo( oCol, uValue, nKey ) CLASS OperacionesLineasController 
 
    if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
       RETURN ( .t. )
@@ -550,7 +561,7 @@ RETURN ( ::stampArticuloNombre( uValue ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD updateArticuloFactor( oCol, uValue )
+METHOD updateArticuloFactor( oCol, uValue ) CLASS OperacionesLineasController
 
    ::updateField( 'unidad_medicion_factor', uValue )
 
@@ -560,7 +571,7 @@ RETURN ( ::oController:calculateTotals() )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampIncrement( nIncrementoPrecio ) 
+METHOD stampIncrement( nIncrementoPrecio ) CLASS OperacionesLineasController 
    
    ::updateField( "incremento_precio", nIncrementoPrecio )
                                                    
@@ -568,7 +579,7 @@ RETURN ( ::oController:calculateTotals() )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampArticuloUnidadMedicionCodigo( uValue )
+METHOD stampArticuloUnidadMedicionCodigo( uValue ) CLASS OperacionesLineasController
 
    ::updateField( 'unidad_medicion_codigo', uValue )
 
@@ -578,7 +589,7 @@ RETURN ( ::oController:calculateTotals() )
 
 //----------------------------------------------------------------------------//
 
-METHOD stampArticuloUnidadMedFac()
+METHOD stampArticuloUnidadMedFac() CLASS OperacionesLineasController
       
    local nFactor  := UnidadesMedicionGruposLineasRepository():getFactorWhereUnidadMedicion( ::getRowSet():fieldGet( 'articulo_codigo' ), ::getRowSet():fieldGet( 'unidad_medicion_codigo' ) ) 
 
@@ -591,7 +602,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
- METHOD stampCombinationAndIncrement( hCombination )
+ METHOD stampCombinationAndIncrement( hCombination ) CLASS OperacionesLineasController
 
    ::stampCombinacionesUuid( hget( hCombination, "uuid" ) )
 
@@ -601,7 +612,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD updateDescuento( nDescuento )
+METHOD updateDescuento( nDescuento ) CLASS OperacionesLineasController
 
    if hb_isnumeric( nDescuento )
       ::updateField( 'descuento', nDescuento )
@@ -611,7 +622,7 @@ RETURN ( ::oController:calculateTotals() )
 
 //----------------------------------------------------------------------------//
 
-METHOD validateLote()
+METHOD validateLote() CLASS OperacionesLineasController
 
    local cLote
 
@@ -630,7 +641,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD runDialogSeries()
+METHOD runDialogSeries() CLASS OperacionesLineasController
 
    if empty( ::getDialogView():nTotalUnidadesArticulo() )
       ::getController():getDialogView():showMessage( "El número de unidades no puede ser 0 para editar números de serie" )      
@@ -645,13 +656,13 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD Search()
+METHOD Search() CLASS OperacionesLineasController
 
 RETURN ( ::getSearchView():Activate() )
 
 //---------------------------------------------------------------------------//
 
-METHOD deleteLines( uuid )
+METHOD deleteLines( uuid ) CLASS OperacionesLineasController
 
    ::aSelectDelete  := ::getModel():aRowsDeleted( uuid )
 
@@ -665,7 +676,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD Edit()
+METHOD Edit() CLASS OperacionesLineasController
 
    local nId
    local cCodigoArticulo   := ::getRowSet():fieldGet( 'articulo_codigo' )
@@ -683,7 +694,7 @@ RETURN ( ::oController:getArticulosController():Edit( nId ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD loadUnidadesMedicion()
+METHOD loadUnidadesMedicion() CLASS OperacionesLineasController
 
    local aUnidadesMedicion := UnidadesMedicionGruposLineasRepository():getCodigos( ::getRowSet():fieldGet( 'articulo_codigo' ) )
 
@@ -695,7 +706,7 @@ RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-METHOD validateUnidadMedicion( uValue )
+METHOD validateUnidadMedicion( uValue ) CLASS OperacionesLineasController
 
    local cValue   := uValue:VarGet()
 
@@ -711,7 +722,7 @@ RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-METHOD validateDescuento( uValue )
+METHOD validateDescuento( uValue ) CLASS OperacionesLineasController
 
    local nDescuento                  
 
@@ -726,7 +737,7 @@ RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-METHOD validateIva( uValue )
+METHOD validateIva( uValue ) CLASS OperacionesLineasController
 
    local nPorcentajeIVA                  
    local nPorcentajeRecargo
@@ -746,6 +757,21 @@ RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
+METHOD loadInformation() CLASS OperacionesLineasController
+
+   local nStockGlobal 
+
+   if empty( ::oController:getDialogView() )
+      RETURN ( nil )
+   end if 
+
+   nStockGlobal   := StocksRepository():selectStockWhereCodigo( ::getRowSet():fieldget( "articulo_codigo" ) )
+
+   ::oController:getDialogView():setTextLinkStockGlobal( alltrim( ::getRowSet():fieldget( "articulo_codigo" ) ) )
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
 
 
 

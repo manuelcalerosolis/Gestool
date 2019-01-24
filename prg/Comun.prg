@@ -226,14 +226,9 @@ RETURN ( oMenu )
 //---------------------------------------------------------------------------//
 
 PROCEDURE loggedTest()
-/*
-   getSQLDatabase():BeginTransaction()
 
-   SQLAgentesModel():insertBuffer(  {  'codigo' => '9',;
-                                       'nombre' => 'Test' } )
+   msgalert( StocksRepository():selectStockWhereCodigo( '2' ), "appTest" )
 
-   getSQLDatabase():RollBack()
-*/
 RETURN 
 
 //----------------------------------------------------------------------------//

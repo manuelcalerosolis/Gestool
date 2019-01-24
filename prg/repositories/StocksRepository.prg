@@ -14,6 +14,8 @@ CLASS StocksRepository FROM SQLBaseRepository
 
    METHOD createFunctionStockWhereCodigo()
 
+   METHOD selectStockWhereCodigo( cCodigoArticulo )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -187,37 +189,12 @@ METHOD createFunctionStockWhereCodigo() CLASS StocksRepository
                            SQLAlbaranesComprasModel():getTableName(),;
                            SQLAlbaranesComprasLineasModel():getTableName() )
 
-   logwrite( cSql )
-
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
-/*
-   SELECT 
-      movimientos_almacenes.almacen_origen_codigo, 
-      movimientos_almacenes_lineas.articulo_unidades * movimientos_almacenes_lineas.unidad_medicion_factor * -1
-         
-      FROM gestool_0001.movimientos_almacenes_lineas
 
-      INNER JOIN gestool_0001.movimientos_almacenes AS movimientos_almacenes
-         ON movimientos_almacenes.UUID = movimientos_almacenes_lineas.parent_uuid      
+METHOD selectStockWhereCodigo( cCodigoArticulo ) CLASS StocksRepository
 
-   GROUP BY movimientos_almacenes_lineas.articulo_codigo, almacenes.codigo, movimientos_almacenes_lineas.ubicacion_codigo, movimientos_almacenes_lineas.lote, movimientos_almacenes_lineas.combinaciones_uuid
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( "StockWhereCodigo" ) + "( " + quoted( cCodigoArticulo ) + " )" ) )
 
-   ORDER BY movimientos_almacenes.fecha_valor_stock
-   
-   UNION 
-   
-   SELECT 
-      movimientos_almacenes.almacen_destino_codigo, 
-      movimientos_almacenes_lineas.articulo_unidades * movimientos_almacenes_lineas.unidad_medicion_factor 
-         
-      FROM gestool_0001.movimientos_almacenes_lineas
-
-      INNER JOIN gestool_0001.movimientos_almacenes AS movimientos_almacenes
-         ON movimientos_almacenes.UUID = movimientos_almacenes_lineas.parent_uuid      
-
-   GROUP BY movimientos_almacenes_lineas.articulo_codigo, almacenes.codigo, movimientos_almacenes_lineas.ubicacion_codigo, movimientos_almacenes_lineas.lote, movimientos_almacenes_lineas.combinaciones_uuid
-
-   ORDER BY movimientos_almacenes.fecha_valor_stock
-*/
+//---------------------------------------------------------------------------//

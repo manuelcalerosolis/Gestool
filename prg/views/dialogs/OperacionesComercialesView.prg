@@ -26,6 +26,8 @@ CLASS OperacionesComercialesView FROM SQLBaseView
    DATA oTotalImporte
    DATA nTotalImporte                  INIT 0
    DATA oRecargoEquivalencia
+
+   DATA oLinkStockGlobal
    
    METHOD Activate()
       METHOD startActivate()
@@ -45,7 +47,8 @@ CLASS OperacionesComercialesView FROM SQLBaseView
 
    METHOD defaultTitle()
 
-   METHOD getPrompt()
+   METHOD setTextLinkStockGlobal( nStock ) ;
+                                       INLINE ( ::oLinkStockGlobal:Cargo:setText( nStock ) )
 
 END CLASS
 
@@ -295,21 +298,21 @@ METHOD addLinksToExplorerBar() CLASS OperacionesComercialesView
 
    local oPanel
 
-   oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+   oPanel               := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
    oPanel:AddLink(   "Incidencias...",;
-                     {|| ::getController():getIncidenciasController():activateDialogView() },;
-                         ::getController():getIncidenciasController():getImage( "16" ) )
+                     {||   ::getController():getIncidenciasController():activateDialogView() },;
+                           ::getController():getIncidenciasController():getImage( "16" ) )
 
    oPanel:AddLink(   "Tipo de direcciones...",;
-                     {|| ::getController():getDireccionTipoDocumentoController():activateDialogView() },;
-                         ::getController():getDireccionTipoDocumentoController():getImage( "16" ) )
+                     {||   ::getController():getDireccionTipoDocumentoController():activateDialogView() },;
+                           ::getController():getDireccionTipoDocumentoController():getImage( "16" ) )
 
    if ::getController():isNotZoomMode()
 
-      oPanel:AddLink(   "Campos extra...",;
-                        {||   ::getController():getCamposExtraValoresController():Edit( ::getController():getUuid() ) },;
-                              ::getController():getCamposExtraValoresController():getImage( "16" ) )
+   oPanel:AddLink(   "Campos extra...",;
+                     {||   ::getController():getCamposExtraValoresController():Edit( ::getController():getUuid() ) },;
+                           ::getController():getCamposExtraValoresController():getImage( "16" ) )
    end if
 
    oPanel:AddLink(   "Detalle IVA...",;
@@ -317,14 +320,12 @@ METHOD addLinksToExplorerBar() CLASS OperacionesComercialesView
                            ::getController():getTipoIvaController():getImage( "16" ) )
 
    oPanel:AddLink(   "Recibos...",;
-                     {|| ::getController():getRecibosController():activateDialogView() },;
-                         ::getController():getRecibosController():getImage( "16" ) )
+                     {||   ::getController():getRecibosController():activateDialogView() },;
+                           ::getController():getRecibosController():getImage( "16" ) )
 
-   oPanel            := ::oExplorerBar:AddPanel( "Datos del elemento", nil, 1 ) 
+   oPanel               := ::oExplorerBar:AddPanel( "Datos del elemento", nil, 1 ) 
 
-   oPanel:AddLink(   "Stock global :",;
-                     {|| nil },;
-                         ::getController():getRecibosController():getImage( "16" ) )
+   ::oLinkStockGlobal   := oPanel:AddLinkAndData( "Stock global :", "", {|| nil }, ::getController():getRecibosController():getImage( "16" ) )
 
 RETURN ( nil )
 
@@ -363,14 +364,6 @@ METHOD defaultTitle() CLASS OperacionesComercialesView
 RETURN ( cTitle )
 
 //---------------------------------------------------------------------------//
-
-METHOD getPrompt() CLASS OperacionesComercialesView
-
-if ::oController:isClient()
-   RETURN ( "Factura de venta"  )
-end if 
-
-RETURN ( "Factura de compra"  )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

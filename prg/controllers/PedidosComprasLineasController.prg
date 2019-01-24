@@ -13,7 +13,6 @@ CLASS PedidosComprasLineasController FROM OperacionesComercialesLineasController
 
    METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLPedidosComprasLineasModel():New( self ), ), ::oModel )
 
-
 END CLASS
 
 //---------------------------------------------------------------------------//

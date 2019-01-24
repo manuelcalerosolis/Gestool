@@ -472,48 +472,50 @@ RETURN Self
 
 METHOD AddLink( cPrompt, bAction, cBitmap ) CLASS TTaskPanel
 
-   local oUrlLink
-
-   oUrlLink             := TUrlLink():New( ::getTopControl(), 33, Self, .t., .F., ::oFont, "", cPrompt )
-
-   oUrlLink:SetColor( ::nClrLink, ::nClrPane )
-   oUrlLink:nClrInit    := ::nClrLink
-   oUrlLink:nClrOver    := ::nClrLink
-   oUrlLink:nClrVisit   := ::nClrLink
-   oUrlLink:bAction     := bAction
-
-   if !empty( cBitmap )
-      oUrlLink:hBmp     := LoadBitmap( GetResources(), cBitmap )
-   endif
-
-   ::setHeight( oUrlLink:nTop, oUrlLink:nHeight )
-
-RETURN nil
-
-//----------------------------------------------------------------------------//
-
-METHOD addLinkAndData( cLink, cData, bAction, cBitmap ) CLASS TTaskPanel
-
    local oLink
-   local oData
 
-   oLink                := TUrlLink():New( ::getTopControl(), 33, Self, .t., .F., ::oFont, "", cLink )
+   oLink             := TUrlLink():New( ::getTopControl(), 33, Self, .t., .F., ::oFont, "", cPrompt )
 
    oLink:SetColor( ::nClrLink, ::nClrPane )
-   oLink:nClrInit       := ::nClrLink
-   oLink:nClrOver       := ::nClrLink
-   oLink:nClrVisit      := ::nClrLink
-   oLink:bAction        := bAction
-
-   oData                := TSay():New( ::getTopControl(), 33, {|| cData }, Self, , ::oFont, .f., .t., .f., .t., , , Self:nWidth, , .f., .f., .f., .f., .f., .f., "cData", .f., .f. )
+   oLink:nClrInit    := ::nClrLink
+   oLink:nClrOver    := ::nClrLink
+   oLink:nClrVisit   := ::nClrLink
+   oLink:bAction     := bAction
 
    if !empty( cBitmap )
-      oLink:hBmp        := LoadBitmap( GetResources(), cBitmap )
+      oLink:hBmp     := LoadBitmap( GetResources(), cBitmap )
    endif
 
    ::setHeight( oLink:nTop, oLink:nHeight )
 
-RETURN nil
+RETURN ( oLink )
+
+//----------------------------------------------------------------------------//
+
+METHOD addLinkAndData( cLink, cPrompt, bAction, cBitmap ) CLASS TTaskPanel
+
+   local nTop        
+   local oLink
+
+   nTop              := ::getTopControl()
+
+   oLink             := TUrlLink():New( nTop, 33, Self, .t., .F., ::oFont, "", cLink )
+
+   oLink:SetColor( ::nClrLink, ::nClrPane )
+   oLink:nClrInit    := ::nClrLink
+   oLink:nClrOver    := ::nClrLink
+   oLink:nClrVisit   := ::nClrLink
+   oLink:bAction     := bAction
+
+   if !empty( cBitmap )
+      oLink:hBmp     := LoadBitmap( GetResources(), cBitmap )
+   endif
+
+   @ nTop, 100 SAY oLink:Cargo PROMPT cPrompt OF Self RIGHT PIXEL COLOR Rgb( 10, 152, 234 ), Rgb( 255, 255, 255 ) SIZE Self:nWidth - 100, 12
+
+   ::setHeight( oLink:nTop, oLink:nHeight )
+
+RETURN ( oLink )
 
 //----------------------------------------------------------------------------//
 

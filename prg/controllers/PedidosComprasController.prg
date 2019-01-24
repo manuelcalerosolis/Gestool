@@ -9,11 +9,9 @@ CLASS PedidosComprasController FROM OperacionesComercialesController
 
    METHOD End()
 
-   METHOD getLinesController();
-                                       INLINE ( ::getPedidosComprasLineasController() )
+   METHOD getLinesController()         INLINE ( ::getPedidosComprasLineasController() )
 
-   METHOD getDiscountController();
-                                       INLINE ( ::getPedidosComprasDescuentosController() )
+   METHOD getDiscountController()      INLINE ( ::getPedidosComprasDescuentosController() )
 
    METHOD isClient()                   INLINE ( .f. )
 
