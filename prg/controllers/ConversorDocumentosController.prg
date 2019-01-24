@@ -7,6 +7,8 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    DATA aDocumentosDestino 
 
+   DATA aCreatedDocument               INIT {}
+
    DATA oDestinoController
 
    DATA oAlbaranesComprasController
@@ -19,7 +21,11 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    DATA oResumenView
 
-   DATA cTerceroCodigo
+   DATA cRuta                          INIT nil
+   DATA cTarifa                        INIT nil
+   DATA cMetodoPago                    INIT nil
+   DATA cTerceroCodigo                 INIT nil
+   DATA cRecargoEquivalencia           INIT nil
 
    METHOD New() CONSTRUCTOR
 
@@ -35,6 +41,8 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
       METHOD convertDiscounts()
 
    METHOD convertAlbaranCompras()
+
+   METHOD setWhereArray( aSelecteds )
 
    //Construcciones tardias----------------------------------------------------
 
@@ -70,6 +78,7 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    METHOD getResumenView()             INLINE ( if( empty( ::oResumenView ), ::oResumenView := ConversorResumenView():New( self ), ), ::oResumenView )
 
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := ConversorDocumentosBrowseView():New( self ), ), ::oBrowseView )
 
 END CLASS
 
@@ -171,6 +180,8 @@ METHOD convertHeader() CLASS ConversorDocumentosController
 
    ::getModel():insertRelationDocument( ::uuidDocumentoOrigen, ::getController():getModel():cTableName, ::uuidDocumentoDestino ,::oDestinoController:getModel():cTableName )
 
+   ::aCreatedDocument:add( ::uuidDocumentoDestino )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -238,9 +249,12 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD convertAlbaranCompras( aSelecteds )
+METHOD convertAlbaranCompras( aSelecteds ) CLASS ConversorDocumentosController
 
    local aSelected
+   local hAlbaranes := {}
+   Local hAlbaran
+   local i := 0
 
    if empty( ::getController() )
       RETURN ( nil )
@@ -248,32 +262,102 @@ METHOD convertAlbaranCompras( aSelecteds )
 
    ::oDestinoController := ::getFacturasComprasController()
 
-   msgalert("convertir albaranes")
+   hAlbaranes:= SQLAlbaranesComprasModel():getHashWhereUuid( ::setWhereArray( aSelecteds ) )
 
-   msgalert( hb_valtoexp( aSelecteds ) )
+   for each hAlbaran in hAlbaranes
+      i++
+      if (::getModel():countDocumentoWhereUuidOigen( hget( hAlbaran, "uuid") ) == 0 )
 
-   for each aSelected in aSelecteds
+      msgalert( i, "vuelta")
+      msgalert( hb_valtoexp( hAlbaran ), "datos" )
+      msgalert( ::cRuta, "cRuta")
+      msgalert( ::cMetodoPago, "cMetodoPago")
+      msgalert( ::cTarifa, "cTarifa" )
+      msgalert( ::cRecargoEquivalencia, "cRecargoEquivalencia")
 
-   ::uuidDocumentoOrigen     := aSelected
+         if( ::cTerceroCodigo != hget(hAlbaran, "tercero_codigo") .OR. ::cRuta != hget( hAlbaran, "ruta_codigo" ) .OR. ::cMetodoPago !=hget( hAlbaran ,"metodo_pago_codigo" ) .OR. ::cTarifa != hget( hAlbaran, "tarifa_codigo") .OR. ::cRecargoEquivalencia != hget( hAlbaran, "recargo_equivalencia" ) )
 
-   ::convertHeader()
+            ::uuidDocumentoOrigen   := hget( hAlbaran, "uuid")
 
-   //::convertLines()
+            ::cRuta                 := hget( hAlbaran, "ruta_codigo" )
 
-   //::convertDiscounts()
+            ::cMetodoPago           := hget( hAlbaran, "metodo_pago_codigo" )
+
+            ::cTarifa               := hget( hAlbaran, "tarifa_codigo")
+
+            ::cRecargoEquivalencia  := hget( hAlbaran, "recargo_equivalencia" )
+            
+            ::convertHeader()
+
+         else
+
+         ::uuidDocumentoOrigen   := hget(hAlbaran, "uuid")
+
+         ::getModel():insertRelationDocument( ::uuidDocumentoOrigen, ::getController():getModel():cTableName, ::uuidDocumentoDestino ,::oDestinoController:getModel():cTableName )
+         
+         end if
+
+         ::cTerceroCodigo  :=  hget(hAlbaran, "tercero_codigo")
+         
+         ::convertLines()
+
+         end if
 
    next
 
-   ::getResumenView():Activate()
+   if !empty( ::aCreatedDocument )
+       ::getResumenView():Activate()
+       ::aCreatedDocument := {}
+   end if 
 
 RETURN( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD setWhereArray( aSelecteds ) CLASS ConversorDocumentosController
+   
+   local aSelected
+   local nWhere := 0
+   local cWhere := " IN("
+
+ for each aSelected in aSelecteds
+   nWhere++
+
+   cWhere += quoted( aSelected )
+
+   if(nWhere != Len( aSelecteds ) )
+      cWhere +=","
+   end if
+   next
+
+   cWhere += " )"
+
+RETURN ( cWhere )
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
+CLASS ConversorDocumentosBrowseView FROM OperacionesComercialesBrowseView
+
+   METHOD addColumns() 
+
+END class
+
+//---------------------------------------------------------------------------//
+
+METHOD addColumns() CLASS ConversorDocumentosBrowseView
+
+   ::Super:addColumns()
+
+   RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 CLASS ConversorDocumentoView FROM SQLBaseView
 
    DATA cDocumentoDestino
@@ -366,7 +450,7 @@ METHOD Activate() CLASS ConversorResumenView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   ::getController():getFacturasComprasController():Activate( 100, ::oDialog )
+   ::getController():Activate(100, ::oDialog )
 
 
    // Botones------------------------------------------------------------------
@@ -396,6 +480,10 @@ CLASS SQLConversorDocumentosModel FROM SQLCompanyModel
    METHOD insertRelationDocument( uuidOrigin, cTableOrigin, uuidDestiny, cTableDestiny )
 
    METHOD deleteWhereDestinoUuid( Uuid )
+
+   METHOD countDocumentoWhereUuidOigen( uuidOrigen )
+
+   METHOD getInitialSelect()
 
 END CLASS
 
@@ -465,6 +553,34 @@ local cSql
                            quoted( Uuid ) )
    
 RETURN ( getSQLDatabase():Exec( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD countDocumentoWhereUuidOigen( uuidOrigen ) CLASS SQLConversorDocumentosModel
+ 
+local cSql
+
+   TEXT INTO cSql
+
+   SELECT COUNT(*)
+   
+   FROM %1$s
+
+   WHERE documento_origen_uuid = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql,;
+                           ::getTableName(),;
+                           quoted( uuidOrigen ) )
+  
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLConversorDocumentosModel
+  
+RETURN ( SQLFacturasComprasModel():getInitialWhereDocumentos(::oController:setWhereArray( ::oController:aCreatedDocument ) ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
