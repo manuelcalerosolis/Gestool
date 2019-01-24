@@ -17,48 +17,50 @@
 
 USER FUNCTION hbunit_test()
 
-   local oRunner   := TextRunner():new()
-   local oSuite    := TestSuite():new()
+   local oRunner   := TextRunner():New()
+   local oSuite    := TestSuite():New()
 
-   oSuite:addTest( TestAssert():new() )
+   oSuite:addTest( TestAssert():New() )
 
-   oSuite:addTest( TestEmpresasController():new() )
+   oSuite:addTest( TestEmpresasController():New() )
 
-   oSuite:addTest( TestArticulosController():new() )
+   oSuite:addTest( TestArticulosController():New() )
 
-   oSuite:addTest( TestCaracteristicasController():new() )
+   oSuite:addTest( TestCaracteristicasController():New() )
 
-   oSuite:addTest( TestCaracteristicasLineasController():new() )
+   oSuite:addTest( TestCaracteristicasLineasController():New() )
 
-   oSuite:addTest( TestCaracteristicasValoresArticulosController():new() )
+   oSuite:addTest( TestCaracteristicasValoresArticulosController():New() )
 
-   oSuite:addTest( TestUnidadesMedicionController():new() )
+   oSuite:addTest( TestUnidadesMedicionController():New() )
 
-   oSuite:addTest( TestUnidadesMedicionGruposController():new() )
+   oSuite:addTest( TestUnidadesMedicionGruposController():New() )
 
-   oSuite:addTest( TestArticulosTarifasController():new() )
+   oSuite:addTest( TestArticulosTarifasController():New() )
 
-   oSuite:addTest( TestArticulosTarifasController():new() )
+   oSuite:addTest( TestArticulosTarifasController():New() )
 
-   oSuite:addTest( TestAlmacenesController():new() )
+   oSuite:addTest( TestAlmacenesController():New() )
 
-   oSuite:addTest( TestTercerosController():new() )
+   oSuite:addTest( TestTercerosController():New() )
 
-   oSuite:addTest( TestTercerosGruposController():new() )
+   oSuite:addTest( TestTercerosGruposController():New() )
 
-   oSuite:addTest( TestEntidadesController():new() )
+   oSuite:addTest( TestEntidadesController():New() )
 
-   oSuite:addTest( TestFacturasClientesFacturaeController():new() )
+   oSuite:addTest( TestFacturasClientesFacturaeController():New() )
 
-   oSuite:addTest( TestPagosController():new() )
+   oSuite:addTest( TestPagosController():New() )
 
-   oSuite:addTest( TestPagosAssistantController():new() )
+   oSuite:addTest( TestPagosAssistantController():New() )
 
-   oSuite:addTest( TestFacturasVentasController():new() )
+   oSuite:addTest( TestFacturasVentasController():New() )
 
-   oSuite:addTest( TestConsolidacionAlmacenController():new() )
+   oSuite:addTest( TestConsolidacionAlmacenController():New() )
 
-   oSuite:setCategories( { "facturas_ventas" } )
+   oSuite:addTest( TestMovimientoAlmacenController():New() )
+
+   oSuite:setCategories( { "movimientos_almacenes" } )
 
    oRunner:run( oSuite )
 

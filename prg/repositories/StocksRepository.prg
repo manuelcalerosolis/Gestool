@@ -408,7 +408,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD beforeClass() CLASS TestFacturasVentasController
+METHOD beforeClass() CLASS TestStocksRepository
    
    Company():setDefaultUsarUbicaciones( .t. )
    
@@ -418,7 +418,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_con_un_solo_pago() CLASS TestFacturasVentasController
+METHOD test_dialogo_con_un_solo_pago() CLASS TestStocksRepository
 
    ::oController:getDialogView():setEvent( 'painted',;
       <| view | 
@@ -448,7 +448,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_con_varios_pagos() CLASS TestFacturasVentasController
+METHOD test_dialogo_con_varios_pagos() CLASS TestStocksRepository
 
    ::oController:getDialogView():setEvent( 'painted',;
       <| view | 
@@ -475,33 +475,5 @@ METHOD test_dialogo_con_varios_pagos() CLASS TestFacturasVentasController
    ::assert:equals( 3, RecibosRepository():getCountWhereDocumentUuid( ::oController:getModelBuffer( "uuid" ) ), "test comprobacion numeros de recibos" )
 
 RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-/*
-METHOD test_dialogo_con_cambio_de_importe() CLASS TestFacturasVentasController
-
-   local id  
-
-   ::test_dialogo_con_varios_pagos()
-
-   id          := ::oController:getModelBuffer( "id" )
-
-   ::oController:getDialogView():setEvent( 'painted',;
-      <| view | 
-
-         ::set_precio_en_linea( 400 )
-
-         view:getControl( IDOK ):Click()
-         
-         RETURN ( nil )
-      > )
-
-   ::assert:true( ::oController:Edit( id ), "test modificacion de factura con nuevo importe" )
-
-   // ::assert:equals( 3, RecibosRepository():getCountWhereDocumentUuid( ::oController:getModelBuffer( "uuid" ) ), "test comprobacion numeros de recibos" )
-
-RETURN ( nil )
-*/
-#endif
 
 //---------------------------------------------------------------------------//

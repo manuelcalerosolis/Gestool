@@ -146,13 +146,19 @@ METHOD validLine() CLASS MovimientoAlmacenLineasController
       RETURN ( .f. )
    end if
 
+   msgalert( "::validLineCombinacion()" )
+
    if !( ::validLineCombinacion() )
       RETURN ( .f. )
    end if
 
+   msgalert( "::validLineUbicacionOrigen()" )
+   
    if !( ::validLineUbicacionOrigen() )
       RETURN ( .f. )
    end if
+
+   msgalert( "::validLineUbicacionDestino()" )
 
    if !( ::validLineUbicacionDestino() )
       RETURN ( .f. )

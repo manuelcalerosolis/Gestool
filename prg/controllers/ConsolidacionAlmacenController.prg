@@ -148,7 +148,7 @@ RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getCounterAndIncreme
 METHOD appendLine() CLASS ConsolidacionAlmacenController
 
    if empty( ::getModelBuffer( "almacen_codigo" ) )
-      msgStop( "El código del almacén es un dato requerido" )
+      ::getDialogView():showMessage( "El código del almacén es un dato requerido" )
       RETURN( nil )
    end if 
 
@@ -351,11 +351,17 @@ RETURN ( nil )
 METHOD test_dialogo_sin_lineas() CLASS TestConsolidacionAlmacenController
 
    ::oController:getDialogView():setEvent( 'painted',;
-      {| view | ;
-         ::set_codigo_almacen( "0", view ),;
-         view:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
-         view:getControl( IDCANCEL ):Click() } )
+      <| view | 
+         ::set_codigo_almacen( "0", view )
+         
+         view:getControl( IDOK ):Click()
+         
+         apoloWaitSeconds( 1 )
+
+         view:getControl( IDCANCEL ):Click()
+
+         RETURN ( nil )
+      > )
 
    ::assert:false( ::oController:Append(), "test creación de consolidación sin lineas" )
 
@@ -366,13 +372,21 @@ RETURN ( nil )
 METHOD test_dialogo_sin_ubicacion() CLASS TestConsolidacionAlmacenController
 
    ::oController:getDialogView():setEvent( 'painted',;
-      {| view | ;
-         ::set_codigo_almacen( "0", view ),;
-         ::click_nueva_linea( view ),;
-         ::set_codigo_articulo_en_linea( "1" ),;
-         view:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
-         view:getControl( IDCANCEL ):Click() } )
+      <| view | 
+         ::set_codigo_almacen( "0", view )
+
+         ::click_nueva_linea( view )
+
+         ::set_codigo_articulo_en_linea( "1" )
+
+         view:getControl( IDOK ):Click()
+
+         apoloWaitSeconds( 1 )
+
+         view:getControl( IDCANCEL ):Click() 
+
+         RETURN ( nil )
+      > )
 
    ::assert:false( ::oController:Append(), "test creación de consolidación sin ubicacion" )
 
@@ -384,19 +398,17 @@ METHOD test_dialogo_articulo_por_cajas_con_ubicacion() CLASS TestConsolidacionAl
 
    ::oController:getDialogView():setEvent( 'painted',;
       <| view | 
-
-      ::set_codigo_almacen( "0", view )
-      
-      ::click_nueva_linea( view )
-      
-      ::set_codigo_articulo_en_linea( "0" )
-      
-      ::set_codigo_ubicacion_en_linea( "0" )
-      
-      view:getControl( IDOK ):Click()
-      
-      RETURN ( nil )
-
+         ::set_codigo_almacen( "0", view )
+         
+         ::click_nueva_linea( view )
+         
+         ::set_codigo_articulo_en_linea( "0" )
+         
+         ::set_codigo_ubicacion_en_linea( "0" )
+         
+         view:getControl( IDOK ):Click()
+         
+         RETURN ( nil )
       > )
 
    ::assert:true( ::oController:Append(), "test creación de consolidación por cajas y con ubicacion" )
@@ -409,21 +421,19 @@ METHOD test_dialogo_articulo_con_lote() CLASS TestConsolidacionAlmacenController
 
    ::oController:getDialogView():setEvent( 'painted',;
       <| view | 
+         ::set_codigo_almacen( "0", view )
+         
+         ::click_nueva_linea( view )
+         
+         ::set_codigo_articulo_en_linea( "2" )
 
-      ::set_codigo_almacen( "0", view )
-      
-      ::click_nueva_linea( view )
-      
-      ::set_codigo_articulo_en_linea( "2" )
-
-      ::set_lote_en_linea( "1234" )
-      
-      ::set_codigo_ubicacion_en_linea( "0" )
-      
-      view:getControl( IDOK ):Click()
-      
-      RETURN ( nil )
-
+         ::set_lote_en_linea( "1234" )
+         
+         ::set_codigo_ubicacion_en_linea( "0" )
+         
+         view:getControl( IDOK ):Click()
+         
+         RETURN ( nil )
       > )
 
    ::assert:true( ::oController:Append(), "test creación de consolidación por cajas y con ubicacion" )

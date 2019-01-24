@@ -165,12 +165,12 @@ RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getCounterAndIncreme
 METHOD appendLine() CLASS MovimientoAlmacenController
 
    if empty( ::getModelBuffer( "almacen_origen_codigo" ) )
-      msgStop( "El código del almacén origen es un dato requerido" )
+      ::getDialogView():showMessage( "El código del almacén origen es un dato requerido" )   
       RETURN( nil )
    end if 
 
    if empty( ::getModelBuffer( "almacen_destino_codigo" ) )
-      msgStop( "El código del almacén destino es un dato requerido" )
+      ::getDialogView():showMessage( "El código del almacén destino es un dato requerido" )
       RETURN( nil )
    end if 
 
@@ -284,39 +284,52 @@ CLASS TestMovimientoAlmacenController FROM TestOperacionesController
 
    METHOD beforeClass()
 
-   METHOD click_nueva_linea( view )    INLINE ( view:getControl( 501, view:oFolder:aDialogs[1] ):Click(),;
-                                                apoloWaitSeconds( 1 ) )
+   METHOD click_nueva_linea( view )    INLINE   (  view:getControl( 501, view:oFolder:aDialogs[1] ):Click(),;
+                                                   apoloWaitSeconds( 1 ) )
 
-   METHOD set_codigo_almacen( cCodigoAlmacen, view ) ;
-                                       INLINE ( view:getControl( 130, view:oFolder:aDialogs[1] ):cText( cCodigoAlmacen ),;
-                                                apoloWaitSeconds( 1 ),;
-                                                view:getControl( 130, view:oFolder:aDialogs[1] ):lValid(),;
-                                                apoloWaitSeconds( 1 ) )
+   METHOD set_codigo_almacen_origen( cCodigoAlmacen, view ) ;
+                                       INLINE   (  view:getControl( 130, view:oFolder:aDialogs[1] ):cText( cCodigoAlmacen ),;
+                                                   apoloWaitSeconds( 1 ),;
+                                                   view:getControl( 130, view:oFolder:aDialogs[1] ):lValid(),;
+                                                   apoloWaitSeconds( 1 ) )
+
+   METHOD set_codigo_almacen_destino( cCodigoAlmacen, view ) ;
+                                       INLINE   (  view:getControl( 140, view:oFolder:aDialogs[1] ):cText( cCodigoAlmacen ),;
+                                                   apoloWaitSeconds( 1 ),;
+                                                   view:getControl( 140, view:oFolder:aDialogs[1] ):lValid(),;
+                                                   apoloWaitSeconds( 1 ) )
 
    METHOD set_codigo_articulo_en_linea( cCodigoArticulo ) ;
-                                       INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , cCodigoArticulo, 0 ),;
-                                                apoloWaitSeconds( 1 ),;
-                                                ::refresh_linea_browse_view() )
+                                       INLINE   (  eval( ::oController:getLinesController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , cCodigoArticulo, 0 ),;
+                                                   apoloWaitSeconds( 1 ),;
+                                                   ::refresh_linea_browse_view() )
 
-   METHOD set_codigo_ubicacion_en_linea( cCodigoUbicacion ) ;
-                                       INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoUbicacion:bOnPostEdit, , cCodigoUbicacion, 0 ),;
-                                                apoloWaitSeconds( 1 ),;
-                                                ::refresh_linea_browse_view() )
+   METHOD set_codigo_ubicacion_origen_en_linea( cCodigoUbicacion ) ;
+                                       INLINE   (  eval( ::oController:getLinesController():getBrowseView():oColumnCodigoUbicacionOrigen:bOnPostEdit, , cCodigoUbicacion, 0 ),;
+                                                   apoloWaitSeconds( 1 ),;
+                                                   ::refresh_linea_browse_view() )
+
+   METHOD set_codigo_ubicacion_destino_en_linea( cCodigoUbicacion ) ;
+                                       INLINE   (  eval( ::oController:getLinesController():getBrowseView():oColumnCodigoUbicacionDestino:bOnPostEdit, , cCodigoUbicacion, 0 ),;
+                                                   apoloWaitSeconds( 1 ),;
+                                                   ::refresh_linea_browse_view() )
 
    METHOD set_precio_en_linea( nPrecio ) ;
-                                       INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , nPrecio, 0 ),;
-                                                apoloWaitSeconds( 1 ),;
-                                                ::refresh_linea_browse_view() )
+                                       INLINE   (  eval( ::oController:getLinesController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , nPrecio, 0 ),;
+                                                   apoloWaitSeconds( 1 ),;
+                                                   ::refresh_linea_browse_view() )
 
-   METHOD refresh_linea_browse_view()  INLINE ( ::oController:getLinesController():getBrowseView():getRowSet():Refresh(),;
-                                                apoloWaitSeconds( 1 ) )
-   
+   METHOD refresh_linea_browse_view()  INLINE   (  ::oController:getLinesController():getBrowseView():getRowSet():Refresh(),;
+                                                   apoloWaitSeconds( 1 ) )
+/*   
    METHOD test_dialogo_sin_almacen()                
    
    METHOD test_dialogo_sin_lineas()   
 
    METHOD test_dialogo_sin_ubicacion()  
 
+   METHOD test_dialogo_sin_almacen_destino()
+*/
    METHOD test_dialogo_articulo_por_cajas_con_ubicacion()              
 
 END CLASS
@@ -332,22 +345,42 @@ METHOD beforeClass() CLASS TestMovimientoAlmacenController
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
+/*
 METHOD test_dialogo_sin_almacen() CLASS TestMovimientoAlmacenController
 
    ::oController:getDialogView():setEvent( 'painted',;
       <| view | 
+         view:getControl( IDOK ):Click()
+         
+         apoloWaitSeconds( 1 )
       
-      view:getControl( IDOK ):Click()
-      
-      apoloWaitSeconds( 1 )
-   
-      view:getControl( IDCANCEL ):Click()
+         view:getControl( IDCANCEL ):Click()
 
-      RETURN ( nil )
+         RETURN ( nil )
       > )
 
-   ::assert:false( ::oController:Append(), "test creación de consolidación sin código almacén" )
+   ::assert:false( ::oController:Append(), "test creación de movimiento de almacén sin código almacén" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_sin_almacen_destino() CLASS TestMovimientoAlmacenController
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      <| view | 
+         ::set_codigo_almacen_origen( "0", view )
+
+         view:getControl( IDOK ):Click()
+         
+         apoloWaitSeconds( 1 )
+      
+         view:getControl( IDCANCEL ):Click()
+
+         RETURN ( nil )
+      > )
+
+   ::assert:false( ::oController:Append(), "test creación de movimiento de almacén sin almacén destino" )
 
 RETURN ( nil )
 
@@ -357,19 +390,20 @@ METHOD test_dialogo_sin_lineas() CLASS TestMovimientoAlmacenController
 
    ::oController:getDialogView():setEvent( 'painted',;
       <| view | 
+         ::set_codigo_almacen_origen( "0", view )
 
-      ::set_codigo_almacen( "0", view )
+         ::set_codigo_almacen_destino( "1", view )
 
-      view:getControl( IDOK ):Click()
+         view:getControl( IDOK ):Click()
 
-      apoloWaitSeconds( 1 )
+         apoloWaitSeconds( 1 )
 
-      view:getControl( IDCANCEL ):Click()
+         view:getControl( IDCANCEL ):Click()
 
-      RETURN ( nil )
+         RETURN ( nil )
       > )
 
-   ::assert:false( ::oController:Append(), "test creación de consolidación sin lineas" )
+   ::assert:false( ::oController:Append(), "test creación movimiento de almacén sin lineas" )
 
 RETURN ( nil )
 
@@ -378,31 +412,54 @@ RETURN ( nil )
 METHOD test_dialogo_sin_ubicacion() CLASS TestMovimientoAlmacenController
 
    ::oController:getDialogView():setEvent( 'painted',;
-      {| view | ;
-         ::set_codigo_almacen( "0", view ),;
-         ::click_nueva_linea( view ),;
-         ::set_codigo_articulo_en_linea( "1" ),;
-         view:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
-         view:getControl( IDCANCEL ):Click() } )
+      <| view | 
+         ::set_codigo_almacen_origen( "0", view )
 
-   ::assert:false( ::oController:Append(), "test creación de consolidación sin ubicacion" )
+         ::set_codigo_almacen_destino( "1", view )
+
+         ::click_nueva_linea( view )
+
+         ::set_codigo_articulo_en_linea( "1" )
+
+         view:getControl( IDOK ):Click()
+
+         apoloWaitSeconds( 1 )
+
+         view:getControl( IDCANCEL ):Click() 
+         
+         RETURN ( nil )
+      > )
+
+   ::assert:false( ::oController:Append(), "test creación de movimiento sin ubicacion" )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
+*/
 METHOD test_dialogo_articulo_por_cajas_con_ubicacion() CLASS TestMovimientoAlmacenController
 
    ::oController:getDialogView():setEvent( 'painted',;
-      {| view | ;
-         ::set_codigo_almacen( "0", view ),;
-         ::click_nueva_linea( view ),;
-         ::set_codigo_articulo_en_linea( "0" ),;
-         ::set_codigo_ubicacion_en_linea( "0" ),;
-         view:getControl( IDOK ):Click() } )
+      <| view | 
+         ::set_codigo_almacen_origen( "0", view )
 
-   ::assert:true( ::oController:Append(), "test creación de consolidación por cajas y con ubicacion" )
+         ::set_codigo_almacen_destino( "1", view )
+         
+         ::click_nueva_linea( view )
+         
+         ::set_codigo_articulo_en_linea( "0" )
+         
+         ::set_codigo_ubicacion_origen_en_linea( "0" )
+         
+         view:getControl( IDOK ):Click()
+
+         apoloWaitSeconds( 1 )
+
+         view:getControl( IDCANCEL ):Click() 
+
+         RETURN ( nil )
+      > )
+
+   ::assert:false( ::oController:Append(), "test creación de movimiento por cajas y con solo una ubicacion" )
 
 RETURN ( nil )
 

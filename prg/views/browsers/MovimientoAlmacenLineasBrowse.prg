@@ -6,6 +6,10 @@
 
 CLASS MovimientoAlmacenLineasBrowseView FROM OperacionesLineasBrowseView
 
+   DATA oColumnCodigoUbicacionOrigen
+
+   DATA oColumnCodigoUbicacionDestino
+   
    METHOD addColumns()
 
    METHOD activateUbicacionesOrigenSelectorView() ;
@@ -194,7 +198,7 @@ METHOD addColumns() CLASS MovimientoAlmacenLineasBrowseView
 
    if Company():getDefaultUsarUbicaciones()
 
-   with object ( ::oColumnCodigoUbicacion := ::oBrowse:AddCol() )
+   with object ( ::oColumnCodigoUbicacionOrigen := ::oBrowse:AddCol() )
       :cSortOrder          := 'ubicacion_origen_codigo'
       :cHeader             := 'Ubicación origen'
       :nWidth              := 100
@@ -216,7 +220,7 @@ METHOD addColumns() CLASS MovimientoAlmacenLineasBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-   with object ( ::oColumnCodigoUbicacion := ::oBrowse:AddCol() )
+   with object ( ::oColumnCodigoUbicacionDestino := ::oBrowse:AddCol() )
       :cSortOrder          := 'ubicacion_destino_codigo'
       :cHeader             := 'Ubicación destino'
       :nWidth              := 100
