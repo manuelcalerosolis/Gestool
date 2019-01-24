@@ -227,8 +227,6 @@ RETURN ( oMenu )
 
 PROCEDURE loggedTest()
 
-   msgalert( StocksRepository():selectStockWhereCodigo( '2' ), "appTest" )
-
 RETURN 
 
 //----------------------------------------------------------------------------//

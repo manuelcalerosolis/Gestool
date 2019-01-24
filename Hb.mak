@@ -80,7 +80,7 @@ SQLFiltrosValidator.prg											\
 SQLFiltrosController.prg										\
 Rfile.prg               										\
 Animat.prg              										\
-TExplorerBar.prg 													\
+TApoloExplorerBar.prg 													\
 Label.prg               										\
 Litem.prg               										\
 Tloitem.prg             										\
@@ -509,7 +509,7 @@ SQLFiltrosController.obj													\
 Rfile.obj                                          				\
 Animat.obj                                         				\
 Printer.obj                                        				\
-TExplorerBar.obj 																\
+TApoloExplorerBar.obj 																\
 Tgfdpre.obj                                        				\
 Tgfdped.obj                                        				\
 Tgfdalb.obj                                        				\
@@ -959,7 +959,7 @@ $(OBJ)\Animat.obj                										+
 $(OBJ)\Printer.obj               										+
 $(OBJ)\Webbar.obj                										+
 $(OBJ)\Webmap.obj                										+
-$(OBJ)\TExplorerBar.obj           										+
+$(OBJ)\TApoloExplorerBar.obj           										+
 $(OBJ)\Timaglst.obj             											+
 $(OBJ)\Label.obj                											+
 $(OBJ)\Litem.obj                											+

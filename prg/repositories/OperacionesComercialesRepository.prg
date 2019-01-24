@@ -150,7 +150,7 @@ METHOD createFunctionRecargoEquivalenciaWhereUuid() CLASS OperacionesComerciales
 
    SELECT 
       operaciones_comerciales.recargo_equivalencia INTO RecargoEquivalencia
-      
+
    FROM %2$s AS operaciones_comerciales 
       WHERE operaciones_comerciales.uuid = uuid_operacion_comercial;
 
@@ -220,6 +220,7 @@ METHOD createFunctionDescuentoWhereUuid() CLASS OperacionesComercialesRepository
 
    SELECT 
       SUM( operaciones_comerciales_descuentos.descuento ) INTO Descuentos
+      
    FROM %2$s AS operaciones_comerciales_descuentos 
       WHERE operaciones_comerciales_descuentos.parent_uuid = uuid_operacion_comercial 
          AND operaciones_comerciales_descuentos.deleted_at = 0 ;

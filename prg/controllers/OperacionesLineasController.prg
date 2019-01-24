@@ -757,7 +757,7 @@ RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-METHOD loadInformation() CLASS OperacionesLineasController
+METHOD loadInformation() CLASS OperacionesLineasController 
 
    local nStockGlobal 
 
@@ -767,7 +767,7 @@ METHOD loadInformation() CLASS OperacionesLineasController
 
    nStockGlobal   := StocksRepository():selectStockWhereCodigo( ::getRowSet():fieldget( "articulo_codigo" ) )
 
-   ::oController:getDialogView():setTextLinkStockGlobal( alltrim( ::getRowSet():fieldget( "articulo_codigo" ) ) )
+   ::oController:getDialogView():setTextLinkStockGlobal( nStockGlobal )
 
 RETURN ( nil )
 

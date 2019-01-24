@@ -195,6 +195,6 @@ RETURN ( alltrim( cSql ) )
 
 METHOD selectStockWhereCodigo( cCodigoArticulo ) CLASS StocksRepository
 
-RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( "StockWhereCodigo" ) + "( " + quoted( cCodigoArticulo ) + " )" ) )
+RETURN ( getSQLDatabase():getValue( "SELECT " + Company():getTableName( "StockWhereCodigo" ) + "( " + quoted( cCodigoArticulo ) + " )", 0 ) )
 
 //---------------------------------------------------------------------------//

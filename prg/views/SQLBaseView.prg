@@ -237,7 +237,7 @@ METHOD redefineExplorerBar( idExplorerBar )
 
    DEFAULT idExplorerBar         := 100
 
-   ::oExplorerBar                := TExplorerBar():Redefine( idExplorerBar, ::oDialog )
+   ::oExplorerBar                := TApoloExplorerBar():Redefine( idExplorerBar, ::oDialog )
 
    ::oExplorerBar:nBottomColor   := rgb( 255, 255, 255 )
    ::oExplorerBar:nTopColor      := rgb( 255, 255, 255 )
