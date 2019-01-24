@@ -760,6 +760,7 @@ RETURN ( .t. )
 METHOD loadInformation() CLASS OperacionesLineasController 
 
    local nStockGlobal 
+   local nStockAlmacen
 
    if empty( ::oController:getDialogView() )
       RETURN ( nil )
@@ -768,6 +769,10 @@ METHOD loadInformation() CLASS OperacionesLineasController
    nStockGlobal   := StocksRepository():selectStockWhereCodigo( ::getRowSet():fieldget( "articulo_codigo" ) )
 
    ::oController:getDialogView():setTextLinkStockGlobal( nStockGlobal )
+
+   nStockAlmacen  := StocksRepository():selectStockWhereCodigoAlmacen( ::getRowSet():fieldget( "articulo_codigo" ), ::getRowSet():fieldget( "almacen_codigo" ) )
+
+   ::oController:getDialogView():setTextLinkStockAlmacen( nStockAlmacen )
 
 RETURN ( nil )
 

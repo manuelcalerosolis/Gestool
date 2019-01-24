@@ -179,14 +179,15 @@ METHOD createFunctionUpdatePrecioWhereIdPrecio() CLASS ArticulosPreciosRepositor
 
    TEXT INTO cSql
 
-   CREATE DEFINER=`root`@`localhost` PROCEDURE %1$s ( IN `id_articulo_precio` INT ) 
-      LANGUAGE SQL
-      NOT DETERMINISTIC
-      CONTAINS SQL
-      SQL SECURITY DEFINER
-      COMMENT ''
+   CREATE DEFINER=`root`@`localhost` 
+   PROCEDURE %1$s ( IN `id_articulo_precio` INT ) 
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
 
-      BEGIN
+   BEGIN
 
       DECLARE margen FLOAT;
       DECLARE margen_real FLOAT;
@@ -278,8 +279,8 @@ METHOD createFunctionUpdatePreciosWhereUuidArticulo() CLASS ArticulosPreciosRepo
 
    TEXT INTO cSql
 
-      CREATE DEFINER = `root`@`localhost` PROCEDURE %1$s ( IN `uuid_articulo_precio` CHAR(40) ) 
-      
+      CREATE DEFINER = `root`@`localhost` 
+      PROCEDURE %1$s ( IN `uuid_articulo_precio` CHAR(40) ) 
       LANGUAGE SQL
       NOT DETERMINISTIC
       CONTAINS SQL

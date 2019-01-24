@@ -443,6 +443,7 @@ OperacionesComercialesLineasBrowse.prg									\
 OperacionesComercialesBrowseView.prg 									\
 OperacionesComercialesLineasView.prg									\
 OperacionesComercialesView.prg 											\
+OperacionesView.prg 															\
 OperacionesComercialesRectificativasView.prg 						\
 ClientesTarifasController.prg 											\
 Server.prg 																		\
@@ -881,6 +882,7 @@ OperacionesComercialesLineasBrowse.obj 								\
 OperacionesComercialesBrowseView.obj 									\
 OperacionesComercialesLineasView.obj 									\
 OperacionesComercialesView.obj 											\
+OperacionesView.obj 															\
 OperacionesComercialesRectificativasView.obj 						\
 ClientesTarifasController.obj 											\
 Server.obj 																		\
@@ -1313,6 +1315,7 @@ $(OBJ)\OperacionesComercialesLineasBrowse.obj 						+
 $(OBJ)\OperacionesComercialesBrowseView.obj 							+
 $(OBJ)\OperacionesComercialesLineasView.obj 							+
 $(OBJ)\OperacionesComercialesView.obj 									+
+$(OBJ)\OperacionesView.obj 												+
 $(OBJ)\OperacionesComercialesRectificativasView.obj 				+
 $(OBJ)\ClientesTarifasController.obj 									+
 $(OBJ)\Server.obj 															+
