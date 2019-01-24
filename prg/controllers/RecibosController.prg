@@ -631,7 +631,7 @@ METHOD getInitialSelect() CLASS SQLRecibosModel
                            SQLTercerosModel():getTableName(),;
                            Company():getTableName( 'RecibosPagosTotalPaidWhereUuid' ),;
                            Company():getTableName( 'RecibosTerceroCodigoWhereUuid' ) )
-logwrite(cSql)
+
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//

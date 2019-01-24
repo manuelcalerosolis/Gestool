@@ -23,8 +23,6 @@ CLASS MovimientoAlmacenController FROM OperacionesController
 
    METHOD insertingBuffer()
 
-   METHOD updatedBuffer()
-
    METHOD appendLine()
 
    METHOD changedSerie()  
@@ -88,7 +86,6 @@ METHOD New( oController ) CLASS MovimientoAlmacenController
    ::getModel():setEvent( 'loadedBuffer',          {|| ::loadedBuffer() } )
    ::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )
    ::getModel():setEvent( 'loadedDuplicateBuffer', {|| ::loadedDuplicateBuffer() } )
-   ::getModel():setEvent( 'updatedBuffer',         {|| ::updatedBuffer() } )
    ::getModel():setEvent( 'insertingBuffer',       {|| ::insertingBuffer() } )
 
    ::getLinesController():setEvent( 'deletedSelection',   {|| ::calculateTotals() } ) 
@@ -162,12 +159,6 @@ RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::ge
 METHOD insertingBuffer() CLASS MovimientoAlmacenController 
 
 RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD updatedBuffer() CLASS MovimientoAlmacenController 
-
-RETURN ( ::getRecibosGeneratorController():update() )
 
 //---------------------------------------------------------------------------//
 

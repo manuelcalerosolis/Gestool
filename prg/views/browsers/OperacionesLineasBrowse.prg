@@ -34,6 +34,8 @@ CLASS OperacionesLineasBrowseView FROM SQLBrowseView
 
    METHOD setOnCancelEdit()
 
+   METHOD browseChange()
+
    METHOD keyChar( nKey )
 
    METHOD getEditButton()              INLINE ( if( ::getSuperController():isNotZoomMode(), EDIT_GET_BUTTON, 0 ) )
@@ -71,9 +73,9 @@ METHOD Create( oWindow ) CLASS OperacionesLineasBrowseView
 
    ::oBrowse:bKeyChar      := {| nKey | ::keyChar( nKey ) }
 
-   ::oBrowse:setChange( {|| ::getController():getHistoryManager():Set( ::getRowSet():getValuesAsHash() ) } )
+   ::oBrowse:setChange( {|| ::browseChange() } )
 
-   ::oBrowse:setGotFocus( {|| ::getController():getHistoryManager():Set( ::getRowSet():getValuesAsHash() ) } )
+   ::oBrowse:setGotFocus( {|| ::browseChange() } )
 
 RETURN ( ::oBrowse )
 
@@ -82,6 +84,16 @@ RETURN ( ::oBrowse )
 METHOD setOnCancelEdit() CLASS OperacionesLineasBrowseView
 
 RETURN ( ::getController():validLine() )   
+
+//---------------------------------------------------------------------------//
+
+METHOD browseChange() CLASS OperacionesLineasBrowseView
+
+   ::getController():getHistoryManager():Set( ::getRowSet():getValuesAsHash() ) 
+
+   ::getController():loadInformation()
+
+RETURN ( nil )   
 
 //---------------------------------------------------------------------------//
 

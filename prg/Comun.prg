@@ -226,14 +226,7 @@ RETURN ( oMenu )
 //---------------------------------------------------------------------------//
 
 PROCEDURE loggedTest()
-/*
-   getSQLDatabase():BeginTransaction()
 
-   SQLAgentesModel():insertBuffer(  {  'codigo' => '9',;
-                                       'nombre' => 'Test' } )
-
-   getSQLDatabase():RollBack()
-*/
 RETURN 
 
 //----------------------------------------------------------------------------//

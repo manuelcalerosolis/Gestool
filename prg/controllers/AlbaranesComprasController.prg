@@ -35,7 +35,6 @@ CLASS AlbaranesComprasController FROM OperacionesComercialesController
 
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := AlbaranesComprasRepository():New( self ), ), ::oRepository )
 
-
 END CLASS
 
 //---------------------------------------------------------------------------//

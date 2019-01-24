@@ -19,8 +19,6 @@ CLASS ConsolidacionAlmacenController FROM OperacionesController
 
    METHOD insertingBuffer()
 
-   METHOD updatedBuffer()
-
    METHOD appendLine()
 
    METHOD changedSerie()  
@@ -79,7 +77,6 @@ METHOD New( oController ) CLASS ConsolidacionAlmacenController
    ::getModel():setEvent( 'loadedBuffer',          {|| ::loadedBuffer() } )
    ::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )
    ::getModel():setEvent( 'loadedDuplicateBuffer', {|| ::loadedDuplicateBuffer() } )
-   ::getModel():setEvent( 'updatedBuffer',         {|| ::updatedBuffer() } )
    ::getModel():setEvent( 'insertingBuffer',       {|| ::insertingBuffer() } )
 
    ::getLinesController():setEvent( 'deletedSelection',   {|| ::calculateTotals() } ) 
@@ -145,12 +142,6 @@ RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::ge
 METHOD insertingBuffer() CLASS ConsolidacionAlmacenController 
 
 RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD updatedBuffer() CLASS ConsolidacionAlmacenController 
-
-RETURN ( ::getRecibosGeneratorController():update() )
 
 //---------------------------------------------------------------------------//
 

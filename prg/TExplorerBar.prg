@@ -362,6 +362,8 @@ CLASS TTaskPanel FROM TControl
 
    METHOD addLink( cPrompt, bAction, cBitmap )
 
+   METHOD addLinkAndData( cLink, cData, bAction, cBitmap )
+
    METHOD addGetSelector( cPrompt, cGet ) 
 
    METHOD addGetAction( cPrompt, cGet, bAction )
@@ -391,7 +393,6 @@ CLASS TTaskPanel FROM TControl
    METHOD MouseMove( nRow, nCol, nFlags )
    METHOD MouseLeave( nRow, nCol, nFlags )
    METHOD UpdateRegion()
-
 
    METHOD SetPanelBitmap( cnBmp )
    METHOD setHeight( nHeight )
@@ -470,23 +471,55 @@ RETURN Self
 
 METHOD AddLink( cPrompt, bAction, cBitmap ) CLASS TTaskPanel
 
-   local oUrlLink
+   local oLink
 
-   oUrlLink             := TUrlLink():New( ::getTopControl(), 33, Self, .t., .F., ::oFont, "", cPrompt )
+   oLink             := TUrlLink():New( ::getTopControl(), 33, Self, .t., .F., ::oFont, "", cPrompt )
 
-   oUrlLink:SetColor( ::nClrLink, ::nClrPane )
-   oUrlLink:nClrInit    := ::nClrLink
-   oUrlLink:nClrOver    := ::nClrLink
-   oUrlLink:nClrVisit   := ::nClrLink
-   oUrlLink:bAction     := bAction
+   oLink:SetColor( ::nClrLink, ::nClrPane )
+   oLink:nClrInit    := ::nClrLink
+   oLink:nClrOver    := ::nClrLink
+   oLink:nClrVisit   := ::nClrLink
+   oLink:bAction     := bAction
 
    if !empty( cBitmap )
-      oUrlLink:hBmp     := LoadBitmap( GetResources(), cBitmap )
+      oLink:hBmp     := LoadBitmap( GetResources(), cBitmap )
    endif
 
-   ::setHeight( oUrlLink:nTop, oUrlLink:nHeight )
+   ::setHeight( oLink:nTop, oLink:nHeight )
 
-RETURN nil
+RETURN ( oLink )
+
+//----------------------------------------------------------------------------//
+
+METHOD addLinkAndData( cLink, cPrompt, bAction, cBitmap ) CLASS TTaskPanel
+
+   local nTop        
+   local oLink
+
+   nTop                    := ::getTopControl()
+
+   oLink                   := TUrlLink():New( nTop, 33, Self, .t., .F., ::oFont, "", cLink )
+
+   oLink:SetColor( ::nClrLink, ::nClrPane )
+   oLink:nClrInit          := ::nClrLink
+   oLink:nClrOver          := ::nClrLink
+   oLink:nClrVisit         := ::nClrLink
+   oLink:bAction           := bAction
+
+   if !empty( cBitmap )
+      oLink:hBmp           := loadBitmap( GetResources(), cBitmap )
+   endif
+
+   @ nTop, 100 SAY oLink:Cargo PROMPT cPrompt OF Self RIGHT PIXEL COLOR Rgb( 10, 152, 234 ), Rgb( 255, 255, 255 ) SIZE ( Self:nWidth - 100 ), 12
+
+   oLink:Cargo:lWantClick  := .t.
+   oLink:Cargo:OnClick     := bAction
+
+   ::setHeight( oLink:nTop, oLink:nHeight )
+
+   msgalert( oLink:nRight - oLink:nLeft, "nRight - nLeft" )
+
+RETURN ( oLink )
 
 //----------------------------------------------------------------------------//
 
@@ -661,35 +694,37 @@ RETURN nil
 
 METHOD LoadBitmaps( nType, cnBitmap ) CLASS TTaskPanel
 
-   local nWidth, nHeight, lHasAlpha
+   local nWidth
+   local nHeight
    local hBitmap
+   local lHasAlpha
 
-   DEFAULT nType := BMPDEFAULT
+   DEFAULT nType  := BMPDEFAULT
 
    if nType > BMPCOLLAP .OR. nType < BMPDEFAULT
       RETURN nil
    endif
 
    if nType == BMPDEFAULT
-      ::aBitmaps = {}
-      hBitmap = fwBmpDes()
-      AAdd( ::aBitmaps, { hBitmap, 0, HasAlpha( hBitmap ), nBmpWidth( hBitmap ), nBmpHeight( hBitmap ) } )
+      ::aBitmaps  := {}
+      hBitmap     := fwBmpDes()
+      aadd( ::aBitmaps, { hBitmap, 0, HasAlpha( hBitmap ), nBmpWidth( hBitmap ), nBmpHeight( hBitmap ) } )
       ::aBitmaps[ BMPEXPAND ][ BMP_BRIGHT ] = BrightImg( ::hDC, hBitmap, 90 )
-      hBitmap = fwBmpAsc()
-      AAdd( ::aBitmaps, { hBitmap, 0, HasAlpha( hBitmap ), nBmpWidth( hBitmap ), nBmpHeight( hBitmap ) } )
+      hBitmap     := fwBmpAsc()
+      aadd( ::aBitmaps, { hBitmap, 0, HasAlpha( hBitmap ), nBmpWidth( hBitmap ), nBmpHeight( hBitmap ) } )
       ::aBitmaps[ BMPCOLLAP ][ BMP_BRIGHT ] = BrightImg( ::hDC, hBitmap, 90 )
    else
       if File( cnBitmap )
-         hBitmap = ReadBitmap( 0, cnBitmap )
+         hBitmap  := ReadBitmap( 0, cnBitmap )
       else
-         hBitmap = LoadBitmap( GetResources(), cnBitmap )
+         hBitmap  := LoadBitmap( GetResources(), cnBitmap )
       endif
-      nWidth  = nBmpWidth( hBitmap )
-      nHeight = nBmpHeight( hBitmap )
-      lHasAlpha = HasAlpha( hBitmap )
+      nWidth      := nBmpWidth( hBitmap )
+      nHeight     := nBmpHeight( hBitmap )
+      lHasAlpha   := HasAlpha( hBitmap )
       DeleteObject( ::aBitmaps[ nType ][ BMP_HANDLE ] )
       DeleteObject( ::aBitmaps[ nType ][ BMP_BRIGHT ] )
-      ::aBitmaps[ nType ] = { hBitmap, , lHasAlpha, nWidth, nHeight }
+      ::aBitmaps[ nType ] := { hBitmap, , lHasAlpha, nWidth, nHeight }
       ::aBitmaps[ nType ][ BMP_BRIGHT ] = BrightImg( ::hDC, hBitmap, 2 )
    endif
 

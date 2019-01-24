@@ -49,42 +49,48 @@ CLASS SQLBrowseController FROM SQLApplicationController
 
    METHOD saveState()
 
-   METHOD getBrowseView()                             INLINE ( ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( ::oBrowseView )
+
+   METHOD setBrowseChange( bChange )   INLINE ( ::oBrowseView:setBrowseChange( bChange ) )
    
-   METHOD getBrowseViewType()                         INLINE ( ::getBrowseView():getViewType() )
+   METHOD getBrowseViewType()          INLINE ( ::getBrowseView():getViewType() )
 
-   METHOD getBrowseViewName()                         INLINE ( ::getBrowseView():getName() )
+   METHOD getBrowseViewName()          INLINE ( ::getBrowseView():getName() )
 
-   METHOD getBrowseViewState()                        INLINE ( ::getBrowseView():getState() )
+   METHOD getBrowseViewState()         INLINE ( ::getBrowseView():getState() )
    
-   METHOD refreshBrowseView()                         INLINE ( ::getBrowseView():selectCurrent(), ::getBrowseView():Refresh() )
+   METHOD refreshBrowseView()          INLINE ( ::getBrowseView():selectCurrent(), ::getBrowseView():Refresh() )
 
-   METHOD setFocusBrowseView()                        INLINE ( ::getBrowseView():setFocus() )
+   METHOD setFocusBrowseView()         INLINE ( ::getBrowseView():setFocus() )
 
-   METHOD setIdView( cType, cName, nId )              INLINE ( ::getConfiguracionVistasController():setId( cType, cName, nId ) )
+   METHOD setIdView( cType, cName, nId ) ;
+                                       INLINE ( ::getConfiguracionVistasController():setId( cType, cName, nId ) )
    
-   METHOD getIdView( cType, cName )                   INLINE ( ::getConfiguracionVistasController():getId( cType, cName ) )
+   METHOD getIdView( cType, cName )    INLINE ( ::getConfiguracionVistasController():getId( cType, cName ) )
 
    METHOD setColumnOrder( cType, cName, cColumnOrder ) ;
-                                                      INLINE ( ::getConfiguracionVistasController():setColumnOrder( cType, cName, cColumnOrder ) )
+                                       INLINE ( ::getConfiguracionVistasController():setColumnOrder( cType, cName, cColumnOrder ) )
    
-   METHOD getColumnOrder( cType, cName )              INLINE ( ::getConfiguracionVistasController():getColumnOrder( cType, cName ) )
+   METHOD getColumnOrder( cType, cName ) ;
+                                       INLINE ( ::getConfiguracionVistasController():getColumnOrder( cType, cName ) )
 
    METHOD setColumnOrientation( cType, cName, cColumnOrientation ) ;
-                                                      INLINE ( ::getConfiguracionVistasController():setColumnOrientation( cType, cName, cColumnOrientation ) )
+                                       INLINE ( ::getConfiguracionVistasController():setColumnOrientation( cType, cName, cColumnOrientation ) )
    
-   METHOD getColumnOrientation( cType, cName )        INLINE ( ::getConfiguracionVistasController():getColumnOrientation( cType, cName ) ) 
+   METHOD getColumnOrientation( cType, cName ) ;
+                                       INLINE ( ::getConfiguracionVistasController():getColumnOrientation( cType, cName ) ) 
 
-   METHOD setState( cType, cName, cState )            INLINE ( ::getConfiguracionVistasController():setState( cType, cName, cState ) )
+   METHOD setState( cType, cName, cState ) ;
+                                       INLINE ( ::getConfiguracionVistasController():setState( cType, cName, cState ) )
    
-   METHOD getState( cType, cName )                    INLINE ( ::getConfiguracionVistasController():getState( cType, cName ) )
+   METHOD getState( cType, cName )     INLINE ( ::getConfiguracionVistasController():getState( cType, cName ) )
 
    METHOD buildRowSetSentence() 
 
    METHOD appendLineal() 
 
-   METHOD setView( oView )                            INLINE ( ::oView := oView )
-   METHOD getView()                                   INLINE ( if( empty( ::oView ), ::oDialogView, ::oView ) )
+   METHOD setView( oView )             INLINE ( ::oView := oView )
+   METHOD getView()                    INLINE ( if( empty( ::oView ), ::oDialogView, ::oView ) )
 
    METHOD setShowDeleted()
 

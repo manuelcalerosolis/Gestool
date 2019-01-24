@@ -42,6 +42,8 @@ CLASS OperacionesComercialesLineasController FROM OperacionesLineasController
 
    METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesLineasView():New( self ), ), ::oDialogView )
 
+   METHOD setBrowseChange( bChange )   INLINE ( ::getBrowseView:setChange( bChange ) )
+
 END CLASS
 
 //----------------------------------------------------------------------------//

@@ -169,16 +169,17 @@ RETURN ( ::oGet )
 
 METHOD addGetSelector( cLink, oTaskPanel ) CLASS GetSelector
 
-   local nTop           := oTaskPanel:getTopControl()
+   local nTop
 
    if isFalse( ::fireEvent( 'activating' ) )
       RETURN ( nil )
    end if
 
+   nTop                 := oTaskPanel:getTopControl()
+
    ::setOriginal( eval( ::bValue ) )
 
    ::oLink              := TSay():New( nTop + 3, 10, {|| cLink }, oTaskPanel, , , .f., .f., .f., .t., Rgb( 10, 152, 234 ), Rgb( 255, 255, 255 ), , , .f., .f., .f., .f., .f., .f., .f., "oLink", , .f. )
-
    ::oLink:lWantClick   := .t.
    ::oLink:OnClick      := {|| ::oController:Edit( ::oController:getModel():getIdWhereCodigo( ::cGet ) ) }
 
@@ -189,6 +190,8 @@ METHOD addGetSelector( cLink, oTaskPanel ) CLASS GetSelector
    ::loadHelpText( .t. )
 
    oTaskPanel:setHeight( ::oGet:nTop, ::oGet:nHeight )
+
+   oTaskPanel:updateRegion()
 
    ::fireEvent( 'activated' ) 
 
