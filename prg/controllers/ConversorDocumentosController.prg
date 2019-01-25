@@ -19,6 +19,9 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    DATA idDocumentoDestino
 
+   DATA aDescuentos                    INIT {}
+   DATA aDescuentosActuales            INIT {}
+
    DATA oResumenView
 
    DATA cRuta                          INIT nil
@@ -78,7 +81,7 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    METHOD getResumenView()             INLINE ( if( empty( ::oResumenView ), ::oResumenView := ConversorResumenView():New( self ), ), ::oResumenView )
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := ConversorDocumentosBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesBrowseView():New( self ), ), ::oBrowseView )
 
 END CLASS
 
@@ -254,7 +257,7 @@ METHOD convertAlbaranCompras( aSelecteds ) CLASS ConversorDocumentosController
    local aSelected
    local hAlbaranes := {}
    Local hAlbaran
-   local i := 0
+   local aDescuentosActuales
 
    if empty( ::getController() )
       RETURN ( nil )
@@ -265,17 +268,12 @@ METHOD convertAlbaranCompras( aSelecteds ) CLASS ConversorDocumentosController
    hAlbaranes:= SQLAlbaranesComprasModel():getHashWhereUuid( ::setWhereArray( aSelecteds ) )
 
    for each hAlbaran in hAlbaranes
-      i++
+
       if (::getModel():countDocumentoWhereUuidOigen( hget( hAlbaran, "uuid") ) == 0 )
 
-      msgalert( i, "vuelta")
-      msgalert( hb_valtoexp( hAlbaran ), "datos" )
-      msgalert( ::cRuta, "cRuta")
-      msgalert( ::cMetodoPago, "cMetodoPago")
-      msgalert( ::cTarifa, "cTarifa" )
-      msgalert( ::cRecargoEquivalencia, "cRecargoEquivalencia")
-
-         if( ::cTerceroCodigo != hget(hAlbaran, "tercero_codigo") .OR. ::cRuta != hget( hAlbaran, "ruta_codigo" ) .OR. ::cMetodoPago !=hget( hAlbaran ,"metodo_pago_codigo" ) .OR. ::cTarifa != hget( hAlbaran, "tarifa_codigo") .OR. ::cRecargoEquivalencia != hget( hAlbaran, "recargo_equivalencia" ) )
+          ::aDescuentosActuales := ::getController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen ) 
+      
+         if( ::cTerceroCodigo != hget(hAlbaran, "tercero_codigo") .OR. ::cRuta != hget( hAlbaran, "ruta_codigo" ) .OR. ::cMetodoPago !=hget( hAlbaran ,"metodo_pago_codigo" ) .OR. ::cTarifa != hget( hAlbaran, "tarifa_codigo") .OR. ::cRecargoEquivalencia != hget( hAlbaran, "recargo_equivalencia" ) .OR. hb_valtoexp(::aDescuentos) != hb_valtoexp(::aDescuentosActuales ) )
 
             ::uuidDocumentoOrigen   := hget( hAlbaran, "uuid")
 
@@ -286,19 +284,25 @@ METHOD convertAlbaranCompras( aSelecteds ) CLASS ConversorDocumentosController
             ::cTarifa               := hget( hAlbaran, "tarifa_codigo")
 
             ::cRecargoEquivalencia  := hget( hAlbaran, "recargo_equivalencia" )
+
+            ::aDescuentos           := ::getController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
             
             ::convertHeader()
+
+            ::convertDiscounts()
 
          else
 
          ::uuidDocumentoOrigen   := hget(hAlbaran, "uuid")
 
          ::getModel():insertRelationDocument( ::uuidDocumentoOrigen, ::getController():getModel():cTableName, ::uuidDocumentoDestino ,::oDestinoController:getModel():cTableName )
+
+         ::aDescuentos           := ::getController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
          
          end if
 
          ::cTerceroCodigo  :=  hget(hAlbaran, "tercero_codigo")
-         
+
          ::convertLines()
 
          end if
@@ -339,25 +343,6 @@ RETURN ( cWhere )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ConversorDocumentosBrowseView FROM OperacionesComercialesBrowseView
-
-   METHOD addColumns() 
-
-END class
-
-//---------------------------------------------------------------------------//
-
-METHOD addColumns() CLASS ConversorDocumentosBrowseView
-
-   ::Super:addColumns()
-
-   RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 CLASS ConversorDocumentoView FROM SQLBaseView
 
    DATA cDocumentoDestino
