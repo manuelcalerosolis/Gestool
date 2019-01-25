@@ -254,6 +254,8 @@ METHOD startActivate() CLASS ConsolidacionAlmacenView
 
    ::getController():calculateTotals()
 
+   ::getController():getLinesController():getBrowseView():Refresh()
+
    ::getController():getAlmacenesController():getSelector():setFocus()
 
 RETURN ( nil )
@@ -304,12 +306,12 @@ METHOD startActivate() CLASS MovimientoAlmacenView
    ::getController():getAlmacenDestinoController():getSelector():Show()
    ::getController():getAlmacenDestinoController():getSelector():Start()
 
-   ::getController():getAlmacenOrigenController():getSelector():setFocus()
+   ::getController():calculateTotals()
 
    ::getController():getLinesController():getBrowseView():Refresh()
 
-   ::getController():calculateTotals()
-   
+   ::getController():getAlmacenOrigenController():getSelector():setFocus()
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
