@@ -34,7 +34,7 @@ METHOD getHashWhereUuid( cWhere ) CLASS SQLAlbaranesComprasModel
    ENDTEXT
 
    cSql  := hb_strformat(  cSql, ::getTableName(), cWhere )
-
+logwrite( cSql )
 RETURN ( ::getDatabase():selectFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//

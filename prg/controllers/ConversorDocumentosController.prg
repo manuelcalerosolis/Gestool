@@ -24,6 +24,8 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    DATA oResumenView
 
+   DATA oConvertirView
+
    DATA cRuta                          INIT nil
    DATA cTarifa                        INIT nil
    DATA cMetodoPago                    INIT nil
@@ -77,17 +79,19 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLConversorDocumentosModel():New( self ), ), ::oModel ) 
 
-   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ConversorDocumentoView():New( self ), ), ::oDialogView )
+   METHOD getConvertirView()           INLINE ( if( empty( ::oConvertirView ), ::oConvertirView := ConversorDocumentoView():New( self ), ), ::oConvertirView )
 
    METHOD getResumenView()             INLINE ( if( empty( ::oResumenView ), ::oResumenView := ConversorResumenView():New( self ), ), ::oResumenView )
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesBrowseView():New( self ), ), ::oBrowseView )
 
+   METHOD getDialogView()              INLINE ( ::oDialogView := ::oController:getFacturasComprasController():getDialogView() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS ConversorDocumentosController
+METHOD New( oController ) CLASS ConversorDocumentosController 
 
    ::aDocumentosDestino := {  "Albarán de compras"             => {|| ::getAlbaranesComprasController() },;
                               "Albarán de ventas"              => {|| ::getAlbaranesVentasController() },;
@@ -120,12 +124,12 @@ RETURN ( nil )
 
 METHOD Run() CLASS ConversorDocumentosController
 
-   if ::getDialogView():Activate() != IDOK
+   if ::getConvertirView():Activate() != IDOK
       RETURN ( nil )
    end if 
 
-   if hhaskey( ::aDocumentosDestino, ::getDialogView():getDocumentoDestino() )
-      ::oDestinoController    := eval( hget( ::aDocumentosDestino, ::getDialogView():getDocumentoDestino() ) )
+   if hhaskey( ::aDocumentosDestino, ::getConvertirView():getDocumentoDestino() )
+      ::oDestinoController    := eval( hget( ::aDocumentosDestino, ::getConvertirView():getDocumentoDestino() ) )
    end if 
 
    if !empty( ::oDestinoController )
@@ -254,7 +258,6 @@ RETURN ( nil )
 
 METHOD convertAlbaranCompras( aSelecteds ) CLASS ConversorDocumentosController
 
-   local aSelected
    local hAlbaranes := {}
    Local hAlbaran
    local aDescuentosActuales
@@ -292,7 +295,7 @@ METHOD convertAlbaranCompras( aSelecteds ) CLASS ConversorDocumentosController
             ::convertDiscounts()
 
          else
-
+         
          ::uuidDocumentoOrigen   := hget(hAlbaran, "uuid")
 
          ::getModel():insertRelationDocument( ::uuidDocumentoOrigen, ::getController():getModel():cTableName, ::uuidDocumentoDestino ,::oDestinoController:getModel():cTableName )
@@ -343,6 +346,25 @@ RETURN ( cWhere )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
+/*CLASS ConversorDocumentosBrowseView FROM OperacionesComercialesBrowseView
+
+   METHOD addColumns() 
+
+END class
+
+//---------------------------------------------------------------------------//
+
+METHOD addColumns() CLASS ConversorDocumentosBrowseView
+
+   ::Super:addColumns()
+
+   RETURN ( nil )*/
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 CLASS ConversorDocumentoView FROM SQLBaseView
 
    DATA cDocumentoDestino
