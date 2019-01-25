@@ -3,15 +3,13 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS OperacionAlmacenView FROM SQLBaseView
+CLASS OperacionAlmacenView FROM OperacionesView
   
-   DATA oExplorerBar
-
    DATA oBtnLineasDeleted
 
    DATA oTotalImporte
    DATA nTotalImporte                  INIT 0
-   
+
    METHOD Activate()
       METHOD startActivate()           VIRTUAL
       METHOD validActivate()
@@ -170,17 +168,14 @@ METHOD addLinksToExplorerBar() CLASS OperacionAlmacenView
    oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
    oPanel:AddLink(   "Incidencias...",;
-                     {|| ::getController():getIncidenciasController():activateDialogView() },;
-                         ::getController():getIncidenciasController():getImage( "16" ) )
+                     {||   ::getController():getIncidenciasController():activateDialogView() },;
+                           ::getController():getIncidenciasController():getImage( "16" ) )
 
-   oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
+   oPanel:AddLink(   "Campos extra...",;
+                     {||   ::getController():getCamposExtraValoresController():Edit( ::getController():getUuid() ) },;
+                           ::getController():getCamposExtraValoresController():getImage( "16" ) )
 
-   if ::getController():isNotZoomMode()
-
-      oPanel:AddLink(   "Campos extra...",;
-                        {||   ::getController():getCamposExtraValoresController():Edit( ::getController():getUuid() ) },;
-                              ::getController():getCamposExtraValoresController():getImage( "16" ) )
-   end if
+   ::addLinksElementToExplorerBar() 
 
 RETURN ( nil )
 

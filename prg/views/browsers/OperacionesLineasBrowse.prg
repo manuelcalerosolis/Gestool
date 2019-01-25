@@ -53,6 +53,12 @@ CLASS OperacionesLineasBrowseView FROM SQLBrowseView
    METHOD setFocusColumnCodigoUbicacion() ;
                                        INLINE ( ::setFocusInColumn( ::oColumnCodigoUbicacion ) )
 
+   METHOD setFocusColumnCodigoUbicacionOrigen() ;
+                                       INLINE ( ::setFocusInColumn( ::oColumnCodigoUbicacionOrigen ) )
+
+   METHOD setFocusColumnCodigoUbicacionDestino() ;
+                                       INLINE ( ::setFocusInColumn( ::oColumnCodigoUbicacionDestino ) )
+
    METHOD setFocusColumnPropiedades()  INLINE ( ::setFocusInColumn( ::oColumnPropiedades ) )
 
    METHOD setFocusColumnLote()         INLINE ( ::setFocusInColumn( ::oColumnLote ) )

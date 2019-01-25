@@ -3,10 +3,8 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS OperacionesComercialesView FROM SQLBaseView
+CLASS OperacionesComercialesView FROM OperacionesView
   
-   DATA oExplorerBar
-
    DATA oGetNumero
 
    DATA oBtnDescuentosDeleted
@@ -27,8 +25,6 @@ CLASS OperacionesComercialesView FROM SQLBaseView
    DATA nTotalImporte                  INIT 0
    DATA oRecargoEquivalencia
 
-   DATA oLinkStockGlobal
-   
    METHOD Activate()
       METHOD startActivate()
       METHOD validActivate()
@@ -46,9 +42,6 @@ CLASS OperacionesComercialesView FROM SQLBaseView
                                                 ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
    METHOD defaultTitle()
-
-   METHOD setTextLinkStockGlobal( nStock ) ;
-                                       INLINE ( ::oLinkStockGlobal:Cargo:setText( nStock ) )
 
 END CLASS
 
@@ -323,9 +316,7 @@ METHOD addLinksToExplorerBar() CLASS OperacionesComercialesView
                      {||   ::getController():getRecibosController():activateDialogView() },;
                            ::getController():getRecibosController():getImage( "16" ) )
 
-   oPanel               := ::oExplorerBar:AddPanel( "Datos del elemento", nil, 1 ) 
-
-   ::oLinkStockGlobal   := oPanel:AddLinkAndData( "Stock global :", "", {|| nil }, ::getController():getRecibosController():getImage( "16" ) )
+   ::addLinksElementToExplorerBar() 
 
 RETURN ( nil )
 
