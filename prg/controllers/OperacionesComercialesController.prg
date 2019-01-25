@@ -584,7 +584,7 @@ CLASS TestOperacionesComercialesController FROM TestOperacionesController
 
    METHOD refresh_linea_browse_view()  INLINE ( ::oController:getLinesController():getBrowseView():getRowSet():Refresh(),;
                                                 apoloWaitSeconds( 1 ) )
-
+/*
    METHOD test_calculo_con_descuento()
 
    METHOD test_calculo_con_incremento()
@@ -606,11 +606,11 @@ CLASS TestOperacionesComercialesController FROM TestOperacionesController
    METHOD test_dialogo_con_recargo_en_documento()
 
    METHOD test_dialogo_con_descuento_en_documento()
-
+*/
 END CLASS
 
 //---------------------------------------------------------------------------//
-
+/*
 METHOD test_calculo_con_descuento() CLASS TestOperacionesComercialesController
 
    local uuid
@@ -852,7 +852,7 @@ METHOD test_dialogo_con_descuento_en_documento() CLASS TestOperacionesComerciale
    ::assert:equals( "1", alltrim( cCodigo ), "test comprobacion cambio agente" )
 
 RETURN ( nil )
-
+*/
 //---------------------------------------------------------------------------//
 
 #endif

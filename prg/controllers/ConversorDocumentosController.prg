@@ -19,13 +19,14 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    DATA idDocumentoDestino
 
+   DATA aDescuentos                    INIT {}
+   DATA aDescuentosActuales            INIT {}
+
    DATA oResumenView
 
-   DATA cRuta                          INIT nil
-   DATA cTarifa                        INIT nil
-   DATA cMetodoPago                    INIT nil
-   DATA cTerceroCodigo                 INIT nil
-   DATA cRecargoEquivalencia           INIT nil
+   DATA oConvertirView
+
+   DATA hProcesedAlbaran               INIT{}
 
    METHOD New() CONSTRUCTOR
 
@@ -40,60 +41,70 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
       METHOD convertLines()
       METHOD convertDiscounts()
 
-   METHOD convertAlbaranCompras()
+   METHOD runConvertAlbaranCompras( aSelected ) 
+      METHOD convertAlbaranCompras( aSelected )
 
-   METHOD setWhereArray( aSelecteds )
+   Method isAlbaranEquals( hAlbaran )
+
+   METHOD setWhereArray( aSelected )
+
+   METHOD isAlbaranNotConverted( hAlbaran ) ;
+                                       INLINE ( ::getModel():countDocumentoWhereUuidOigen( hget( hAlbaran, "uuid" ) ) == 0 )
+
+   METHOD insertRelationDocument()     INLINE ( ::getModel():insertRelationDocument( ::uuidDocumentoOrigen, ::getController():getModel():cTableName, ::uuidDocumentoDestino, ::oDestinoController:getModel():cTableName ) )
+
+   METHOD Edit( nId )
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getAlbaranesComprasController() ;
+   METHOD setAlbaranesComprasController() ;
                                        INLINE ( ::oDestinoController := AlbaranesComprasController():New( self ), ::oDestinoController ) 
 
-   METHOD getAlbaranesVentasController() ;
+   METHOD setAlbaranesVentasController() ;
                                        INLINE ( ::oDestinoController := AlbaranesVentasController():New( self ), ::oDestinoController ) 
 
-   METHOD getFacturasComprasController() ;
+   METHOD setFacturasComprasController() ;
                                        INLINE ( ::oDestinoController := FacturasComprasController():New( self ), ::oDestinoController ) 
 
-   METHOD getFacturasVentasController() ;
+   METHOD setFacturasVentasController() ;
                                        INLINE ( ::oDestinoController := FacturasVentasController():New( self ), ::oDestinoController ) 
 
-   METHOD getFacturasVentasSimplificadasController() ;
+   METHOD setFacturasVentasSimplificadasController() ;
                                        INLINE ( ::oDestinoController := FacturasVentasSimplificadasController():New( self ), ::oDestinoController ) 
 
-   METHOD getPedidosComprasController() ;
+   METHOD setPedidosComprasController() ;
                                        INLINE ( ::oDestinoController := PedidosComprasController():New( self ), ::oDestinoController ) 
 
-   METHOD getPedidosVentasController() ;
+   METHOD setPedidosVentasController() ;
                                        INLINE ( ::oDestinoController := PedidosVentasController():New( self ), ::oDestinoController ) 
 
-   METHOD getPresupuestosVentasController() ;
+   METHOD setPresupuestosVentasController() ;
                                        INLINE ( ::oDestinoController := PresupuestosVentasController():New( self ), ::oDestinoController ) 
    
-
-
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLConversorDocumentosModel():New( self ), ), ::oModel ) 
 
-   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ConversorDocumentoView():New( self ), ), ::oDialogView )
+   METHOD getConvertirView()           INLINE ( if( empty( ::oConvertirView ), ::oConvertirView := ConversorDocumentoView():New( self ), ), ::oConvertirView )
 
    METHOD getResumenView()             INLINE ( if( empty( ::oResumenView ), ::oResumenView := ConversorResumenView():New( self ), ), ::oResumenView )
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := ConversorDocumentosBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ::oController:getFacturasComprasController():getDialogView(), ::oDialogView ) )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS ConversorDocumentosController
+METHOD New( oController ) CLASS ConversorDocumentosController 
 
-   ::aDocumentosDestino := {  "Albarán de compras"             => {|| ::getAlbaranesComprasController() },;
-                              "Albarán de ventas"              => {|| ::getAlbaranesVentasController() },;
-                              "Factura de compras"             => {|| ::getFacturasComprasController() },;
-                              "Factura de ventas"              => {|| ::getFacturasventasController() },;
-                              "Factura de ventas simplificada" => {|| ::getFacturasVentasSimplificadasController() },;
-                              "Pedido de compras"              => {|| ::getPedidosComprasController() },;
-                              "Pedido de ventas"               => {|| ::getPedidosVentasController() },;
-                              "Presupuesto de ventas"          => {|| ::getPresupuestosVentasController() } }
+   ::aDocumentosDestino := {  "Albarán de compras"             => {|| ::setAlbaranesComprasController() },;
+                              "Albarán de ventas"              => {|| ::setAlbaranesVentasController() },;
+                              "Factura de compras"             => {|| ::setFacturasComprasController() },;
+                              "Factura de ventas"              => {|| ::setFacturasventasController() },;
+                              "Factura de ventas simplificada" => {|| ::setFacturasVentasSimplificadasController() },;
+                              "Pedido de compras"              => {|| ::setPedidosComprasController() },;
+                              "Pedido de ventas"               => {|| ::setPedidosVentasController() },;
+                              "Presupuesto de ventas"          => {|| ::setPresupuestosVentasController() } }
 
    ::Super:New( oController )
 
@@ -111,18 +122,34 @@ METHOD End() CLASS ConversorDocumentosController
       ::oDestinoController:End()
    end if 
 
+   if !empty( ::oConvertirView )
+      ::oConvertirView:End() 
+   end if 
+
+   if !empty( ::oResumenView )
+      ::oResumenView:End()
+   end if 
+   
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
+
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD Run() CLASS ConversorDocumentosController
 
-   if ::getDialogView():Activate() != IDOK
+   if ::getConvertirView():Activate() != IDOK
       RETURN ( nil )
    end if 
 
-   if hhaskey( ::aDocumentosDestino, ::getDialogView():getDocumentoDestino() )
-      ::oDestinoController    := eval( hget( ::aDocumentosDestino, ::getDialogView():getDocumentoDestino() ) )
+   if hhaskey( ::aDocumentosDestino, ::getConvertirView():getDocumentoDestino() )
+      ::oDestinoController    := eval( hget( ::aDocumentosDestino, ::getConvertirView():getDocumentoDestino() ) )
    end if 
 
    if !empty( ::oDestinoController )
@@ -140,7 +167,7 @@ METHOD Convert() CLASS ConversorDocumentosController
    end if
 
    if ::getController:className() == ::oDestinoController:className()
-      msgstop("No puede seleccionar el mismo tipo de documento")
+      msgstop( "No puede seleccionar el mismo tipo de documento" )
       RETURN ( nil )
    end if
 
@@ -166,7 +193,7 @@ METHOD convertHeader() CLASS ConversorDocumentosController
 
    local hBufferDocumentoOrigen
 
-   hBufferDocumentoOrigen  := ::getController():getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
+   hBufferDocumentoOrigen     := ::getController():getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
 
    hdel( hBufferDocumentoOrigen, 'id' )
    hdel( hBufferDocumentoOrigen, 'uuid' )
@@ -178,7 +205,7 @@ METHOD convertHeader() CLASS ConversorDocumentosController
 
    ::idDocumentoDestino      := ::oDestinoController:getModelBuffer( "id" )
 
-   ::getModel():insertRelationDocument( ::uuidDocumentoOrigen, ::getController():getModel():cTableName, ::uuidDocumentoDestino ,::oDestinoController:getModel():cTableName )
+   ::insertRelationDocument()
 
    ::aCreatedDocument:add( ::uuidDocumentoDestino )
 
@@ -190,28 +217,29 @@ METHOD convertLines() CLASS ConversorDocumentosController
 
    local hLine
    local uuidOriginLine
-   local uuidDestinyLine
+   local uuidDestinationLine
    local aLinesDocumentoOrigen
 
    aLinesDocumentoOrigen   := ::getController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
 
-   if aLinesDocumentoOrigen == nil
+   if empty( aLinesDocumentoOrigen )
       RETURN ( nil )
    end if
 
    for each hLine in aLinesDocumentoOrigen
 
-         uuidOriginLine := hget( hLine, "uuid" )
+      uuidOriginLine       := hget( hLine, "uuid" )
 
-         hdel( hLine, 'id' )
-         hdel( hLine, 'uuid' )
-         hset( hLine, 'parent_uuid', ::uuidDocumentoDestino )
+      hdel( hLine, 'id' )
+      hdel( hLine, 'uuid' )
+      hset( hLine, 'parent_uuid', ::uuidDocumentoDestino )
 
-         ::oDestinoController:getLinesController():getModel():insertBlankBuffer( hLine )
+      ::oDestinoController:getLinesController():getModel():insertBlankBuffer( hLine )
 
-         uuidDestinyLine := ::oDestinoController:getLinesController():getModelBuffer( "uuid" )
+      uuidDestinationLine      := ::oDestinoController:getLinesController():getModelBuffer( "uuid" )
 
-         ::getModel():insertRelationDocument( uuidOriginLine, ::getController():getLinesController():getModel():cTableName, uuidDestinyLine, ::oDestinoController:getLinesController():getModel():cTableName )
+      ::getModel():insertRelationDocument( uuidOriginLine, ::getController():getLinesController():getModel():cTableName, uuidDestinationLine, ::oDestinoController:getLinesController():getModel():cTableName )
+
    next
 
 RETURN ( nil )
@@ -223,9 +251,9 @@ METHOD convertDiscounts() CLASS ConversorDocumentosController
    local hDiscount
    local aDiscountsDocumentoOrigen
    local uuidOriginDiscount
-   local uuidDestinyDiscount
+   local uuidDestinationDiscount
 
-   aDiscountsDocumentoOrigen   := ::getController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
+   aDiscountsDocumentoOrigen  := ::getController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
 
    if empty( aDiscountsDocumentoOrigen )
       RETURN ( nil )
@@ -233,131 +261,139 @@ METHOD convertDiscounts() CLASS ConversorDocumentosController
 
    for each hDiscount in aDiscountsDocumentoOrigen
 
-         uuidOriginDiscount:= hget(hDiscount, "uuid")
-         hdel( hDiscount, 'id' )
-         hdel( hDiscount, 'uuid' )
-         hset( hDiscount, 'parent_uuid', ::uuidDocumentoDestino )
+      uuidOriginDiscount      := hget(hDiscount, "uuid")
+      hdel( hDiscount, 'id' )
+      hdel( hDiscount, 'uuid' )
+      hset( hDiscount, 'parent_uuid', ::uuidDocumentoDestino )
 
-         ::oDestinoController:getDiscountController():getModel():insertBlankBuffer( hDiscount )
+      ::oDestinoController:getDiscountController():getModel():insertBlankBuffer( hDiscount )
 
-         uuidDestinyDiscount := ::oDestinoController:getDiscountController():getModelBuffer( "uuid" )
+      uuidDestinationDiscount     := ::oDestinoController:getDiscountController():getModelBuffer( "uuid" )
 
-         ::getModel():insertRelationDocument( uuidOriginDiscount, ::getController:getDiscountController():getModel():cTableName, uuidDestinyDiscount, ::oDestinoController:getDiscountController():getModel():cTableName )
+      ::getModel():insertRelationDocument( uuidOriginDiscount, ::getController:getDiscountController():getModel():cTableName, uuidDestinationDiscount, ::oDestinoController:getDiscountController():getModel():cTableName )
+
    next
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD convertAlbaranCompras( aSelecteds ) CLASS ConversorDocumentosController
+METHOD runConvertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
 
-   local aSelected
-   local hAlbaranes := {}
+   if !empty( ::convertAlbaranCompras( aSelected ) )
+      ::getResumenView():Activate()
+   end if
+
+   ::aCreatedDocument   := {}
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD convertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
+
    Local hAlbaran
-   local i := 0
+   local hAlbaranes 
 
    if empty( ::getController() )
       RETURN ( nil )
    end if
 
-   ::oDestinoController := ::getFacturasComprasController()
+   ::setFacturasComprasController()
 
-   hAlbaranes:= SQLAlbaranesComprasModel():getHashWhereUuid( ::setWhereArray( aSelecteds ) )
+   hAlbaranes  := SQLAlbaranesComprasModel():getHashWhereUuid( ::setWhereArray( aSelected ) )
 
    for each hAlbaran in hAlbaranes
-      i++
-      if (::getModel():countDocumentoWhereUuidOigen( hget( hAlbaran, "uuid") ) == 0 )
 
-      msgalert( i, "vuelta")
-      msgalert( hb_valtoexp( hAlbaran ), "datos" )
-      msgalert( ::cRuta, "cRuta")
-      msgalert( ::cMetodoPago, "cMetodoPago")
-      msgalert( ::cTarifa, "cTarifa" )
-      msgalert( ::cRecargoEquivalencia, "cRecargoEquivalencia")
+      if ::isAlbaranNotConverted( hAlbaran ) 
 
-         if( ::cTerceroCodigo != hget(hAlbaran, "tercero_codigo") .OR. ::cRuta != hget( hAlbaran, "ruta_codigo" ) .OR. ::cMetodoPago !=hget( hAlbaran ,"metodo_pago_codigo" ) .OR. ::cTarifa != hget( hAlbaran, "tarifa_codigo") .OR. ::cRecargoEquivalencia != hget( hAlbaran, "recargo_equivalencia" ) )
+         ::uuidDocumentoOrigen   := hget( hAlbaran, "uuid")
 
-            ::uuidDocumentoOrigen   := hget( hAlbaran, "uuid")
+         if ::isAlbaranEquals( hAlbaran )
 
-            ::cRuta                 := hget( hAlbaran, "ruta_codigo" )
-
-            ::cMetodoPago           := hget( hAlbaran, "metodo_pago_codigo" )
-
-            ::cTarifa               := hget( hAlbaran, "tarifa_codigo")
-
-            ::cRecargoEquivalencia  := hget( hAlbaran, "recargo_equivalencia" )
-            
-            ::convertHeader()
+            ::insertRelationDocument()
 
          else
 
-         ::uuidDocumentoOrigen   := hget(hAlbaran, "uuid")
+            ::convertHeader()
 
-         ::getModel():insertRelationDocument( ::uuidDocumentoOrigen, ::getController():getModel():cTableName, ::uuidDocumentoDestino ,::oDestinoController:getModel():cTableName )
+            ::convertDiscounts()
          
          end if
 
-         ::cTerceroCodigo  :=  hget(hAlbaran, "tercero_codigo")
-         
          ::convertLines()
 
-         end if
+         ::hProcesedAlbaran      := hAlbaran
+
+      end if
 
    next
 
-   if !empty( ::aCreatedDocument )
-       ::getResumenView():Activate()
-       ::aCreatedDocument := {}
+RETURN ( ::aCreatedDocument )
+
+//---------------------------------------------------------------------------//
+
+METHOD isAlbaranEquals( hAlbaran )
+
+   if !( hb_ishash( ::hProcesedAlbaran ) )
+      RETURN ( .f. )
    end if 
 
-RETURN( nil )
+   if hget( ::hProcesedAlbaran, "tercero_codigo" ) != hget( hAlbaran, "tercero_codigo" )
+      RETURN ( .f. )
+   end if 
+
+   if hget( ::hProcesedAlbaran, "ruta_codigo" ) != hget( hAlbaran, "ruta_codigo" )
+      RETURN ( .f. )
+   end if 
+
+   if hget( ::hProcesedAlbaran, "metodo_pago_codigo" ) != hget( hAlbaran ,"metodo_pago_codigo" )
+      RETURN ( .f. )
+   end if 
+
+   if hget( ::hProcesedAlbaran, "tarifa_codigo" ) != hget( hAlbaran, "tarifa_codigo" )
+      RETURN ( .f. )
+   end if 
+
+   if hget( ::hProcesedAlbaran, "recargo_equivalencia" ) != hget( hAlbaran, "recargo_equivalencia" )
+      RETURN ( .f. )
+   end if 
+
+   if !empty( ::getController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen ) ) 
+      RETURN ( .f. )
+   end if 
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD setWhereArray( aSelecteds ) CLASS ConversorDocumentosController
+METHOD setWhereArray( aSelected ) CLASS ConversorDocumentosController
    
-   local aSelected
-   local nWhere := 0
-   local cWhere := " IN("
+   local cWhere   := " IN( "
 
- for each aSelected in aSelecteds
-   nWhere++
+   aeval( aSelected, {| v | cWhere += quotedUuid( v ) + ", " } )
 
-   cWhere += quoted( aSelected )
-
-   if(nWhere != Len( aSelecteds ) )
-      cWhere +=","
-   end if
-   next
-
-   cWhere += " )"
+   cWhere         := chgAtEnd( cWhere, ' )', 2 )
 
 RETURN ( cWhere )
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS ConversorDocumentosBrowseView FROM OperacionesComercialesBrowseView
-
-   METHOD addColumns() 
-
-END class
 
 //---------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS ConversorDocumentosBrowseView
+METHOD Edit( nId )
 
-   ::Super:addColumns()
+if empty(nId)
+   nId   := ::getIdFromRowSet()
+end if
 
-   RETURN ( nil )
+RETURN ( ::getDestinoController:Edit( nId ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
 CLASS ConversorDocumentoView FROM SQLBaseView
 
    DATA cDocumentoDestino
@@ -434,6 +470,8 @@ END CLASS
 
 METHOD Activate() CLASS ConversorResumenView
 
+   msgalert( ::getController():className(), "controller:className()")
+
    DEFINE DIALOG  ::oDialog;
       RESOURCE    "RESUMEN_CONVERSION"; 
       TITLE       "Resumen de la conversión ..."
@@ -450,11 +488,9 @@ METHOD Activate() CLASS ConversorResumenView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   ::getController():Activate(100, ::oDialog )
-
+   ::getController():Activate( 100, ::oDialog )
 
    // Botones------------------------------------------------------------------
-
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
    
@@ -477,7 +513,7 @@ CLASS SQLConversorDocumentosModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD insertRelationDocument( uuidOrigin, cTableOrigin, uuidDestiny, cTableDestiny )
+   METHOD insertRelationDocument( uuidOrigin, cTableOrigin, uuidDestination, cTableDestination )
 
    METHOD deleteWhereDestinoUuid( Uuid )
 
@@ -513,7 +549,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertRelationDocument( uuidOrigin, cTableOrigin, uuidDestiny, cTableDestiny ) CLASS SQLConversorDocumentosModel
+METHOD insertRelationDocument( uuidOrigin, cTableOrigin, uuidDestination, cTableDestination ) CLASS SQLConversorDocumentosModel
 
    local cSql
 
@@ -530,8 +566,8 @@ METHOD insertRelationDocument( uuidOrigin, cTableOrigin, uuidDestiny, cTableDest
    cSql  := hb_strformat(  cSql, ::getTableName(),;
                                  quoted( cTableOrigin ),;
                                  quoted( uuidOrigin ),;
-                                 quoted( cTableDestiny ),;
-                                 quoted( uuidDestiny ) )
+                                 quoted( cTableDestination ),;
+                                 quoted( uuidDestination ) )
                                  
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 
