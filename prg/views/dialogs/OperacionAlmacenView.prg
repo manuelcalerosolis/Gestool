@@ -304,10 +304,12 @@ METHOD startActivate() CLASS MovimientoAlmacenView
    ::getController():getAlmacenDestinoController():getSelector():Show()
    ::getController():getAlmacenDestinoController():getSelector():Start()
 
-   ::getController():calculateTotals()
-
    ::getController():getAlmacenOrigenController():getSelector():setFocus()
 
+   ::getController():getLinesController():getBrowseView():Refresh()
+
+   ::getController():calculateTotals()
+   
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

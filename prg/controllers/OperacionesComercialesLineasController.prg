@@ -22,8 +22,7 @@ CLASS OperacionesComercialesLineasController FROM OperacionesLineasController
    METHOD updateImpuestos( nPorcentajeIva )
 
    METHOD updateAgenteComision( uValue ) ;
-                                       INLINE ( ::updateField( 'agente_comision', uValue ),;
-                                                ::oController:calculateTotals() )
+                                       INLINE ( ::updateField( 'agente_comision', uValue ), ::oController:calculateTotals() )
 
    METHOD stampAgente( cCodigoAgente )
 
