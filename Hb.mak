@@ -213,6 +213,7 @@ OperacionAlmacenView.prg 													\
 ConsolidacionAlmacenController.prg										\
 MovimientoAlmacenController.prg											\
 ConsolidacionAlmacenLineasController.prg								\
+MovimientoAlmacenLineasController.prg									\
 OperacionesLineasController.obj 											\
 OperacionesLineasController.prg											\
 ConsolidacionAlmacenLineasBrowse.prg									\
@@ -659,6 +660,7 @@ OperacionAlmacenView.obj 													\
 ConsolidacionAlmacenController.obj 										\
 MovimientoAlmacenController.obj 											\
 ConsolidacionAlmacenLineasController.obj 								\
+MovimientoAlmacenLineasController.obj 									\
 OperacionesLineasController.obj 											\
 ConsolidacionAlmacenLineasBrowse.obj 									\
 MovimientoAlmacenLineasBrowse.obj 										\
@@ -1102,6 +1104,7 @@ $(OBJ)\OperacionAlmacenView.obj 											+
 $(OBJ)\ConsolidacionAlmacenController.obj 							+
 $(OBJ)\MovimientoAlmacenController.obj 								+
 $(OBJ)\ConsolidacionAlmacenLineasController.obj 					+
+$(OBJ)\MovimientoAlmacenLineasController.obj 						+
 $(OBJ)\OperacionesLineasController.obj 								+
 $(OBJ)\ConsolidacionAlmacenLineasBrowse.obj 							+
 $(OBJ)\MovimientoAlmacenLineasBrowse.obj 								+

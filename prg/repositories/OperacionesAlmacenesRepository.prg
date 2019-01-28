@@ -56,7 +56,7 @@ METHOD createFunctionTotalSummaryWhereUuid() CLASS OperacionesAlmacenesRepositor
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ), SQLConsolidacionesAlmacenesLineasModel():getTableName() )
+   cSql  := hb_strformat( cSql, Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ), ::getLinesTableName() )
 
 RETURN ( alltrim( cSql ) )
 
@@ -109,6 +109,8 @@ CLASS ConsolidacionesAlmacenesRepository FROM OperacionesAlmacenesRepository
    METHOD getPackage( cContext )       INLINE ( SQLConsolidacionesAlmacenesModel():getPackage( cContext ) )
    
    METHOD getTableName()               INLINE ( SQLConsolidacionesAlmacenesModel():getTableName() ) 
+   
+   METHOD getLinesTableName()          INLINE ( SQLConsolidacionesAlmacenesLineasModel():getTableName() ) 
 
 END CLASS
 
@@ -123,6 +125,8 @@ CLASS MovimientosAlmacenesRepository FROM OperacionesAlmacenesRepository
    METHOD getPackage( cContext )       INLINE ( SQLMovimientosAlmacenesModel():getPackage( cContext ) )
    
    METHOD getTableName()               INLINE ( SQLMovimientosAlmacenesModel():getTableName() ) 
+
+   METHOD getLinesTableName()          INLINE ( SQLMovimientosAlmacenesLineasModel():getTableName() ) 
 
 END CLASS
 
