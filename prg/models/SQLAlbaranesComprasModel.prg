@@ -29,10 +29,10 @@ METHOD getHashWhereUuidAndOrder( cWhere ) CLASS SQLAlbaranesComprasModel
 
       WHERE uuid %2$s
 
-      Order by tercero_codigo, ruta_codigo, metodo_pago_codigo, tarifa_codigo, recargo_equivalencia
+      Order by tercero_codigo, ruta_codigo, metodo_pago_codigo, tarifa_codigo, recargo_equivalencia, serie
        
    ENDTEXT
-logwrite(cSql)
+
    cSql  := hb_strformat(  cSql, ::getTableName(), cWhere )
 
 RETURN ( ::getDatabase():selectFetchHash( cSQL ) )

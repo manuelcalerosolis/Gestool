@@ -196,15 +196,19 @@ RETURN ( ::updatePaid() )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTotalDocumento() CLASS RecibosGeneratorController
+METHOD getTotalDocumento( uuidDocument ) CLASS RecibosGeneratorController
+   
+   DEFAULT uuidDocument    := ::getController():getUuid()
 
-RETURN ( ::hTotalDocument  := ::getController():getRepository():getTotalesDocument( ::getController():getuuid() ) )
+RETURN ( ::hTotalDocument  := ::getController():getRepository():getTotalesDocument( uuidDocument ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTotalToPay() CLASS RecibosGeneratorController
+METHOD getTotalToPay( uuidDocument ) CLASS RecibosGeneratorController
 
-RETURN ( ::getController():getRepository():getTotalDocument( ::getController():getuuid() ) - ::getRepository():getImporteWhereDocumentUuid( ::getController():getuuid() ) )
+   DEFAULT uuidDocument    := ::getController():getUuid()
+
+RETURN ( ::getController():getRepository():getTotalDocument( uuidDocument ) - ::getRepository():getImporteWhereDocumentUuid( uuidDocument ) )
 
 //---------------------------------------------------------------------------//
 

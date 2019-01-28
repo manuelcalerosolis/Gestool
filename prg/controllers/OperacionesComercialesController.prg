@@ -1,4 +1,4 @@
-﻿#include "FiveWin.Ch"
+#include "FiveWin.Ch"
 #include "Factu.ch"
 
 //---------------------------------------------------------------------------//
@@ -64,6 +64,12 @@ CLASS OperacionesComercialesController FROM OperacionesController
    METHOD hasNotPaid( uuidDocumento )
 
    METHOD importFactura()
+
+   METHOD generateHeader( hHeader )
+   
+   METHOD generateLines( aLines )
+   
+   METHOD generateDiscounts( aDiscounts )
 
    // Impresiones--------------------------------------------------------------
 
@@ -432,7 +438,7 @@ METHOD getConfigItems() CLASS OperacionesComercialesController
 
    local aItems   := {}
 
-   aadd( aItems,  {  'texto'  => 'Documento impresi�n',;
+   aadd( aItems,  {  'texto'  => 'Documento impresión',;
                      'clave'  => 'documento_impresion',;
                      'valor'  => ::getDocumentPrint(),;
                      'tipo'   => "B",;
@@ -470,6 +476,35 @@ METHOD addExtraButtons() CLASS OperacionesComercialesController
    ::super:addExtraButtons()
 
    ::oNavigatorView:getMenuTreeView():addButton( "Convertir documento", "gc_document_text_earth_16", {|| ::getConversorDocumentosController():Run() } )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD generateHeader( hHeader ) CLASS OperacionesComercialesController
+
+   //msgalert("generando Header")
+   hset(hHeader, "numero", ::getContadoresModel():getCounterAndIncrement( ::getName(), hget( hHeader, "serie" ) ) )
+    //msgalert( hb_valtoexp( hHeader ), "header" )
+   ::getModel():insertBuffer( hHeader )
+
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD generateLines( aLines ) CLASS OperacionesComercialesController
+
+   msgalert("generando Lines")
+   msgalert( hb_valtoexp( aLines ), "lineas" )
+ 
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD generateDiscounts( aDiscounts ) CLASS OperacionesComercialesController
+
+   msgalert("generando discounts")
 
 RETURN ( nil )
 
@@ -517,6 +552,7 @@ METHOD validLine() CLASS OperacionesComercialesValidator
 
 RETURN ( ::getController():getLinesController():validLine() )
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
