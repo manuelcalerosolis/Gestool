@@ -9,14 +9,14 @@ CLASS SQLAlbaranesComprasModel FROM SQLOperacionesComercialesModel
 
    DATA cTableName                     INIT "albaranes_compras"
 
-   METHOD getHashWhereUuid( aSelected )
+   METHOD getHashWhereUuidAndOrder( aSelected )
 
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getHashWhereUuid( cWhere ) CLASS SQLAlbaranesComprasModel
+METHOD getHashWhereUuidAndOrder( cWhere ) CLASS SQLAlbaranesComprasModel
    
    local cSql
    local aSelected
@@ -29,10 +29,10 @@ METHOD getHashWhereUuid( cWhere ) CLASS SQLAlbaranesComprasModel
 
       WHERE uuid %2$s
 
-      Order by tercero_codigo
+      Order by tercero_codigo, ruta_codigo, metodo_pago_codigo, tarifa_codigo, recargo_equivalencia
        
    ENDTEXT
-
+logwrite(cSql)
    cSql  := hb_strformat(  cSql, ::getTableName(), cWhere )
 
 RETURN ( ::getDatabase():selectFetchHash( cSQL ) )

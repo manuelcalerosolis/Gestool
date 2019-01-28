@@ -19,8 +19,13 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    DATA idDocumentoDestino
 
-   DATA aDescuentos                    INIT {}
-   DATA aDescuentosActuales            INIT {}
+   DATA aConvert                       INIT { "header" => , "lines" => , "discounts" => }
+
+   DATA hHeader                        INIT {}
+
+   DATA hLines                         INIT {}
+
+   DATA hDiscounts                     INIT {}
 
    DATA oResumenView
 
@@ -195,19 +200,9 @@ METHOD convertHeader() CLASS ConversorDocumentosController
 
    hBufferDocumentoOrigen     := ::getController():getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
 
-   hdel( hBufferDocumentoOrigen, 'id' )
-   hdel( hBufferDocumentoOrigen, 'uuid' )
-   hdel( hBufferDocumentoOrigen, 'fecha' )
+   aadd( ::hHeader, hBufferDocumentoOrigen )
 
-   ::oDestinoController:getModel():insertBlankBuffer( hBufferDocumentoOrigen )
-
-   ::uuidDocumentoDestino    := ::oDestinoController:getModelBuffer( "uuid" )
-
-   ::idDocumentoDestino      := ::oDestinoController:getModelBuffer( "id" )
-
-   ::insertRelationDocument()
-
-   ::aCreatedDocument:add( ::uuidDocumentoDestino )
+   //::aCreatedDocument:add( ::uuidDocumentoDestino )
 
 RETURN ( nil )
 
@@ -223,24 +218,12 @@ METHOD convertLines() CLASS ConversorDocumentosController
    aLinesDocumentoOrigen   := ::getController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
 
    if empty( aLinesDocumentoOrigen )
+      
       RETURN ( nil )
+   
    end if
 
-   for each hLine in aLinesDocumentoOrigen
-
-      uuidOriginLine       := hget( hLine, "uuid" )
-
-      hdel( hLine, 'id' )
-      hdel( hLine, 'uuid' )
-      hset( hLine, 'parent_uuid', ::uuidDocumentoDestino )
-
-      ::oDestinoController:getLinesController():getModel():insertBlankBuffer( hLine )
-
-      uuidDestinationLine      := ::oDestinoController:getLinesController():getModelBuffer( "uuid" )
-
-      ::getModel():insertRelationDocument( uuidOriginLine, ::getController():getLinesController():getModel():cTableName, uuidDestinationLine, ::oDestinoController:getLinesController():getModel():cTableName )
-
-   next
+   aadd( ::hLines, aLinesDocumentoOrigen )
 
 RETURN ( nil )
 
@@ -255,36 +238,60 @@ METHOD convertDiscounts() CLASS ConversorDocumentosController
 
    aDiscountsDocumentoOrigen  := ::getController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
 
-   if empty( aDiscountsDocumentoOrigen )
+   /*if empty( aDiscountsDocumentoOrigen )
+
       RETURN ( nil )
-   end if
+   end if*/
 
-   for each hDiscount in aDiscountsDocumentoOrigen
-
-      uuidOriginDiscount      := hget(hDiscount, "uuid")
-      hdel( hDiscount, 'id' )
-      hdel( hDiscount, 'uuid' )
-      hset( hDiscount, 'parent_uuid', ::uuidDocumentoDestino )
-
-      ::oDestinoController:getDiscountController():getModel():insertBlankBuffer( hDiscount )
-
-      uuidDestinationDiscount     := ::oDestinoController:getDiscountController():getModelBuffer( "uuid" )
-
-      ::getModel():insertRelationDocument( uuidOriginDiscount, ::getController:getDiscountController():getModel():cTableName, uuidDestinationDiscount, ::oDestinoController:getDiscountController():getModel():cTableName )
-
-   next
+   aadd( ::hDiscounts, aDiscountsDocumentoOrigen )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD runConvertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
+   
+   local header
+   local lines
+   local discounts
 
-   if !empty( ::convertAlbaranCompras( aSelected ) )
+   ::convertAlbaranCompras( aSelected ) 
+
+
+   /*if !empty( ::aCreatedDocument )
+
+      aeval( ::aCreatedDocument, {|uuidDocument| ::generate }, nStart, nCount)
+
       ::getResumenView():Activate()
-   end if
+   end if*/
 
-   ::aCreatedDocument   := {}
+   hset( ::aConvert, "header", ::hHeader )
+
+   hset( ::aConvert,"lines", ::hLines )
+   
+   hset( ::aConvert, "discounts", ::hDiscounts )
+   
+   
+   for each header in ::hHeader
+      
+      msgalert(hb_valtoexp( header ), "cabecera" )
+   
+   next
+
+   for each lines in ::hLines
+      
+      msgalert(hb_valtoexp( lines ), "lineas" )
+   
+   next
+
+   for each discounts in ::hDiscounts
+      
+      msgalert(hb_valtoexp( discounts ), "discounts" )
+   
+   next
+
+   msgalert( hb_valtoexp( ::aConvert ), "::aConvert" )
+   //::aCreatedDocument   := {}
 
 RETURN ( nil )
 
@@ -301,7 +308,7 @@ METHOD convertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
 
    ::setFacturasComprasController()
 
-   hAlbaranes  := SQLAlbaranesComprasModel():getHashWhereUuid( ::setWhereArray( aSelected ) )
+   hAlbaranes  := SQLAlbaranesComprasModel():getHashWhereUuidAndOrder( ::setWhereArray( aSelected ) )
 
    for each hAlbaran in hAlbaranes
 
@@ -311,17 +318,23 @@ METHOD convertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
 
          if ::isAlbaranEquals( hAlbaran )
 
-            ::insertRelationDocument()
+            //::sumDocument()
+               
+            ::convertLines()
+
+            //::insertRelationDocument()
 
          else
 
-            ::convertHeader()
+            //::addDocument()
 
-            ::convertDiscounts()
-         
+               ::convertHeader()
+
+               ::convertLines()
+            
+               ::convertDiscounts()
+
          end if
-
-         ::convertLines()
 
          ::hProcesedAlbaran      := hAlbaran
 
@@ -381,11 +394,11 @@ RETURN ( cWhere )
 
 METHOD Edit( nId )
 
-if empty(nId)
-   nId   := ::getIdFromRowSet()
-end if
+   if empty( nId )
+      nId   := ::getIdFromRowSet()
+   end if
 
-RETURN ( ::getDestinoController:Edit( nId ) )
+RETURN ( ::getDestinoController():Edit( nId ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -624,3 +637,96 @@ RETURN ( SQLFacturasComprasModel():getInitialWhereDocumentos(::oController:setWh
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+CLASS TestOperacionesController FROM TestCase
+
+   DATA oController
+
+   METHOD beforeClass()                VIRTUAL
+
+   METHOD afterClass()
+
+   METHOD Before() 
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD afterClass() CLASS TestOperacionesController
+
+RETURN ( ::oController:end() )
+
+//---------------------------------------------------------------------------//
+
+METHOD Before() CLASS TestOperacionesController
+
+   SQLTercerosModel():truncateTable()
+
+   SQLDireccionesModel():truncateTable()
+
+   SQLAlmacenesModel():truncateTable()
+      SQLUbicacionesModel():truncateTable()
+
+   SQLMetodoPagoModel():truncateTable()
+
+   SQLArticulosModel():truncateTable()
+   
+   SQLAlbaranesComprasModel():truncateTable()
+      SQLAlbaranesComprasLineasModel():truncateTable()
+      SQLAlbaranesComprasDescuentosModel():truncateTable()
+
+   SQLFacturasComprasModel():truncateTable()
+      SQLFacturasComprasLineasModel():truncateTable()
+      SQLFacturasComprasDescuentosModel():truncateTable()
+
+   SQLArticulosTarifasModel():truncateTable()
+
+   SQLAgentesModel():truncateTable()
+
+   SQLUnidadesMedicionGruposModel():truncateTable()
+   SQLUnidadesMedicionOperacionesModel():truncateTable()
+
+   SQLTercerosModel():test_create_contado()
+   SQLTercerosModel():test_create_tarifa_mayorista()
+   SQLTercerosModel():test_create_con_plazos()
+
+   SQLAlmacenesModel():test_create_almacen_principal()
+   SQLAlmacenesModel():test_create_almacen_auxiliar()
+
+   SQLAgentesModel():test_create_agente_principal()
+   SQLAgentesModel():test_create_agente_auxiliar()
+
+   SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_principal() )
+   SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_auxiliar() )
+
+   SQLTiposIvaModel():test_create_iva_al_4()
+   SQLTiposIvaModel():test_create_iva_al_10()
+   SQLTiposIvaModel():test_create_iva_al_21()
+
+   SQLMetodoPagoModel():test_create_contado()
+   SQLMetodoPagoModel():test_create_reposicion()
+   SQLMetodoPagoModel():test_create_con_plazos()
+
+   SQLUnidadesMedicionGruposModel():test_create()
+
+   SQLArticulosModel():test_create_con_unidad_de_medicion_cajas_palets()
+   SQLArticulosModel():test_create_con_tarifa_mayorista()
+   SQLArticulosModel():test_create_con_lote()
+
+   SQLArticulosTarifasModel():test_create_tarifa_base()
+   SQLArticulosTarifasModel():test_create_tarifa_mayorista()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+#endif
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
