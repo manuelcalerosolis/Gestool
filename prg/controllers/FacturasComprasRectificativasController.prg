@@ -129,7 +129,7 @@ CLASS TestFacturasVentasController FROM TestCase
 
    METHOD Before() 
 
-   METHOD set_codigo_cliente( cCodigoCliente, view ) ;
+   METHOD set_codigo_tercero( cCodigoCliente, view ) ;
                                        INLINE ( view:getControl( 170, view:oFolder:aDialogs[1] ):cText( cCodigoCliente ),;
                                                 apoloWaitSeconds( 1 ),;
                                                 view:getControl( 170, view:oFolder:aDialogs[1] ):lValid(),;
@@ -321,7 +321,7 @@ METHOD test_dialogo_sin_lineas() CLASS TestFacturasVentasController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
-         ::set_codigo_cliente( "0", view ),;
+         ::set_codigo_tercero( "0", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          view:getControl( IDOK ):Click(),;
          apoloWaitSeconds( 1 ),;
@@ -337,7 +337,7 @@ METHOD test_dialogo_ventas_por_cajas() CLASS TestFacturasVentasController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
-         ::set_codigo_cliente( "0", view ),;
+         ::set_codigo_tercero( "0", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          ::click_nueva_linea( view ),;
          ::set_codigo_articulo_en_linea(),;
@@ -355,7 +355,7 @@ METHOD test_dialogo_tarifa_mayorista() CLASS TestFacturasVentasController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
-         ::set_codigo_cliente( "1", view ),;
+         ::set_codigo_tercero( "1", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          ::click_nueva_linea( view ),;
          ::set_codigo_articulo_en_linea(),;
@@ -373,7 +373,7 @@ METHOD test_dialogo_con_un_solo_pago() CLASS TestFacturasVentasController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
-         ::set_codigo_cliente( "1", view ),;
+         ::set_codigo_tercero( "1", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          ::click_nueva_linea( view ),;
          ::set_codigo_articulo_en_linea(),;
@@ -393,7 +393,7 @@ METHOD test_dialogo_con_varios_pagos() CLASS TestFacturasVentasController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
-         ::set_codigo_cliente( "2", view ),;
+         ::set_codigo_tercero( "2", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          ::click_nueva_linea( view ),;
          ::set_codigo_articulo_en_linea(),;

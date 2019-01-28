@@ -200,7 +200,7 @@ METHOD addLinkAndData( cLink, cPrompt, bAction, cBitmap ) CLASS TApoloTaskPanel
 
    oUrlLink                   := ::addLink( cLink, bAction, cBitmap )
 
-   @ nTop, 100 SAY oUrlLink:Cargo PROMPT cPrompt OF Self RIGHT PIXEL COLOR Rgb( 10, 152, 234 ), Rgb( 255, 255, 255 ) SIZE ( Self:nWidth - 100 ), 12
+   @ nTop, 110 SAY oUrlLink:Cargo PROMPT cPrompt OF Self RIGHT PIXEL COLOR Rgb( 10, 152, 234 ), Rgb( 255, 255, 255 ) SIZE ( Self:nWidth - 110 ), 12
 
    oUrlLink:Cargo:lWantClick  := .t.
    oUrlLink:Cargo:OnClick     := bAction

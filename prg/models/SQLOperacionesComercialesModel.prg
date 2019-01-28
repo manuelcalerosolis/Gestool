@@ -109,6 +109,7 @@ METHOD getColumnsSelect() CLASS SQLOperacionesComercialesModel
       %1$s.uuid AS uuid,
       CONCAT( %1$s.serie, '-', %1$s.numero ) AS numero,
       %1$s.fecha AS fecha,
+      %1$s.fecha_valor_stock AS fecha_valor_stock,
       %1$s.delegacion_uuid AS delegacion_uuid,
       %1$s.sesion_uuid AS sesion_uuid,
       %1$s.recargo_equivalencia AS recargo_equivalencia,

@@ -54,13 +54,17 @@ USER FUNCTION hbunit_test()
 
    oSuite:addTest( TestPagosAssistantController():New() )
 
+   oSuite:addTest( TestAlbaranesComprasController():New() )
+
    oSuite:addTest( TestFacturasVentasController():New() )
 
    oSuite:addTest( TestConsolidacionAlmacenController():New() )
 
    oSuite:addTest( TestMovimientoAlmacenController():New() )
 
-   oSuite:setCategories( { "movimientos_almacenes" } )
+   oSuite:addTest( TestStocksRepository():New() )
+
+   oSuite:setCategories( { "stocks" } )
 
    oRunner:run( oSuite )
 

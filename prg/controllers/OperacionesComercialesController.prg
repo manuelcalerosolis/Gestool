@@ -527,7 +527,7 @@ RETURN ( ::getController():getLinesController():validLine() )
 
 CLASS TestOperacionesComercialesController FROM TestOperacionesController
 
-   METHOD set_codigo_cliente( cCodigoCliente, view ) ;
+   METHOD set_codigo_tercero( cCodigoCliente, view ) ;
                                        INLINE ( view:getControl( 170, view:oFolder:aDialogs[1] ):cText( cCodigoCliente ),;
                                                 apoloWaitSeconds( 1 ),;
                                                 view:getControl( 170, view:oFolder:aDialogs[1] ):lValid(),;
@@ -579,6 +579,10 @@ CLASS TestOperacionesComercialesController FROM TestOperacionesController
 
    METHOD set_porcentaje_descuento( nDescuento ) ;
                                        INLINE ( eval( ::oController:getDiscountController():getBrowseView():oColumnDescuento:bOnPostEdit, , nDescuento, 0 ),;
+                                                apoloWaitSeconds( 1 ),;
+                                                ::refresh_linea_browse_view() )
+
+   METHOD set_lote_en_linea( cLote )   INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnLote:bOnPostEdit, , cLote, 0 ),;
                                                 apoloWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
@@ -678,7 +682,7 @@ METHOD test_dialogo_sin_lineas() CLASS TestOperacionesComercialesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
-         ::set_codigo_cliente( "0", view ),;
+         ::set_codigo_tercero( "0", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          view:getControl( IDOK ):Click(),;
          apoloWaitSeconds( 1 ),;
@@ -694,7 +698,7 @@ METHOD test_dialogo_ventas_por_cajas() CLASS TestOperacionesComercialesControlle
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
-         ::set_codigo_cliente( "0", view ),;
+         ::set_codigo_tercero( "0", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          ::click_nueva_linea( view ),;
          ::set_codigo_articulo_en_linea( "1" ),;
@@ -712,7 +716,7 @@ METHOD test_dialogo_tarifa_mayorista() CLASS TestOperacionesComercialesControlle
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
-         ::set_codigo_cliente( "1", view ),;
+         ::set_codigo_tercero( "1", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          ::click_nueva_linea( view ),;
          ::set_codigo_articulo_en_linea( "1" ),;
@@ -732,7 +736,7 @@ METHOD test_dialogo_cambiando_almacen() CLASS TestOperacionesComercialesControll
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
-         ::set_codigo_cliente( "1", view ),;
+         ::set_codigo_tercero( "1", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          ::click_nueva_linea( view ),;
          ::set_codigo_articulo_en_linea( "1" ),;
@@ -757,7 +761,7 @@ METHOD test_dialogo_cambiando_ubicacion() CLASS TestOperacionesComercialesContro
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
-         ::set_codigo_cliente( "1", view ),;
+         ::set_codigo_tercero( "1", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          ::click_nueva_linea( view ),;
          ::set_codigo_articulo_en_linea( "1" ),;
@@ -782,7 +786,7 @@ METHOD test_dialogo_cambiando_agente() CLASS TestOperacionesComercialesControlle
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
-         ::set_codigo_cliente( "1", view ),;
+         ::set_codigo_tercero( "1", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          ::set_codigo_agente( "1", view ),;
          ::click_nueva_linea( view ),;
@@ -832,7 +836,7 @@ METHOD test_dialogo_con_descuento_en_documento() CLASS TestOperacionesComerciale
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| view | ;
-         ::set_codigo_cliente( "1", view ),;
+         ::set_codigo_tercero( "1", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          ::set_codigo_agente( "1", view ),;
          ::click_nueva_linea( view ),;

@@ -152,8 +152,6 @@ METHOD loadedBlankBuffer() CLASS OperacionesController
 
    ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) )
 
-   // ::setModelBuffer( "almacen_codigo", Store():getCodigo() )
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -246,6 +244,10 @@ CLASS TestOperacionesController FROM TestCase
 
    METHOD Before() 
 
+   METHOD set_lote_en_linea( cLote )   INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnLote:bOnPostEdit, , cLote, 0 ),;
+                                                apoloWaitSeconds( 1 ),;
+                                                ::refresh_linea_browse_view() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -291,6 +293,7 @@ METHOD Before() CLASS TestOperacionesController
    SQLTercerosModel():test_create_contado()
    SQLTercerosModel():test_create_tarifa_mayorista()
    SQLTercerosModel():test_create_con_plazos()
+   SQLTercerosModel():test_create_proveedor()
 
    SQLAlmacenesModel():test_create_almacen_principal()
    SQLAlmacenesModel():test_create_almacen_auxiliar()

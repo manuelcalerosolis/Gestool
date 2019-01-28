@@ -9,11 +9,9 @@ CLASS AlbaranesComprasController FROM OperacionesComercialesController
 
    METHOD End()
 
-   METHOD getLinesController();
-                                       INLINE ( ::getAlbaranesComprasLineasController() )
+   METHOD getLinesController()         INLINE ( ::getAlbaranesComprasLineasController() )
 
-   METHOD getDiscountController();
-                                       INLINE ( ::getAlbaranesComprasDescuentosController() )
+   METHOD getDiscountController()      INLINE ( ::getAlbaranesComprasDescuentosController() )
 
    METHOD isClient()                   INLINE ( .f. )
 
@@ -90,8 +88,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS AlbaranesCompraValidator FROM OperacionesComercialesValidator 
 
@@ -122,202 +118,111 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-/*#ifdef __TEST__
+#ifdef __TEST__
 
-CLASS TestFacturasComprasController FROM TestCase
+CLASS TestAlbaranesComprasController FROM TestOperacionesComercialesController
 
-   METHOD initModels()
+   DATA aCategories                    INIT { "all", "albaranes_compras" }
 
-   METHOD testCalculoFacturaConDescuento()
+   METHOD beforeClass()
 
-   METHOD testCalculoFacturaConIncremento()
+   METHOD Before()
 
-   METHOD testFacturaConUnidadesDeMedicion()
+   METHOD test_dialogo_con_una_linea()
 
-   METHOD testDialogoWithNoLines() 
+   METHOD test_dialogo_con_articulo_lote()
 
-   METHOD testDialogoVentasPorCajas() 
+   METHOD getController()              INLINE ( if( empty( ::oController ), ::oController := AlbaranesComprasController():New(), ), ::oController ) 
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD initModels() CLASS TestFacturasComprasController
+METHOD beforeClass() CLASS TestAlbaranesComprasController
 
-   SQLTercerosModel():truncateTable()
-   SQLAlmacenesModel():truncateTable()
-   SQLMetodoPagoModel():truncateTable()
-   SQLFacturasVentasModel():truncateTable() 
-   SQLFacturasVentasLineasModel():truncateTable() 
-   SQLFacturasVentasDescuentosModel():truncateTable()
-   SQLArticulosModel():truncateTable()
-   SQLArticulosTarifasModel():truncateTable()
+   Company():setDefaultUsarUbicaciones( .t. )
 
-   SQLTercerosModel():test_create_contado()
-   SQLAlmacenesModel():test_create()
-   SQLMetodoPagoModel():test_create_contado()
-   SQLArticulosModel():test_create_con_unidad_de_medicion_cajas_palets()
+   ::getController()
+   
+RETURN ( nil )
 
-   SQLArticulosTarifasModel():insertArticulosTarifasBase() 
+//---------------------------------------------------------------------------//
+
+METHOD Before() CLASS TestAlbaranesComprasController
+
+   SQLAlbaranesComprasModel():truncateTable()
+
+   SQLAlbaranesComprasLineasModel():truncateTable()
+   
+   SQLAlbaranesComprasDescuentosModel():truncateTable()
+
+RETURN ( ::Super:Before() )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_con_una_linea() CLASS TestAlbaranesComprasController
+
+   ::getController():getDialogView():setEvent( 'painted',;
+      <| view | 
+         
+         ::set_codigo_tercero( "3", view )
+
+         ::set_codigo_forma_pago( "0", view )
+         
+         ::click_nueva_linea( view )
+         
+         ::set_codigo_articulo_en_linea( "1" )
+         
+         ::set_codigo_ubicacion_en_linea( "0" )
+         
+         ::set_precio_en_linea( 200 )         
+         
+         view:getControl( IDOK ):Click()          
+         
+         RETURN ( nil )
+      > )
+
+   ::assert:true( ::getController():Insert(), "test creación de albaran de compra con una linea" )
+   
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_con_articulo_lote() CLASS TestAlbaranesComprasController
+
+   local lInsert
+
+   ::getController():getDialogView():setEvent( 'painted',;
+      <| view | 
+      
+         ::set_codigo_tercero( "3", view )
+      
+         ::set_codigo_forma_pago( "0", view )
+      
+         ::click_nueva_linea( view )
+
+         ::set_codigo_articulo_en_linea( "2" )
+
+         ::set_lote_en_linea( "1234" )
+
+         ::set_codigo_ubicacion_en_linea( "0" )
+
+         ::set_precio_en_linea( 300 )
+
+         view:getControl( IDOK ):Click()
+         
+         RETURN ( nil )
+      > )
+
+   lInsert  := ::getController():Insert()
+
+   if !empty( ::assert )
+      ::assert:true( lInsert, "test creación de albaran de compra con artículo con lote" )
+   end if 
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD testCalculoFacturaConDescuento() CLASS TestFacturasComprasController
-
-   local uuid  
-   local hTotal
-   local oController
-
-   ::initModels()
-
-   uuid        := win_uuidcreatestring()
-
-   SQLFacturasVentasModel():test_create_factura( uuid ) 
-
-   SQLFacturasVentasLineasModel():test_create_IVA_al_0_con_10_descuento( uuid ) 
-   SQLFacturasVentasLineasModel():test_create_IVA_al_10_con_15_porciento_descuento( uuid ) 
-   SQLFacturasVentasLineasModel():test_create_IVA_al_21_con_20_porciento_descuento( uuid ) 
-
-   SQLFacturasVentasDescuentosModel():test_create_l0_por_ciento( uuid )   
-   SQLFacturasVentasDescuentosModel():test_create_20_por_ciento( uuid )   
-   SQLFacturasVentasDescuentosModel():test_create_30_por_ciento( uuid )   
-
-   oController := FacturasVentasController():New() 
-
-   hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
-
-   ::assert:equals( 112.120000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
-
-   oController:End()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD testCalculoFacturaConIncremento() CLASS TestFacturasComprasController
-
-   local uuid  
-   local hTotal
-   local oController
-
-   ::initModels()
-
-   uuid        := win_uuidcreatestring()
-
-   SQLFacturasVentasModel():test_create_factura( uuid ) 
-
-   SQLFacturasVentasLineasModel():test_create_IVA_al_21_con_incrememto_precio( uuid ) 
-
-   oController := FacturasVentasController():New() 
-
-   hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
-
-   ::assert:equals( 7.720000, hget( hTotal, "total_documento" ), "test creacion de factura con incremento" )
-
-   oController:End()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD testFacturaConUnidadesDeMedicion() CLASS TestFacturasComprasController
-
-   local uuid  
-   local hTotal
-   local oController
-
-   ::initModels()
-
-   uuid        := win_uuidcreatestring()
-
-   SQLFacturasVentasModel():test_create_factura( uuid ) 
-
-   SQLFacturasVentasLineasModel():test_create_10_porciento_descuento_15_incremento( uuid ) 
-
-   oController := FacturasVentasController():New() 
-
-   hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
-
-   ::assert:equals( 103.500000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
-
-   oController:End()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD testDialogoWithNoLines() CLASS TestFacturasComprasController
-
-   local oController
-
-   ::initModels()
-
-   oController             := FacturasVentasController():New()
-
-   oController:getDialogView():setEvent( 'painted',;
-      {| self | ;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 170, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 170, self:oFolder:aDialogs[1] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 240, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 240, self:oFolder:aDialogs[1] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( IDCANCEL ):Click() } )
-
-   ::assert:false( oController:Append(), "test creación de factura sin lineas" )
-
-   oController:End()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD testDialogoVentasPorCajas() CLASS TestFacturasComprasController
-
-   local oController
-
-   ::initModels()
-
-   oController             := FacturasVentasController():New()
-
-   oController:getDialogView():setEvent( 'painted',;
-      {| self | ;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 170, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 170, self:oFolder:aDialogs[1] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 240, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 240, self:oFolder:aDialogs[1] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( 501, self:oFolder:aDialogs[1] ):Click(),;
-         apoloWaitSeconds( 1 ),;
-         eval( oController:getFacturasVentasLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "0", 0 ),;
-         apoloWaitSeconds( 1 ),;
-         oController:getFacturasVentasLineasController():getBrowseView():getRowSet():Refresh(),;
-         apoloWaitSeconds( 1 ),;
-         eval( oController:getFacturasVentasLineasController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , 100, 0 ),;
-         apoloWaitSeconds( 1 ),;
-         oController:getFacturasVentasLineasController():getBrowseView():getRowSet():Refresh(),;
-         apoloWaitSeconds( 1 ),;
-         self:getControl( IDOK ):Click() } )
-
-   ::assert:true( oController:Append(), "test creación de factura con ventas por cajas" )
-
-   oController:End()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-
-#endif*/
+#endif
 
