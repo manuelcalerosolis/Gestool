@@ -364,11 +364,11 @@ RETURN ( nil )
 
 METHOD Before() CLASS TestMovimientoAlmacenController
 
-   ::Super:Before()
-
    SQLMovimientosAlmacenesModel():truncateTable()
 
    SQLMovimientosAlmacenesLineasModel():truncateTable()
+
+   ::Super:Before()
 
 RETURN ( nil )
 

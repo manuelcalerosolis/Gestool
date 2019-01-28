@@ -252,7 +252,11 @@ END CLASS
 
 METHOD afterClass() CLASS TestOperacionesController
 
-RETURN ( ::oController:end() )
+   if !empty( ::oController )
+      ::oController:End()
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

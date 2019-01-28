@@ -303,6 +303,8 @@ CLASS TestConsolidacionAlmacenController FROM TestOperacionesController
 
    METHOD test_dialogo_articulo_con_lote()
 
+   METHOD getController()              INLINE ( if( empty( ::oController ), ::oController := ConsolidacionAlmacenController():New(), ), ::oController ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -310,8 +312,6 @@ END CLASS
 METHOD beforeClass() CLASS TestConsolidacionAlmacenController
    
    Company():setDefaultUsarUbicaciones( .t. )
-   
-   ::oController  := ConsolidacionAlmacenController():New()
 
 RETURN ( nil )
 
@@ -331,7 +331,7 @@ RETURN ( nil )
 
 METHOD test_dialogo_sin_almacen() CLASS TestConsolidacionAlmacenController
 
-   ::oController:getDialogView():setEvent( 'painted',;
+   ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
          view:getControl( IDOK ):Click()
       
@@ -342,7 +342,7 @@ METHOD test_dialogo_sin_almacen() CLASS TestConsolidacionAlmacenController
          RETURN ( nil )
       > )
 
-   ::assert:false( ::oController:Append(), "test creación de consolidación sin código almacén" )
+   ::assert:false( ::getController():Insert(), "test creación de consolidación sin código almacén" )
 
 RETURN ( nil )
 
@@ -350,7 +350,7 @@ RETURN ( nil )
 
 METHOD test_dialogo_sin_lineas() CLASS TestConsolidacionAlmacenController
 
-   ::oController:getDialogView():setEvent( 'painted',;
+   ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
          ::set_codigo_almacen( "0", view )
          
@@ -363,7 +363,7 @@ METHOD test_dialogo_sin_lineas() CLASS TestConsolidacionAlmacenController
          RETURN ( nil )
       > )
 
-   ::assert:false( ::oController:Append(), "test creación de consolidación sin lineas" )
+   ::assert:false( ::getController():Insert(), "test creación de consolidación sin lineas" )
 
 RETURN ( nil )
 
@@ -371,7 +371,7 @@ RETURN ( nil )
 
 METHOD test_dialogo_sin_ubicacion() CLASS TestConsolidacionAlmacenController
 
-   ::oController:getDialogView():setEvent( 'painted',;
+   ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
          ::set_codigo_almacen( "0", view )
 
@@ -388,7 +388,7 @@ METHOD test_dialogo_sin_ubicacion() CLASS TestConsolidacionAlmacenController
          RETURN ( nil )
       > )
 
-   ::assert:false( ::oController:Append(), "test creación de consolidación sin ubicacion" )
+   ::assert:false( ::getController():Insert(), "test creación de consolidación sin ubicacion" )
 
 RETURN ( nil )
 
@@ -396,7 +396,7 @@ RETURN ( nil )
 
 METHOD test_dialogo_articulo_por_cajas_con_ubicacion() CLASS TestConsolidacionAlmacenController
 
-   ::oController:getDialogView():setEvent( 'painted',;
+   ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
          ::set_codigo_almacen( "0", view )
          
@@ -411,7 +411,7 @@ METHOD test_dialogo_articulo_por_cajas_con_ubicacion() CLASS TestConsolidacionAl
          RETURN ( nil )
       > )
 
-   ::assert:true( ::oController:Append(), "test creación de consolidación por cajas y con ubicacion" )
+   ::assert:true( ::getController():Insert(), "test creación de consolidación por cajas y con ubicacion" )
 
 RETURN ( nil )
 
@@ -419,7 +419,7 @@ RETURN ( nil )
 
 METHOD test_dialogo_articulo_con_lote() CLASS TestConsolidacionAlmacenController
 
-   ::oController:getDialogView():setEvent( 'painted',;
+   ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
          ::set_codigo_almacen( "0", view )
          
@@ -436,7 +436,7 @@ METHOD test_dialogo_articulo_con_lote() CLASS TestConsolidacionAlmacenController
          RETURN ( nil )
       > )
 
-   ::assert:true( ::oController:Append(), "test creación de consolidación por cajas y con ubicacion" )
+   ::assert:true( ::getController():Insert(), "test creación de consolidación por cajas y con ubicacion" )
 
 RETURN ( nil )
 

@@ -396,84 +396,71 @@ RETURN ( getSQLDatabase():getValue( "SELECT " + Company():getTableName( "StockWh
 
 CLASS TestStocksRepository FROM TestOperacionesComercialesController
 
-   DATA aCategories                    INIT { "all", "facturas_ventas" }
+   DATA aCategories                    INIT { "all", "stocks" }
+
+   DATA oTestConsolidacionAlmacenController
 
    METHOD beforeClass()
+   
+   METHOD afterClass()
 
-   METHOD test_dialogo_con_un_solo_pago()
+   METHOD Before() 
 
-   METHOD test_dialogo_con_varios_pagos()
+   METHOD test_calculo_stock_con_lote()
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD Before() CLASS TestStocksRepository
+
+   SQLConsolidacionesAlmacenesModel():truncateTable()
+
+   SQLConsolidacionesAlmacenesLineasModel():truncateTable()
+
+   SQLMovimientosAlmacenesModel():truncateTable()
+
+   SQLMovimientosAlmacenesLineasModel():truncateTable()
+
+   SQLAlbaranesComprasModel():truncateTable()
+
+   SQLAlbaranesComprasLineasModel():truncateTable()
+   
+   SQLAlbaranesComprasDescuentosModel():truncateTable()
+
+   ::Super:Before()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD beforeClass() CLASS TestStocksRepository
    
    Company():setDefaultUsarUbicaciones( .t. )
+
+   ::oTestConsolidacionAlmacenController  := TestConsolidacionAlmacenController():New()
    
-   ::oController  := FacturasVentasController():New()
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD afterClass() CLASS TestStocksRepository
+
+   ::oTestConsolidacionAlmacenController:End()
+
+   ::Super:afterClass()
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_con_un_solo_pago() CLASS TestStocksRepository
+METHOD test_calculo_stock_con_lote() CLASS TestStocksRepository
 
-   ::oController:getDialogView():setEvent( 'painted',;
-      <| view | 
-         
-         ::set_codigo_cliente( "1", view )
+   ::oTestConsolidacionAlmacenController:test_dialogo_articulo_con_lote()
 
-         ::set_codigo_forma_pago( "0", view )
-         
-         ::click_nueva_linea( view )
-         
-         ::set_codigo_articulo_en_linea( "1" )
-         
-         ::set_codigo_ubicacion_en_linea( "0" )
-         
-         ::set_precio_en_linea( 200 )         
-         
-         view:getControl( IDOK ):Click()          
-         
-         RETURN ( nil )
-      > )
-
-   ::assert:true( ::oController:Insert(), "test creación de factura con un recibo pagado" )
-   
    ::assert:equals( 1, RecibosRepository():getCountWhereDocumentUuid( ::oController:getModelBuffer( "uuid" ) ), "test comprobacion numeros de recibos" )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_con_varios_pagos() CLASS TestStocksRepository
-
-   ::oController:getDialogView():setEvent( 'painted',;
-      <| view | 
-      
-         ::set_codigo_cliente( "2", view )
-      
-         ::set_codigo_forma_pago( "0", view )
-      
-         ::click_nueva_linea( view )
-
-         ::set_codigo_articulo_en_linea( "1" )
-
-         ::set_codigo_ubicacion_en_linea( "0" )
-
-         ::set_precio_en_linea( 300 )
-
-         view:getControl( IDOK ):Click()
-         
-         RETURN ( nil )
-      > )
-
-   ::assert:true( ::oController:Insert(), "test creación de factura con varios recibos pagados" )
-
-   ::assert:equals( 3, RecibosRepository():getCountWhereDocumentUuid( ::oController:getModelBuffer( "uuid" ) ), "test comprobacion numeros de recibos" )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
