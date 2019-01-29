@@ -288,6 +288,8 @@ CLASS TestMovimientoAlmacenController FROM TestOperacionesController
 
    METHOD before()
 
+   METHOD getController()              INLINE   ( if( empty( ::oController ), ::oController := MovimientoAlmacenController():New(), ), ::oController )
+
    METHOD click_nueva_linea( view )    INLINE   (  view:getControl( 501, view:oFolder:aDialogs[1] ):Click(),;
                                                    apoloWaitSeconds( 1 ) )
 
@@ -338,6 +340,8 @@ CLASS TestMovimientoAlmacenController FROM TestOperacionesController
 
    METHOD test_dialogo_con_dos_ubicacion()
 
+   METHOD test_dialogo_con_lote_dos_ubicacion()   
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -346,7 +350,7 @@ METHOD beforeClass() CLASS TestMovimientoAlmacenController
    
    Company():setDefaultUsarUbicaciones( .t. )
    
-   ::oController  := MovimientoAlmacenController():New()
+   ::getController()
 
 RETURN ( nil )
 
@@ -376,7 +380,7 @@ RETURN ( nil )
 
 METHOD test_dialogo_sin_almacen() CLASS TestMovimientoAlmacenController
 
-   ::oController:getDialogView():setEvent( 'painted',;
+   ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
          view:getControl( IDOK ):Click()
          
@@ -387,7 +391,7 @@ METHOD test_dialogo_sin_almacen() CLASS TestMovimientoAlmacenController
          RETURN ( nil )
       > )
 
-   ::assert:false( ::oController:Append(), "test creación de movimiento de almacén sin código almacén" )
+   ::assert:false( ::getController():Insert(), "test creación de movimiento de almacén sin código almacén" )
 
 RETURN ( nil )
 
@@ -395,7 +399,7 @@ RETURN ( nil )
 
 METHOD test_dialogo_sin_almacen_destino() CLASS TestMovimientoAlmacenController
 
-   ::oController:getDialogView():setEvent( 'painted',;
+   ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
          ::set_codigo_almacen_origen( "0", view )
 
@@ -408,7 +412,7 @@ METHOD test_dialogo_sin_almacen_destino() CLASS TestMovimientoAlmacenController
          RETURN ( nil )
       > )
 
-   ::assert:false( ::oController:Append(), "test creación de movimiento de almacén sin almacén destino" )
+   ::assert:false( ::getController():Insert(), "test creación de movimiento de almacén sin almacén destino" )
 
 RETURN ( nil )
 
@@ -416,7 +420,7 @@ RETURN ( nil )
 
 METHOD test_dialogo_sin_lineas() CLASS TestMovimientoAlmacenController
 
-   ::oController:getDialogView():setEvent( 'painted',;
+   ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
          ::set_codigo_almacen_origen( "0", view )
 
@@ -431,7 +435,7 @@ METHOD test_dialogo_sin_lineas() CLASS TestMovimientoAlmacenController
          RETURN ( nil )
       > )
 
-   ::assert:false( ::oController:Append(), "test creación movimiento de almacén sin lineas" )
+   ::assert:false( ::getController():Insert(), "test creación movimiento de almacén sin lineas" )
 
 RETURN ( nil )
 
@@ -439,7 +443,7 @@ RETURN ( nil )
 
 METHOD test_dialogo_sin_ubicacion() CLASS TestMovimientoAlmacenController
 
-   ::oController:getDialogView():setEvent( 'painted',;
+   ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
          ::set_codigo_almacen_origen( "0", view )
 
@@ -458,7 +462,7 @@ METHOD test_dialogo_sin_ubicacion() CLASS TestMovimientoAlmacenController
          RETURN ( nil )
       > )
 
-   ::assert:false( ::oController:Append(), "test creación de movimiento sin ubicacion" )
+   ::assert:false( ::getController():Insert(), "test creación de movimiento sin ubicacion" )
 
 RETURN ( nil )
 
@@ -466,7 +470,7 @@ RETURN ( nil )
 
 METHOD test_dialogo_con_solo_una_ubicacion() CLASS TestMovimientoAlmacenController
 
-   ::oController:getDialogView():setEvent( 'painted',;
+   ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
          ::set_codigo_almacen_origen( "0", view )
 
@@ -487,7 +491,7 @@ METHOD test_dialogo_con_solo_una_ubicacion() CLASS TestMovimientoAlmacenControll
          RETURN ( nil )
       > )
 
-   ::assert:false( ::oController:Append(), "test creación de movimiento por cajas y con solo una ubicacion" )
+   ::assert:false( ::getController():Insert(), "test creación de movimiento por cajas y con solo una ubicacion" )
 
 RETURN ( nil )
 
@@ -495,7 +499,7 @@ RETURN ( nil )
 
 METHOD test_dialogo_con_dos_ubicacion() CLASS TestMovimientoAlmacenController
 
-   ::oController:getDialogView():setEvent( 'painted',;
+   ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
          ::set_codigo_almacen_origen( "0", view )
 
@@ -514,10 +518,46 @@ METHOD test_dialogo_con_dos_ubicacion() CLASS TestMovimientoAlmacenController
          RETURN ( nil )
       > )
 
-   ::assert:true( ::oController:Insert(), "test creación de movimiento con dos ubicaciones" )
+   ::assert:true( ::getController():Insert(), "test creación de movimiento con dos ubicaciones" )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD test_dialogo_con_lote_dos_ubicacion() CLASS TestMovimientoAlmacenController
+
+   local lInsert
+
+   ::getController():getDialogView():setEvent( 'painted',;
+      <| view | 
+         ::set_codigo_almacen_origen( "0", view )
+
+         ::set_codigo_almacen_destino( "1", view )
+         
+         ::click_nueva_linea( view )
+         
+         ::set_codigo_articulo_en_linea( "2" )
+
+         ::set_lote_en_linea( "1234" )
+         
+         ::set_codigo_ubicacion_origen_en_linea( "0" )
+
+         ::set_codigo_ubicacion_destino_en_linea( "1" )
+         
+         view:getControl( IDOK ):Click()
+
+         RETURN ( nil )
+      > )
+
+   lInsert  := ::getController():Insert()
+
+   if !empty( ::assert )
+      ::assert:true( ::getController():Insert(), "test creación de movimiento con lote y dos ubicaciones" )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 
 #endif

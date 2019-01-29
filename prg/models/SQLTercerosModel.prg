@@ -44,6 +44,10 @@ CLASS SQLTercerosModel FROM SQLCompanyModel
 
    METHOD test_get_uuid_con_plazos()
 
+   METHOD test_create_proveedor() 
+
+   METHOD test_get_uuid_proveedor()
+
 #endif
 
 END CLASS
@@ -609,6 +613,50 @@ RETURN ( ::insertBuffer( hBuffer ) )
 METHOD test_get_uuid_con_plazos() CLASS SQLTercerosModel
 
 RETURN ( ::getUuidWhereCodigo( "2" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_proveedor() CLASS SQLTercerosModel
+
+   local uuid     
+   local hBuffer     
+   local hDireccion  
+
+   uuid              := win_uuidcreatestring() 
+
+   hDireccion        := SQLDireccionesModel():loadBlankBuffer()
+
+   hset( hDireccion, "parent_uuid", uuid )
+   hset( hDireccion, "codigo", "3" )
+   hset( hDireccion, "direccion", "Cl. Real, 58" )
+   hset( hDireccion, "poblacion", "Bollullos Par del Codado" )
+   hset( hDireccion, "codigo_provincia", "21" )
+   hset( hDireccion, "provincia", "Huelva" )
+   hset( hDireccion, "codigo_postal", "21700" )
+   hset( hDireccion, "codigo_pais", "ES" )
+   hset( hDireccion, "telefono", "666666666" )
+   hset( hDireccion, "movil", "666666666" )
+   hset( hDireccion, "email", "mail@mail.com" )
+
+   SQLDireccionesModel():insertBuffer( hDireccion )
+
+   hBuffer           := ::loadBlankBuffer()
+
+   hset( hBuffer, "uuid", uuid )
+   hset( hBuffer, "codigo", "3" )
+   hset( hBuffer, "nombre", "Proveedor" )
+   hset( hBuffer, "tipo", "Proveedor" )
+   hset( hBuffer, "dni", "77777777A" )
+   hset( hBuffer, "metodo_pago_codigo", "2" )
+   hset( hBuffer, "tarifa_codigo", "1" )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_get_uuid_proveedor() CLASS SQLTercerosModel
+
+RETURN ( ::getUuidWhereCodigo( "3" ) )
 
 //---------------------------------------------------------------------------//
 

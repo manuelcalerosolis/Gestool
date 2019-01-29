@@ -759,20 +759,27 @@ RETURN ( .t. )
 
 METHOD loadInformation() CLASS OperacionesLineasController 
 
-   local nStockGlobal 
-   local nStockAlmacen
+   local nStock
 
    if empty( ::oController:getDialogView() )
       RETURN ( nil )
    end if 
 
-   nStockGlobal   := StocksRepository():selectStockWhereCodigo( ::getRowSet():fieldget( "articulo_codigo" ) )
+   nStock      := StocksRepository():selectStockWhereCodigo( ::getRowSet():fieldget( "articulo_codigo" ) )
 
-   ::oController:getDialogView():setTextLinkStockGlobal( nStockGlobal )
+   ::oController:getDialogView():setTextLinkStockGlobal( nStock )
 
-   nStockAlmacen  := StocksRepository():selectStockWhereCodigoAlmacen( ::getRowSet():fieldget( "articulo_codigo" ), ::getRowSet():fieldget( "almacen_codigo" ) )
+   nStock      := StocksRepository():selectStockWhereCodigoAlmacen( ::getRowSet():fieldget( "articulo_codigo" ), ::getRowSet():fieldget( "almacen_codigo" ) )
 
-   ::oController:getDialogView():setTextLinkStockAlmacen( nStockAlmacen )
+   ::oController:getDialogView():setTextLinkStockAlmacen( nStock )
+
+   if ( Company():getDefaultUsarUbicaciones() )
+   
+      nStock   := StocksRepository():selectStockWhereCodigoAlmacenUbicacion( ::getRowSet():fieldget( "articulo_codigo" ), ::getRowSet():fieldget( "almacen_codigo" ), ::getRowSet():fieldget( "ubicacion_codigo" ) )
+
+      ::oController:getDialogView():setTextLinkStockUbicacion( nStock )
+
+   end if 
 
 RETURN ( nil )
 

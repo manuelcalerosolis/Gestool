@@ -59,6 +59,19 @@ METHOD addColumns() CLASS OperacionesComercialesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'fecha_valor_stock'
+      :cHeader             := 'Fecha stock'
+      :cEditPicture        := '@DT'
+      :nWidth              := 120
+      :cDataType           := 'D'
+      :nHeadStrAlign       := AL_LEFT
+      :nDataStrAlign       := AL_LEFT
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_valor_stock' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := "tercero_codigo"
       :cHeader             := "Código tercero"
       :nWidth              := 100

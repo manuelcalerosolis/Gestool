@@ -51,7 +51,7 @@ METHOD Activate() CLASS OperacionesComercialesView
    
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "TRANSACION_COMERCIAL" ;
-      TITLE       ::LblTitle() + "factura cliente"
+      TITLE       ::LblTitle() + lower( ::getController():cTitle )
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -97,6 +97,15 @@ METHOD Activate() CLASS OperacionesComercialesView
    REDEFINE GET   ::getController():getModel():hBuffer[ "fecha" ] ;
       ID          130 ;
       PICTURE     "@D" ;
+      SPINNER ;
+      WHEN        ( ::getController():isNotZoomMode() ) ;
+      OF          ::oFolder:aDialogs[1]
+
+   // Stock--------------------------------------------------------------------
+
+   REDEFINE GET   ::getController():getModel():hBuffer[ "fecha_valor_stock" ] ;
+      ID          140 ;
+      PICTURE     "@DT" ;
       SPINNER ;
       WHEN        ( ::getController():isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
@@ -353,8 +362,6 @@ METHOD defaultTitle() CLASS OperacionesComercialesView
    end if
 
 RETURN ( cTitle )
-
-//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -276,10 +276,6 @@ CLASS TestConsolidacionAlmacenController FROM TestOperacionesController
                                                 apoloWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
-   METHOD set_lote_en_linea( cLote )   INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnLote:bOnPostEdit, , cLote, 0 ),;
-                                                apoloWaitSeconds( 1 ),;
-                                                ::refresh_linea_browse_view() )
-
    METHOD set_codigo_ubicacion_en_linea( cCodigoUbicacion ) ;
                                        INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoUbicacion:bOnPostEdit, , cCodigoUbicacion, 0 ),;
                                                 apoloWaitSeconds( 1 ),;
@@ -419,6 +415,8 @@ RETURN ( nil )
 
 METHOD test_dialogo_articulo_con_lote() CLASS TestConsolidacionAlmacenController
 
+   local lInsert
+
    ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
          ::set_codigo_almacen( "0", view )
@@ -436,7 +434,11 @@ METHOD test_dialogo_articulo_con_lote() CLASS TestConsolidacionAlmacenController
          RETURN ( nil )
       > )
 
-   ::assert:true( ::getController():Insert(), "test creación de consolidación por cajas y con ubicacion" )
+   lInsert     := ::getController():Insert()
+
+   if !empty( ::assert )
+      ::assert:true( lInsert, "test creación de consolidación por cajas y con ubicacion" )
+   end if 
 
 RETURN ( nil )
 

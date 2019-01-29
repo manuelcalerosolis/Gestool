@@ -93,6 +93,8 @@ METHOD getColumnsSelect() CLASS SQLConsolidacionesAlmacenesLineasModel
       %1$s.incremento_precio AS incremento_precio,
       ( ROUND( ( %1$s.articulo_unidades * %1$s.unidad_medicion_factor ) * ( %1$s.articulo_precio + %1$s.incremento_precio ), 2 ) ) AS total_precio,
       %1$s.unidad_medicion_codigo AS unidad_medicion_codigo,
+      consolidaciones_almacenes.almacen_codigo AS almacen_codigo,
+      almacenes.nombre AS almacen_nombre,
       %1$s.ubicacion_codigo AS ubicacion_codigo,
       ubicaciones.nombre AS ubicacion_nombre,
       RTRIM( GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) ) AS articulos_propiedades_nombre,

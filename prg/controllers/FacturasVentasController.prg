@@ -175,7 +175,7 @@ METHOD test_dialogo_con_un_solo_pago() CLASS TestFacturasVentasController
    ::oController:getDialogView():setEvent( 'painted',;
       <| view | 
          
-         ::set_codigo_cliente( "1", view )
+         ::set_codigo_tercero( "1", view )
 
          ::set_codigo_forma_pago( "0", view )
          
@@ -205,7 +205,7 @@ METHOD test_dialogo_con_varios_pagos() CLASS TestFacturasVentasController
    ::oController:getDialogView():setEvent( 'painted',;
       <| view | 
       
-         ::set_codigo_cliente( "2", view )
+         ::set_codigo_tercero( "2", view )
       
          ::set_codigo_forma_pago( "0", view )
       
