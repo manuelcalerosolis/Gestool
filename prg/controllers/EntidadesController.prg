@@ -540,7 +540,7 @@ METHOD test_create() CLASS TestEntidadesController
                                        "gnl_fisico"      => "GNL",;
                                        "punto_logico_op" => "Punto lógico" } )
    
-   ::getAssert():notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion entidades" )
+   ::Assert():notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion entidades" )
 
 RETURN ( nil )
 
@@ -550,16 +550,16 @@ METHOD test_dialogo_sin_codigo() CLASS TestEntidadesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110 ):cText( "Test de entidades" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120 ):cText( "Descripción" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::getAssert():false( ::oController:Append(), "test creación de enditades sin codigo" )
+   ::Assert():false( ::oController:Append(), "test creación de enditades sin codigo" )
 
 RETURN ( nil )
 
@@ -569,20 +569,20 @@ METHOD test_dialogo_creacion() CLASS TestEntidadesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100 ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110 ):cText( "Test de entidades" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120 ):cText( "Nombre de entidad" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130 ):cText( "GNL fisico" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 140 ):cText( "Punto lógico" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::getAssert():true( ::oController:Append(), "test creación de entidades al completo" )
+   ::Assert():true( ::oController:Append(), "test creación de entidades al completo" )
 
 RETURN ( nil )
 

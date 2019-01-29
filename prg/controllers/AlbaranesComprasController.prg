@@ -184,7 +184,7 @@ METHOD test_dialogo_con_una_linea() CLASS TestAlbaranesComprasController
          RETURN ( nil )
       > )
 
-   ::getAssert():true( ::getController():Insert(), "test creación de albaran de compra con una linea" )
+   ::Assert():true( ::getController():Insert(), "test creación de albaran de compra con una linea" )
    
 RETURN ( nil )
 
@@ -219,7 +219,7 @@ METHOD test_dialogo_con_articulo_lote() CLASS TestAlbaranesComprasController
    lInsert  := ::getController():Insert()
 
    if !empty( ::assert )
-      ::getAssert():true( lInsert, "test creación de albaran de compra con artículo con lote" )
+      ::Assert():true( lInsert, "test creación de albaran de compra con artículo con lote" )
    end if 
 
 RETURN ( nil )

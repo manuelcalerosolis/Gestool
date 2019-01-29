@@ -724,16 +724,16 @@ METHOD testDialogoCambioPorcentajeTarifaBase() CLASS TestArticulosTarifasControl
 
    nId                     := oController:getModel():getField( "id", "nombre", __tarifa_base__ )
    
-   ::getAssert():notnull( nId, "test identificador de la tarifa base" )
+   ::Assert():notnull( nId, "test identificador de la tarifa base" )
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:oGetMargen():cText( 50 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::getAssert():true( oController:Edit( nId ), "test modificación porcentaje tarifa base" )
+   ::Assert():true( oController:Edit( nId ), "test modificación porcentaje tarifa base" )
 
    oController:End()
 
@@ -753,20 +753,20 @@ METHOD testDialogoCreacionNuevaTarifa() CLASS TestArticulosTarifasController
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:oGetCodigo:cText( "1" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:oGetNombre:cText( "Mayorista" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:oComboTarifaPadre:set( __tarifa_base__ ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:oGetMargen:cText( 50 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:oCheckActiva():Click(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::getAssert():true( oController:Append(), "test creación tarifa mayorista" )
+   ::Assert():true( oController:Append(), "test creación tarifa mayorista" )
 
    oController:End()
 

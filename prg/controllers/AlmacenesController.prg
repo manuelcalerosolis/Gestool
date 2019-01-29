@@ -478,12 +478,12 @@ METHOD test_dialogo_sin_codigo() CLASS TestAlmacenesController
    
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-RETURN ( ::getAssert():false( ::oController:Append(), "test creación de almacen sin código" ) )
+RETURN ( ::Assert():false( ::oController:Append(), "test creación de almacen sin código" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -491,14 +491,14 @@ METHOD test_dialogo_sin_nombre() CLASS TestAlmacenesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
    
-RETURN ( ::getAssert():false( ::oController:Append(), "test creación de almacen sin nombre" ) )
+RETURN ( ::Assert():false( ::oController:Append(), "test creación de almacen sin nombre" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -506,14 +506,14 @@ METHOD test_dialogo_creacion() CLASS TestAlmacenesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[1] ):cText( "Almacen principal" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-RETURN ( ::getAssert():true( ::oController:Append(), "test creación de almacen" ) )
+RETURN ( ::Assert():true( ::oController:Append(), "test creación de almacen" ) )
 
 //---------------------------------------------------------------------------//
 

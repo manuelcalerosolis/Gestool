@@ -786,7 +786,7 @@ METHOD test_create_recibo_como_pagado() CLASS TestPagosController
 
    SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPagoPresentado , ::uuidPrimerRecibo, 100 )
 
-   ::getAssert():Equals( RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), 100, "test pago del recibo" )
+   ::Assert():Equals( RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), 100, "test pago del recibo" )
 
 RETURN ( nil )
 
@@ -796,7 +796,7 @@ METHOD test_create_pago_como_rechazado() CLASS TestPagosController
 
    SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPagoRechazado, ::uuidPrimerRecibo, 100 )
 
-   ::getAssert():Equals( RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), 0, "test pago del recibo" )
+   ::Assert():Equals( RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), 0, "test pago del recibo" )
 
 RETURN ( nil )
 
@@ -808,7 +808,7 @@ METHOD test_create_recibo_con_doble_pago() CLASS TestPagosController
 
    SQLRecibosPagosModel():insertPagoRecibo( ::uuidSegundoPagoPresentado, ::uuidPrimerRecibo, 50 )
 
-   ::getAssert():Equals( 100, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), "test pago del recibo" )
+   ::Assert():Equals( 100, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), "test pago del recibo" )
 
 RETURN ( nil )
 
@@ -820,7 +820,7 @@ METHOD test_create_pago_con_doble_recibo() CLASS TestPagosController
 
    SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPagoPresentado, ::uuidSegundoRecibo, 100 )
 
-   ::getAssert():Equals( 200, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ) + RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidSegundoRecibo ) , "test pago del recibo" )
+   ::Assert():Equals( 200, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ) + RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidSegundoRecibo ) , "test pago del recibo" )
 
 RETURN ( nil )
 
@@ -832,7 +832,7 @@ METHOD test_create_recibo_con_pago_presentado_y_pago_rechazado() CLASS TestPagos
 
    SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPagoRechazado, ::uuidPrimerRecibo, 50 )
 
-   ::getAssert():Equals( 50, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), "test pago del recibo" )
+   ::Assert():Equals( 50, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), "test pago del recibo" )
 
 RETURN ( nil )
 
@@ -844,7 +844,7 @@ METHOD test_create_recibo_con_pagos_rechazados() CLASS TestPagosController
 
    SQLRecibosPagosModel():insertPagoRecibo( ::uuidSegundoPagoRechazado, ::uuidPrimerRecibo, 50 )
 
-   ::getAssert():Equals( 0, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), "test pago del recibo" )
+   ::Assert():Equals( 0, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), "test pago del recibo" )
 
 RETURN ( nil )
 
@@ -854,22 +854,22 @@ METHOD test_dialog_append() CLASS TestPagosController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),; 
+         testWaitSeconds( 1 ),; 
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( "0"),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):cText( 50 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 150, self:oFolder:aDialogs[ 1 ] ):cText( "Comentario del pago" ),;
-         apoloWaitSeconds( 3 ),;
+         testWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():true( ::oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -879,32 +879,32 @@ METHOD test_dialog_append_con_bancos() CLASS TestPagosController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),; 
+         testWaitSeconds( 1 ),; 
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( "0"),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):cText( 50 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 150, self:oFolder:aDialogs[ 1 ] ):cText( "Comentario del pago" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 170, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 170, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 180, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 180, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 3 ),;
+         testWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():true( ::oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -914,24 +914,24 @@ METHOD test_dialog_append_con_importe_mayor() CLASS TestPagosController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):cText( 500 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 3 ),;
+         testWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 3 ),;
+         testWaitSeconds( 3 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::getAssert():false( ::oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():false( ::oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -941,24 +941,24 @@ METHOD test_dialog_append_cliente_inexistente() CLASS TestPagosController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( "2" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):cText( 50 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 3 ),;
+         testWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::getAssert():false( ::oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():false( ::oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -968,24 +968,24 @@ METHOD test_dialog_append_medio_pago_inexistente() CLASS TestPagosController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):cText( 50 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( "1" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 3 ),;
+         testWaitSeconds( 3 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::getAssert():false( ::oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():false( ::oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 

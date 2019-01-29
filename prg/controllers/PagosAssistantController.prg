@@ -453,12 +453,12 @@ METHOD test_create_asistente_sin_cliente() CLASS TestPagosAssistantController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),; 
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::getAssert():false( ::oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():false( ::oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -468,20 +468,20 @@ METHOD test_create_asistente_sin_medio_pago() CLASS TestPagosAssistantController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 20 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),; 
-         apoloWaitSeconds( 2 ),;
+         testWaitSeconds( 2 ),;
          self:getControl( IDCANCEL ):Click() } ) 
 
-   ::getAssert():false( ::oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():false( ::oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -491,20 +491,20 @@ METHOD test_create_asistente_no_importe() CLASS TestPagosAssistantController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "1" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),; 
-         apoloWaitSeconds( 2 ),;
+         testWaitSeconds( 2 ),;
          self:getControl( IDCANCEL ):Click() } ) 
 
-   ::getAssert():false( ::oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():false( ::oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -514,22 +514,22 @@ METHOD test_create_asistente_con_pago_parcial() CLASS TestPagosAssistantControll
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 20 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 2 ),;
+         testWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
 
-   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():true( ::oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -539,22 +539,22 @@ METHOD test_create_asistente_pago_completo() CLASS TestPagosAssistantController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 100 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 2 ),;
+         testWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
 
-   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():true( ::oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -564,24 +564,24 @@ METHOD test_create_asistente_cambio_importe() CLASS TestPagosAssistantController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 175.36 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 90 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 2 ),;
+         testWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
 
-   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():true( ::oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -591,30 +591,30 @@ METHOD test_create_asistente_pagos_parciales() CLASS TestPagosAssistantControlle
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "1" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          eval( ::oController:getRecibosPagosTemporalController():getBrowseView():oColumImporte:bOnPostEdit, , 90 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          ::oController:getRecibosPagosTemporalController():getRowSet():Refresh(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          ::oController:getRecibosPagosTemporalController():getRowSet():goDown(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          eval( ::oController:getRecibosPagosTemporalController():getBrowseView():oColumImporte:bOnPostEdit, , 50 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          ::oController:getRecibosPagosTemporalController():getRowSet():Refresh(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 500, self:oFolder:aDialogs[ 1 ] ):Refresh(),;
-         apoloWaitSeconds( 2 ),;
+         testWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
 
-   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():true( ::oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -624,34 +624,34 @@ METHOD test_create_asistente_todos_pagos_cambio_importe() CLASS TestPagosAssista
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "1" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          eval( ::oController:getRecibosPagosTemporalController():getBrowseView():oColumImporte:bOnPostEdit, , 90 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          ::oController:getRecibosPagosTemporalController():getRowSet():Refresh(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          ::oController:getRecibosPagosTemporalController():getRowSet():goDown(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          eval( ::oController:getRecibosPagosTemporalController():getBrowseView():oColumImporte:bOnPostEdit, , 50 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          ::oController:getRecibosPagosTemporalController():getRowSet():Refresh(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 250 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 3 ),;
+         testWaitSeconds( 3 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 500, self:oFolder:aDialogs[ 1 ] ):Refresh(),;
-         apoloWaitSeconds( 2 ),;
+         testWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
 
-   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():true( ::oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -661,26 +661,26 @@ METHOD test_create_asistente_un_banco() CLASS TestPagosAssistantController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 20 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 2 ),;
+         testWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
 
-   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():true( ::oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -690,30 +690,30 @@ METHOD test_create_asistente_dos_banco() CLASS TestPagosAssistantController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 20 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 150, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 150, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         apoloWaitSeconds( 2 ),;
+         testWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
 
-   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():true( ::oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 

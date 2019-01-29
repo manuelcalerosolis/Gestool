@@ -647,9 +647,9 @@ RETURN ( nil )
 
 CLASS SQLCombinacionesModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "combinaciones"
+   DATA cTableName                     INIT "combinaciones"
 
-   DATA cGroupBy                 INIT "uuid"
+   DATA cGroupBy                       INIT "uuid"
 
    METHOD getColumns()
 

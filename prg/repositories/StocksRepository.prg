@@ -1089,19 +1089,19 @@ METHOD test_calculo_stock_con_lote() CLASS TestStocksRepository
 
    nStock   := StocksRepository():selectStockWhereCodigoAlmacenLote( '2', '0', '0', '1234' )
 
-   ::getAssert():equals( 1, nStock, "test comprobación de stocks por almacén" )
+   ::Assert():equals( 1, nStock, "test comprobación de stocks por almacén" )
 
    ::oTestAlbaranesComprasController:test_dialogo_con_articulo_lote()
 
    nStock   := StocksRepository():selectStockWhereCodigoAlmacenLote( '2', '0', '0', '1234' )
 
-   ::getAssert():equals( 2, nStock, "test comprobación de stocks por almacén" )
+   ::Assert():equals( 2, nStock, "test comprobación de stocks por almacén" )
 
    ::oTestMovimientoAlmacenController:test_dialogo_con_lote_dos_ubicacion()    
 
    nStock   := StocksRepository():selectStockWhereCodigoAlmacenLote( '2', '0', '0', '1234' )
    
-   ::getAssert():equals( 1, nStock, "test comprobación de stocks por almacén" )
+   ::Assert():equals( 1, nStock, "test comprobación de stocks por almacén" )
 
 RETURN ( nil )
 

@@ -310,7 +310,7 @@ METHOD test_append() CLASS TestArticulosController
                                                    'codigo' => '000',;
                                                    'nombre' => 'Test 0' } )
 
-   ::getAssert():notEquals( nId, 0, "test id articulos distinto de cero" )
+   ::Assert():notEquals( nId, 0, "test id articulos distinto de cero" )
 
 RETURN ( nil )
 
@@ -323,11 +323,11 @@ METHOD test_dialog_append() CLASS TestArticulosController
 
          view:oGetCodigo:cText( '3' )
 
-         apoloWaitSeconds( 1 )
+         testWaitSeconds( 1 )
 
          view:oGetNombre:cText( 'Test 1' )
 
-         apoloWaitSeconds( 1 )
+         testWaitSeconds( 1 )
 
          view:oBtnAceptar:Click()
 
@@ -335,7 +335,7 @@ METHOD test_dialog_append() CLASS TestArticulosController
       
       > )
 
-   ::getAssert():true( ::getController():Insert(), "test ::getAssert():true with .t." )
+   ::Assert():true( ::getController():Insert(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -348,11 +348,11 @@ METHOD test_dialog_empty_nombre() CLASS TestArticulosController
 
          view:oGetCodigo:cText( '3' )
 
-         apoloWaitSeconds( 1 )
+         testWaitSeconds( 1 )
 
          view:oBtnAceptar:Click()
 
-         apoloWaitSeconds( 1 )
+         testWaitSeconds( 1 )
 
          view:oBtnCancelar:Click()
 
@@ -360,7 +360,7 @@ METHOD test_dialog_empty_nombre() CLASS TestArticulosController
       
       > )
 
-   ::getAssert():false( ::getController():Insert(), "test ::getAssert():true with .t." )
+   ::Assert():false( ::getController():Insert(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -375,15 +375,15 @@ METHOD test_dialog_append_con_unidad_de_medicion() CLASS TestArticulosController
          
          view:oGetCodigo:cText( '3' )
          
-         apoloWaitSeconds( 1 )
+         testWaitSeconds( 1 )
          
          view:oGetNombre:cText( 'Test producto venta con caja y palets' )
          
-         apoloWaitSeconds( 1 )
+         testWaitSeconds( 1 )
          
          ::getController():getUnidadesMedicionGruposController():getSelector():cText( "0" )
          
-         apoloWaitSeconds( 1 )
+         testWaitSeconds( 1 )
          
          view:oBtnAceptar:Click() 
 
@@ -391,7 +391,7 @@ METHOD test_dialog_append_con_unidad_de_medicion() CLASS TestArticulosController
 
       > )
 
-   ::getAssert():true( ::getController():Insert(), "test ::getAssert():true with .t." )
+   ::Assert():true( ::getController():Insert(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -404,18 +404,18 @@ METHOD test_dialog_cancel_append() CLASS TestArticulosController
 
          view:oGetCodigo:cText( '3' )
 
-         apoloWaitSeconds( 1 )
+         testWaitSeconds( 1 )
 
          view:oGetNombre:cText( 'Test 1' )
 
-         apoloWaitSeconds( 1 )
+         testWaitSeconds( 1 )
 
          view:oBtnCancelar:Click() 
 
          RETURN ( nil )
       > )
 
-   ::getAssert():false( ::getController():Insert(), "test cancelar la insercion de registro" )
+   ::Assert():false( ::getController():Insert(), "test cancelar la insercion de registro" )
 
 RETURN ( nil )
 
@@ -428,7 +428,7 @@ METHOD test_controller_rollback() CLASS TestArticulosController
    ::getController():getDialogView():setEvent( 'painted',;
       <| view |
 
-         apoloWaitSeconds( 1 )
+         testWaitSeconds( 1 )
 
          view:oBtnCancelar:Click() 
 
@@ -445,7 +445,7 @@ METHOD test_controller_rollback() CLASS TestArticulosController
 
    ::getController():rollbackTransactionalMode()
 
-   ::getAssert():notEquals( ::getController():getModel():getFieldWhere( 'id', { 'id' => nId } ), 0, "test cancelar la insercion de registro" )
+   ::Assert():notEquals( ::getController():getModel():getFieldWhere( 'id', { 'id' => nId } ), 0, "test cancelar la insercion de registro" )
 
 RETURN ( nil )
 
@@ -458,17 +458,17 @@ METHOD test_dialog_append_con_caracteristicas() CLASS TestArticulosController
    ::getController():getCombinacionesController():getDialogView():setEvent( 'painted',;
       <| view | 
          
-         apoloWaitSeconds( 1 )
+         testWaitSeconds( 1 )
 
          aeval( view:oExplorerBar:aPanels,;
             {|a| aeval( a:aControls,;
                {|o| o:Click() } ) } )
 
-         apoloWaitSeconds( 1 )
+         testWaitSeconds( 1 )
 
          view:oButtonGenerate:Click()
 
-         apoloWaitSeconds( 1 )
+         testWaitSeconds( 1 )
 
          view:oButtonAceptar:Click()
 
@@ -480,15 +480,15 @@ METHOD test_dialog_append_con_caracteristicas() CLASS TestArticulosController
          
          view:oGetCodigo:cText( '3' )
          
-         apoloWaitSeconds( 1 )
+         testWaitSeconds( 1 )
          
          view:oGetNombre:cText( 'Test producto con propiedades' )
          
-         apoloWaitSeconds( 1 )
+         testWaitSeconds( 1 )
          
          ::getController():getCombinacionesController():runViewGenerate()
          
-         apoloWaitSeconds( 1 )
+         testWaitSeconds( 1 )
          
          view:oBtnAceptar:Click() 
 
@@ -496,7 +496,7 @@ METHOD test_dialog_append_con_caracteristicas() CLASS TestArticulosController
 
       > )
 
-   ::getAssert():true( ::getController():Insert(), "test ::getAssert():true with .t." )
+   ::Assert():true( ::getController():Insert(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 

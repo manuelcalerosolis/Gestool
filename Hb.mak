@@ -450,7 +450,7 @@ ClientesTarifasController.prg 											\
 Server.prg 																		\
 BaseHttpService.prg 															\
 BaseHttpController.prg														\
-Test.prg 																		\
+TestBase.prg 																	\
 TestSuite.prg 																	\
 TestResult.prg 																\
 TestResultData.prg                                             \
@@ -459,6 +459,7 @@ TestCase.prg                                                   \
 TestTextRunner.prg                                             \
 TestAssert.prg                                                 \
 TestAllSuite.prg                                               \
+TestUtils.prg                                               	\
 
 C               =       	            								\
 Treeview.c 					               								\
@@ -890,7 +891,7 @@ ClientesTarifasController.obj 											\
 Server.obj 																		\
 BaseHttpService.obj 															\
 BaseHttpController.obj														\
-Test.obj																			\
+TestBase.obj																	\
 TestSuite.obj																	\
 TestResult.obj 																\
 TestResultData.obj                                             \
@@ -899,6 +900,7 @@ TestCase.obj                                                   \
 TestTextRunner.obj                                             \
 TestAssert.obj                                                 \
 TestAllSuite.obj                                               \
+TestUtils.obj                                               	\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /d__TEST__ /w /es2 /gc0 /i$(GESTOOLINCLUDE) /i$(FWINCLUDE) /i$(HBINCLUDE) /o$(OBJ)\$&.c
@@ -1324,7 +1326,7 @@ $(OBJ)\ClientesTarifasController.obj 									+
 $(OBJ)\Server.obj 															+
 $(OBJ)\BaseHttpService.obj													+
 $(OBJ)\BaseHttpController.obj												+
-$(OBJ)\Test.obj																+
+$(OBJ)\TestBase.obj															+
 $(OBJ)\TestSuite.obj															+
 $(OBJ)\TestResult.obj														+
 $(OBJ)\TestResultData.obj                                      +
@@ -1333,6 +1335,7 @@ $(OBJ)\TestCase.obj                                            +
 $(OBJ)\TestTextRunner.obj                                      +
 $(OBJ)\TestAssert.obj                                          +
 $(OBJ)\TestAllSuite.obj                                        +
+$(OBJ)\TestUtils.obj                                        	+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\fiveH.lib               										+

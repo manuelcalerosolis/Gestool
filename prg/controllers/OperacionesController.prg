@@ -245,7 +245,7 @@ CLASS TestOperacionesController FROM TestCase
    METHOD Before() 
 
    METHOD set_lote_en_linea( cLote )   INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnLote:bOnPostEdit, , cLote, 0 ),;
-                                                apoloWaitSeconds( 1 ),;
+                                                testWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
 END CLASS

@@ -15,7 +15,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS Test
+CLASS TestBase
 
    METHOD New()                        CONSTRUCTOR
    METHOD End()                        VIRTUAL
@@ -30,7 +30,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD new() CLASS Test
+METHOD new() CLASS TestBase
 
    ::oResult   := TestResult():new()
    

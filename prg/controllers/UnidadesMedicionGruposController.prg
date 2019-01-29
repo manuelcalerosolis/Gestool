@@ -546,7 +546,7 @@ METHOD testAppend() CLASS TestUnidadesMedicionGruposController
    SQLUnidadesMedicionGruposLineasModel():test_create_cajas( uuid )
    SQLUnidadesMedicionGruposLineasModel():test_create_palets( uuid )
 
-   ::getAssert():notEquals( 0, SQLUnidadesMedicionGruposModel():insertBuffer( hBuffer ), "test id UnidadesMedicionGrupos distinto de cero" )
+   ::Assert():notEquals( 0, SQLUnidadesMedicionGruposModel():insertBuffer( hBuffer ), "test id UnidadesMedicionGrupos distinto de cero" )
 
 RETURN ( nil )
 
@@ -563,25 +563,25 @@ METHOD testDialogAppend() CLASS TestUnidadesMedicionGruposController
    oController:getUnidadesMedicionGruposLineasController():getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 120 ):cText( 'CAJAS' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130 ):cText( 10 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 100 ):cText( '0' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110 ):cText( 'Test unidad de medición grupo' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120 ):cText( 'UDS' ),;
          self:getControl( 120 ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130 ):Click(),;         
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::getAssert():true( oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():true( oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -598,25 +598,25 @@ METHOD testDialogEmptyUnidades() CLASS TestUnidadesMedicionGruposController
    oController:getUnidadesMedicionGruposLineasController():getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 120 ):cText( 'CAJAS' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 100 ):cText( '0' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110 ):cText( 'Test unidad de medición grupo' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120 ):cText( 'UDS' ),;
          self:getControl( 120 ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130 ):Click(),;         
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::getAssert():false( oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():false( oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -633,28 +633,28 @@ METHOD testDialogCodigoUnidadesErroneo() CLASS TestUnidadesMedicionGruposControl
    oController:getUnidadesMedicionGruposLineasController():getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 120 ):cText( 'CAJAS' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130 ):cText( 10 ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 100 ):cText( '0' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110 ):cText( 'Test unidad de medición grupo' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120 ):cText( '123' ),;
          self:getControl( 120 ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120 ):cText( 'UDS' ),;
          self:getControl( 120 ):lValid(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130 ):Click(),;         
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::getAssert():true( oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():true( oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 

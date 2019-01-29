@@ -426,7 +426,7 @@ METHOD testAppend() CLASS TestUnidadesMedicionController
 
    SQLUnidadesMedicionModel():truncateTable() 
 
-   ::getAssert():notEquals( 0, SQLUnidadesMedicionModel():insertBuffer( hBuffer ), "test id UnidadesMedicion distinto de cero" )
+   ::Assert():notEquals( 0, SQLUnidadesMedicionModel():insertBuffer( hBuffer ), "test id UnidadesMedicion distinto de cero" )
 
 RETURN ( nil )
 
@@ -443,14 +443,14 @@ METHOD testDialogAppend() CLASS TestUnidadesMedicionController
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 100 ):cText( '0' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110 ):cText( 'Test uniades de medición' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120 ):cText( 'TST' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::getAssert():true( oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():true( oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -467,12 +467,12 @@ METHOD testDialogEmptyNombre() CLASS TestUnidadesMedicionController
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 100 ):cText( '0' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::getAssert():false( oController:Append(), "test creación unidad de medición sin nombre" )
+   ::Assert():false( oController:Append(), "test creación unidad de medición sin nombre" )
 
 RETURN ( nil )
 
@@ -489,14 +489,14 @@ METHOD testDialogEmptyISO() CLASS TestUnidadesMedicionController
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 100 ):cText( '0' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110 ):cText( 'Test uniades de medición' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::getAssert():false( oController:Append(), "test creación unidad de medición sin codigo ISO" )
+   ::Assert():false( oController:Append(), "test creación unidad de medición sin codigo ISO" )
 
 RETURN ( nil )
 

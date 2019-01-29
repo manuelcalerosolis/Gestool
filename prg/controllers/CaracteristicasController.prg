@@ -383,14 +383,14 @@ METHOD testCreateCaracteristicaSincodigo() CLASS TestCaracteristicasController
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oDialog ):cText( "" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::getAssert():false( oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():false( oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -405,16 +405,16 @@ METHOD testCreateCaracteristicaSinNombre() CLASS TestCaracteristicasController
    oController             := CaracteristicasController():New()
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oDialog ):cText( "001" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oDialog ):cText( "" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::getAssert():false( oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():false( oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -429,14 +429,14 @@ METHOD testCreateCaracteristicaSinLinea() CLASS TestCaracteristicasController
    oController             := CaracteristicasController():New()
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oDialog ):cText( "001" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::getAssert():true( oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():true( oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -454,22 +454,22 @@ RETURN ( nil )
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oDialog ):cText( "001" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          oController:getCaracteristicasLineasController():Append(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
    oController:getCaracteristicasLineasController():getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 110 ):cText( "Caracteristica línea" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::getAssert():true( oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():true( oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )*/
 
@@ -485,20 +485,20 @@ local oController
    oController             := CaracteristicasController():New()
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oDialog ):cText( "001" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:lineAppend(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:lineAppend(),;
-         apoloWaitSeconds( 3 ),;
+         testWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } ) 
 
-   ::getAssert():true( oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():true( oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -514,24 +514,24 @@ local oController
    oController             := CaracteristicasController():New()
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oDialog ):cText( "001" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:lineAppend(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:lineAppend(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 2" ),;
          oController:getCaracteristicasLineasController():getRowSet():goTop(),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "" ),;
-         apoloWaitSeconds( 3 ),;
+         testWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } ) 
 
-   ::getAssert():true( oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():true( oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -547,24 +547,24 @@ local oController
    oController             := CaracteristicasController():New()
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oDialog ):cText( "001" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:lineAppend(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:lineAppend(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:lineAppend(),;
-         apoloWaitSeconds( 3 ),;
+         testWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } ) 
           
-   ::getAssert():true( oController:Append(), "test ::getAssert():true with .t." )
+   ::Assert():true( oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 

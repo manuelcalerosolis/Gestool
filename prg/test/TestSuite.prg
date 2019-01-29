@@ -13,7 +13,7 @@
 
 #include "hbunit.ch"
 
-CLASS TestSuite FROM Test
+CLASS TestSuite FROM TestBase
 
    DATA aTests
 

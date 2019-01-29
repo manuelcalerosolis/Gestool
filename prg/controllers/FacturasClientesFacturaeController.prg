@@ -369,9 +369,9 @@ METHOD testGenerateXml() CLASS TestFacturasClientesFacturaeController
 
    oController:getFacturasClientesFacturaeController():Generate( uuid )   
 
-   ::getAssert():true( file( cPatXml() + "TEST1.xml" ), "test creacion de XML" )
+   ::Assert():true( file( cPatXml() + "TEST1.xml" ), "test creacion de XML" )
 
-   ::getAssert():true( file( cPatXml() + "TEST1-signed.xml" ), "test creacion de XML firmado" )
+   ::Assert():true( file( cPatXml() + "TEST1-signed.xml" ), "test creacion de XML firmado" )
 
    oController:End()
 
