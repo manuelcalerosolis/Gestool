@@ -458,7 +458,7 @@ METHOD test_create_asistente_sin_cliente() CLASS TestPagosAssistantController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( ::oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():false( ::oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -481,7 +481,7 @@ METHOD test_create_asistente_sin_medio_pago() CLASS TestPagosAssistantController
          apoloWaitSeconds( 2 ),;
          self:getControl( IDCANCEL ):Click() } ) 
 
-   ::assert:false( ::oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():false( ::oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -504,7 +504,7 @@ METHOD test_create_asistente_no_importe() CLASS TestPagosAssistantController
          apoloWaitSeconds( 2 ),;
          self:getControl( IDCANCEL ):Click() } ) 
 
-   ::assert:false( ::oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():false( ::oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -529,7 +529,7 @@ METHOD test_create_asistente_con_pago_parcial() CLASS TestPagosAssistantControll
          apoloWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
 
-   ::assert:true( ::oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -554,7 +554,7 @@ METHOD test_create_asistente_pago_completo() CLASS TestPagosAssistantController
          apoloWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
 
-   ::assert:true( ::oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -581,7 +581,7 @@ METHOD test_create_asistente_cambio_importe() CLASS TestPagosAssistantController
          apoloWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
 
-   ::assert:true( ::oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -614,7 +614,7 @@ METHOD test_create_asistente_pagos_parciales() CLASS TestPagosAssistantControlle
          apoloWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
 
-   ::assert:true( ::oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -651,7 +651,7 @@ METHOD test_create_asistente_todos_pagos_cambio_importe() CLASS TestPagosAssista
          apoloWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
 
-   ::assert:true( ::oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -680,7 +680,7 @@ METHOD test_create_asistente_un_banco() CLASS TestPagosAssistantController
          apoloWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
 
-   ::assert:true( ::oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -713,7 +713,7 @@ METHOD test_create_asistente_dos_banco() CLASS TestPagosAssistantController
          apoloWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
 
-   ::assert:true( ::oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 

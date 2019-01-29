@@ -483,7 +483,7 @@ METHOD test_dialogo_sin_codigo() CLASS TestAlmacenesController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-RETURN ( ::assert:false( ::oController:Append(), "test creación de almacen sin código" ) )
+RETURN ( ::getAssert():false( ::oController:Append(), "test creación de almacen sin código" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -498,7 +498,7 @@ METHOD test_dialogo_sin_nombre() CLASS TestAlmacenesController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
    
-RETURN ( ::assert:false( ::oController:Append(), "test creación de almacen sin nombre" ) )
+RETURN ( ::getAssert():false( ::oController:Append(), "test creación de almacen sin nombre" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -513,7 +513,7 @@ METHOD test_dialogo_creacion() CLASS TestAlmacenesController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-RETURN ( ::assert:true( ::oController:Append(), "test creación de almacen" ) )
+RETURN ( ::getAssert():true( ::oController:Append(), "test creación de almacen" ) )
 
 //---------------------------------------------------------------------------//
 

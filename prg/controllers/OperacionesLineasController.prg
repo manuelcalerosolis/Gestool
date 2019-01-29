@@ -57,6 +57,8 @@ CLASS OperacionesLineasController FROM SQLBrowseController
 
    METHOD validLineUbicacion()
 
+   METHOD validCombinacionTexto( oGet, oCol )    
+
    // Escritura de campos------------------------------------------------------
 
    METHOD updateField( cField, uValue )   
@@ -243,6 +245,14 @@ METHOD validUbicacionCodigo( oGet, oCol ) CLASS OperacionesLineasController
       RETURN ( .f. )
 
    end if
+
+RETURN ( .t. ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD validCombinacionTexto( oGet, oCol ) CLASS OperacionesLineasController
+
+   msgalert( oGet:varGet(), "validCombinacionTexto" ) 
 
 RETURN ( .t. ) 
 
@@ -778,6 +788,30 @@ METHOD loadInformation() CLASS OperacionesLineasController
       nStock   := StocksRepository():selectStockWhereCodigoAlmacenUbicacion( ::getRowSet():fieldget( "articulo_codigo" ), ::getRowSet():fieldget( "almacen_codigo" ), ::getRowSet():fieldget( "ubicacion_codigo" ) )
 
       ::oController:getDialogView():setTextLinkStockUbicacion( nStock )
+
+   end if 
+
+   if !empty( ::getRowSet():fieldget( "lote" ) )
+
+      nStock   := StocksRepository():selectStockWhereCodigoAlmacenLote( ::getRowSet():fieldget( "articulo_codigo" ), ::getRowSet():fieldget( "almacen_codigo" ), ::getRowSet():fieldget( "ubicacion_codigo" ), ::getRowSet():fieldget( "lote" ) )
+
+      ::oController:getDialogView():setTextLinkStockLote( nStock )
+
+   else
+
+      ::oController:getDialogView():cleanTextLinkStockLote()
+
+   end if 
+
+   if !empty( ::getRowSet():fieldget( "combinaciones_uuid" ) )
+
+      nStock   := StocksRepository():selectStockWhereCodigoAlmacenLote( ::getRowSet():fieldget( "articulo_codigo" ), ::getRowSet():fieldget( "almacen_codigo" ), ::getRowSet():fieldget( "ubicacion_codigo" ), ::getRowSet():fieldget( "lote" ), ::getRowSet():fieldget( "combinaciones_uuid" ) )
+
+      ::oController:getDialogView():setTextLinkStockCombinaciones( nStock )
+
+   else
+
+      ::oController:getDialogView():cleanTextLinkStockCombinaciones()
 
    end if 
 

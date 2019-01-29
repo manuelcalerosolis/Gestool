@@ -17,7 +17,8 @@
 
 CLASS Test
 
-   METHOD new()                        CONSTRUCTOR
+   METHOD New()                        CONSTRUCTOR
+   METHOD End()                        VIRTUAL
 
    METHOD countTestCases()             VIRTUAL
    METHOD run()                        VIRTUAL

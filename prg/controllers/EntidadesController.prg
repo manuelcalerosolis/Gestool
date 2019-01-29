@@ -540,7 +540,7 @@ METHOD test_create() CLASS TestEntidadesController
                                        "gnl_fisico"      => "GNL",;
                                        "punto_logico_op" => "Punto lógico" } )
    
-   ::assert:notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion entidades" )
+   ::getAssert():notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion entidades" )
 
 RETURN ( nil )
 
@@ -559,7 +559,7 @@ METHOD test_dialogo_sin_codigo() CLASS TestEntidadesController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( ::oController:Append(), "test creación de enditades sin codigo" )
+   ::getAssert():false( ::oController:Append(), "test creación de enditades sin codigo" )
 
 RETURN ( nil )
 
@@ -582,7 +582,7 @@ METHOD test_dialogo_creacion() CLASS TestEntidadesController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( ::oController:Append(), "test creación de entidades al completo" )
+   ::getAssert():true( ::oController:Append(), "test creación de entidades al completo" )
 
 RETURN ( nil )
 

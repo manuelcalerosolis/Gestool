@@ -546,7 +546,7 @@ METHOD test_dialogo_sin_codigo() CLASS TestAgentesController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-RETURN ( ::assert:false( ::oController:Append(), "test creación de agente sin código" ) )
+RETURN ( ::getAssert():false( ::oController:Append(), "test creación de agente sin código" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -561,7 +561,7 @@ METHOD test_dialogo_sin_nombre() CLASS TestAgentesController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
    
-RETURN ( ::assert:false( ::oController:Append(), "test creación de agente sin nombre" ) )
+RETURN ( ::getAssert():false( ::oController:Append(), "test creación de agente sin nombre" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -576,7 +576,7 @@ METHOD test_dialogo_creacion() CLASS TestAgentesController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-RETURN ( ::assert:true( ::oController:Append(), "test creación de agente" ) )
+RETURN ( ::getAssert():true( ::oController:Append(), "test creación de agente" ) )
 
 //---------------------------------------------------------------------------//
 

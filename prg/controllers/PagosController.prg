@@ -786,7 +786,7 @@ METHOD test_create_recibo_como_pagado() CLASS TestPagosController
 
    SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPagoPresentado , ::uuidPrimerRecibo, 100 )
 
-   ::assert:Equals( RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), 100, "test pago del recibo" )
+   ::getAssert():Equals( RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), 100, "test pago del recibo" )
 
 RETURN ( nil )
 
@@ -796,7 +796,7 @@ METHOD test_create_pago_como_rechazado() CLASS TestPagosController
 
    SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPagoRechazado, ::uuidPrimerRecibo, 100 )
 
-   ::assert:Equals( RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), 0, "test pago del recibo" )
+   ::getAssert():Equals( RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), 0, "test pago del recibo" )
 
 RETURN ( nil )
 
@@ -808,7 +808,7 @@ METHOD test_create_recibo_con_doble_pago() CLASS TestPagosController
 
    SQLRecibosPagosModel():insertPagoRecibo( ::uuidSegundoPagoPresentado, ::uuidPrimerRecibo, 50 )
 
-   ::assert:Equals( 100, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), "test pago del recibo" )
+   ::getAssert():Equals( 100, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), "test pago del recibo" )
 
 RETURN ( nil )
 
@@ -820,7 +820,7 @@ METHOD test_create_pago_con_doble_recibo() CLASS TestPagosController
 
    SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPagoPresentado, ::uuidSegundoRecibo, 100 )
 
-   ::assert:Equals( 200, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ) + RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidSegundoRecibo ) , "test pago del recibo" )
+   ::getAssert():Equals( 200, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ) + RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidSegundoRecibo ) , "test pago del recibo" )
 
 RETURN ( nil )
 
@@ -832,7 +832,7 @@ METHOD test_create_recibo_con_pago_presentado_y_pago_rechazado() CLASS TestPagos
 
    SQLRecibosPagosModel():insertPagoRecibo( ::uuidPrimerPagoRechazado, ::uuidPrimerRecibo, 50 )
 
-   ::assert:Equals( 50, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), "test pago del recibo" )
+   ::getAssert():Equals( 50, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), "test pago del recibo" )
 
 RETURN ( nil )
 
@@ -844,7 +844,7 @@ METHOD test_create_recibo_con_pagos_rechazados() CLASS TestPagosController
 
    SQLRecibosPagosModel():insertPagoRecibo( ::uuidSegundoPagoRechazado, ::uuidPrimerRecibo, 50 )
 
-   ::assert:Equals( 0, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), "test pago del recibo" )
+   ::getAssert():Equals( 0, RecibosPagosRepository():selectFunctionTotalPaidWhereUuid( ::uuidPrimerRecibo ), "test pago del recibo" )
 
 RETURN ( nil )
 
@@ -869,7 +869,7 @@ METHOD test_dialog_append() CLASS TestPagosController
          apoloWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( ::oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -904,7 +904,7 @@ METHOD test_dialog_append_con_bancos() CLASS TestPagosController
          apoloWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( ::oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( ::oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -931,7 +931,7 @@ METHOD test_dialog_append_con_importe_mayor() CLASS TestPagosController
          apoloWaitSeconds( 3 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( ::oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():false( ::oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -958,7 +958,7 @@ METHOD test_dialog_append_cliente_inexistente() CLASS TestPagosController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( ::oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():false( ::oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -985,7 +985,7 @@ METHOD test_dialog_append_medio_pago_inexistente() CLASS TestPagosController
          apoloWaitSeconds( 3 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( ::oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():false( ::oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 

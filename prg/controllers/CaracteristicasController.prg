@@ -390,7 +390,7 @@ METHOD testCreateCaracteristicaSincodigo() CLASS TestCaracteristicasController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():false( oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -414,7 +414,7 @@ METHOD testCreateCaracteristicaSinNombre() CLASS TestCaracteristicasController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():false( oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -436,7 +436,7 @@ METHOD testCreateCaracteristicaSinLinea() CLASS TestCaracteristicasController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -469,7 +469,7 @@ RETURN ( nil )
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )*/
 
@@ -498,7 +498,7 @@ local oController
          apoloWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } ) 
 
-   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -531,7 +531,7 @@ local oController
          apoloWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } ) 
 
-   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -564,7 +564,7 @@ local oController
          apoloWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } ) 
           
-   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 

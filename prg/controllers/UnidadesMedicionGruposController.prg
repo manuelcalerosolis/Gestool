@@ -546,7 +546,7 @@ METHOD testAppend() CLASS TestUnidadesMedicionGruposController
    SQLUnidadesMedicionGruposLineasModel():test_create_cajas( uuid )
    SQLUnidadesMedicionGruposLineasModel():test_create_palets( uuid )
 
-   ::assert:notEquals( 0, SQLUnidadesMedicionGruposModel():insertBuffer( hBuffer ), "test id UnidadesMedicionGrupos distinto de cero" )
+   ::getAssert():notEquals( 0, SQLUnidadesMedicionGruposModel():insertBuffer( hBuffer ), "test id UnidadesMedicionGrupos distinto de cero" )
 
 RETURN ( nil )
 
@@ -581,7 +581,7 @@ METHOD testDialogAppend() CLASS TestUnidadesMedicionGruposController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -616,7 +616,7 @@ METHOD testDialogEmptyUnidades() CLASS TestUnidadesMedicionGruposController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():false( oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -654,7 +654,7 @@ METHOD testDialogCodigoUnidadesErroneo() CLASS TestUnidadesMedicionGruposControl
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 

@@ -17,7 +17,7 @@
 
 CLASS TestCase FROM Test
 
-   METHOD run()
+   METHOD Run()
    METHOD before()                     VIRTUAL
    METHOD beforeClass()                VIRTUAL
    METHOD after()                      VIRTUAL
@@ -26,17 +26,17 @@ CLASS TestCase FROM Test
    DATA aCategories                    INIT { "all" }
 
    PROTECTED:
-      DATA assert
+      DATA assert                      
+
+      METHOD getAssert()               INLINE ( if( empty( ::assert ), ::assert := TAssert():new( ::oResult ), ), ::assert )
 
 ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD run() CLASS TestCase
+METHOD Run() CLASS TestCase
   
-   ::assert    := TAssert():new( ::oResult )
-  
-   ::oResult():run( self )
+   ::oResult():Run( self )
 
 RETURN ( ::oResult() )
 

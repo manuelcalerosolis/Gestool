@@ -501,13 +501,13 @@ METHOD testCreateValor() CLASS TestCaracteristicasValoresArticulosController
    SQLCaracteristicasLineasModel():truncateTable()
    SQLCaracteristicasValoresArticulosModel():truncateTable()
 
-   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
+   ::getAssert():notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
    
-   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
+   ::getAssert():notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
 
-   ::assert:notEquals( SQLArticulosModel():test_create_con_uuid( uuidArticulo ), 0, "test articulo" )
+   ::getAssert():notEquals( SQLArticulosModel():test_create_con_uuid( uuidArticulo ), 0, "test articulo" )
 
-   ::assert:notEquals( SQLCaracteristicasValoresArticulosModel():testCreateCaracteristicaValor( uuidArticulo, uuidCaracteristica, uuidLinea ), 0, "test caracteristica valor" )
+   ::getAssert():notEquals( SQLCaracteristicasValoresArticulosModel():testCreateCaracteristicaValor( uuidArticulo, uuidCaracteristica, uuidLinea ), 0, "test caracteristica valor" )
 
 RETURN ( nil ) 
 
@@ -523,9 +523,9 @@ METHOD testCreateSinCaracteristica() CLASS TestCaracteristicasValoresArticulosCo
    SQLCaracteristicasLineasModel():truncateTable()
    SQLCaracteristicasValoresArticulosModel():truncateTable()
 
-   ::assert:notEquals( SQLArticulosModel():test_create_con_uuid( uuidArticulo ), 0, "test articulo" )
+   ::getAssert():notEquals( SQLArticulosModel():test_create_con_uuid( uuidArticulo ), 0, "test articulo" )
 
-   ::assert:notEquals( SQLCaracteristicasValoresArticulosModel():testCreateValorSinCaracteristica( uuidArticulo ), 1, "test caracteristica valor" )
+   ::getAssert():notEquals( SQLCaracteristicasValoresArticulosModel():testCreateValorSinCaracteristica( uuidArticulo ), 1, "test caracteristica valor" )
 
 RETURN ( nil )
 
@@ -541,11 +541,11 @@ METHOD testCreateSinArticulo() CLASS TestCaracteristicasValoresArticulosControll
    SQLCaracteristicasLineasModel():truncateTable()
    SQLCaracteristicasValoresArticulosModel():truncateTable()
 
-   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
+   ::getAssert():notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
    
-   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
+   ::getAssert():notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
 
-   ::assert:notEquals( SQLCaracteristicasValoresArticulosModel():testCreateValorSinArticulo( uuidCaracteristica, uuidLinea ), 1, "test caracteristica valor" )
+   ::getAssert():notEquals( SQLCaracteristicasValoresArticulosModel():testCreateValorSinArticulo( uuidCaracteristica, uuidLinea ), 1, "test caracteristica valor" )
 
 RETURN ( nil )
 
@@ -561,9 +561,9 @@ METHOD testCreateSinValor() CLASS TestCaracteristicasValoresArticulosController
    SQLCaracteristicasLineasModel():truncateTable()
    SQLCaracteristicasValoresArticulosModel():truncateTable()
 
-   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
+   ::getAssert():notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
 
-   ::assert:notEquals( SQLCaracteristicasValoresArticulosModel():testCreateSinValor( uuidArticulo, uuidCaracteristica ), 1, "test caracteristica valor" )
+   ::getAssert():notEquals( SQLCaracteristicasValoresArticulosModel():testCreateSinValor( uuidArticulo, uuidCaracteristica ), 1, "test caracteristica valor" )
 
 RETURN ( nil )
 
@@ -582,11 +582,11 @@ METHOD testCreatePersonlizado() CLASS TestCaracteristicasValoresArticulosControl
    SQLCaracteristicasLineasModel():truncateTable()
    SQLCaracteristicasValoresArticulosModel():truncateTable()
 
-   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
+   ::getAssert():notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
    
-   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
+   ::getAssert():notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
 
-   ::assert:notEquals( SQLArticulosModel():test_create_con_uuid( uuidArticulo ), 0, "test articulo" )
+   ::getAssert():notEquals( SQLArticulosModel():test_create_con_uuid( uuidArticulo ), 0, "test articulo" )
 
    oController             := CaracteristicasValoresArticulosController():New()
 
@@ -597,7 +597,7 @@ METHOD testCreatePersonlizado() CLASS TestCaracteristicasValoresArticulosControl
          apoloWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } ) 
           
-   ::assert:true( oController:Edit( uuidArticulo ), "test ::assert:true with .t." )
+   ::getAssert():true( oController:Edit( uuidArticulo ), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -616,11 +616,11 @@ METHOD testCreateCaracteristicaCombo() CLASS TestCaracteristicasValoresArticulos
    SQLCaracteristicasLineasModel():truncateTable()
    SQLCaracteristicasValoresArticulosModel():truncateTable()
 
-   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
+   ::getAssert():notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
    
-   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
+   ::getAssert():notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
 
-   ::assert:notEquals( SQLArticulosModel():test_create_con_uuid( uuidArticulo ), 0, "test articulo" )
+   ::getAssert():notEquals( SQLArticulosModel():test_create_con_uuid( uuidArticulo ), 0, "test articulo" )
 
    oController             := CaracteristicasValoresArticulosController():New()
 
@@ -631,7 +631,7 @@ METHOD testCreateCaracteristicaCombo() CLASS TestCaracteristicasValoresArticulos
          apoloWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } ) 
           
-   ::assert:true( oController:Edit( uuidArticulo ), "test ::assert:true with .t." )
+   ::getAssert():true( oController:Edit( uuidArticulo ), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -650,11 +650,11 @@ METHOD testCreateComboCambio() CLASS TestCaracteristicasValoresArticulosControll
    SQLCaracteristicasLineasModel():truncateTable()
    SQLCaracteristicasValoresArticulosModel():truncateTable()
 
-   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
+   ::getAssert():notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
    
-   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
+   ::getAssert():notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
 
-   ::assert:notEquals( SQLArticulosModel():test_create_con_uuid( uuidArticulo ), 0, "test articulo" )
+   ::getAssert():notEquals( SQLArticulosModel():test_create_con_uuid( uuidArticulo ), 0, "test articulo" )
 
    oController             := CaracteristicasValoresArticulosController():New()
 
@@ -667,7 +667,7 @@ METHOD testCreateComboCambio() CLASS TestCaracteristicasValoresArticulosControll
          apoloWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } ) 
           
-   ::assert:true( oController:Edit( uuidArticulo ), "test ::assert:true with .t." )
+   ::getAssert():true( oController:Edit( uuidArticulo ), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -686,11 +686,11 @@ METHOD testCreatePersonalizadoCambio() CLASS TestCaracteristicasValoresArticulos
    SQLCaracteristicasLineasModel():truncateTable()
    SQLCaracteristicasValoresArticulosModel():truncateTable()
 
-   ::assert:notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
+   ::getAssert():notEquals( SQLCaracteristicasModel():testCreateCaracteristica( uuidCaracteristica ), 0, "test create caracteristica" )
    
-   ::assert:notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
+   ::getAssert():notEquals( SQLCaracteristicasLineasModel():testCreateCaracteristicaLineaConUuidAndParent( uuidLinea, uuidCaracteristica ), 0, "test create linea" )
 
-   ::assert:notEquals( SQLArticulosModel():test_create_con_uuid( uuidArticulo ), 0, "test articulo" )
+   ::getAssert():notEquals( SQLArticulosModel():test_create_con_uuid( uuidArticulo ), 0, "test articulo" )
 
    oController             := CaracteristicasValoresArticulosController():New()
 
@@ -703,7 +703,7 @@ METHOD testCreatePersonalizadoCambio() CLASS TestCaracteristicasValoresArticulos
          apoloWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } ) 
           
-   ::assert:true( oController:Edit( uuidArticulo ), "test ::assert:true with .t." )
+   ::getAssert():true( oController:Edit( uuidArticulo ), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 

@@ -174,7 +174,7 @@ METHOD testCalculoFacturaConDescuento() CLASS TestFacturasComprasController
 
    hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
 
-   ::assert:equals( 112.120000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
+   ::getAssert():equals( 112.120000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
 
    oController:End()
 
@@ -200,7 +200,7 @@ METHOD testCalculoFacturaConIncremento() CLASS TestFacturasComprasController
 
    hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
 
-   ::assert:equals( 7.720000, hget( hTotal, "total_documento" ), "test creacion de factura con incremento" )
+   ::getAssert():equals( 7.720000, hget( hTotal, "total_documento" ), "test creacion de factura con incremento" )
 
    oController:End()
 
@@ -226,7 +226,7 @@ METHOD testFacturaConUnidadesDeMedicion() CLASS TestFacturasComprasController
 
    hTotal      := oController:getRepository():getTotalesDocument( uuid ) 
 
-   ::assert:equals( 103.500000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
+   ::getAssert():equals( 103.500000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
 
    oController:End()
 
@@ -257,7 +257,7 @@ METHOD testDialogoWithNoLines() CLASS TestFacturasComprasController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( oController:Append(), "test creación de factura sin lineas" )
+   ::getAssert():false( oController:Append(), "test creación de factura sin lineas" )
 
    oController:End()
 
@@ -296,7 +296,7 @@ METHOD testDialogoVentasPorCajas() CLASS TestFacturasComprasController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( oController:Append(), "test creación de factura con ventas por cajas" )
+   ::getAssert():true( oController:Append(), "test creación de factura con ventas por cajas" )
 
    oController:End()
 

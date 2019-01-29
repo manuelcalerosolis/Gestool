@@ -283,7 +283,7 @@ METHOD test_create() CLASS TestTercerosController
                                        "dni"    => "757575757A",;
                                        "tipo"   => "Cliente/Proveedor" } )
    
-   ::assert:notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion terceros" )
+   ::getAssert():notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion terceros" )
 
 RETURN ( nil )
 
@@ -302,7 +302,7 @@ METHOD test_dialogo_sin_codigo() CLASS TestTercerosController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( ::oController:Append(), "test creación de tercero sin codigo" )
+   ::getAssert():false( ::oController:Append(), "test creación de tercero sin codigo" )
 
 RETURN ( nil )
 
@@ -321,7 +321,7 @@ METHOD test_dialogo_creacion() CLASS TestTercerosController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( ::oController:Append(), "test creación de factura sin lineas" )
+   ::getAssert():true( ::oController:Append(), "test creación de factura sin lineas" )
 
 RETURN ( nil )
 

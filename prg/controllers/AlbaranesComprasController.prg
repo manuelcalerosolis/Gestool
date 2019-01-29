@@ -134,6 +134,8 @@ CLASS TestAlbaranesComprasController FROM TestOperacionesComercialesController
 
    METHOD getController()              INLINE ( if( empty( ::oController ), ::oController := AlbaranesComprasController():New(), ), ::oController ) 
 
+   METHOD End()                        INLINE ( if( !empty( ::oController ), ::oController:End(), ) ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -182,7 +184,7 @@ METHOD test_dialogo_con_una_linea() CLASS TestAlbaranesComprasController
          RETURN ( nil )
       > )
 
-   ::assert:true( ::getController():Insert(), "test creación de albaran de compra con una linea" )
+   ::getAssert():true( ::getController():Insert(), "test creación de albaran de compra con una linea" )
    
 RETURN ( nil )
 
@@ -217,7 +219,7 @@ METHOD test_dialogo_con_articulo_lote() CLASS TestAlbaranesComprasController
    lInsert  := ::getController():Insert()
 
    if !empty( ::assert )
-      ::assert:true( lInsert, "test creación de albaran de compra con artículo con lote" )
+      ::getAssert():true( lInsert, "test creación de albaran de compra con artículo con lote" )
    end if 
 
 RETURN ( nil )

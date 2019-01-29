@@ -838,7 +838,7 @@ METHOD test_dialog_append() CLASS TestEmpresasController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -852,7 +852,7 @@ METHOD test_delete() CLASS TestEmpresasController
       EmpresasController():getModel():deleteSelection( nId ) 
    end if 
 
-   ::assert:equals( nil, EmpresasController():getModel():getField( 'id', 'codigo', 'TEST' ), "test ::assert:true with .t." )
+   ::getAssert():equals( nil, EmpresasController():getModel():getField( 'id', 'codigo', 'TEST' ), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -872,7 +872,7 @@ METHOD test_dialog_empty_cif() CLASS TestEmpresasController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():false( oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -893,7 +893,7 @@ METHOD testDialogEmptyNombre() CLASS TestArticulosController
          apoloWaitSeconds( 1 ),;
          ::oBtnCancelar:Click() } )
 
-   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():false( oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 */

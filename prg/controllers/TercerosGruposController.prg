@@ -301,7 +301,7 @@ METHOD test_create() CLASS TestTercerosGruposController
                   :loadBlankBuffer( {  "codigo" => "0",;
                                        "nombre" => "Test de grupos de terceros" } )
    
-   ::assert:notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion de grupos de terceros" )
+   ::getAssert():notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion de grupos de terceros" )
 
 RETURN ( nil )
 
@@ -318,7 +318,7 @@ METHOD test_dialogo_sin_codigo() CLASS TestTercerosGruposController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( ::oController:Append(), "test creación de grupos de terceros sin codigo" )
+   ::getAssert():false( ::oController:Append(), "test creación de grupos de terceros sin codigo" )
 
 RETURN ( nil )
 
@@ -335,7 +335,7 @@ METHOD test_dialogo_creacion() CLASS TestTercerosGruposController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( ::oController:Append(), "test creación de grupos de terceros" )
+   ::getAssert():true( ::oController:Append(), "test creación de grupos de terceros" )
 
 RETURN ( nil )
 

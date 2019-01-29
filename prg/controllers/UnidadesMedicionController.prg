@@ -426,7 +426,7 @@ METHOD testAppend() CLASS TestUnidadesMedicionController
 
    SQLUnidadesMedicionModel():truncateTable() 
 
-   ::assert:notEquals( 0, SQLUnidadesMedicionModel():insertBuffer( hBuffer ), "test id UnidadesMedicion distinto de cero" )
+   ::getAssert():notEquals( 0, SQLUnidadesMedicionModel():insertBuffer( hBuffer ), "test id UnidadesMedicion distinto de cero" )
 
 RETURN ( nil )
 
@@ -450,7 +450,7 @@ METHOD testDialogAppend() CLASS TestUnidadesMedicionController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+   ::getAssert():true( oController:Append(), "test ::getAssert():true with .t." )
 
 RETURN ( nil )
 
@@ -472,7 +472,7 @@ METHOD testDialogEmptyNombre() CLASS TestUnidadesMedicionController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( oController:Append(), "test creación unidad de medición sin nombre" )
+   ::getAssert():false( oController:Append(), "test creación unidad de medición sin nombre" )
 
 RETURN ( nil )
 
@@ -496,7 +496,7 @@ METHOD testDialogEmptyISO() CLASS TestUnidadesMedicionController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( oController:Append(), "test creación unidad de medición sin codigo ISO" )
+   ::getAssert():false( oController:Append(), "test creación unidad de medición sin codigo ISO" )
 
 RETURN ( nil )
 

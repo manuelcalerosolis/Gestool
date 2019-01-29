@@ -724,7 +724,7 @@ METHOD testDialogoCambioPorcentajeTarifaBase() CLASS TestArticulosTarifasControl
 
    nId                     := oController:getModel():getField( "id", "nombre", __tarifa_base__ )
    
-   ::assert:notnull( nId, "test identificador de la tarifa base" )
+   ::getAssert():notnull( nId, "test identificador de la tarifa base" )
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
@@ -733,7 +733,7 @@ METHOD testDialogoCambioPorcentajeTarifaBase() CLASS TestArticulosTarifasControl
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( oController:Edit( nId ), "test modificación porcentaje tarifa base" )
+   ::getAssert():true( oController:Edit( nId ), "test modificación porcentaje tarifa base" )
 
    oController:End()
 
@@ -766,7 +766,7 @@ METHOD testDialogoCreacionNuevaTarifa() CLASS TestArticulosTarifasController
          apoloWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( oController:Append(), "test creación tarifa mayorista" )
+   ::getAssert():true( oController:Append(), "test creación tarifa mayorista" )
 
    oController:End()
 
