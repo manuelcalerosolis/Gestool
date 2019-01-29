@@ -985,6 +985,7 @@ METHOD getInsertSentence( hBuffer, lIgnore )
 
    ::cSQLInsert      := chgAtEnd( ::cSQLInsert, ' )', 2 )
 
+
    ::fireEvent( 'gotInsertSentence' ) 
 
 RETURN ( ::cSQLInsert )

@@ -44,7 +44,7 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
    METHOD Convert()
       METHOD setHeader()
       METHOD setLines()
-      METHOD insertLines()
+      METHOD sumLines()
       METHOD setDiscounts()
 
    METHOD runConvertAlbaranCompras( aSelected ) 
@@ -66,6 +66,10 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
    METHOD loadData()
 
    METHOD addConvert()
+
+   METHOD convertDocument( aConvert )
+      METHOD insertLines( hLines )
+      METHOD insertDiscounts( hDiscounts )
 
    //Construcciones tardias----------------------------------------------------
 
@@ -223,7 +227,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertLines() CLASS ConversorDocumentosController
+METHOD sumLines() CLASS ConversorDocumentosController
 
    local aLines   := ::getController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
 
@@ -276,18 +280,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD runConvertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
-
-   Local convert
-
-   local line
-
-   local uuidDocumentoOrigen
-
-   local uuidDocumentoDestino
-
-   local uuidDocumentoLineaOrigen
-
-   local uuidDocumentoLineaDestino
    
    ::aConvert     := {}
 
@@ -297,34 +289,8 @@ METHOD runConvertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
 
    ::convertAlbaranCompras( aSelected ) 
 
-   aeval( ::aConvert, {|u| msgalert( hb_valtoexp( u ), "::aConvert" ) } )
-
-   for each convert in ::aConvert
-
-      uuidDocumentoOrigen        := hget( hget( convert, "header" ), "uuid" ) 
-      uuidDocumentoDestino       := win_uuidcreatestring()
-
-      hset( hget( convert, "header" ), "uuid", uuidDocumentoDestino )
-      hset( hget( convert, "header" ), "id", "" )
-
-      ::oDestinoController:generateHeader( hget( convert, "header" ) )
-
-      for each line in hget(convert, "lines")
-
-         uuidDocumentoLineaOrigen   := hget( line, "uuid" )
-
-         msgalert( uuidDocumentoLineaOrigen , "uuidDocumentoLineaOrigen"  ) 
-
-         uuidDocumentoLineaDestino  := win_uuidcreatestring()
-
-         hset( line , "uuid", uuidDocumentoLineaDestino )
-         hset( line , "id", "" )
-
-         ::oDestinoController:generateLines( line )
-
-      next
-
-   next
+   //aeval( ::aConvert, {|u| msgalert( hb_valtoexp( u ), "::aConvert" ) } )
+   ::convertDocument( ::aConvert )
 
 RETURN ( ::aConvert )
 
@@ -349,7 +315,7 @@ METHOD convertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
 
          if ::isAlbaranEquals( hAlbaran )
 
-            ::insertLines()
+            ::sumLines()
 
          else
 
@@ -440,6 +406,108 @@ METHOD Edit( nId )
    end if
 
 RETURN ( ::getDestinoController():Edit( nId ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD convertDocument( aConvert ) 
+
+   Local hConvert
+
+   local uuidDocumentoOrigen
+
+   for each hConvert in ::aConvert
+
+      uuidDocumentoOrigen        := hget( hget( hConvert, "header" ), "uuid" ) 
+       
+      hDels( hget( hConvert, "header" ), { "uuid" , "id", "numero" } )
+
+      ::uuidDocumentoDestino := ::oDestinoController:generateHeader( hget( hConvert, "header" ) )
+
+      if !hb_ishash( ::uuidDocumentoDestino )
+         RETURN ( nil )
+      end if 
+
+      ::uuidDocumentoDestino := hget(::uuidDocumentoDestino, "uuid")
+
+      ::getModel():insertRelationDocument( uuidDocumentoOrigen, ::getController():getModel():cTableName, ::uuidDocumentoDestino, ::oDestinoController:getModel():cTableName )
+
+      msgalert( "cabecera insertdada" )
+
+      ::insertLines( hget( hConvert, "lines") )
+
+      ::insertDiscounts( hget( hConvert, "discounts") )
+
+   next
+
+   RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertLines( hLines )
+
+   local hLine
+
+   local uuidDocumentoLineaOrigen
+
+   local uuidDocumentoLineaDestino
+
+   for each hLine in hLines
+
+         uuidDocumentoLineaOrigen   := hget( hline, "uuid" )
+
+         hDels( hLine, { "uuid", "id" } )
+
+         hset( hLine, "parent_uuid", ::uuidDocumentoDestino )
+
+         uuidDocumentoLineaDestino  := ::oDestinoController:getLinesController():generateLine( hLine )
+
+         if !hb_ishash( uuidDocumentoLineaDestino )
+            RETURN ( nil )
+         end if 
+
+         msgalert( "linea insertada" ) 
+
+         uuidDocumentoLineaDestino := hget( uuidDocumentoLineaDestino, "uuid")
+
+         ::getModel():insertRelationDocument( uuidDocumentoLineaOrigen, ::getController():getLinesController():getModel():cTableName, uuidDocumentoLineaDestino, ::oDestinoController:getLinesController():getModel():cTableName )
+
+   next
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertDiscounts( hDiscounts )
+
+   local hDiscount
+
+   local uuidDocumentoDescuentoOrigen
+
+   local uuidDocumentoDescuentoDestino
+
+ for each hDiscount in hDiscounts
+
+         uuidDocumentoDescuentoOrigen   := hget( hDiscount, "uuid" )
+
+         hDels( hDiscount, { "uuid", "id" } )
+
+         hset( hDiscount, "parent_uuid", ::uuidDocumentoDestino )
+
+         uuidDocumentoDescuentoDestino  := ::oDestinoController:getDiscountController():generateDiscount( hDiscount )
+
+         if !hb_ishash( uuidDocumentoDescuentoDestino )
+            RETURN ( nil )
+         end if 
+
+         uuidDocumentoDescuentoDestino := hget( uuidDocumentoDescuentoDestino, "uuid")
+
+         msgalert( "descuento insertado" )   
+
+         ::getModel():insertRelationDocument( uuidDocumentoDescuentoOrigen, ::getController():getDiscountController():getModel():cTableName, uuidDocumentoDescuentoDestino, ::oDestinoController:getDiscountController():getModel():cTableName )   
+
+      next
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

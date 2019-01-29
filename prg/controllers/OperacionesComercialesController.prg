@@ -66,10 +66,6 @@ CLASS OperacionesComercialesController FROM OperacionesController
    METHOD importFactura()
 
    METHOD generateHeader( hHeader )
-   
-   METHOD generateLines( aLines )
-   
-   METHOD generateDiscounts( aDiscounts )
 
    // Impresiones--------------------------------------------------------------
 
@@ -483,28 +479,13 @@ RETURN ( nil )
 
 METHOD generateHeader( hHeader ) CLASS OperacionesComercialesController
 
-   //msgalert("generando Header")
-   hset(hHeader, "numero", ::getContadoresModel():getCounterAndIncrement( ::getName(), hget( hHeader, "serie" ) ) )
-    //msgalert( hb_valtoexp( hHeader ), "header" )
-   ::getModel():insertBuffer( hHeader )
+   local nId
 
+   nId      := ::getModel():insertBlankBuffer( hHeader ) 
 
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD generateLines( aLines ) CLASS OperacionesComercialesController
-
-   msgalert("generando Lines")
-   msgalert( hb_valtoexp( aLines ), "lineas" )
- 
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD generateDiscounts( aDiscounts ) CLASS OperacionesComercialesController
-
-   msgalert("generando discounts")
+   if !empty( nId )
+      RETURN ( ::getModel():hBuffer )
+   end if 
 
 RETURN ( nil )
 
