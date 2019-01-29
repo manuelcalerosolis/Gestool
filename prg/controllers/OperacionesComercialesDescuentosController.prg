@@ -15,6 +15,8 @@ CLASS OperacionesComercialesDescuentosController FROM SQLBrowseController
 
    METHOD validateDescuento( uValue )
 
+   METHOD generateDiscount( hDiscount )
+
    //Construcciones tardias----------------------------------------------------
    
    METHOD getModel()                   VIRTUAL
@@ -105,6 +107,20 @@ METHOD validateNombre( oGet ) CLASS OperacionesComercialesDescuentosController
    end if
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD generateDiscount( hDiscount ) CLASS OperacionesComercialesDescuentosController
+   
+   local nId
+
+   nId      := ::getModel():insertBlankBuffer( hDiscount ) 
+
+   if !empty( nId )
+      RETURN ( ::getModel():hBuffer )
+   end if 
+ 
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

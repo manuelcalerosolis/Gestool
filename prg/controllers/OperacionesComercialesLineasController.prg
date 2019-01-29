@@ -43,6 +43,8 @@ CLASS OperacionesComercialesLineasController FROM OperacionesLineasController
 
    METHOD setBrowseChange( bChange )   INLINE ( ::getBrowseView:setChange( bChange ) )
 
+   METHOD generateLine( hLine )
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -227,6 +229,20 @@ METHOD stampArticuloPrecio() CLASS OperacionesComercialesLineasController
    ::updateField( 'articulo_precio', nPrecioBase )
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD generateLine( hLine ) CLASS OperacionesComercialesLineasController
+
+   local nId
+
+   nId      := ::getModel():insertBlankBuffer( hLine ) 
+
+   if !empty( nId )
+      RETURN ( ::getModel():hBuffer )
+   end if 
+ 
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
