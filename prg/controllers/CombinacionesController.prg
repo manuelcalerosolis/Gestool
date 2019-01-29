@@ -11,7 +11,7 @@ CLASS CombinacionesController FROM SQLBrowseController
 
    DATA oSelectorView
 
-   DATA aHaving                           INIT {}
+   DATA aHaving                        INIT {}
 
    METHOD New() CONSTRUCTOR
 
@@ -30,7 +30,7 @@ CLASS CombinacionesController FROM SQLBrowseController
    METHOD getCombinationName( aCombination )
 
    METHOD isCombinationInRowSet( cCombinationName ) ;
-                                          INLINE ( ::getRowSet():findString( cCombinationName, 'articulos_propiedades_nombre' ) )
+                                       INLINE ( ::getRowSet():findString( cCombinationName, 'articulos_propiedades_nombre' ) )
 
    METHOD updateIncrementoPrecio( nIncrementoPrecio )
 
@@ -40,22 +40,24 @@ CLASS CombinacionesController FROM SQLBrowseController
 
    METHOD updateHavingSentence()
 
-   METHOD setCodigoArticulo( cCodigoArticulo )  INLINE ( ::cCodigoArticulo := cCodigoArticulo )
-   METHOD getCodigoArticulo()                   INLINE ( ::cCodigoArticulo )
+   METHOD setCodigoArticulo( cCodigoArticulo ) ;
+                                       INLINE ( ::cCodigoArticulo := cCodigoArticulo )
+
+   METHOD getCodigoArticulo()          INLINE ( ::cCodigoArticulo )
 
    METHOD deleteBuffer( aUuidEntidades )
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := CombinacionesBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := CombinacionesBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE ( iif( empty( ::oDialogView ), ::oDialogView := CombinacionesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := CombinacionesView():New( self ), ), ::oDialogView )
 
-   METHOD getSelectorView()               INLINE ( iif( empty( ::oSelectorView ), ::oSelectorView := CombinacionesSelectorView():New( self ), ), ::oSelectorView )
+   METHOD getSelectorView()            INLINE ( iif( empty( ::oSelectorView ), ::oSelectorView := CombinacionesSelectorView():New( self ), ), ::oSelectorView )
 
-   METHOD getRepository()                 INLINE ( iif( empty( ::oRepository ), ::oRepository := CombinacionesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( iif( empty( ::oRepository ), ::oRepository := CombinacionesRepository():New( self ), ), ::oRepository )
 
-   METHOD getModel()                      INLINE ( iif( empty( ::oModel ), ::oModel := SQLCombinacionesModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLCombinacionesModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -65,18 +67,18 @@ METHOD New( oController ) CLASS CombinacionesController
 
    ::Super:New( oController )
 
-   ::cTitle                               := "Combinaciones"
+   ::cTitle                            := "Combinaciones"
 
-   ::cName                                := "combinaciones"
+   ::cName                             := "combinaciones"
 
-   ::hImage                               := {  "16" => "gc_coathanger_16",;
-                                                "32" => "gc_coathanger_32",;
-                                                "48" => "gc_coathanger_48" }
+   ::hImage                            := {  "16" => "gc_coathanger_16",;
+                                             "32" => "gc_coathanger_32",;
+                                             "48" => "gc_coathanger_48" }
 
 
-   ::nLevel                               := Auth():Level( ::cName )
+   ::nLevel                            := Auth():Level( ::cName )
 
-   ::getModel():setEvent( 'beforeDuplicated',{|| ::getCombinacionesPropiedadesController():getModel():olderUuid := ::getModel():getField( "uuid", "parent_uuid", ::getModel():getUuidOlderParent() ) } )
+   ::getModel():setEvent( 'beforeDuplicated', {|| ::getCombinacionesPropiedadesController():getModel():olderUuid := ::getModel():getField( "uuid", "parent_uuid", ::getModel():getUuidOlderParent() ) } )
 
    ::getModel():setEvent( 'afterDuplicated', {| newUuid | ::getCombinacionesPropiedadesController():getModel():duplicateOthers( newUuid ) } )
 
@@ -302,9 +304,10 @@ CLASS CombinacionesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()   
 
-   METHOD onDblClick()                          INLINE ( ::getController():getSelectorView():oDialog:end( IDOK ) )
+   METHOD onDblClick()                 INLINE ( ::getController():getSelectorView():oDialog:end( IDOK ) )
 
-   METHOD disableEditColumnIncrementoPrecio()   INLINE ( ::oColumnIncrementoPrecio:nEditType := 0 )
+   METHOD disableEditColumnIncrementoPrecio() ;
+                                       INLINE ( ::oColumnIncrementoPrecio:nEditType := 0 )
                     
 ENDCLASS
 
