@@ -21,9 +21,7 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    DATA aConvert                       INIT {}
 
-   DATA hHeader                        INIT {=>}
-
-   DATA aHeaders                       INIT{}
+   DATA hHeader                        INIT {}
 
    DATA aLines                         INIT {}
 
@@ -71,8 +69,6 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
    METHOD addConvert()
 
    METHOD convertDocument( aConvert )
-      METHOD insertLines( hLines )
-      METHOD insertDiscounts( hDiscounts )
 
    //Construcciones tardias----------------------------------------------------
 
@@ -210,7 +206,9 @@ RETURN ( nil )
 
 METHOD setHeader() CLASS ConversorDocumentosController
 
-   ::hHeader   := ::getController():getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
+   local hNewHeader   := ::getController():getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
+
+   aadd( ::hHeader, hNewHeader )
 
 RETURN ( nil )
 
@@ -224,8 +222,7 @@ METHOD sumHeader() CLASS ConversorDocumentosController
       RETURN ( nil )
    end if
 
-   //msgalert( hb_valtoexp( hHeaderNew ), "nuevo header" )
-   //aadd( hget( ::aConvert , "header" ), hHeaderNew )  
+   aadd( hget( atail( ::aConvert ), "header" ), hHeaderNew )
 
 RETURN ( nil )
 
@@ -337,15 +334,11 @@ METHOD convertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
 
             ::sumLines()
 
-            //msgalert( hb_valtoexp(::aConvert))
-
          else
 
             ::loadData()
 
             ::addConvert()
-
-            //msgalert( hb_valtoexp( ::aConvert ))
 
          end if
 
@@ -434,101 +427,13 @@ RETURN ( ::getDestinoController():Edit( nId ) )
 
 METHOD convertDocument( aConvert ) CLASS ConversorDocumentosController
 
-   Local hConvert
+   ::aCreatedDocument            := ::oDestinoController:convertDocument( aConvert )
 
-   local uuidDocumentoOrigen
-
-   local cHeader
-
-   for each hConvert in ::aConvert
-
-      uuidDocumentoOrigen        := hget( hget( hConvert, "header" ), "uuid" ) 
-       
-      hDels( hget( hConvert, "header" ), { "uuid" , "id", "numero" } )
-
-      ::uuidDocumentoDestino := ::oDestinoController:generateHeader( hget( hConvert, "header" ) )
-
-      if !hb_ishash( ::uuidDocumentoDestino )
-         RETURN ( nil )
-      end if 
-
-      ::uuidDocumentoDestino := hget(::uuidDocumentoDestino, "uuid")
-
-      /*for each cHeader in hget( hConvert, "aHeaders")
-
-         ::getModel():insertRelationDocument( cHeader, ::getController():getModel():cTableName, ::uuidDocumentoDestino, ::oDestinoController:getModel():cTableName )
-      
-      next*/
-
-      ::insertLines( hget( hConvert, "lines") )
-
-      ::insertDiscounts( hget( hConvert, "discounts") )
-
-   next
-
-   RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertLines( hLines ) CLASS ConversorDocumentosController
-
-   local hLine
-
-   local uuidDocumentoLineaOrigen
-
-   local uuidDocumentoLineaDestino
-
-   for each hLine in hLines
-
-      uuidDocumentoLineaOrigen   := hget( hline, "uuid" )
-
-      hDels( hLine, { "uuid", "id" } )
-
-      hset( hLine, "parent_uuid", ::uuidDocumentoDestino )
-
-      uuidDocumentoLineaDestino  := ::oDestinoController:getLinesController():generateLine( hLine )
-
-      if !hb_ishash( uuidDocumentoLineaDestino )
-         RETURN ( nil )
-      end if 
-
-      uuidDocumentoLineaDestino := hget( uuidDocumentoLineaDestino, "uuid")
-
-      ::getModel():insertRelationDocument( uuidDocumentoLineaOrigen, ::getController():getLinesController():getModel():cTableName, uuidDocumentoLineaDestino, ::oDestinoController:getLinesController():getModel():cTableName )
-
-   next
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertDiscounts( hDiscounts ) CLASS ConversorDocumentosController
-
-   local hDiscount
-
-   local uuidDocumentoDescuentoOrigen
-
-   local uuidDocumentoDescuentoDestino
-
-   for each hDiscount in hDiscounts
-
-      uuidDocumentoDescuentoOrigen   := hget( hDiscount, "uuid" )
-
-      hDels( hDiscount, { "uuid", "id" } )
-
-      hset( hDiscount, "parent_uuid", ::uuidDocumentoDestino )
-
-      uuidDocumentoDescuentoDestino  := ::oDestinoController:getDiscountController():generateDiscount( hDiscount )
-
-      if !hb_ishash( uuidDocumentoDescuentoDestino )
-         RETURN ( nil )
-      end if 
-
-      uuidDocumentoDescuentoDestino := hget( uuidDocumentoDescuentoDestino, "uuid")
-
-      ::getModel():insertRelationDocument( uuidDocumentoDescuentoOrigen, ::getController():getDiscountController():getModel():cTableName, uuidDocumentoDescuentoDestino, ::oDestinoController:getDiscountController():getModel():cTableName )   
-
-   next
+    if !empty( ::aCreatedDocument )
+   
+      ::getResumenView():Activate()
+   
+   end if
 
 RETURN ( nil )
 

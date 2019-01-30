@@ -239,7 +239,7 @@ METHOD generateLine( hLine ) CLASS OperacionesComercialesLineasController
    nId      := ::getModel():insertBlankBuffer( hLine ) 
 
    if !empty( nId )
-      RETURN ( ::getModel():hBuffer )
+      RETURN ( ::getModelBuffer( "uuid" ) )
    end if 
  
 RETURN ( nil )
