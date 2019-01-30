@@ -481,10 +481,14 @@ METHOD generateHeader( hHeader ) CLASS OperacionesComercialesController
 
    local nId
 
+    //hDels ( hHeader , {"uuid", "id", "numero "} )
+
    nId      := ::getModel():insertBlankBuffer( hHeader ) 
 
    if !empty( nId )
-      RETURN ( ::getModel():hBuffer )
+      
+      RETURN ( ::getModelBuffer( "uuid" ) )
+
    end if 
 
 RETURN ( nil )
