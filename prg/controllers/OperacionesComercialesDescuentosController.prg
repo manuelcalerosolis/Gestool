@@ -117,7 +117,7 @@ METHOD generateDiscount( hDiscount ) CLASS OperacionesComercialesDescuentosContr
    nId      := ::getModel():insertBlankBuffer( hDiscount ) 
 
    if !empty( nId )
-      RETURN ( ::getModel():hBuffer )
+      RETURN ( ::getModelBuffer( "uuid" ) )
    end if 
  
 RETURN ( nil )
