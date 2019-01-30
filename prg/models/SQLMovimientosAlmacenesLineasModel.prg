@@ -100,7 +100,7 @@ METHOD getColumnsSelect() CLASS SQLMovimientosAlmacenesLineasModel
       ubicaciones_origen.nombre AS ubicacion_origen_nombre,
       %1$s.ubicacion_destino_codigo AS ubicacion_destino_codigo,
       ubicaciones_destino.nombre AS ubicacion_destino_nombre,
-      RTRIM( GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) ) AS articulos_propiedades_nombre,
+      TRIM( GROUP_CONCAT( " ", articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) ) AS articulos_propiedades_nombre,
       %1$s.deleted_at AS deleted_at
    ENDTEXT
 

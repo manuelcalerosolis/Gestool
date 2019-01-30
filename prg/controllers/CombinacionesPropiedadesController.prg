@@ -194,17 +194,21 @@ RETURN ( ::hValidators )
 
 CLASS SQLCombinacionesPropiedadesModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "combinaciones_propiedades"
+   DATA cTableName                     INIT "combinaciones_propiedades"
 
-   DATA cConstraints             INIT "FOREIGN KEY (parent_uuid) REFERENCES " + SQLCombinacionesModel():getTableName() + " (uuid) ON DELETE CASCADE"
+   DATA cConstraints                   INIT "FOREIGN KEY (parent_uuid) REFERENCES " + SQLCombinacionesModel():getTableName() + " (uuid) ON DELETE CASCADE"
 
    METHOD getColumns()
 
    METHOD getPropertyWhereArticuloCodigo( cCodigoArticulo, cHaving )   
 
    METHOD getPropertyWhereArticuloHaving( cCodigoArticulo, cHaving )
+   
+   METHOD getPropertyWhereArticuloCombinacion( cCodigoArticulo, cTextoCombinacion )
 
-   METHOD getUuidOlderParent()                        INLINE ( ::olderUuid )
+   METHOD selectPropertyWhereArticuloCombinacion( cCodigoArticulo, cTextoCombinacion ) 
+
+   METHOD getUuidOlderParent()         INLINE ( ::olderUuid )
 
 END CLASS
 
@@ -241,7 +245,7 @@ METHOD getPropertyWhereArticuloCodigo( cCodigoArticulo ) CLASS SQLCombinacionesP
       combinaciones.uuid AS uuid,
       combinaciones.parent_uuid AS parent_uuid,
       combinaciones.incremento_precio AS incremento_precio,
-      GROUP_CONCAT( CONCAT( " ", articulos_propiedades_lineas.nombre, " " ) ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre
+      TRIM( GROUP_CONCAT( " ", articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) ) AS articulos_propiedades_nombre
 
    FROM %1$s as combinaciones_propiedades
 
@@ -266,6 +270,24 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
+METHOD getPropertyWhereArticuloCombinacion( cCodigoArticulo, cTextoCombinacion ) CLASS SQLCombinacionesPropiedadesModel
+
+   local cSql
+
+   cSql     := ::getPropertyWhereArticuloCodigo( cCodigoArticulo )
+
+   cSql     += "HAVING articulos_propiedades_nombre LIKE " + quoted( cTextoCombinacion ) 
+
+RETURN ( cSql )   
+
+//---------------------------------------------------------------------------//
+
+METHOD selectPropertyWhereArticuloCombinacion( cCodigoArticulo, cTextoCombinacion ) CLASS SQLCombinacionesPropiedadesModel
+
+RETURN ( getSQLDatabase():selectTrimedFetchHash( ::getPropertyWhereArticuloCombinacion( cCodigoArticulo, cTextoCombinacion ) ) )  
+
+//---------------------------------------------------------------------------//
+
 METHOD getPropertyWhereArticuloHaving( cCodigoArticulo, cHaving ) CLASS SQLCombinacionesPropiedadesModel
 
    local cSql
@@ -278,7 +300,6 @@ METHOD getPropertyWhereArticuloHaving( cCodigoArticulo, cHaving ) CLASS SQLCombi
 
 RETURN ( cSql )   
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -599,10 +599,6 @@ CLASS TestOperacionesComercialesController FROM TestOperacionesController
                                                 testWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
-   METHOD set_lote_en_linea( cLote )   INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnLote:bOnPostEdit, , cLote, 0 ),;
-                                                testWaitSeconds( 1 ),;
-                                                ::refresh_linea_browse_view() )
-
    METHOD refresh_linea_browse_view()  INLINE ( ::oController:getLinesController():getBrowseView():getRowSet():Refresh(),;
                                                 testWaitSeconds( 1 ) )
 /*

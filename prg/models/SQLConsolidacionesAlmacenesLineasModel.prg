@@ -97,7 +97,7 @@ METHOD getColumnsSelect() CLASS SQLConsolidacionesAlmacenesLineasModel
       almacenes.nombre AS almacen_nombre,
       %1$s.ubicacion_codigo AS ubicacion_codigo,
       ubicaciones.nombre AS ubicacion_nombre,
-      RTRIM( GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) ) AS articulos_propiedades_nombre,
+      TRIM( GROUP_CONCAT( " ", articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) ) AS articulos_propiedades_nombre,
       %1$s.deleted_at AS deleted_at
    ENDTEXT
 

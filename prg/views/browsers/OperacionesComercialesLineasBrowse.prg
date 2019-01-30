@@ -235,7 +235,7 @@ METHOD addColumns() CLASS OperacionesComercialesLineasBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_propiedades_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := ::getEditButton()
-      :bEditValid          := {|oGet, oCol| ::getController():validCombinacionTexto( oGet, oCol ) }
+      :bEditValid          := {|oGet, oCol| ::getController():validCombinacionesTexto( oGet, oCol ) }
       :bEditBlock          := {|| ::getController():getCombinacionesController():runViewSelector( ::getRowSet():fieldGet( 'articulo_codigo' ) ) }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )
@@ -248,7 +248,7 @@ METHOD addColumns() CLASS OperacionesComercialesLineasBrowseView
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'almacen_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :nEditType           := EDIT_GET_BUTTON
+      :nEditType           := ::getEditButton()
       :bEditValid          := {|oGet, oCol| ::getController():validAlmacenCodigo( oGet, oCol ) }
       :bEditBlock          := {|| ::getController():oController:getAlmacenesController():ActivateSelectorView() }
       :nBtnBmp             := 1
@@ -272,7 +272,7 @@ METHOD addColumns() CLASS OperacionesComercialesLineasBrowseView
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'ubicacion_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :nEditType           := EDIT_GET_BUTTON
+      :nEditType           := ::getEditButton()
       :bEditValid          := {|oGet, oCol| ::getController():validUbicacionCodigo( oGet, oCol ) }
       :bEditBlock          := {|| ::activateUbicacionesSelectorView() }
       :nBtnBmp             := 1

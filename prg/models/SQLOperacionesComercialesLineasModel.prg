@@ -117,7 +117,7 @@ METHOD getColumnsSelect() CLASS SQLOperacionesComercialesLineasModel
       %1$s.agente_codigo AS agente_codigo,
       %1$s.agente_comision AS agente_comision, 
       agentes.nombre AS agente_nombre, 
-      RTRIM( GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) ) AS articulos_propiedades_nombre,
+      TRIM( GROUP_CONCAT( " ", articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) ) AS articulos_propiedades_nombre,
       %1$s.deleted_at AS deleted_at
    ENDTEXT
 

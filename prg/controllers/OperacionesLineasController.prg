@@ -57,7 +57,7 @@ CLASS OperacionesLineasController FROM SQLBrowseController
 
    METHOD validLineUbicacion()
 
-   METHOD validCombinacionTexto( oGet, oCol )    
+   METHOD validCombinacionesTexto( oGet, oCol )    
 
    // Escritura de campos------------------------------------------------------
 
@@ -250,9 +250,23 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validCombinacionTexto( oGet, oCol ) CLASS OperacionesLineasController
+METHOD validCombinacionesTexto( oGet, oCol ) CLASS OperacionesLineasController
 
-   msgalert( oGet:varGet(), "validCombinacionTexto" ) 
+   local hArticuloCombinacion
+
+   hArticuloCombinacion    := SQLCombinacionesPropiedadesModel():selectPropertyWhereArticuloCombinacion( ::getRowSet():fieldget( 'articulo_codigo' ), alltrim( oGet:varGet() ) )
+   
+   if empty( hArticuloCombinacion )
+
+      ::getController():getDialogView():showMessage( "Las propiedades introducidas no son validas" )      
+
+      ::getBrowseView():setFocusColumnPropiedades()
+
+      RETURN ( .f. )
+
+   end if 
+
+   oGet:varPut( hget( atail( hArticuloCombinacion ), "uuid" ) )
 
 RETURN ( .t. ) 
 
@@ -429,7 +443,7 @@ METHOD postValidateCombinacionesUuid( oCol, uValue ) CLASS OperacionesLineasCont
    if empty( hCombination )
       RETURN ( nil )
    end if 
-   
+
    ::stampCombinationAndIncrement( hCombination )
 
    ::oController:calculateTotals()

@@ -132,6 +132,8 @@ CLASS TestAlbaranesComprasController FROM TestOperacionesComercialesController
 
    METHOD test_dialogo_con_articulo_lote()
 
+   METHOD test_dialogo_con_articulo_combinacion() 
+
    METHOD getController()              INLINE ( if( empty( ::oController ), ::oController := AlbaranesComprasController():New(), ), ::oController ) 
 
    METHOD End()                        INLINE ( if( !empty( ::oController ), ::oController:End(), ) ) 
@@ -192,8 +194,6 @@ RETURN ( nil )
 
 METHOD test_dialogo_con_articulo_lote() CLASS TestAlbaranesComprasController
 
-   local lInsert
-
    ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
       
@@ -216,15 +216,42 @@ METHOD test_dialogo_con_articulo_lote() CLASS TestAlbaranesComprasController
          RETURN ( nil )
       > )
 
-   lInsert  := ::getController():Insert()
-
-   if !empty( ::assert )
-      ::Assert():true( lInsert, "test creación de albaran de compra con artículo con lote" )
-   end if 
+   ::Assert():true( ::getController():Insert(), "test creación de albaran de compra con artículo con lote" )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD test_dialogo_con_articulo_combinacion() CLASS TestAlbaranesComprasController
+
+   ::getController():getDialogView():setEvent( 'painted',;
+      <| view | 
+      
+         ::set_codigo_tercero( "3", view )
+      
+         ::set_codigo_forma_pago( "0", view )
+      
+         ::click_nueva_linea( view )
+
+         ::set_codigo_articulo_en_linea( "2" )
+
+         ::set_combinaciones_en_linea( "S, Azul, Denim" )
+
+         ::set_codigo_ubicacion_en_linea( "0" )
+
+         ::set_precio_en_linea( 300 )
+
+         view:getControl( IDOK ):Click()
+         
+         RETURN ( nil )
+      > )
+
+   ::Assert():true( ::getController():Insert(), "test creación de albaran de compra con combinaciones" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 
 #endif
 
