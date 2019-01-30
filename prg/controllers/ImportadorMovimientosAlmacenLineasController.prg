@@ -26,7 +26,7 @@ CLASS ImportadorMovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD stampNombreFamilia( oFamilia )     INLINE ( oFamilia:oHelpText:cText( FamiliasModel():getNombre( oFamilia:varGet() ) ), .t. )
 
-   METHOD stampArticuloNombre( oArticulo )   INLINE ( oArticulo:oHelpText:cText( ArticulosModel():getNombre( oArticulo:varGet() ) ), .t. )
+   METHOD stampArticuloNombre( oArticulo )   INLINE ( oArticulo:oHelpText:cText( SQLArticulosModel():getNombre( oArticulo:varGet() ) ), .t. )
 
    METHOD isConsolidacion()                  INLINE ( ::oController:oDialogView:oRadioTipoMovimento:nOption() == __tipo_movimiento_consolidacion__ )
 
@@ -77,7 +77,7 @@ METHOD importarAlmacen()
 
    local cArea          := "ArtToImport"
 
-   ArticulosModel():getArticulosToImport( @cArea, ::oDialogView:getRange() )
+   SQLArticulosModel():getArticulosToImport( @cArea, ::oDialogView:getRange() )
 
    ::oDialogView:oMtrStock:setTotal( ( cArea )->( lastrec() ) )
 

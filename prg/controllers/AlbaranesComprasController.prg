@@ -224,6 +224,8 @@ RETURN ( nil )
 
 METHOD test_dialogo_con_articulo_combinacion() CLASS TestAlbaranesComprasController
 
+   TestArticulosController():test_dialog_append_con_caracteristicas()
+
    ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
       
@@ -233,9 +235,9 @@ METHOD test_dialogo_con_articulo_combinacion() CLASS TestAlbaranesComprasControl
       
          ::click_nueva_linea( view )
 
-         ::set_codigo_articulo_en_linea( "2" )
+         ::set_codigo_articulo_en_linea( "3" )
 
-         ::set_combinaciones_en_linea( "S, Azul, Denim" )
+         ::set_combinaciones_en_linea( "3", "S, Azul, Denim" )
 
          ::set_codigo_ubicacion_en_linea( "0" )
 
@@ -251,7 +253,6 @@ METHOD test_dialogo_con_articulo_combinacion() CLASS TestAlbaranesComprasControl
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
 
 #endif
 

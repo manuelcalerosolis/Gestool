@@ -4207,7 +4207,7 @@ METHOD ExportOneCategoryToPrestashop( idCategory, cWeb )
       RETURN ( nil )
    end if 
 
-   ArticulosModel():getArticulosToPrestashopInFamilia( idCategory, cWeb, @cSql )
+   SQLArticulosModel():getArticulosToPrestashopInFamilia( idCategory, cWeb, @cSql )
 
    ::ftpConnect()
 

@@ -819,7 +819,7 @@ METHOD loadInformation() CLASS OperacionesLineasController
 
    if !empty( ::getRowSet():fieldget( "combinaciones_uuid" ) )
 
-      nStock   := StocksRepository():selectStockWhereCodigoAlmacenLote( ::getRowSet():fieldget( "articulo_codigo" ), ::getRowSet():fieldget( "almacen_codigo" ), ::getRowSet():fieldget( "ubicacion_codigo" ), ::getRowSet():fieldget( "lote" ), ::getRowSet():fieldget( "combinaciones_uuid" ) )
+      nStock   := StocksRepository():selectStockWhereCodigoAlmacenCombinaciones( ::getRowSet():fieldget( "articulo_codigo" ), ::getRowSet():fieldget( "almacen_codigo" ), ::getRowSet():fieldget( "ubicacion_codigo" ), ::getRowSet():fieldget( "lote" ), ::getRowSet():fieldget( "combinaciones_uuid" ) )
 
       ::oController:getDialogView():setTextLinkStockCombinaciones( nStock )
 

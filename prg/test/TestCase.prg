@@ -28,7 +28,7 @@ CLASS TestCase FROM TestBase
    PROTECTED:
       DATA oAssert                      
 
-      METHOD Assert()                  INLINE ( if( empty( ::oAssert ), ::oAssert := TAssert():new( ::oResult ), ), ::oAssert )
+      METHOD Assert()                  INLINE ( if( empty( ::oAssert ), ::oAssert := TAssert():new( ::Result() ), ), ::oAssert )
 
 ENDCLASS
 
@@ -36,7 +36,7 @@ ENDCLASS
 
 METHOD Run() CLASS TestCase
   
-   ::oResult():Run( self )
+   ::Result():Run( self )
 
 RETURN ( ::oResult() )
 

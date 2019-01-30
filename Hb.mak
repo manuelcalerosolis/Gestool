@@ -311,7 +311,6 @@ TiposVentasController.prg 													\
 PropiedadesModel.obj       								   			\
 PropiedadesController.obj       											\
 PropiedadesLineasController.obj       									\
-ArticulosModel.prg                                    			\
 FamiliasModel.prg                                    				\
 TiposArticulosModel.prg                                    		\
 ContadoresModel.prg                                   			\
@@ -767,7 +766,6 @@ PropiedadesLineasController.obj       									\
 IdentificadorRegistroView.obj             							\
 SQLTageableModel.obj 														\
 SQLAjustableModel.obj 														\
-ArticulosModel.obj                                    			\
 FamiliasModel.obj                                    				\
 TiposArticulosModel.obj                                    		\
 ContadoresModel.obj                                    			\
@@ -1169,7 +1167,6 @@ $(OBJ)\RectificativasProveedoresLineasModel.obj 					+
 $(OBJ)\FacturasClientesModel.obj 										+
 $(OBJ)\TicketsClientesLineasModel.obj 									+
 $(OBJ)\TicketsClientesPagosModel.obj 									+
-$(OBJ)\ArticulosModel.obj                    						+
 $(OBJ)\FamiliasModel.obj                    							+
 $(OBJ)\TiposArticulosModel.obj              							+
 $(OBJ)\ContadoresModel.obj                    						+

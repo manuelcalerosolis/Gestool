@@ -2090,7 +2090,7 @@ Return nil
 Function SQLTiposImpresorasModel()
 Return nil
 
-Function ArticulosModel()
+Function SQLArticulosModel()
 Return nil
 
 Function AlbaranesClientesModel()

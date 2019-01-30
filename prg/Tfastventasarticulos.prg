@@ -4427,7 +4427,7 @@ METHOD getSerialiceValoresPropiedades( cCodigoPropiedad ) CLASS TFastVentasArtic
    local cSql        := "Propiedades"
    local aResult     := {}
 
-   ArticulosModel():getValoresPropiedades( cCodigoPropiedad, @cSql )
+   SQLArticulosModel():getValoresPropiedades( cCodigoPropiedad, @cSql )
 
    while !( cSql )->( Eof() )
       aAdd( aResult, AllTrim( ( cSql )->cCodTbl ) + " - " + AllTrim( ( cSql )->cDesTbl ) )
@@ -4442,7 +4442,7 @@ METHOD getPrimerValorPropiedad( cCodigoPropiedad ) CLASS TFastVentasArticulos
 
    local cSql        := "PrimeraPropiedades"
 
-   ArticulosModel():getPrimerValorPropiedad( cCodigoPropiedad, @cSql )
+   SQLArticulosModel():getPrimerValorPropiedad( cCodigoPropiedad, @cSql )
 
 Return ( AllTrim( ( cSql )->cCodTbl ) + " - " + AllTrim( ( cSql )->cDesTbl ) )
 

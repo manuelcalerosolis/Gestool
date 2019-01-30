@@ -13,6 +13,8 @@
 
 #include "hbunit.ch"
 
+//---------------------------------------------------------------------------//
+
 CLASS TAssert
 
    DATA oResult
@@ -34,15 +36,21 @@ PROTECTED:
 
 ENDCLASS
 
+//---------------------------------------------------------------------------//
+
 METHOD new( oResult ) CLASS TAssert
 
    ::oResult      := oResult
 
 RETURN ( self )
 
+//---------------------------------------------------------------------------//
+
 METHOD fail( cMsg ) CLASS TAssert
 
 RETURN ( ::assert( .f.,, "Failure: " + cMsg ) )
+
+//---------------------------------------------------------------------------//
 
 METHOD equals( xExp, xAct, cMsg ) CLASS TAssert
 
@@ -54,6 +62,8 @@ METHOD equals( xExp, xAct, cMsg ) CLASS TAssert
 
 RETURN ( ::assert( xExp, xAct, cErrMsg ) )
 
+//---------------------------------------------------------------------------//
+
 METHOD notEquals( xExp, xAct, cMsg ) CLASS TAssert
 
    local cErrMsg := ""
@@ -63,6 +73,8 @@ METHOD notEquals( xExp, xAct, cMsg ) CLASS TAssert
    cErrMsg += "( " + cMsg + " )"
 
 RETURN ( ::assert( xExp, xAct, cErrMsg, .t. ) )
+
+//---------------------------------------------------------------------------//
 
 METHOD true( xAct, cMsg ) CLASS TAssert
 
@@ -74,6 +86,8 @@ METHOD true( xAct, cMsg ) CLASS TAssert
 
 RETURN ( ::assert( .t., xAct , cErrMsg ) )
 
+//---------------------------------------------------------------------------//
+
 METHOD false( xAct, cMsg ) CLASS TAssert
 
    local cErrMsg := ""
@@ -83,6 +97,8 @@ METHOD false( xAct, cMsg ) CLASS TAssert
    cErrMsg += "( " + cMsg + " )"
 
 RETURN ( ::assert( .f., xAct , cErrMsg ) )
+
+//---------------------------------------------------------------------------//
 
 METHOD null( xAct, cMsg ) CLASS TAssert
 
@@ -94,6 +110,8 @@ METHOD null( xAct, cMsg ) CLASS TAssert
 
 RETURN ( ::assert( nil, xAct , cErrMsg ) )
 
+//---------------------------------------------------------------------------//
+
 METHOD notNull( xAct, cMsg ) CLASS TAssert
 
    local cErrMsg := ""
@@ -103,6 +121,8 @@ METHOD notNull( xAct, cMsg ) CLASS TAssert
    cErrMsg += "( " + cMsg + " )"
 
 RETURN ( ::assert( nil, xAct , cErrMsg, .t. ) )
+
+//---------------------------------------------------------------------------//
 
 METHOD assert( xExp, xAct, cMsg, lInvert ) CLASS TAssert
 
@@ -133,6 +153,8 @@ METHOD assert( xExp, xAct, cMsg, lInvert ) CLASS TAssert
 
 RETURN ( nil )
 
+//---------------------------------------------------------------------------//
+
 METHOD isEqual( xExp, xAct ) CLASS TAssert
 
    local lResult := .f.
@@ -146,6 +168,7 @@ METHOD isEqual( xExp, xAct ) CLASS TAssert
 
 RETURN ( lResult )
 
+//---------------------------------------------------------------------------//
 // #TODO - see where to put these util methods
 
 METHOD toStr( xVal, lUseQuote ) CLASS TAssert
@@ -181,3 +204,4 @@ METHOD toStr( xVal, lUseQuote ) CLASS TAssert
 
 RETURN ( cStr )
 
+//---------------------------------------------------------------------------//

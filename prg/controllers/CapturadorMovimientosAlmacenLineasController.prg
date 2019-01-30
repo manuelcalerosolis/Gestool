@@ -99,7 +99,7 @@ METHOD processLine( cLine )
       hset( hBuffer, "valor_segunda_propiedad",  alltrim( aLines[ 6 ] ) )
    end if 
 
-   hArticulo                  := ArticulosModel():getHash( hget( hBuffer, "codigo_articulo" ) )
+   hArticulo                  := SQLArticulosModel():getHash( hget( hBuffer, "codigo_articulo" ) )
    if empty( hArticulo )
       aadd( ::aErrors, "El código del artículo no existe." )
       RETURN ( Self )

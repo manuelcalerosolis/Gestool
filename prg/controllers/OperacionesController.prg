@@ -248,10 +248,7 @@ CLASS TestOperacionesController FROM TestCase
                                                    testWaitSeconds( 1 ),;
                                                    ::refresh_linea_browse_view() )
 
-   METHOD set_combinaciones_en_linea( cCombinacionTexto ) ;
-                                       INLINE   (  eval( ::oController:getLinesController():getBrowseView():oColumnPropiedades:bOnPostEdit, , cCombinacionTexto, 0 ),;
-                                                   testWaitSeconds( 1 ),;
-                                                   ::refresh_linea_browse_view() )
+   METHOD set_combinaciones_en_linea( cCodigoArticulo, cCombinacionTexto )
 
 END CLASS
 
@@ -325,6 +322,24 @@ METHOD Before() CLASS TestOperacionesController
 
    SQLArticulosTarifasModel():test_create_tarifa_base()
    SQLArticulosTarifasModel():test_create_tarifa_mayorista()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD set_combinaciones_en_linea( cCodigoArticulo, cCombinacionTexto )
+
+   local aArticuloCombinacion := SQLCombinacionesPropiedadesModel():selectPropertyWhereArticuloCombinacion( cCodigoArticulo, cCombinacionTexto )
+
+   if !empty( aArticuloCombinacion )
+   
+      eval( ::oController:getLinesController():getBrowseView():oColumnPropiedades:bOnPostEdit, , hget( atail( aArticuloCombinacion ), "uuid" ), 0 )
+
+      testWaitSeconds( 1 )
+   
+      ::refresh_linea_browse_view() 
+
+   end if 
 
 RETURN ( nil )
 
