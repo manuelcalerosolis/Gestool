@@ -192,9 +192,9 @@ METHOD test_dialogo_con_un_solo_pago() CLASS TestFacturasVentasController
          RETURN ( nil )
       > )
 
-   ::assert:true( ::oController:Insert(), "test creación de factura con un recibo pagado" )
+   ::Assert():true( ::oController:Insert(), "test creación de factura con un recibo pagado" )
    
-   ::assert:equals( 1, RecibosRepository():getCountWhereDocumentUuid( ::oController:getModelBuffer( "uuid" ) ), "test comprobacion numeros de recibos" )
+   ::Assert():equals( 1, RecibosRepository():getCountWhereDocumentUuid( ::oController:getModelBuffer( "uuid" ) ), "test comprobacion numeros de recibos" )
 
 RETURN ( nil )
 
@@ -222,9 +222,9 @@ METHOD test_dialogo_con_varios_pagos() CLASS TestFacturasVentasController
          RETURN ( nil )
       > )
 
-   ::assert:true( ::oController:Insert(), "test creación de factura con varios recibos pagados" )
+   ::Assert():true( ::oController:Insert(), "test creación de factura con varios recibos pagados" )
 
-   ::assert:equals( 3, RecibosRepository():getCountWhereDocumentUuid( ::oController:getModelBuffer( "uuid" ) ), "test comprobacion numeros de recibos" )
+   ::Assert():equals( 3, RecibosRepository():getCountWhereDocumentUuid( ::oController:getModelBuffer( "uuid" ) ), "test comprobacion numeros de recibos" )
 
 RETURN ( nil )
 
@@ -248,9 +248,9 @@ METHOD test_dialogo_con_cambio_de_importe() CLASS TestFacturasVentasController
          RETURN ( nil )
       > )
 
-   ::assert:true( ::oController:Edit( id ), "test modificacion de factura con nuevo importe" )
+   ::Assert():true( ::oController:Edit( id ), "test modificacion de factura con nuevo importe" )
 
-   // ::assert:equals( 3, RecibosRepository():getCountWhereDocumentUuid( ::oController:getModelBuffer( "uuid" ) ), "test comprobacion numeros de recibos" )
+   // ::Assert():equals( 3, RecibosRepository():getCountWhereDocumentUuid( ::oController:getModelBuffer( "uuid" ) ), "test comprobacion numeros de recibos" )
 
 RETURN ( nil )
 */

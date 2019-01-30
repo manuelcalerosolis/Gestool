@@ -283,7 +283,7 @@ METHOD test_create() CLASS TestTercerosController
                                        "dni"    => "757575757A",;
                                        "tipo"   => "Cliente/Proveedor" } )
    
-   ::assert:notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion terceros" )
+   ::Assert():notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion terceros" )
 
 RETURN ( nil )
 
@@ -293,16 +293,16 @@ METHOD test_dialogo_sin_codigo() CLASS TestTercerosController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[1] ):cText( "Test de cliente/proveedor" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120, self:oFolder:aDialogs[1] ):cText( "75757575A" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( ::oController:Append(), "test creación de tercero sin codigo" )
+   ::Assert():false( ::oController:Append(), "test creación de tercero sin codigo" )
 
 RETURN ( nil )
 
@@ -312,16 +312,16 @@ METHOD test_dialogo_creacion() CLASS TestTercerosController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110, self:oFolder:aDialogs[1] ):cText( "Test de cliente/proveedor" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120, self:oFolder:aDialogs[1] ):cText( "75757575A" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( ::oController:Append(), "test creación de factura sin lineas" )
+   ::Assert():true( ::oController:Append(), "test creación de factura sin lineas" )
 
 RETURN ( nil )
 

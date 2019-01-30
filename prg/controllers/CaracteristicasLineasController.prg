@@ -387,7 +387,7 @@ METHOD testCreateLineaSinPadre() CLASS TestCaracteristicasLineasController
    
    SQLCaracteristicasLineasModel():truncateTable()
 
-   ::assert:notEquals( SQLCaracteristicasLineasModel():test_create_sin_parent(), 1, "test create linea" )
+   ::Assert():notEquals( SQLCaracteristicasLineasModel():test_create_sin_parent(), 1, "test create linea" )
 
 RETURN ( nil )
 
@@ -400,9 +400,9 @@ METHOD testCreateLineaConPadre() CLASS TestCaracteristicasLineasController
    SQLCaracteristicasModel():truncateTable() 
    SQLCaracteristicasLineasModel():truncateTable()
    
-   ::assert:notEquals( SQLCaracteristicasModel():test_create_caracteristica( uuidParent ), 0, "test create caracteristica" )
+   ::Assert():notEquals( SQLCaracteristicasModel():test_create_caracteristica( uuidParent ), 0, "test create caracteristica" )
 
-   ::assert:notEquals( SQLCaracteristicasLineasModel():test_create_con_parent( uuidParent ), 0, "test create linea" )
+   ::Assert():notEquals( SQLCaracteristicasLineasModel():test_create_con_parent( uuidParent ), 0, "test create linea" )
 
 RETURN ( nil )
 
@@ -415,9 +415,9 @@ METHOD testCreateLineaSinNombre() CLASS TestCaracteristicasLineasController
    SQLCaracteristicasModel():truncateTable() 
    SQLCaracteristicasLineasModel():truncateTable()
    
-   ::assert:notEquals( SQLCaracteristicasModel():test_create_caracteristica( uuidParent ), 0, "test create caracteristica" )
+   ::Assert():notEquals( SQLCaracteristicasModel():test_create_caracteristica( uuidParent ), 0, "test create caracteristica" )
 
-   ::assert:notEquals( SQLCaracteristicasLineasModel():test_create_sin_nombre( uuidParent ), 1, "test create linea" )
+   ::Assert():notEquals( SQLCaracteristicasLineasModel():test_create_sin_nombre( uuidParent ), 1, "test create linea" )
 
 RETURN ( nil )
 

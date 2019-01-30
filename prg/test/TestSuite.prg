@@ -13,7 +13,7 @@
 
 #include "hbunit.ch"
 
-CLASS TestSuite FROM Test
+CLASS TestSuite FROM TestBase
 
    DATA aTests
 
@@ -23,7 +23,9 @@ CLASS TestSuite FROM Test
 
    METHOD New() CONSTRUCTOR
 
-   METHOD run()
+   METHOD Run()
+
+   METHOD End()
 
    METHOD addTest( oTest )
 
@@ -56,6 +58,14 @@ METHOD Run() CLASS TestSuite
    aeval( ::aTests, {|oTest| if( ::isInCategories( oTest:aCategories ), oTest:Run(), ) } )
 
 RETURN ( ::oResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD End() CLASS TestSuite
+
+   aeval( ::aTests, {|oTest| oTest:End() } )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

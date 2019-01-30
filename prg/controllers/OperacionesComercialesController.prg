@@ -550,65 +550,65 @@ CLASS TestOperacionesComercialesController FROM TestOperacionesController
 
    METHOD set_codigo_tercero( cCodigoCliente, view ) ;
                                        INLINE ( view:getControl( 170, view:oFolder:aDialogs[1] ):cText( cCodigoCliente ),;
-                                                apoloWaitSeconds( 1 ),;
+                                                testWaitSeconds( 1 ),;
                                                 view:getControl( 170, view:oFolder:aDialogs[1] ):lValid(),;
-                                                apoloWaitSeconds( 1 ) )
+                                                testWaitSeconds( 1 ) )
 
    METHOD set_codigo_agente( cCodigoAgente, view ) ;
                                        INLINE ( view:getControl( 270, view:oFolder:aDialogs[1] ):cText( cCodigoAgente ),;
-                                                apoloWaitSeconds( 1 ),;
+                                                testWaitSeconds( 1 ),;
                                                 view:getControl( 270, view:oFolder:aDialogs[1] ):lValid(),;
-                                                apoloWaitSeconds( 1 ) )
+                                                testWaitSeconds( 1 ) )
 
    METHOD set_codigo_forma_pago( cCodigoFormaPago, view ) ;
                                        INLINE ( view:getControl( 240, view:oFolder:aDialogs[1] ):cText( cCodigoFormaPago ),;
-                                                apoloWaitSeconds( 1 ),;
+                                                testWaitSeconds( 1 ),;
                                                 view:getControl( 240, view:oFolder:aDialogs[1] ):lValid(),;
-                                                apoloWaitSeconds( 1 ) )
+                                                testWaitSeconds( 1 ) )
 
    METHOD click_nueva_linea( view )    INLINE ( view:getControl( 501, view:oFolder:aDialogs[1] ):Click(),;
-                                                apoloWaitSeconds( 1 ) )
+                                                testWaitSeconds( 1 ) )
 
    METHOD click_nuevo_descuento( view ) ;
                                        INLINE ( view:getControl( 601, view:oFolder:aDialogs[1] ):Click(),;
-                                                apoloWaitSeconds( 1 ) )
+                                                testWaitSeconds( 1 ) )
 
    METHOD set_codigo_articulo_en_linea( cCodigoArticulo ) ;
                                        INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , cCodigoArticulo, 0 ),;
-                                                apoloWaitSeconds( 1 ),;
+                                                testWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_codigo_almacen_en_linea( cCodigoAlmacen ) ;
                                        INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoAlmacen:bOnPostEdit, , cCodigoAlmacen, 0 ),;
-                                                apoloWaitSeconds( 1 ),;
+                                                testWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_codigo_ubicacion_en_linea( cCodigoUbicacion ) ;
                                        INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoUbicacion:bOnPostEdit, , cCodigoUbicacion, 0 ),;
-                                                apoloWaitSeconds( 1 ),;
+                                                testWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_precio_en_linea( nPrecio ) ;
                                        INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , nPrecio, 0 ),;
-                                                apoloWaitSeconds( 1 ),;
+                                                testWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_descripcion_descuento( cDescuento ) ;
                                        INLINE ( eval( ::oController:getDiscountController():getBrowseView():oColumnNombre:bOnPostEdit, , cDescuento, 0 ),;
-                                                apoloWaitSeconds( 1 ),;
+                                                testWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_porcentaje_descuento( nDescuento ) ;
                                        INLINE ( eval( ::oController:getDiscountController():getBrowseView():oColumnDescuento:bOnPostEdit, , nDescuento, 0 ),;
-                                                apoloWaitSeconds( 1 ),;
+                                                testWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_lote_en_linea( cLote )   INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnLote:bOnPostEdit, , cLote, 0 ),;
-                                                apoloWaitSeconds( 1 ),;
+                                                testWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD refresh_linea_browse_view()  INLINE ( ::oController:getLinesController():getBrowseView():getRowSet():Refresh(),;
-                                                apoloWaitSeconds( 1 ) )
+                                                testWaitSeconds( 1 ) )
 /*
    METHOD test_calculo_con_descuento()
 
@@ -655,7 +655,7 @@ METHOD test_calculo_con_descuento() CLASS TestOperacionesComercialesController
 
    hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
 
-   ::assert:equals( 112.120000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
+   ::Assert():equals( 112.120000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
 
 RETURN ( nil )
 
@@ -674,7 +674,7 @@ METHOD test_calculo_con_incremento() CLASS TestOperacionesComercialesController
 
    hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
 
-   ::assert:equals( 7.720000, hget( hTotal, "total_documento" ), "test creacion de factura con incremento" )
+   ::Assert():equals( 7.720000, hget( hTotal, "total_documento" ), "test creacion de factura con incremento" )
 
 RETURN ( nil )
 
@@ -693,7 +693,7 @@ METHOD test_con_unidades_de_medicion() CLASS TestOperacionesComercialesControlle
 
    hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
 
-   ::assert:equals( 103.500000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
+   ::Assert():equals( 103.500000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
 
 RETURN ( nil )
 
@@ -706,10 +706,10 @@ METHOD test_dialogo_sin_lineas() CLASS TestOperacionesComercialesController
          ::set_codigo_tercero( "0", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          view:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          view:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( ::oController:Insert(), "test creaci�n de factura sin lineas" )
+   ::Assert():false( ::oController:Insert(), "test creaci�n de factura sin lineas" )
 
 RETURN ( nil )
 
@@ -727,7 +727,7 @@ METHOD test_dialogo_ventas_por_cajas() CLASS TestOperacionesComercialesControlle
          ::set_precio_en_linea( 100 ),;
          view:getControl( IDOK ):Click() } )
 
-   ::assert:true( ::oController:Insert(), "test creaci�n de factura con ventas por cajas" )
+   ::Assert():true( ::oController:Insert(), "test creaci�n de factura con ventas por cajas" )
 
 RETURN ( nil )
 
@@ -745,7 +745,7 @@ METHOD test_dialogo_tarifa_mayorista() CLASS TestOperacionesComercialesControlle
          ::set_precio_en_linea( 100 ),;
          view:getControl( IDOK ):Click() } )
 
-   ::assert:true( ::oController:Insert(), "test creaci�n de factura con ventas por cajas" )
+   ::Assert():true( ::oController:Insert(), "test creaci�n de factura con ventas por cajas" )
 
 RETURN ( nil )
 
@@ -766,11 +766,11 @@ METHOD test_dialogo_cambiando_almacen() CLASS TestOperacionesComercialesControll
          ::set_precio_en_linea( 200 ),;
          view:getControl( IDOK ):Click() } )
 
-   ::assert:true( ::oController:Insert(), "test creaci�n de factura con cambio de almac�n" )
+   ::Assert():true( ::oController:Insert(), "test creaci�n de factura con cambio de almac�n" )
 
    cCodigo  := ::oController:getLinesController():getModel():getFieldWhere( "almacen_codigo", { "parent_uuid" => ::oController:getModelBuffer( "uuid" ) } )
 
-   ::assert:equals( "1", alltrim( cCodigo ), "test comprobacion cambio almacen en linea" )
+   ::Assert():equals( "1", alltrim( cCodigo ), "test comprobacion cambio almacen en linea" )
 
 RETURN ( nil )
 
@@ -791,11 +791,11 @@ METHOD test_dialogo_cambiando_ubicacion() CLASS TestOperacionesComercialesContro
          ::set_precio_en_linea( 200 ),;
          view:getControl( IDOK ):Click() } )
 
-   ::assert:true( ::oController:Insert(), "test creaci�n de factura con cambio de almac�n" )
+   ::Assert():true( ::oController:Insert(), "test creaci�n de factura con cambio de almac�n" )
 
    cCodigo  := ::oController:getLinesController():getModel():getFieldWhere( "almacen_codigo", { "parent_uuid" => ::oController:getModelBuffer( "uuid" ) } )
 
-   ::assert:equals( "1", alltrim( cCodigo ), "test comprobacion cambio almacen en linea" )
+   ::Assert():equals( "1", alltrim( cCodigo ), "test comprobacion cambio almacen en linea" )
 
 RETURN ( nil )
 
@@ -817,11 +817,11 @@ METHOD test_dialogo_cambiando_agente() CLASS TestOperacionesComercialesControlle
          ::set_precio_en_linea( 200 ),;
          view:getControl( IDOK ):Click() } )
 
-   ::assert:true( ::oController:Insert(), "test creaci�n de factura con cambio de almac�n" )
+   ::Assert():true( ::oController:Insert(), "test creaci�n de factura con cambio de almac�n" )
 
    cCodigo  := ::oController:getModel():getFieldWhere( "agente_codigo", { "uuid" => ::oController:getModelBuffer( "uuid" ) } )
 
-   ::assert:equals( "1", alltrim( cCodigo ), "test comprobacion cambio agente" )
+   ::Assert():equals( "1", alltrim( cCodigo ), "test comprobacion cambio agente" )
 
 RETURN ( nil )
 
@@ -845,7 +845,7 @@ METHOD test_dialogo_con_recargo_en_documento() CLASS TestOperacionesComercialesC
 
    hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
 
-   ::assert:equals( 199.950000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
+   ::Assert():equals( 199.950000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
 
 RETURN ( nil )
 
@@ -870,11 +870,11 @@ METHOD test_dialogo_con_descuento_en_documento() CLASS TestOperacionesComerciale
          ::set_porcentaje_descuento( 15 ),;
          view:getControl( IDOK ):Click() } )
 
-   ::assert:true( ::oController:Insert(), "test creaci�n de factura con cambio de almac�n" )
+   ::Assert():true( ::oController:Insert(), "test creaci�n de factura con cambio de almac�n" )
 
    cCodigo  := ::oController:getModel():getFieldWhere( "agente_codigo", { "uuid" => ::oController:getModelBuffer( "uuid" ) } )
 
-   ::assert:equals( "1", alltrim( cCodigo ), "test comprobacion cambio agente" )
+   ::Assert():equals( "1", alltrim( cCodigo ), "test comprobacion cambio agente" )
 
 RETURN ( nil )
 */

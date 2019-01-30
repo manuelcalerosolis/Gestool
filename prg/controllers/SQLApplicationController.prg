@@ -619,6 +619,10 @@ METHOD End() CLASS SQLApplicationController
       ::oAlbaranesComprasLineasController:End()
    end if 
 
+   if !empty( ::oAlbaranesComprasDescuentosController )
+      ::oAlbaranesComprasDescuentosController:End()
+   end if 
+
    if !empty( ::oArticulosTarifasController )
       ::oArticulosTarifasController:End()
    end if 

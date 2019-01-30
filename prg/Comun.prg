@@ -3995,19 +3995,6 @@ RETURN ( .f. )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION ApoloWaitSeconds( nSecs )
-
-   local n
-
-   for n := 1 to nSecs
-      waitSeconds( 1 )
-      sysRefresh()
-   next
-
-RETURN nil
-
-//----------------------------------------------------------------------------//
-
 FUNCTION ApoloDescend( uParam )
 
 RETURN ( Descend( uParam ) )

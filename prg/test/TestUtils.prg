@@ -15,25 +15,32 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS Test
+FUNCTION testWaitSeconds( nSecs )
 
-   METHOD New()                        CONSTRUCTOR
-   METHOD End()                        VIRTUAL
+   local n
 
-   METHOD countTestCases()             VIRTUAL
-   METHOD Run()                        VIRTUAL
+   for n := 1 to nSecs
+      waitSeconds( 1 )
+      sysRefresh()
+   next
 
-   PROTECTED:
-      DATA oResult
-
-ENDCLASS
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD new() CLASS Test
+FUNCTION testGetControl( nId, oDialog )
 
-   ::oResult   := TestResult():new()
+   local nPos
+
+   if empty( oDialog ) 
+      RETURN ( nil )
+   end if 
    
-RETURN ( self )
+   nPos              := ascan( oDialog:aControls, { | o | o:nId == nId } ) 
+   if nPos == 0
+      RETURN ( nil )
+   end if 
+
+RETURN ( oDialog:aControls[ nPos ] )
 
 //---------------------------------------------------------------------------//

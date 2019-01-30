@@ -235,7 +235,7 @@ METHOD addColumns() CLASS OperacionesComercialesLineasBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_propiedades_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := ::getEditButton()
-      :bEditValid          := {|| .t. }
+      :bEditValid          := {|oGet, oCol| ::getController():validCombinacionTexto( oGet, oCol ) }
       :bEditBlock          := {|| ::getController():getCombinacionesController():runViewSelector( ::getRowSet():fieldGet( 'articulo_codigo' ) ) }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )

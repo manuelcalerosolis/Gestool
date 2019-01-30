@@ -68,6 +68,8 @@ USER FUNCTION hbunit_test()
 
    oRunner:run( oSuite )
 
+   oSuite:End()
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -99,7 +101,7 @@ METHOD testAssertErrors() CLASS TestAssert
 
    BEGIN SEQUENCE
       ::assert( a, "test variable not found" )
-      ::assert:fail( "unable to catch 'Variable not found'" )
+      ::Assert():fail( "unable to catch 'Variable not found'" )
    RECOVER
    END
 */
@@ -110,8 +112,8 @@ RETURN ( nil )
 
 METHOD testLogicals() CLASS TestAssert
 
-   ::assert:true( .t., "test ::assert:true with .t." )
-   ::assert:false( .f., "test ::assert:false with .f." )
+   ::Assert():true( .t., "test ::Assert():true with .t." )
+   ::Assert():false( .f., "test ::Assert():false with .f." )
 
 RETURN ( nil )
 
@@ -120,25 +122,25 @@ RETURN ( nil )
 METHOD testAssertEquals() CLASS TestAssert
 
    // test with nil
-   ::assert:equals( nil, nil, "test ::assert:equals nil with nil" )
+   ::Assert():equals( nil, nil, "test ::Assert():equals nil with nil" )
 
    // test with logicals
-   ::assert:equals( .t., .t., "test ::assert:equals with logical .t." )
-   ::assert:equals( .f., .f., "test ::assert:equals with logical .f." )
+   ::Assert():equals( .t., .t., "test ::Assert():equals with logical .t." )
+   ::Assert():equals( .f., .f., "test ::Assert():equals with logical .f." )
 
    // test with characters
-   ::assert:equals( "", '', "test ::assert:equals with empty string" )
-   ::assert:equals( " ", ' ', "test ::assert:equals with single space" )
-   ::assert:equals( "a", 'a', "test ::assert:equals with single character" )
+   ::Assert():equals( "", '', "test ::Assert():equals with empty string" )
+   ::Assert():equals( " ", ' ', "test ::Assert():equals with single space" )
+   ::Assert():equals( "a", 'a', "test ::Assert():equals with single character" )
 
    // test with numerics
-   ::assert:equals( 0, 0, "test ::assert:equals on small integers" )
-   ::assert:equals( 1234567890, 1234567890.0, "test ::assert:equals on large integers" )
-   ::assert:equals( -2, -2, "test ::assert:equals on small negative integers" )
-   ::assert:equals( -2342342342342, -2342342342342.0, "test ::assert:equals on large negative integers" )
-   ::assert:equals( 0.1, 0.1, "test ::assert:equals on single decimal float" )
-   ::assert:equals( 0.12345678, 0.123456780, "test ::assert:equals on multiple decimal floats" )
-   ::assert:equals( 0.01, 0.010000, "test ::assert:equals different decimal floats" )
+   ::Assert():equals( 0, 0, "test ::Assert():equals on small integers" )
+   ::Assert():equals( 1234567890, 1234567890.0, "test ::Assert():equals on large integers" )
+   ::Assert():equals( -2, -2, "test ::Assert():equals on small negative integers" )
+   ::Assert():equals( -2342342342342, -2342342342342.0, "test ::Assert():equals on large negative integers" )
+   ::Assert():equals( 0.1, 0.1, "test ::Assert():equals on single decimal float" )
+   ::Assert():equals( 0.12345678, 0.123456780, "test ::Assert():equals on multiple decimal floats" )
+   ::Assert():equals( 0.01, 0.010000, "test ::Assert():equals different decimal floats" )
 
 RETURN ( nil )
 
@@ -146,10 +148,10 @@ RETURN ( nil )
 
 METHOD testAssertNotEquals() CLASS TestAssert
 
-   ::assert:notEquals( 0, 1, "test ::assert:notEquals on small integers" )
-   ::assert:notEquals( 1234567890, 1234567891, "test ::assert:notEquals on large integers" )
-   ::assert:notEquals( -2, -3, "test ::assert:notEquals on small negative integers" )
-   ::assert:notEquals( -23452342342342, -23452342342343, "test ::assert:notEquals on large negative integers" )
+   ::Assert():notEquals( 0, 1, "test ::Assert():notEquals on small integers" )
+   ::Assert():notEquals( 1234567890, 1234567891, "test ::Assert():notEquals on large integers" )
+   ::Assert():notEquals( -2, -3, "test ::Assert():notEquals on small negative integers" )
+   ::Assert():notEquals( -23452342342342, -23452342342343, "test ::Assert():notEquals on large negative integers" )
 
 RETURN ( nil )
 
@@ -157,8 +159,8 @@ RETURN ( nil )
 
 METHOD testAssertNull() CLASS TestAssert
 
-   ::assert:null( , "test ::assert:notNull with empty parameter" )
-   ::assert:null( nil, "test ::assert:notNull with coded nil" )
+   ::Assert():null( , "test ::Assert():notNull with empty parameter" )
+   ::Assert():null( nil, "test ::Assert():notNull with coded nil" )
 
 RETURN ( nil )
 
@@ -166,12 +168,12 @@ RETURN ( nil )
 
 METHOD testAssertNotNull() CLASS TestAssert
 
-   ::assert:notNull( 1, "test ::assert:notNull on numerics" )
-   ::assert:notNull( 'a', "test ::assert:notNull with character" )
-   ::assert:notNull( date(), "test ::assert:notNull with date" )
-   ::assert:notNull( .f., "test ::assert:notNull with logical" )
-   ::assert:notNull( array(3), "test ::assert:notNull with array" )
-   ::assert:notNull( {|| nil }, "test ::assert:notNull with codeblock" )
+   ::Assert():notNull( 1, "test ::Assert():notNull on numerics" )
+   ::Assert():notNull( 'a', "test ::Assert():notNull with character" )
+   ::Assert():notNull( date(), "test ::Assert():notNull with date" )
+   ::Assert():notNull( .f., "test ::Assert():notNull with logical" )
+   ::Assert():notNull( array(3), "test ::Assert():notNull with array" )
+   ::Assert():notNull( {|| nil }, "test ::Assert():notNull with codeblock" )
 
 RETURN ( nil )
 

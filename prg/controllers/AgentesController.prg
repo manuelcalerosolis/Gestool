@@ -541,12 +541,12 @@ METHOD test_dialogo_sin_codigo() CLASS TestAgentesController
    
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-RETURN ( ::assert:false( ::oController:Append(), "test creación de agente sin código" ) )
+RETURN ( ::Assert():false( ::oController:Append(), "test creación de agente sin código" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -554,14 +554,14 @@ METHOD test_dialogo_sin_nombre() CLASS TestAgentesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100 ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
    
-RETURN ( ::assert:false( ::oController:Append(), "test creación de agente sin nombre" ) )
+RETURN ( ::Assert():false( ::oController:Append(), "test creación de agente sin nombre" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -569,14 +569,14 @@ METHOD test_dialogo_creacion() CLASS TestAgentesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 100 ):cText( "0" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 110 ):cText( "Agente principal" ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-RETURN ( ::assert:true( ::oController:Append(), "test creación de agente" ) )
+RETURN ( ::Assert():true( ::oController:Append(), "test creación de agente" ) )
 
 //---------------------------------------------------------------------------//
 

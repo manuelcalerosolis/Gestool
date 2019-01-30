@@ -831,14 +831,14 @@ METHOD test_dialog_append() CLASS TestEmpresasController
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 110 ):cText( 'TEST' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120 ):cText( 'Test empresa' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 130 ):cText( '99999999A' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click() } )
 
-   ::assert:true( oController:Append(), "test ::assert:true with .t." )
+   ::Assert():true( oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -852,7 +852,7 @@ METHOD test_delete() CLASS TestEmpresasController
       EmpresasController():getModel():deleteSelection( nId ) 
    end if 
 
-   ::assert:equals( nil, EmpresasController():getModel():getField( 'id', 'codigo', 'TEST' ), "test ::assert:true with .t." )
+   ::Assert():equals( nil, EmpresasController():getModel():getField( 'id', 'codigo', 'TEST' ), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -865,14 +865,14 @@ METHOD test_dialog_empty_cif() CLASS TestEmpresasController
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 110 ):cText( 'TEST' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( 120 ):cText( 'Test empresa' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDOK ):Click(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          self:getControl( IDCANCEL ):Click() } )
 
-   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+   ::Assert():false( oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 
@@ -888,12 +888,12 @@ METHOD testDialogEmptyNombre() CLASS TestArticulosController
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          ::oGetCodigo:cText( '002' ),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          ::oBtnAceptar:Click(),;
-         apoloWaitSeconds( 1 ),;
+         testWaitSeconds( 1 ),;
          ::oBtnCancelar:Click() } )
 
-   ::assert:false( oController:Append(), "test ::assert:true with .t." )
+   ::Assert():false( oController:Append(), "test ::Assert():true with .t." )
 
 RETURN ( nil )
 */
