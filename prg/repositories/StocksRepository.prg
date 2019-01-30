@@ -997,6 +997,8 @@ RETURN ( alltrim( cSql ) )
 
 METHOD selectStockWhereCodigoAlmacenCombinaciones( cCodigoArticulo, cCodigoAlmacen, cCodigoUbicacion, cLote, uuidCombinaciones ) CLASS StocksRepository
 
+   logwrite( "SELECT " + Company():getTableName( "StockWhereCodigoAlmacenUbicacionLoteCombinaciones" ) + "( " + quoted( cCodigoArticulo ) + ", " + quoted( cCodigoAlmacen ) + ", " + quoted( cCodigoUbicacion ) + ", " + quoted( cLote ) + ", " + quotedUuid( uuidCombinaciones ) + " )" )
+
 RETURN ( getSQLDatabase():getValue( "SELECT " + Company():getTableName( "StockWhereCodigoAlmacenUbicacionLoteCombinaciones" ) + "( " + quoted( cCodigoArticulo ) + ", " + quoted( cCodigoAlmacen ) + ", " + quoted( cCodigoUbicacion ) + ", " + quoted( cLote ) + ", " + quotedUuid( uuidCombinaciones ) + " )", 0 ) )
 
 //---------------------------------------------------------------------------//
