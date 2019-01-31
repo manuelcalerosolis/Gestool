@@ -21,6 +21,8 @@ USER FUNCTION hbunit_test()
    local oSuite    := TestSuite():New()
 
    oSuite:addTest( TestAssert():New() )
+   
+   oSuite:addTest( TestConversorDocumentosController():New() )
 
    oSuite:addTest( TestEmpresasController():New() )
 

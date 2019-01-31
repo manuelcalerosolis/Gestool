@@ -346,7 +346,7 @@ CLASS SQLBaseModel
 
    METHOD Count()
    
-   METHOD countWhereUuid( Uuid )   
+   METHOD countWhere( hWhere )   
 
    // Duplicates----------------------------------------------------------------
 
@@ -1951,11 +1951,13 @@ RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD countWhereUuid( Uuid )
+METHOD countWhere( hWhere )
 
-   local cSQL  := "SELECT COUNT(*) FROM " + ::getTableName()                  + " "    
-   cSQL        +=    "WHERE uuid = " + quoted( uuid )                         + " "    
+   local cSQL  := "SELECT COUNT(*) FROM " + ::getTableName()                  + " " 
 
+   hEval( hWhere,; 
+      {|k,v| cSql    += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v ) + " " } )
+   
    if ::isDeletedAtColumn()
       cSQL     +=    "AND deleted_at = 0" 
    end if 

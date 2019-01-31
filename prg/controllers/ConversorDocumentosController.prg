@@ -379,7 +379,7 @@ METHOD isAlbaranEquals( hAlbaran ) CLASS ConversorDocumentosController
       RETURN ( .f. )
    end if 
 
-   if !empty( ::getController():getDiscountController():getModel():countWhereUuid( hget( hAlbaran, "uuid" ) ) ) 
+   if !empty( ::getController():getDiscountController():getModel():countWhere( { "parent_uuid" => hget( hAlbaran, "uuid" ) } ) ) 
       RETURN ( .f. )
    end if 
 
@@ -410,6 +410,8 @@ RETURN ( ::getDestinoController():Edit( nId ) )
 //---------------------------------------------------------------------------//
 
 METHOD convertDocument() CLASS ConversorDocumentosController
+
+msgalert(hb_valtoexp(::aConvert))
 
    ::aCreatedDocument            := ::oDestinoController:convertDocument( ::aConvert )
 

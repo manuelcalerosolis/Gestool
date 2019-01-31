@@ -15,7 +15,9 @@ CLASS OperacionesComercialesDescuentosController FROM SQLBrowseController
 
    METHOD validateDescuento( uValue )
 
-   METHOD generateDiscount( hDiscount )
+   METHOD generateDiscount( hDiscount, uuidDocumentoDestino )
+      METHOD insertDiscounts( hDiscounts, uuidDocumentoDestino )
+      METHOD insertDiscountRelation( hLine, uuidDestino )
 
    //Construcciones tardias----------------------------------------------------
    
@@ -110,17 +112,43 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD generateDiscount( hDiscount ) CLASS OperacionesComercialesDescuentosController
+METHOD insertDiscounts( hDiscounts, uuidDocumentoDestino ) CLASS OperacionesComercialesDescuentosController
+
+   local hDiscount
+
+   local uuidDestino
+
+   for each hDiscount in hDiscounts
+
+      uuidDestino  := ::generateDiscount( hClone( hDiscount ), uuidDocumentoDestino  )
+
+      if !empty( uuidDestino )
+         ::insertDiscountRelation( hDiscount, uuidDestino )
+      end if 
+
+   next
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD generateDiscount( hDiscount, uuidDocumentoDestino ) CLASS OperacionesComercialesDescuentosController
    
-   local nId
+   hDels( hDiscount, { "uuid", "id" } )
 
-   nId      := ::getModel():insertBlankBuffer( hDiscount ) 
+   hSet( hDiscount, "parent_uuid", uuidDocumentoDestino )
 
-   if !empty( nId )
-      RETURN ( ::getModelBuffer( "uuid" ) )
+   if empty( ::getModel():insertBlankBuffer( hDiscount ) )
+      RETURN ( nil )
    end if 
  
-RETURN ( nil )
+RETURN ( ::getModelBuffer( "uuid" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertDiscountRelation( hDiscount, uuidDestino ) CLASS OperacionesComercialesDescuentosController
+
+RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hDiscount, "uuid" ), ::getSuperController():getController():getDiscountController():getModel():cTableName, uuidDestino, ::getModel():cTableName ) )   
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
