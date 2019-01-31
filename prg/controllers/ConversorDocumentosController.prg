@@ -675,27 +675,39 @@ RETURN ( SQLFacturasComprasModel():getInitialWhereDocumentos(::oController:setWh
 
 #ifdef __TEST__
 
-CLASS TestOperacionesController FROM TestCase
+CLASS TestConversorDocumentosController FROM TestCase
 
    DATA oController
 
-   METHOD beforeClass()                VIRTUAL
+   METHOD beforeClass() 
 
    METHOD afterClass()
 
    METHOD Before() 
 
+   METHOD test_create_prueba()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD afterClass() CLASS TestOperacionesController
+METHOD afterClass() CLASS TestConversorDocumentosController
 
 RETURN ( ::oController:end() )
 
 //---------------------------------------------------------------------------//
 
-METHOD Before() CLASS TestOperacionesController
+METHOD beforeClass() CLASS TestConversorDocumentosController
+
+   ::oController  := ConversorDocumentosController():New()  
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD Before() CLASS TestConversorDocumentosController
+
+/*truncates*/
 
    SQLTercerosModel():truncateTable()
 
@@ -720,38 +732,43 @@ METHOD Before() CLASS TestOperacionesController
 
    SQLAgentesModel():truncateTable()
 
-   SQLUnidadesMedicionGruposModel():truncateTable()
-   SQLUnidadesMedicionOperacionesModel():truncateTable()
+   SQLTiposIvaModel():truncateTable()
+   SQLUbicacionesModel():truncateTable()
+   SQLArticulosTarifasModel():truncateTable()
+   SQLRutasModel():truncateTable()
 
-   SQLTercerosModel():test_create_contado()
-   SQLTercerosModel():test_create_tarifa_mayorista()
-   SQLTercerosModel():test_create_con_plazos()
+/*fin de truncates*/
+/*creaccion de datos necesarios*/
 
-   SQLAlmacenesModel():test_create_almacen_principal()
-   SQLAlmacenesModel():test_create_almacen_auxiliar()
+   SQLMetodoPagoModel():test_create_con_plazos_con_codigo( "0", "30 60 90", 3, 15, 15, 20 )
+   SQLMetodoPagoModel():test_create_con_plazos_con_codigo( "1", "5 plazos", 5, 10, 15, 20 )
 
-   SQLAgentesModel():test_create_agente_principal()
-   SQLAgentesModel():test_create_agente_auxiliar()
-
-   SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_principal() )
-   SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_auxiliar() )
-
-   SQLTiposIvaModel():test_create_iva_al_4()
-   SQLTiposIvaModel():test_create_iva_al_10()
    SQLTiposIvaModel():test_create_iva_al_21()
 
-   SQLMetodoPagoModel():test_create_contado()
-   SQLMetodoPagoModel():test_create_reposicion()
-   SQLMetodoPagoModel():test_create_con_plazos()
+   SQLAlmacenesModel():test_create_almacen_principal()
 
-   SQLUnidadesMedicionGruposModel():test_create()
+   SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_principal() )
 
-   SQLArticulosModel():test_create_con_unidad_de_medicion_cajas_palets()
-   SQLArticulosModel():test_create_con_tarifa_mayorista()
-   SQLArticulosModel():test_create_con_lote()
+   SQLRutasModel():test_create_ruta()
+
+   SQLArticulosModel():test_create_precio_con_descuentos()
 
    SQLArticulosTarifasModel():test_create_tarifa_base()
    SQLArticulosTarifasModel():test_create_tarifa_mayorista()
+
+   SQLAgentesModel():test_create_agente_principal()
+
+   SQLTercerosModel():test_create_proveedor_con_plazos( 0 )
+   SQLTercerosModel():test_create_proveedor_con_plazos( 1 )
+
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_prueba() CLASS TestConversorDocumentosController
+
+   msgalert("test")
 
 RETURN ( nil )
 

@@ -31,7 +31,9 @@ CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
 
    METHOD test_create_factura_con_varios_plazos()
 
-   METHOD test_get_uuid_factura_con_varios_plazos()   
+   METHOD test_get_uuid_factura_con_varios_plazos()
+
+   METHOD text_create_albaran_compras_con_tercero( cCodigoTercero )   
 
 #endif
 
@@ -342,6 +344,22 @@ RETURN ( ::insertBuffer( hBuffer ) )
 METHOD test_get_uuid_factura_con_varios_plazos() CLASS SQLOperacionesComercialesModel
 
 RETURN ( ::getFieldWhere( "uuid", { "serie" => "TEST", "numero" => 1 } ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD text_create_albaran_compras_con_tercero( cCodigoTercero ) 
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "serie", "TEST" )
+   hset( hBuffer, "tercero_codigo", quoted( cCodigoTercero ) )
+   hset( hBuffer, "metodo_pago_codigo", "1" )
+   hset( hBuffer, "almacen_codigo", "0" )
+   hset( hBuffer, "tarifa_codigo", "0" )
+
+   ::insertBuffer()
+
+RETURN ( ::insertBuffer() )
 
 #endif
 

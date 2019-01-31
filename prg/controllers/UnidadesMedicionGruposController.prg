@@ -479,6 +479,8 @@ METHOD test_create() CLASS SQLUnidadesMedicionGruposModel
    hset( hBuffer, "nombre", "Cajas y palets" )
    hset( hBuffer, "unidad_base_codigo", "UDS" )
 
+   msgalert(hBuffer)
+
 RETURN ( ::insertBuffer( hBuffer ) )
 
 #endif

@@ -221,6 +221,12 @@ CLASS SQLRutasModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   #ifdef __TEST__
+
+   METHOD test_create_ruta()
+
+   #endif
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -243,6 +249,17 @@ METHOD getColumns() CLASS SQLRutasModel
    
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+#ifdef __TEST__
+
+ METHOD test_create_ruta() CLASS SQLRutasModel
+
+ RETURN ( ::insertBuffer( ;
+            ::loadBlankBuffer( { "codigo"       => "0",;
+                                 "nombre"       => "ruta test" } ) ) )
+
+  #endif
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
