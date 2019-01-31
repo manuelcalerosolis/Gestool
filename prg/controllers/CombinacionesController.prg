@@ -520,6 +520,8 @@ METHOD generateCombinations() CLASS CombinacionesView
       RETURN ( nil )
    end if 
 
+   msgalert( hb_valtoexp( ::aCombinations ) )
+
    if len( ::aCombinations ) > 1
       ::oController:insertCombinations( permutateArray( ::aCombinations ) )
    else

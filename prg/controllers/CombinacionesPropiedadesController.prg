@@ -73,9 +73,7 @@ METHOD insertProperties( aCombination, uuidParent ) CLASS CombinacionesPropiedad
    local hCombination
 
    for each hCombination in aCombination
-
       ::insertProperty( hget( hCombination, "propiedad_uuid" ), uuidParent )
-
    next
 
 RETURN ( nil )
