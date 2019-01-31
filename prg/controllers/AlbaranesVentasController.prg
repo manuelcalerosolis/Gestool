@@ -122,28 +122,141 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-/*#ifdef __TEST__
+#ifdef __TEST__
 
-CLASS TestFacturasVentasController FROM TestOperacionesComercialesController
+CLASS TestAlbaranesVentasController FROM TestOperacionesComercialesController
 
-   DATA aCategories                    INIT { "all", "facturas_ventas" }
+   DATA aCategories                    INIT { "all", "albaranes_ventas" }
 
    METHOD beforeClass()
+
+   METHOD Before()
+
+   METHOD test_dialogo_con_una_linea()
+
+   METHOD test_dialogo_con_articulo_lote()
+
+   METHOD test_dialogo_con_articulo_combinacion() 
+
+   METHOD getController()              INLINE ( if( empty( ::oController ), ::oController := AlbaranesVentasController():New(), ), ::oController ) 
+
+   METHOD End()                        INLINE ( if( !empty( ::oController ), ::oController:End(), ) ) 
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD beforeClass() CLASS TestFacturasVentasController
-   
+METHOD beforeClass() CLASS TestAlbaranesVentasController
+
    Company():setDefaultUsarUbicaciones( .t. )
+
+   ::getController()
    
-   ::oController  := FacturasVentasController():New()
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD Before() CLASS TestAlbaranesVentasController
+
+   SQLAlbaranesVentasModel():truncateTable()
+
+   SQLAlbaranesVentasLineasModel():truncateTable()
+   
+   SQLAlbaranesVentasDescuentosModel():truncateTable()
+
+RETURN ( ::Super:Before() )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_con_una_linea() CLASS TestAlbaranesVentasController
+
+   ::getController():getDialogView():setEvent( 'painted',;
+      <| view | 
+         
+         ::set_codigo_tercero( "1", view )
+
+         ::set_codigo_forma_pago( "0", view )
+         
+         ::click_nueva_linea( view )
+         
+         ::set_codigo_articulo_en_linea( "1" )
+         
+         ::set_codigo_ubicacion_en_linea( "0" )
+         
+         ::set_precio_en_linea( 200 )         
+         
+         view:getControl( IDOK ):Click()          
+         
+         RETURN ( nil )
+      > )
+
+   ::Assert():true( ::getController():Insert(), "test creación de albaran de compra con una linea" )
+   
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_con_articulo_lote() CLASS TestAlbaranesVentasController
+
+   ::getController():getDialogView():setEvent( 'painted',;
+      <| view | 
+      
+         ::set_codigo_tercero( "1", view )
+      
+         ::set_codigo_forma_pago( "0", view )
+      
+         ::click_nueva_linea( view )
+
+         ::set_codigo_articulo_en_linea( "2" )
+
+         ::set_lote_en_linea( "1234" )
+
+         ::set_codigo_ubicacion_en_linea( "0" )
+
+         ::set_precio_en_linea( 300 )
+
+         view:getControl( IDOK ):Click()
+         
+         RETURN ( nil )
+      > )
+
+   ::Assert():true( ::getController():Insert(), "test creación de albaran de compra con artículo con lote" )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-#endif*/
+METHOD test_dialogo_con_articulo_combinacion() CLASS TestAlbaranesVentasController
+
+   TestArticulosController():test_dialog_append_con_caracteristicas()
+
+   ::getController():getDialogView():setEvent( 'painted',;
+      <| view | 
+      
+         ::set_codigo_tercero( "1", view )
+      
+         ::set_codigo_forma_pago( "0", view )
+      
+         ::click_nueva_linea( view )
+
+         ::set_codigo_articulo_en_linea( "3" )
+
+         ::set_combinaciones_en_linea( "3", "S, Azul, Denim" )
+
+         ::set_codigo_ubicacion_en_linea( "0" )
+
+         ::set_precio_en_linea( 300 )
+
+         view:getControl( IDOK ):Click()
+         
+         RETURN ( nil )
+      > )
+
+   ::Assert():true( ::getController():Insert(), "test creación de albaran de compra con combinaciones" )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+#endif
+

@@ -413,7 +413,7 @@ METHOD convertDocument() CLASS ConversorDocumentosController
 
    ::aCreatedDocument            := ::oDestinoController:convertDocument( ::aConvert )
 
-    if !empty( ::aCreatedDocument )
+   if !empty( ::aCreatedDocument )
       ::getResumenView():Activate()
    end if
 
@@ -528,7 +528,6 @@ METHOD Activate() CLASS ConversorResumenView
 
 RETURN ( ::oDialog:nResult )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

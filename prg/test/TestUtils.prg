@@ -17,12 +17,16 @@
 
 FUNCTION testWaitSeconds( nSecs )
 
-   local n
+   // local n
 
-   for n := 1 to nSecs
-      waitSeconds( 1 )
-      sysRefresh()
-   next
+   // for n := 1 to nSecs
+   //    waitSeconds( 1 )
+   //    sysRefresh()
+   // next
+
+   waitSeconds( 0.5 )
+   
+   sysRefresh()
 
 RETURN ( nil )
 
@@ -94,7 +98,7 @@ USER FUNCTION hbunit_test()
 
    oSuite:addTest( TestStocksRepository():New() )
 
-   oSuite:setCategories( { "albaranes_compras" } )
+   oSuite:setCategories( { "stocks" } )
 
    oRunner:run( oSuite )
 
