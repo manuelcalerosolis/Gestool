@@ -44,3 +44,62 @@ FUNCTION testGetControl( nId, oDialog )
 RETURN ( oDialog:aControls[ nPos ] )
 
 //---------------------------------------------------------------------------//
+
+USER FUNCTION hbunit_test()
+
+   local oRunner   := TextRunner():New()
+   local oSuite    := TestSuite():New()
+
+   oSuite:addTest( TestAssert():New() )
+
+   oSuite:addTest( TestEmpresasController():New() )
+
+   oSuite:addTest( TestArticulosController():New() )
+
+   oSuite:addTest( TestCaracteristicasController():New() )
+
+   oSuite:addTest( TestCaracteristicasLineasController():New() )
+
+   oSuite:addTest( TestCaracteristicasValoresArticulosController():New() )
+
+   oSuite:addTest( TestUnidadesMedicionController():New() )
+
+   oSuite:addTest( TestUnidadesMedicionGruposController():New() )
+
+   oSuite:addTest( TestArticulosTarifasController():New() )
+
+   oSuite:addTest( TestArticulosTarifasController():New() )
+
+   oSuite:addTest( TestAlmacenesController():New() )
+
+   oSuite:addTest( TestTercerosController():New() )
+
+   oSuite:addTest( TestTercerosGruposController():New() )
+
+   oSuite:addTest( TestEntidadesController():New() )
+
+   oSuite:addTest( TestFacturasClientesFacturaeController():New() )
+
+   oSuite:addTest( TestPagosController():New() )
+
+   oSuite:addTest( TestPagosAssistantController():New() )
+
+   oSuite:addTest( TestAlbaranesComprasController():New() )
+
+   oSuite:addTest( TestFacturasVentasController():New() )
+
+   oSuite:addTest( TestConsolidacionAlmacenController():New() )
+
+   oSuite:addTest( TestMovimientoAlmacenController():New() )
+
+   oSuite:addTest( TestStocksRepository():New() )
+
+   oSuite:setCategories( { "albaranes_compras" } )
+
+   oRunner:run( oSuite )
+
+   oSuite:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//

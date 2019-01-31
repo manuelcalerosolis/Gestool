@@ -48,6 +48,7 @@ CLASS SQLBaseController
    METHOD getName()                    INLINE ( ::cName )
 
    METHOD getController()              INLINE ( ::oController ) 
+   METHOD getSuperController()         INLINE ( iif( !empty( ::getController() ), ::getController():getController(), nil ) )
    METHOD getControllerParentUuid()    INLINE ( iif( !empty( ::oController ), ::oController:getUuid(), space( 40 ) ) ) 
 
    // Modelo -----------------------------------------------------------------

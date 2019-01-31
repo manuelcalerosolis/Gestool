@@ -480,3 +480,69 @@ METHOD LButtonDown( nRow, nCol, nFlags, lTouch ) CLASS SQLXBrowse
 RETURN ( ::Super:LButtonDown( nRow, nCol, nFlags, lTouch ) )
 
 //------------------------------------------------------------------------//
+
+FUNCTION EditGetkeyDown( Self, nKey )
+
+   local lExit       
+   local lMultiGet   
+
+   if !hb_isobject( ::oEditGet )
+      RETURN nil
+   end if
+
+   lExit          := .f.
+   lMultiGet      := ::oEditGet:IsKindOf( "TMULTIGET" )
+
+   do case
+      case nKey == VK_ESCAPE
+           lExit := .t.
+           ::oEditGet:bValid = nil
+
+      case nKey == VK_RETURN
+           if lMultiGet    //Empty( ::cEditPicture ) .and. ::oBrw:nDataLines > 1
+              if ! GetKeyState( VK_CONTROL )
+                 lExit := .t.
+              endif
+           else
+              lExit := .t.
+           endif
+
+      case nKey == VK_TAB
+           lExit  := .t.
+
+      case nKey == VK_DOWN .or. nKey == VK_UP
+           if !lMultiGet      // !( Empty( ::cEditPicture ) .and. ::oBrw:nDataLines > 1 )
+              lExit := .t.
+           endif
+
+      case ::oBrw:lExitGetOnTypeOut .and. ;
+           ( nKey == VK_SPACE .or. ( nKey > 47 .and. nKey < 96 ) ) .and. ;
+           ::oEditGet:oGet:TypeOut .and. !Set( _SET_CONFIRM )
+
+           lExit    := .t.
+           ::oEditGet:nLastKey := VK_RETURN
+           ::oEditGet:End()
+           ::PostEdit()
+           if ::oBrw:lFastEdit
+              PostMessage( ::oBrw:hWnd, WM_KEYDOWN, nKey )
+           endif
+
+           return nil
+
+   endcase
+
+   If lExit .and. ::nEditType != EDIT_DATE
+      if ::oEditGet != nil     // AL 2007-07-10
+         ::oEditGet:nLastKey := nKey
+         ::oEditGet:End()
+      endif
+   else
+      if lExit
+         ::PostEdit()
+      endif
+   Endif
+
+return nil
+
+//----------------------------------------------------------------------------//
+

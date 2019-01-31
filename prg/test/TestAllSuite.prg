@@ -22,9 +22,7 @@ USER FUNCTION hbunit_test()
 
    oSuite:addTest( TestAssert():New() )
 
-   oSuite:addTest( TestConversorDocumentosController():New() )
-
-   /*oSuite:addTest( TestEmpresasController():New() )
+   oSuite:addTest( TestEmpresasController():New() )
 
    oSuite:addTest( TestArticulosController():New() )
 
@@ -66,7 +64,7 @@ USER FUNCTION hbunit_test()
 
    oSuite:addTest( TestStocksRepository():New() )
 
-   oSuite:setCategories( { "stocks" } )*/
+   oSuite:setCategories( { "stocks" } )
 
    oRunner:run( oSuite )
 

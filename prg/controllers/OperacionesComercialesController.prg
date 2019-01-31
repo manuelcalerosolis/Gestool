@@ -89,7 +89,10 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD convertDocument( aConvert )
       METHOD insertHeader( aHeaders )
+      METHOD insertHeaderRelation( aHeaders )
       METHOD insertLines( hLines )
+      METHOD generateLine( hLine )
+      METHOD insertLineRelation()
       METHOD insertDiscounts( hDiscounts )
 
    // Contrucciones tardias----------------------------------------------------
@@ -486,16 +489,13 @@ RETURN ( nil )
 
 METHOD generateHeader( hHeader ) CLASS OperacionesComercialesController
 
-   local nId
+   hDels( hHeader, { "uuid", "id", "numero" } )
 
-
-   nId      := ::getModel():insertBlankBuffer( hHeader ) 
-
-   if !empty( nId )
-      RETURN ( ::getModelBuffer( "uuid" ) )
+   if empty( ::getModel():insertBlankBuffer( hHeader ) )
+      RETURN ( nil )
    end if 
 
-RETURN ( nil )
+RETURN ( ::getModelBuffer( "uuid" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -503,17 +503,17 @@ METHOD convertDocument( aConvert ) CLASS OperacionesComercialesController
 
    Local hConvert
 
-   local uuidDocument
-
    for each hConvert in aConvert
 
-      ::insertHeader( hget( hConvert, "header" ) )
+      if !empty( ::insertHeader( hget( hConvert, "header" ) ) )
 
-      ::insertLines( hget( hConvert, "lines" ) )
+         ::insertLines( hget( hConvert, "lines" ) )
 
-      ::insertDiscounts( hget( hConvert, "discounts" ) )
+         ::insertDiscounts( hget( hConvert, "discounts" ) )
 
-      ::getRecibosGeneratorController():GenerateNegative()
+         ::getRecibosGeneratorController():GenerateNegative()
+
+      end if 
 
    next
 
@@ -523,48 +523,62 @@ RETURN ( ::aCreatedDocument )
 
 METHOD insertHeader( aHeaders ) CLASS OperacionesComercialesController
 
-   local aFirst
    local hHeader
 
-   aFirst                  := hClone( aFirst( aHeaders ) ) 
+   ::uuidDocumentoDestino  := ::generateHeader( hClone( aFirst( aHeaders ) ) )
 
-   hDels( aFirst, { "uuid", "id", "numero" } )
-      
-   ::uuidDocumentoDestino  := ::generateHeader( aFirst )
-         
+   if empty( ::uuidDocumentoDestino )
+      RETURN ( nil )
+   end if 
+
    aadd( ::aCreatedDocument, ::uuidDocumentoDestino )
-
+      
    for each hHeader in aHeaders
-      SQLConversorDocumentosModel():insertRelationDocument( hget( hHeader , "uuid" ), ::getController():getController():getModel():cTableName, ::uuidDocumentoDestino, ::getModel():cTableName )
-   next 
+      ::insertHeaderRelation( hHeader )   
+   next
 
 RETURN ( ::uuidDocumentoDestino )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertLines( hLines ) CLASS OperacionesComercialesController
+METHOD insertHeaderRelation( hHeader ) CLASS OperacionesComercialesController
+
+RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hHeader, "uuid" ), ::getSuperController():getModel():cTableName, ::uuidDocumentoDestino, ::getModel():cTableName ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertLines( aLines ) CLASS OperacionesComercialesController
 
    local hLine
+   local uuidDestino
 
-   local uuidDocumentoLineaOrigen
+   for each hLine in aLines
 
-   local uuidDocumentoLineaDestino
+      uuidDestino    := ::generateLine( hClone( hLine ) )
 
-   for each hLine in hLines
-
-      uuidDocumentoLineaOrigen   := hget( hline, "uuid" )
-
-      hDels( hLine, { "uuid", "id" } )
-
-      hset( hLine, "parent_uuid", ::uuidDocumentoDestino )
-
-      uuidDocumentoLineaDestino  := ::getLinesController():generateLine( hLine )
-
-      SQLConversorDocumentosModel():insertRelationDocument( uuidDocumentoLineaOrigen, ::getController():getController():getLinesController():getModel():cTableName, uuidDocumentoLineaDestino, ::getLinesController():getModel():cTableName )
+      if !empty( uuidDestino )
+         ::insertLineRelation( hLine, uuidDestino )
+      end if 
 
    next
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD generateLine( hLine ) CLASS OperacionesComercialesController
+
+   hDels( hLine, { "uuid", "id" } )
+
+   hSet( hLine, "parent_uuid", ::uuidDocumentoDestino )
+
+RETURN ( ::getLinesController():generateLine( hLine ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertLineRelation( hLine, uuidDestino ) CLASS OperacionesComercialesController
+
+RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hline, "uuid" ), ::getSuperController():getLinesController():getModel():cTableName, uuidDestino, ::getLinesController():getModel():cTableName ) )
 
 //---------------------------------------------------------------------------//
 
@@ -699,10 +713,6 @@ CLASS TestOperacionesComercialesController FROM TestOperacionesController
 
    METHOD set_porcentaje_descuento( nDescuento ) ;
                                        INLINE ( eval( ::oController:getDiscountController():getBrowseView():oColumnDescuento:bOnPostEdit, , nDescuento, 0 ),;
-                                                testWaitSeconds( 1 ),;
-                                                ::refresh_linea_browse_view() )
-
-   METHOD set_lote_en_linea( cLote )   INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnLote:bOnPostEdit, , cLote, 0 ),;
                                                 testWaitSeconds( 1 ),;
                                                 ::refresh_linea_browse_view() )
 

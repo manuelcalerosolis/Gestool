@@ -57,7 +57,7 @@ CLASS OperacionesLineasController FROM SQLBrowseController
 
    METHOD validLineUbicacion()
 
-   METHOD validCombinacionTexto( oGet, oCol )    
+   METHOD validCombinacionesTexto( oGet, oCol )    
 
    // Escritura de campos------------------------------------------------------
 
@@ -132,8 +132,13 @@ CLASS OperacionesLineasController FROM SQLBrowseController
 
    METHOD refreshBrowse()              INLINE ( iif(  !empty( ::getBrowseView() ), ::getBrowseView():Refresh(), ) )
 
-   METHOD loadInformation()            
-
+   METHOD loadStockInformation()
+      METHOD loadGeneralStockInformation()            
+      METHOD loadAlmacenStockInformation()
+      METHOD loadUbicacionStockInformation()
+      METHOD loadLoteStockInformation()
+      METHOD loadCombinacionesStockInformation()
+      
    METHOD loadUnidadesMedicion()
 
    METHOD loadedBlankBuffer()          VIRTUAL
@@ -250,9 +255,23 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validCombinacionTexto( oGet, oCol ) CLASS OperacionesLineasController
+METHOD validCombinacionesTexto( oGet, oCol ) CLASS OperacionesLineasController
 
-   msgalert( oGet:varGet(), "validCombinacionTexto" ) 
+   local hArticuloCombinacion
+
+   hArticuloCombinacion    := SQLCombinacionesPropiedadesModel():selectPropertyWhereArticuloCombinacion( ::getRowSet():fieldget( 'articulo_codigo' ), alltrim( oGet:varGet() ) )
+   
+   if empty( hArticuloCombinacion )
+
+      ::getController():getDialogView():showMessage( "Las propiedades introducidas no son validas" )      
+
+      ::getBrowseView():setFocusColumnPropiedades()
+
+      RETURN ( .f. )
+
+   end if 
+
+   oGet:varPut( hget( atail( hArticuloCombinacion ), "uuid" ) )
 
 RETURN ( .t. ) 
 
@@ -429,7 +448,7 @@ METHOD postValidateCombinacionesUuid( oCol, uValue ) CLASS OperacionesLineasCont
    if empty( hCombination )
       RETURN ( nil )
    end if 
-   
+
    ::stampCombinationAndIncrement( hCombination )
 
    ::oController:calculateTotals()
@@ -767,57 +786,72 @@ RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-METHOD loadInformation() CLASS OperacionesLineasController 
-
-   local nStock
+METHOD loadStockInformation() CLASS OperacionesLineasController 
 
    if empty( ::oController:getDialogView() )
       RETURN ( nil )
    end if 
 
-   nStock      := StocksRepository():selectStockWhereCodigo( ::getRowSet():fieldget( "articulo_codigo" ) )
+   ::loadGeneralStockInformation()
 
-   ::oController:getDialogView():setTextLinkStockGlobal( nStock )
+   ::loadAlmacenStockInformation()
 
-   nStock      := StocksRepository():selectStockWhereCodigoAlmacen( ::getRowSet():fieldget( "articulo_codigo" ), ::getRowSet():fieldget( "almacen_codigo" ) )
+   ::loadUbicacionStockInformation()
 
-   ::oController:getDialogView():setTextLinkStockAlmacen( nStock )
+   ::loadLoteStockInformation()
 
-   if ( Company():getDefaultUsarUbicaciones() )
-   
-      nStock   := StocksRepository():selectStockWhereCodigoAlmacenUbicacion( ::getRowSet():fieldget( "articulo_codigo" ), ::getRowSet():fieldget( "almacen_codigo" ), ::getRowSet():fieldget( "ubicacion_codigo" ) )
-
-      ::oController:getDialogView():setTextLinkStockUbicacion( nStock )
-
-   end if 
-
-   if !empty( ::getRowSet():fieldget( "lote" ) )
-
-      nStock   := StocksRepository():selectStockWhereCodigoAlmacenLote( ::getRowSet():fieldget( "articulo_codigo" ), ::getRowSet():fieldget( "almacen_codigo" ), ::getRowSet():fieldget( "ubicacion_codigo" ), ::getRowSet():fieldget( "lote" ) )
-
-      ::oController:getDialogView():setTextLinkStockLote( nStock )
-
-   else
-
-      ::oController:getDialogView():cleanTextLinkStockLote()
-
-   end if 
-
-   if !empty( ::getRowSet():fieldget( "combinaciones_uuid" ) )
-
-      nStock   := StocksRepository():selectStockWhereCodigoAlmacenLote( ::getRowSet():fieldget( "articulo_codigo" ), ::getRowSet():fieldget( "almacen_codigo" ), ::getRowSet():fieldget( "ubicacion_codigo" ), ::getRowSet():fieldget( "lote" ), ::getRowSet():fieldget( "combinaciones_uuid" ) )
-
-      ::oController:getDialogView():setTextLinkStockCombinaciones( nStock )
-
-   else
-
-      ::oController:getDialogView():cleanTextLinkStockCombinaciones()
-
-   end if 
+   ::loadCombinacionesStockInformation()
 
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
+METHOD loadGeneralStockInformation() CLASS OperacionesLineasController 
 
+   if empty( ::getRowSet():fieldget( "articulo_codigo" ) )
+      RETURN ( ::oController:getDialogView():cleanTextLinkStockGlobal() )
+   end if 
 
+RETURN ( ::oController:getDialogView():setTextLinkStockGlobal( StocksRepository():selectStockWhereCodigo( ::getRowSet():fieldget( "articulo_codigo" ) ) ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD loadAlmacenStockInformation() CLASS OperacionesLineasController 
+   
+   if empty( ::getRowSet():fieldget( "articulo_codigo" ) )
+      RETURN ( ::oController:getDialogView():cleanTextLinkStockAlmacen() )
+   end if 
+
+RETURN ( ::oController:getDialogView():setTextLinkStockAlmacen( StocksRepository():selectStockWhereCodigoAlmacen( ::getRowSet():fieldget( "articulo_codigo" ), ::getRowSet():fieldget( "almacen_codigo" ) ) ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD loadUbicacionStockInformation() CLASS OperacionesLineasController
+
+   if empty( ::getRowSet():fieldget( "articulo_codigo" ) ) .or. !( Company():getDefaultUsarUbicaciones() )
+      RETURN ( ::oController:getDialogView():cleanTextLinkStockUbicacion() )
+   end if 
+   
+RETURN ( ::oController:getDialogView():setTextLinkStockUbicacion( StocksRepository():selectStockWhereCodigoAlmacenUbicacion( ::getRowSet():fieldget( "articulo_codigo" ), ::getRowSet():fieldget( "almacen_codigo" ), ::getRowSet():fieldget( "ubicacion_codigo" ) ) ) ) 
+
+//----------------------------------------------------------------------------//
+
+METHOD loadLoteStockInformation() CLASS OperacionesLineasController
+
+   if empty( ::getRowSet():fieldget( "articulo_codigo" ) ) .or. empty( ::getRowSet():fieldget( "lote" ) )
+      RETURN ( ::oController:getDialogView():cleanTextLinkStockLote() )
+   end if 
+
+RETURN ( ::oController:getDialogView():setTextLinkStockLote( StocksRepository():selectStockWhereCodigoAlmacenLote( ::getRowSet():fieldget( "articulo_codigo" ), ::getRowSet():fieldget( "almacen_codigo" ), ::getRowSet():fieldget( "ubicacion_codigo" ), ::getRowSet():fieldget( "lote" ) ) ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD loadCombinacionesStockInformation() CLASS OperacionesLineasController
+
+   if empty( ::getRowSet():fieldget( "articulo_codigo" ) ) .or. empty( ::getRowSet():fieldget( "combinaciones_uuid" ) )
+      RETURN ( ::oController:getDialogView():cleanTextLinkStockCombinaciones() )
+   end if 
+
+RETURN ( ::oController:getDialogView():setTextLinkStockCombinaciones( StocksRepository():selectStockWhereCodigoAlmacenCombinaciones( ::getRowSet():fieldget( "articulo_codigo" ), ::getRowSet():fieldget( "almacen_codigo" ), ::getRowSet():fieldget( "ubicacion_codigo" ), ::getRowSet():fieldget( "lote" ), ::getRowSet():fieldget( "combinaciones_uuid" ) ) ) )
+
+//----------------------------------------------------------------------------//

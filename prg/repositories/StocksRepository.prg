@@ -52,7 +52,55 @@ CLASS StocksRepository FROM SQLBaseRepository
 
    METHOD selectStockWhereCodigoAlmacenCombinaciones( cCodigoArticulo, cCodigoAlmacen, cCodigoUbicacion, cLote, uuidCombinaciones )
 
+   METHOD sqlColumnsAlbaranesComprasLineas()
+
+   METHOD sqlColumnsAlbaranesComprasLineasAlmacen( cParam1, cParam2, cParam3 ) ;
+                                       INLINE ( ::sqlColumnsAlbaranesComprasLineas( "albaranes_compras.almacen_codigo = almacen_codigo", cParam1, cParam2, cParam3 ) ) 
+
+   METHOD sqlColumnsAlbaranesComprasLineasUbicacion( cParam1, cParam2 ) ;
+                                       INLINE ( ::sqlColumnsAlbaranesComprasLineasAlmacen( "albaranes_compras_lineas.ubicacion_codigo = ubicacion_codigo", cParam1, cParam2 ) ) 
+
+   METHOD sqlColumnsAlbaranesComprasLineasLote( cParam1 ) ;
+                                       INLINE ( ::sqlColumnsAlbaranesComprasLineasUbicacion( "albaranes_compras_lineas.lote = lote", cParam1 ) ) 
+
+   METHOD sqlColumnsAlbaranesComprasLineasCombinaciones() ;
+                                       INLINE ( ::sqlColumnsAlbaranesComprasLineasLote( "albaranes_compras_lineas.combinaciones_uuid = combinaciones_uuid" ) )
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD sqlColumnsAlbaranesComprasLineas(...) CLASS StocksRepository
+
+   local cSql  
+   local cParam
+
+   TEXT INTO cSql
+      SELECT
+         ( IFNULL( albaranes_compras_lineas.unidad_medicion_factor, 1 ) * albaranes_compras_lineas.articulo_unidades ) AS total_unidades,
+         albaranes_compras_lineas.articulo_codigo AS articulo_codigo,
+         albaranes_compras.almacen_codigo AS almacen_codigo,
+         albaranes_compras_lineas.ubicacion_codigo AS ubicacion_codigo,
+         albaranes_compras_lineas.lote AS lote,
+         albaranes_compras_lineas.combinaciones_uuid AS combinaciones_uuid,
+         albaranes_compras.fecha_valor_stock AS fecha_valor_stock
+      
+      FROM %2$s AS albaranes_compras_lineas 
+
+         INNER JOIN %1$s AS albaranes_compras
+            ON albaranes_compras.uuid = albaranes_compras_lineas.parent_uuid      
+
+      WHERE albaranes_compras_lineas.articulo_codigo = articulo_codigo AND 
+            albaranes_compras_lineas.deleted_at = 0 
+   ENDTEXT
+
+   cSql     := hb_strformat( cSql, SQLAlbaranesComprasModel():getTableName(), SQLAlbaranesComprasLineasModel():getTableName() )
+
+   cSql     := alltrim( cSql )
+
+   aeval( hb_aparams(), {|cParam| if( !empty( cParam ), cSql += " AND " + cParam, ) } )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
@@ -93,22 +141,7 @@ METHOD createFunctionStockWhereCodigo() CLASS StocksRepository
          FROM
          (
 
-            SELECT
-               ( IFNULL( albaranes_compras_lineas.unidad_medicion_factor, 1 ) * albaranes_compras_lineas.articulo_unidades ) AS total_unidades ,
-               albaranes_compras_lineas.articulo_codigo AS articulo_codigo,
-               albaranes_compras.almacen_codigo AS almacen_codigo,
-               albaranes_compras_lineas.ubicacion_codigo AS ubicacion_codigo,
-               albaranes_compras_lineas.lote AS lote,
-               albaranes_compras_lineas.combinaciones_uuid AS combinaciones_uuid,
-               albaranes_compras.fecha_valor_stock AS fecha_valor_stock
-            
-            FROM %7$s AS albaranes_compras_lineas 
-
-               INNER JOIN %6$s AS albaranes_compras
-                  ON albaranes_compras.uuid = albaranes_compras_lineas.parent_uuid      
-
-            WHERE albaranes_compras_lineas.articulo_codigo = articulo_codigo AND 
-                  albaranes_compras_lineas.deleted_at = 0 
+            %6$s
 
             UNION 
 
@@ -170,43 +203,43 @@ METHOD createFunctionStockWhereCodigo() CLASS StocksRepository
          ) 
          AS movimientos_union
 
-            LEFT JOIN 
-               (
-                  SELECT 
-                     consolidaciones_almacenes_lineas.articulo_codigo AS articulo_codigo, 
-                     consolidaciones_almacenes_lineas.ubicacion_codigo AS ubicacion_codigo,
-                     consolidaciones_almacenes_lineas.lote AS lote,
-                     consolidaciones_almacenes_lineas.combinaciones_uuid AS combinaciones_uuid,
-                     IFNULL( consolidaciones_almacenes_lineas.unidad_medicion_factor, 1 ) * consolidaciones_almacenes_lineas.articulo_unidades AS total_unidades, 
-                     consolidaciones_almacenes.almacen_codigo,
-                     consolidaciones_almacenes.fecha_valor_stock AS fecha_valor_stock
+         LEFT JOIN 
+            (
+               SELECT 
+                  consolidaciones_almacenes_lineas.articulo_codigo AS articulo_codigo, 
+                  consolidaciones_almacenes_lineas.ubicacion_codigo AS ubicacion_codigo,
+                  consolidaciones_almacenes_lineas.lote AS lote,
+                  consolidaciones_almacenes_lineas.combinaciones_uuid AS combinaciones_uuid,
+                  IFNULL( consolidaciones_almacenes_lineas.unidad_medicion_factor, 1 ) * consolidaciones_almacenes_lineas.articulo_unidades AS total_unidades, 
+                  consolidaciones_almacenes.almacen_codigo,
+                  consolidaciones_almacenes.fecha_valor_stock AS fecha_valor_stock
 
-                  FROM %3$s AS consolidaciones_almacenes_lineas 
+               FROM %3$s AS consolidaciones_almacenes_lineas 
 
-                  INNER JOIN %2$s AS consolidaciones_almacenes
-                     ON consolidaciones_almacenes.uuid = consolidaciones_almacenes_lineas.parent_uuid      
+               INNER JOIN %2$s AS consolidaciones_almacenes
+                  ON consolidaciones_almacenes.uuid = consolidaciones_almacenes_lineas.parent_uuid      
 
-                  WHERE consolidaciones_almacenes_lineas.articulo_codigo = articulo_codigo AND 
-                        consolidaciones_almacenes_lineas.deleted_at = 0  
+               WHERE consolidaciones_almacenes_lineas.articulo_codigo = articulo_codigo AND 
+                     consolidaciones_almacenes_lineas.deleted_at = 0  
 
-                  GROUP BY consolidaciones_almacenes_lineas.articulo_codigo, consolidaciones_almacenes.almacen_codigo, consolidaciones_almacenes_lineas.ubicacion_codigo, consolidaciones_almacenes_lineas.lote, consolidaciones_almacenes_lineas.combinaciones_uuid
+               GROUP BY consolidaciones_almacenes_lineas.articulo_codigo, consolidaciones_almacenes.almacen_codigo, consolidaciones_almacenes_lineas.ubicacion_codigo, consolidaciones_almacenes_lineas.lote, consolidaciones_almacenes_lineas.combinaciones_uuid
 
-                  ORDER BY consolidaciones_almacenes.fecha_valor_stock
-                  
-                  LIMIT 1
-               ) 
-               AS consolidaciones_almacenes
+               ORDER BY consolidaciones_almacenes.fecha_valor_stock
+               
+               LIMIT 1
+            ) 
+            AS consolidaciones_almacenes
 
-               ON movimientos_union.articulo_codigo = consolidaciones_almacenes.articulo_codigo AND
-                  movimientos_union.almacen_codigo = consolidaciones_almacenes.almacen_codigo AND
-                  movimientos_union.ubicacion_codigo = consolidaciones_almacenes.ubicacion_codigo AND
-                  movimientos_union.lote = consolidaciones_almacenes.lote AND 
-                  movimientos_union.combinaciones_uuid = consolidaciones_almacenes.combinaciones_uuid  
+            ON movimientos_union.articulo_codigo = consolidaciones_almacenes.articulo_codigo AND
+               movimientos_union.almacen_codigo = consolidaciones_almacenes.almacen_codigo AND
+               movimientos_union.ubicacion_codigo = consolidaciones_almacenes.ubicacion_codigo AND
+               movimientos_union.lote = consolidaciones_almacenes.lote AND 
+               movimientos_union.combinaciones_uuid = consolidaciones_almacenes.combinaciones_uuid  
 
-            WHERE
+         WHERE
 
-               movimientos_union.fecha_valor_stock >= consolidaciones_almacenes.fecha_valor_stock OR 
-               consolidaciones_almacenes.fecha_valor_stock IS NULL
+            movimientos_union.fecha_valor_stock >= consolidaciones_almacenes.fecha_valor_stock OR 
+            consolidaciones_almacenes.fecha_valor_stock IS NULL
       )
       AS stocks;    
 
@@ -222,8 +255,7 @@ METHOD createFunctionStockWhereCodigo() CLASS StocksRepository
                            SQLConsolidacionesAlmacenesLineasModel():getTableName(),;
                            SQLMovimientosAlmacenesModel():getTableName(),;
                            SQLMovimientosAlmacenesLineasModel():getTableName(),;
-                           SQLAlbaranesComprasModel():getTableName(),;
-                           SQLAlbaranesComprasLineasModel():getTableName() )
+                           ::sqlColumnsAlbaranesComprasLineas() )
 
 RETURN ( alltrim( cSql ) )
 
@@ -272,23 +304,7 @@ METHOD createFunctionStockWhereCodigoAlmacen() CLASS StocksRepository
          FROM
          (
 
-            SELECT
-               ( IFNULL( albaranes_compras_lineas.unidad_medicion_factor, 1 ) * albaranes_compras_lineas.articulo_unidades ) AS total_unidades ,
-               albaranes_compras_lineas.articulo_codigo AS articulo_codigo,
-               albaranes_compras.almacen_codigo AS almacen_codigo,
-               albaranes_compras_lineas.ubicacion_codigo AS ubicacion_codigo,
-               albaranes_compras_lineas.lote AS lote,
-               albaranes_compras_lineas.combinaciones_uuid AS combinaciones_uuid,
-               albaranes_compras.fecha_valor_stock AS fecha_valor_stock
-            
-            FROM %7$s AS albaranes_compras_lineas 
-
-               INNER JOIN %6$s AS albaranes_compras
-                  ON albaranes_compras.uuid = albaranes_compras_lineas.parent_uuid      
-
-            WHERE albaranes_compras_lineas.articulo_codigo = articulo_codigo AND 
-                  albaranes_compras.almacen_codigo = almacen_codigo AND 
-                  albaranes_compras_lineas.deleted_at = 0 
+            %6$s 
 
             UNION 
 
@@ -406,8 +422,9 @@ METHOD createFunctionStockWhereCodigoAlmacen() CLASS StocksRepository
                            SQLConsolidacionesAlmacenesLineasModel():getTableName(),;
                            SQLMovimientosAlmacenesModel():getTableName(),;
                            SQLMovimientosAlmacenesLineasModel():getTableName(),;
-                           SQLAlbaranesComprasModel():getTableName(),;
-                           SQLAlbaranesComprasLineasModel():getTableName() )
+                           ::sqlColumnsAlbaranesComprasLineasAlmacen() )
+
+   logwrite( cSql )
 
 RETURN ( alltrim( cSql ) )
 
@@ -456,24 +473,7 @@ METHOD createFunctionStockWhereCodigoAlmacenUbicacion() CLASS StocksRepository
          FROM
          (
 
-            SELECT
-               ( IFNULL( albaranes_compras_lineas.unidad_medicion_factor, 1 ) * albaranes_compras_lineas.articulo_unidades ) AS total_unidades ,
-               albaranes_compras_lineas.articulo_codigo AS articulo_codigo,
-               albaranes_compras.almacen_codigo AS almacen_codigo,
-               albaranes_compras_lineas.ubicacion_codigo AS ubicacion_codigo,
-               albaranes_compras_lineas.lote AS lote,
-               albaranes_compras_lineas.combinaciones_uuid AS combinaciones_uuid,
-               albaranes_compras.fecha_valor_stock AS fecha_valor_stock
-            
-            FROM %7$s AS albaranes_compras_lineas 
-
-               INNER JOIN %6$s AS albaranes_compras
-                  ON albaranes_compras.uuid = albaranes_compras_lineas.parent_uuid      
-
-            WHERE albaranes_compras_lineas.articulo_codigo = articulo_codigo AND 
-                  albaranes_compras.almacen_codigo = almacen_codigo AND 
-                  albaranes_compras_lineas.ubicacion_codigo = ubicacion_codigo AND 
-                  albaranes_compras_lineas.deleted_at = 0 
+            %6$s
 
             UNION 
 
@@ -595,8 +595,7 @@ METHOD createFunctionStockWhereCodigoAlmacenUbicacion() CLASS StocksRepository
                            SQLConsolidacionesAlmacenesLineasModel():getTableName(),;
                            SQLMovimientosAlmacenesModel():getTableName(),;
                            SQLMovimientosAlmacenesLineasModel():getTableName(),;
-                           SQLAlbaranesComprasModel():getTableName(),;
-                           SQLAlbaranesComprasLineasModel():getTableName() )
+                           ::sqlColumnsAlbaranesComprasLineasUbicacion() )
 
 RETURN ( alltrim( cSql ) )
 
@@ -645,25 +644,7 @@ METHOD createFunctionStockWhereCodigoAlmacenLote() CLASS StocksRepository
          FROM
          (
 
-            SELECT
-               ( IFNULL( albaranes_compras_lineas.unidad_medicion_factor, 1 ) * albaranes_compras_lineas.articulo_unidades ) AS total_unidades ,
-               albaranes_compras_lineas.articulo_codigo AS articulo_codigo,
-               albaranes_compras.almacen_codigo AS almacen_codigo,
-               albaranes_compras_lineas.ubicacion_codigo AS ubicacion_codigo,
-               albaranes_compras_lineas.lote AS lote,
-               albaranes_compras_lineas.combinaciones_uuid AS combinaciones_uuid,
-               albaranes_compras.fecha_valor_stock AS fecha_valor_stock
-            
-            FROM %7$s AS albaranes_compras_lineas 
-
-               INNER JOIN %6$s AS albaranes_compras
-                  ON albaranes_compras.uuid = albaranes_compras_lineas.parent_uuid      
-
-            WHERE albaranes_compras_lineas.articulo_codigo = articulo_codigo AND 
-                  albaranes_compras.almacen_codigo = almacen_codigo AND 
-                  albaranes_compras_lineas.ubicacion_codigo = ubicacion_codigo AND 
-                  albaranes_compras_lineas.lote = lote AND 
-                  albaranes_compras_lineas.deleted_at = 0 
+            %6$s
 
             UNION 
 
@@ -789,8 +770,7 @@ METHOD createFunctionStockWhereCodigoAlmacenLote() CLASS StocksRepository
                            SQLConsolidacionesAlmacenesLineasModel():getTableName(),;
                            SQLMovimientosAlmacenesModel():getTableName(),;
                            SQLMovimientosAlmacenesLineasModel():getTableName(),;
-                           SQLAlbaranesComprasModel():getTableName(),;
-                           SQLAlbaranesComprasLineasModel():getTableName() )
+                           ::sqlColumnsAlbaranesComprasLineasLote() )
 
 RETURN ( alltrim( cSql ) )
 
@@ -839,26 +819,7 @@ METHOD createFunctionStockWhereCodigoAlmacenCombinaciones() CLASS StocksReposito
          FROM
          (
 
-            SELECT
-               ( IFNULL( albaranes_compras_lineas.unidad_medicion_factor, 1 ) * albaranes_compras_lineas.articulo_unidades ) AS total_unidades ,
-               albaranes_compras_lineas.articulo_codigo AS articulo_codigo,
-               albaranes_compras.almacen_codigo AS almacen_codigo,
-               albaranes_compras_lineas.ubicacion_codigo AS ubicacion_codigo,
-               albaranes_compras_lineas.lote AS lote,
-               albaranes_compras_lineas.combinaciones_uuid AS combinaciones_uuid,
-               albaranes_compras.fecha_valor_stock AS fecha_valor_stock
-            
-            FROM %7$s AS albaranes_compras_lineas 
-
-               INNER JOIN %6$s AS albaranes_compras
-                  ON albaranes_compras.uuid = albaranes_compras_lineas.parent_uuid      
-
-            WHERE albaranes_compras_lineas.articulo_codigo = articulo_codigo AND 
-                  albaranes_compras.almacen_codigo = almacen_codigo AND 
-                  albaranes_compras_lineas.ubicacion_codigo = ubicacion_codigo AND 
-                  albaranes_compras_lineas.lote = lote AND 
-                  albaranes_compras_lineas.combinaciones_uuid = combinaciones_uuid AND 
-                  albaranes_compras_lineas.deleted_at = 0 
+            %6$s
 
             UNION 
 
@@ -988,8 +949,7 @@ METHOD createFunctionStockWhereCodigoAlmacenCombinaciones() CLASS StocksReposito
                            SQLConsolidacionesAlmacenesLineasModel():getTableName(),;
                            SQLMovimientosAlmacenesModel():getTableName(),;
                            SQLMovimientosAlmacenesLineasModel():getTableName(),;
-                           SQLAlbaranesComprasModel():getTableName(),;
-                           SQLAlbaranesComprasLineasModel():getTableName() )
+                           ::sqlColumnsAlbaranesComprasLineasCombinaciones() )
 
 RETURN ( alltrim( cSql ) )
 

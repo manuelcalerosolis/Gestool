@@ -5,6 +5,8 @@
 
 CLASS OperacionesView FROM SQLBaseView
   
+   DATA oPanel
+
    DATA oExplorerBar
 
    DATA oLinkStockGlobal
@@ -17,12 +19,19 @@ CLASS OperacionesView FROM SQLBaseView
 
    METHOD setTextLinkStockGlobal( nStock ) ;
                                        INLINE ( ::oLinkStockGlobal:Cargo:setText( nStock ) )   
+   
+   METHOD cleanTextLinkStockGlobal()   INLINE ( if( !empty( ::oLinkStockGlobal ), ::oLinkStockGlobal:Cargo:setText( "" ), ) )   
 
    METHOD setTextLinkStockAlmacen( nStock ) ;
                                        INLINE ( ::oLinkStockAlmacen:Cargo:setText( nStock ) )   
 
+   METHOD cleanTextLinkStockAlmacen()  INLINE ( if( !empty( ::oLinkStockAlmacen ), ::oLinkStockAlmacen:Cargo:setText( "" ), ) )   
+
    METHOD setTextLinkStockUbicacion( nStock ) ;
                                        INLINE ( if( !empty( ::oLinkStockUbicacion ), ::oLinkStockUbicacion:Cargo:setText( nStock ), ) )   
+
+   METHOD cleanTextLinkStockUbicacion() ;
+                                       INLINE ( if( !empty( ::oLinkStockUbicacion ), ::oLinkStockUbicacion:Cargo:setText( "" ), ) )   
 
    METHOD setTextLinkStockLote( nStock ) ;
                                        INLINE ( if( !empty( ::oLinkStockLote ), ::oLinkStockLote:Cargo:setText( nStock ), ) )   
@@ -36,27 +45,30 @@ CLASS OperacionesView FROM SQLBaseView
    METHOD cleanTextLinkStockCombinaciones( nStock ) ;
                                        INLINE ( if( !empty( ::oLinkStockCombinaciones ), ::oLinkStockCombinaciones:Cargo:setText( "" ), ) )   
 
+   METHOD hideTextLinkStockCombinaciones() ;
+                                       INLINE ( if( !empty( ::oLinkStockCombinaciones ), ::oPanel:hideLinkAndData( ::oLinkStockCombinaciones ), ) )   
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD addLinksElementToExplorerBar() CLASS OperacionesView
 
-   local oPanel
+   local cBitmap              := nil // ::getController():getRecibosController():getImage( "16" )
 
-   oPanel                     := ::oExplorerBar:AddPanel( "Datos del elemento", nil, 1 ) 
+   ::oPanel                   := ::oExplorerBar:AddPanel( "Stocks", nil, 1 ) 
 
-   ::oLinkStockGlobal         := oPanel:AddLinkAndData( "Stock global:", "", {|| nil }, ::getController():getRecibosController():getImage( "16" ) )
+   ::oLinkStockGlobal         := ::oPanel:AddLinkAndData( "Global:", "", {|| nil }, cBitmap )
 
-   ::oLinkStockAlmacen        := oPanel:AddLinkAndData( "Stock almacén:", "", {|| nil }, ::getController():getRecibosController():getImage( "16" ) )
+   ::oLinkStockAlmacen        := ::oPanel:AddLinkAndData( "Almacén:", "", {|| nil }, cBitmap )
    
    if ( Company():getDefaultUsarUbicaciones() )
-      ::oLinkStockUbicacion   := oPanel:AddLinkAndData( "Stock ubicación:", "", {|| nil }, ::getController():getRecibosController():getImage( "16" ) )
+      ::oLinkStockUbicacion   := ::oPanel:AddLinkAndData( "Ubicación:", "", {|| nil }, cBitmap )
    end if 
 
-   ::oLinkStockLote           := oPanel:AddLinkAndData( "Stock lote:", "", {|| nil }, ::getController():getRecibosController():getImage( "16" ) )
+   ::oLinkStockLote           := ::oPanel:AddLinkAndData( "Lote:", "", {|| nil }, cBitmap )
 
-   ::oLinkStockCombinaciones  := oPanel:AddLinkAndData( "Stock comb.:", "", {|| nil }, ::getController():getRecibosController():getImage( "16" ) )
+   ::oLinkStockCombinaciones  := ::oPanel:AddLinkAndData( "Propiedades:", "", {|| nil }, cBitmap )
 
 RETURN ( nil )
 

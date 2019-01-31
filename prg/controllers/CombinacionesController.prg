@@ -678,7 +678,7 @@ METHOD getInitialSelect() CLASS SQLCombinacionesModel
       combinaciones.incremento_precio AS incremento_precio,
       combinaciones_propiedades.id AS propiedades_id,
       combinaciones_propiedades.uuid AS propiedades_uuid,
-      GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre
+      TRIM( GROUP_CONCAT( " ", articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) ) AS articulos_propiedades_nombre
    
    FROM %1$s AS combinaciones 
       
@@ -790,13 +790,50 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS CombinacionesRepository FROM SQLBaseRepository
 
    METHOD getTableName()         INLINE ( SQLCombinacionesModel():getTableName() ) 
 
+   METHOD getCombinacionWhereArticuloTexto( cCodigoArticulo, cTextoCombinacion )
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getCombinacionWhereArticuloTexto( cCodigoArticulo, cTextoCombinacion ) CLASS CombinacionesRepository
+
+   local cSql 
+
+   TEXT INTO cSql
+
+   SELECT 
+      combinaciones.id AS id,
+      combinaciones.uuid AS uuid,
+      combinaciones.parent_uuid AS parent_uuid,
+      combinaciones.incremento_precio AS incremento_precio,
+      combinaciones_propiedades.id AS propiedades_id,
+      combinaciones_propiedades.uuid AS propiedades_uuid,
+      TRIM( GROUP_CONCAT( " ", articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) ) AS articulos_propiedades_nombre
+   
+   FROM %1$s AS combinaciones 
+
+      INNER JOIN %4$s AS articulos
+         ON articulos.codigo = %5$s
+      
+      INNER JOIN %2$s AS combinaciones_propiedades
+         ON combinaciones_propiedades.parent_uuid = combinaciones.uuid
+
+      INNER JOIN %3$s AS articulos_propiedades_lineas
+         ON combinaciones_propiedades.propiedad_uuid = articulos_propiedades_lineas.uuid
+
+      HAVING articulos_propiedades_nombre LIKE %6$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ), quoted( cTextoCombinacion ) )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

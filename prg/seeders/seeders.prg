@@ -835,7 +835,7 @@ METHOD getEntidadUuid( cTipoDocumento, cClave ) CLASS SQLCompanySeeders
    do case 
       case cTipoDocumento == "20" // "Artículos" => "20"
          
-         cEntidadUuid   := ArticulosModel():getUuid( cClave )
+         cEntidadUuid   := SQLArticulosModel():getUuid( cClave )
 
       case cTipoDocumento == "21" // "Clientes" => "21"
          

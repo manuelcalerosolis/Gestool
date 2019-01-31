@@ -21,7 +21,7 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    DATA aConvert                       INIT {}
 
-   DATA hHeader                        INIT {}
+   DATA aHeader                        INIT {}
 
    DATA aLines                         INIT {}
 
@@ -43,9 +43,9 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    METHOD Convert()
       METHOD setHeader()
-      METHOD sumHeader()
+      METHOD addHeader()
       METHOD setLines()
-      METHOD sumLines()
+      METHOD addLines()
       METHOD setDiscounts()
 
    METHOD runConvertAlbaranCompras( aSelected ) 
@@ -62,10 +62,6 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    METHOD Edit( nId )
 
-   METHOD cleanData()
-
-   METHOD loadData()
-
    METHOD addConvert()
 
    METHOD convertDocument( aConvert )
@@ -78,7 +74,7 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
    METHOD setAlbaranesVentasController() ;
                                        INLINE ( ::oDestinoController := AlbaranesVentasController():New( self ), ::oDestinoController ) 
 
-   METHOD setFacturasComprasController() ;
+   METHOD setFacturasComprasControllerAsDestino() ;
                                        INLINE ( ::oDestinoController := FacturasComprasController():New( self ), ::oDestinoController ) 
 
    METHOD setFacturasVentasController() ;
@@ -114,7 +110,7 @@ METHOD New( oController ) CLASS ConversorDocumentosController
 
    ::aDocumentosDestino := {  "Albarán de compras"             => {|| ::setAlbaranesComprasController() },;
                               "Albarán de ventas"              => {|| ::setAlbaranesVentasController() },;
-                              "Factura de compras"             => {|| ::setFacturasComprasController() },;
+                              "Factura de compras"             => {|| ::setFacturasComprasControllerAsDestino() },;
                               "Factura de ventas"              => {|| ::setFacturasventasController() },;
                               "Factura de ventas simplificada" => {|| ::setFacturasVentasSimplificadasController() },;
                               "Pedido de compras"              => {|| ::setPedidosComprasController() },;
@@ -208,21 +204,21 @@ METHOD setHeader() CLASS ConversorDocumentosController
 
    local hNewHeader   := ::getController():getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
 
-   aadd( ::hHeader, hNewHeader )
+   aadd( ::aHeader, hNewHeader )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD sumHeader() CLASS ConversorDocumentosController
+METHOD addHeader() CLASS ConversorDocumentosController
 
-   local hHeaderNew := ::getController():getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
+   local hHeader  := ::getController():getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
 
-   if empty( hHeaderNew )
+   if empty( hHeader )
       RETURN ( nil )
    end if
 
-   aadd( hget( atail( ::aConvert ), "header" ), hHeaderNew )
+   aadd( hget( atail( ::aConvert ), "header" ), hHeader )
 
 RETURN ( nil )
 
@@ -242,7 +238,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD sumLines() CLASS ConversorDocumentosController
+METHOD addLines() CLASS ConversorDocumentosController
 
    local aLines   := ::getController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
 
@@ -270,44 +266,23 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD cleanData()
+METHOD runConvertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
+   
+   ::aConvert     := {}
 
-   ::hHeader      := {}
+   ::aHeader      := {}
 
    ::aLines       := {}
 
    ::aDiscounts   := {}
 
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadData()
-
-   ::setHeader()
-
-   ::setLines()
-
-   ::setDiscounts()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD runConvertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
-   
-   ::aConvert     := {}
-
-   ::cleanData()
-
-   ::setFacturasComprasController()
+   ::setFacturasComprasControllerAsDestino()
 
    ::convertAlbaranCompras( aSelected ) 
 
-   //aeval( ::aConvert, {|u| msgalert( hb_valtoexp( u ), "::aConvert" ) } )
-   ::convertDocument( ::aConvert )
+   ::convertDocument()
 
-RETURN ( ::aConvert )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -320,23 +295,27 @@ METHOD convertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
       RETURN ( nil )
    end if
 
-   hAlbaranes  := SQLAlbaranesComprasModel():getHashWhereUuidAndOrder( ::setWhereArray( aSelected ) )
+   hAlbaranes                    := SQLAlbaranesComprasModel():getHashWhereUuidAndOrder( ::setWhereArray( aSelected ) )
 
    for each hAlbaran in hAlbaranes
 
       if ::isAlbaranNotConverted( hAlbaran ) 
 
-         ::uuidDocumentoOrigen   := hget( hAlbaran, "uuid")
+         ::uuidDocumentoOrigen   := hget( hAlbaran, "uuid" )
 
          if ::isAlbaranEquals( hAlbaran )
 
-            ::sumHeader()
+            ::addHeader()
 
-            ::sumLines()
+            ::addLines()
 
          else
 
-            ::loadData()
+            ::setHeader()
+
+            ::setLines()
+
+            ::setDiscounts()
 
             ::addConvert()
 
@@ -354,12 +333,17 @@ RETURN ( ::aCreatedDocument )
 
 METHOD addConvert() CLASS ConversorDocumentosController
 
-   if empty( ::hHeader )
+   if empty( ::aHeader )
       RETURN ( nil )
    end if 
 
-   aadd( ::aConvert, { "header" => ::hHeader, "lines" => ::aLines, "discounts" => ::aDiscounts } )
-   ::cleanData()
+   aadd( ::aConvert, { "header" => ::aHeader, "lines" => ::aLines, "discounts" => ::aDiscounts } )
+
+   ::aHeader      := {}
+
+   ::aLines       := {}
+
+   ::aDiscounts   := {}
 
 RETURN ( ::aConvert )
 
@@ -395,7 +379,7 @@ METHOD isAlbaranEquals( hAlbaran ) CLASS ConversorDocumentosController
       RETURN ( .f. )
    end if 
 
-   if !empty( ::getController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen ) ) 
+   if !empty( ::getController():getDiscountController():getModel():countWhereUuid( hget( hAlbaran, "uuid" ) ) ) 
       RETURN ( .f. )
    end if 
 
@@ -425,17 +409,15 @@ RETURN ( ::getDestinoController():Edit( nId ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD convertDocument( aConvert ) CLASS ConversorDocumentosController
+METHOD convertDocument() CLASS ConversorDocumentosController
 
-   ::aCreatedDocument            := ::oDestinoController:convertDocument( aConvert )
+   ::aCreatedDocument            := ::oDestinoController:convertDocument( ::aConvert )
 
     if !empty( ::aCreatedDocument )
-   
       ::getResumenView():Activate()
-   
    end if
 
-RETURN ( nil )
+RETURN ( ::aCreatedDocument )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

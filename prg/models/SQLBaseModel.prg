@@ -345,6 +345,8 @@ CLASS SQLBaseModel
    METHOD getControllerParentUuid()
 
    METHOD Count()
+   
+   METHOD countWhereUuid( Uuid )   
 
    // Duplicates----------------------------------------------------------------
 
@@ -1862,6 +1864,10 @@ METHOD Count()
 
    local cSql  := "SELECT COUNT(*) FROM " + ::getTableName()    
 
+   if ::isDeletedAtColumn()
+      cSQL           +=    ::getWhereOrAnd( cSQL ) + "deleted_at = 0" 
+   end if 
+
 RETURN ( ::getDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
@@ -1942,6 +1948,19 @@ METHOD getWhereUuid( Uuid )
    cSQL        +=    "LIMIT 1"
 
 RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD countWhereUuid( Uuid )
+
+   local cSQL  := "SELECT COUNT(*) FROM " + ::getTableName()                  + " "    
+   cSQL        +=    "WHERE uuid = " + quoted( uuid )                         + " "    
+
+   if ::isDeletedAtColumn()
+      cSQL     +=    "AND deleted_at = 0" 
+   end if 
+
+RETURN ( ::getDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 

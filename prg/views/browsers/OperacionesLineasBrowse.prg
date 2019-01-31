@@ -97,7 +97,7 @@ METHOD browseChange() CLASS OperacionesLineasBrowseView
 
    ::getController():getHistoryManager():Set( ::getRowSet():getValuesAsHash() ) 
 
-   ::getController():loadInformation()
+   ::getController():loadStockInformation()
 
 RETURN ( nil )   
 

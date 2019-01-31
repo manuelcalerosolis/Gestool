@@ -26,13 +26,15 @@ CLASS TestBase
    PROTECTED:
       DATA oResult
 
+      METHOD Result()                  INLINE ( if( empty( ::oResult ), ::oResult := TestResult():new(), ), ::oResult )
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD new() CLASS TestBase
 
-   ::oResult   := TestResult():new()
+   ::Result()
    
 RETURN ( self )
 

@@ -169,7 +169,7 @@ METHOD exportArticulosJson()
 
    ::addTreeLog( "Exportando articulos a json" )
 
-   ArticulosModel():getArticulosToJson( @cArea ) 
+   SQLArticulosModel():getArticulosToJson( @cArea ) 
 
    ::setTotalProgress( ( cArea )->( lastrec() ) )
 
@@ -421,7 +421,7 @@ METHOD buildTicketLineHash( hLine )
 
    hTicketLine       := {=>}
    idArticulo        := cvaltochar( hget( hLine, "id_articulo" ) ) 
-   hArticulo         := ArticulosModel():getHash( idArticulo )
+   hArticulo         := SQLArticulosModel():getHash( idArticulo )
 
    hset( hTicketLine, "cSerTil", ::cSerieTicket )
    hset( hTicketLine, "cNumTil", ::cNumeroTicket )

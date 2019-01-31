@@ -460,9 +460,7 @@ METHOD test_dialog_append_con_caracteristicas() CLASS TestArticulosController
          
          testWaitSeconds( 1 )
 
-         aeval( view:oExplorerBar:aPanels,;
-            {|a| aeval( a:aControls,;
-               {|o| o:Click() } ) } )
+         aeval( view:oExplorerBar:aPanels, {|a| aeval( a:aControls, {|o| o:Click() } ) } )
 
          testWaitSeconds( 1 )
 
@@ -482,7 +480,7 @@ METHOD test_dialog_append_con_caracteristicas() CLASS TestArticulosController
          
          testWaitSeconds( 1 )
          
-         view:oGetNombre:cText( 'Test producto con propiedades' )
+         view:oGetNombre:cText( 'Test producto con caracteristicas' )
          
          testWaitSeconds( 1 )
          

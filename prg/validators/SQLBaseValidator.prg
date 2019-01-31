@@ -71,7 +71,6 @@ CLASS SQLBaseValidator
    METHOD Password( uValue )
    METHOD Mail( uValue )
 
-   METHOD existArticulo( uValue )
    METHOD existFamilia( uValue )
    METHOD existTipoArticulo( uValue )
 
@@ -311,20 +310,6 @@ RETURN ( Len( uValue) >= 8 .and. Len( uValue) <= 18 )
 METHOD onlyAlphanumeric( uValue )
 
 RETURN ( hb_regexmatch( "[a-zA-Z0-9]", uValue, .f. ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD existArticulo( uValue )
-
-   if empty( uValue ) .or. ( uValue == replicate( "Z", len( uValue ) ) )
-      RETURN ( .t. )
-   end if 
-
-   if ArticulosModel():exist( uValue )
-      RETURN ( .t. )
-   end if 
-
-RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 

@@ -28,7 +28,7 @@
 
 //----------------------------------------------------------------------------//
 
-CLASS TApoloExplorerBar FROM  TExplorerBar
+CLASS TApoloExplorerBar FROM TExplorerBar
 
    METHOD AddPanel( cName, cBmpName )
 
@@ -63,6 +63,7 @@ CLASS TApoloTaskPanel FROM TTaskPanel
    METHOD addLink( cPrompt, bAction, cBitmap, oFnt, nClrT, nClrP, nClrO )
 
    METHOD addLinkAndData( cLink, cData, bAction, cBitmap )
+   METHOD hideLinkAndData( oUrlLink )
 
    METHOD addGetSelector( cPrompt, cGet ) 
 
@@ -208,6 +209,16 @@ METHOD addLinkAndData( cLink, cPrompt, bAction, cBitmap ) CLASS TApoloTaskPanel
    ::UpdateRegion()
 
 RETURN ( oUrlLink )
+
+//----------------------------------------------------------------------------//
+
+METHOD hideLinkAndData( oUrlLink ) CLASS TApoloTaskPanel
+
+   oUrlLink:Cargo:Hide()
+
+   oUrlLink:Hide()
+
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
