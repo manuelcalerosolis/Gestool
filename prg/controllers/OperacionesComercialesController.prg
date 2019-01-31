@@ -653,6 +653,7 @@ CLASS TestOperacionesComercialesController FROM TestOperacionesController
 
    METHOD refresh_linea_browse_view()  INLINE ( ::oController:getLinesController():getBrowseView():getRowSet():Refresh(),;
                                                 testWaitSeconds( 1 ) )
+   
 /*
    METHOD test_calculo_con_descuento()
 

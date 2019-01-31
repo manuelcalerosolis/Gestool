@@ -22,8 +22,6 @@ CLASS SQLOperacionesLineasModel FROM SQLCompanyModel
 
    METHOD getInitialWhereParentUuid( uuidParent )
 
-   METHOD getInsertSentence()
-
    METHOD addUpdateSentence()
    
    METHOD addDeleteSentence()
@@ -37,8 +35,6 @@ CLASS SQLOperacionesLineasModel FROM SQLCompanyModel
    METHOD getDeleteSentenceFromParentsUuid()
 
    METHOD getSentenceNotSent( aFetch )
-
-   METHOD getIdProductAdded()
 
    METHOD getUpdateUnitsSentece()
 
@@ -66,22 +62,6 @@ END CLASS
 METHOD getInitialWhereParentUuid( uuidParent ) CLASS SQLOperacionesLineasModel
 
 RETURN ( "WHERE " + ::cTableName + ".parent_uuid = " + quoted( uuidParent ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD getInsertSentence() CLASS SQLOperacionesLineasModel
-
-   local nId
-
-   nId            := ::getIdProductAdded()
-
-   if empty( nId )
-      RETURN ( ::Super:getInsertSentence() )
-   end if 
-
-   ::setSQLInsert( ::getUpdateUnitsSentece( nId ) )
-
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -161,12 +141,6 @@ METHOD getSentenceNotSent( aFetch ) CLASS SQLOperacionesLineasModel
    cSentence         := chgAtEnd( cSentence, ' )', 2 )
 
 RETURN ( cSentence )
-
-//---------------------------------------------------------------------------//
-
-METHOD getIdProductAdded() CLASS SQLOperacionesLineasModel
-
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

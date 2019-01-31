@@ -299,6 +299,7 @@ CLASS SQLBaseModel
    METHOD getUuidWhereColumn( uValue, cColumn, uDefault ) 
    METHOD getUuidWhereNombre( uValue ) INLINE ( ::getUuidWhereColumn( uValue, 'nombre', '' ) )
    METHOD getUuidWhereCodigo( uValue ) INLINE ( ::getUuidWhereColumn( uValue, 'codigo', '' ) )
+   METHOD getUuidWhereSerieAndNumero( cSerie, nNumero, uDefault ) 
 
    METHOD getIdWhereColumn( uValue, cColumn, uDefault ) 
    METHOD getIdWhereNombre( uValue )   INLINE ( ::getIdWhereColumn( uValue, 'nombre', '' ) )
@@ -1895,6 +1896,23 @@ METHOD getUuidWhereColumn( uValue, cColumn, uDefault )
       RETURN ( uuid )
    end if 
 
+RETURN ( uDefault )
+
+//---------------------------------------------------------------------------//
+
+METHOD getUuidWhereSerieAndNumero( cSerie, nNumero, uDefault ) 
+
+   local uuid
+   local cSQL  := "SELECT uuid FROM " + ::getTableName()                + " " 
+   cSQL        +=    "WHERE serie = " + toSqlString( cSerie )           + " " 
+   cSQL        +=    "AND numero = " + toSqlString( nNumero )           + " " 
+   cSQL        +=    "LIMIT 1"
+
+   uuid        := ::getDatabase():getValue( cSQL )
+   if !empty( uuid )
+      RETURN ( uuid )
+   end if 
+logwrite (cSQL )
 RETURN ( uDefault )
 
 //---------------------------------------------------------------------------//

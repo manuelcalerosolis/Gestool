@@ -223,7 +223,7 @@ CLASS SQLRutasModel FROM SQLCompanyModel
 
    #ifdef __TEST__
 
-   METHOD test_create_ruta()
+   METHOD test_create_ruta( cCodigo )
 
    #endif
 
@@ -253,11 +253,11 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 #ifdef __TEST__
 
- METHOD test_create_ruta() CLASS SQLRutasModel
+ METHOD test_create_ruta( cCodigo ) CLASS SQLRutasModel
 
  RETURN ( ::insertBuffer( ;
-            ::loadBlankBuffer( { "codigo"       => "0",;
-                                 "nombre"       => "ruta test" } ) ) )
+            ::loadBlankBuffer( { "codigo"       => quoted( cCodigo ),;
+                                 "nombre"       => "ruta test "+ quoted( cCodigo ) } ) ) )
 
   #endif
 

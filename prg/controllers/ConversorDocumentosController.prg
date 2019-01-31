@@ -278,7 +278,11 @@ METHOD runConvertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
 
    ::setFacturasComprasControllerAsDestino()
 
+   msgalert( hb_valtoexp( aSelected ), "aSelected")
+
    ::convertAlbaranCompras( aSelected ) 
+
+   msgalert( hb_valtoexp( ::aConvert ), "aConvert")
 
    ::convertDocument()
 
@@ -410,8 +414,6 @@ RETURN ( ::getDestinoController():Edit( nId ) )
 //---------------------------------------------------------------------------//
 
 METHOD convertDocument() CLASS ConversorDocumentosController
-
-msgalert(hb_valtoexp(::aConvert))
 
    ::aCreatedDocument            := ::oDestinoController:convertDocument( ::aConvert )
 
@@ -656,6 +658,7 @@ RETURN ( SQLFacturasComprasModel():getInitialWhereDocumentos(::oController:setWh
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 #ifdef __TEST__
 
@@ -669,7 +672,7 @@ CLASS TestConversorDocumentosController FROM TestCase
 
    METHOD Before() 
 
-   METHOD test_create_prueba()
+   METHOD test_create_distinto_tercero()
 
 END CLASS
 
@@ -733,7 +736,8 @@ METHOD Before() CLASS TestConversorDocumentosController
 
    SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_principal() )
 
-   SQLRutasModel():test_create_ruta()
+   SQLRutasModel():test_create_ruta(0)
+   SQLRutasModel():test_create_ruta(1)
 
    SQLArticulosModel():test_create_precio_con_descuentos()
 
@@ -750,9 +754,23 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_create_prueba() CLASS TestConversorDocumentosController
+METHOD test_create_distinto_tercero() CLASS TestConversorDocumentosController
 
-   msgalert("test")
+local aSelecteds := {}
+
+   SQLAlbaranesComprasModel():create_albaran_compras("0", 0, "0", "0", "0", "0", "0", "A", 3 )
+      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ), 21, "0", 100, 2, 5, "0", "0", "0" )
+      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ), 21, "0", 5000, 2, 5, "0", "0", "0" )
+
+   SQLAlbaranesComprasModel():create_albaran_compras("1", 0, "0", "0", "0", "0", "0", "A", 4 )
+      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ), 21, "0", 300, 2, 5, "0", "0", "0" )
+      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ), 21, "0", 400, 2, 5, "0", "0", "0" )
+   
+   aadd( aSelecteds, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ) )
+   aadd( aSelecteds, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ) )
+   
+   ::oController:runConvertAlbaranCompras( aSelecteds )
+   
 
 RETURN ( nil )
 
