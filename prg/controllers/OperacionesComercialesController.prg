@@ -90,10 +90,6 @@ CLASS OperacionesComercialesController FROM OperacionesController
    METHOD convertDocument( aConvert )
       METHOD insertHeader( aHeaders )
       METHOD insertHeaderRelation( aHeaders )
-      METHOD insertLines( hLines )
-      METHOD generateLine( hLine )
-      METHOD insertLineRelation()
-      METHOD insertDiscounts( hDiscounts )
 
    // Contrucciones tardias----------------------------------------------------
 
@@ -507,9 +503,9 @@ METHOD convertDocument( aConvert ) CLASS OperacionesComercialesController
 
       if !empty( ::insertHeader( hget( hConvert, "header" ) ) )
 
-         ::insertLines( hget( hConvert, "lines" ) )
+         ::getLinesController():insertLines( hget( hConvert, "lines" ), ::uuidDocumentoDestino )
 
-         ::insertDiscounts( hget( hConvert, "discounts" ) )
+         ::getDiscountController():insertDiscounts( hget( hConvert, "discounts" ), ::uuidDocumentoDestino )
 
          ::getRecibosGeneratorController():GenerateNegative()
 
@@ -544,67 +540,6 @@ RETURN ( ::uuidDocumentoDestino )
 METHOD insertHeaderRelation( hHeader ) CLASS OperacionesComercialesController
 
 RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hHeader, "uuid" ), ::getSuperController():getModel():cTableName, ::uuidDocumentoDestino, ::getModel():cTableName ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertLines( aLines ) CLASS OperacionesComercialesController
-
-   local hLine
-   local uuidDestino
-
-   for each hLine in aLines
-
-      uuidDestino    := ::generateLine( hClone( hLine ) )
-
-      if !empty( uuidDestino )
-         ::insertLineRelation( hLine, uuidDestino )
-      end if 
-
-   next
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD generateLine( hLine ) CLASS OperacionesComercialesController
-
-   hDels( hLine, { "uuid", "id" } )
-
-   hSet( hLine, "parent_uuid", ::uuidDocumentoDestino )
-
-RETURN ( ::getLinesController():generateLine( hLine ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertLineRelation( hLine, uuidDestino ) CLASS OperacionesComercialesController
-
-RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hline, "uuid" ), ::getSuperController():getLinesController():getModel():cTableName, uuidDestino, ::getLinesController():getModel():cTableName ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertDiscounts( hDiscounts ) CLASS OperacionesComercialesController
-
-   local hDiscount
-
-   local uuidDocumentoDescuentoOrigen
-
-   local uuidDocumentoDescuentoDestino
-
-   for each hDiscount in hDiscounts
-
-      uuidDocumentoDescuentoOrigen   := hget( hDiscount, "uuid" )
-
-      hDels( hDiscount, { "uuid", "id" } )
-
-      hset( hDiscount, "parent_uuid", ::uuidDocumentoDestino )
-
-      uuidDocumentoDescuentoDestino  := ::getDiscountController():generateDiscount( hDiscount )
-
-      SQLConversorDocumentosModel():insertRelationDocument( uuidDocumentoDescuentoOrigen, ::getController():getController():getDiscountController():getModel():cTableName, uuidDocumentoDescuentoDestino, ::getDiscountController():getModel():cTableName )   
-
-   next
-
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
