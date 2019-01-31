@@ -56,19 +56,19 @@ METHOD addLinksElementToExplorerBar() CLASS OperacionesView
 
    local cBitmap              := nil // ::getController():getRecibosController():getImage( "16" )
 
-   ::oPanel                   := ::oExplorerBar:AddPanel( "Datos del elemento", nil, 1 ) 
+   ::oPanel                   := ::oExplorerBar:AddPanel( "Stocks", nil, 1 ) 
 
-   ::oLinkStockGlobal         := ::oPanel:AddLinkAndData( "Stock global:", "", {|| nil }, cBitmap )
+   ::oLinkStockGlobal         := ::oPanel:AddLinkAndData( "Global:", "", {|| nil }, cBitmap )
 
-   ::oLinkStockAlmacen        := ::oPanel:AddLinkAndData( "Stock almacén:", "", {|| nil }, cBitmap )
+   ::oLinkStockAlmacen        := ::oPanel:AddLinkAndData( "Almacén:", "", {|| nil }, cBitmap )
    
    if ( Company():getDefaultUsarUbicaciones() )
-      ::oLinkStockUbicacion   := ::oPanel:AddLinkAndData( "Stock ubicación:", "", {|| nil }, cBitmap )
+      ::oLinkStockUbicacion   := ::oPanel:AddLinkAndData( "Ubicación:", "", {|| nil }, cBitmap )
    end if 
 
-   ::oLinkStockLote           := ::oPanel:AddLinkAndData( "Stock lote:", "", {|| nil }, cBitmap )
+   ::oLinkStockLote           := ::oPanel:AddLinkAndData( "Lote:", "", {|| nil }, cBitmap )
 
-   ::oLinkStockCombinaciones  := ::oPanel:AddLinkAndData( "Stock comb.:", "", {|| nil }, cBitmap )
+   ::oLinkStockCombinaciones  := ::oPanel:AddLinkAndData( "Propiedades:", "", {|| nil }, cBitmap )
 
 RETURN ( nil )
 
