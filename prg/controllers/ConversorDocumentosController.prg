@@ -278,11 +278,7 @@ METHOD runConvertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
 
    ::setFacturasComprasControllerAsDestino()
 
-   msgalert( hb_valtoexp( aSelected ), "aSelected")
-
    ::convertAlbaranCompras( aSelected ) 
-
-   msgalert( hb_valtoexp( ::aConvert ), "aConvert")
 
    ::convertDocument()
 
@@ -528,6 +524,8 @@ METHOD Activate() CLASS ConversorResumenView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
    
+   ::oDialog:bStart     := {|| ::paintedActivate() }
+
    ::oDialog:Activate( , , , .t. )
 
 RETURN ( ::oDialog:nResult )
@@ -666,6 +664,11 @@ CLASS TestConversorDocumentosController FROM TestCase
 
    DATA oController
 
+   DATA oAlbaranesComprasController
+
+   METHOD getAlbaranesComprasController();
+                                    INLINE ( if( empty( ::oAlbaranesComprasController ), ::oAlbaranesComprasController := AlbaranesComprasController():New( self ), ), ::oAlbaranesComprasController )
+
    METHOD beforeClass() 
 
    METHOD afterClass()
@@ -680,13 +683,19 @@ END CLASS
 
 METHOD afterClass() CLASS TestConversorDocumentosController
 
-RETURN ( ::oController:end() )
+   ::oController:End()
+
+   if !empty( ::oAlbaranesComprasController )
+      ::oAlbaranesComprasController:End()
+   end if
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD beforeClass() CLASS TestConversorDocumentosController
 
-   ::oController  := ConversorDocumentosController():New()  
+   ::oController  := ConversorDocumentosController():New( ::getAlbaranesComprasController() )  
 
 RETURN ( nil )
 
@@ -756,7 +765,7 @@ RETURN ( nil )
 
 METHOD test_create_distinto_tercero() CLASS TestConversorDocumentosController
 
-local aSelecteds := {}
+local aSelected := {}
 
    SQLAlbaranesComprasModel():create_albaran_compras("0", 0, "0", "0", "0", "0", "0", "A", 3 )
       SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ), 21, "0", 100, 2, 5, "0", "0", "0" )
@@ -766,11 +775,17 @@ local aSelecteds := {}
       SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ), 21, "0", 300, 2, 5, "0", "0", "0" )
       SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ), 21, "0", 400, 2, 5, "0", "0", "0" )
    
-   aadd( aSelecteds, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ) )
-   aadd( aSelecteds, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ) )
+   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ) )
+   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ) )
    
-   ::oController:runConvertAlbaranCompras( aSelecteds )
+   ::oController:getResumenView():setEvent( 'painted',;
+      {| self | ;
+         testWaitSeconds( 3 ),;
+         self:getControl( IDCANCEL ):Click() } )
+
+         //::Assert():false( ::oController:Append(), "test ::Assert():true with .t." )
    
+   ::oController:runConvertAlbaranCompras( aSelected )
 
 RETURN ( nil )
 

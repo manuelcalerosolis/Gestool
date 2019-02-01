@@ -238,6 +238,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oMovimientoAlmacenLineasController
 
+   DATA oAlbaranesComprasController
+
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
    METHOD getCodigosPostalesController();
@@ -417,6 +419,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getAlbaranesComprasDescuentosController();
                                     INLINE ( if( empty( ::oAlbaranesComprasDescuentosController ), ::oAlbaranesComprasDescuentosController := AlbaranesComprasDescuentosController():New( self ), ), ::oAlbaranesComprasDescuentosController )
+
+   METHOD getAlbaranesComprasController();
+                                    INLINE ( if( empty( ::oAlbaranesComprasController ), ::oAlbaranesComprasController := AlbaranesComprasController():New( self ), ), ::oAlbaranesComprasController )
 
    METHOD getPedidosComprasDescuentosController();
                                     INLINE ( if( empty( ::oPedidosComprasDescuentosController ), ::oPedidosComprasDescuentosController := PedidosComprasDescuentosController():New( self ), ), ::oPedidosComprasDescuentosController )
@@ -621,6 +626,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oAlbaranesComprasDescuentosController )
       ::oAlbaranesComprasDescuentosController:End()
+   end if
+
+   if !empty( ::oAlbaranesComprasController )
+      ::oAlbaranesComprasController:End()
    end if 
 
    if !empty( ::oArticulosTarifasController )
