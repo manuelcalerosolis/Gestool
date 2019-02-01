@@ -52,10 +52,29 @@ CLASS SQLAlbaranesComprasDescuentosModel FROM SQLOperacionesComercialesDescuento
    DATA cTableName               INIT "albaranes_compras_descuentos"
 
    DATA cOrderBy                 INIT "albaranes_compras_descuentos.id"
+
+#ifdef __TEST__
+
+   METHOD test_create_descuento( hDatosDescuento )
+
+#endif
    
 END CLASS
 
 //---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+METHOD test_create_descuento( hDatosDescuento ) CLASS SQLAlbaranesComprasDescuentosModel
+
+ ::insertBuffer( ::loadBlankBuffer( hDatosDescuento ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+#endif
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

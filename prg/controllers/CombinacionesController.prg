@@ -798,7 +798,7 @@ RETURN ( ::hColumns )
 #ifdef __TEST__
 
 METHOD test_create_combinaciones() CLASS SQLCombinacionesModel
-
+/*
    local cGroup
    local aCombinations
    local aPropertyList  := SQLPropiedadesModel():selectPropertyList()
@@ -814,7 +814,7 @@ METHOD test_create_combinaciones() CLASS SQLCombinacionesModel
       cGroup             := hget( hProperty, "grupo_nombre" ) 
 
    next
-
+*/
 RETURN ( nil )
 
 #endif

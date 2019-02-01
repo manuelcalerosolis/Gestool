@@ -1912,7 +1912,7 @@ METHOD getUuidWhereSerieAndNumero( cSerie, nNumero, uDefault )
    if !empty( uuid )
       RETURN ( uuid )
    end if 
-logwrite (cSQL )
+
 RETURN ( uDefault )
 
 //---------------------------------------------------------------------------//

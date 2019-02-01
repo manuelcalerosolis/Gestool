@@ -14,6 +14,10 @@ CLASS SQLAlbaranesComprasModel FROM SQLOperacionesComercialesModel
 #ifdef __TEST__
 
    METHOD test_create_albaran_compras_con_tercero( cCodigoTercero )
+
+   METHOD create_albaran_compras( hDatos )
+
+   METHOD test_get_uuid_albaran_compras( cSerie, nNumero )
    
 #endif
 
@@ -46,7 +50,7 @@ RETURN ( ::getDatabase():selectFetchHash( cSQL ) )
 
 #ifdef __TEST__
 
-METHOD test_create_albaran_compras_con_tercero( cCodigoTercero ) 
+METHOD test_create_albaran_compras_con_tercero( cCodigoTercero )  CLASS SQLAlbaranesComprasModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -59,6 +63,24 @@ METHOD test_create_albaran_compras_con_tercero( cCodigoTercero )
    ::insertBuffer()
 
 RETURN ( ::insertBuffer() )
+
+//---------------------------------------------------------------------------//
+
+METHOD create_albaran_compras( hDatos ) CLASS SQLAlbaranesComprasModel
+
+ local hBuffer    := ::loadBlankBuffer( hDatos )
+
+ hset(hBuffer, "numero", hget( hDatos, "numero" ) )
+
+ ::insertBuffer( hBuffer )
+
+RETURN( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_get_uuid_albaran_compras( cSerie, nNumero ) CLASS SQLAlbaranesComprasModel
+
+RETURN ( ::getUuidWhereSerieAndNumero( cSerie, nNumero ) )
 
 #endif
 

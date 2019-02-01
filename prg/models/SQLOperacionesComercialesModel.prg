@@ -33,11 +33,7 @@ CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
 
    METHOD test_get_uuid_factura_con_varios_plazos()
 
-   METHOD text_create_albaran_compras_con_tercero( cCodigoTercero ) 
-
-   METHOD create_albaran_compras(cCodigoTercero, recargo, cCodigoMetodoPago, cCodigoAlmacen, cCodigoAgente, cCodigoRuta, cCodigoTarifa, cSerie, nNumero )  
-
-   METHOD test_get_uuid_albaran_compras( cSerie, nNumero )
+   METHOD test_create_albaran_compras_con_tercero( cCodigoTercero ) 
 
 #endif
 
@@ -351,7 +347,7 @@ RETURN ( ::getFieldWhere( "uuid", { "serie" => "TEST", "numero" => 1 } ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD text_create_albaran_compras_con_tercero( cCodigoTercero ) CLASS SQLOperacionesComercialesModel
+METHOD test_create_albaran_compras_con_tercero( cCodigoTercero ) CLASS SQLOperacionesComercialesModel
 
    local hBuffer  := ::loadBlankBuffer()
 
@@ -366,30 +362,6 @@ METHOD text_create_albaran_compras_con_tercero( cCodigoTercero ) CLASS SQLOperac
 RETURN ( ::insertBuffer() )
 
 //---------------------------------------------------------------------------//
-
-METHOD create_albaran_compras( cCodigoTercero, recargo, cCodigoMetodoPago, cCodigoAlmacen, cCodigoAgente, cCodigoRuta, cCodigoTarifa, cSerie, nNumero ) CLASS SQLOperacionesComercialesModel
-
- ::insertBuffer( ;
-            ::loadBlankBuffer( { "tercero_codigo"           => cCodigoTercero ,;
-                                 "recargo_equivalencia"     => recargo ,;
-                                 "metodo_pago_codigo"       => cCodigoMetodoPago ,;
-                                 "almacen_codigo"           => cCodigoAlmacen ,;
-                                 "agente_codigo"            => cCodigoAgente ,;
-                                 "ruta_codigo"              => cCodigoRuta ,;
-                                 "tarifa_codigo"            => cCodigoTarifa,;
-                                 "serie"                    => cSerie ,;
-                                 "numero"                   => nNumero } ) )
-
-RETURN( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD test_get_uuid_albaran_compras( cSerie, nNumero ) CLASS SQLOperacionesComercialesModel
-
-RETURN ( ::getUuidWhereSerieAndNumero( cSerie, nNumero ) )
-
-#endif
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

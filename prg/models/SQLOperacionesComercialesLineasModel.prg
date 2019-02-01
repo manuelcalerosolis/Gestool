@@ -14,12 +14,6 @@ CLASS SQLOperacionesComercialesLineasModel FROM SQLOperacionesLineasModel
 
    METHOD getHashWhereUuid( uuidOrigen )
 
-#ifdef __TEST__
-   
-   METHOD create_linea_albaran_compras( uuidParent, nIva, cCodigoArticulo, nPrecioArticulo, nDescuento, nRecargo, cCodigoAlmacen, cCodigoUbicacion, cCodigoAgente )
-
-#endif
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -195,28 +189,6 @@ METHOD getHashWhereUuid( uuidOrigen ) CLASS SQLOperacionesComercialesLineasModel
 RETURN ( ::getDatabase():selectTrimedFetchHash( cSql ) ) 
 
 //---------------------------------------------------------------------------//
-
-#ifdef __TEST__
-   
-METHOD create_linea_albaran_compras( uuidParent, nIva, cCodigoArticulo, nPrecioArticulo, nDescuento, nRecargo, cCodigoAlmacen, cCodigoUbicacion, cCodigoAgente )
-
-   ::insertBuffer( ;
-            ::loadBlankBuffer({ "parent_uuid"               => uuidParent  ,;
-                                 "iva"                      => nIva ,;
-                                 "articulo_codigo"          => cCodigoArticulo ,;
-                                 "articulo_precio"          => nPrecioArticulo ,;
-                                 "descuento"                => nDescuento ,;
-                                 "recargo_equivalencia"     => nRecargo ,;
-                                 "almacen_codigo"           => cCodigoAlmacen,;
-                                 "ubicacion_codigo"         => cCodigoUbicacion ,;
-                                 "agente_codigo"            => cCodigoAgente ,;
-                                 "unidad_medicion_codigo"   => "UDS" ,;
-                                 "articulo_nombre"          => "Articulo con descuentos"  } ) )
-
-RETURN( nil )
-
-#endif
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

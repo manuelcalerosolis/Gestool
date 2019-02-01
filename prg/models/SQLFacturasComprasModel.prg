@@ -11,6 +11,8 @@ CLASS SQLFacturasComprasModel FROM SQLOperacionesComercialesModel
 
    METHOD getInitialWhereDocumentos( cWhere )
 
+   METHOD countFacturas()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -49,6 +51,26 @@ local cSql
                            cWhere )
 
 RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD countFActuras() CLASS SQLFacturasComprasModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+      SELECT 
+         COUNT(*)  
+      FROM %1$s
+       
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql, ::getTableName() )
+
+RETURN ( ::getDatabase():getValue( cSql, 0 ) )
+
+//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
