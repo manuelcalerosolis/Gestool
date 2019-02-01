@@ -41,7 +41,6 @@ METHOD New( oController ) CLASS CombinacionesPropiedadesController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -208,6 +207,12 @@ CLASS SQLCombinacionesPropiedadesModel FROM SQLCompanyModel
 
    METHOD getUuidOlderParent()         INLINE ( ::olderUuid )
 
+#ifdef __TEST__
+
+   METHOD test_insert_property( uuidCombination, uuidParent )
+
+#endif
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -299,6 +304,19 @@ METHOD getPropertyWhereArticuloHaving( cCodigoArticulo, cHaving ) CLASS SQLCombi
 RETURN ( cSql )   
 
 //---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+METHOD test_insert_property( uuidProperty, uuidParent ) CLASS SQLCombinacionesPropiedadesModel
+
+   local hBuffer  := ::getModel():loadBlankBuffer( {  "propiedad_uuid"  => uuidProperty,;
+                                                      "parent_uuid"     => uuidParent } )
+
+RETURN ( ::getModel():insertBuffer( hBuffer ) )
+
+#endif
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -306,12 +324,10 @@ RETURN ( cSql )
 
 CLASS CombinacionesPropiedadesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLCombinacionesPropiedadesModel():getTableName() ) 
+   METHOD getTableName()               INLINE ( SQLCombinacionesPropiedadesModel():getTableName() ) 
 
 END CLASS
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -218,7 +218,6 @@ METHOD test_create_con_unidad_de_medicion_cajas_palets() CLASS SQLArticulosModel
 
    hBuffer  := ::loadBlankBuffer()
 
-
    hset( hBuffer, "uuid", uuid )
    hset( hBuffer, "codigo", "0" )
    hset( hBuffer, "nombre", "Artículo con unidad de venta como cajas y palets" )
@@ -281,10 +280,6 @@ METHOD test_create_con_propiedades() CLASS SQLArticulosModel
 
    SQLArticulosTarifasModel():test_create_tarifa_base() 
    SQLArticulosTarifasModel():test_create_tarifa_mayorista() 
-
-   SQLPropiedadesModel():test_create_tallas()
-   SQLPropiedadesModel():test_create_colores()
-   SQLPropiedadesModel():test_create_texturas()
 
    hBuffer  := ::loadBlankBuffer()
 

@@ -226,19 +226,9 @@ RETURN ( oMenu )
 //---------------------------------------------------------------------------//
 
 PROCEDURE loggedTest()
-/*
-   logwrite( SQLCombinacionesPropiedadesModel():getPropertyWhereArticuloCombinacion( '3', 'XS, Azul, Denim' ) )
 
-   msgalert( ;
-      hb_valtoexp( ;
-         getSQLDatabase():selectFetchHash( ;
-            SQLCombinacionesPropiedadesModel():getPropertyWhereArticuloCombinacion( '3', 'XS, Azul, Denim' ) ) ) )
+   // SQLCombinacionesModel():test_create_combinaciones()
 
-   msgalert( ;
-      hb_valtoexp( ;
-         getSQLDatabase():selectFetchHash( ;
-            SQLCombinacionesPropiedadesModel():getPropertyWhereArticuloCombinacion( '2', 'XS, Azul, Denim' ) ) ) )
-*/
 RETURN 
 
 //----------------------------------------------------------------------------//

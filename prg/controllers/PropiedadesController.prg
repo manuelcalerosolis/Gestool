@@ -274,6 +274,8 @@ CLASS SQLPropiedadesModel FROM SQLCompanyModel
 
    METHOD getPropertyList()
 
+   METHOD selectPropertyList()
+
 #ifdef __TEST__   
 
    METHOD test_create_tallas() 
@@ -340,6 +342,12 @@ METHOD getPropertyList() CLASS SQLPropiedadesModel
    cSql  := hb_strformat( cSql, ::getTableName(), SQLPropiedadesLineasModel():getTableName() )                                      
 
 RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectPropertyList() CLASS SQLPropiedadesModel
+
+RETURN ( getSQLDatabase():selectTrimedFetchHash( ::getPropertyList() ) )
 
 //---------------------------------------------------------------------------//
 

@@ -277,6 +277,12 @@ METHOD Before() CLASS TestOperacionesController
 
    SQLArticulosModel():truncateTable()
    
+   SQLPropiedadesModel():truncateTable()
+      SQLPropiedadesLineasModel():truncateTable()
+
+   SQLCombinacionesModel():truncateTable()
+      SQLCombinacionesPropiedadesModel():truncateTable()
+
    SQLFacturasVentasModel():truncateTable()
       SQLFacturasVentasLineasModel():truncateTable()
       SQLFacturasVentasDescuentosModel():truncateTable()
@@ -315,6 +321,10 @@ METHOD Before() CLASS TestOperacionesController
    SQLMetodoPagoModel():test_create_con_plazos()
 
    SQLUnidadesMedicionGruposModel():test_create()
+
+   SQLPropiedadesModel():test_create_tallas()
+   SQLPropiedadesModel():test_create_colores()
+   SQLPropiedadesModel():test_create_texturas()
 
    SQLArticulosModel():test_create_con_unidad_de_medicion_cajas_palets()
    SQLArticulosModel():test_create_con_tarifa_mayorista()
