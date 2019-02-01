@@ -7,7 +7,7 @@ CLASS CombinacionesController FROM SQLBrowseController
 
    DATA cCodigoArticulo
 
-   DATA hPropertyList
+   DATA aPropertyList
 
    DATA oSelectorView
 
@@ -118,9 +118,9 @@ RETURN ( ::Super:End() )
 
 METHOD runViewGenerate() CLASS CombinacionesController
 
-   ::hPropertyList  := getSQLDatabase():selectTrimedFetchHash( ::getPropiedadesController():getModel():getPropertyList() ) 
+   ::aPropertyList  := ::getPropiedadesController():getModel():selectPropertyList()
 
-   if empty( ::hPropertyList )
+   if empty( ::aPropertyList )
       msgStop( "No se definieron propiedades" )
       RETURN ( nil )
    end if 
@@ -152,9 +152,9 @@ METHOD runViewSelector( cCodigoArticulo ) CLASS CombinacionesController
       RETURN ( nil )
    end if 
 
-   ::hPropertyList   := getSQLDatabase():selectTrimedFetchHash( ::getPropiedadesController():getModel():getPropertyList() )
+   ::aPropertyList   := ::getPropiedadesController():getModel():selectPropertyList()
 
-   if empty( ::hPropertyList )
+   if empty( ::aPropertyList )
       msgStop( "No se definieron propiedades" )
       RETURN ( nil )
    end if 
@@ -448,7 +448,7 @@ METHOD startActivate() CLASS CombinacionesView
 
    ::oController:aHaving   := {}
 
-   for each hProperty in ::oController:hPropertyList
+   for each hProperty in ::oController:aPropertyList
       
       ::addPanel( hProperty )
 
@@ -515,6 +515,8 @@ METHOD generateCombinations() CLASS CombinacionesView
 
    next 
 
+   msgalert( hb_valtoexp( ::aCombinations ), "aCombinations" )
+
    if empty( ::aCombinations )
       msgStop( "Debe seleccionar al menos una propiedad" )
       RETURN ( nil )
@@ -542,7 +544,7 @@ METHOD generatePanelCombinations( oPanel )
    for each oControl in oPanel:aControls
 
       if ( oControl:className() == "TCHECKBOX" ) .and. ( oControl:varGet() )
-               
+
          aadd( aPanelCombination, oControl:Cargo )
 
       end if 
@@ -660,6 +662,12 @@ CLASS SQLCombinacionesModel FROM SQLCompanyModel
    METHOD getHaving( aHaving )
 
    METHOD CountCombinacionesWhereArticulo( cCodigoArticulo )
+
+#ifdef __TEST__
+
+   METHOD test_create_combinaciones()
+
+#endif
   
 END CLASS
 
@@ -784,6 +792,32 @@ METHOD getColumns() CLASS SQLCombinacionesModel
    ::getDeletedStampColumn() 
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+METHOD test_create_combinaciones() CLASS SQLCombinacionesModel
+
+   local cGroup
+   local aCombinations
+   local aPropertyList  := SQLPropiedadesModel():selectPropertyList()
+
+   msgalert( hb_valtoexp( aPropertyList ) )
+
+   for each hProperty in aPropertyList
+
+      if hget( hProperty, "grupo_nombre" ) != cGroup
+          ::oPanel       := ::oExplorerBar:addPanel( hget( hProperty, "grupo_nombre" ), nil, 1 )
+      end if 
+
+      cGroup             := hget( hProperty, "grupo_nombre" ) 
+
+   next
+
+RETURN ( nil )
+
+#endif
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

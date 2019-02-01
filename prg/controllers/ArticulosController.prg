@@ -291,8 +291,10 @@ METHOD Before() CLASS TestArticulosController
    SQLArticulosModel():truncateTable()
 
    SQLPropiedadesModel():truncateTable()
-
    SQLPropiedadesLineasModel():truncateTable()
+
+   SQLCombinacionesModel():truncateTable()
+   SQLCombinacionesPropiedadesModel():truncateTable()
 
    SQLPropiedadesModel():test_create_tallas()
    SQLPropiedadesModel():test_create_colores()

@@ -11,6 +11,11 @@ CLASS SQLAlbaranesComprasModel FROM SQLOperacionesComercialesModel
 
    METHOD getHashWhereUuidAndOrder( aSelected )
 
+#ifdef __TEST__
+
+   METHOD test_create_albaran_compras_con_tercero( cCodigoTercero )
+   
+#endif
 
 END CLASS
 
@@ -38,6 +43,25 @@ METHOD getHashWhereUuidAndOrder( cWhere ) CLASS SQLAlbaranesComprasModel
 RETURN ( ::getDatabase():selectFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+METHOD test_create_albaran_compras_con_tercero( cCodigoTercero ) 
+
+   local hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "serie", "TEST" )
+   hset( hBuffer, "tercero_codigo", quoted( cCodigoTercero ) )
+   hset( hBuffer, "metodo_pago_codigo", "1" )
+   hset( hBuffer, "almacen_codigo", "0" )
+   hset( hBuffer, "tarifa_codigo", "0" )
+
+   ::insertBuffer()
+
+RETURN ( ::insertBuffer() )
+
+#endif
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

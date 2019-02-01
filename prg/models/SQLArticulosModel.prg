@@ -27,6 +27,8 @@ CLASS SQLArticulosModel FROM SQLCompanyModel
 
    METHOD test_create_con_lote() 
 
+   METHOD test_create_con_propiedades() 
+
 #endif
 
 END CLASS
@@ -216,7 +218,6 @@ METHOD test_create_con_unidad_de_medicion_cajas_palets() CLASS SQLArticulosModel
 
    hBuffer  := ::loadBlankBuffer()
 
-
    hset( hBuffer, "uuid", uuid )
    hset( hBuffer, "codigo", "0" )
    hset( hBuffer, "nombre", "Artículo con unidad de venta como cajas y palets" )
@@ -265,6 +266,27 @@ METHOD test_create_con_lote() CLASS SQLArticulosModel
    hset( hBuffer, "nombre", "Artículo con lote" )
    hset( hBuffer, "precio_costo", 50 )
    hset( hBuffer, "lote", .t. )
+
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_con_propiedades() CLASS SQLArticulosModel
+
+   local uuid
+   local hBuffer
+
+   uuid     := win_uuidcreatestring()
+
+   SQLArticulosTarifasModel():test_create_tarifa_base() 
+   SQLArticulosTarifasModel():test_create_tarifa_mayorista() 
+
+   hBuffer  := ::loadBlankBuffer()
+
+   hset( hBuffer, "uuid", uuid )
+   hset( hBuffer, "codigo", "3" )
+   hset( hBuffer, "nombre", "Artículo con propiedades" )
+   hset( hBuffer, "precio_costo", 50 )
 
 RETURN ( ::insertBuffer( hBuffer ) )
 

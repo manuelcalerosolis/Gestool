@@ -528,8 +528,6 @@ RETURN ( nil )
 
 METHOD test_dialogo_con_lote_dos_ubicacion() CLASS TestMovimientoAlmacenController
 
-   local lInsert
-
    ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
          ::set_codigo_almacen_origen( "0", view )
@@ -551,11 +549,7 @@ METHOD test_dialogo_con_lote_dos_ubicacion() CLASS TestMovimientoAlmacenControll
          RETURN ( nil )
       > )
 
-   lInsert  := ::getController():Insert()
-
-   if !empty( ::assert )
-      ::Assert():true( ::getController():Insert(), "test creación de movimiento con lote y dos ubicaciones" )
-   end if 
+   ::Assert():true( ::getController():Insert(), "test creación de movimiento con lote y dos ubicaciones" )
 
 RETURN ( nil )
 
