@@ -41,10 +41,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( "familia_codigo" ) }
       :lHide               := .t.
       
-      if ::oController:isUserEdit()
+      if ::getController():isUserEdit()
          :nEditType        := 5
-         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnArticulosFamiliaBrowse( oCol, uNewValue, nKey ) }
-         :bEditBlock       := {|| ::oController:oArticulosFamiliasController:ActivateSelectorView() }
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::getController():validColumnArticulosFamiliaBrowse( oCol, uNewValue, nKey ) }
+         :bEditBlock       := {|| ::getController():getArticulosFamiliasController():ActivateSelectorView() }
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if
@@ -66,10 +66,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( "tipo_codigo" ) }
       :lHide               := .t.
       
-      if ::oController:isUserEdit()
+      if ::getController():isUserEdit()
          :nEditType        := 5
-         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnArticulosTipoBrowse( oCol, uNewValue, nKey ) }
-         :bEditBlock       := {|| ::oController:oArticulostipoController:ActivateSelectorView() }
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::getController():validColumnArticulosTipoBrowse( oCol, uNewValue, nKey ) }
+         :bEditBlock       := {|| ::getController():getArticulostipoController():ActivateSelectorView() }
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if
@@ -93,10 +93,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( "categoria_codigo" ) }
       :lHide               := .t.
       
-      if ::oController:isUserEdit()
+      if ::getController():isUserEdit()
          :nEditType        := 5
-         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnArticulosCategoriasBrowse( oCol, uNewValue, nKey ) }
-         :bEditBlock       := {|| ::oController:oArticulosCategoriasController:ActivateSelectorView() }
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::getController():validColumnArticulosCategoriasBrowse( oCol, uNewValue, nKey ) }
+         :bEditBlock       := {|| ::getController():getArticulosCategoriasController():ActivateSelectorView() }
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if
@@ -120,10 +120,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( "fabricante_codigo" ) }
       :lHide               := .t.
       
-      if ::oController:isUserEdit()
+      if ::getController():isUserEdit()
          :nEditType        := 5
-         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnArticulosFabricantesBrowse( oCol, uNewValue, nKey ) }
-         :bEditBlock       := {|| ::oController:oArticulosFabricantesController:ActivateSelectorView() }
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::getController():validColumnArticulosFabricantesBrowse( oCol, uNewValue, nKey ) }
+         :bEditBlock       := {|| ::getController():getArticulosFabricantesController():ActivateSelectorView() }
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if
@@ -147,10 +147,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( "temporada_codigo" ) }
       :lHide               := .t.
       
-      if ::oController:isUserEdit()
+      if ::getController():isUserEdit()
          :nEditType        := 5
-         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnArticulosTemporadasBrowse( oCol, uNewValue, nKey ) }
-         :bEditBlock       := {|| ::oController:oArticulosTemporadasController:ActivateSelectorView() }
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::getController():validColumnArticulosTemporadasBrowse( oCol, uNewValue, nKey ) }
+         :bEditBlock       := {|| ::getController():getArticulosTemporadasController():ActivateSelectorView() }
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if
@@ -174,10 +174,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( "tipo_iva_codigo" ) }
       :lHide               := .t.
       
-      if ::oController:isUserEdit()
+      if ::getController():isUserEdit()
          :nEditType        := 5
-         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnTiposIvaBrowse( oCol, uNewValue, nKey ) }
-         :bEditBlock       := {|| ::oController:oTipoIvaController:ActivateSelectorView() }
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::getController():validColumnTiposIvaBrowse( oCol, uNewValue, nKey ) }
+         :bEditBlock       := {|| ::getController():getTipoIvaController():ActivateSelectorView() }
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if
@@ -201,10 +201,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( "impuesto_especial_codigo" ) }
       :lHide               := .t.
       
-      if ::oController:isUserEdit()
+      if ::getController():isUserEdit()
          :nEditType        := 5
-         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnImpuestosEspecialesBrowse( oCol, uNewValue, nKey ) }
-         :bEditBlock       := {|| ::oController:oImpuestosEspecialesController:ActivateSelectorView() }
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::getController():validColumnImpuestosEspecialesBrowse( oCol, uNewValue, nKey ) }
+         :bEditBlock       := {|| ::getController():getImpuestosEspecialesController():ActivateSelectorView() }
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if
@@ -228,10 +228,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( "unidades_medicion_grupos_codigo" ) }
       :lHide               := .t.
       
-      if ::oController:isUserEdit()
+      if ::getController():isUserEdit()
          :nEditType        := 5
-         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnUnidadesMedicionGruposBrowse( oCol, uNewValue, nKey ) }
-         :bEditBlock       := {|| ::oController:oUnidadesMedicionGruposController:ActivateSelectorView() }
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::getController():validColumnUnidadesMedicionGruposBrowse( oCol, uNewValue, nKey ) }
+         :bEditBlock       := {|| ::getController():getUnidadesMedicionGruposController():ActivateSelectorView() }
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if

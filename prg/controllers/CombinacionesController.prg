@@ -7,7 +7,7 @@ CLASS CombinacionesController FROM SQLBrowseController
 
    DATA cCodigoArticulo
 
-   DATA aPropertyList
+   DATA aProperties
 
    DATA oSelectorView
 
@@ -118,22 +118,14 @@ RETURN ( ::Super:End() )
 
 METHOD runViewGenerate() CLASS CombinacionesController
 
-   ::aPropertyList  := ::getPropiedadesController():getModel():selectPropertyList()
+   ::aProperties  := ::getPropiedadesController():getModel():selectProperties()
 
-   if empty( ::aPropertyList )
+   if empty( ::aProperties )
       msgStop( "No se definieron propiedades" )
       RETURN ( nil )
    end if 
 
-   ::beginTransactionalMode()
-
-   if ::dialogViewActivate()
-      ::commitTransactionalMode()
-   else 
-      ::rollbackTransactionalMode()
-   end if 
-
-RETURN ( nil )
+RETURN ( ::dialogViewActivate() )
 
 //---------------------------------------------------------------------------//
 
@@ -152,9 +144,9 @@ METHOD runViewSelector( cCodigoArticulo ) CLASS CombinacionesController
       RETURN ( nil )
    end if 
 
-   ::aPropertyList   := ::getPropiedadesController():getModel():selectPropertyList()
+   ::aProperties     := ::getPropiedadesController():getModel():selectProperties()
 
-   if empty( ::aPropertyList )
+   if empty( ::aProperties )
       msgStop( "No se definieron propiedades" )
       RETURN ( nil )
    end if 
@@ -448,7 +440,7 @@ METHOD startActivate() CLASS CombinacionesView
 
    ::oController:aHaving   := {}
 
-   for each hProperty in ::oController:aPropertyList
+   for each hProperty in ::oController:aProperties
       
       ::addPanel( hProperty )
 
@@ -514,8 +506,6 @@ METHOD generateCombinations() CLASS CombinacionesView
       end if 
 
    next 
-
-   msgalert( hb_valtoexp( ::aCombinations ), "aCombinations" )
 
    if empty( ::aCombinations )
       msgStop( "Debe seleccionar al menos una propiedad" )
@@ -661,7 +651,7 @@ CLASS SQLCombinacionesModel FROM SQLCompanyModel
 
    METHOD getHaving( aHaving )
 
-   METHOD CountCombinacionesWhereArticulo( cCodigoArticulo )
+   METHOD CountWhereCodigoArticulo( cCodigoArticulo )
 
 #ifdef __TEST__
 
@@ -752,7 +742,7 @@ RETURN ( cHaving )
 
 //---------------------------------------------------------------------------//
 
-METHOD CountCombinacionesWhereArticulo( cCodigoArticulo ) CLASS SQLCombinacionesModel
+METHOD CountWhereCodigoArticulo( cCodigoArticulo ) CLASS SQLCombinacionesModel
 
    local cSql
 
@@ -797,25 +787,42 @@ RETURN ( ::hColumns )
 
 #ifdef __TEST__
 
-METHOD test_create_combinaciones() CLASS SQLCombinacionesModel
-/*
+METHOD test_create_combinaciones( uuidArticulo ) CLASS SQLCombinacionesModel
+
    local cGroup
-   local aCombinations
-   local aPropertyList  := SQLPropiedadesModel():selectPropertyList()
+   local aGroup         := {}
+   local hProperty
+   local aCombination
+   local aCombinations  := {}
+   local aProperties    := SQLPropiedadesModel():selectProperties()
 
-   msgalert( hb_valtoexp( aPropertyList ) )
+   for each hProperty in aProperties
 
-   for each hProperty in aPropertyList
+      if hget( hProperty, "grupo_nombre" ) != cGroup .and. !empty( aCombinations )
 
-      if hget( hProperty, "grupo_nombre" ) != cGroup
-          ::oPanel       := ::oExplorerBar:addPanel( hget( hProperty, "grupo_nombre" ), nil, 1 )
+         aadd( aGroup, aCombinations )
+
+         aCombinations  := {}
+         
       end if 
+         
+      aadd( aCombinations, hProperty )
 
-      cGroup             := hget( hProperty, "grupo_nombre" ) 
-
+      cGroup            := hget( hProperty, "grupo_nombre" ) 
+      
    next
-*/
+
+   aadd( aGroup, aCombinations )
+
+   for each aCombination in ( permutateArray( aGroup ) )
+      if ::insertBlankBuffer( { "parent_uuid" => uuidArticulo } ) != 0
+         SQLCombinacionesPropiedadesModel():insertProperties( aCombination, ::getBuffer( "uuid" ) ) 
+      end if 
+   next
+
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 
 #endif
 

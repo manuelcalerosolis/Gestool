@@ -273,6 +273,8 @@ METHOD Before() CLASS TestOperacionesController
    SQLAlmacenesModel():truncateTable()
       SQLUbicacionesModel():truncateTable()
 
+   SQLTiposIvaModel():truncateTable()
+
    SQLMetodoPagoModel():truncateTable()
 
    SQLArticulosModel():truncateTable()
@@ -329,6 +331,7 @@ METHOD Before() CLASS TestOperacionesController
    SQLArticulosModel():test_create_con_unidad_de_medicion_cajas_palets()
    SQLArticulosModel():test_create_con_tarifa_mayorista()
    SQLArticulosModel():test_create_con_lote()
+   SQLArticulosModel():test_create_con_propiedades()
 
    SQLArticulosTarifasModel():test_create_tarifa_base()
    SQLArticulosTarifasModel():test_create_tarifa_mayorista()

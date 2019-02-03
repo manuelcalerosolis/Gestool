@@ -227,7 +227,7 @@ RETURN ( oMenu )
 
 PROCEDURE loggedTest()
 
-   // SQLCombinacionesModel():test_create_combinaciones()
+   // SQLArticulosModel():test_create_con_propiedades() 
 
 RETURN 
 

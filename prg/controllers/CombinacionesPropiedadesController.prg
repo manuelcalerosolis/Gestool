@@ -9,19 +9,18 @@ CLASS CombinacionesPropiedadesController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD insertProperties( aCombination )
-
-   METHOD insertProperty( uuidCombination, uuidParent )
+   METHOD insertProperties( aCombination, uuidParent ) ;
+                                       INLINE ( ::getModel():insertProperties( aCombination, uuidParent ) )
 
    //Construcciones tardias----------------------------------------------------
    
-   METHOD getModel()                INLINE ( iif( empty( ::oModel ), ::oModel := SQLCombinacionesPropiedadesModel():New( self ), ), ::oModel )  
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLCombinacionesPropiedadesModel():New( self ), ), ::oModel )  
 
-   METHOD getBrowseView()           INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := CombinacionesPropiedadesBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := CombinacionesPropiedadesBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()           INLINE ( iif( empty( ::oDialogView ), ::oDialogView := CombinacionesPropiedadesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := CombinacionesPropiedadesView():New( self ), ), ::oDialogView )
 
-   METHOD getRepository()           INLINE ( iif( empty( ::oRepository ), ::oRepository := CombinacionesPropiedadesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( iif( empty( ::oRepository ), ::oRepository := CombinacionesPropiedadesRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -31,15 +30,15 @@ METHOD New( oController ) CLASS CombinacionesPropiedadesController
 
    ::Super:New( oController )
 
-   ::cTitle                         := "Combinaciones de Propiedades"
+   ::cTitle                            := "Combinaciones de Propiedades"
 
-   ::cName                          := "combinaciones_propiedades"
+   ::cName                             := "combinaciones_propiedades"
 
-   ::hImage                         := {  "16" => "gc_cash_register_refresh_16",;
-                                          "32" => "gc_cash_register_refresh_32",;
-                                          "48" => "gc_cash_register_refresh_48" }
+   ::hImage                            := {  "16" => "gc_cash_register_refresh_16",;
+                                             "32" => "gc_cash_register_refresh_32",;
+                                             "48" => "gc_cash_register_refresh_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                            := Auth():Level( ::cName )
 
 RETURN ( Self )
 
@@ -64,30 +63,6 @@ METHOD End() CLASS CombinacionesPropiedadesController
    end if
 
 RETURN ( ::Super:End() )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertProperties( aCombination, uuidParent ) CLASS CombinacionesPropiedadesController
-
-   local hCombination
-
-   for each hCombination in aCombination
-      ::insertProperty( hget( hCombination, "propiedad_uuid" ), uuidParent )
-   next
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertProperty( uuidCombination, uuidParent ) CLASS CombinacionesPropiedadesController
-
-   local hBuffer     := ::getModel():loadBlankBuffer()
-   
-   hset( hBuffer, "propiedad_uuid", uuidCombination )  
-
-   hset( hBuffer, "parent_uuid", uuidParent ) 
-
-RETURN ( ::getModel():insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -205,6 +180,10 @@ CLASS SQLCombinacionesPropiedadesModel FROM SQLCompanyModel
 
    METHOD selectPropertyWhereArticuloCombinacion( cCodigoArticulo, cTextoCombinacion ) 
 
+   METHOD insertProperties( aCombination, uuidParent ) 
+
+   METHOD insertProperty( uuidCombination, uuidParent )
+
    METHOD getUuidOlderParent()         INLINE ( ::olderUuid )
 
 #ifdef __TEST__
@@ -305,14 +284,29 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
+METHOD insertProperties( aCombination, uuidParent ) CLASS SQLCombinacionesPropiedadesModel
+
+RETURN ( aeval( aCombination, {|hCombination| ::insertProperty( hget( hCombination, "propiedad_uuid" ), uuidParent ) } ) ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD insertProperty( uuidProperty, uuidParent ) CLASS SQLCombinacionesPropiedadesModel
+
+   local hBuffer     := ::loadBlankBuffer( { "propiedad_uuid"  => uuidProperty,;
+                                             "parent_uuid"     => uuidParent  } )
+   
+RETURN ( ::insertBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
 #ifdef __TEST__
 
 METHOD test_insert_property( uuidProperty, uuidParent ) CLASS SQLCombinacionesPropiedadesModel
 
-   local hBuffer  := ::getModel():loadBlankBuffer( {  "propiedad_uuid"  => uuidProperty,;
-                                                      "parent_uuid"     => uuidParent } )
+   local hBuffer  := ::loadBlankBuffer( { "propiedad_uuid"  => uuidProperty,;
+                                          "parent_uuid"     => uuidParent } )
 
-RETURN ( ::getModel():insertBuffer( hBuffer ) )
+RETURN ( ::insertBuffer( hBuffer ) )
 
 #endif
 

@@ -283,7 +283,7 @@ METHOD validLineCombinacion() CLASS OperacionesLineasController
       RETURN ( .t. )
    end if
 
-   if !empty( ::getCombinacionesController():getModel():CountCombinacionesWhereArticulo( ::getRowSet():fieldget( 'articulo_codigo' ) ) )
+   if !empty( ::getCombinacionesController():getModel():CountWhereCodigoArticulo( ::getRowSet():fieldget( 'articulo_codigo' ) ) )
       
       ::getController():getDialogView():showMessage( "Debe seleccionar propiedades" )      
       

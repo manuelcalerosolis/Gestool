@@ -157,8 +157,6 @@ METHOD Process( cMethod, cMessage )
 
    ::parsedMethod( cMethod )
 
-   logwrite( "cParsedMethod > " +  ::cParsedMethod )
-
    try 
 
       lValidate      := Self:&( ::cParsedMethod )( ::uValue, ::uOthers ) 

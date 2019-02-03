@@ -831,9 +831,9 @@ CLASS TestStocksRepository FROM TestOperacionesComercialesController
    METHOD Before() 
 
    METHOD test_calculo_stock_con_lote()
-/*
-   METHOD test_calculo_stock_con_caracteristicas() 
-*/
+
+   METHOD test_calculo_stock_con_propiedades() 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -930,19 +930,23 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-/*
-METHOD test_calculo_stock_con_caracteristicas() CLASS TestStocksRepository
+METHOD test_calculo_stock_con_propiedades() CLASS TestStocksRepository
 
    local nStock
+   local uuidProperty      
+   local hCombinacion
 
-   ::oTestArticulosController:test_dialog_append_con_caracteristicas()
+   hCombinacion    := SQLCombinacionesPropiedadesModel():selectPropertyWhereArticuloCombinacion( '3', 'S, Azul, Denim' )
 
-   ::oTestConsolidacionAlmacenController:test_dialogo_articulo_con_lote()
+   uuidProperty    := hget( atail( hCombinacion ), "uuid" )
 
-   nStock   := StocksRepository():selectStockWhereCodigoAlmacenLote( '2', '0', '0', '1234' )
+   ::oTestConsolidacionAlmacenController:test_dialogo_articulo_con_propiedades()
+
+   nStock          := StocksRepository():selectStockWhereCodigoAlmacenLote( '3', '0', '0', nil, uuidProperty )
+
+   ::Assert():equals( 1, nStock, "test comprobación de stocks por almacén en consolidacion" )
 
 RETURN ( nil )
-*/
 
 //---------------------------------------------------------------------------//
 

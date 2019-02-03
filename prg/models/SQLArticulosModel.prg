@@ -280,7 +280,7 @@ METHOD test_create_con_propiedades() CLASS SQLArticulosModel
 
    SQLArticulosTarifasModel():test_create_tarifa_base() 
    SQLArticulosTarifasModel():test_create_tarifa_mayorista() 
-
+    
    hBuffer  := ::loadBlankBuffer()
 
    hset( hBuffer, "uuid", uuid )
@@ -288,7 +288,11 @@ METHOD test_create_con_propiedades() CLASS SQLArticulosModel
    hset( hBuffer, "nombre", "Artículo con propiedades" )
    hset( hBuffer, "precio_costo", 50 )
 
-RETURN ( ::insertBuffer( hBuffer ) )
+   ::insertBuffer( hBuffer )
+
+   SQLCombinacionesModel():test_create_combinaciones( uuid )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

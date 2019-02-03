@@ -517,8 +517,6 @@ METHOD addLinkAndData( cLink, cPrompt, bAction, cBitmap ) CLASS TTaskPanel
 
    ::setHeight( oLink:nTop, oLink:nHeight )
 
-   msgalert( oLink:nRight - oLink:nLeft, "nRight - nLeft" )
-
 RETURN ( oLink )
 
 //----------------------------------------------------------------------------//

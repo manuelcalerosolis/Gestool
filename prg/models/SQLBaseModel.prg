@@ -479,8 +479,6 @@ METHOD getGeneralSelect()
 
    cSQLSelect              := ::addLimit( cSQLSelect )
 
-   logwrite( cSQLSelect )
-
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//

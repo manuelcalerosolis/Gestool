@@ -300,7 +300,7 @@ CLASS TestConsolidacionAlmacenController FROM TestOperacionesController
 
    METHOD test_dialogo_articulo_con_lote()
 
-   METHOD test_dialogo_articulo_con_caraceristicas() 
+   METHOD test_dialogo_articulo_con_propiedades() 
 
    METHOD getController()              INLINE ( if( empty( ::oController ), ::oController := ConsolidacionAlmacenController():New(), ), ::oController ) 
 
@@ -420,8 +420,6 @@ RETURN ( nil )
 
 METHOD test_dialogo_articulo_con_lote() CLASS TestConsolidacionAlmacenController
 
-   local lInsert
-
    ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
          ::set_codigo_almacen( "0", view )
@@ -439,19 +437,13 @@ METHOD test_dialogo_articulo_con_lote() CLASS TestConsolidacionAlmacenController
          RETURN ( nil )
       > )
 
-   lInsert     := ::getController():Insert()
-
-   if !empty( ::assert )
-      ::Assert():true( lInsert, "test creación de consolidación por cajas y con ubicacion" )
-   end if 
+   ::Assert():true( ::getController():Insert(), "test creación de consolidación por cajas y con ubicacion" )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_articulo_con_caraceristicas() CLASS TestConsolidacionAlmacenController
-
-   local lInsert
+METHOD test_dialogo_articulo_con_propiedades() CLASS TestConsolidacionAlmacenController
 
    ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
@@ -461,8 +453,8 @@ METHOD test_dialogo_articulo_con_caraceristicas() CLASS TestConsolidacionAlmacen
          
          ::set_codigo_articulo_en_linea( "3" )
 
-         ::set_lote_en_linea( "1234" )
-         
+         ::set_combinaciones_en_linea( "3", "S, Azul, Denim" )
+
          ::set_codigo_ubicacion_en_linea( "0" )
          
          view:getControl( IDOK ):Click()
@@ -470,11 +462,7 @@ METHOD test_dialogo_articulo_con_caraceristicas() CLASS TestConsolidacionAlmacen
          RETURN ( nil )
       > )
 
-   lInsert     := ::getController():Insert()
-
-   if !empty( ::assert )
-      ::Assert():true( lInsert, "test creación de consolidación por cajas y con ubicacion" )
-   end if 
+   ::Assert():true( ::getController():Insert(), "test creación de consolidación por cajas y con ubicacion" )
 
 RETURN ( nil )
 

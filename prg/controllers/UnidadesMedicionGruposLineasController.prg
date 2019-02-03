@@ -776,8 +776,6 @@ METHOD getUnidadDefectoWhereArticulo( cCodigoArticulo ) CLASS UnidadesMedicionGr
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLUnidadesMedicionGruposModel():getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ) )
 
-   logwrite( cSQL )
-
 RETURN ( getSQLDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//

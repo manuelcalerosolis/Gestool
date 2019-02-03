@@ -274,7 +274,7 @@ CLASS SQLPropiedadesModel FROM SQLCompanyModel
 
    METHOD getPropertyList()
 
-   METHOD selectPropertyList()
+   METHOD selectProperties()
 
 #ifdef __TEST__   
 
@@ -345,7 +345,7 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD selectPropertyList() CLASS SQLPropiedadesModel
+METHOD selectProperties() CLASS SQLPropiedadesModel
 
 RETURN ( getSQLDatabase():selectTrimedFetchHash( ::getPropertyList() ) )
 
