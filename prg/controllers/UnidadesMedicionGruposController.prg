@@ -563,22 +563,22 @@ METHOD testDialogAppend() CLASS TestUnidadesMedicionGruposController
    oController:getUnidadesMedicionGruposLineasController():getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 120 ):cText( 'CAJAS' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130 ):cText( 10 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 100 ):cText( '0' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110 ):cText( 'Test unidad de medición grupo' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120 ):cText( 'UDS' ),;
          self:getControl( 120 ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130 ):Click(),;         
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )
 
    ::Assert():true( oController:Append(), "test ::Assert():true with .t." )
@@ -598,22 +598,22 @@ METHOD testDialogEmptyUnidades() CLASS TestUnidadesMedicionGruposController
    oController:getUnidadesMedicionGruposLineasController():getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 120 ):cText( 'CAJAS' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDCANCEL ):Click() } )
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 100 ):cText( '0' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110 ):cText( 'Test unidad de medición grupo' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120 ):cText( 'UDS' ),;
          self:getControl( 120 ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130 ):Click(),;         
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDCANCEL ):Click() } )
 
    ::Assert():false( oController:Append(), "test ::Assert():true with .t." )
@@ -633,25 +633,25 @@ METHOD testDialogCodigoUnidadesErroneo() CLASS TestUnidadesMedicionGruposControl
    oController:getUnidadesMedicionGruposLineasController():getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 120 ):cText( 'CAJAS' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130 ):cText( 10 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 100 ):cText( '0' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110 ):cText( 'Test unidad de medición grupo' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120 ):cText( '123' ),;
          self:getControl( 120 ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120 ):cText( 'UDS' ),;
          self:getControl( 120 ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130 ):Click(),;         
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )
 
    ::Assert():true( oController:Append(), "test ::Assert():true with .t." )

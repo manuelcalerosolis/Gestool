@@ -38,6 +38,8 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    DATA lDocuments                     INIT .f.
 
+   DATA lCanceled                      INIT .f.
+
    DATA lMail                          INIT .f.
 
    DATA lEnableWindowsBar              INIT .f.

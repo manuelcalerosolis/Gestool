@@ -293,42 +293,42 @@ CLASS TestMovimientoAlmacenController FROM TestOperacionesController
    METHOD End()                        INLINE ( if( !empty( ::oController ), ::oController:End(), ) ) 
 
    METHOD click_nueva_linea( view )    INLINE   (  view:getControl( 501, view:oFolder:aDialogs[1] ):Click(),;
-                                                   testWaitSeconds( 1 ) )
+                                                   testWaitSeconds() )
 
    METHOD set_codigo_almacen_origen( cCodigoAlmacen, view ) ;
                                        INLINE   (  view:getControl( 130, view:oFolder:aDialogs[1] ):cText( cCodigoAlmacen ),;
-                                                   testWaitSeconds( 1 ),;
+                                                   testWaitSeconds(),;
                                                    view:getControl( 130, view:oFolder:aDialogs[1] ):lValid(),;
-                                                   testWaitSeconds( 1 ) )
+                                                   testWaitSeconds() )
 
    METHOD set_codigo_almacen_destino( cCodigoAlmacen, view ) ;
                                        INLINE   (  view:getControl( 140, view:oFolder:aDialogs[1] ):cText( cCodigoAlmacen ),;
-                                                   testWaitSeconds( 1 ),;
+                                                   testWaitSeconds(),;
                                                    view:getControl( 140, view:oFolder:aDialogs[1] ):lValid(),;
-                                                   testWaitSeconds( 1 ) )
+                                                   testWaitSeconds() )
 
    METHOD set_codigo_articulo_en_linea( cCodigoArticulo ) ;
                                        INLINE   (  eval( ::oController:getLinesController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , cCodigoArticulo, 0 ),;
-                                                   testWaitSeconds( 1 ),;
+                                                   testWaitSeconds(),;
                                                    ::refresh_linea_browse_view() )
 
    METHOD set_codigo_ubicacion_origen_en_linea( cCodigoUbicacion ) ;
                                        INLINE   (  eval( ::oController:getLinesController():getBrowseView():oColumnCodigoUbicacionOrigen:bOnPostEdit, , cCodigoUbicacion, 0 ),;
-                                                   testWaitSeconds( 1 ),;
+                                                   testWaitSeconds(),;
                                                    ::refresh_linea_browse_view() )
 
    METHOD set_codigo_ubicacion_destino_en_linea( cCodigoUbicacion ) ;
                                        INLINE   (  eval( ::oController:getLinesController():getBrowseView():oColumnCodigoUbicacionDestino:bOnPostEdit, , cCodigoUbicacion, 0 ),;
-                                                   testWaitSeconds( 1 ),;
+                                                   testWaitSeconds(),;
                                                    ::refresh_linea_browse_view() )
 
    METHOD set_precio_en_linea( nPrecio ) ;
                                        INLINE   (  eval( ::oController:getLinesController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , nPrecio, 0 ),;
-                                                   testWaitSeconds( 1 ),;
+                                                   testWaitSeconds(),;
                                                    ::refresh_linea_browse_view() )
 
    METHOD refresh_linea_browse_view()  INLINE   (  ::oController:getLinesController():getBrowseView():getRowSet():Refresh(),;
-                                                   testWaitSeconds( 1 ) )
+                                                   testWaitSeconds() )
    
    METHOD test_dialogo_sin_almacen()                
    
@@ -342,7 +342,9 @@ CLASS TestMovimientoAlmacenController FROM TestOperacionesController
 
    METHOD test_dialogo_con_dos_ubicacion()
 
-   METHOD test_dialogo_con_lote_dos_ubicacion()   
+   METHOD test_dialogo_con_lote_dos_ubicaciones()   
+
+   METHOD test_dialogo_con_propiedades_dos_ubicaciones()   
 
 END CLASS
 
@@ -386,7 +388,7 @@ METHOD test_dialogo_sin_almacen() CLASS TestMovimientoAlmacenController
       <| view | 
          view:getControl( IDOK ):Click()
          
-         testWaitSeconds( 1 )
+         testWaitSeconds()
       
          view:getControl( IDCANCEL ):Click()
 
@@ -407,7 +409,7 @@ METHOD test_dialogo_sin_almacen_destino() CLASS TestMovimientoAlmacenController
 
          view:getControl( IDOK ):Click()
          
-         testWaitSeconds( 1 )
+         testWaitSeconds()
       
          view:getControl( IDCANCEL ):Click()
 
@@ -430,7 +432,7 @@ METHOD test_dialogo_sin_lineas() CLASS TestMovimientoAlmacenController
 
          view:getControl( IDOK ):Click()
 
-         testWaitSeconds( 1 )
+         testWaitSeconds()
 
          view:getControl( IDCANCEL ):Click()
 
@@ -457,7 +459,7 @@ METHOD test_dialogo_sin_ubicacion() CLASS TestMovimientoAlmacenController
 
          view:getControl( IDOK ):Click()
 
-         testWaitSeconds( 1 )
+         testWaitSeconds()
 
          view:getControl( IDCANCEL ):Click() 
          
@@ -486,7 +488,7 @@ METHOD test_dialogo_con_solo_una_ubicacion() CLASS TestMovimientoAlmacenControll
          
          view:getControl( IDOK ):Click()
 
-         testWaitSeconds( 1 )
+         testWaitSeconds()
 
          view:getControl( IDCANCEL ):Click() 
 
@@ -526,7 +528,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_con_lote_dos_ubicacion() CLASS TestMovimientoAlmacenController
+METHOD test_dialogo_con_lote_dos_ubicaciones() CLASS TestMovimientoAlmacenController
 
    ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
@@ -550,6 +552,35 @@ METHOD test_dialogo_con_lote_dos_ubicacion() CLASS TestMovimientoAlmacenControll
       > )
 
    ::Assert():true( ::getController():Insert(), "test creación de movimiento con lote y dos ubicaciones" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_con_propiedades_dos_ubicaciones() CLASS TestMovimientoAlmacenController
+
+   ::getController():getDialogView():setEvent( 'painted',;
+      <| view | 
+         ::set_codigo_almacen_origen( "0", view )
+
+         ::set_codigo_almacen_destino( "1", view )
+         
+         ::click_nueva_linea( view )
+         
+         ::set_codigo_articulo_en_linea( "3" )
+
+         ::set_combinaciones_en_linea( "3", "S, Azul, Denim" )
+         
+         ::set_codigo_ubicacion_origen_en_linea( "0" )
+
+         ::set_codigo_ubicacion_destino_en_linea( "1" )
+         
+         view:getControl( IDOK ):Click()
+
+         RETURN ( nil )
+      > )
+
+   ::Assert():true( ::getController():Insert(), "test creación de movimiento con propiedades y dos ubicaciones" )
 
 RETURN ( nil )
 

@@ -264,31 +264,31 @@ CLASS TestConsolidacionAlmacenController FROM TestOperacionesController
    METHOD beforeClass()
 
    METHOD click_nueva_linea( view )    INLINE ( view:getControl( 501, view:oFolder:aDialogs[1] ):Click(),;
-                                                testWaitSeconds( 1 ) )
+                                                testWaitSeconds() )
 
    METHOD set_codigo_almacen( cCodigoAlmacen, view ) ;
                                        INLINE ( view:getControl( 130, view:oFolder:aDialogs[1] ):cText( cCodigoAlmacen ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 view:getControl( 130, view:oFolder:aDialogs[1] ):lValid(),;
-                                                testWaitSeconds( 1 ) )
+                                                testWaitSeconds() )
 
    METHOD set_codigo_articulo_en_linea( cCodigoArticulo ) ;
                                        INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , cCodigoArticulo, 0 ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_codigo_ubicacion_en_linea( cCodigoUbicacion ) ;
                                        INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoUbicacion:bOnPostEdit, , cCodigoUbicacion, 0 ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_precio_en_linea( nPrecio ) ;
                                        INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , nPrecio, 0 ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD refresh_linea_browse_view()  INLINE ( ::oController:getLinesController():getBrowseView():getRowSet():Refresh(),;
-                                                testWaitSeconds( 1 ) )
+                                                testWaitSeconds() )
    
    METHOD test_dialogo_sin_almacen()                
    
@@ -336,7 +336,7 @@ METHOD test_dialogo_sin_almacen() CLASS TestConsolidacionAlmacenController
       <| view | 
          view:getControl( IDOK ):Click()
       
-         testWaitSeconds( 1 )
+         testWaitSeconds()
       
          view:getControl( IDCANCEL ):Click()
 
@@ -357,7 +357,7 @@ METHOD test_dialogo_sin_lineas() CLASS TestConsolidacionAlmacenController
          
          view:getControl( IDOK ):Click()
          
-         testWaitSeconds( 1 )
+         testWaitSeconds()
 
          view:getControl( IDCANCEL ):Click()
 
@@ -382,7 +382,7 @@ METHOD test_dialogo_sin_ubicacion() CLASS TestConsolidacionAlmacenController
 
          view:getControl( IDOK ):Click()
 
-         testWaitSeconds( 1 )
+         testWaitSeconds()
 
          view:getControl( IDCANCEL ):Click() 
 

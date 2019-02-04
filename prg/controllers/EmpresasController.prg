@@ -831,11 +831,11 @@ METHOD test_dialog_append() CLASS TestEmpresasController
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 110 ):cText( 'TEST' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120 ):cText( 'Test empresa' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130 ):cText( '99999999A' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )
 
    ::Assert():true( oController:Append(), "test ::Assert():true with .t." )
@@ -865,11 +865,11 @@ METHOD test_dialog_empty_cif() CLASS TestEmpresasController
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 110 ):cText( 'TEST' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120 ):cText( 'Test empresa' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDCANCEL ):Click() } )
 
    ::Assert():false( oController:Append(), "test ::Assert():true with .t." )
@@ -888,9 +888,9 @@ METHOD testDialogEmptyNombre() CLASS TestArticulosController
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          ::oGetCodigo:cText( '002' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          ::oBtnAceptar:Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          ::oBtnCancelar:Click() } )
 
    ::Assert():false( oController:Append(), "test ::Assert():true with .t." )

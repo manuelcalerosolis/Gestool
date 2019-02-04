@@ -854,17 +854,17 @@ METHOD test_dialog_append() CLASS TestPagosController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),; 
+         testWaitSeconds(),; 
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( "0"),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):cText( 50 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 150, self:oFolder:aDialogs[ 1 ] ):cText( "Comentario del pago" ),;
          testWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } )
@@ -879,27 +879,27 @@ METHOD test_dialog_append_con_bancos() CLASS TestPagosController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),; 
+         testWaitSeconds(),; 
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( "0"),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):cText( 50 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 150, self:oFolder:aDialogs[ 1 ] ):cText( "Comentario del pago" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 170, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 170, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 180, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 180, self:oFolder:aDialogs[ 1 ] ):lValid(),;
          testWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } )
@@ -914,17 +914,17 @@ METHOD test_dialog_append_con_importe_mayor() CLASS TestPagosController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):cText( 500 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):lValid(),;
          testWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click(),;
@@ -941,21 +941,21 @@ METHOD test_dialog_append_cliente_inexistente() CLASS TestPagosController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( "2" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):cText( 50 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):lValid(),;
          testWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDCANCEL ):Click() } )
 
    ::Assert():false( ::oController:Append(), "test ::Assert():true with .t." )
@@ -968,19 +968,19 @@ METHOD test_dialog_append_medio_pago_inexistente() CLASS TestPagosController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):cText( 50 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( "1" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click(),;
          testWaitSeconds( 3 ),;
          self:getControl( IDCANCEL ):Click() } )

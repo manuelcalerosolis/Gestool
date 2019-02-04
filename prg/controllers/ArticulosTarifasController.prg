@@ -728,9 +728,9 @@ METHOD testDialogoCambioPorcentajeTarifaBase() CLASS TestArticulosTarifasControl
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:oGetMargen():cText( 50 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )
 
    ::Assert():true( oController:Edit( nId ), "test modificación porcentaje tarifa base" )
@@ -753,17 +753,17 @@ METHOD testDialogoCreacionNuevaTarifa() CLASS TestArticulosTarifasController
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:oGetCodigo:cText( "1" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:oGetNombre:cText( "Mayorista" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:oComboTarifaPadre:set( __tarifa_base__ ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:oGetMargen:cText( 50 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:oCheckActiva():Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )
 
    ::Assert():true( oController:Append(), "test creación tarifa mayorista" )

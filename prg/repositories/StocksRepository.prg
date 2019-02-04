@@ -15,7 +15,9 @@ CLASS StocksRepository FROM SQLBaseRepository
                                                    ::dropFunctionStockWhereCodigoAlmacenLote(),;
                                                    ::createFunctionStockWhereCodigoAlmacenLote(),;
                                                    ::dropFunctionStockWhereCodigoAlmacenCombinaciones(),;
-                                                   ::createFunctionStockWhereCodigoAlmacenCombinaciones() } )
+                                                   ::createFunctionStockWhereCodigoAlmacenCombinaciones(),;
+                                                   ::dropProcedureInfoWhereCodigo(),;
+                                                   ::createProcedureInfoWhereCodigo() } )
 
    METHOD dropFunctionStockWhereCodigo() ;
                                        INLINE ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'StockWhereCodigo' ) + ";" )
@@ -50,7 +52,14 @@ CLASS StocksRepository FROM SQLBaseRepository
 
    METHOD createFunctionStockWhereCodigoAlmacenCombinaciones() 
 
-   METHOD selectStockWhereCodigoAlmacenCombinaciones( cCodigoArticulo, cCodigoAlmacen, cCodigoUbicacion, cLote, uuidCombinaciones )
+   METHOD selectStockWhereCodigoAlmacenCombinaciones( cCodigoArticulo, cCodigoAlmacen, cCodigoUbicacion, cLote, uuidCombinacion )
+
+   METHOD dropProcedureInfoWhereCodigo() ;
+                                       INLINE ( "DROP PROCEDURE IF EXISTS " + Company():getTableName( 'InfoWhereCodigo' ) + ";" )
+
+   METHOD createProcedureInfoWhereCodigo() 
+
+   METHOD selectInfoWhereCodigo( cCodigoArticulo )
 
    METHOD sqlAlbaranesComprasLineas()
 
@@ -65,6 +74,20 @@ CLASS StocksRepository FROM SQLBaseRepository
 
    METHOD sqlAlbaranesComprasLineasCombinaciones() ;
                                        INLINE ( ::sqlAlbaranesComprasLineasLote( "albaranes_compras_lineas.combinaciones_uuid = combinaciones_uuid" ) )
+
+   METHOD sqlFacturasComprasLineas()
+
+   METHOD sqlFacturasComprasdLineasAlmacen( cParam1, cParam2, cParam3 ) ;
+                                       INLINE ( ::sqlFacturasComprasdLineas( "facturas_compras.almacen_codigo = almacen_codigo", cParam1, cParam2, cParam3 ) ) 
+
+   METHOD sqlFacturasComprasdLineasUbicacion( cParam1, cParam2 ) ;
+                                       INLINE ( ::sqlFacturasComprasdLineasAlmacen( "facturas_compras_lineas.ubicacion_codigo = ubicacion_codigo", cParam1, cParam2 ) ) 
+
+   METHOD sqlFacturasComprasdLineasLote( cParam1 ) ;
+                                       INLINE ( ::sqlFacturasComprasdLineasUbicacion( "facturas_compras_lineas.lote = lote", cParam1 ) ) 
+
+   METHOD sqlFacturasComprasdLineasCombinaciones() ;
+                                       INLINE ( ::sqlFacturasComprasdLineasLote( "facturas_compras_lineas.combinaciones_uuid = combinaciones_uuid" ) )
 
    METHOD sqlAlbaranesVentasLineas()
 
@@ -152,6 +175,8 @@ METHOD sqlAlbaranesComprasLineas(...) CLASS StocksRepository
 
    TEXT INTO cSql
       SELECT
+         albaranes_compras_lineas.uuid AS uuid,
+         'albaranes_compras_lineas' AS tabla,
          ( IFNULL( albaranes_compras_lineas.unidad_medicion_factor, 1 ) * albaranes_compras_lineas.articulo_unidades ) AS total_unidades,
          albaranes_compras_lineas.articulo_codigo AS articulo_codigo,
          albaranes_compras.almacen_codigo AS almacen_codigo,
@@ -179,12 +204,57 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
+METHOD sqlFacturasComprasLineas(...) CLASS StocksRepository
+
+   local cSql  
+
+   TEXT INTO cSql
+      SELECT
+         facturas_compras_lineas.uuid AS uuid,
+         'facturas_compras_lineas' AS tabla,
+         ( IFNULL( facturas_compras_lineas.unidad_medicion_factor, 1 ) * facturas_compras_lineas.articulo_unidades ) AS total_unidades,
+         facturas_compras_lineas.articulo_codigo AS articulo_codigo,
+         facturas_compras.almacen_codigo AS almacen_codigo,
+         facturas_compras_lineas.ubicacion_codigo AS ubicacion_codigo,
+         facturas_compras_lineas.lote AS lote,
+         facturas_compras_lineas.combinaciones_uuid AS combinaciones_uuid,
+         facturas_compras.fecha_valor_stock AS fecha_valor_stock
+      
+      FROM %2$s AS facturas_compras_lineas 
+
+         INNER JOIN %1$s AS facturas_compras
+            ON facturas_compras.uuid = facturas_compras_lineas.parent_uuid      
+
+      WHERE facturas_compras_lineas.articulo_codigo = articulo_codigo AND 
+            facturas_compras_lineas.deleted_at = 0 AND
+            ( 
+            SELECT 
+               COUNT( * ) 
+               FROM %3$s 
+               WHERE documentos_conversion.documento_destino_uuid = facturas_compras_lineas.uuid AND      
+                     documentos_conversion.documento_destino_tabla = 'facturas_compras_lineas' AND 
+                     documentos_conversion.documento_origen_tabla = 'albaranes_compras_lineas'
+            ) = 0
+   ENDTEXT
+
+   cSql     := hb_strformat( cSql, SQLFacturasComprasModel():getTableName(), SQLFacturasComprasLineasModel():getTableName(), SQLConversorDocumentosModel():getTableName() )
+
+   cSql     := alltrim( cSql )
+
+   aeval( hb_aparams(), {|cParam| if( !empty( cParam ), cSql += " AND " + cParam, ) } )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
 METHOD sqlAlbaranesVentasLineas(...) CLASS StocksRepository
 
    local cSql  
 
    TEXT INTO cSql
       SELECT
+         albaranes_ventas_lineas.uuid AS uuid,
+         'albaranes_ventas_lineas' AS tabla,
          ( ( IFNULL( albaranes_ventas_lineas.unidad_medicion_factor, 1 ) * albaranes_ventas_lineas.articulo_unidades ) * -1 ) AS total_unidades,
          albaranes_ventas_lineas.articulo_codigo AS articulo_codigo,
          albaranes_ventas.almacen_codigo AS almacen_codigo,
@@ -219,6 +289,8 @@ METHOD sqlConsolidacionesAlmacenesLineas(...) CLASS StocksRepository
    TEXT INTO cSql
 
       SELECT
+         consolidaciones_almacenes_lineas.uuid AS uuid,
+         'consolidaciones_almacenes_lineas' AS tabla,
          ( IFNULL( consolidaciones_almacenes_lineas.unidad_medicion_factor, 1 ) * consolidaciones_almacenes_lineas.articulo_unidades ) AS total_unidades ,
          consolidaciones_almacenes_lineas.articulo_codigo AS articulo_codigo,
          consolidaciones_almacenes.almacen_codigo AS almacen_codigo,
@@ -253,6 +325,8 @@ METHOD sqlMovimientosOrigenAlmacenesLineas(...) CLASS StocksRepository
 
    TEXT INTO cSql
       SELECT
+         movimientos_almacenes_lineas.uuid AS uuid,
+         'movimientos_almacenes_lineas' AS tabla,
          ( IFNULL( movimientos_almacenes_lineas.unidad_medicion_factor, 1 ) * movimientos_almacenes_lineas.articulo_unidades * -1 ) AS total_unidades,
          movimientos_almacenes_lineas.articulo_codigo AS articulo_codigo,
          movimientos_almacenes.almacen_origen_codigo AS almacen_codigo,
@@ -286,7 +360,9 @@ METHOD sqlMovimientosDestinoAlmacenesLineas(...) CLASS StocksRepository
 
    TEXT INTO cSql
       SELECT
-         ( IFNULL( movimientos_almacenes_lineas.unidad_medicion_factor, 1 ) * movimientos_almacenes_lineas.articulo_unidades * -1 ) AS total_unidades,
+         movimientos_almacenes_lineas.uuid AS uuid,
+         'movimientos_almacenes_lineas' AS tabla,
+         ( IFNULL( movimientos_almacenes_lineas.unidad_medicion_factor, 1 ) * movimientos_almacenes_lineas.articulo_unidades ) AS total_unidades,
          movimientos_almacenes_lineas.articulo_codigo AS articulo_codigo,
          movimientos_almacenes.almacen_destino_codigo AS almacen_codigo,
          movimientos_almacenes_lineas.ubicacion_destino_codigo AS ubicacion_codigo,
@@ -382,6 +458,8 @@ METHOD sqlSelectMovimientosUnion() CLASS StocksRepository
    local cSql  
 
    TEXT INTO cSql
+      movimientos_union.uuid,
+      movimientos_union.tabla,
       movimientos_union.total_unidades ,
       movimientos_union.articulo_codigo,
       movimientos_union.almacen_codigo,
@@ -440,23 +518,25 @@ METHOD createFunctionStockWhereCodigo() CLASS StocksRepository
             %4$s
                UNION 
             %5$s
+               UNION 
+            %6$s
                UNION
-            %6$s 
+            %7$s 
                UNION
-            %7$s
+            %8$s
          ) 
          AS movimientos_union
 
          LEFT JOIN 
             (
-               %8$s
+               %9$s
             ) 
             AS consolidaciones_almacenes
 
-            %9$s
+            %10$s
 
          WHERE
-            %10$s
+            %11$s
       )
       AS stocks;    
 
@@ -470,6 +550,7 @@ METHOD createFunctionStockWhereCodigo() CLASS StocksRepository
                            Company():getTableName( 'StockWhereCodigo' ),;
                            ::sqlSelectMovimientosUnion(),;
                            ::sqlAlbaranesComprasLineas(),;
+                           ::sqlFacturasComprasLineas(),;
                            ::sqlConsolidacionesAlmacenesLineas(),;
                            ::sqlMovimientosOrigenAlmacenesLineas(),;
                            ::sqlMovimientosDestinoAlmacenesLineas(),;
@@ -722,7 +803,7 @@ RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD selectStockWhereCodigoAlmacenLote( cCodigoArticulo, cCodigoAlmacen, cCodigoUbicacion, cLote, uuidCombinaciones ) CLASS StocksRepository
+METHOD selectStockWhereCodigoAlmacenLote( cCodigoArticulo, cCodigoAlmacen, cCodigoUbicacion, cLote, uuidCombinacion ) CLASS StocksRepository
 
 RETURN ( getSQLDatabase():getValue( "SELECT " + Company():getTableName( "StockWhereCodigoAlmacenUbicacionLote" ) + "( " + quoted( cCodigoArticulo ) + ", " + quoted( cCodigoAlmacen ) + ", " + quoted( cCodigoUbicacion ) + ", " + quoted( cLote ) + " )", 0 ) )
 
@@ -802,9 +883,95 @@ RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD selectStockWhereCodigoAlmacenCombinaciones( cCodigoArticulo, cCodigoAlmacen, cCodigoUbicacion, cLote, uuidCombinaciones ) CLASS StocksRepository
+METHOD selectStockWhereCodigoAlmacenCombinaciones( cCodigoArticulo, cCodigoAlmacen, cCodigoUbicacion, cLote, uuidCombinacion ) CLASS StocksRepository
 
-RETURN ( getSQLDatabase():getValue( "SELECT " + Company():getTableName( "StockWhereCodigoAlmacenUbicacionLoteCombinaciones" ) + "( " + quoted( cCodigoArticulo ) + ", " + quoted( cCodigoAlmacen ) + ", " + quoted( cCodigoUbicacion ) + ", " + quoted( cLote ) + ", " + quotedUuid( uuidCombinaciones ) + " )", 0 ) )
+RETURN ( getSQLDatabase():getValue( "SELECT " + Company():getTableName( "StockWhereCodigoAlmacenUbicacionLoteCombinaciones" ) + "( " + quoted( cCodigoArticulo ) + ", " + quoted( cCodigoAlmacen ) + ", " + quoted( cCodigoUbicacion ) + ", " + quoted( cLote ) + ", " + quotedUuid( uuidCombinacion ) + " )", 0 ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD createProcedureInfoWhereCodigo() CLASS StocksRepository
+
+   local cSql  
+
+   TEXT INTO cSql
+
+   CREATE DEFINER=`root`@`localhost` 
+   PROCEDURE %1$s ( IN `articulo_codigo` CHAR( 20 ) )
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
+
+   BEGIN
+
+   SELECT 
+      info.tabla,
+      info.uuid,
+      info.total_unidades,
+      info.articulo_codigo,
+      info.almacen_codigo,
+      info.ubicacion_codigo,
+      info.lote,
+      info.combinaciones_uuid,
+      info.fecha_valor_stock
+   FROM
+      (
+         SELECT 
+            %2$s
+         FROM
+         (
+            %3$s
+               UNION 
+            %4$s
+               UNION 
+            %5$s
+               UNION 
+            %6$s
+               UNION
+            %7$s 
+               UNION
+            %8$s
+         ) 
+         AS movimientos_union
+
+         LEFT JOIN 
+            (
+               %9$s
+            ) 
+            AS consolidaciones_almacenes
+
+            %10$s
+
+         WHERE
+            %11$s
+      )
+      AS info;    
+
+   END
+
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql,;
+                           Company():getTableName( 'InfoWhereCodigo' ),;
+                           ::sqlSelectMovimientosUnion(),;
+                           ::sqlAlbaranesComprasLineas(),;
+                           ::sqlFacturasComprasLineas(),;
+                           ::sqlConsolidacionesAlmacenesLineas(),;
+                           ::sqlMovimientosOrigenAlmacenesLineas(),;
+                           ::sqlMovimientosDestinoAlmacenesLineas(),;
+                           ::sqlAlbaranesVentasLineas(),;
+                           ::sqlJoinConsolidacionesAlmacenesLineas(),;
+                           ::sqlOnMovimientosUnion(),;
+                           ::sqlWhereMovimientosUnion() )
+
+RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectInfoWhereCodigo( cCodigoArticulo ) CLASS StocksRepository
+
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( "InfoWhereCodigo" ) + "( " + quoted( cCodigoArticulo ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -821,6 +988,8 @@ CLASS TestStocksRepository FROM TestOperacionesComercialesController
    DATA oTestAlbaranesVentasController 
 
    DATA oTestMovimientoAlmacenController     
+
+   DATA oTestConversorDocumentoController   
 
    DATA aCategories                    INIT { "all", "stocks" }
 
@@ -876,7 +1045,8 @@ METHOD beforeClass() CLASS TestStocksRepository
    
    ::oTestAlbaranesVentasController       := TestAlbaranesVentasController():New()
 
-   ::oTestMovimientoAlmacenController     := TestMovimientoAlmacenController():New()    
+   ::oTestMovimientoAlmacenController     := TestMovimientoAlmacenController():New()   
+
 
 RETURN ( nil )
 
@@ -899,7 +1069,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD test_calculo_stock_con_lote() CLASS TestStocksRepository
-
+/*
    local nStock
 
    ::oTestConsolidacionAlmacenController:test_dialogo_articulo_con_lote()
@@ -914,7 +1084,7 @@ METHOD test_calculo_stock_con_lote() CLASS TestStocksRepository
 
    ::Assert():equals( 2, nStock, "test comprobación de stocks por almacén en albaranes de compras" )
 
-   ::oTestMovimientoAlmacenController:test_dialogo_con_lote_dos_ubicacion()    
+   ::oTestMovimientoAlmacenController:test_dialogo_con_lote_dos_ubicaciones()    
 
    nStock   := StocksRepository():selectStockWhereCodigoAlmacenLote( '2', '0', '0', '1234' )
    
@@ -925,7 +1095,7 @@ METHOD test_calculo_stock_con_lote() CLASS TestStocksRepository
    nStock   := StocksRepository():selectStockWhereCodigoAlmacenLote( '2', '0', '0', '1234' )
    
    ::Assert():equals( 0, nStock, "test comprobación de stocks por almacén en albaranes de ventas" )
-
+*/
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -942,15 +1112,27 @@ METHOD test_calculo_stock_con_propiedades() CLASS TestStocksRepository
 
    ::oTestConsolidacionAlmacenController:test_dialogo_articulo_con_propiedades()
 
-   nStock          := StocksRepository():selectStockWhereCodigoAlmacenLote( '3', '0', '0', nil, uuidProperty )
+   nStock          := StocksRepository():selectStockWhereCodigoAlmacenCombinaciones( '3', '0', '0', nil, uuidProperty )
 
-   ::Assert():equals( 1, nStock, "test comprobación de stocks por almacén en consolidacion" )
+   ::Assert():equals( 1, nStock, "test comprobación de stocks con propiedades por almacén en consolidacion" )
 
    ::oTestAlbaranesComprasController:test_dialogo_articulo_con_propiedades()
 
-   nStock   := StocksRepository():selectStockWhereCodigoAlmacenLote( '2', '0', '0', '1234' )
+   nStock          := StocksRepository():selectStockWhereCodigoAlmacenCombinaciones( '3', '0', '0', nil, uuidProperty )
 
-   ::Assert():equals( 2, nStock, "test comprobación de stocks por almacén en albaranes de compras" )
+   ::Assert():equals( 2, nStock, "test comprobación de stocks con propiedades por almacén en albaranes de compras" )
+
+   ::oTestMovimientoAlmacenController:test_dialogo_con_propiedades_dos_ubicaciones()    
+
+   nStock          := StocksRepository():selectStockWhereCodigoAlmacenCombinaciones( '3', '0', '0', nil, uuidProperty )
+   
+   ::Assert():equals( 1, nStock, "test comprobación de stocks con propiedades por almacén en movimientos de almacen" )
+
+   ::oTestAlbaranesVentasController:test_dialogo_con_articulo_propiedades()
+
+   nStock          := StocksRepository():selectStockWhereCodigoAlmacenCombinaciones( '3', '0', '0', nil, uuidProperty )
+   
+   ::Assert():equals( 0, nStock, "test comprobación de stocks por almacén en albaranes de ventas" )
 
 RETURN ( nil )
 

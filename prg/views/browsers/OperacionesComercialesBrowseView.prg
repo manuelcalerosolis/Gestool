@@ -19,6 +19,14 @@ ENDCLASS
 METHOD addColumns() CLASS OperacionesComercialesBrowseView
 
    ::getColumnIdAndUuid()
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := "canceled_at"
+      :cHeader             := "Estado"
+      :nWidth              := 80
+      :bEditValue          := {|| iif( empty( ::getRowSet():fieldGet( 'canceled_at' ) ), "Activo", "Cancelado" ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
    
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := "numero"
@@ -220,7 +228,7 @@ METHOD addColumns() CLASS OperacionesComercialesBrowseView
 
    ::getColumnsCreatedUpdatedAt()
    
-   ::getColumnDeletedAt()
+   ::getColumnCanceledAt()
 
 RETURN ( nil )
 

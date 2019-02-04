@@ -131,41 +131,41 @@ CLASS TestFacturasVentasController FROM TestCase
 
    METHOD set_codigo_tercero( cCodigoCliente, view ) ;
                                        INLINE ( view:getControl( 170, view:oFolder:aDialogs[1] ):cText( cCodigoCliente ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 view:getControl( 170, view:oFolder:aDialogs[1] ):lValid(),;
-                                                testWaitSeconds( 1 ) )
+                                                testWaitSeconds() )
 
    METHOD set_codigo_forma_pago( cCodigoFormaPago, view ) ;
                                        INLINE ( view:getControl( 240, view:oFolder:aDialogs[1] ):cText( "0" ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 view:getControl( 240, view:oFolder:aDialogs[1] ):lValid(),;
-                                                testWaitSeconds( 1 ) )
+                                                testWaitSeconds() )
 
    METHOD click_nueva_linea( view )    INLINE ( view:getControl( 501, view:oFolder:aDialogs[1] ):Click(),;
-                                                testWaitSeconds( 1 ) )
+                                                testWaitSeconds() )
 
    METHOD set_codigo_articulo_en_linea() ;
                                        INLINE ( eval( ::oController:getFacturasVentasLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "0", 0 ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_codigo_almacen_en_linea( cCodigoAlmacen ) ;
                                        INLINE ( eval( ::oController:getFacturasVentasLineasController():getBrowseView():oColumnCodigoAlmacen:bOnPostEdit, , cCodigoAlmacen, 0 ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_codigo_ubicacion_en_linea( cCodigoUbicacion ) ;
                                        INLINE ( eval( ::oController:getFacturasVentasLineasController():getBrowseView():oColumnCodigoUbicacion:bOnPostEdit, , cCodigoUbicacion, 0 ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_precio_en_linea( nPrecio ) ;
                                        INLINE ( eval( ::oController:getFacturasVentasLineasController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , nPrecio, 0 ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD refresh_linea_browse_view()  INLINE ( ::oController:getFacturasVentasLineasController():getBrowseView():getRowSet():Refresh(),;
-                                                testWaitSeconds( 1 ) )
+                                                testWaitSeconds() )
    
    METHOD test_calculo_con_descuento()                
 
@@ -324,7 +324,7 @@ METHOD test_dialogo_sin_lineas() CLASS TestFacturasVentasController
          ::set_codigo_tercero( "0", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          view:getControl( IDOK ):Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          view:getControl( IDCANCEL ):Click() } )
 
    ::Assert():false( ::oController:Append(), "test creación de factura sin lineas" )

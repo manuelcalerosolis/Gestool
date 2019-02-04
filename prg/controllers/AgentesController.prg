@@ -541,9 +541,9 @@ METHOD test_dialogo_sin_codigo() CLASS TestAgentesController
    
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDCANCEL ):Click() } )
 
 RETURN ( ::Assert():false( ::oController:Append(), "test creación de agente sin código" ) )
@@ -554,11 +554,11 @@ METHOD test_dialogo_sin_nombre() CLASS TestAgentesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100 ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDCANCEL ):Click() } )
    
 RETURN ( ::Assert():false( ::oController:Append(), "test creación de agente sin nombre" ) )
@@ -569,11 +569,11 @@ METHOD test_dialogo_creacion() CLASS TestAgentesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100 ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110 ):cText( "Agente principal" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )
 
 RETURN ( ::Assert():true( ::oController:Append(), "test creación de agente" ) )

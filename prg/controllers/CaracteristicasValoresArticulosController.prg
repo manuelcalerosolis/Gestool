@@ -592,7 +592,7 @@ METHOD testCreatePersonlizado() CLASS TestCaracteristicasValoresArticulosControl
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          eval( oController:getDialogView():oColumnPersonalizado:bOnPostEdit, , "Personalizado" ),;
          testWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } ) 
@@ -626,7 +626,7 @@ METHOD testCreateCaracteristicaCombo() CLASS TestCaracteristicasValoresArticulos
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          eval( oController:getDialogView():oColumnValores:bOnPostEdit, , "linea 1" ),;
          testWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } ) 
@@ -660,7 +660,7 @@ METHOD testCreateComboCambio() CLASS TestCaracteristicasValoresArticulosControll
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          eval( oController:getDialogView():oColumnValores:bOnPostEdit, , "linea 1" ),;
          testWaitSeconds( 3 ),;
          eval( oController:getDialogView():oColumnPersonalizado:bOnPostEdit, , "Personalizado" ),;
@@ -696,7 +696,7 @@ METHOD testCreatePersonalizadoCambio() CLASS TestCaracteristicasValoresArticulos
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          eval( oController:getDialogView():oColumnPersonalizado:bOnPostEdit, , "Personalizado" ),;
          testWaitSeconds( 3 ),;
          eval( oController:getDialogView():oColumnValores:bOnPostEdit, , "linea 1" ),;

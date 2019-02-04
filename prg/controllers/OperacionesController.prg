@@ -245,7 +245,7 @@ CLASS TestOperacionesController FROM TestCase
    METHOD Before() 
 
    METHOD set_lote_en_linea( cLote )   INLINE   (  eval( ::oController:getLinesController():getBrowseView():oColumnLote:bOnPostEdit, , cLote, 0 ),;
-                                                   testWaitSeconds( 1 ),;
+                                                   testWaitSeconds(),;
                                                    ::refresh_linea_browse_view() )
 
    METHOD set_combinaciones_en_linea( cCodigoArticulo, cCombinacionTexto )
@@ -348,7 +348,7 @@ METHOD set_combinaciones_en_linea( cCodigoArticulo, cCombinacionTexto )
    
       eval( ::oController:getLinesController():getBrowseView():oColumnPropiedades:bOnPostEdit, , hget( atail( aArticuloCombinacion ), "uuid" ), 0 )
 
-      testWaitSeconds( 1 )
+      testWaitSeconds()
    
       ::refresh_linea_browse_view() 
 

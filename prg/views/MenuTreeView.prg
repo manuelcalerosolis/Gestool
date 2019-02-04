@@ -36,6 +36,8 @@ CLASS MenuTreeView
 
    DATA oButtonShowDelete
 
+   DATA oButtonCanceled
+
    DATA oEvents
 
    METHOD New( oController )
@@ -59,6 +61,7 @@ CLASS MenuTreeView
    METHOD isControllerConfig()            INLINE ( ::getSuperController():lConfig )
    METHOD isMailConfig()                  INLINE ( ::getSuperController():lMail )
    METHOD isControllerOthers()            INLINE ( ::getSuperController():lOthers )
+   METHOD isControllerCanceled()          INLINE ( ::getSuperController():lCanceled )
    METHOD getControllerDocuments()        INLINE ( ::getSuperController():loadDocuments() )
 
    METHOD addImage()
@@ -78,6 +81,8 @@ CLASS MenuTreeView
    METHOD addZoomButton()      
    
    METHOD addDeleteButton() 
+
+   METHOD addCanceledButton() 
 
    METHOD addShowDeleteButton() 
 
@@ -205,6 +210,8 @@ METHOD addGeneralButton()
       ::addShowDeleteButton()
 
    end if
+
+   ::addCanceledButton()
 
    ::oButtonMain:Expand()
 
@@ -541,6 +548,24 @@ METHOD addPrintSerialButton()
    ::oButtonPrint    := ::AddButton( "Imprimir series", "Imp16", {|| ::getSuperController():getImprimirSeriesController():dialogViewActivate() }, nil, ACC_IMPR )
 
    ::fireEvent( 'addedPrintSerialButton') 
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD addCanceledButton()
+
+   if !( ::isControllerCanceled() )
+      RETURN ( nil )
+   end if 
+
+   if isFalse( ::fireEvent( 'addingCanceledButton' ) )
+      RETURN ( nil )
+   end if 
+
+   ::oButtonCanceled   := ::AddButton( "Cancelar", "del16", {|| ::getSuperController():Cancel( ::getBrowse():aSelected ), ::oController:Refresh() }, "E", ACC_DELE ) 
+
+   ::fireEvent( 'addedCanceledButton') 
 
 RETURN ( nil )
 

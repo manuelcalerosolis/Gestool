@@ -98,8 +98,9 @@ CLASS SQLBaseController
    METHOD getUuidFromRecno( aSelected ) ;
                                        INLINE ( ::getRowSet():UuidFromRecno( aSelected ) )
 
-   METHOD getIdFromRowSet()            INLINE ( ::getRowSet():fieldGet( ::getModel():cColumnKey ) )
-   METHOD getUuidFromRowSet()          INLINE ( if( empty( ::getRowset() ), nil, ::getRowSet():fieldGet( "uuid" ) ) )
+   METHOD getIdFromRowSet()            INLINE ( if( empty( ::getRowset() ), nil, ::getRowSet():fieldGet( ::getModel():cColumnKey ) ) )
+   METHOD getFieldFromRowSet( cField ) INLINE ( if( empty( ::getRowset() ), nil, ::getRowSet():fieldGet( cField ) ) )
+   METHOD getUuidFromRowSet()          INLINE ( ::getFieldFromRowSet( "uuid" ) )
 
    METHOD isRowSetSystemRegister()                          
    METHOD isNotRowSetSystemRegister()  INLINE ( !( ::isRowSetSystemRegister() ) )
@@ -197,7 +198,9 @@ CLASS SQLBaseController
       METHOD isZoomMode()              INLINE ( ::nMode == __zoom_mode__ )
       METHOD isNotZoomMode()           INLINE ( ::nMode != __zoom_mode__ )
 
-   METHOD Delete()
+   METHOD Delete( aSelectedRecno )
+   METHOD Cancel( aSelectedRecno )
+      METHOD allowDeleteOrCancel( aSelectedRecno )
       METHOD priorRecnoToDelete( aSelectedRecno )
 
    METHOD dialgOkAndGoTo()             INLINE ( ::uDialogResult == IDOKANDGOTO )
@@ -700,43 +703,25 @@ RETURN ( nil )
 METHOD Delete( aSelectedRecno )
 
    local lDelete        := .f.
-   local cNumbersOfDeletes
+   local cNumbers
 
-   if ::notUserDelete()
-      msgStop( "Acceso no permitido" )
+   if !( ::allowDeleteOrCancel( aSelectedRecno ) )
       RETURN ( .f. )
-   end if 
-
-   if !hb_isarray( aSelectedRecno )
-      RETURN ( .f. )
-   end if 
-
-   if len( aSelectedRecno ) == 0
-      RETURN ( .f. )
-   end if 
-
-   if len( aSelectedRecno ) == 1 .and. atail( aSelectedRecno ) == 0
-      RETURN ( .f. )
-   end if 
-
-   if ( !::isMultiDelete() .and. len( aSelectedRecno ) > 1 )
-      msgStop( "Borrado multiple no permitido" )
-      RETURN ( .f. )
-   end if 
+   end if
 
    if isFalse( ::fireEvent( 'deleting' ) )
       RETURN ( .f. )
    end if
 
    if len( aSelectedRecno ) > 1
-      cNumbersOfDeletes := alltrim( str( len( aSelectedRecno ), 3 ) ) + " registros?"
+      cNumbers := alltrim( str( len( aSelectedRecno ), 3 ) ) + " registros?"
    else
-      cNumbersOfDeletes := "el registro en curso?"
+      cNumbers := "el registro en curso?"
    end if
 
    ::fireEvent( 'openingConfirmDelete' )
 
-   if SQLAjustableGestoolModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. msgNoYes( "¿Desea eliminar " + cNumbersOfDeletes, "Confirme eliminación" )
+   if SQLAjustableGestoolModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. msgNoYes( "¿Desea eliminar " + cNumbers, "Confirme eliminación" )
       
       ::fireEvent( 'deletingSelection' ) 
 
@@ -761,6 +746,83 @@ METHOD Delete( aSelectedRecno )
    ::fireEvent( 'exitDeleted' ) 
 
 RETURN ( lDelete )
+
+//----------------------------------------------------------------------------//
+
+METHOD Cancel( aSelectedRecno )
+
+   local lCancel        := .f.
+   local cNumbers
+
+   if !( ::allowDeleteOrCancel( aSelectedRecno ) )
+      RETURN ( .f. )
+   end if
+
+   if isFalse( ::fireEvent( 'deleting' ) )
+      RETURN ( .f. )
+   end if
+
+   if len( aSelectedRecno ) > 1
+      cNumbers := alltrim( str( len( aSelectedRecno ), 3 ) ) + " registros?"
+   else
+      cNumbers := "el registro en curso?"
+   end if
+
+   ::fireEvent( 'openingConfirmCancel' )
+
+   if SQLAjustableGestoolModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. msgNoYes( "¿Desea cancelar " + cNumbers, "Confirme eliminación" )
+      
+      ::fireEvent( 'cancelingSelection' ) 
+
+      ::getModel():cancelSelection( ::getIdFromRecno( aSelectedRecno ), ::getUuidFromRecno( aSelectedRecno ) )
+
+      ::fireEvent( 'canceledSelection' ) 
+
+      ::gotoRowSetRecno( ::priorRecnoToDelete( aSelectedRecno ) )
+
+      ::refreshRowSet()
+
+      ::refreshBrowseView()
+
+      lCancel           := .t.
+
+   else 
+
+      ::fireEvent( 'cancelCanceled' ) 
+   
+   end if 
+
+   ::fireEvent( 'exitCanceled' ) 
+
+RETURN ( lCancel )
+
+//----------------------------------------------------------------------------//
+
+METHOD allowDeleteOrCancel( aSelectedRecno )
+
+   if ::notUserDelete()
+      msgStop( "Acceso no permitido" )
+      RETURN ( .f. )
+   end if 
+
+   if !hb_isarray( aSelectedRecno )
+      RETURN ( .f. )
+   end if 
+
+   if len( aSelectedRecno ) == 0
+      RETURN ( .f. )
+   end if 
+
+   if len( aSelectedRecno ) == 1 .and. atail( aSelectedRecno ) == 0
+      RETURN ( .f. )
+   end if 
+
+   if ( !::isMultiDelete() .and. len( aSelectedRecno ) > 1 )
+      msgStop( "Borrado multiple no permitido" )
+      RETURN ( .f. )
+   end if 
+
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 

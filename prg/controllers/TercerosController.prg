@@ -293,13 +293,13 @@ METHOD test_dialogo_sin_codigo() CLASS TestTercerosController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[1] ):cText( "Test de cliente/proveedor" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120, self:oFolder:aDialogs[1] ):cText( "75757575A" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDCANCEL ):Click() } )
 
    ::Assert():false( ::oController:Append(), "test creación de tercero sin codigo" )
@@ -312,13 +312,13 @@ METHOD test_dialogo_creacion() CLASS TestTercerosController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[1] ):cText( "Test de cliente/proveedor" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120, self:oFolder:aDialogs[1] ):cText( "75757575A" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )
 
    ::Assert():true( ::oController:Append(), "test creación de factura sin lineas" )

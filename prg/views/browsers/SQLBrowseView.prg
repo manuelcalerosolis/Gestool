@@ -211,6 +211,8 @@ CLASS SQLBrowseView
 
    METHOD getColumnIdAndUuid()
 
+   METHOD getColumnCanceledAt()
+
    METHOD getStdColors()
 
    METHOD getSelColors()
@@ -783,6 +785,24 @@ METHOD getColumnDeletedAt()
       :nDataStrAlign       := AL_LEFT
       :lHide               := .t.
       :bEditValue          := {|| ::getRowSet():fieldGet( 'deleted_at' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD getColumnCanceledAt()
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'canceled_at'
+      :cHeader             := 'Cancelado'
+      :cEditPicture        := '@DT'
+      :nWidth              := 140
+      :nHeadStrAlign       := AL_LEFT
+      :nDataStrAlign       := AL_LEFT
+      :lHide               := .t.
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'canceled_at' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 

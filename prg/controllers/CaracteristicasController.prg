@@ -383,11 +383,11 @@ METHOD testCreateCaracteristicaSincodigo() CLASS TestCaracteristicasController
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oDialog ):cText( "" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDCANCEL ):Click() } )
 
    ::Assert():false( oController:Append(), "test ::Assert():true with .t." )
@@ -405,13 +405,13 @@ METHOD testCreateCaracteristicaSinNombre() CLASS TestCaracteristicasController
    oController             := CaracteristicasController():New()
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oDialog ):cText( "001" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oDialog ):cText( "" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDCANCEL ):Click() } )
 
    ::Assert():false( oController:Append(), "test ::Assert():true with .t." )
@@ -429,11 +429,11 @@ METHOD testCreateCaracteristicaSinLinea() CLASS TestCaracteristicasController
    oController             := CaracteristicasController():New()
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oDialog ):cText( "001" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )
 
    ::Assert():true( oController:Append(), "test ::Assert():true with .t." )
@@ -454,19 +454,19 @@ RETURN ( nil )
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oDialog ):cText( "001" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          oController:getCaracteristicasLineasController():Append(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )
 
    oController:getCaracteristicasLineasController():getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 110 ):cText( "Caracteristica línea" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )
 
    ::Assert():true( oController:Append(), "test ::Assert():true with .t." )
@@ -485,15 +485,15 @@ local oController
    oController             := CaracteristicasController():New()
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oDialog ):cText( "001" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:lineAppend(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:lineAppend(),;
          testWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } ) 
@@ -514,17 +514,17 @@ local oController
    oController             := CaracteristicasController():New()
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oDialog ):cText( "001" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:lineAppend(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:lineAppend(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 2" ),;
          oController:getCaracteristicasLineasController():getRowSet():goTop(),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "" ),;
@@ -547,19 +547,19 @@ local oController
    oController             := CaracteristicasController():New()
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oDialog ):cText( "001" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oDialog ):cText( "Caracteristica 1" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:lineAppend(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:lineAppend(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:lineAppend(),;
          testWaitSeconds( 3 ),;
          self:getControl( IDOK ):Click() } ) 
