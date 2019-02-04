@@ -68,11 +68,21 @@ RETURN ( ::insertBuffer() )
 
 METHOD create_albaran_compras( hDatos ) CLASS SQLAlbaranesComprasModel
 
- local hBuffer    := ::loadBlankBuffer( hDatos )
+   local hBuffer    := ::loadBlankBuffer( {  "tercero_codigo"           => "0" ,;
+                                             "recargo_equivalencia"     =>  0  ,;
+                                             "metodo_pago_codigo"       => "0" ,;
+                                             "almacen_codigo"           => "0" ,;
+                                             "agente_codigo"            => "0" ,;
+                                             "ruta_codigo"              => "0" ,;
+                                             "tarifa_codigo"            => "0" ,;
+                                             "serie"                    => "A" ,;
+                                             "numero"                   =>  3  } )
+ 
+   if hb_ishash( hDatos )
+      heval( hDatos, {|k,v| hset( hBuffer, k, v) } )
+   end if
 
- hset(hBuffer, "numero", hget( hDatos, "numero" ) )
-
- ::insertBuffer( hBuffer )
+   ::insertBuffer( hBuffer )
 
 RETURN( nil )
 

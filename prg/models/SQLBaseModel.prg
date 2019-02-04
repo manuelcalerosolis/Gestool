@@ -1977,7 +1977,7 @@ METHOD countWhere( hWhere )
    if ::isDeletedAtColumn()
       cSQL     +=    "AND deleted_at = 0" 
    end if 
-
+   
 RETURN ( ::getDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
