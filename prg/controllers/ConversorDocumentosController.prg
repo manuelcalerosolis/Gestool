@@ -33,6 +33,8 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    DATA hProcesedAlbaran               INIT{}
 
+   DATA lDescuento                     INIT .f.
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -303,6 +305,12 @@ METHOD convertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
 
          ::uuidDocumentoOrigen   := hget( hAlbaran, "uuid" )
 
+         if (::getController():getDiscountController():getModel():countWhere( { "parent_uuid" => hget( hAlbaran, "uuid" ) } ) ) > 0
+            ::lDescuento := .t.
+         else 
+            ::lDescuento := .f.
+         end if 
+
          if ::isAlbaranEquals( hAlbaran )
 
             ::addHeader()
@@ -355,6 +363,10 @@ METHOD isAlbaranEquals( hAlbaran ) CLASS ConversorDocumentosController
       RETURN ( .f. )
    end if 
 
+   if ::lDescuento
+      RETURN ( .f. )
+   end if 
+
    if hget( ::hProcesedAlbaran, "tercero_codigo" ) != hget( hAlbaran, "tercero_codigo" )
       RETURN ( .f. )
    end if 
@@ -377,8 +389,8 @@ METHOD isAlbaranEquals( hAlbaran ) CLASS ConversorDocumentosController
 
    if hget( ::hProcesedAlbaran, "serie" ) != hget( hAlbaran, "serie" )
       RETURN ( .f. )
-   end if 
-
+   end if
+  
    if !empty( ::getController():getDiscountController():getModel():countWhere( { "parent_uuid" => hget( hAlbaran, "uuid" ) } ) ) 
       RETURN ( .f. )
    end if 
@@ -659,6 +671,8 @@ RETURN ( SQLFacturasComprasModel():getInitialWhereDocumentos(::oController:setWh
 
 CLASS TestConversorDocumentosController FROM TestCase
 
+   DATA aSelected                      INIT {}
+
    DATA oController
 
    DATA aCategories                    INIT { "all", "conversor_documento" }
@@ -674,6 +688,10 @@ CLASS TestConversorDocumentosController FROM TestCase
 
    METHOD Before() 
 
+   METHOD create_albaran()
+
+   METHOD close_resumen_view()
+
    METHOD test_create_distinto_tercero()
 
    METHOD test_create_distinta_ruta()
@@ -686,7 +704,7 @@ CLASS TestConversorDocumentosController FROM TestCase
 
    METHOD test_create_distinta_serie()
 
-   METHOD test_create_distinto_descuento()
+   METHOD test_create_con_descuento()
 
    METHOD test_create_iguales_y_distinto()
 
@@ -718,8 +736,6 @@ RETURN ( nil )
 
 METHOD Before() CLASS TestConversorDocumentosController
 
-/*truncates*/
-
    SQLTercerosModel():truncateTable()
 
    SQLDireccionesModel():truncateTable()
@@ -750,8 +766,9 @@ METHOD Before() CLASS TestConversorDocumentosController
 
    SQLConversorDocumentosModel():truncateTable()
 
-   SQLMetodoPagoModel():test_create_contado() 
-   SQLMetodoPagoModel():test_create_reposicion() 
+   SQLMetodoPagoModel():test_create_con_plazos_con_hash() 
+   SQLMetodoPagoModel():test_create_con_plazos_con_hash( {  "codigo"          => "1",;
+                                                            "numero_plazos"   => 5  } ) 
 
    SQLTiposIvaModel():test_create_iva_al_21()
 
@@ -772,81 +789,51 @@ METHOD Before() CLASS TestConversorDocumentosController
    SQLTercerosModel():test_create_proveedor_con_plazos( 0 )
    SQLTercerosModel():test_create_proveedor_con_plazos( 1 )
 
+   ::aSelected :={}
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD create_albaran( hAlbaran )
+
+   local hLinea         := {}
+
+   SQLAlbaranesComprasModel():create_albaran_compras( hAlbaran )
+
+   hLinea               := { "parent_uuid"   => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( hget( hAlbaran,"serie" ), hget( hAlbaran, "numero" ) ) }
+
+   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hLinea )
+  
+   aadd( ::aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( hget( hAlbaran, "serie" ), hget( hAlbaran, "numero" ) ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD close_resumen_view()
+
+   ::oController:getResumenView():setEvent( 'painted',;
+         {| self | ;
+            testWaitSeconds( 1 ),;
+            self:getControl( IDCANCEL ):Click() } )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD test_create_distinto_tercero() CLASS TestConversorDocumentosController
 
-   local aSelected      := {}
+   ::create_albaran( {  "serie"  => "A",;
+                        "numero" =>  3 } )
 
-   local hDatosLineaA   := {}
-
-   local hDatosLineaB   := {}
+   ::create_albaran( {  "tercero_codigo"  => "1" ,;
+                        "numero"          =>  4,;
+                        "serie"           => "A"  } )
    
-   local hDatosAlbaranA := { "tercero_codigo"           => "0" ,;
-                             "recargo_equivalencia"     =>  0  ,;
-                             "metodo_pago_codigo"       => "0" ,;
-                             "almacen_codigo"           => "0" ,;
-                             "agente_codigo"            => "0" ,;
-                             "ruta_codigo"              => "0" ,;
-                             "tarifa_codigo"            => "0" ,;
-                             "serie"                    => "A" ,;
-                             "numero"                   => 3   }
-
-   local hDatosAlbaranB := { "tercero_codigo"           => "1" ,;
-                             "recargo_equivalencia"     =>  0  ,;
-                             "metodo_pago_codigo"       => "0" ,;
-                             "almacen_codigo"           => "0" ,;
-                             "agente_codigo"            => "0" ,;
-                             "ruta_codigo"              => "0" ,;
-                             "tarifa_codigo"            => "0" ,;
-                             "serie"                    => "A" ,;
-                             "numero"                   => 4   }
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranA )
-
-   hDatosLineaA   := {  "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 )  ,;
-                        "iva"                      => 21                         ,;
-                        "articulo_codigo"          => "0"                        ,;
-                        "articulo_precio"          => 100                        ,;
-                        "descuento"                => 2                          ,;
-                        "recargo_equivalencia"     => 5                          ,;
-                        "almacen_codigo"           => "0"                        ,;
-                        "ubicacion_codigo"         => "0"                        ,;
-                        "agente_codigo"            => "0"                        ,;
-                        "unidad_medicion_codigo"   => "UDS"                      ,;
-                        "articulo_nombre"          => "Articulo con descuentos"  }
-
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranB )
-
-   hDatosLineaB := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
-
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
+   ::close_resumen_view()
    
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ) )
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ) )
-   
-   ::oController:getResumenView():setEvent( 'painted',;
-      {| self | ;
-         testWaitSeconds( 3 ),;
-         self:getControl( IDCANCEL ):Click() } )
-   
-   ::oController:runConvertAlbaranCompras( aSelected )
+   ::oController:runConvertAlbaranCompras( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "Genera dos facturas con distintos terceros" )
 
@@ -856,75 +843,16 @@ RETURN ( nil )
 
 METHOD test_create_distinta_ruta() CLASS TestConversorDocumentosController
 
-   local aSelected      := {}
+   ::create_albaran( {  "serie"        => "A",;
+                        "numero"       =>  3 } )
 
-   local hDatosLineaA   := {}
-
-   local hDatosLineaB   := {}
+   ::create_albaran( {  "ruta_codigo"  => "1" ,;
+                        "numero"       =>  4  ,;
+                        "serie"        => "A" } )
    
-   local hDatosAlbaranA := { "tercero_codigo"           => "0" ,;
-                             "recargo_equivalencia"     =>  0  ,;
-                             "metodo_pago_codigo"       => "0" ,;
-                             "almacen_codigo"           => "0" ,;
-                             "agente_codigo"            => "0" ,;
-                             "ruta_codigo"              => "0" ,;
-                             "tarifa_codigo"            => "0" ,;
-                             "serie"                    => "A" ,;
-                             "numero"                   => 3   }
-
-   local hDatosAlbaranB := { "tercero_codigo"           => "0" ,;
-                             "recargo_equivalencia"     =>  0  ,;
-                             "metodo_pago_codigo"       => "0" ,;
-                             "almacen_codigo"           => "0" ,;
-                             "agente_codigo"            => "0" ,;
-                             "ruta_codigo"              => "1" ,;
-                             "tarifa_codigo"            => "0" ,;
-                             "serie"                    => "A" ,;
-                             "numero"                   => 4   }
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranA )
-
-   hDatosLineaA := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
-
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranB )
-
-   hDatosLineaB := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
-
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
+   ::close_resumen_view()
    
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ) )
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ) )
-   
-   ::oController:getResumenView():setEvent( 'painted',;
-      {| self | ;
-         testWaitSeconds( 3 ),;
-         self:getControl( IDCANCEL ):Click() } )
-   
-   ::oController:runConvertAlbaranCompras( aSelected )
+   ::oController:runConvertAlbaranCompras( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera dos facturas con distintas rutas" )
 
@@ -934,75 +862,15 @@ RETURN ( nil )
 
 METHOD test_create_distinto_metodo_pago() CLASS TestConversorDocumentosController
 
-   local aSelected      := {}
+   ::create_albaran( {  "serie"                 => "A",;
+                        "numero"                =>  3 } )
 
-   local hDatosLineaA   := {}
-
-   local hDatosLineaB   := {}
+   ::create_albaran( {  "metodo_pago_codigo"    => "1" ,;
+                        "numero"                =>  4  ,;
+                        "serie"                 => "A" } )
+   ::close_resumen_view()
    
-   local hDatosAlbaranA := {  "tercero_codigo"           => "0" ,;
-                              "recargo_equivalencia"     =>  0  ,;
-                              "metodo_pago_codigo"       => "0" ,;
-                              "almacen_codigo"           => "0" ,;
-                              "agente_codigo"            => "0" ,;
-                              "ruta_codigo"              => "0" ,;
-                              "tarifa_codigo"            => "0" ,;
-                              "serie"                    => "A" ,;
-                              "numero"                   => 3   }
-
-   local hDatosAlbaranB := {  "tercero_codigo"           => "0" ,;
-                              "recargo_equivalencia"     =>  0  ,;
-                              "metodo_pago_codigo"       => "1" ,;
-                              "almacen_codigo"           => "0" ,;
-                              "agente_codigo"            => "0" ,;
-                              "ruta_codigo"              => "0" ,;
-                              "tarifa_codigo"            => "0" ,;
-                              "serie"                    => "A" ,;
-                              "numero"                   => 4   }
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranA )
-
-   hDatosLineaA := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
-
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranB )
-
-   hDatosLineaB := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
-
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-   
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ) )
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ) )
-   
-   ::oController:getResumenView():setEvent( 'painted',;
-      {| self | ;
-         testWaitSeconds( 3 ),;
-         self:getControl( IDCANCEL ):Click() } )
-   
-   ::oController:runConvertAlbaranCompras( aSelected )
+   ::oController:runConvertAlbaranCompras( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera facturas con distintos metodos de pago" )
 
@@ -1012,75 +880,15 @@ RETURN ( nil )
 
 METHOD test_create_distinta_tarifa() CLASS TestConversorDocumentosController
 
-   local aSelected      := {}
+   ::create_albaran( {  "serie"           => "A",;
+                        "numero"          =>  3 } )
 
-   local hDatosLineaA   := {}
-
-   local hDatosLineaB   := {}
+   ::create_albaran( {  "tarifa_codigo"   => "1" ,;
+                        "numero"          =>  4  ,;
+                        "serie"           => "A" } )
+   ::close_resumen_view()
    
-   local hDatosAlbaranA := { "tercero_codigo"           => "0" ,;
-                             "recargo_equivalencia"     =>  0  ,;
-                             "metodo_pago_codigo"       => "0" ,;
-                             "almacen_codigo"           => "0" ,;
-                             "agente_codigo"            => "0" ,;
-                             "ruta_codigo"              => "0" ,;
-                             "tarifa_codigo"            => "0" ,;
-                             "serie"                    => "A" ,;
-                             "numero"                   => 3   }
-
-   local hDatosAlbaranB := { "tercero_codigo"           => "0" ,;
-                             "recargo_equivalencia"     =>  0  ,;
-                             "metodo_pago_codigo"       => "0" ,;
-                             "almacen_codigo"           => "0" ,;
-                             "agente_codigo"            => "0" ,;
-                             "ruta_codigo"              => "0" ,;
-                             "tarifa_codigo"            => "1" ,;
-                             "serie"                    => "A" ,;
-                             "numero"                   => 4   }
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranA )
-
-   hDatosLineaA := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
-
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranB )
-
-   hDatosLineaB := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
-
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-   
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ) )
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ) )
-   
-   ::oController:getResumenView():setEvent( 'painted',;
-      {| self | ;
-         testWaitSeconds( 3 ),;
-         self:getControl( IDCANCEL ):Click() } )
-   
-   ::oController:runConvertAlbaranCompras( aSelected )
+   ::oController:runConvertAlbaranCompras( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "creacion de facturas con dos tarifas diferentes" )
 
@@ -1090,75 +898,16 @@ RETURN ( nil )
 
 METHOD test_create_distinto_recargo() CLASS TestConversorDocumentosController
 
-   local aSelected      := {}
+   ::create_albaran( {  "serie"                    => "A",;
+                        "numero"                   =>  3 } )
 
-   local hDatosLineaA   := {}
+   ::create_albaran( {  "recargo_equivalencia"     =>  1  ,;
+                        "numero"                   =>  4  ,;
+                        "serie"                    => "A" } )
 
-   local hDatosLineaB   := {}
+   ::close_resumen_view()
    
-   local hDatosAlbaranA := { "tercero_codigo"           => "0" ,;
-                             "recargo_equivalencia"     =>  0  ,;
-                             "metodo_pago_codigo"       => "0" ,;
-                             "almacen_codigo"           => "0" ,;
-                             "agente_codigo"            => "0" ,;
-                             "ruta_codigo"              => "0" ,;
-                             "tarifa_codigo"            => "0" ,;
-                             "serie"                    => "A" ,;
-                             "numero"                   =>  3   }
-
-   local hDatosAlbaranB := { "tercero_codigo"           => "0" ,;
-                             "recargo_equivalencia"     =>  1  ,;
-                             "metodo_pago_codigo"       => "0" ,;
-                             "almacen_codigo"           => "0" ,;
-                             "agente_codigo"            => "0" ,;
-                             "ruta_codigo"              => "0" ,;
-                             "tarifa_codigo"            => "0" ,;
-                             "serie"                    => "A" ,;
-                             "numero"                   =>  4   }
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranA )
-
-   hDatosLineaA := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
-
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranB )
-
-   hDatosLineaB := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
-
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-   
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ) )
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ) )
-   
-   ::oController:getResumenView():setEvent( 'painted',;
-      {| self | ;
-         testWaitSeconds( 3 ),;
-         self:getControl( IDCANCEL ):Click() } )
-   
-   ::oController:runConvertAlbaranCompras( aSelected )
+   ::oController:runConvertAlbaranCompras( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera facturas con distintos recargos de equivalencia" )
 
@@ -1168,324 +917,77 @@ RETURN ( nil )
 
 METHOD test_create_distinta_serie() CLASS TestConversorDocumentosController
 
-   local aSelected      := {}
+   ::create_albaran( {  "serie"     => "A",;
+                        "numero"    =>  3 } )
 
-   local hDatosLineaA   := {}
+   ::create_albaran( {   "serie"    => "B",;
+                         "numero"   =>  5 } )
 
-   local hDatosLineaB   := {}
-   
-   local hDatosAlbaranA := { "tercero_codigo"           => "0" ,;
-                             "recargo_equivalencia"     =>  0  ,;
-                             "metodo_pago_codigo"       => "0" ,;
-                             "almacen_codigo"           => "0" ,;
-                             "agente_codigo"            => "0" ,;
-                             "ruta_codigo"              => "0" ,;
-                             "tarifa_codigo"            => "0" ,;
-                             "serie"                    => "A" ,;
-                             "numero"                   =>  3   }
-
-   local hDatosAlbaranB := { "tercero_codigo"           => "0" ,;
-                             "recargo_equivalencia"     =>  1  ,;
-                             "metodo_pago_codigo"       => "0" ,;
-                             "almacen_codigo"           => "0" ,;
-                             "agente_codigo"            => "0" ,;
-                             "ruta_codigo"              => "0" ,;
-                             "tarifa_codigo"            => "0" ,;
-                             "serie"                    => "B" ,;
-                             "numero"                   =>  4   }
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranA )
-
-   hDatosLineaA := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
-
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranB )
-
-   hDatosLineaB := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "B", 4 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
-
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-   
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ) )
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "B", 4 ) )
+   ::close_resumen_view()
   
-   ::oController:getResumenView():setEvent( 'painted',;
-      {| self | ;
-         testWaitSeconds( 3 ),;
-         self:getControl( IDCANCEL ):Click() } )
-   
-   ::oController:runConvertAlbaranCompras( aSelected )
+   ::oController:runConvertAlbaranCompras( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera factras con distintas series" )
 
 RETURN ( nil )
 
-
 //---------------------------------------------------------------------------//
 
-METHOD test_create_distinto_descuento() CLASS TestConversorDocumentosController
+METHOD test_create_con_descuento() CLASS TestConversorDocumentosController
 
-   local aSelected         := {}
+   ::create_albaran( {  "serie"        => "A",;
+                        "numero"       =>  3 } )
 
-   local hDatosLineaA      := {}
+   SQLAlbaranesComprasDescuentosModel():test_create_descuento( { "parent_uuid" => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ) } )
 
-   local hDatosLineaB      := {}
+   ::create_albaran( {  "numero"       =>  4 ,;
+                        "serie"        => "A" } )
 
-   local hDatosDescuentos  := {}
-   
-   local hDatosAlbaranA    := { "tercero_codigo"           => "0" ,;
-                                "recargo_equivalencia"     =>  0  ,;
-                                "metodo_pago_codigo"       => "0" ,;
-                                "almacen_codigo"           => "0" ,;
-                                "agente_codigo"            => "0" ,;
-                                "ruta_codigo"              => "0" ,;
-                                "tarifa_codigo"            => "0" ,;
-                                "serie"                    => "A" ,;
-                                "numero"                   =>  3   }
-
-   local hDatosAlbaranB    := { "tercero_codigo"           => "0" ,;
-                                "recargo_equivalencia"     =>  1  ,;
-                                "metodo_pago_codigo"       => "0" ,;
-                                "almacen_codigo"           => "0" ,;
-                                "agente_codigo"            => "0" ,;
-                                "ruta_codigo"              => "0" ,;
-                                "tarifa_codigo"            => "0" ,;
-                                "serie"                    => "A" ,;
-                                "numero"                   =>  4   }
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranA )
-
-   hDatosLineaA := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
-
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-
-   hDatosDescuentos := { "parent_uuid"           => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 )  ,;
-                         "nombre"                => "Descuento 1" ,;
-                         "descuento"             => 15            }
-
-   SQLAlbaranesComprasDescuentosModel():test_create_descuento( hDatosDescuentos )
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranB )
-
-   hDatosLineaB := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
-
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-   
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ) )
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ) )
+   ::close_resumen_view()
   
-   ::oController:getResumenView():setEvent( 'painted',;
-      {| self | ;
-         testWaitSeconds( 3 ),;
-         self:getControl( IDCANCEL ):Click() } )
-   
-   ::oController:runConvertAlbaranCompras( aSelected )
+   ::oController:runConvertAlbaranCompras( ::aSelected )
 
-   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "test ::Assert():equals on small integers" )
+   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera 2 facturas con distintos descuentos" )
 
 RETURN ( nil )
-
 
 //---------------------------------------------------------------------------//
 
 METHOD test_create_iguales_y_distinto() CLASS TestConversorDocumentosController
 
-   local aSelected         := {}
+   ::create_albaran( {  "serie"           => "A",;
+                        "numero"          =>  3 } )
 
-   local hDatosLineaA      := {}
+   ::create_albaran( {  "tercero_codigo"  => "1" ,;
+                        "numero"          =>  4  ,;
+                        "serie"           => "A" } )
 
-   local hDatosLineaB      := {}
+   ::create_albaran( {  "serie"           => "A",;
+                        "numero"          =>  5 } )
 
-   local hDatosLineaC      := {}
+   ::close_resumen_view()
    
-   local hDatosAlbaranA    := { "tercero_codigo"           => "0" ,;
-                                "recargo_equivalencia"     =>  0  ,;
-                                "metodo_pago_codigo"       => "0" ,;
-                                "almacen_codigo"           => "0" ,;
-                                "agente_codigo"            => "0" ,;
-                                "ruta_codigo"              => "0" ,;
-                                "tarifa_codigo"            => "0" ,;
-                                "serie"                    => "A" ,;
-                                "numero"                   =>  3   }
+   ::oController:runConvertAlbaranCompras( ::aSelected )
 
-   local hDatosAlbaranB    := { "tercero_codigo"           => "1" ,;
-                                "recargo_equivalencia"     =>  1  ,;
-                                "metodo_pago_codigo"       => "0" ,;
-                                "almacen_codigo"           => "0" ,;
-                                "agente_codigo"            => "0" ,;
-                                "ruta_codigo"              => "0" ,;
-                                "tarifa_codigo"            => "0" ,;
-                                "serie"                    => "A" ,;
-                                "numero"                   =>  4   }
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranA )
-
-   hDatosLineaA := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
-
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranB )
-
-   hDatosLineaB := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
-
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-   
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ) )
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ) )
-  
-   ::oController:getResumenView():setEvent( 'painted',;
-      {| self | ;
-         testWaitSeconds( 3 ),;
-         self:getControl( IDCANCEL ):Click() } )
-   
-   ::oController:runConvertAlbaranCompras( aSelected )
-
-    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "test ::Assert():equals on small integers" )
+   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera 2 facturas a traves de 3 albaranes" )
 
 RETURN ( nil )
-
 
 //---------------------------------------------------------------------------//
 
 METHOD test_create_iguales() CLASS TestConversorDocumentosController
 
-   local aSelected      := {}
+   ::create_albaran( {  "serie"           => "A",;
+                        "numero"          =>  3 } )
 
-   local hDatosLineaA   := {}
+   ::create_albaran( {  "serie"           => "A",;
+                        "numero"          =>  4 } )
 
-   local hDatosLineaB   := {}
+   ::close_resumen_view()
    
-   local hDatosAlbaranA := { "tercero_codigo"           => "0" ,;
-                             "recargo_equivalencia"     =>  0  ,;
-                             "metodo_pago_codigo"       => "0" ,;
-                             "almacen_codigo"           => "0" ,;
-                             "agente_codigo"            => "0" ,;
-                             "ruta_codigo"              => "0" ,;
-                             "tarifa_codigo"            => "0" ,;
-                             "serie"                    => "A" ,;
-                             "numero"                   =>  3   }
+   ::oController:runConvertAlbaranCompras( ::aSelected )
 
-   local hDatosAlbaranB := { "tercero_codigo"           => "0" ,;
-                             "recargo_equivalencia"     =>  0  ,;
-                             "metodo_pago_codigo"       => "0" ,;
-                             "almacen_codigo"           => "0" ,;
-                             "agente_codigo"            => "0" ,;
-                             "ruta_codigo"              => "0" ,;
-                             "tarifa_codigo"            => "0" ,;
-                             "serie"                    => "A" ,;
-                             "numero"                   =>  4   }
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranA )
-
-   hDatosLineaA := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
-
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-
-   SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranB )
-
-   hDatosLineaB := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
-
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-   
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ) )
-   aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ) )
-   
-   ::oController:getResumenView():setEvent( 'painted',;
-      {| self | ;
-         testWaitSeconds( 3 ),;
-         self:getControl( IDCANCEL ):Click() } )
-   
-   ::oController:runConvertAlbaranCompras( aSelected )
-
-   ::Assert():equals( 1, SQLFacturasComprasModel():countFacturas(), "test ::Assert():equals on small integers" )
+   ::Assert():equals( 1, SQLFacturasComprasModel():countFacturas(), "genera 1 factura a traves de 2 albaranes" )
 
 RETURN ( nil )
 

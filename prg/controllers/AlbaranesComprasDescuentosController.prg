@@ -67,9 +67,16 @@ END CLASS
 
 METHOD test_create_descuento( hDatosDescuento ) CLASS SQLAlbaranesComprasDescuentosModel
 
- ::insertBuffer( ::loadBlankBuffer( hDatosDescuento ) )
+   local hBuffer := ::loadBlankBuffer( {  "nombre"                => "Descuento 1" ,;
+                                          "descuento"             => 15             } )  
 
-RETURN ( nil )
+ if hb_ishash( hDatosDescuento )
+      heval( hDatosDescuento, {|k,v| hset( hBuffer, k, v) } )
+   end if
+   
+   ::insertBuffer( hBuffer )
+
+RETURN( nil )
 
 //---------------------------------------------------------------------------//
 

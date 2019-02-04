@@ -44,9 +44,26 @@ END CLASS
 
 METHOD create_linea_albaran_compras( hDatosLinea )
 
-   ::insertBuffer( ::loadBlankBuffer( hDatosLinea ) )
+   local hBuffer := ::loadBlankBuffer( {  "iva"                      => 21                         ,;
+                                          "articulo_codigo"          => "0"                        ,;
+                                          "articulo_precio"          => 100                        ,;
+                                          "descuento"                => 2                          ,;
+                                          "recargo_equivalencia"     => 5                          ,;
+                                          "almacen_codigo"           => "0"                        ,;
+                                          "ubicacion_codigo"         => "0"                        ,;
+                                          "agente_codigo"            => "0"                        ,;
+                                          "unidad_medicion_codigo"   => "UDS"                      ,;
+                                          "articulo_nombre"          => "Articulo con descuentos"  } )
+
+   if hb_ishash( hDatosLinea )
+      heval( hDatosLinea, {|k,v| hset( hBuffer, k, v) } )
+   end if
+
+   ::insertBuffer( hBuffer )
 
 RETURN( nil )
+
+//---------------------------------------------------------------------------//
 
 #endif
 

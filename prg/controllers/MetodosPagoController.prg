@@ -431,7 +431,7 @@ CLASS SQLMetodoPagoModel FROM SQLCompanyModel
 
    METHOD test_create_con_plazos()
 
-   METHOD test_create_con_plazos_con_codigo( cCodigo, cNombre, nPlazos, primerPlazo, entrePlazos, ultimoPlazo )
+   METHOD test_create_con_plazos_con_hash( hDatosMetodo )
 
 #endif
 
@@ -531,19 +531,27 @@ RETURN ( ::insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_create_con_plazos_con_codigo( cCodigo, cNombre, nPlazos, primerPlazo, entrePlazos, ultimoPlazo ) CLASS SQLMetodoPagoModel
+METHOD test_create_con_plazos_con_hash( hDatosMetodo ) CLASS SQLMetodoPagoModel
 
    local hBuffer  := ::loadBlankBuffer()
 
-   hset( hBuffer, "codigo", cCodigo )
-   hset( hBuffer, "nombre", cNombre )
+   hset( hBuffer, "codigo", "0" )
+   hset( hBuffer, "nombre", "metodo pago" )
    hset( hBuffer, "cobrado", 2 )
-   hset( hBuffer, "numero_plazos", nPlazos )
-   hset( hBuffer, "primer_plazo", primerPlazo )
-   hset( hBuffer, "entre_plazo", entrePlazos )
-   hset( hBuffer, "ultimo_plazo", ultimoPlazo )
+   hset( hBuffer, "numero_plazos", 3 )
+   hset( hBuffer, "primer_plazo", 10 )
+   hset( hBuffer, "entre_plazo", 15 )
+   hset( hBuffer, "ultimo_plazo", 20 )
 
-RETURN ( ::insertBuffer( hBuffer ) )
+   if !empty( hDatosMetodo )
+   if hb_ishash( hDatosMetodo )
+      heval( hDatosMetodo, {|k,v| hset( hBuffer, k, v) } )
+   end if
+ end if
+
+::insertBuffer( hBuffer )
+
+RETURN ( nil )
 
 #endif
 
