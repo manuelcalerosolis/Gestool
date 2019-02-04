@@ -97,8 +97,10 @@ USER FUNCTION hbunit_test()
    oSuite:addTest( TestMovimientoAlmacenController():New() )
 
    oSuite:addTest( TestStocksRepository():New() )
+   
+   oSuite:addTest( TestConversorDocumentosController():New() )
 
-   oSuite:setCategories( { "stocks" } )
+   oSuite:setCategories( { "conversor_documento" } )
 
    oRunner:run( oSuite )
 

@@ -223,7 +223,9 @@ CLASS SQLRutasModel FROM SQLCompanyModel
 
    #ifdef __TEST__
 
-   METHOD test_create_ruta( cCodigo )
+   METHOD test_create_ruta_principal()
+
+   METHOD test_create_ruta_alternativa()
 
    #endif
 
@@ -250,16 +252,27 @@ METHOD getColumns() CLASS SQLRutasModel
 
 RETURN ( ::hColumns )
 
-//---------------------------------------------------------------------------//
 #ifdef __TEST__
 
- METHOD test_create_ruta( cCodigo ) CLASS SQLRutasModel
+//---------------------------------------------------------------------------//
 
- RETURN ( ::insertBuffer( ;
-            ::loadBlankBuffer( { "codigo"       => quoted( cCodigo ),;
-                                 "nombre"       => "ruta test "+ quoted( cCodigo ) } ) ) )
+METHOD test_create_ruta_principal( cCodigo ) CLASS SQLRutasModel
 
-  #endif
+RETURN   (  ::insertBuffer( ;
+               ::loadBlankBuffer( { "codigo"       => '0',;
+                                    "nombre"       => 'Ruta principal' } ) ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_ruta_alternativa( cCodigo ) CLASS SQLRutasModel
+
+RETURN   (  ::insertBuffer( ;
+               ::loadBlankBuffer( { "codigo"       => '1',;
+                                    "nombre"       => 'Ruta alternativa' } ) ) )
+
+//---------------------------------------------------------------------------//
+
+#endif
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

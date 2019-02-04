@@ -946,6 +946,12 @@ METHOD test_calculo_stock_con_propiedades() CLASS TestStocksRepository
 
    ::Assert():equals( 1, nStock, "test comprobación de stocks por almacén en consolidacion" )
 
+   ::oTestAlbaranesComprasController:test_dialogo_articulo_con_propiedades()
+
+   nStock   := StocksRepository():selectStockWhereCodigoAlmacenLote( '2', '0', '0', '1234' )
+
+   ::Assert():equals( 2, nStock, "test comprobación de stocks por almacén en albaranes de compras" )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

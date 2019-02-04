@@ -132,7 +132,7 @@ CLASS TestAlbaranesComprasController FROM TestOperacionesComercialesController
 
    METHOD test_dialogo_con_articulo_lote()
 
-   METHOD test_dialogo_con_articulo_combinacion() 
+   METHOD test_dialogo_articulo_con_propiedades() 
 
    METHOD getController()              INLINE ( if( empty( ::oController ), ::oController := AlbaranesComprasController():New(), ), ::oController ) 
 
@@ -222,7 +222,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_con_articulo_combinacion() CLASS TestAlbaranesComprasController
+METHOD test_dialogo_articulo_con_propiedades() CLASS TestAlbaranesComprasController
 
    TestArticulosController():test_dialog_append_con_caracteristicas()
 

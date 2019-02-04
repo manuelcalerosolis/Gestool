@@ -690,7 +690,7 @@ METHOD test_create_proveedor_con_plazos( cCodigo ) CLASS SQLTercerosModel
 
    hset( hBuffer, "uuid", uuid )
    hset( hBuffer, "codigo", quoted( cCodigo ) )
-   hset( hBuffer, "nombre", "Proveedor "+ quoted(cCodigo)  )
+   hset( hBuffer, "nombre", "Proveedor "+ quoted( cCodigo )  )
    hset( hBuffer, "tipo", "Proveedor" )
    hset( hBuffer, "dni", "77777777A" )
    hset( hBuffer, "metodo_pago_codigo", "2" )

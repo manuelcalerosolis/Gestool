@@ -663,10 +663,12 @@ CLASS TestConversorDocumentosController FROM TestCase
 
    DATA oController
 
+   DATA aCategories                    INIT { "all", "conversor_documento" }
+
    DATA oAlbaranesComprasController
 
    METHOD getAlbaranesComprasController();
-                                    INLINE ( if( empty( ::oAlbaranesComprasController ), ::oAlbaranesComprasController := AlbaranesComprasController():New( self ), ), ::oAlbaranesComprasController )
+                                       INLINE ( if( empty( ::oAlbaranesComprasController ), ::oAlbaranesComprasController := AlbaranesComprasController():New( self ), ), ::oAlbaranesComprasController )
 
    METHOD beforeClass() 
 
@@ -696,6 +698,14 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
+METHOD beforeClass() CLASS TestConversorDocumentosController
+
+   ::oController  := ConversorDocumentosController():New( ::getAlbaranesComprasController() )  
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD afterClass() CLASS TestConversorDocumentosController
 
    ::oController:End()
@@ -703,14 +713,6 @@ METHOD afterClass() CLASS TestConversorDocumentosController
    if !empty( ::oAlbaranesComprasController )
       ::oAlbaranesComprasController:End()
    end if
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD beforeClass() CLASS TestConversorDocumentosController
-
-   ::oController  := ConversorDocumentosController():New( ::getAlbaranesComprasController() )  
 
 RETURN ( nil )
 
@@ -750,11 +752,8 @@ METHOD Before() CLASS TestConversorDocumentosController
 
    SQLConversorDocumentosModel():truncateTable()
 
-/*fin de truncates*/
-/*creaccion de datos necesarios*/
-
-   SQLMetodoPagoModel():test_create_con_plazos_con_codigo( "0", "30 60 90", 3, 15, 15, 20 )
-   SQLMetodoPagoModel():test_create_con_plazos_con_codigo( "1", "5 plazos", 5, 10, 15, 20 )
+   SQLMetodoPagoModel():test_create_contado() 
+   SQLMetodoPagoModel():test_create_reposicion() 
 
    SQLTiposIvaModel():test_create_iva_al_21()
 
@@ -762,8 +761,8 @@ METHOD Before() CLASS TestConversorDocumentosController
 
    SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_principal() )
 
-   SQLRutasModel():test_create_ruta(0)
-   SQLRutasModel():test_create_ruta(1)
+   SQLRutasModel():test_create_ruta_principal()
+   SQLRutasModel():test_create_ruta_alternativa()
 
    SQLArticulosModel():test_create_precio_con_descuentos()
 
@@ -774,7 +773,6 @@ METHOD Before() CLASS TestConversorDocumentosController
 
    SQLTercerosModel():test_create_proveedor_con_plazos( 0 )
    SQLTercerosModel():test_create_proveedor_con_plazos( 1 )
-
 
 RETURN ( nil )
 
@@ -810,20 +808,20 @@ METHOD test_create_distinto_tercero() CLASS TestConversorDocumentosController
 
    SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranA )
 
-   hDatosLineaA := { "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 )  ,;
-                     "iva"                      => 21                         ,;
-                     "articulo_codigo"          => "0"                        ,;
-                     "articulo_precio"          => 100                        ,;
-                     "descuento"                => 2                          ,;
-                     "recargo_equivalencia"     => 5                          ,;
-                     "almacen_codigo"           => "0"                        ,;
-                     "ubicacion_codigo"         => "0"                        ,;
-                     "agente_codigo"            => "0"                        ,;
-                     "unidad_medicion_codigo"   => "UDS"                      ,;
-                     "articulo_nombre"          => "Articulo con descuentos"  }
+   hDatosLineaA   := {  "parent_uuid"              => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 )  ,;
+                        "iva"                      => 21                         ,;
+                        "articulo_codigo"          => "0"                        ,;
+                        "articulo_precio"          => 100                        ,;
+                        "descuento"                => 2                          ,;
+                        "recargo_equivalencia"     => 5                          ,;
+                        "almacen_codigo"           => "0"                        ,;
+                        "ubicacion_codigo"         => "0"                        ,;
+                        "agente_codigo"            => "0"                        ,;
+                        "unidad_medicion_codigo"   => "UDS"                      ,;
+                        "articulo_nombre"          => "Articulo con descuentos"  }
 
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
+   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
+   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
 
    SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranB )
 
@@ -839,8 +837,8 @@ METHOD test_create_distinto_tercero() CLASS TestConversorDocumentosController
                      "unidad_medicion_codigo"   => "UDS"                      ,;
                      "articulo_nombre"          => "Articulo con descuentos"  }
 
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
+   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
+   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
    
    aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ) )
    aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ) )
@@ -852,7 +850,7 @@ METHOD test_create_distinto_tercero() CLASS TestConversorDocumentosController
    
    ::oController:runConvertAlbaranCompras( aSelected )
 
-   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "test ::Assert():equals on small integers" )
+   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "Genera dos facturas con distintos terceros" )
 
 RETURN ( nil )
 
@@ -900,8 +898,8 @@ METHOD test_create_distinta_ruta() CLASS TestConversorDocumentosController
                      "unidad_medicion_codigo"   => "UDS"                      ,;
                      "articulo_nombre"          => "Articulo con descuentos"  }
 
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
+   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
+   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
 
    SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranB )
 
@@ -917,8 +915,8 @@ METHOD test_create_distinta_ruta() CLASS TestConversorDocumentosController
                      "unidad_medicion_codigo"   => "UDS"                      ,;
                      "articulo_nombre"          => "Articulo con descuentos"  }
 
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
+   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
+   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
    
    aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ) )
    aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ) )
@@ -930,7 +928,7 @@ METHOD test_create_distinta_ruta() CLASS TestConversorDocumentosController
    
    ::oController:runConvertAlbaranCompras( aSelected )
 
-   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "test ::Assert():equals on small integers" )
+   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera dos facturas con distintas rutas" )
 
 RETURN ( nil )
 
@@ -944,25 +942,25 @@ METHOD test_create_distinto_metodo_pago() CLASS TestConversorDocumentosControlle
 
    local hDatosLineaB   := {}
    
-   local hDatosAlbaranA := { "tercero_codigo"           => "0" ,;
-                             "recargo_equivalencia"     =>  0  ,;
-                             "metodo_pago_codigo"       => "0" ,;
-                             "almacen_codigo"           => "0" ,;
-                             "agente_codigo"            => "0" ,;
-                             "ruta_codigo"              => "0" ,;
-                             "tarifa_codigo"            => "0" ,;
-                             "serie"                    => "A" ,;
-                             "numero"                   => 3   }
+   local hDatosAlbaranA := {  "tercero_codigo"           => "0" ,;
+                              "recargo_equivalencia"     =>  0  ,;
+                              "metodo_pago_codigo"       => "0" ,;
+                              "almacen_codigo"           => "0" ,;
+                              "agente_codigo"            => "0" ,;
+                              "ruta_codigo"              => "0" ,;
+                              "tarifa_codigo"            => "0" ,;
+                              "serie"                    => "A" ,;
+                              "numero"                   => 3   }
 
-   local hDatosAlbaranB := { "tercero_codigo"           => "0" ,;
-                             "recargo_equivalencia"     =>  0  ,;
-                             "metodo_pago_codigo"       => "1" ,;
-                             "almacen_codigo"           => "0" ,;
-                             "agente_codigo"            => "0" ,;
-                             "ruta_codigo"              => "0" ,;
-                             "tarifa_codigo"            => "0" ,;
-                             "serie"                    => "A" ,;
-                             "numero"                   => 4   }
+   local hDatosAlbaranB := {  "tercero_codigo"           => "0" ,;
+                              "recargo_equivalencia"     =>  0  ,;
+                              "metodo_pago_codigo"       => "1" ,;
+                              "almacen_codigo"           => "0" ,;
+                              "agente_codigo"            => "0" ,;
+                              "ruta_codigo"              => "0" ,;
+                              "tarifa_codigo"            => "0" ,;
+                              "serie"                    => "A" ,;
+                              "numero"                   => 4   }
 
    SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranA )
 
@@ -978,8 +976,8 @@ METHOD test_create_distinto_metodo_pago() CLASS TestConversorDocumentosControlle
                      "unidad_medicion_codigo"   => "UDS"                      ,;
                      "articulo_nombre"          => "Articulo con descuentos"  }
 
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
+   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
+   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
 
    SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranB )
 
@@ -995,8 +993,8 @@ METHOD test_create_distinto_metodo_pago() CLASS TestConversorDocumentosControlle
                      "unidad_medicion_codigo"   => "UDS"                      ,;
                      "articulo_nombre"          => "Articulo con descuentos"  }
 
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
+   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
+   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
    
    aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ) )
    aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ) )
@@ -1008,7 +1006,7 @@ METHOD test_create_distinto_metodo_pago() CLASS TestConversorDocumentosControlle
    
    ::oController:runConvertAlbaranCompras( aSelected )
 
-   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "test ::Assert():equals on small integers" )
+   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera facturas con distintos metodos de pago" )
 
 RETURN ( nil )
 
@@ -1056,8 +1054,8 @@ METHOD test_create_distinta_tarifa() CLASS TestConversorDocumentosController
                      "unidad_medicion_codigo"   => "UDS"                      ,;
                      "articulo_nombre"          => "Articulo con descuentos"  }
 
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
+   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
+   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaA )
 
    SQLAlbaranesComprasModel():create_albaran_compras( hDatosAlbaranB )
 
@@ -1073,8 +1071,8 @@ METHOD test_create_distinta_tarifa() CLASS TestConversorDocumentosController
                      "unidad_medicion_codigo"   => "UDS"                      ,;
                      "articulo_nombre"          => "Articulo con descuentos"  }
 
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
-      SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
+   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
+   SQLAlbaranesComprasLineasModel():create_linea_albaran_compras( hDatosLineaB )
    
    aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 3 ) )
    aadd( aSelected, SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ) )
@@ -1086,7 +1084,7 @@ METHOD test_create_distinta_tarifa() CLASS TestConversorDocumentosController
    
    ::oController:runConvertAlbaranCompras( aSelected )
 
-   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "test ::Assert():equals on small integers" )
+   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "creacion de facturas con dos tarifas diferentes" )
 
 RETURN ( nil )
 
@@ -1164,7 +1162,7 @@ METHOD test_create_distinto_recargo() CLASS TestConversorDocumentosController
    
    ::oController:runConvertAlbaranCompras( aSelected )
 
-   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "test ::Assert():equals on small integers" )
+   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera facturas con distintos recargos de equivalencia" )
 
 RETURN ( nil )
 
@@ -1242,7 +1240,7 @@ METHOD test_create_distinta_serie() CLASS TestConversorDocumentosController
    
    ::oController:runConvertAlbaranCompras( aSelected )
 
-   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "test ::Assert():equals on small integers" )
+   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera factras con distintas series" )
 
 RETURN ( nil )
 
