@@ -16,4 +16,5 @@
 
 
 
-#define bancos  65535
+
+#define Rangos  65535

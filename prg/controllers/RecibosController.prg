@@ -529,11 +529,17 @@ CLASS SQLRecibosModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
-   METHOD getDiferencia( uuidRecibo ) 
+   METHOD getDiferencia( uuidRecibo )
+
+   METHOD countRecibos() 
+
+   #ifdef __TEST__
 
    METHOD test_create_recibo()
 
    METHOD test_create_recibo_con_parent( uuid, parent_uuid )
+
+   #endif
 
 END CLASS
 
@@ -646,6 +652,26 @@ RETURN ( nImporte )
 
 //---------------------------------------------------------------------------//
 
+METHOD countRecibos() CLASS SQLRecibosModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+      SELECT 
+         COUNT(*)  
+      FROM %1$s
+       
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql, ::getTableName() )
+
+RETURN ( ::getDatabase():getValue( cSql, 0 ) )
+
+//---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
 METHOD test_create_recibo( uuid ) CLASS SQLRecibosModel
 
    local hBuffer  := ::loadBlankBuffer()
@@ -667,6 +693,8 @@ METHOD test_create_recibo_con_parent( parent_uuid ) CLASS SQLRecibosModel
    hset( hBuffer, "concepto", "Recibo test" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
+
+#endif
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

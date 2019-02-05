@@ -31,7 +31,9 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    DATA oConvertirView
 
-   DATA hProcesedAlbaran               INIT{}
+   DATA oConvertirAlbaranVentasView
+
+   DATA hProcesedAlbaran               INIT {}
 
    DATA lDescuento                     INIT .f.
 
@@ -99,6 +101,8 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
    METHOD getConvertirView()           INLINE ( if( empty( ::oConvertirView ), ::oConvertirView := ConversorDocumentoView():New( self ), ), ::oConvertirView )
 
    METHOD getResumenView()             INLINE ( if( empty( ::oResumenView ), ::oResumenView := ConversorResumenView():New( self ), ), ::oResumenView )
+
+   METHOD getAlbaranVentasView()      INLINE ( if( empty( ::oConvertirAlbaranVentasView ), ::oConvertirAlbaranVentasView := ConvertirAlbaranVentasView():New( self ), ), ::oConvertirAlbaranVentasView )
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesBrowseView():New( self ), ), ::oBrowseView )
 
@@ -304,13 +308,7 @@ METHOD convertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
       if ::isAlbaranNotConverted( hAlbaran ) 
 
          ::uuidDocumentoOrigen   := hget( hAlbaran, "uuid" )
-
-         if (::getController():getDiscountController():getModel():countWhere( { "parent_uuid" => hget( hAlbaran, "uuid" ) } ) ) > 0
-            ::lDescuento := .t.
-         else 
-            ::lDescuento := .f.
-         end if 
-
+         
          if ::isAlbaranEquals( hAlbaran )
 
             ::addHeader()
@@ -330,6 +328,12 @@ METHOD convertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
          end if
 
          ::hProcesedAlbaran      := hAlbaran
+
+         if (::getController():getDiscountController():getModel():countWhere( { "parent_uuid" => hget( hAlbaran, "uuid" ) } ) ) > 0
+            ::lDescuento := .t.
+         else 
+            ::lDescuento := .f.
+         end if
 
       end if
 
@@ -359,11 +363,11 @@ RETURN ( ::aConvert )
 
 METHOD isAlbaranEquals( hAlbaran ) CLASS ConversorDocumentosController
 
-   if !( hb_ishash( ::hProcesedAlbaran ) )
-      RETURN ( .f. )
-   end if 
-
    if ::lDescuento
+      RETURN ( .f. )
+   end if
+
+   if !( hb_ishash( ::hProcesedAlbaran ) )
       RETURN ( .f. )
    end if 
 
@@ -461,7 +465,7 @@ METHOD Activate() CLASS ConversorDocumentoView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_tags_48" ;
+      RESOURCE    "gc_convertir_documento_48" ;
       TRANSPARENT ;
       OF          ::oDialog
 
@@ -497,6 +501,52 @@ METHOD Activating() CLASS ConversorDocumentoView
 
 RETURN ( nil )
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS ConvertirAlbaranVentasView FROM SQLBaseView
+                                          
+   METHOD Activate()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS ConvertirAlbaranVentasView
+
+   DEFINE DIALOG  ::oDialog;
+      RESOURCE    "CONVERTIR_ALBARAN_VENTAS"; 
+      TITLE       "Convertir albaran de ventas a factura de ventas"
+
+   REDEFINE BITMAP ::oBitmap ;
+      ID          900 ;
+      RESOURCE    "gc_convertir_documento_48" ;
+      TRANSPARENT ;
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      PROMPT      "Convertir a factura de ventas" ;
+      ID          800 ;
+      FONT        oFontBold() ;
+      OF          ::oDialog
+
+   
+   // Botones------------------------------------------------------------------
+
+   ApoloBtnFlat():Redefine( IDOK, {|| ::oDialog:end( IDOK ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
+   
+   ::oDialog:Activate( , , , .t. )
+
+RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -706,7 +756,9 @@ CLASS TestConversorDocumentosController FROM TestCase
 
    METHOD test_create_distinta_serie()
 
-   METHOD test_create_con_descuento()
+   METHOD test_create_con_a_descuento()
+
+   METHOD test_create_con_b_descuento()
 
    METHOD test_create_iguales_y_distinto()
 
@@ -757,6 +809,9 @@ METHOD Before() CLASS TestConversorDocumentosController
       SQLFacturasComprasLineasModel():truncateTable()
       SQLFacturasComprasDescuentosModel():truncateTable()
 
+   SQLConversorDocumentosModel():truncateTable()
+   SQLRecibosModel():truncateTable()
+
    SQLArticulosTarifasModel():truncateTable()
 
    SQLAgentesModel():truncateTable()
@@ -791,7 +846,11 @@ METHOD Before() CLASS TestConversorDocumentosController
    SQLTercerosModel():test_create_proveedor_con_plazos( 0 )
    SQLTercerosModel():test_create_proveedor_con_plazos( 1 )
 
-   ::aSelected :={}
+   ::aSelected := {}
+
+   ::oController:hProcesedAlbaran := {}
+
+   ::oController:lDescuento := .f.
 
 RETURN ( nil )
 
@@ -838,6 +897,7 @@ METHOD test_create_distinto_tercero() CLASS TestConversorDocumentosController
    ::oController:runConvertAlbaranCompras( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "Genera dos facturas con distintos terceros" )
+   ::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con distintos terceros" )
 
 RETURN ( nil )
 
@@ -857,6 +917,7 @@ METHOD test_create_distinta_ruta() CLASS TestConversorDocumentosController
    ::oController:runConvertAlbaranCompras( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera dos facturas con distintas rutas" )
+   ::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con distintas rutas" )
 
 RETURN ( nil )
 
@@ -875,6 +936,7 @@ METHOD test_create_distinto_metodo_pago() CLASS TestConversorDocumentosControlle
    ::oController:runConvertAlbaranCompras( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera facturas con distintos metodos de pago" )
+   ::Assert():equals( 8, SQLRecibosModel():countRecibos(), "Genera 8 recibos a traves de 2 albaranes con distintos metodos de pago" )
 
 RETURN ( nil )
 
@@ -893,6 +955,7 @@ METHOD test_create_distinta_tarifa() CLASS TestConversorDocumentosController
    ::oController:runConvertAlbaranCompras( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "creacion de facturas con dos tarifas diferentes" )
+   ::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con dos tarifas diferentes" )
 
 RETURN ( nil )
 
@@ -912,6 +975,7 @@ METHOD test_create_distinto_recargo() CLASS TestConversorDocumentosController
    ::oController:runConvertAlbaranCompras( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera facturas con distintos recargos de equivalencia" )
+   ::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con distintos recargos de equivalencia" )
 
 RETURN ( nil )
 
@@ -930,12 +994,13 @@ METHOD test_create_distinta_serie() CLASS TestConversorDocumentosController
    ::oController:runConvertAlbaranCompras( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera factras con distintas series" )
+   ::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con distintas series" )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_create_con_descuento() CLASS TestConversorDocumentosController
+METHOD test_create_con_a_descuento() CLASS TestConversorDocumentosController
 
    ::create_albaran( {  "serie"        => "A",;
                         "numero"       =>  3 } )
@@ -949,7 +1014,30 @@ METHOD test_create_con_descuento() CLASS TestConversorDocumentosController
   
    ::oController:runConvertAlbaranCompras( ::aSelected )
 
-   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera 2 facturas con distintos descuentos" )
+   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera 2 facturas con descuento en el primero" )
+   ::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con descuento en el primero" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_con_b_descuento() CLASS TestConversorDocumentosController
+
+   ::create_albaran( {  "serie"        => "A",;
+                        "numero"       =>  3 } )
+
+
+   ::create_albaran( {  "numero"       =>  4 ,;
+                        "serie"        => "A" } )
+
+   SQLAlbaranesComprasDescuentosModel():test_create_descuento( { "parent_uuid" => SQLAlbaranesComprasModel():test_get_uuid_albaran_compras( "A", 4 ) } )
+
+   ::close_resumen_view()
+  
+   ::oController:runConvertAlbaranCompras( ::aSelected )
+
+   ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera 2 facturas con descuentos en el segundo" )
+   ::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con descuento en el segundo" )
 
 RETURN ( nil )
 
@@ -972,6 +1060,7 @@ METHOD test_create_iguales_y_distinto() CLASS TestConversorDocumentosController
    ::oController:runConvertAlbaranCompras( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera 2 facturas a traves de 3 albaranes" )
+   ::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 3 albaranes" )
 
 RETURN ( nil )
 
@@ -989,7 +1078,8 @@ METHOD test_create_iguales() CLASS TestConversorDocumentosController
    
    ::oController:runConvertAlbaranCompras( ::aSelected )
 
-   ::Assert():equals( 1, SQLFacturasComprasModel():countFacturas(), "genera 1 factura a traves de 2 albaranes" )
+   ::Assert():equals( 1, SQLFacturasComprasModel():countFacturas(), "genera 1 factura a traves de 2 albaranes iguales" )
+   ::Assert():equals( 3, SQLRecibosModel():countRecibos(), "Genera 3 recibos a traves de 2 albaranes iguales" )
 
 RETURN ( nil )
 
