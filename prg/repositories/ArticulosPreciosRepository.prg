@@ -62,13 +62,15 @@ METHOD createFunctionUpdatePrecioBaseWhereUuid() CLASS ArticulosPreciosRepositor
 
    TEXT INTO cSql
 
-   CREATE DEFINER=`root`@`localhost` PROCEDURE %1$s ( IN `uuid_precio_articulo` CHAR(40), IN `precio_base` FLOAT(16,6) ) 
-      LANGUAGE SQL 
-      NOT DETERMINISTIC 
-      CONTAINS SQL 
-      SQL SECURITY DEFINER 
-      COMMENT '' 
-      BEGIN 
+   CREATE DEFINER=`root`@`localhost` 
+   PROCEDURE %1$s ( IN `uuid_precio_articulo` CHAR(40), IN `precio_base` FLOAT(16,6) ) 
+   LANGUAGE SQL 
+   NOT DETERMINISTIC 
+   CONTAINS SQL 
+   SQL SECURITY DEFINER 
+   COMMENT '' 
+
+   BEGIN 
 
       UPDATE %2$s AS articulos_precios 
 
@@ -87,7 +89,7 @@ METHOD createFunctionUpdatePrecioBaseWhereUuid() CLASS ArticulosPreciosRepositor
 
       WHERE articulos_precios.uuid = uuid_precio_articulo; 
 
-      END
+   END
 
    ENDTEXT
 

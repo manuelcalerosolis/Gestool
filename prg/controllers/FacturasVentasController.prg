@@ -23,6 +23,8 @@ CLASS FacturasVentasController FROM OperacionesComercialesController
 
    METHOD Inserted()
 
+   METHOD Editing( nId )
+
    METHOD Edited()
 
    // Contrucciones tardias----------------------------------------------------
@@ -55,7 +57,9 @@ METHOD New( oController ) CLASS FacturasVentasController
 
    ::setEvent( 'inserted', {|| ::Inserted() } )
 
-   ::setEvent( 'edited',   {|| ::Edited() } )
+   ::setEvent( 'editing', {|nId| ::Editing( nId ) } )
+
+   ::setEvent( 'edited', {|| ::Edited() } )
 
 RETURN ( Self )
 
@@ -96,6 +100,35 @@ RETURN ( ::getRecibosGeneratorController():generate() )
 METHOD Edited() CLASS FacturasVentasController 
 
 RETURN ( ::getRecibosGeneratorController():update() )
+
+//---------------------------------------------------------------------------//
+
+METHOD Editing( nId ) CLASS FacturasVentasController
+
+   local uuid
+   local nTotalDocumento
+   local nRecibosPagados
+
+   uuid                    := ::getUuidFromRowSet()
+
+   if empty( uuid )
+      uuid                 := ::getModel():getUuidWhereColumn( nId, "id" )
+   end if 
+
+   if empty( uuid )
+      RETURN ( .f. )
+   end if 
+
+   nRecibosPagados         := RecibosPagosRepository():selectFunctionTotalPaidWhereFacturaUuid( uuid )
+
+   nTotalDocumento         := ::getTotalDocument( uuid )
+
+   if ( nTotalDocumento != 0 .and. nRecibosPagados >= nTotalDocumento )
+      msgstop( "La factura esta completamete pagada", "No esta permitida la edición" )
+      RETURN ( .f. )
+   end if
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 

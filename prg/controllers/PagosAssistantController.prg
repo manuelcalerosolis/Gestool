@@ -453,9 +453,9 @@ METHOD test_create_asistente_sin_cliente() CLASS TestPagosAssistantController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click(),; 
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDCANCEL ):Click() } )
 
    ::Assert():false( ::oController:Append(), "test ::Assert():true with .t." )
@@ -468,15 +468,15 @@ METHOD test_create_asistente_sin_medio_pago() CLASS TestPagosAssistantController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 20 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click(),; 
          testWaitSeconds( 2 ),;
          self:getControl( IDCANCEL ):Click() } ) 
@@ -491,15 +491,15 @@ METHOD test_create_asistente_no_importe() CLASS TestPagosAssistantController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "1" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click(),; 
          testWaitSeconds( 2 ),;
          self:getControl( IDCANCEL ):Click() } ) 
@@ -514,17 +514,17 @@ METHOD test_create_asistente_con_pago_parcial() CLASS TestPagosAssistantControll
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 20 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):lValid(),;
          testWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
@@ -539,17 +539,17 @@ METHOD test_create_asistente_pago_completo() CLASS TestPagosAssistantController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 100 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):lValid(),;
          testWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
@@ -564,19 +564,19 @@ METHOD test_create_asistente_cambio_importe() CLASS TestPagosAssistantController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 175.36 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 90 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
          testWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
@@ -591,25 +591,25 @@ METHOD test_create_asistente_pagos_parciales() CLASS TestPagosAssistantControlle
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "1" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          eval( ::oController:getRecibosPagosTemporalController():getBrowseView():oColumImporte:bOnPostEdit, , 90 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          ::oController:getRecibosPagosTemporalController():getRowSet():Refresh(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          ::oController:getRecibosPagosTemporalController():getRowSet():goDown(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          eval( ::oController:getRecibosPagosTemporalController():getBrowseView():oColumImporte:bOnPostEdit, , 50 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          ::oController:getRecibosPagosTemporalController():getRowSet():Refresh(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 500, self:oFolder:aDialogs[ 1 ] ):Refresh(),;
          testWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
@@ -624,29 +624,29 @@ METHOD test_create_asistente_todos_pagos_cambio_importe() CLASS TestPagosAssista
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "1" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          eval( ::oController:getRecibosPagosTemporalController():getBrowseView():oColumImporte:bOnPostEdit, , 90 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          ::oController:getRecibosPagosTemporalController():getRowSet():Refresh(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          ::oController:getRecibosPagosTemporalController():getRowSet():goDown(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          eval( ::oController:getRecibosPagosTemporalController():getBrowseView():oColumImporte:bOnPostEdit, , 50 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          ::oController:getRecibosPagosTemporalController():getRowSet():Refresh(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 250 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
          testWaitSeconds( 3 ),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 500, self:oFolder:aDialogs[ 1 ] ):Refresh(),;
          testWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
@@ -661,21 +661,21 @@ METHOD test_create_asistente_un_banco() CLASS TestPagosAssistantController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 20 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):lValid(),;
          testWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   
@@ -690,25 +690,25 @@ METHOD test_create_asistente_dos_banco() CLASS TestPagosAssistantController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 20 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 150, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 150, self:oFolder:aDialogs[ 1 ] ):lValid(),;
          testWaitSeconds( 2 ),;
          self:getControl( IDOK ):Click() } )   

@@ -443,11 +443,11 @@ METHOD testDialogAppend() CLASS TestUnidadesMedicionController
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 100 ):cText( '0' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110 ):cText( 'Test uniades de medición' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 120 ):cText( 'TST' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )
 
    ::Assert():true( oController:Append(), "test ::Assert():true with .t." )
@@ -467,9 +467,9 @@ METHOD testDialogEmptyNombre() CLASS TestUnidadesMedicionController
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 100 ):cText( '0' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDCANCEL ):Click() } )
 
    ::Assert():false( oController:Append(), "test creación unidad de medición sin nombre" )
@@ -489,11 +489,11 @@ METHOD testDialogEmptyISO() CLASS TestUnidadesMedicionController
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
          self:getControl( 100 ):cText( '0' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110 ):cText( 'Test uniades de medición' ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDCANCEL ):Click() } )
 
    ::Assert():false( oController:Append(), "test creación unidad de medición sin codigo ISO" )

@@ -137,7 +137,7 @@ CLASS TestAlbaranesVentasController FROM TestOperacionesComercialesController
 
    METHOD test_dialogo_con_articulo_lote()
 
-   METHOD test_dialogo_con_articulo_combinacion() 
+   METHOD test_dialogo_con_articulo_propiedades() 
 
    METHOD getController()              INLINE ( if( empty( ::oController ), ::oController := AlbaranesVentasController():New(), ), ::oController ) 
 
@@ -227,9 +227,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_con_articulo_combinacion() CLASS TestAlbaranesVentasController
-
-   TestArticulosController():test_dialog_append_con_caracteristicas()
+METHOD test_dialogo_con_articulo_propiedades() CLASS TestAlbaranesVentasController
 
    ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
@@ -253,7 +251,7 @@ METHOD test_dialogo_con_articulo_combinacion() CLASS TestAlbaranesVentasControll
          RETURN ( nil )
       > )
 
-   ::Assert():true( ::getController():Insert(), "test creación de albaran de compra con combinaciones" )
+   ::Assert():true( ::getController():Insert(), "test creación de albaran de venta con combinaciones" )
 
 RETURN ( nil )
 

@@ -24,7 +24,7 @@ FUNCTION testWaitSeconds( nSecs )
    //    sysRefresh()
    // next
 
-   waitSeconds( 0.5 )
+   waitSeconds( 0.1 )
    
    sysRefresh()
 
@@ -100,7 +100,7 @@ USER FUNCTION hbunit_test()
    
    oSuite:addTest( TestConversorDocumentosController():New() )
 
-   oSuite:setCategories( { "conversor_documento" } )
+   oSuite:setCategories( { "stocks" } ) 
 
    oRunner:run( oSuite )
 

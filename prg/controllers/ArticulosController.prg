@@ -262,7 +262,7 @@ CLASS TestArticulosController FROM TestCase
 
    DATA aCategories                    INIT { "all", "articulos" }
 
-   METHOD getController()              INLINE   ( if( empty( ::oController ), ::oController := ArticulosController():New(), ), ::oController )
+   METHOD getController()              INLINE ( if( empty( ::oController ), ::oController := ArticulosController():New(), ), ::oController )
 
    METHOD End()                        INLINE ( if( !empty( ::oController ), ::oController:End(), ) ) 
 
@@ -325,11 +325,11 @@ METHOD test_dialog_append() CLASS TestArticulosController
 
          view:oGetCodigo:cText( '3' )
 
-         testWaitSeconds( 1 )
+         testWaitSeconds()
 
          view:oGetNombre:cText( 'Test 1' )
 
-         testWaitSeconds( 1 )
+         testWaitSeconds()
 
          view:oBtnAceptar:Click()
 
@@ -350,11 +350,11 @@ METHOD test_dialog_empty_nombre() CLASS TestArticulosController
 
          view:oGetCodigo:cText( '3' )
 
-         testWaitSeconds( 1 )
+         testWaitSeconds()
 
          view:oBtnAceptar:Click()
 
-         testWaitSeconds( 1 )
+         testWaitSeconds()
 
          view:oBtnCancelar:Click()
 
@@ -377,15 +377,15 @@ METHOD test_dialog_append_con_unidad_de_medicion() CLASS TestArticulosController
          
          view:oGetCodigo:cText( '3' )
          
-         testWaitSeconds( 1 )
+         testWaitSeconds()
          
          view:oGetNombre:cText( 'Test producto venta con caja y palets' )
          
-         testWaitSeconds( 1 )
+         testWaitSeconds()
          
          ::getController():getUnidadesMedicionGruposController():getSelector():cText( "0" )
          
-         testWaitSeconds( 1 )
+         testWaitSeconds()
          
          view:oBtnAceptar:Click() 
 
@@ -406,11 +406,11 @@ METHOD test_dialog_cancel_append() CLASS TestArticulosController
 
          view:oGetCodigo:cText( '3' )
 
-         testWaitSeconds( 1 )
+         testWaitSeconds()
 
          view:oGetNombre:cText( 'Test 1' )
 
-         testWaitSeconds( 1 )
+         testWaitSeconds()
 
          view:oBtnCancelar:Click() 
 
@@ -430,7 +430,7 @@ METHOD test_controller_rollback() CLASS TestArticulosController
    ::getController():getDialogView():setEvent( 'painted',;
       <| view |
 
-         testWaitSeconds( 1 )
+         testWaitSeconds()
 
          view:oBtnCancelar:Click() 
 
@@ -460,15 +460,15 @@ METHOD test_dialog_append_con_caracteristicas() CLASS TestArticulosController
    ::getController():getCombinacionesController():getDialogView():setEvent( 'painted',;
       <| view | 
          
-         testWaitSeconds( 1 )
+         testWaitSeconds()
 
          aeval( view:oExplorerBar:aPanels, {|a| aeval( a:aControls, {|o| o:Click() } ) } )
 
-         testWaitSeconds( 1 )
+         testWaitSeconds()
 
          view:oButtonGenerate:Click()
 
-         testWaitSeconds( 1 )
+         testWaitSeconds()
 
          view:oButtonAceptar:Click()
 
@@ -480,15 +480,15 @@ METHOD test_dialog_append_con_caracteristicas() CLASS TestArticulosController
          
          view:oGetCodigo:cText( '3' )
          
-         testWaitSeconds( 1 )
+         testWaitSeconds()
          
          view:oGetNombre:cText( 'Test producto con caracteristicas' )
          
-         testWaitSeconds( 1 )
+         testWaitSeconds()
          
          ::getController():getCombinacionesController():runViewGenerate()
          
-         testWaitSeconds( 1 )
+         testWaitSeconds()
          
          view:oBtnAceptar:Click() 
 

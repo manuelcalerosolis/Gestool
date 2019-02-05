@@ -98,6 +98,8 @@ METHOD getColumns() CLASS SQLOperacionesComercialesModel
 
    ::getClosedColumns()
 
+   ::getCanceledColumns()
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
@@ -118,6 +120,7 @@ METHOD getColumnsSelect() CLASS SQLOperacionesComercialesModel
       %1$s.tercero_codigo AS tercero_codigo,
       %1$s.created_at AS created_at,
       %1$s.updated_at AS updated_at,
+      %1$s.canceled_at AS canceled_at,
       terceros.nombre AS tercero_nombre,
       terceros.dni AS cliente_dni,
       direcciones.direccion AS direccion_direccion,

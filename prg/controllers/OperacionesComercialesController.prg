@@ -25,8 +25,6 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD End()
 
-   METHOD Editing()
-
    METHOD getTerceroUuid()
 
    METHOD isTerceroFilled()            INLINE ( !empty( ::getModelBuffer( "tercero_codigo" ) ) )
@@ -127,10 +125,11 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD getSelector()                INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := OperacionesGetSelector():New( self ), ), ::oGetSelector )
 
-   METHOD getRectificativaDialogView();
-                                       INLINE ( if( empty( ::oRectificativaDialogView ), ::oRectificativaDialogView := OperacionComercialRectificarView():New( self ), ), ::oRectificativaDialogView )
+   METHOD getRectificativaDialogView() INLINE ( if( empty( ::oRectificativaDialogView ), ::oRectificativaDialogView := OperacionComercialRectificarView():New( self ), ), ::oRectificativaDialogView )
 
    METHOD getRectifictivaValidator()   INLINE (if( empty( ::oRectificativaValidator ), ::oRectificativaValidator := OperacionComercialRectificarValidator():New( self ), ), ::oRectificativaValidator )
+
+   METHOD Editing()
 
    METHOD cancelEdited()
 
@@ -150,13 +149,15 @@ METHOD New( oController ) CLASS OperacionesComercialesController
 
    ::lDocuments                        := .t.
 
+   ::lCanceled                         := .t.
+
    ::lMail                             := .t.
 
    ::lOthers                           := .t.
 
    ::setEvent( 'editing', {|nId| ::Editing( nId ) } )
 
-   ::setEvent( 'cancelEdited',{|| ::cancelEdited() } )
+   ::setEvent( 'cancelEdited', {|| ::cancelEdited() } )
 
    ::getTercerosController():getSelector():setEvent( 'settedHelpText', {|| ::terceroSettedHelpText() } )
 
@@ -184,28 +185,10 @@ RETURN ( ::Super:End() )
 
 METHOD Editing( nId ) CLASS OperacionesComercialesController
 
-   local uuid
-   local nTotalDocumento
-   local nRecibosPagados
-
-   uuid                    := ::getUuidFromRowSet()
-
-   if empty( uuid )
-      uuid                 := ::getModel():getUuidWhereColumn( nId, "id" )
-   end if 
-
-   if empty( uuid )
+   if !empty( ::getFieldFromRowSet( "canceled_at" ) )
+      msgstop( "El documento está cancelado.", "No esta permitida la edición" )
       RETURN ( .f. )
    end if 
-
-   nRecibosPagados         := RecibosPagosRepository():selectFunctionTotalPaidWhereFacturaUuid( uuid )
-
-   nTotalDocumento         := ::getTotalDocument( uuid )
-
-   if ( nTotalDocumento != 0 .and. nRecibosPagados >= nTotalDocumento )
-      msgstop( "La factura esta completamete pagada", "No esta permitida la edición" )
-      RETURN ( .f. )
-   end if
 
 RETURN ( .t. )
 
@@ -219,11 +202,11 @@ METHOD cancelEdited() CLASS OperacionesComercialesController
       RETURN ( nil )
    end if
 
-   uuidDocumentoDestino := ::getModelBuffer("uuid")
-
-   ::getModel():deleteWhereUuid( uuidDocumentoDestino )
+   uuidDocumentoDestino    := ::getModelBuffer( "uuid" )
 
    SQLConversorDocumentosModel():deleteWhereDestinoUuid( uuidDocumentoDestino )
+
+   ::getModel():deleteWhereUuid( uuidDocumentoDestino )
 
    ::getLinesController():getModel():deleteWhereParentUuid( uuidDocumentoDestino )
 
@@ -598,61 +581,61 @@ CLASS TestOperacionesComercialesController FROM TestOperacionesController
 
    METHOD set_codigo_tercero( cCodigoCliente, view ) ;
                                        INLINE ( view:getControl( 170, view:oFolder:aDialogs[1] ):cText( cCodigoCliente ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 view:getControl( 170, view:oFolder:aDialogs[1] ):lValid(),;
-                                                testWaitSeconds( 1 ) )
+                                                testWaitSeconds() )
 
    METHOD set_codigo_agente( cCodigoAgente, view ) ;
                                        INLINE ( view:getControl( 270, view:oFolder:aDialogs[1] ):cText( cCodigoAgente ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 view:getControl( 270, view:oFolder:aDialogs[1] ):lValid(),;
-                                                testWaitSeconds( 1 ) )
+                                                testWaitSeconds() )
 
    METHOD set_codigo_forma_pago( cCodigoFormaPago, view ) ;
                                        INLINE ( view:getControl( 240, view:oFolder:aDialogs[1] ):cText( cCodigoFormaPago ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 view:getControl( 240, view:oFolder:aDialogs[1] ):lValid(),;
-                                                testWaitSeconds( 1 ) )
+                                                testWaitSeconds() )
 
    METHOD click_nueva_linea( view )    INLINE ( view:getControl( 501, view:oFolder:aDialogs[1] ):Click(),;
-                                                testWaitSeconds( 1 ) )
+                                                testWaitSeconds() )
 
    METHOD click_nuevo_descuento( view ) ;
                                        INLINE ( view:getControl( 601, view:oFolder:aDialogs[1] ):Click(),;
-                                                testWaitSeconds( 1 ) )
+                                                testWaitSeconds() )
 
    METHOD set_codigo_articulo_en_linea( cCodigoArticulo ) ;
                                        INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , cCodigoArticulo, 0 ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_codigo_almacen_en_linea( cCodigoAlmacen ) ;
                                        INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoAlmacen:bOnPostEdit, , cCodigoAlmacen, 0 ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_codigo_ubicacion_en_linea( cCodigoUbicacion ) ;
                                        INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnCodigoUbicacion:bOnPostEdit, , cCodigoUbicacion, 0 ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_precio_en_linea( nPrecio ) ;
                                        INLINE ( eval( ::oController:getLinesController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , nPrecio, 0 ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_descripcion_descuento( cDescuento ) ;
                                        INLINE ( eval( ::oController:getDiscountController():getBrowseView():oColumnNombre:bOnPostEdit, , cDescuento, 0 ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD set_porcentaje_descuento( nDescuento ) ;
                                        INLINE ( eval( ::oController:getDiscountController():getBrowseView():oColumnDescuento:bOnPostEdit, , nDescuento, 0 ),;
-                                                testWaitSeconds( 1 ),;
+                                                testWaitSeconds(),;
                                                 ::refresh_linea_browse_view() )
 
    METHOD refresh_linea_browse_view()  INLINE ( ::oController:getLinesController():getBrowseView():getRowSet():Refresh(),;
-                                                testWaitSeconds( 1 ) )
+                                                testWaitSeconds() )
    
 /*
    METHOD test_calculo_con_descuento()
@@ -751,7 +734,7 @@ METHOD test_dialogo_sin_lineas() CLASS TestOperacionesComercialesController
          ::set_codigo_tercero( "0", view ),;
          ::set_codigo_forma_pago( "0", view ),;
          view:getControl( IDOK ):Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          view:getControl( IDCANCEL ):Click() } )
 
    ::Assert():false( ::oController:Insert(), "test creaci�n de factura sin lineas" )

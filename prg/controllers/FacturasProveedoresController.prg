@@ -246,17 +246,17 @@ METHOD testDialogoWithNoLines() CLASS TestFacturasProveedoresController
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 170, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 170, self:oFolder:aDialogs[1] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 240, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 240, self:oFolder:aDialogs[1] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDCANCEL ):Click() } )
 
    ::Assert():false( oController:Append(), "test creación de factura sin lineas" )
@@ -277,25 +277,25 @@ METHOD testDialogoVentasPorCajas() CLASS TestFacturasProveedoresController
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 170, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 170, self:oFolder:aDialogs[1] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 240, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 240, self:oFolder:aDialogs[1] ):lValid(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 501, self:oFolder:aDialogs[1] ):Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          eval( oController:getFacturasVentasLineasController():getBrowseView():oColumnCodigoArticulo:bOnPostEdit, , "0", 0 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          oController:getFacturasVentasLineasController():getBrowseView():getRowSet():Refresh(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          eval( oController:getFacturasVentasLineasController():getBrowseView():oColumnArticuloPrecio:bOnPostEdit, , 100, 0 ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          oController:getFacturasVentasLineasController():getBrowseView():getRowSet():Refresh(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )
 
    ::Assert():true( oController:Append(), "test creación de factura con ventas por cajas" )

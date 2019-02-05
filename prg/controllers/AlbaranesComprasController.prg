@@ -224,8 +224,6 @@ RETURN ( nil )
 
 METHOD test_dialogo_articulo_con_propiedades() CLASS TestAlbaranesComprasController
 
-   TestArticulosController():test_dialog_append_con_caracteristicas()
-
    ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
       

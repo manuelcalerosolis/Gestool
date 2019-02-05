@@ -96,6 +96,7 @@ CLASS SQLBaseModel
    METHOD getTimeStampColumns()
    METHOD getTimeStampSentColumns()
    METHOD getDeletedStampColumn()
+   METHOD getCanceledColumns()
 
    METHOD getSerializeColumns()
    METHOD getSerializeColumnsSelect()
@@ -161,6 +162,11 @@ CLASS SQLBaseModel
    METHOD getDeleteOrUpdateSentenceById( aId )
       METHOD SQLUpdateDeletedAtSentenceById( aIds )
       METHOD SQLDeletedSentenceById( aIds )
+
+   METHOD getCencelOrUpdateSentenceById( aIds )
+
+   METHOD SQLUpdateCanceledAtSentenceById( aIds )      
+
    METHOD getDeleteOrUpdateSentenceWhereParentUuid( uUuid )
       METHOD SQLUpdateDeletedAtSentenceWhereParentUuid( uUuid )
       METHOD SQLDeletedSentenceWhereParentUuid( uUuid )
@@ -267,6 +273,8 @@ CLASS SQLBaseModel
    METHOD deleteByUuid( uUuid )
    METHOD deleteWhereParentUuid( uUuid )
    METHOD deleteWhere( hWhere )
+
+   METHOD cancelSelection( aIds )
 
    METHOD loadBlankBuffer( hBuffer )
    METHOD loadDuplicateBuffer() 
@@ -447,6 +455,15 @@ RETURN ( ::hColumns )
 METHOD getClosedColumns()
    
    hset( ::hColumns, "closed_at",   {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
+                                       "default"   => {|| nil } }         )
+
+RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getCanceledColumns()
+   
+   hset( ::hColumns, "canceled_at", {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
                                        "default"   => {|| nil } }         )
 
 RETURN ( ::hColumns )
@@ -1176,19 +1193,31 @@ RETURN ( ::SQLDeletedSentenceById( aIds ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD SQLUpdateDeletedAtSentenceById( aIds )
+METHOD getCencelOrUpdateSentenceById( aIds )
+
+   if hb_isnumeric( aIds )
+      aIds     := { aIds }
+   end if 
+
+RETURN ( ::SQLUpdateCanceledAtSentenceById( aIds ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD SQLUpdateDeletedAtSentenceById( aIds, cField )
 
    local cSentence
 
-   cSentence   := "UPDATE " + ::getTableName() + " " + ;
-                     "SET deleted_at = NOW() "  + ;
-                     "WHERE " + ::cColumnKey + " IN ( "
+   DEFAULT cField    := "deleted_at"
+
+   cSentence         := "UPDATE " + ::getTableName() + " " + ;
+                           "SET " + cField + " = NOW() "  + ;
+                           "WHERE " + ::cColumnKey + " IN ( "
 
    aeval( aIds, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
 
-   cSentence   := chgAtEnd( cSentence, ' )', 2 ) + " "
+   cSentence         := chgAtEnd( cSentence, ' )', 2 ) + " "
 
-   cSentence   +=    "AND deleted_at = 0" 
+   cSentence         +=    "AND ( " + cField + " = 0 OR " + cField + " = null )" 
 
 RETURN ( cSentence )
 
@@ -1208,6 +1237,12 @@ METHOD SQLDeletedSentenceById( aIds )
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------// 
+
+METHOD SQLUpdateCanceledAtSentenceById( aIds )
+
+RETURN ( ::SQLUpdateDeletedAtSentenceById( aIds, "canceled_at" ) )
+
+//---------------------------------------------------------------------------//
 
 METHOD aUuidToDelete( aParentsUuid )
 
@@ -1620,6 +1655,18 @@ METHOD deleteSelection( aIds )
    ::getDatabase():Querys( ::getDeleteOrUpdateSentenceById( aIds ) )
 
    ::fireEvent( 'deletedSelection' )
+   
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD cancelSelection( aIds ) 
+
+   ::fireEvent( 'cancelingSelection' )
+
+   ::getDatabase():Querys( ::getCencelOrUpdateSentenceById( aIds ) )
+
+   ::fireEvent( 'canceledSelection' )
    
 RETURN ( nil )
 

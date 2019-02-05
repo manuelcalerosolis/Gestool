@@ -478,9 +478,9 @@ METHOD test_dialogo_sin_codigo() CLASS TestAlmacenesController
    
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDCANCEL ):Click() } )
 
 RETURN ( ::Assert():false( ::oController:Append(), "test creación de almacen sin código" ) )
@@ -491,11 +491,11 @@ METHOD test_dialogo_sin_nombre() CLASS TestAlmacenesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click(),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDCANCEL ):Click() } )
    
 RETURN ( ::Assert():false( ::oController:Append(), "test creación de almacen sin nombre" ) )
@@ -506,11 +506,11 @@ METHOD test_dialogo_creacion() CLASS TestAlmacenesController
 
    ::oController:getDialogView():setEvent( 'painted',;
       {| self | ;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 100, self:oFolder:aDialogs[1] ):cText( "0" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[1] ):cText( "Almacen principal" ),;
-         testWaitSeconds( 1 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )
 
 RETURN ( ::Assert():true( ::oController:Append(), "test creación de almacen" ) )
