@@ -427,7 +427,7 @@ Return ( cErrorText )
 
 FUNCTION successAlert( cMessage )
 
-   with object ( TToast():NewToast( 1, cMessage, "hand_thumb_up.bmp", 400, 40, oWnd(), CLR_WHITE, , rgb( 76, 176, 80 ), 255, 4000, .t., , .f. ) )
+   with object ( TToast():NewToast( 1, cMessage, "hand_thumb_up.bmp", 400, 42, oWnd(), CLR_WHITE, , rgb( 76, 176, 80 ), 255, 4000, .t., , .f. ) )
       :lBtnClose    := .f.
       :lBtnSetup    := .f.
       :ActivaAlert()
@@ -439,7 +439,7 @@ RETURN ( nil )
 
 FUNCTION warningAlert( cMessage )
 
-   with object ( TToast():NewToast( 1, cMessage, "hand_thumb_up.bmp", 400, 40, oWnd(), rgb( 255, 151, 0 ), , CLR_WHITE, 255, 4000, .t., , .f. ) )
+   with object ( TToast():NewToast( 1, cMessage, "hand_thumb_up.bmp", 400, 42, oWnd(), rgb( 255, 151, 0 ), , CLR_WHITE, 255, 4000, .t., , .f. ) )
       :lBtnClose    := .f.
       :lBtnSetup    := .f.
       :ActivaAlert()
@@ -463,7 +463,7 @@ RETURN ( nil )
 
 FUNCTION informationAlert( cMessage )
 
-   with object ( TToast():NewToast( 1, cMessage, "hand_thumb_up.bmp", 400, 40, oWnd(), CLR_WHITE, , CLR_BLACK, 255, 4000, .t., , .f. ) )
+   with object ( TToast():NewToast( 1, cMessage, "hand_thumb_up.bmp", 400, 42, oWnd(), CLR_WHITE, , CLR_BLACK, 255, 4000, .t., , .f. ) )
       :lBtnClose    := .f.
       :lBtnSetup    := .f.
       :ActivaAlert()
