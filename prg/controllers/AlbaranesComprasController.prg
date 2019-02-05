@@ -79,7 +79,7 @@ METHOD addExtraButtons() CLASS AlbaranesComprasController
 
    ::super:addExtraButtons()
 
-   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturas", "gc_document_text_earth_16", {|| ::getConversorDocumentosController():runConvertAlbaranCompras( ::getUuids() ) } )
+   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturas", "gc_document_text_businessman_16", {|| ::getConversorDocumentosController():runConvertAlbaranCompras( ::getUuids() ) } )
 
 RETURN ( nil )
 

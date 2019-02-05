@@ -461,7 +461,7 @@ METHOD addExtraButtons() CLASS OperacionesComercialesController
 
    ::super:addExtraButtons()
 
-   ::oNavigatorView:getMenuTreeView():addButton( "Convertir documento", "gc_document_text_earth_16", {|| ::getConversorDocumentosController():Run() } )
+   ::oNavigatorView:getMenuTreeView():addButton( "Convertir documento", "gc_convertir_documento_16", {|| ::getConversorDocumentosController():Run() } )
 
 RETURN ( nil )
 
