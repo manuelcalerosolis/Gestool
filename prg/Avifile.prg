@@ -424,3 +424,51 @@ METHOD showErrors() CLASS TGetDialog
 Return ( cErrorText )
 
 //--------------------------------------------------------------------------//
+
+FUNCTION successAlert( cMessage )
+
+   with object ( TToast():NewToast( 1, cMessage, "hand_thumb_up.bmp", 400, 40, oWnd(), CLR_WHITE, , rgb( 76, 176, 80 ), 255, 4000, .t., , .f. ) )
+      :lBtnClose    := .f.
+      :lBtnSetup    := .f.
+      :ActivaAlert()
+   end with
+
+RETURN ( nil )
+
+//--------------------------------------------------------------------------//
+
+FUNCTION warningAlert( cMessage )
+
+   with object ( TToast():NewToast( 1, cMessage, "hand_thumb_up.bmp", 400, 40, oWnd(), rgb( 255, 151, 0 ), , CLR_WHITE, 255, 4000, .t., , .f. ) )
+      :lBtnClose    := .f.
+      :lBtnSetup    := .f.
+      :ActivaAlert()
+   end with
+
+RETURN ( nil )
+
+//--------------------------------------------------------------------------//
+
+FUNCTION errorAlert( cMessage )
+
+   with object ( TToast():NewToast( 1, cMessage, "sign_stop.bmp", 400, 42, oWnd(), CLR_WHITE, , rgb( 255, 83, 83 ), 255, 4000, .t., , .f. ) )
+      :lBtnClose    := .f.
+      :lBtnSetup    := .f.
+      :ActivaAlert()
+   end with
+
+RETURN ( nil )
+
+//--------------------------------------------------------------------------//
+
+FUNCTION informationAlert( cMessage )
+
+   with object ( TToast():NewToast( 1, cMessage, "hand_thumb_up.bmp", 400, 40, oWnd(), CLR_WHITE, , CLR_BLACK, 255, 4000, .t., , .f. ) )
+      :lBtnClose    := .f.
+      :lBtnSetup    := .f.
+      :ActivaAlert()
+   end with
+
+RETURN ( nil )
+
+//--------------------------------------------------------------------------//

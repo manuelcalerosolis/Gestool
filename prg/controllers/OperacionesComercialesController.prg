@@ -186,6 +186,7 @@ RETURN ( ::Super:End() )
 METHOD Editing( nId ) CLASS OperacionesComercialesController
 
    if !empty( ::getFieldFromRowSet( "canceled_at" ) )
+      errorAlert( "El documento está cancelado." )
       msgstop( "El documento está cancelado.", "No esta permitida la edición" )
       RETURN ( .f. )
    end if 

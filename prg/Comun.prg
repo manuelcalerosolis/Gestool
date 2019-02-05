@@ -31,6 +31,8 @@
 
 #define GWL_STYLE       (-16)
 
+#define LWA_ALPHA  0x00000002
+
 memvar nId
 
 static oPnel1
@@ -226,9 +228,7 @@ RETURN ( oMenu )
 //---------------------------------------------------------------------------//
 
 PROCEDURE loggedTest()
-
-   // SQLArticulosModel():test_create_con_propiedades() 
-
+   
 RETURN 
 
 //----------------------------------------------------------------------------//
