@@ -1,4 +1,5 @@
 #include "FiveWin.Ch"
+#include "Colores.ch"
 #include "Factu.ch" 
 
 static oMsg
@@ -439,7 +440,7 @@ RETURN ( nil )
 
 FUNCTION warningAlert( cMessage )
 
-   with object ( TToast():NewToast( 1, cMessage, "hand_thumb_up.bmp", 400, 42, oWnd(), rgb( 255, 151, 0 ), , CLR_WHITE, 255, 4000, .t., , .f. ) )
+   with object ( TToast():NewToast( 1, cMessage, "hand_thumb_up.bmp", 400, 42, oWnd(), CLR_WHITE, , rgb( 255, 151, 0 ), 255, 4000, .t., , .f. ) )
       :lBtnClose    := .f.
       :lBtnSetup    := .f.
       :ActivaAlert()

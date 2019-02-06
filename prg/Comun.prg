@@ -228,7 +228,15 @@ RETURN ( oMenu )
 //---------------------------------------------------------------------------//
 
 PROCEDURE loggedTest()
+
+   // successAlert( "All it's ok" )
    
+   // informationAlert( "Information" )
+
+   // warningAlert( "Warning" )
+
+   // errorAlert( "Error" )
+
 RETURN 
 
 //----------------------------------------------------------------------------//
