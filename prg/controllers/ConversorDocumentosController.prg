@@ -155,6 +155,10 @@ METHOD End() CLASS ConversorDocumentosController
       ::oDialogView:End()
    end if 
 
+   if !empty( ::getAlbaranVentasView )
+      ::getAlbaranVentasView:End()
+   end if 
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -508,8 +512,18 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 CLASS ConvertirAlbaranVentasView FROM SQLBaseView
+
+   DATA oFechaDesde
+   DATA dFechaDesde     INIT boy()
+
+   DATA oFechaHasta
+   DATA dFechaHasta     INIT date()
                                           
    METHOD Activate()
+      METHOD starActivate() 
+      METHOD okActivate() 
+         METHOD okActivateFolderOne()
+         METHOD okActivateFolderTwo()
 
 END CLASS
 
@@ -517,13 +531,13 @@ END CLASS
 
 METHOD Activate() CLASS ConvertirAlbaranVentasView
 
-   DEFINE DIALOG  ::oDialog;
-      RESOURCE    "CONVERTIR_ALBARAN_VENTAS"; 
-      TITLE       "Convertir albaran de ventas a factura de ventas"
+   DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "CONTAINER_MEDIUM" ;
+      TITLE       ::LblTitle() + "convertir a factura de ventas"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_convertir_documento_48" ;
+      RESOURCE    "gc_warning_48" ;
       TRANSPARENT ;
       OF          ::oDialog
 
@@ -533,20 +547,95 @@ METHOD Activate() CLASS ConvertirAlbaranVentasView
       FONT        oFontBold() ;
       OF          ::oDialog
 
+   REDEFINE FOLDER ::oFolder ;
+      ID          500 ;
+      OF          ::oDialog ;
+      PROMPT      "Rangos" ,;
+                  "Vista Previa" ,;
+                  "Pestaña 3" ;
+      DIALOGS     "CONVERTIR_ALBARAN_VENTAS",;
+                  "CONVERTIR_ALBARAN_VENTAS_PREVIA",;
+                  "CONVERTIR_ALBARAN_VENTAS"   
+
+   REDEFINE GET   ::oFechaDesde ;
+      VAR         ::dFechaDesde ;
+      ID          100 ;
+      PICTURE     "@D" ;
+      SPINNER ;
+      OF          ::oFolder:aDialogs[1]
+
+   REDEFINE GET   ::oFechaHasta ;
+      VAR         ::dFechaHasta ;
+      ID          110 ;
+      PICTURE     "@D" ;
+      SPINNER ;
+      OF          ::oFolder:aDialogs[1]
    
    // Botones------------------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| ::oDialog:end( IDOK ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| ::okActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-   
-   ::oDialog:Activate( , , , .t. )
+   ::oDialog:bKeyDown      := {| nKey | if( nKey == VK_F5, ::okActivate(), ) }
+
+   ::oDialog:bStart        := {|| ::starActivate(), ::paintedActivate() }
+
+   ACTIVATE DIALOG ::oDialog CENTER
 
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
+
+METHOD starActivate() CLASS ConvertirAlbaranVentasView
+
+   ::oFolder:aEnable    := { .t., .f., .f. }
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD okActivate() CLASS ConvertirAlbaranVentasView
+
+   msgAlert( ::oFolder:nOption(), "nOption" )
+
+   do case 
+      case ::oFolder:nOption == 1
+         ::okActivateFolderOne()
+
+      case ::oFolder:nOption == 2
+         ::okActivateFolderTwo()
+
+      case ::oFolder:nOption == 3
+         ::oDialog:End()
+   end case
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD okActivateFolderOne() CLASS ConvertirAlbaranVentasView
+
+   local hAlbaran 
+
+   ::oFolder:aEnable[ 2 ]  := .t.
+   ::oFolder:setOption( 2 ) 
+
+   hAlbaran := SQLAlbaranesVentasModel():getHashAlbaranWhereFechaIn( ::dfechadesde, ::dfechaHasta )
+
+  msgalert( hb_valtoexp( hAlbaran ), "hAlbaranes")
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD okActivateFolderTwo() CLASS ConvertirAlbaranVentasView
+
+   ::oFolder:aEnable[ 3 ]  := .t.
+   ::oFolder:setOption( 3 ) 
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
