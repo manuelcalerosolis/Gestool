@@ -229,6 +229,10 @@ RETURN ( oMenu )
 
 PROCEDURE loggedTest()
 
+   with object ( TLightToast():Build() )
+      :Activate()
+   end with
+
    // successAlert( "All it's ok" )
    
    // informationAlert( "Information" )

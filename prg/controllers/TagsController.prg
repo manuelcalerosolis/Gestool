@@ -13,13 +13,13 @@ CLASS TagsController FROM SQLNavigatorController
 
    //Contrucciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := TagsBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := TagsBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := TagsView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := TagsView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := TagsValidator():New( self  ), ), ::oValidator )
+   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := TagsValidator():New( self  ), ), ::oValidator )
 
-   METHOD getModel()                      INLINE( if( empty( ::oModel ), ::oModel := SQLTagsModel():New( self  ), ), ::oModel )
+   METHOD getModel()                   INLINE( if( empty( ::oModel ), ::oModel := SQLTagsModel():New( self  ), ), ::oModel )
 
 END CLASS
 
@@ -61,9 +61,7 @@ METHOD End() CLASS TagsController
       ::oValidator:End()
    endif
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
@@ -82,6 +80,7 @@ METHOD insertTag( tageableUuid, tagUuid ) CLASS TagsController
    hBuffer                    := SQLTageableModel():loadBlankBuffer()
    hBuffer[ "tageable_uuid" ] := tageableUuid
    hBuffer[ "tag_uuid"]       := tagUuid
+
    SQLTageableModel():insertBuffer( hBuffer )
 
 RETURN ( .t. )
@@ -282,13 +281,13 @@ METHOD validateAndAddTag( cMarcador ) CLASS TagsView
    end if 
 
    if ascan( ::oTagsEver:aItems, {|oItem| upper( oItem:cText ) == upper( cMarcador ) } ) != 0
-      msgStop( "Este marcador ya está incluido" )
+      errorAlert( "El marcador " + cMarcador + " ya incluido" ) 
       RETURN ( .f. )
    end if 
 
    uuidTag        := ::oController:getModel():getUuidWhereNombre( cMarcador ) 
    if empty( uuidTag )
-      msgStop( "Este marcador : " + cMarcador + " , no existe" )
+      errorAlert( "El marcador : " + cMarcador + ", no existe" )
       RETURN ( .f. )
    end if 
 
@@ -303,10 +302,14 @@ RETURN ( .t. )
 
 METHOD selectorAndAddTag() CLASS TagsView
 
-   local hMarcador   := ::oController:activateSelectorView()
+   local aMarcador   
 
-   if !empty( hMarcador ) 
-      ::validateAndAddTag( hget( hMarcador, "nombre" ) )
+   ::oController:getSelectorView():setMultiSelect( .t. )
+
+   aMarcador   := ::oController:activateSelectorView()
+
+   if hb_isarray( aMarcador ) 
+      aeval( aMarcador, {|hMarcador| ::validateAndAddTag( hget( hMarcador, "nombre" ) ) } )
    end if 
 
 RETURN ( .t. )

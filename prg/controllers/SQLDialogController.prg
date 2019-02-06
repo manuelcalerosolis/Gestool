@@ -140,9 +140,7 @@ METHOD End()
       ::oVistaModel:End()
    end if 
 
-   ::Super():End()
-
-RETURN ( nil )
+RETURN ( ::Super():End() )
 
 //---------------------------------------------------------------------------//
 

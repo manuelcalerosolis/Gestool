@@ -1125,6 +1125,10 @@ METHOD SQLDeletedSentenceWhereUuid( uuid )
    
    local cSentence
 
+   if hb_ischar( uuid )
+      uuid     := { uuid }
+   end if 
+
    cSentence   := "DELETE FROM " + ::getTableName() + " " + ;
                      "WHERE uuid IN ( " 
 

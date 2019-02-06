@@ -16,7 +16,7 @@ CLASS SQLSelectorView FROM SQLBrowseableView
 
    DATA aSelectedBuffer
 
-   DATA lMultiselect                            INIT ( .f. )
+   DATA lMultiSelect                            INIT ( .f. )
 
    METHOD New( oController ) CONSTRUCTOR
    METHOD End()
@@ -33,14 +33,15 @@ CLASS SQLSelectorView FROM SQLBrowseableView
 
    METHOD MultiSelect()
 
-   METHOD setLogicMultiselect( lMultiselect )   INLINE ( ::lMultiselect := lMultiselect )
+   METHOD setMultiSelect( lMultiSelect )        INLINE ( ::lMultiSelect := lMultiSelect )
+   METHOD getMultiSelect()                      INLINE ( ::lMultiSelect )
 
    METHOD Start()
 
    METHOD getGetSearch()                        INLINE ( ::oGetSearch )
    METHOD getWindow()                           INLINE ( ::oDialog )
 
-   METHOD getSelectedBuffer()                   INLINE ( if( ::lMultiselect, ::aSelectedBuffer, ::hSelectedBuffer ) )
+   METHOD getSelectedBuffer()                   INLINE ( if( ::getMultiSelect(), ::aSelectedBuffer, ::hSelectedBuffer ) )
 
 ENDCLASS
 
@@ -109,7 +110,7 @@ METHOD Select()
 
    ::aSelectedBuffer       := {}
 
-   if ::lMultiselect
+   if ::getMultiSelect()
       
       ::MultiSelect()
 
@@ -150,9 +151,7 @@ METHOD MultiSelect()
       aAdd( ::aSelectedBuffer, ::getModel():loadCurrentBuffer( nId ) )
    next
 
-   ::oDialog:End( IDOK )
-
-RETURN ( nil )
+RETURN ( ::oDialog:End( IDOK ) )
 
 //----------------------------------------------------------------------------//
 

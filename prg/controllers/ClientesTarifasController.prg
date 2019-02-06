@@ -75,7 +75,7 @@ METHOD ApenndLinea()
    local aLines      := {}
    local hBuffer     := {=>}
 
-   ::getArticulosTarifasController():oSelectorView:setLogicMultiselect( .t. )
+   ::getArticulosTarifasController():oSelectorView:setMultiselect( .t. )
 
    aLines            := ::getArticulosTarifasController():activateSelectorView()
 
