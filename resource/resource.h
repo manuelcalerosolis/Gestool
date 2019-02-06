@@ -17,4 +17,5 @@
 
 
 
-#define Rangos  65535
+
+#define Rango  65535
