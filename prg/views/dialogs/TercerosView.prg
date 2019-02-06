@@ -126,7 +126,7 @@ METHOD Activate() CLASS TercerosView
 
    ::oDialog:bStart        := {|| ::startActivate(), ::paintedActivate() }
 
-   ACTIVATE DIALOG ::oDialog CENTER
+   ACTIVATE DIALOG ::oDialog CENTER 
 
 RETURN ( ::oDialog:nResult )
 
@@ -148,7 +148,8 @@ METHOD redefineGeneral() CLASS TercerosView
       VALID       ( ::getController():validate( "nombre" ) ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::oGetDni VAR ::getController():getModel():hBuffer[ "dni" ] ;
+   REDEFINE GET   ::oGetDni ;
+      VAR         ::getController():getModel():hBuffer[ "dni" ] ;
       ID          120 ;
       WHEN        ( ::getController():isNotZoomMode() ) ;
       VALID       ( CheckCif( ::oGetDni ) );
