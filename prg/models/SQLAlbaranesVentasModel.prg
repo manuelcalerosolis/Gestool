@@ -9,30 +9,28 @@ CLASS SQLAlbaranesVentasModel FROM SQLOperacionesComercialesModel
 
    DATA cTableName                     INIT "albaranes_ventas"
 
-   METHOD getHashAlbaranWhereFechaIn( dfechadesde, dfechaHasta )
+   METHOD getSentenceAlbaranWhereHash( dFechadesde, dFechaHasta, hWhere )
+
+   METHOD getArrayAlbaranWhereHash( dFechaDesde, dFechaHasta, hWhere ) ;
+                                       INLINE( ::getDatabase():selectTrimedFetchHash( ::getSentenceAlbaranWhereHash( dFechaDesde, dFechaHasta, hWhere ) ) )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getHashAlbaranWhereFechaIn( dfechaDesde, dfechaHasta )
+METHOD getSentenceAlbaranWhereHash( dFechaDesde, dFechaHasta, hWhere )
 
-   local cSql
+   local cSql  := "SELECT * " 
+   cSql        +=    "FROM " + ::getTableName()                       + " "
+   cSql        +=    "WHERE fecha >= " + DtoS( dFechadesde )          + " "
+   cSQL        +=    "AND fecha <= "   + DtoS( dFechaHasta )          + " "
 
-   TEXT INTO cSql
+   if hb_ishash( hWhere ) 
+      msgalert( "hay hWhere")
+      heval( hWhere, {|k,v| cSQL += "AND " + k + " = " + v + " " } )
+   end if
 
-   SELECT
-      *
-
-   FROM %1$s
-
-   WHERE fecha >= %2$s AND fecha <= %3$s
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( dfechaDesde ), quoted( dfechaHasta ) )
-
-RETURN ( getSQLDatabase():selectFetch( cSql ) )
+RETURN ( cSql )  
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

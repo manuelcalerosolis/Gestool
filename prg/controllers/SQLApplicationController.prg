@@ -141,6 +141,8 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oFacturasVentasSimplificadasLineasController
 
    DATA oAlbaranesVentasLineasController
+   
+   DATA oConvertirAlbaranVentasTemporalController
 
    DATA oPedidosVentasLineasController
 
@@ -407,6 +409,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getAlbaranesVentasDescuentosController();
                                     INLINE ( if( empty( ::oAlbaranesVentasDescuentosController ), ::oAlbaranesVentasDescuentosController := AlbaranesVentasDescuentosController():New( self ), ), ::oAlbaranesVentasDescuentosController )
+
+   METHOD getConvertirAlbaranVentasTemporalController();
+                                    INLINE ( if( empty( ::oConvertirAlbaranVentasTemporalController ), ::oConvertirAlbaranVentasTemporalController := ConvertirAlbaranVentasTemporalController():New( self ), ), ::oConvertirAlbaranVentasTemporalController )
 
    METHOD getPresupuestosVentasDescuentosController();
                                     INLINE ( if( empty( ::oPresupuestosVentasDescuentosController ), ::oPresupuestosVentasDescuentosController := PresupuestosVentasDescuentosController():New( self ), ), ::oPresupuestosVentasDescuentosController )
@@ -810,6 +815,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oAlbaranesVentasDescuentosController )   
       ::oAlbaranesVentasDescuentosController:End()
+   end if 
+
+   if !empty( ::oConvertirAlbaranVentasTemporalController )   
+      ::oConvertirAlbaranVentasTemporalController:End()
    end if  
 
    if !empty( ::oFacturasVentasDescuentosController )   

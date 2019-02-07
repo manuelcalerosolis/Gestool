@@ -406,6 +406,7 @@ FacturasVentasController.prg 												\
 AlbaranesComprasController.prg 											\
 FacturasVentasSimplificadasController.prg 							\
 AlbaranesVentasController.prg 											\
+ConvertirAlbaranVentasTemporalController.prg 						\
 PedidosVentasController.prg 												\
 PresupuestosVentasController.prg 										\
 FacturasVentasRectificativasController.prg 							\
@@ -846,6 +847,7 @@ FacturasVentasController.obj 												\
 AlbaranesComprasController.obj 											\
 FacturasVentasSimplificadasController.obj 							\
 AlbaranesVentasController.obj 											\
+ConvertirAlbaranVentasTemporalController.obj 						\
 PedidosVentasController.obj 												\
 PresupuestosVentasController.obj 										\
 FacturasVentasRectificativasController.obj 							\
@@ -1280,6 +1282,7 @@ $(OBJ)\FacturasVentasController.obj 									+
 $(OBJ)\AlbaranesComprasController.obj 									+
 $(OBJ)\FacturasVentasSimplificadasController.obj 					+
 $(OBJ)\AlbaranesVentasController.obj 									+
+$(OBJ)\ConvertirAlbaranVentasTemporalController.obj 				+
 $(OBJ)\PedidosVentasController.obj 										+
 $(OBJ)\PresupuestosVentasController.obj 								+
 $(OBJ)\FacturasVentasRectificativasController.obj 					+

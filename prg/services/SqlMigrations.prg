@@ -410,6 +410,8 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLAlbaranesVentasModel():New() )
 
+   aadd( ::aModels, SQLConvertirAlbaranVentasTemporalModel():New() )
+
    aadd( ::aModels, SQLPedidosVentasModel():New() )
 
    aadd( ::aModels, SQLPresupuestosVentasModel():New() )

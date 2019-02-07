@@ -519,17 +519,23 @@ CLASS ConvertirAlbaranVentasView FROM SQLBaseView
    DATA oFechaHasta
    DATA dFechaHasta     INIT date()
                                           
+   METHOD insertTemporalAlbaranes( aAlbaranes )
+
    METHOD Activate()
       METHOD starActivate() 
       METHOD okActivate() 
          METHOD okActivateFolderOne()
          METHOD okActivateFolderTwo()
 
+   METHOD convertAlbaranVentas( aSelecteds )
+         
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS ConvertirAlbaranVentasView
+
+   ::getController():getConvertirAlbaranVentasTemporalController():getModel():createTemporalTable()
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_MEDIUM" ;
@@ -570,6 +576,8 @@ METHOD Activate() CLASS ConvertirAlbaranVentasView
       PICTURE     "@D" ;
       SPINNER ;
       OF          ::oFolder:aDialogs[1]
+
+   ::getController():getConvertirAlbaranVentasTemporalController():Activate( 100, ::oFolder:aDialogs[2] )
    
    // Botones------------------------------------------------------------------
 
@@ -597,11 +605,10 @@ RETURN ( nil )
 
 METHOD okActivate() CLASS ConvertirAlbaranVentasView
 
-   msgAlert( ::oFolder:nOption(), "nOption" )
-
    do case 
       case ::oFolder:nOption == 1
          ::okActivateFolderOne()
+
 
       case ::oFolder:nOption == 2
          ::okActivateFolderTwo()
@@ -616,23 +623,58 @@ RETURN ( nil )
 
 METHOD okActivateFolderOne() CLASS ConvertirAlbaranVentasView
 
-   local hAlbaran 
+   local aAlbaranes 
+   local hWhere /*:= { "tercero_codigo" => "003",;
+                     "ruta_codigo" => "002" }*/
+
+   aAlbaranes := SQLAlbaranesVentasModel():getArrayAlbaranWhereHash( ::dFechaDesde, ::dFechaHasta, hWhere )
+   if empty( aAlbaranes )
+      msgstop("No existen albaranes en el rango de fechas seleccionado")
+      RETURN( nil )
+   end if
+
+   //msgalert( hb_valtoexp( aAlbaranes ), "albaraneeees")
+
+   ::insertTemporalAlbaranes( hWhere )
+
+   ::getController():getConvertirAlbaranVentasTemporalController():getRowSet():refresh()
 
    ::oFolder:aEnable[ 2 ]  := .t.
    ::oFolder:setOption( 2 ) 
-
-   hAlbaran := SQLAlbaranesVentasModel():getHashAlbaranWhereFechaIn( ::dfechadesde, ::dfechaHasta )
-
-  msgalert( hb_valtoexp( hAlbaran ), "hAlbaranes")
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD okActivateFolderTwo() CLASS ConvertirAlbaranVentasView
+   
+   ::convertAlbaranVentas( ::getController():getConvertirAlbaranVentasTemporalController():getUuids() )
 
    ::oFolder:aEnable[ 3 ]  := .t.
    ::oFolder:setOption( 3 ) 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertTemporalAlbaranes( hWhere ) CLASS ConvertirAlbaranVentasView
+
+   ::getController():getConvertirAlbaranVentasTemporalController():getModel():insertTemporalAlbaranes( ::dFechaDesde, ::dFechaHasta, hWhere )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD convertAlbaranVentas( aSelecteds )
+
+   local Selected 
+
+   for each Selected in aSelecteds
+      msgalert( Selected, "uuidSelected" )
+      /*Comprobar que no se haya convertido ya*/
+      /*realizar la conversion*/
+   next
+
 
 RETURN ( nil )
 
