@@ -175,7 +175,7 @@ METHOD addColumns() CLASS ConsolidacionAlmacenLineasBrowseView
 
    with object ( ::oColumnPropiedades := ::oBrowse:AddCol() )
       :cHeader             := 'Propiedades'
-      :nWidth              := 180
+      :nWidth              := 140
       :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_propiedades_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := ::getEditButton()

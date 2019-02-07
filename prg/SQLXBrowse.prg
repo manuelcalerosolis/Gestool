@@ -101,6 +101,8 @@ CLASS SQLXBrowse FROM TXBrowse
 
    METHOD LButtonDown( nRow, nCol, nFlags, lTouch )
 
+   METHOD GoRight( lOffset, lRefresh )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -481,7 +483,93 @@ RETURN ( ::Super:LButtonDown( nRow, nCol, nFlags, lTouch ) )
 
 //------------------------------------------------------------------------//
 
-FUNCTION EditGetkeyDown( Self, nKey )
+METHOD GoRight( lOffset, lRefresh ) CLASS SQLXBrowse
+
+   local nLen
+   local oCol
+   local lColSel
+   local oSelCol
+   local oLastCol
+   local oNextCol
+
+   ::CancelEdit()
+
+   oLastcol    := ::aCols[ ATail( ::aDisplay ) ]
+
+   oSelCol     := ::SelectedCol()
+   if oSelCol == ::hRightCol
+      RETURN ( nil )
+   end if 
+
+   if oSelCol == oLastCol
+      if ::hRightCol != nil
+         ::nColSel   := ::hRightCol:nPos
+         ::GetDisplayCols()
+         ::DrawLine( .t. )
+      endif
+      RETURN ( nil )
+   endif
+
+   DEFAULT lOffset  := .f.,;
+           lRefresh := .t.
+
+   lColSel  := .t.
+   nLen     := len( ::aDisplay )
+
+   logwrite( if( lOffset, "lOffset = .t.", "lOffset = .f." ) )
+
+   if lOffSet
+
+      if ::IsDisplayPosVisible( oLastCol:nPos, .t. )
+         ::nColSel++
+         if lRefresh
+            ::Super:Refresh( .t. )
+         endif
+      else
+         if ::nColOffSet < ( nLen - ::nFreeze )
+            ::nColOffSet++
+            ::GetDisplayCols()
+            if lRefresh
+               ::Super:Refresh( ::FullPaint() )
+            endif
+         endif
+      endif
+
+   else
+
+      ::nColSel++
+
+      logwrite( "suma nColSel" + str( ::nColSel ) )
+
+      ::GetDisplayCols()
+
+      oCol     := ::SelectedCol()
+
+      logwrite( "oCol:nPos" + str( oCol:nPos ) )
+
+      do while ! ::IsDisplayPosVisible( oCol:nPos, .t. ) .and. ::nColSel > ( ::nFreeze + 1 )
+         ::nColOffSet++
+         ::nColSel--
+         ::GetDisplayCols()
+      enddo
+
+      if lRefresh
+         ::Super:Refresh( ::FullPaint() )
+      endif
+
+   endif
+
+   if ::oHScroll != nil
+      ::oHScroll:GoDown()
+   endif
+
+   ::Change( .f. )
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION EditGetkeyDown( Self, nKey ) 
 
    local lExit       
    local lMultiGet   
@@ -495,23 +583,27 @@ FUNCTION EditGetkeyDown( Self, nKey )
 
    do case
       case nKey == VK_ESCAPE
-           lExit := .t.
-           ::oEditGet:bValid = nil
+
+           lExit              := .t.
+           ::oEditGet:bValid  := nil
 
       case nKey == VK_RETURN
+
            if lMultiGet    //Empty( ::cEditPicture ) .and. ::oBrw:nDataLines > 1
               if ! GetKeyState( VK_CONTROL )
-                 lExit := .t.
+                 lExit        := .t.
               endif
            else
-              lExit := .t.
+              lExit           := .t.
            endif
 
       case nKey == VK_TAB
+
            lExit  := .t.
 
       case nKey == VK_DOWN .or. nKey == VK_UP
-           if !lMultiGet      // !( Empty( ::cEditPicture ) .and. ::oBrw:nDataLines > 1 )
+
+           if !lMultiGet      
               lExit := .t.
            endif
 
