@@ -204,7 +204,8 @@ METHOD getGeneralSelect( uuidPago, cCodigoCliente ) CLASS SQLConvertirAlbaranVen
       direcciones.movil AS direccion_movil,
       direcciones.email AS direccion_email,
       tarifas.codigo AS tarifa_codigo,
-      tarifas.nombre AS tarifa_nombre
+      tarifas.nombre AS tarifa_nombre,
+      ( %6$s( tmp.uuid ) ) AS total
 
    FROM %1$s AS tmp
 
@@ -223,7 +224,9 @@ METHOD getGeneralSelect( uuidPago, cCodigoCliente ) CLASS SQLConvertirAlbaranVen
                            ::getTableName(),;
                            SQLTercerosModel():getTableName(),;
                            SQLDireccionesModel():getTableName(),;
-                           SQLArticulosTarifasModel():getTableName() )
+                           SQLArticulosTarifasModel():getTableName(),;
+                           SQLAlbaranesVentasModel():getTableName(),;
+                           Company():getTableName( SQLAlbaranesVentasModel():getPackage( 'TotalSummaryWhereUuid' ) ) )
 
 RETURN ( cSql )
 

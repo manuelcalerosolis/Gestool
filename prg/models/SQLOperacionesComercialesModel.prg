@@ -172,7 +172,6 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesModel
                            SQLArticulosTarifasModel():getTableName(),;
                            ::getColumnsSelect() )
 
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//

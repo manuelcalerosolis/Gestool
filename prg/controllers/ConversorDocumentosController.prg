@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ConversorDocumentosController FROM SQLNavigatorController
+CLASS ConversorDocumentosController 
 
    DATA aDocumentosDestino 
 
@@ -27,12 +27,6 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    DATA aDiscounts                     INIT {}
 
-   DATA oResumenView
-
-   DATA oConvertirView
-
-   DATA oConvertirAlbaranVentasView
-
    DATA hProcesedAlbaran               INIT {}
 
    DATA lDescuento                     INIT .f.
@@ -41,9 +35,11 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD Run()
+   METHOD getDestinoController()       INLINE ( ::oController:oDestinoController )
 
-   METHOD getDestinoController()       INLINE ( ::oDestinoController )
+   METHOD getOrigenController()        INLINE ( ::oController:oOrigenController )
+
+   METHOD getSelected()                INLINE ( ::oController:aSelected )
 
    METHOD Convert()
       METHOD setHeader()
@@ -52,8 +48,8 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
       METHOD addLines()
       METHOD setDiscounts()
 
-   METHOD runConvertAlbaranCompras( aSelected ) 
-      METHOD convertAlbaranCompras( aSelected )
+   METHOD runConvertAlbaran( aSelected ) 
+      METHOD convertAlbaran( aSelected )
 
    Method isAlbaranEquals( hAlbaran )
 
@@ -64,49 +60,16 @@ CLASS ConversorDocumentosController FROM SQLNavigatorController
 
    METHOD insertRelationDocument()     INLINE ( ::getModel():insertRelationDocument( ::uuidDocumentoOrigen, ::getController():getModel():cTableName, ::uuidDocumentoDestino, ::oDestinoController:getModel():cTableName ) )
 
-   METHOD Edit( nId )
-
    METHOD addConvert()
 
-   METHOD convertDocument( aConvert )
+   METHOD Edit( nId )
 
-   //Construcciones tardias----------------------------------------------------
 
-   METHOD setAlbaranesComprasController() ;
-                                       INLINE ( ::oDestinoController := AlbaranesComprasController():New( self ), ::oDestinoController ) 
+   METHOD convertDocument()
 
-   METHOD setAlbaranesVentasController() ;
-                                       INLINE ( ::oDestinoController := AlbaranesVentasController():New( self ), ::oDestinoController ) 
+   //Contrucciones tarias------------------------------------------------------
 
-   METHOD setFacturasComprasControllerAsDestino() ;
-                                       INLINE ( ::oDestinoController := FacturasComprasController():New( self ), ::oDestinoController ) 
-
-   METHOD setFacturasVentasController() ;
-                                       INLINE ( ::oDestinoController := FacturasVentasController():New( self ), ::oDestinoController ) 
-
-   METHOD setFacturasVentasSimplificadasController() ;
-                                       INLINE ( ::oDestinoController := FacturasVentasSimplificadasController():New( self ), ::oDestinoController ) 
-
-   METHOD setPedidosComprasController() ;
-                                       INLINE ( ::oDestinoController := PedidosComprasController():New( self ), ::oDestinoController ) 
-
-   METHOD setPedidosVentasController() ;
-                                       INLINE ( ::oDestinoController := PedidosVentasController():New( self ), ::oDestinoController ) 
-
-   METHOD setPresupuestosVentasController() ;
-                                       INLINE ( ::oDestinoController := PresupuestosVentasController():New( self ), ::oDestinoController ) 
-   
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLConversorDocumentosModel():New( self ), ), ::oModel ) 
-
-   METHOD getConvertirView()           INLINE ( if( empty( ::oConvertirView ), ::oConvertirView := ConversorDocumentoView():New( self ), ), ::oConvertirView )
-
-   METHOD getResumenView()             INLINE ( if( empty( ::oResumenView ), ::oResumenView := ConversorResumenView():New( self ), ), ::oResumenView )
-
-   METHOD getAlbaranVentasView()      INLINE ( if( empty( ::oConvertirAlbaranVentasView ), ::oConvertirAlbaranVentasView := ConvertirAlbaranVentasView():New( self ), ), ::oConvertirAlbaranVentasView )
-
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesBrowseView():New( self ), ), ::oBrowseView )
-
-   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ::oController:getFacturasComprasController():getDialogView(), ::oDialogView ) )
 
 END CLASS
 
@@ -114,16 +77,7 @@ END CLASS
 
 METHOD New( oController ) CLASS ConversorDocumentosController 
 
-   ::aDocumentosDestino := {  "Albarán de compras"             => {|| ::setAlbaranesComprasController() },;
-                              "Albarán de ventas"              => {|| ::setAlbaranesVentasController() },;
-                              "Factura de compras"             => {|| ::setFacturasComprasControllerAsDestino() },;
-                              "Factura de ventas"              => {|| ::setFacturasventasController() },;
-                              "Factura de ventas simplificada" => {|| ::setFacturasVentasSimplificadasController() },;
-                              "Pedido de compras"              => {|| ::setPedidosComprasController() },;
-                              "Pedido de ventas"               => {|| ::setPedidosVentasController() },;
-                              "Presupuesto de ventas"          => {|| ::setPresupuestosVentasController() } }
-
-   ::Super:New( oController )
+   ::oController  := oController
 
 RETURN ( Self )
 
@@ -131,68 +85,22 @@ RETURN ( Self )
 
 METHOD End() CLASS ConversorDocumentosController
 
-   if !empty( ::oModel )
-      ::oModel:End()
-   end if
-
-   if !empty( ::oDestinoController )
-      ::oDestinoController:End()
-   end if 
-
-   if !empty( ::oConvertirView )
-      ::oConvertirView:End() 
-   end if 
-
-   if !empty( ::oResumenView )
-      ::oResumenView:End()
-   end if 
-   
-   if !empty( ::oBrowseView )
-      ::oBrowseView:End()
-   end if 
-
-   if !empty( ::oDialogView )
-      ::oDialogView:End()
-   end if 
-
-   if !empty( ::getAlbaranVentasView )
-      ::getAlbaranVentasView:End()
-   end if 
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD Run() CLASS ConversorDocumentosController
-
-   if ::getConvertirView():Activate() != IDOK
-      RETURN ( nil )
-   end if 
-
-   if hhaskey( ::aDocumentosDestino, ::getConvertirView():getDocumentoDestino() )
-      ::oDestinoController    := eval( hget( ::aDocumentosDestino, ::getConvertirView():getDocumentoDestino() ) )
-   end if 
-
-   if !empty( ::oDestinoController )
-      ::Convert()
-   end if 
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD Convert() CLASS ConversorDocumentosController
 
-   if empty( ::getController() )
+   if empty( ::getOrigenController() )
       RETURN ( nil )
    end if
 
-   if ::getController:className() == ::oDestinoController:className()
+   if ::getOrigenController:className() == ::oDestinoController:className()
       msgstop( "No puede seleccionar el mismo tipo de documento" )
       RETURN ( nil )
    end if
 
-   ::uuidDocumentoOrigen     := ::getController():getRowSet():fieldGet( "uuid" )
+   ::uuidDocumentoOrigen     := ::getOrigenController():getRowSet():fieldGet( "uuid" )
 
    if empty( ::uuidDocumentoOrigen )
       RETURN( nil )
@@ -212,7 +120,7 @@ RETURN ( nil )
 
 METHOD setHeader() CLASS ConversorDocumentosController
 
-   local hNewHeader   := ::getController():getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
+   local hNewHeader   := ::getOrigenController:getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
 
    aadd( ::aHeader, hNewHeader )
 
@@ -222,7 +130,7 @@ RETURN ( nil )
 
 METHOD addHeader() CLASS ConversorDocumentosController
 
-   local hHeader  := ::getController():getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
+   local hHeader  := ::getOrigenController():getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
 
    if empty( hHeader )
       RETURN ( nil )
@@ -236,7 +144,7 @@ RETURN ( nil )
 
 METHOD setLines() CLASS ConversorDocumentosController
 
-   local aLines   := ::getController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
+   local aLines   := ::getOrigenController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
 
    if empty( aLines )
       RETURN ( nil )
@@ -250,7 +158,7 @@ RETURN ( nil )
 
 METHOD addLines() CLASS ConversorDocumentosController
 
-   local aLines   := ::getController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
+   local aLines   := ::getOrigenController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
 
    if empty( aLines )
       RETURN ( nil )
@@ -264,7 +172,7 @@ RETURN ( nil )
 
 METHOD setDiscounts() CLASS ConversorDocumentosController
 
-   local aDiscounts  := ::getController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
+   local aDiscounts  := ::getOrigenController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
 
    if empty( aDiscounts )
       RETURN ( nil )
@@ -276,7 +184,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD runConvertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
+METHOD runConvertAlbaran( aSelected ) CLASS ConversorDocumentosController
    
    ::aConvert     := {}
 
@@ -286,17 +194,13 @@ METHOD runConvertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
 
    ::aDiscounts   := {}
 
-   ::setFacturasComprasControllerAsDestino()
-
-   ::convertAlbaranCompras( aSelected ) 
-
-   ::convertDocument()
+   ::convertAlbaran( aSelected ) 
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD convertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
+METHOD convertAlbaran( aSelected ) CLASS ConversorDocumentosController
 
    Local hAlbaran
    local hAlbaranes 
@@ -304,14 +208,17 @@ METHOD convertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
    if empty( ::getController() )
       RETURN ( nil )
    end if
-
-   hAlbaranes                    := SQLAlbaranesComprasModel():getHashWhereUuidAndOrder( ::setWhereArray( aSelected ) )
+   
+   hAlbaranes                    := ::getOrigenController:getModel():getHashWhereUuidAndOrder( ::setWhereArray( aSelected ) )
 
    for each hAlbaran in hAlbaranes
+
 
       if ::isAlbaranNotConverted( hAlbaran ) 
 
          ::uuidDocumentoOrigen   := hget( hAlbaran, "uuid" )
+
+         msgalert( ::uuidDocumentoOrigen)
          
          if ::isAlbaranEquals( hAlbaran )
 
@@ -333,7 +240,7 @@ METHOD convertAlbaranCompras( aSelected ) CLASS ConversorDocumentosController
 
          ::hProcesedAlbaran      := hAlbaran
 
-         if (::getController():getDiscountController():getModel():countWhere( { "parent_uuid" => hget( hAlbaran, "uuid" ) } ) ) > 0
+         if (::getOrigenController():getDiscountController():getModel():countWhere( { "parent_uuid" => hget( hAlbaran, "uuid" ) } ) ) > 0
             ::lDescuento := .t.
          else 
             ::lDescuento := .f.
@@ -399,7 +306,7 @@ METHOD isAlbaranEquals( hAlbaran ) CLASS ConversorDocumentosController
       RETURN ( .f. )
    end if
   
-   if !empty( ::getController():getDiscountController():getModel():countWhere( { "parent_uuid" => hget( hAlbaran, "uuid" ) } ) ) 
+   if !empty( ::getOrigenController():getDiscountController():getModel():countWhere( { "parent_uuid" => hget( hAlbaran, "uuid" ) } ) ) 
       RETURN ( .f. )
    end if 
 
@@ -431,14 +338,11 @@ RETURN ( ::getDestinoController():Edit( nId ) )
 
 METHOD convertDocument() CLASS ConversorDocumentosController
 
-   ::aCreatedDocument            := ::oDestinoController:convertDocument( ::aConvert )
-
-   if !empty( ::aCreatedDocument )
-      ::getResumenView():Activate()
-   end if
+   ::aCreatedDocument            := ::getController():oDestinoController:convertDocument( ::aConvert )
 
 RETURN ( ::aCreatedDocument )
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -538,7 +442,7 @@ METHOD Activate() CLASS ConvertirAlbaranVentasView
    ::getController():getConvertirAlbaranVentasTemporalController():getModel():createTemporalTable()
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "CONTAINER_MEDIUM" ;
+      RESOURCE    "CONTAINER_LARGE" ;
       TITLE       ::LblTitle() + "convertir a factura de ventas"
 
    REDEFINE BITMAP ::oBitmap ;
@@ -565,14 +469,14 @@ METHOD Activate() CLASS ConvertirAlbaranVentasView
 
    REDEFINE GET   ::oFechaDesde ;
       VAR         ::dFechaDesde ;
-      ID          100 ;
+      ID          110 ;
       PICTURE     "@D" ;
       SPINNER ;
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE GET   ::oFechaHasta ;
       VAR         ::dFechaHasta ;
-      ID          110 ;
+      ID          120 ;
       PICTURE     "@D" ;
       SPINNER ;
       OF          ::oFolder:aDialogs[1]
@@ -647,6 +551,13 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD okActivateFolderTwo() CLASS ConvertirAlbaranVentasView
+
+msgalert( hb_valtoexp( ::getController():getConvertirAlbaranVentasTemporalController():getUuids() ) )
+
+   if empty(::getController():getConvertirAlbaranVentasTemporalController():getUuids() )
+      msgstop("Debe seleccionar al menos un albaran")
+      RETURN( nil )
+   end if
    
    ::convertAlbaranVentas( ::getController():getConvertirAlbaranVentasTemporalController():getUuids() )
 
@@ -668,12 +579,14 @@ RETURN ( nil )
 METHOD convertAlbaranVentas( aSelecteds )
 
    local Selected 
-
-   for each Selected in aSelecteds
+   ::getController():runConvertAlbaran( aSelecteds )
+   /*for each Selected in aSelecteds
       msgalert( Selected, "uuidSelected" )
-      /*Comprobar que no se haya convertido ya*/
-      /*realizar la conversion*/
-   next
+     
+      if ::getController():getModel():countDocumentoWhereUuidOigen( Selected ) == 0
+      
+
+   next*/
 
 
 RETURN ( nil )
@@ -840,7 +753,7 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 METHOD getInitialSelect() CLASS SQLConversorDocumentosModel
   
-RETURN ( SQLFacturasComprasModel():getInitialWhereDocumentos(::oController:setWhereArray( ::oController:aCreatedDocument ) ) )
+RETURN ( ::getController:oDestinoController:getInitialWhereDocumentos(::oController:setWhereArray( ::oController:aCreatedDocument ) ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -1023,7 +936,7 @@ METHOD test_create_distinto_tercero() CLASS TestConversorDocumentosController
    
    ::close_resumen_view()
    
-   ::oController:runConvertAlbaranCompras( ::aSelected )
+   ::oController:runConvertAlbaran( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "Genera dos facturas con distintos terceros" )
    ::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con distintos terceros" )
@@ -1043,7 +956,7 @@ METHOD test_create_distinta_ruta() CLASS TestConversorDocumentosController
    
    ::close_resumen_view()
    
-   ::oController:runConvertAlbaranCompras( ::aSelected )
+   ::oController:runConvertAlbaran( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera dos facturas con distintas rutas" )
    ::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con distintas rutas" )
@@ -1062,7 +975,7 @@ METHOD test_create_distinto_metodo_pago() CLASS TestConversorDocumentosControlle
                         "serie"                 => "A" } )
    ::close_resumen_view()
    
-   ::oController:runConvertAlbaranCompras( ::aSelected )
+   ::oController:runConvertAlbaran( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera facturas con distintos metodos de pago" )
    ::Assert():equals( 8, SQLRecibosModel():countRecibos(), "Genera 8 recibos a traves de 2 albaranes con distintos metodos de pago" )
@@ -1081,7 +994,7 @@ METHOD test_create_distinta_tarifa() CLASS TestConversorDocumentosController
                         "serie"           => "A" } )
    ::close_resumen_view()
    
-   ::oController:runConvertAlbaranCompras( ::aSelected )
+   ::oController:runConvertAlbaran( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "creacion de facturas con dos tarifas diferentes" )
    ::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con dos tarifas diferentes" )
@@ -1101,7 +1014,7 @@ METHOD test_create_distinto_recargo() CLASS TestConversorDocumentosController
 
    ::close_resumen_view()
    
-   ::oController:runConvertAlbaranCompras( ::aSelected )
+   ::oController:runConvertAlbaran( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera facturas con distintos recargos de equivalencia" )
    ::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con distintos recargos de equivalencia" )
@@ -1120,7 +1033,7 @@ METHOD test_create_distinta_serie() CLASS TestConversorDocumentosController
 
    ::close_resumen_view()
   
-   ::oController:runConvertAlbaranCompras( ::aSelected )
+   ::oController:runConvertAlbaran( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera factras con distintas series" )
    ::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con distintas series" )
@@ -1141,7 +1054,7 @@ METHOD test_create_con_a_descuento() CLASS TestConversorDocumentosController
 
    ::close_resumen_view()
   
-   ::oController:runConvertAlbaranCompras( ::aSelected )
+   ::oController:runConvertAlbaran( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera 2 facturas con descuento en el primero" )
    ::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con descuento en el primero" )
@@ -1163,7 +1076,7 @@ METHOD test_create_con_b_descuento() CLASS TestConversorDocumentosController
 
    ::close_resumen_view()
   
-   ::oController:runConvertAlbaranCompras( ::aSelected )
+   ::oController:runConvertAlbaran( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera 2 facturas con descuentos en el segundo" )
    ::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con descuento en el segundo" )
@@ -1186,7 +1099,7 @@ METHOD test_create_iguales_y_distinto() CLASS TestConversorDocumentosController
 
    ::close_resumen_view()
    
-   ::oController:runConvertAlbaranCompras( ::aSelected )
+   ::oController:runConvertAlbaran( ::aSelected )
 
    ::Assert():equals( 2, SQLFacturasComprasModel():countFacturas(), "genera 2 facturas a traves de 3 albaranes" )
    ::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 3 albaranes" )
@@ -1205,7 +1118,7 @@ METHOD test_create_iguales() CLASS TestConversorDocumentosController
 
    ::close_resumen_view()
    
-   ::oController:runConvertAlbaranCompras( ::aSelected )
+   ::oController:runConvertAlbaran( ::aSelected )
 
    ::Assert():equals( 1, SQLFacturasComprasModel():countFacturas(), "genera 1 factura a traves de 2 albaranes iguales" )
    ::Assert():equals( 3, SQLRecibosModel():countRecibos(), "Genera 3 recibos a traves de 2 albaranes iguales" )

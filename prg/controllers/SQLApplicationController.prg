@@ -247,9 +247,6 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getCodigosPostalesController();
                                     INLINE ( if( empty( ::oCodigosPostalesController ), ::oCodigosPostalesController := CodigosPostalesController():New( self ), ), ::oCodigosPostalesController ) 
 
-   METHOD getConversorDocumentosController();
-                                    INLINE ( if( empty( ::oConversorDocumentosController ), ::oConversorDocumentosController := ConversorDocumentosController():New( self ), ), ::oConversorDocumentosController )
-
    METHOD getDireccionesController();
                                     INLINE ( if( empty( ::oDireccionesController ), ::oDireccionesController := DireccionesController():New( self ), ), ::oDireccionesController )
 

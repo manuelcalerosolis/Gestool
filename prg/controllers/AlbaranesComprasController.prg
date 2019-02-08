@@ -17,6 +17,8 @@ CLASS AlbaranesComprasController FROM OperacionesComercialesController
 
    METHOD addExtraButtons()
 
+   METHOD RunGenerateFacturaCompras()
+
    // Impresiones--------------------------------------------------------------
 
    METHOD getSubject()                 INLINE ( "Albarán de compras número" )
@@ -79,7 +81,19 @@ METHOD addExtraButtons() CLASS AlbaranesComprasController
 
    ::super:addExtraButtons()
 
-   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturas", "gc_document_text_businessman_16", {|| ::getConversorDocumentosController():runConvertAlbaranCompras( ::getUuids() ) } )
+   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturas", "gc_document_text_businessman_16", {|| ::RunGenerateFacturaCompras() } )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD RunGenerateFacturaCompras() CLASS AlbaranesComprasController
+
+   local oConversorPrepareController   := ConversorPrepareController():New( self, ::getFacturasComprasController(), ::getUuids() )
+
+   oConversorPrepareController:Run()
+
+   oConversorPrepareController:End()
 
 RETURN ( nil )
 
