@@ -22,7 +22,7 @@ CLASS SQLBrowseView
    
    DATA lMultiSelect                         INIT .t.
 
-   DATA nMarqueeStyle                        INIT MARQSTYLE_HIGHLROWRC
+   DATA nMarqueeStyle                        INIT MARQSTYLE_HIGHLCELL
 
    DATA nColSel                              INIT 1
 
