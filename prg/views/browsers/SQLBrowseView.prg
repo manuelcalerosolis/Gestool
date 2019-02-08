@@ -22,7 +22,7 @@ CLASS SQLBrowseView
    
    DATA lMultiSelect                         INIT .t.
 
-   DATA nMarqueeStyle                        INIT MARQSTYLE_HIGHLROWRC
+   DATA nMarqueeStyle                        INIT MARQSTYLE_HIGHLCELL
 
    DATA nColSel                              INIT 1
 
@@ -165,6 +165,8 @@ CLASS SQLBrowseView
 
    METHOD addColumns()                       VIRTUAL
 
+   METHOD adjustColumns()                    INLINE ( aeval( ::oBrowse:aCols, {|oCol| oCol:bClrSelFocus := {|| { CLR_BLACK, rgb(144,202,249) } } } ) )
+
    METHOD getColumnsHeaders()
 
    METHOD getVisibleColumnsHeaders()   
@@ -284,9 +286,9 @@ METHOD Create( oWindow )
 
    ::oBrowse:setRowSet( ::getRowSet() )
    
-   ::oBrowse:bClrStd          := {|| ::getStdColors() }
-   ::oBrowse:bClrSel          := {|| ::getSelColors() }
-   ::oBrowse:bClrSelFocus     := {|| ::getSelFocusColors() }
+   ::oBrowse:bClrStd          := ::getStdColors() 
+   ::oBrowse:bClrSel          := ::getSelColors()
+   ::oBrowse:bClrSelFocus     := ::getSelFocusColors()
 
    ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::BuildMenu( nRow, nCol, nFlags ) }
 
@@ -398,6 +400,8 @@ METHOD ActivateDialog( oDialog, nId )
 
    ::addColumns()
 
+   ::adjustColumns()
+
    ::createFromResource( nId )
 
    ::restoreState()
@@ -421,6 +425,8 @@ METHOD ActivateMDI( oWindow, nTop, nLeft, nRight, nBottom )
    ::insertSelectedColumn()
 
    ::addColumns()
+
+   ::adjustColumns()
 
    ::createFromCode()
 
@@ -835,30 +841,30 @@ RETURN ( nil )
 METHOD getStdColors()
 
    if ::lDeletedColored
-      RETURN ( { CLR_BLACK, if( empty( ::getRowSet():fieldget( 'deleted_at' ) ), CLR_WHITE, rgb( 255, 235, 238 ) ) } )
+      RETURN ( {|| { CLR_BLACK, if( empty( ::getRowSet():fieldget( 'deleted_at' ) ), CLR_WHITE, rgb( 255, 235, 238 ) ) } } )
    end if 
 
-RETURN ( { CLR_BLACK, CLR_WHITE } )
+RETURN ( {|| { CLR_BLACK, CLR_WHITE } } )
 
 //----------------------------------------------------------------------------//
 
 METHOD getSelColors()
 
    if ::lDeletedColored
-      RETURN ( { CLR_BLACK, if( empty( ::getRowSet():fieldget( 'deleted_at' ) ), Rgb( 229, 229, 229 ), rgb( 255, 235, 238 ) ) } )
+      RETURN ( {|| { CLR_BLACK, if( empty( ::getRowSet():fieldget( 'deleted_at' ) ), Rgb( 229, 229, 229 ), rgb( 255, 235, 238 ) ) } } )
    end if 
 
-RETURN ( { CLR_BLACK, Rgb( 229, 229, 229 ) } )
+RETURN ( {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } } )
 
 //----------------------------------------------------------------------------//
 
 METHOD getSelFocusColors()
 
    if ::lDeletedColored
-      RETURN ( { CLR_BLACK, if( empty( ::getRowSet():fieldget( 'deleted_at' ) ), Rgb( 229, 229, 229 ), rgb( 239, 154, 154 ) ) } )
+      RETURN ( {|| { CLR_BLACK, if( empty( ::getRowSet():fieldget( 'deleted_at' ) ), Rgb( 229, 229, 229 ), rgb( 239, 154, 154 ) ) } } )
    end if 
 
-RETURN ( { CLR_BLACK, Rgb( 229, 229, 229 ) } )
+RETURN ( {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } } )
 
 //----------------------------------------------------------------------------//
 

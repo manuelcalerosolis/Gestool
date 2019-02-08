@@ -54,7 +54,7 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    METHOD End()
 
-   METHOD Delete( aSelected )                         INLINE ( ::Super:Delete( aSelected ) )
+   METHOD Delete( aSelected )          INLINE ( ::Super:Delete( aSelected ) )
 
    METHOD buildRowSetSentence() 
 
@@ -68,7 +68,7 @@ CLASS SQLNavigatorController FROM SQLBrowseController
    METHOD activateSelectorView()
    METHOD activateSelectorViewNoCenter()              INLINE ( ::ActivateSelectorView( .f. ) )
 
-   METHOD closeAllWindows()                           INLINE ( if( !empty( oWnd() ), ( SysRefresh(), oWnd():CloseAll(), SysRefresh() ), ) )
+   METHOD closeAllWindows()            INLINE ( if( !empty( oWnd() ), ( SysRefresh(), oWnd():CloseAll(), SysRefresh() ), ) )
 
    METHOD saveState()
 
@@ -86,15 +86,15 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    METHOD DisableWindowsBar()
 
-   METHOD onChangeSearch()                            INLINE ( ::getNavigatorView():onChangeSearch() )
+   METHOD onChangeSearch()             INLINE ( ::getNavigatorView():onChangeSearch() )
 
    METHOD hideEditAndDeleteButtonFilter()
 
    METHOD showEditAndDeleteButtonFilter()
 
-   METHOD getIds()                                    INLINE ( ::getRowSet():idFromRecno( ::getBrowseView():oBrowse:aSelected ) )
-   METHOD getUuids()                                  INLINE ( ::getRowSet():uuidFromRecno( ::getBrowseView():oBrowse:aSelected ) )
-   METHOD getIdentifiers()                            INLINE ( ::getRowSet():identifiersFromRecno( ::getBrowseView():oBrowse:aSelected ) )
+   METHOD getIds()                     INLINE ( ::getRowSet():idFromRecno( ::getBrowseView():oBrowse:aSelected ) )
+   METHOD getUuids()                   INLINE ( ::getRowSet():uuidFromRecno( ::getBrowseView():oBrowse:aSelected ) )
+   METHOD getIdentifiers()             INLINE ( ::getRowSet():identifiersFromRecno( ::getBrowseView():oBrowse:aSelected ) )
 
    // Filters manege-----------------------------------------------------------
 
@@ -102,7 +102,7 @@ CLASS SQLNavigatorController FROM SQLBrowseController
    METHOD editFilter()
    METHOD deleteFilter()                                
 
-   METHOD getFilters()                                INLINE ( ::getFilterController():getFilters() ) 
+   METHOD getFilters()                 INLINE ( ::getFilterController():getFilters() ) 
    METHOD changeFilter()                                                                                                       
    METHOD clearFilter() 
 
