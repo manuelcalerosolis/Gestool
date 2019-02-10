@@ -1033,7 +1033,7 @@ CLASS BrowseRangos
 
    DATA idBrowse
    DATA oContainer
-   DATA aInitGroup            INIT {}
+   DATA aInitGroup                     INIT {}
    DATA oBrwRango
    DATA oColNombre
    DATA oColDesde
@@ -1042,7 +1042,7 @@ CLASS BrowseRangos
    METHOD New()
    METHOD Resource()
 
-   METHOD AddGroup( oGroup )  INLINE ( aAdd( ::aInitGroup, oGroup ) )
+   METHOD AddGroup( oGroup )           INLINE ( aAdd( ::aInitGroup, oGroup ) )
 
    METHOD EditValueTextDesde()         INLINE ( Eval( ::aInitGroup[ ::oBrwRango:nArrayAt ]:HelpDesde ) )
    METHOD EditValueTextHasta()         INLINE ( Eval( ::aInitGroup[ ::oBrwRango:nArrayAt ]:HelpHasta ) )
@@ -1061,6 +1061,7 @@ END CLASS
 METHOD New( idBrowse, oContainer ) CLASS BrowseRangos
 
    ::idBrowse     := idBrowse
+   
    ::oContainer   := oContainer
    
 RETURN ( Self )

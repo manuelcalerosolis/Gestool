@@ -24075,7 +24075,7 @@ FONT 8, "Ms Sans Serif"
 {
   CONTROL "", 110, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 43, 15, 80, 12
   CONTROL "", 120, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 177, 15, 80, 12
-  CONTROL "Rango de fechas", -1, "Button", BS_GROUPBOX, 3, 3, 755, 38
+  CONTROL "Rango de fechas", -1, "Button", BS_GROUPBOX, 3, 3, 755, 29
   CONTROL "Desde ", -1, "Static", WS_GROUP, 9, 15, 28, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 146, 17, 24, 8
 }

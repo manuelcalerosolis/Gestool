@@ -41,6 +41,7 @@ Webmap.prg              										\
 Timaglst.prg            										\
 GestoolFont.prg          										\
 TTagEver.prg 														\
+TToast.prg 															\
 WebBrow.prg             										\
 TFTPLinux.prg 														\
 Comun.prg               										\
@@ -470,6 +471,7 @@ $(TARGETOBJ)                                       				\
 SQLDatabase.obj 																\
 GestoolFont.obj                                     				\
 TTagEver.obj 																	\
+TToast.obj 																		\
 WebBrow.obj                                        				\
 TFTPLinux.obj 																	\
 Comun.obj                                          				\
@@ -923,6 +925,7 @@ $(OBJ)\$(TARGETOBJ)                                         	+
 $(OBJ)\SQLDatabase.obj                                      	+
 $(OBJ)\GestoolFont.obj                                       	+
 $(OBJ)\TTagEver.obj 															+
+$(OBJ)\TToast.obj 															+
 $(OBJ)\WebBrow.obj                                          	+
 $(OBJ)\TFTPLinux.obj 														+
 $(OBJ)\Comun.obj                                            	+

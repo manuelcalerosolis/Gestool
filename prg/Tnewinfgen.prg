@@ -813,7 +813,7 @@ METHOD lGrupoArticulo( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoArticulo:Cargo:lImprimir    := lImp
    ::oGrupoArticulo:Cargo:cBitmap      := "gc_object_cube_16"
 
-   if !Empty( ::oImageList )
+   if !empty( ::oImageList )
       ::oImageList:AddMasked( TBitmap():Define( "gc_object_cube_16" ), Rgb( 255, 0, 255 ) )
    end if
 
@@ -821,7 +821,7 @@ METHOD lGrupoArticulo( lInitGroup, lImp ) CLASS TNewInfGen
 
       aAdd( ::aSelectionGroup, ::oGrupoArticulo )
 
-      if !Empty( ::oImageGroup )
+      if !empty( ::oImageGroup )
 
          ::oImageGroup:AddMasked( TBitmap():Define( "gc_object_cube_16" ), Rgb( 255, 0, 255 ) )
 
@@ -830,7 +830,7 @@ METHOD lGrupoArticulo( lInitGroup, lImp ) CLASS TNewInfGen
       end if
 
       if lInitGroup
-         if !Empty( ::oColNombre )
+         if !empty( ::oColNombre )
             ::oColNombre:AddResource( ::oGrupoArticulo:Cargo:cBitmap )
          end if
          aAdd( ::aInitGroup, ::oGrupoArticulo )

@@ -13,13 +13,13 @@ CLASS ConversorPrepareController
 
    DATA oDestinoController
 
-   DATA oOrigenCOntroller
+   DATA oOrigenController
 
    DATA oResumenView
 
    DATA oConvertirView
 
-   DATA oConvertirAlbaranVentasView
+   DATA oConversorAlbaranVentasView
 
    METHOD New() CONSTRUCTOR
 
@@ -68,7 +68,7 @@ CLASS ConversorPrepareController
 
    METHOD getResumenView()             INLINE ( if( empty( ::oResumenView ), ::oResumenView := ConversorResumenView():New( self ), ), ::oResumenView )
 
-   METHOD getAlbaranVentasView()       INLINE ( if( empty( ::oConvertirAlbaranVentasView ), ::oConvertirAlbaranVentasView := ConvertirAlbaranVentasView():New( self ), ), ::oConvertirAlbaranVentasView )
+   METHOD getAlbaranVentasView()       INLINE ( if( empty( ::oConversorAlbaranVentasView ), ::oConversorAlbaranVentasView := ConversorAlbaranVentasView():New( self ), ), ::oConversorAlbaranVentasView )
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesBrowseView():New( self ), ), ::oBrowseView )
 
@@ -241,7 +241,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ConvertirAlbaranVentasView FROM SQLBaseView
+CLASS ConversorAlbaranVentasView FROM SQLBaseView
 
    DATA oFechaDesde
    DATA dFechaDesde     INIT boy()
@@ -252,6 +252,7 @@ CLASS ConvertirAlbaranVentasView FROM SQLBaseView
    METHOD insertTemporalAlbaranes( aAlbaranes )
 
    METHOD Activate()
+   METHOD Activating()
       METHOD starActivate() 
       METHOD okActivate() 
          METHOD okActivateFolderOne()
@@ -263,13 +264,11 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS ConvertirAlbaranVentasView
-
-   ::getController():getConvertirAlbaranVentasTemporalController():getModel():createTemporalTable()
+METHOD Activate() CLASS ConversorAlbaranVentasView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_LARGE" ;
-      TITLE       ::LblTitle() + "convertir a factura de ventas"
+      TITLE       "Convertir a factura de ventas"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -286,12 +285,8 @@ METHOD Activate() CLASS ConvertirAlbaranVentasView
    REDEFINE FOLDER ::oFolder ;
       ID          500 ;
       OF          ::oDialog ;
-      PROMPT      "Rangos" ,;
-                  "Vista Previa" ,;
-                  "Pestaña 3" ;
-      DIALOGS     "CONVERTIR_ALBARAN_VENTAS",;
-                  "CONVERTIR_ALBARAN_VENTAS_PREVIA",;
-                  "CONVERTIR_ALBARAN_VENTAS"   
+      PROMPT      "Rangos" ;
+      DIALOGS     "CONVERTIR_ALBARAN_VENTAS"   
 
    REDEFINE GET   ::oFechaDesde ;
       VAR         ::dFechaDesde ;
@@ -307,7 +302,7 @@ METHOD Activate() CLASS ConvertirAlbaranVentasView
       SPINNER ;
       OF          ::oFolder:aDialogs[1]
 
-   ::getController():getConvertirAlbaranVentasTemporalController():Activate( 100, ::oFolder:aDialogs[2] )
+   // ::getController():getConvertirAlbaranVentasTemporalController():Activate( 100, ::oFolder:aDialogs[2] )
    
    // Botones------------------------------------------------------------------
 
@@ -325,7 +320,15 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD starActivate() CLASS ConvertirAlbaranVentasView
+METHOD Activating() CLASS ConversorAlbaranVentasView
+
+   // ::getController():getConvertirAlbaranVentasTemporalController():getModel():createTemporalTable()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD starActivate() CLASS ConversorAlbaranVentasView
 
    ::oFolder:aEnable    := { .t., .f., .f. }
 
@@ -333,25 +336,28 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD okActivate() CLASS ConvertirAlbaranVentasView
+METHOD okActivate() CLASS ConversorAlbaranVentasView
 
    do case 
       case ::oFolder:nOption == 1
+
          ::okActivateFolderOne()
 
-
       case ::oFolder:nOption == 2
+
          ::okActivateFolderTwo()
 
       case ::oFolder:nOption == 3
+
          ::oDialog:End()
+
    end case
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD okActivateFolderOne() CLASS ConvertirAlbaranVentasView
+METHOD okActivateFolderOne() CLASS ConversorAlbaranVentasView
 
    local aAlbaranes 
    local hWhere /*:= { "tercero_codigo" => "003",;
@@ -376,7 +382,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD okActivateFolderTwo() CLASS ConvertirAlbaranVentasView
+METHOD okActivateFolderTwo() CLASS ConversorAlbaranVentasView
    
    msgalert( hb_valtoexp( ::getController():getConvertirAlbaranVentasTemporalController():getUuids() ) )
 
@@ -394,7 +400,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertTemporalAlbaranes( hWhere ) CLASS ConvertirAlbaranVentasView
+METHOD insertTemporalAlbaranes( hWhere ) CLASS ConversorAlbaranVentasView
 
    ::getController():getConvertirAlbaranVentasTemporalController():getModel():insertTemporalAlbaranes( ::dFechaDesde, ::dFechaHasta, hWhere )
 

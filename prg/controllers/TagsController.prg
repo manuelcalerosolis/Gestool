@@ -281,13 +281,13 @@ METHOD validateAndAddTag( cMarcador ) CLASS TagsView
    end if 
 
    if ascan( ::oTagsEver:aItems, {|oItem| upper( oItem:cText ) == upper( cMarcador ) } ) != 0
-      errorAlert( "El marcador " + cMarcador + " ya incluido" ) 
+      errorAlert( 'El marcador "' + cMarcador + '", ya está incluido' ) 
       RETURN ( .f. )
    end if 
 
    uuidTag        := ::oController:getModel():getUuidWhereNombre( cMarcador ) 
    if empty( uuidTag )
-      errorAlert( "El marcador : " + cMarcador + ", no existe" )
+      errorAlert( 'El marcador : "' + cMarcador + '", no existe' )
       RETURN ( .f. )
    end if 
 
