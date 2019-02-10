@@ -248,6 +248,8 @@ CLASS ConversorAlbaranVentasView FROM SQLBaseView
 
    DATA oFechaHasta
    DATA dFechaHasta     INIT date()
+
+   DATA oBrwRange
                                           
    METHOD insertTemporalAlbaranes( aAlbaranes )
 
@@ -301,6 +303,12 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
       PICTURE     "@D" ;
       SPINNER ;
       OF          ::oFolder:aDialogs[1]
+
+   ::oBrwRange    := BrowseRange():New( 130, ::oFolder:aDialogs[1] )
+
+   ::oBrwRange:addController( ArticulosController():New() )
+
+   ::oBrwRange:Resource()
 
    // ::getController():getConvertirAlbaranVentasTemporalController():Activate( 100, ::oFolder:aDialogs[2] )
    

@@ -228,18 +228,8 @@ RETURN ( oMenu )
 //---------------------------------------------------------------------------//
 
 PROCEDURE loggedTest()
-
-   // with object ( TLightToast():Build() )
-   //    :Activate()
-   // end with
-
-   // successAlert( "All it's ok" )
    
-   // informationAlert( "Information" )
-
-   // warningAlert( "Warning" )
-
-   // errorAlert( "Error" )
+   ConversorAlbaranVentasView():Activate()
 
 RETURN 
 

@@ -166,8 +166,6 @@ RETURN ( nil )
 
 FUNCTION appTest()
 
-   ConversorAlbaranVentasView():Activate()
-
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
