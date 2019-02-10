@@ -1,3 +1,8 @@
 {
-    "files.encoding": "windows1252"
+    "files.encoding": "windows1252",
+    "terminal.integrated.shell.windows": "C:\\WINDOWS\\System32\\cmd.exe",
+    "editor.minimap.enabled": false,
+    "workbench.colorTheme": "Visual Studio Dark",
+    "search.location": "panel",
+    "editor.tabSize": 3
 }
