@@ -132,6 +132,17 @@ METHOD Resource() CLASS BrowseRange
       :Cargo         := 0.25
    end with
 
+   with object ( ::oColAll := ::oBrwRango:AddCol() )
+      :cHeader       := "Fitrar"         
+      :bStrData      := {|| "" }
+      :bEditValue    := {|| ::oBrwRango:aRow:getRange():lAll }
+      :bOnPostEdit   := {|o,x| ::oBrwRango:aRow:getRange():lAll := x }
+      :nWidth        := 40
+      :Cargo         := 0.10
+      :SetCheck( { "gc_funnel_add_16", "gc_funnel_broom_16" } )
+   end with
+
+
 RETURN .t.
 
 //---------------------------------------------------------------------------//
