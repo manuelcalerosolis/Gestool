@@ -9,8 +9,6 @@ CLASS SQLArticulosModel FROM SQLCompanyModel
 
    DATA cConstraints                   INIT "PRIMARY KEY ( codigo, deleted_at )"
 
-   DATA 
-
    METHOD getColumns()
 
    METHOD getInitialSelect()

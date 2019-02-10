@@ -14,6 +14,7 @@ CLASS BrowseRange
    DATA oColNombre
    DATA oColDesde
    DATA oColHasta
+   DATA oColAll
 
    METHOD New()
    METHOD Resource()
@@ -50,8 +51,8 @@ METHOD Resource() CLASS BrowseRange
 
    ::oBrwRango                      := IXBrowse():New( ::oContainer )
 
-   ::oBrwRango:bClrSel              := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrwRango:bClrSelFocus         := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+   ::oBrwRango:bClrSel              := {|| { CLR_BLACK, rgb( 229, 229, 229 ) } }
+   ::oBrwRango:bClrSelFocus         := {|| { CLR_BLACK, rgb( 144, 202, 249 ) } }
 
    ::oBrwRango:SetArray( ::aControllers, , , .f. )
 
@@ -78,20 +79,29 @@ METHOD Resource() CLASS BrowseRange
       ::oColNombre:AddResource( hget( o:hImage, "16" ) )
    next
 
+   with object ( ::oColAll := ::oBrwRango:AddCol() )
+      :cHeader       := "Todo"         
+      :bStrData      := {|| "" }
+      :bEditValue    := {|| ::oBrwRango:aRow:getRange():lAll }
+      :bOnPostEdit   := {|o,x| ::oBrwRango:aRow:getRange():lAll := x }
+      :nWidth        := 40
+      :Cargo         := 0.10
+      :SetCheck( { "Sel16", "Cnt16" } )
+   end with
+
    with object ( ::oColDesde := ::oBrwRango:AddCol() )
       :cHeader       := "Desde"
-      :bEditValue    := {|| ::aControllers[ ::oBrwRango:nArrayAt ]:Desde }
-      :bOnPostEdit   := {|o,x| ::aControllers[ ::oBrwRango:nArrayAt ]:Desde := x }
-      :bEditValid    := {|oGet| ::ValidValueTextDesde( oGet ) }
-      :bEditBlock    := {|| ::EditValueTextDesde() }
+      :bEditValue    := {|| ::oBrwRango:aRow:getRange():uFrom }
+      // :bEditValid    := {|oGet| ::ValidValueTextDesde( oGet ) }
+      // :bEditBlock    := {|| ::EditValueTextDesde() }
       :cEditPicture  := "@!"
       :nEditType     := 5
       :nWidth        := 120
-      :Cargo         := 0.15
+      :Cargo         := 0.10
       :nBtnBmp       := 1
       :AddResource( "Lupa" )
    end with
-/*
+
    with object ( ::oBrwRango:AddCol() )
       :cHeader       := ""
       :bEditValue    := {|| ::EditTextDesde() } 
@@ -102,10 +112,10 @@ METHOD Resource() CLASS BrowseRange
 
    with object ( ::oColHasta := ::oBrwRango:AddCol() )
       :cHeader       := "Hasta"
-      :bEditValue    := {|| ::aControllers[ ::oBrwRango:nArrayAt ]:Hasta }
-      :bOnPostEdit   := {|o,x| ::aControllers[ ::oBrwRango:nArrayAt ]:Hasta := x }
-      :bEditValid    := {|oGet| ::ValidValueTextHasta( oGet ) }
-      :bEditBlock    := {|| ::EditValueTextHasta() }
+      :bEditValue    := {|| ::oBrwRango:aRow:getRange():uTo }
+      // :bOnPostEdit   := {|o,x| ::aControllers[ ::oBrwRango:nArrayAt ]:Hasta := x }
+      // :bEditValid    := {|oGet| ::ValidValueTextHasta( oGet ) }
+      // :bEditBlock    := {|| ::EditValueTextHasta() }
       :cEditPicture  := "@!"
       :nEditType     := 5
       :nWidth        := 120
@@ -121,7 +131,7 @@ METHOD Resource() CLASS BrowseRange
       :nWidth        := 200
       :Cargo         := 0.25
    end with
-*/
+
 RETURN .t.
 
 //---------------------------------------------------------------------------//
@@ -141,6 +151,8 @@ RETURN .t.
 //---------------------------------------------------------------------------//
 
 CLASS ItemRange
+
+   DATA oController
 
    DATA Expresion
 
@@ -171,6 +183,10 @@ CLASS ItemRange
    DATA bValidMayorIgual
    DATA bValidMenorIgual
 
+   METHOD New( oController )
+
+   METHOD End()                        VIRTUAL
+
    METHOD ValidMayorIgual( uVal, uMayor )
    METHOD ValidMenorIgual( uVal, uMenor )
 
@@ -181,7 +197,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS TItemGroup
+METHOD New( oController ) CLASS ItemRange
 
    ::oController                       := oController
 
@@ -189,7 +205,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ValidMayorIgual( uVal, uMayor ) CLASS TItemGroup
+METHOD ValidMayorIgual( uVal, uMayor ) CLASS ItemRange
 
    if IsBlock( ::bValidMayorIgual )
       Return ( Eval( ::bValidMayorIgual, uVal, uMayor ) )
@@ -215,5 +231,21 @@ Return ( .t. )
 
 CLASS ArticulosItemRange FROM ItemRange
 
+   METHOD New( oController ) 
 
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( oController ) CLASS ArticulosItemRange
+
+   ::lAll                              := .t.
+
+   ::uFrom                             := space( 20 )
+
+   ::uTo                               := replicate( 'Z', 20 )
+
+RETURN ( ::Super:New( oController ) )
+
+//---------------------------------------------------------------------------//
 

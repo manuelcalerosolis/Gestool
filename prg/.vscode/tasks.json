@@ -34,7 +34,7 @@
         {
             "label": "build resource",
             "type": "shell",
-            "command": "c:\\fw195\\gestool\\hr.bat",
+            "command": "c:\\fw195\\gestool\\\\hr.bat",
             "group": "build",
             "presentation": {
                 "reveal": "always",

@@ -24078,7 +24078,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Rango de fechas", -1, "Button", BS_GROUPBOX, 3, 3, 756, 29
   CONTROL "Desde ", -1, "Static", WS_GROUP, 9, 19, 28, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 146, 19, 24, 8
-  CONTROL "", 130, "IXBrowse", WS_TABSTOP|0x00300000, 3, 33, 548, 190
+  CONTROL "", 130, "IXBrowse", WS_TABSTOP|0x00300000, 3, 33, 756, 190
 }
 
 CONTAINER_LARGE DIALOG DISCARDABLE 138, 96, 811, 429
