@@ -5,6 +5,8 @@
 
 CLASS AlbaranesVentasController FROM OperacionesComercialesController
 
+   DATA oConversorPrepareController
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -14,6 +16,8 @@ CLASS AlbaranesVentasController FROM OperacionesComercialesController
    METHOD getDiscountController()      INLINE ( ::getAlbaranesVentasDescuentosController() )
 
    METHOD isClient()                   INLINE ( .t. )
+
+   METHOD RunGenerateFacturaVentas()
 
    // Impresiones--------------------------------------------------------------
 
@@ -75,6 +79,10 @@ METHOD End() CLASS AlbaranesVentasController
       ::oBrowseView:End()
    end if
 
+   if !empty( ::oConversorPrepareController )
+      ::oConversorPrepareController:End()
+   end if
+
 RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
@@ -83,10 +91,23 @@ METHOD addExtraButtons() CLASS AlbaranesVentasController
 
    ::super:addExtraButtons()
    
-   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturas", "gc_document_text_user_16", {|| ::getConversorDocumentosController():getAlbaranVentasView():Activate() } )  
+   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturas", "gc_document_text_user_16", {|| ::RunGenerateFacturaVentas() } )  
 
 RETURN ( nil )
 
+//---------------------------------------------------------------------------//
+
+METHOD RunGenerateFacturaVentas() CLASS AlbaranesVentasController
+
+   local oConversorPrepareController   := ConversorPrepareController():New( self, ::getFacturasVentasController() )
+
+   oConversorPrepareController:getAlbaranVentasView():Activate()
+
+   oConversorPrepareController:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -23,6 +23,8 @@ CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
 
    METHOD deleteWhereUuid( Uuid )
 
+   METHOD getHashWhereUuidAndOrder( cWhere )
+
 #ifdef __TEST__
 
    METHOD test_create_factura( uuid )
@@ -290,6 +292,29 @@ local cSql
                            quoted( Uuid ) )
 
 RETURN ( getSQLDatabase():Exec( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getHashWhereUuidAndOrder( cWhere ) CLASS SQLOperacionesComercialesModel
+   
+   local cSql
+   local aSelected
+
+   TEXT INTO cSql
+
+      SELECT 
+         *  
+      FROM %1$s
+
+      WHERE uuid %2$s
+
+      Order by tercero_codigo, ruta_codigo, metodo_pago_codigo, tarifa_codigo, recargo_equivalencia, serie
+       
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql, ::getTableName(), cWhere )
+
+RETURN ( ::getDatabase():selectFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
 

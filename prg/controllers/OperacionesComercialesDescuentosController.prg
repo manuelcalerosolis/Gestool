@@ -17,7 +17,7 @@ CLASS OperacionesComercialesDescuentosController FROM SQLBrowseController
 
    METHOD generateDiscount( hDiscount, uuidDocumentoDestino )
       METHOD insertDiscounts( hDiscounts, uuidDocumentoDestino )
-      METHOD insertDiscountRelation( hLine, uuidDestino )
+      METHOD insertDiscountRelation( hDiscounts, uuidDestino )
 
    //Construcciones tardias----------------------------------------------------
    
@@ -148,7 +148,7 @@ RETURN ( ::getModelBuffer( "uuid" ) )
 
 METHOD insertDiscountRelation( hDiscount, uuidDestino ) CLASS OperacionesComercialesDescuentosController
 
-RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hDiscount, "uuid" ), ::getSuperController():getController():getDiscountController():getModel():cTableName, uuidDestino, ::getModel():cTableName ) )   
+RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hDiscount, "uuid" ), ::oController:oController:getDiscountController():getModel():cTableName, uuidDestino, ::getModel():cTableName ) )   
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -1,10 +1,10 @@
 #include "FiveWin.Ch"
-#include "Factu.ch" 
-#include "Menu.ch" 
+#include "Factu.ch"
+#include "Menu.ch"
 #include "Font.ch"
 #include "Inkey.ch"
 #include "Xbrowse.ch"
-#include "dbInfo.ch" 
+#include "dbInfo.ch"
 #include "directry.ch"
 #include "hbcurl.ch"
 #include "hdo.ch"
@@ -12,13 +12,13 @@
 #require "hbcurl"
 
 #define GR_GDIOBJECTS         0
-#define GR_USEROBJECTS        1   
+#define GR_USEROBJECTS        1
 
 #define CS_DBLCLKS            8
 
 #define HKEY_LOCAL_MACHINE    2147483650
 
-#define FONT_NAME             "Segoe UI" 
+#define FONT_NAME             "Segoe UI"
 
 static hDLLRich
 static oIconApp
@@ -33,7 +33,7 @@ PROCEDURE RddInit()
    REQUEST DBFCDX
    REQUEST DBFFPT
 
-   REQUEST RDLMYSQL 
+   REQUEST RDLMYSQL
 
    REQUEST OrdKeyCount
    REQUEST OrdKeyNo
@@ -46,13 +46,13 @@ RETURN
 INIT PROCEDURE InitAplication()
 
    REQUEST HB_LANG_ES            // Para establecer idioma de Mensajes, fechas, etc..
-   REQUEST HB_CODEPAGE_ESWIN     // Para establecer código de página a Español (Ordenación, etc..)
+   REQUEST HB_CODEPAGE_ESWIN     // Para establecer cï¿½digo de pï¿½gina a Espaï¿½ol (Ordenaciï¿½n, etc..)
 
    hb_langselect( "ES" )         // Para mensajes, fechas, etc..
-   hb_setcodepage( "ESWIN" )     // Para ordenación (arrays, cadenas, etc..) *Requiere CodePage.lib
+   hb_setcodepage( "ESWIN" )     // Para ordenaciï¿½n (arrays, cadenas, etc..) *Requiere CodePage.lib
 
    loadLibrary( "Riched20.dll" ) // Cargamos la libreria para richedit
-   
+
    setResDebug( .t. )
 
 RETURN
@@ -72,24 +72,24 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
    appParamsMain( paramsMain )
 
    appParamsSecond( paramsSecond )
-   
+
    appParamsThird( paramsThird )
 
    appTest()
 
    appSettings()
-   
-   appDialogExtend() 
+
+   appDialogExtend()
 
    appCheckDirectory()
 
    xbrNumFormat( "E", .t. )
 
    do case
-      case ( "ADMINSQL" $ appParamsMain() ) 
+      case ( "ADMINSQL" $ appParamsMain() )
          mainAdminSQL()
 
-      case ( "TEST" $ appParamsMain() ) 
+      case ( "TEST" $ appParamsMain() )
          mainTest()
 
       otherwise
@@ -112,10 +112,10 @@ STATIC FUNCTION mainAdminSQL()
       SQLGestoolMigrations():messageRun()
 
       CreateAdminSQLWindow()
-   
+
    end if
 
-   getSQLDatabase():Disconnect() 
+   getSQLDatabase():Disconnect()
 
 RETURN ( nil )
 
@@ -123,25 +123,25 @@ RETURN ( nil )
 
 STATIC FUNCTION MainTest()
 
-   local hEmpresa 
+   local hEmpresa
 
    if !( getSQLDatabase():Connect() )
       msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
       RETURN ( nil )
-   end if 
+   end if
 
-   hEmpresa          := SQLEmpresasModel():getWhereCodigo( '0001' ) 
-   
+   hEmpresa          := SQLEmpresasModel():getWhereCodigo( '0001' )
+
    if empty( hEmpresa )
       msgStop( "No se ha podido seleccionar la empresa de pruebas" )
       RETURN ( nil )
-   end if  
+   end if
 
    Company( hEmpresa )
 
    hbunit_test()
 
-   getSQLDatabase():Disconnect() 
+   getSQLDatabase():Disconnect()
 
 RETURN ( nil )
 
@@ -152,13 +152,13 @@ STATIC FUNCTION mainApplication()
    if !( getSQLDatabase():Connect() )
       msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
       RETURN ( nil )
-   end if 
+   end if
 
    if AccessController():isLogin()
       CreateMainSQLWindow()
-   end if 
+   end if
 
-   getSQLDatabase():Disconnect() 
+   getSQLDatabase():Disconnect()
 
 RETURN ( nil )
 
@@ -204,7 +204,7 @@ FUNCTION getIconApp()
 
    if empty( oIconApp )
       oIconApp    := TIcon():New( , , "Gestool" )
-   end if 
+   end if
 
 RETURN ( oIconApp )
 
