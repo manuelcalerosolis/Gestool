@@ -9,7 +9,7 @@
             "command": "c:\\fw195\\gestool\\\\hb.bat",
             "group": "build",
             "presentation": {
-                "reveal": "silent",
+                "reveal": "always",
                 "panel": "new"
             },
             // Use the standard MS compiler pattern to detect errors, warnings and infos

@@ -21,6 +21,10 @@ CLASS BrowseRange
 
    METHOD Resource()
 
+   METHOD Clicked( nRow, nCol ) 
+
+   METHOD getEditButton()              INLINE ( if( ::oBrwRango:aRow:getRange():lAll, 0, EDIT_GET_BUTTON ) )
+
    METHOD AddController( oController ) INLINE ( aAdd( ::aControllers, oController ) )
 
    METHOD EditValueTextDesde()         INLINE ( Eval( ::aControllers[ ::oBrwRango:nArrayAt ]:HelpDesde ) )
@@ -74,49 +78,47 @@ METHOD Resource() CLASS BrowseRange
    ::oBrwRango:nFreeze              := 1
    ::oBrwRango:nMarqueeStyle        := 3
 
-   ::oBrwRango:nColSel              := 2
+   ::oBrwRango:nColSel              := 3
+
+   ::oBrwRango:bLClicked            := {| nRow, nCol| ::Clicked( nRow, nCol ) }
 
    ::oBrwRango:CreateFromResource( ::idBrowse )
 
-   ::oColNombre                     := ::oBrwRango:AddCol()
-   ::oColNombre:cHeader             := ""
-   ::oColNombre:bStrData            := {|| ::oBrwRango:aRow:cTitle }
-   ::oColNombre:bBmpData            := {|| ::oBrwRango:nArrayAt }
-   ::oColNombre:nWidth              := 200
-   ::oColNombre:Cargo               := 0.20
-
-   for each o in ::aControllers
-      ::oColNombre:AddResource( hget( o:hImage, "16" ) )
-   next
+   with object ( ::oColNombre := ::oBrwRango:AddCol() )
+      :cHeader       := ""
+      :bStrData      := {|| ::oBrwRango:aRow:cTitle }
+      :bBmpData      := {|| ::oBrwRango:nArrayAt }
+      :nWidth        := 200
+      :Cargo         := 0.20
+      aeval( ::aControllers, {| oController | :addResource( hget( oController:hImage, "16" ) ) } )
+   end with
 
    with object ( ::oColAll := ::oBrwRango:AddCol() )
       :cHeader       := "Todo"         
       :bStrData      := {|| "" }
       :bEditValue    := {|| ::oBrwRango:aRow:getRange():lAll }
-      :bOnPostEdit   := {|o,x| ::oBrwRango:aRow:getRange():lAll := x }
       :nWidth        := 40
       :Cargo         := 0.10
       :SetCheck( { "Sel16", "Cnt16" } )
-      :bLDClickData  := {|| msgalert( "click") }
-      :bPopup        := {|| msgalert( "pop") }
    end with
 
    with object ( ::oColDesde := ::oBrwRango:AddCol() )
       :cHeader       := "Desde"
+      :nEditType     := ::getEditButton()
       :bEditValue    := {|| ::oBrwRango:aRow:getRange():uFrom }
-      // :bEditValid    := {|oGet| ::ValidValueTextDesde( oGet ) }
-      // :bEditBlock    := {|| ::EditValueTextDesde() }
+      :bEditBlock    := {|| ::oBrwRango:aRow:ActivateSelectorView() }
+      :bEditValid    := {| oGet | ::oBrwRango:aRow:getRange():validCode( oGet ) }
+      :bOnPostEdit   := {| oCol, uNewValue | ::oBrwRango:aRow:getRange():setFrom( uNewValue ) }
       :cEditPicture  := "@!"
-      :nEditType     := 5
       :nWidth        := 120
       :Cargo         := 0.10
       :nBtnBmp       := 1
       :AddResource( "Lupa" )
    end with
-
+   
    with object ( ::oBrwRango:AddCol() )
       :cHeader       := ""
-      :bEditValue    := {|| ::EditTextDesde() } 
+      :bEditValue    := {|| ::oBrwRango:aRow:getRange():showFromNombre() } 
       :nEditType     := 0
       :nWidth        := 200
       :Cargo         := 0.25
@@ -124,12 +126,12 @@ METHOD Resource() CLASS BrowseRange
 
    with object ( ::oColHasta := ::oBrwRango:AddCol() )
       :cHeader       := "Hasta"
+      :nEditType     := ::getEditButton()
       :bEditValue    := {|| ::oBrwRango:aRow:getRange():uTo }
-      // :bOnPostEdit   := {|o,x| ::aControllers[ ::oBrwRango:nArrayAt ]:Hasta := x }
-      // :bEditValid    := {|oGet| ::ValidValueTextHasta( oGet ) }
-      // :bEditBlock    := {|| ::EditValueTextHasta() }
+      :bEditBlock    := {|| ::oBrwRango:aRow:ActivateSelectorView() }
+      :bEditValid    := {| oGet | ::oBrwRango:aRow:getRange():validCode( oGet ) }
+      :bOnPostEdit   := {| oCol, uNewValue | ::oBrwRango:aRow:getRange():setTo( uNewValue ) }
       :cEditPicture  := "@!"
-      :nEditType     := 5
       :nWidth        := 120
       :Cargo         := 0.15
       :nBtnBmp       := 1
@@ -138,24 +140,20 @@ METHOD Resource() CLASS BrowseRange
 
    with object ( ::oBrwRango:AddCol() )
       :cHeader       := ""
-      :bEditValue    := {|| ::EditTextHasta() }
+      :bEditValue    := {|| ::oBrwRango:aRow:getRange():showToNombre() } 
       :nEditType     := 0
       :nWidth        := 200
       :Cargo         := 0.25
    end with
 
    with object ( ::oColAll := ::oBrwRango:AddCol() )
-      :cHeader          := "Fitrar"         
-      :bStrData         := {|| "" }
-      :bEditValue       := {|| ::oBrwRango:aRow:getRange():lAll }
-      :bOnPostEdit      := {|o,x| ::oBrwRango:aRow:getRange():lAll := x }
-      :nWidth           := 40
-      :Cargo            := 0.10
-      :nBtnBmp          := 1
-      :nEditType        := EDIT_BUTTON
-      :lBtnTransparent  := .t.
-      :addBmpFile( "gc_funnel_add_16" )
-      :addBmpFile( "gc_funnel_broom_16" )
+      :cHeader       := "Fitrar"         
+      :bStrData      := {|| "" }
+      :bEditValue    := {|| ::oBrwRango:aRow:getRange():lAll }
+      :bOnPostEdit   := {|o,x| ::oBrwRango:aRow:getRange():lAll := x }
+      :nWidth        := 40
+      :Cargo         := 0.10
+      :SetCheck( { "gc_funnel_add_16", "gc_funnel_broom_16" } )
    end with
 
 RETURN .t.
@@ -169,6 +167,31 @@ METHOD ResizeColumns() CLASS BrowseRange
    aeval( ::oBrwRango:aCols, {|o, n, oCol| o:nWidth := ::oBrwRango:nWidth * o:Cargo } )
 
 RETURN .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD Clicked( nRow, nCol ) CLASS BrowseRange
+
+   local nSelectedColumn   := ::oBrwRango:MouseColPos( nCol ) 
+
+   do case
+      case nSelectedColumn == 2
+
+         ::oBrwRango:aRow:getRange():toogleAll() 
+
+         ::oColDesde:nEditType( ::getEditButton() )
+
+         ::oColHasta:nEditType( ::getEditButton() ) 
+
+         ::oBrwRango:Refresh()
+
+      case nSelectedColumn == 7
+
+         msgalert( "filtrar" )         
+
+   endcase
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -193,31 +216,41 @@ CLASS ItemRange
 
    DATA ValidDesde
    DATA ValidHasta
-
+   
    DATA TextDesde
    DATA TextHasta
-
+   
    DATA Imagen
    DATA bCondition
    DATA lImprimir
-
+   
    DATA cPicDesde
    DATA cPicHasta
-
+   
    DATA cBitmap
-
+   
    DATA bValidMayorIgual
    DATA bValidMenorIgual
-
-   METHOD New( oController )
-
+   
+   METHOD New( oController )           CONSTRUCTOR
+      
    METHOD End()                        VIRTUAL
+         
+   METHOD ValidCode( uVal )
 
-   METHOD ValidMayorIgual( uVal, uMayor )
-   METHOD ValidMenorIgual( uVal, uMenor )
+   METHOD extractCode( uValue )        INLINE ( if( hb_ishash( uValue ), hget( uValue, "codigo" ), uValue ) )
 
-   METHOD GetDesde()                   INLINE ( if( Empty( ::Desde ), "", alltrim( ::Desde ) ) )
-   METHOD GetHasta()                   INLINE ( if( Empty( ::Hasta ), "", alltrim( ::Hasta ) ) )
+   METHOD showNombre( cCode )          
+
+   METHOD getFrom()                    INLINE ( if( empty( ::uFrom ), "", alltrim( ::uFrom ) ) )
+   METHOD setFrom( uFrom )             INLINE ( ::uFrom := ::extractCode( uFrom ) )
+   METHOD showFromNombre()             INLINE ( ::showNombre( ::uFrom ) )
+      
+   METHOD getTo()                      INLINE ( if( empty( ::uTo ), "", alltrim( ::uTo ) ) )
+   METHOD setTo( uTo )                 INLINE ( ::uTo := ::extractCode( uTo ) )
+   METHOD showToNombre()               INLINE ( ::showNombre( ::uTo ) )
+
+   METHOD toogleAll()               
 
 END CLASS
 
@@ -231,25 +264,37 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ValidMayorIgual( uVal, uMayor ) CLASS ItemRange
+METHOD ValidCode( uValue ) CLASS ItemRange
 
-   if IsBlock( ::bValidMayorIgual )
-      Return ( Eval( ::bValidMayorIgual, uVal, uMayor ) )
+   if hb_isobject( uValue )
+      RETURN ( ::oController:getModel():isWhereCodigo( uValue:varGet() ) )
+   end if 
+
+RETURN ( ::oController:getModel():isWhereCodigo( uValue ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD showNombre( cCode ) CLASS ItemRange
+
+   if !empty( cCode )
+      RETURN ( ::oController:getModel():getNombreWhereCodigo( cCode ) )
    end if
 
-Return ( .t. )
+RETURN ( '' )
 
 //---------------------------------------------------------------------------//
 
-METHOD ValidMenorIgual( uVal, uMenor ) CLASS ItemRange
+METHOD toogleAll() CLASS ItemRange
 
-   if IsBlock( ::bValidMenorIgual )
-      Return ( Eval( ::bValidMenorIgual, uVal, uMenor ) )
-   end if
+   ::lAll   := !::lAll
 
-Return ( .t. )
+   if ::lAll
+      ::setFrom( space( 20 ) )
+      ::setTo( space( 20 ) )
+   end if 
 
-//---------------------------------------------------------------------------//
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -265,7 +310,7 @@ END CLASS
 
 METHOD New( oController ) CLASS ArticulosItemRange
 
-   ::lAll                              := .t.
+   ::lAll                              := .f.
 
    ::uFrom                             := space( 20 )
 
