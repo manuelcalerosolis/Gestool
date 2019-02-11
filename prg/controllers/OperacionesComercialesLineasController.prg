@@ -269,5 +269,5 @@ RETURN ( ::getModelBuffer( "uuid" ) )
 
 METHOD insertLineRelation( hLine, uuidDestino ) CLASS OperacionesComercialesLineasController
 
-RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hline, "uuid" ), ::getSuperController():getController():getLinesController():getModel():cTableName, uuidDestino, ::getModel():cTableName ) )
+RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hline, "uuid" ), ::oController:oController:getLinesController():getModel():cTableName, uuidDestino, ::getModel():cTableName ) )
 

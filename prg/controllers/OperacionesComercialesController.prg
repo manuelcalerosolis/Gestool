@@ -514,7 +514,7 @@ METHOD insertHeader( aHeaders ) CLASS OperacionesComercialesController
    aadd( ::aCreatedDocument, ::uuidDocumentoDestino )
       
    for each hHeader in aHeaders
-      ::insertHeaderRelation( hHeader )   
+      ::insertHeaderRelation( hHeader )
    next
 
 RETURN ( ::uuidDocumentoDestino )
@@ -523,7 +523,7 @@ RETURN ( ::uuidDocumentoDestino )
 
 METHOD insertHeaderRelation( hHeader ) CLASS OperacionesComercialesController
 
-RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hHeader, "uuid" ), ::getSuperController():getModel():cTableName, ::uuidDocumentoDestino, ::getModel():cTableName ) )
+RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hHeader, "uuid" ), ::oController:getModel():cTableName, ::uuidDocumentoDestino, ::getModel():cTableName ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

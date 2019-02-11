@@ -141,8 +141,6 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oFacturasVentasSimplificadasLineasController
 
    DATA oAlbaranesVentasLineasController
-   
-   DATA oConvertirAlbaranVentasTemporalController
 
    DATA oPedidosVentasLineasController
 
@@ -407,9 +405,6 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getAlbaranesVentasDescuentosController();
                                     INLINE ( if( empty( ::oAlbaranesVentasDescuentosController ), ::oAlbaranesVentasDescuentosController := AlbaranesVentasDescuentosController():New( self ), ), ::oAlbaranesVentasDescuentosController )
 
-   METHOD getConvertirAlbaranVentasTemporalController();
-                                    INLINE ( if( empty( ::oConvertirAlbaranVentasTemporalController ), ::oConvertirAlbaranVentasTemporalController := ConvertirAlbaranVentasTemporalController():New( self ), ), ::oConvertirAlbaranVentasTemporalController )
-
    METHOD getPresupuestosVentasDescuentosController();
                                     INLINE ( if( empty( ::oPresupuestosVentasDescuentosController ), ::oPresupuestosVentasDescuentosController := PresupuestosVentasDescuentosController():New( self ), ), ::oPresupuestosVentasDescuentosController )
 
@@ -490,9 +485,6 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getAlbaranesComprasLineasController();
                                     INLINE ( if( empty( ::oAlbaranesComprasLineasController ), ::oAlbaranesComprasLineasController := AlbaranesComprasLineasController():New( self ), ), ::oAlbaranesComprasLineasController )
-
-   METHOD getFacturasComprasController();
-                                    INLINE ( if( empty( ::oPresupuestosComprasController ), ::oPresupuestosComprasController := PresupuestosComprasController():New( self ), ), ::oPresupuestosComprasController )
 
    METHOD getAlmacenesController()  INLINE ( if( empty( ::oAlmacenesController ), ::oAlmacenesController := AlmacenesController():New( self ), ), ::oAlmacenesController )
 
@@ -812,10 +804,6 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oAlbaranesVentasDescuentosController )   
       ::oAlbaranesVentasDescuentosController:End()
-   end if 
-
-   if !empty( ::oConvertirAlbaranVentasTemporalController )   
-      ::oConvertirAlbaranVentasTemporalController:End()
    end if  
 
    if !empty( ::oFacturasVentasDescuentosController )   

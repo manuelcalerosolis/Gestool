@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ConversorPrepareController 
+CLASS ConversorPrepareController FROM SQLBrowseController
 
    DATA aSelected
 
@@ -15,11 +15,13 @@ CLASS ConversorPrepareController
 
    DATA oOrigenController
 
-   DATA oResumenView
-
    DATA oConvertirView
 
+   DATA oConvertirAlbaranVentasTemporalController
+
    DATA oConversorAlbaranVentasView
+
+   DATA oConversorDocumentosController
 
    METHOD New() CONSTRUCTOR
 
@@ -37,7 +39,10 @@ CLASS ConversorPrepareController
 
    METHOD setDocumentosDestino()
 
-   METHOD getModel()                   INLINE ( ::getConversorDocumentosController():getModel() ) 
+   //METHOD getModel()                   INLINE ( ::getConversorDocumentosController():getModel() ) 
+
+   METHOD getConvertirAlbaranVentasTemporalController();
+                                       INLINE ( if( empty( ::oConvertirAlbaranVentasTemporalController ), ::oConvertirAlbaranVentasTemporalController := ConvertirAlbaranVentasTemporalController():New( self ), ), ::oConvertirAlbaranVentasTemporalController )
 
    METHOD setAlbaranesComprasController() ;
                                        INLINE ( ::oDestinoController := AlbaranesComprasController():New( self ), ::oDestinoController ) 
@@ -74,6 +79,9 @@ CLASS ConversorPrepareController
 
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ::oController:getFacturasComprasController():getDialogView(), ::oDialogView ) )
 
+   METHOD getConversorDocumentosController() ;
+                                       INLINE ( if( empty( ::oConversorDocumentosController ), ::oConversorDocumentosController := ConversorDocumentosController():New( self ), ), ::oConversorDocumentosController ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -94,9 +102,13 @@ RETURN ( self )
 
 METHOD End() CLASS ConversorPrepareController
 
-   if !empty( ::oConversorDocumentosControllerModel )
+   if !empty( ::oConversorDocumentosController )
       ::oConversorDocumentosController:End()
    end if
+
+   if !empty( ::oConvertirAlbaranVentasTemporalController )
+      ::oConvertirAlbaranVentasTemporalController:End()
+   end if 
 
 RETURN ( nil )
 
@@ -145,13 +157,12 @@ RETURN ( ::getDestinoController():Edit( nId ) )
 */
 //---------------------------------------------------------------------------//
 
-METHOD convertDocument( aCreatedDocument ) CLASS ConversorPrepareController
+METHOD convertDocument() CLASS ConversorPrepareController
 
-   if !empty( aCreatedDocument )
-      ::getResumenView():Activate()
-   end if
+      ::getConversorDocumentosController():convertDocument()
+      ::getConversorDocumentosController():showResume()
 
-RETURN ( aCreatedDocument )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -159,13 +170,9 @@ METHOD runConvert() CLASS ConversorPrepareController
 
    local aCreatedDocument
 
-   msgalert( hb_valtoexp( ::aSelected ), "aSelected" )
-
    ::getConversorDocumentosController():runConvertAlbaran( ::aSelected )
 
-   aCreatedDocument := ::getConversorDocumentosController():convertDocument()
-
-   ::convertDocument( aCreatedDocument )
+   ::convertDocument()
 
 RETURN ( nil )
 
@@ -211,7 +218,7 @@ METHOD Activate() CLASS ConversorDocumentoView
 
    REDEFINE COMBOBOX ::oComboDocumentoDestino ;
       VAR         ::cDocumentoDestino ;
-      ITEMS       ( hgetkeys( ::getController():aDocumentosDestino ) ) ;
+      ITEMS       ( hgetkeys( ::oController:aDocumentosDestino ) ) ;
       ID          100 ;
       OF          ::oDialog
 
@@ -266,6 +273,8 @@ END CLASS
 
 METHOD Activate() CLASS ConversorAlbaranVentasView
 
+   ::oController:getConvertirAlbaranVentasTemporalController():getModel():createTemporalTable()
+
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_LARGE" ;
       TITLE       "Convertir a factura de ventas"
@@ -285,8 +294,13 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
    REDEFINE FOLDER ::oFolder ;
       ID          500 ;
       OF          ::oDialog ;
-      PROMPT      "Rangos" ;
-      DIALOGS     "CONVERTIR_ALBARAN_VENTAS"   
+      PROMPT      "Rangos" ,;
+                  "Vista previa",;
+                  "Convertidos" ;
+      DIALOGS     "CONVERTIR_ALBARAN_VENTAS",;
+                  "CONVERTIR_ALBARAN_VENTAS_PREVIA",;
+                  "CONVERTIR_ALBARAN_VENTAS"
+                  
 
    REDEFINE GET   ::oFechaDesde ;
       VAR         ::dFechaDesde ;
@@ -302,7 +316,7 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
       SPINNER ;
       OF          ::oFolder:aDialogs[1]
 
-   // ::getController():getConvertirAlbaranVentasTemporalController():Activate( 100, ::oFolder:aDialogs[2] )
+   ::oController:getConvertirAlbaranVentasTemporalController():Activate( 100, ::oFolder:aDialogs[2] )
    
    // Botones------------------------------------------------------------------
 
@@ -321,8 +335,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 
 METHOD Activating() CLASS ConversorAlbaranVentasView
-
-   // ::getController():getConvertirAlbaranVentasTemporalController():getModel():createTemporalTable()
+   
 
 RETURN ( nil )
 
@@ -369,11 +382,9 @@ METHOD okActivateFolderOne() CLASS ConversorAlbaranVentasView
       RETURN( nil )
    end if
 
-   //msgalert( hb_valtoexp( aAlbaranes ), "albaraneeees")
-
    ::insertTemporalAlbaranes( hWhere )
 
-   ::getController():getConvertirAlbaranVentasTemporalController():getRowSet():refresh()
+   ::oController:getConvertirAlbaranVentasTemporalController():getRowSet():refresh()
 
    ::oFolder:aEnable[ 2 ]  := .t.
    ::oFolder:setOption( 2 ) 
@@ -383,15 +394,15 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD okActivateFolderTwo() CLASS ConversorAlbaranVentasView
-   
-   msgalert( hb_valtoexp( ::getController():getConvertirAlbaranVentasTemporalController():getUuids() ) )
 
-   if empty(::getController():getConvertirAlbaranVentasTemporalController():getUuids() )
+   if empty(::oController:getConvertirAlbaranVentasTemporalController():getUuids() )
       msgstop("Debe seleccionar al menos un albaran")
       RETURN( nil )
    end if
    
-   ::convertAlbaranVentas( ::getController():getConvertirAlbaranVentasTemporalController():getUuids() )
+   ::oController:getConversorDocumentosController():runConvertAlbaran( ::oController:getConvertirAlbaranVentasTemporalController():getUuids() )
+   ::oController:getConversorDocumentosController():convertDocument()
+   
 
    ::oFolder:aEnable[ 3 ]  := .t.
    ::oFolder:setOption( 3 ) 
@@ -402,7 +413,7 @@ RETURN ( nil )
 
 METHOD insertTemporalAlbaranes( hWhere ) CLASS ConversorAlbaranVentasView
 
-   ::getController():getConvertirAlbaranVentasTemporalController():getModel():insertTemporalAlbaranes( ::dFechaDesde, ::dFechaHasta, hWhere )
+   ::oController:getConvertirAlbaranVentasTemporalController():getModel():insertTemporalAlbaranes( ::dFechaDesde, ::dFechaHasta, hWhere )
 
 RETURN ( nil )
 
@@ -410,14 +421,11 @@ RETURN ( nil )
 
 METHOD convertAlbaranVentas( aSelected )
 
-   local Selected 
-   ::getController():runConvertAlbaranCompras( aSelected )
-   /*for each Selected in aSelected
-      msgalert( Selected, "uuidSelected" )
-     
-      if ::getController():getModel():countDocumentoWhereUuidOigen( Selected ) == 0
-      
-   next*/
+   msgalert( hb_valtoexp( aSelected ), "aSelected")
+
+   ::oController:getConversorDocumentosController():runConvertAlbaran( aSelected )
+   msgalert( hb_valtoexp( ::aConvert ), "aConvert")
+   
 
 RETURN ( nil )
 
@@ -454,7 +462,7 @@ METHOD Activate() CLASS ConversorResumenView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   ::getController():Activate( 100, ::oDialog )
+   ::oController():Activate( 100, ::oDialog )
 
    // Botones------------------------------------------------------------------
 

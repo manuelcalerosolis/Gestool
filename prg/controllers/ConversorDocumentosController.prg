@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ConversorDocumentosController 
+CLASS ConversorDocumentosController FROM SQLBrowseController
 
    DATA aDocumentosDestino 
 
@@ -18,6 +18,12 @@ CLASS ConversorDocumentosController
    DATA uuidDocumentoDestino
 
    DATA idDocumentoDestino
+
+   DATA oResumenView
+
+   DATA oController
+
+   DATA oModel
 
    DATA aConvert                       INIT {}
 
@@ -58,18 +64,25 @@ CLASS ConversorDocumentosController
    METHOD isAlbaranNotConverted( hAlbaran ) ;
                                        INLINE ( ::getModel():countDocumentoWhereUuidOigen( hget( hAlbaran, "uuid" ) ) == 0 )
 
-   METHOD insertRelationDocument()     INLINE ( ::getModel():insertRelationDocument( ::uuidDocumentoOrigen, ::getController():getModel():cTableName, ::uuidDocumentoDestino, ::oDestinoController:getModel():cTableName ) )
+   METHOD insertRelationDocument()     INLINE ( ::getModel():insertRelationDocument( ::uuidDocumentoOrigen, ::getOrigenController():getModel():cTableName, ::uuidDocumentoDestino, ::getDestinoController():getModel():cTableName ) )
 
    METHOD addConvert()
 
    METHOD Edit( nId )
 
-
    METHOD convertDocument()
+
+   METHOD showResume()
 
    //Contrucciones tarias------------------------------------------------------
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLConversorDocumentosModel():New( self ), ), ::oModel ) 
+
+   METHOD getResumenView()             INLINE ( if( empty( ::oResumenView ), ::oResumenView := ConversorResumenView():New( self ), ), ::oResumenView )
+
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ::oController:oOrigenController:getDialogView(), ::oDialogView ) )
+
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesBrowseView():New( self ), ), ::oBrowseView )
 
 END CLASS
 
@@ -84,6 +97,14 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS ConversorDocumentosController
+
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
+
+   if !empty( ::oResumenView )
+      ::oResumenView:End()
+   end if
 
 RETURN ( nil )
 
@@ -185,14 +206,18 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD runConvertAlbaran( aSelected ) CLASS ConversorDocumentosController
+
+   msgalert( hb_valtoexp( aSelected ), "aSelected" )
    
-   ::aConvert     := {}
+   ::aConvert           := {}
 
-   ::aHeader      := {}
+   ::aHeader            := {}
 
-   ::aLines       := {}
+   ::aLines             := {}
 
-   ::aDiscounts   := {}
+   ::aDiscounts         := {}
+
+   ::aCreatedDocument   := {}
 
    ::convertAlbaran( aSelected ) 
 
@@ -205,7 +230,7 @@ METHOD convertAlbaran( aSelected ) CLASS ConversorDocumentosController
    Local hAlbaran
    local hAlbaranes 
 
-   if empty( ::getController() )
+   if empty( ::oController )
       RETURN ( nil )
    end if
    
@@ -218,7 +243,7 @@ METHOD convertAlbaran( aSelected ) CLASS ConversorDocumentosController
 
          ::uuidDocumentoOrigen   := hget( hAlbaran, "uuid" )
 
-         msgalert( ::uuidDocumentoOrigen)
+         //msgalert( ::uuidDocumentoOrigen)
          
          if ::isAlbaranEquals( hAlbaran )
 
@@ -338,11 +363,22 @@ RETURN ( ::getDestinoController():Edit( nId ) )
 
 METHOD convertDocument() CLASS ConversorDocumentosController
 
-   ::aCreatedDocument            := ::getController():oDestinoController:convertDocument( ::aConvert )
+   ::aCreatedDocument            := ::oController:oDestinoController:convertDocument( ::aConvert )
 
-RETURN ( ::aCreatedDocument )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD showResume() CLASS ConversorDocumentosController
+
+   if !empty( ::aCreatedDocument )
+      ::getResumenView:Activate()
+   end if
+
+   ::aCreatedDocument := {}
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -385,7 +421,7 @@ METHOD Activate() CLASS ConversorDocumentoView
 
    REDEFINE COMBOBOX ::oComboDocumentoDestino ;
       VAR         ::cDocumentoDestino ;
-      ITEMS       ( hgetkeys( ::getController():aDocumentosDestino ) ) ;
+      ITEMS       ( hgetkeys( ::oController:aDocumentosDestino ) ) ;
       ID          100 ;
       OF          ::oDialog
 
@@ -439,7 +475,7 @@ END CLASS
 
 METHOD Activate() CLASS ConvertirAlbaranVentasView
 
-   ::getController():getConvertirAlbaranVentasTemporalController():getModel():createTemporalTable()
+   ::oController:getConvertirAlbaranVentasTemporalController():getModel():createTemporalTable()
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_LARGE" ;
@@ -481,7 +517,7 @@ METHOD Activate() CLASS ConvertirAlbaranVentasView
       SPINNER ;
       OF          ::oFolder:aDialogs[1]
 
-   ::getController():getConvertirAlbaranVentasTemporalController():Activate( 100, ::oFolder:aDialogs[2] )
+   ::oController:getConvertirAlbaranVentasTemporalController():Activate( 100, ::oFolder:aDialogs[2] )
    
    // Botones------------------------------------------------------------------
 
@@ -541,7 +577,7 @@ METHOD okActivateFolderOne() CLASS ConvertirAlbaranVentasView
 
    ::insertTemporalAlbaranes( hWhere )
 
-   ::getController():getConvertirAlbaranVentasTemporalController():getRowSet():refresh()
+   ::oController:getConvertirAlbaranVentasTemporalController():getRowSet():refresh()
 
    ::oFolder:aEnable[ 2 ]  := .t.
    ::oFolder:setOption( 2 ) 
@@ -552,14 +588,14 @@ RETURN ( nil )
 
 METHOD okActivateFolderTwo() CLASS ConvertirAlbaranVentasView
 
-msgalert( hb_valtoexp( ::getController():getConvertirAlbaranVentasTemporalController():getUuids() ) )
+msgalert( hb_valtoexp( ::oController:getConvertirAlbaranVentasTemporalController():getUuids() ) )
 
-   if empty(::getController():getConvertirAlbaranVentasTemporalController():getUuids() )
+   if empty(::oController:getConvertirAlbaranVentasTemporalController():getUuids() )
       msgstop("Debe seleccionar al menos un albaran")
       RETURN( nil )
    end if
    
-   ::convertAlbaranVentas( ::getController():getConvertirAlbaranVentasTemporalController():getUuids() )
+   ::convertAlbaranVentas( ::oController:getConvertirAlbaranVentasTemporalController():getUuids() )
 
    ::oFolder:aEnable[ 3 ]  := .t.
    ::oFolder:setOption( 3 ) 
@@ -570,7 +606,7 @@ RETURN ( nil )
 
 METHOD insertTemporalAlbaranes( hWhere ) CLASS ConvertirAlbaranVentasView
 
-   ::getController():getConvertirAlbaranVentasTemporalController():getModel():insertTemporalAlbaranes( ::dFechaDesde, ::dFechaHasta, hWhere )
+   ::oController:getConvertirAlbaranVentasTemporalController():getModel():insertTemporalAlbaranes( ::dFechaDesde, ::dFechaHasta, hWhere )
 
 RETURN ( nil )
 
@@ -579,11 +615,11 @@ RETURN ( nil )
 METHOD convertAlbaranVentas( aSelecteds )
 
    local Selected 
-   ::getController():runConvertAlbaran( aSelecteds )
+   ::oController:runConvertAlbaran( aSelecteds )
    /*for each Selected in aSelecteds
       msgalert( Selected, "uuidSelected" )
      
-      if ::getController():getModel():countDocumentoWhereUuidOigen( Selected ) == 0
+      if ::oController:getModel():countDocumentoWhereUuidOigen( Selected ) == 0
       
 
    next*/
@@ -624,7 +660,7 @@ METHOD Activate() CLASS ConversorResumenView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   ::getController():Activate( 100, ::oDialog )
+   ::oController:Activate( 100, ::oDialog )
 
    // Botones------------------------------------------------------------------
 
@@ -752,8 +788,8 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 //---------------------------------------------------------------------------//
 
 METHOD getInitialSelect() CLASS SQLConversorDocumentosModel
-  
-RETURN ( ::getController:oDestinoController:getInitialWhereDocumentos(::oController:setWhereArray( ::oController:aCreatedDocument ) ) )
+
+RETURN ( SQLFacturasComprasModel():getInitialWhereDocumentos(::oController:setWhereArray( ::oController:aCreatedDocument ) ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
