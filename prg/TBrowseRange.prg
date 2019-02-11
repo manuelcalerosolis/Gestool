@@ -16,7 +16,9 @@ CLASS BrowseRange
    DATA oColHasta
    DATA oColAll
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
+   METHOD End()
+
    METHOD Resource()
 
    METHOD AddController( oController ) INLINE ( aAdd( ::aControllers, oController ) )
@@ -42,6 +44,14 @@ METHOD New( idBrowse, oContainer ) CLASS BrowseRange
    ::oContainer   := oContainer
    
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End() CLASS BrowseRange
+
+   aeval( ::aControllers, {| oController | oController:End() } )
+   
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -87,6 +97,8 @@ METHOD Resource() CLASS BrowseRange
       :nWidth        := 40
       :Cargo         := 0.10
       :SetCheck( { "Sel16", "Cnt16" } )
+      :bLDClickData  := {|| msgalert( "click") }
+      :bPopup        := {|| msgalert( "pop") }
    end with
 
    with object ( ::oColDesde := ::oBrwRango:AddCol() )
@@ -133,15 +145,18 @@ METHOD Resource() CLASS BrowseRange
    end with
 
    with object ( ::oColAll := ::oBrwRango:AddCol() )
-      :cHeader       := "Fitrar"         
-      :bStrData      := {|| "" }
-      :bEditValue    := {|| ::oBrwRango:aRow:getRange():lAll }
-      :bOnPostEdit   := {|o,x| ::oBrwRango:aRow:getRange():lAll := x }
-      :nWidth        := 40
-      :Cargo         := 0.10
-      :SetCheck( { "gc_funnel_add_16", "gc_funnel_broom_16" } )
+      :cHeader          := "Fitrar"         
+      :bStrData         := {|| "" }
+      :bEditValue       := {|| ::oBrwRango:aRow:getRange():lAll }
+      :bOnPostEdit      := {|o,x| ::oBrwRango:aRow:getRange():lAll := x }
+      :nWidth           := 40
+      :Cargo            := 0.10
+      :nBtnBmp          := 1
+      :nEditType        := EDIT_BUTTON
+      :lBtnTransparent  := .t.
+      :addBmpFile( "gc_funnel_add_16" )
+      :addBmpFile( "gc_funnel_broom_16" )
    end with
-
 
 RETURN .t.
 
