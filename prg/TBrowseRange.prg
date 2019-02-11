@@ -314,7 +314,7 @@ METHOD New( oController ) CLASS ArticulosItemRange
 
    ::uFrom                             := space( 20 )
 
-   ::uTo                               := replicate( 'Z', 20 )
+   ::uTo                               := space( 20 )
 
 RETURN ( ::Super:New( oController ) )
 
