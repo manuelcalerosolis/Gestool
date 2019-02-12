@@ -35,22 +35,25 @@ local cSql
       LEFT JOIN %5$s AS tarifas
          ON %1$s.tarifa_codigo = tarifas.codigo
 
-      WHERE %1$s.uuid %7$s
-
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql,;
-                           ::cTableName,;
-                           ::getTableName(),;
-                           SQLTercerosModel():getTableName(),;
-                           SQLDireccionesModel():getTableName(),;
-                           SQLArticulosTarifasModel():getTableName(),;
-                           ::getColumnsSelect(),;
-                           cWhere )
+   cSql     := hb_strformat(  cSql,;
+                              ::cTableName,;
+                              ::getTableName(),;
+                              SQLTercerosModel():getTableName(),;
+                              SQLDireccionesModel():getTableName(),;
+                              SQLArticulosTarifasModel():getTableName(),;
+                              ::getColumnsSelect() )
+
+   if empty( cWhere )
+      cSql  += "LIMIT 0"
+   else
+      cSql  += "WHERE " + ::cTableName + ".uuid " + cWhere
+   end if 
+
+   msgalert( cSql, "getInitialWhereDocumentos" )
 
 RETURN ( cSql )
-
-//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

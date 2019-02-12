@@ -71,6 +71,7 @@ CLASS SQLRowSet
    METHOD RefreshAndGoTop()                           INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:Refresh(), ::oRowSet:GoTop() ), ) )
 
    METHOD idFromRecno( aRecno, cColumnKey )
+      
    METHOD uuidFromRecno( aRecno )                     INLINE ( ::idFromRecno( aRecno, "uuid" ) )
    METHOD identifiersFromRecno( aRecno )              
 
@@ -212,7 +213,7 @@ METHOD IdFromRecno( aRecno, cColumnKey )
 
    DEFAULT cColumnKey   := 'id'
 
-   aeval( aRecno, {|nRecno| ::oRowSet:goTo( nRecno ), aadd( aId, ::oRowSet:fieldget( cColumnKey ) ) } )
+   aeval( aRecno, {|nRecno| if( !empty( nRecno ), ( ::oRowSet:goTo( nRecno ), aadd( aId, ::oRowSet:fieldget( cColumnKey ) ) ), ) } )
 
 RETURN ( aId )
 

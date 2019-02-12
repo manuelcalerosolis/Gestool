@@ -341,7 +341,13 @@ RETURN ( .t. )
 
 METHOD setWhereArray( aSelected ) CLASS ConversorDocumentosController
    
-   local cWhere   := " IN( "
+   local cWhere
+   
+   if empty( aSelected )
+      RETURN ( '' )
+   end if 
+   
+   cWhere         := " IN( "
 
    aeval( aSelected, {| v | cWhere += quotedUuid( v ) + ", " } )
 
@@ -467,8 +473,8 @@ CLASS ConvertirAlbaranVentasView FROM SQLBaseView
          METHOD okActivateFolderOne()
          METHOD okActivateFolderTwo()
 
-   METHOD convertAlbaranVentas( aSelecteds )
-         
+   METHOD showFolderResults()          INLINE ( ::oFolder:aEnable[ 3 ] := .t., ::oFolder:setOption( 3 ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -587,15 +593,16 @@ RETURN ( nil )
 
 METHOD okActivateFolderTwo() CLASS ConvertirAlbaranVentasView
 
-   if empty(::oController:getConvertirAlbaranVentasTemporalController():getUuids() )
-      msgstop("Debe seleccionar al menos un albaran")
+   if empty( ::oController:getConvertirAlbaranVentasTemporalController():getUuids() )
+      msgstop( "Debe seleccionar al menos un albaran" )
       RETURN( nil )
    end if
    
-   ::convertAlbaranVentas( ::oController:getConvertirAlbaranVentasTemporalController():getUuids() )
+   ::oController:runConvertAlbaran( ::oController:getConvertirAlbaranVentasTemporalController():getUuids() )
+
    ::oController:getConversorDocumentosController():convertDocument()
-   ::oFolder:aEnable[ 3 ]  := .t.
-   ::oFolder:setOption( 3 ) 
+
+   ::showFolderResults()
 
 RETURN ( nil )
 
@@ -607,15 +614,6 @@ METHOD insertTemporalAlbaranes( hWhere ) CLASS ConvertirAlbaranVentasView
 
 RETURN ( nil )
 
-//---------------------------------------------------------------------------//
-
-METHOD convertAlbaranVentas( aSelecteds )
-
-   ::oController:runConvertAlbaran( aSelecteds )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -681,6 +679,8 @@ CLASS SQLConversorDocumentosModel FROM SQLCompanyModel
    METHOD countDocumentoWhereUuidOigen( uuidOrigen )
 
    METHOD getInitialSelect()
+
+   METHOD getDestinoController()       INLINE ( ::oController:oController:oDestinoController )
 
 END CLASS
 
@@ -755,7 +755,7 @@ RETURN ( getSQLDatabase():Exec( cSql ) )
 
 METHOD countDocumentoWhereUuidOigen( uuidOrigen ) CLASS SQLConversorDocumentosModel
  
-local cSql
+   local cSql
 
    TEXT INTO cSql
 
@@ -777,7 +777,7 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 METHOD getInitialSelect() CLASS SQLConversorDocumentosModel
 
-RETURN ( ::oController:oController:oDestinoController:getModel():getInitialWhereDocumentos(::oController:setWhereArray( ::oController:aCreatedDocument ) ) )
+RETURN ( ::getDestinoController():getModel():getInitialWhereDocumentos( ::oController:setWhereArray( ::oController:aCreatedDocument ) ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
