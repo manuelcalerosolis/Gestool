@@ -269,6 +269,8 @@ CLASS ConversorAlbaranVentasView FROM SQLBaseView
 
    METHOD convertAlbaranVentas( aSelected )
 
+   METHOD cancelDialog()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -299,7 +301,7 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
                   "Convertidos" ;
       DIALOGS     "CONVERTIR_ALBARAN_VENTAS",;
                   "CONVERTIR_ALBARAN_VENTAS_PREVIA",;
-                  "CONVERTIR_ALBARAN_VENTAS"
+                  "CONVERTIR_ALBARAN_VENTAS_PREVIA"
 
    REDEFINE GET   ::oFechaDesde ;
       VAR         ::dFechaDesde ;
@@ -315,6 +317,10 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
       SPINNER ;
       OF          ::oFolder:aDialogs[1]
 
+   ::oController:getConvertirAlbaranVentasTemporalController():Activate( 100, ::oFolder:aDialogs[2] )
+
+   ::oController:getConversorDocumentosController():Activate( 100, ::oFolder:aDialogs[3] )
+
    ::oBrwRange    := BrowseRange():New( 130, ::oFolder:aDialogs[1] )
 
    ::oBrwRange:addController( ContadoresController():New() )
@@ -323,13 +329,11 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
 
    ::oBrwRange:Resource()
 
-   ::oController:getConvertirAlbaranVentasTemporalController():Activate( 100, ::oFolder:aDialogs[2] )
-
    // Botones------------------------------------------------------------------
 
    ApoloBtnFlat():Redefine( IDOK, {|| ::okActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::cancelDialog() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    ::oDialog:bKeyDown      := {| nKey | if( nKey == VK_F5, ::okActivate(), ) }
 
@@ -342,6 +346,8 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 
 METHOD Activating() CLASS ConversorAlbaranVentasView
+
+   msgalert( "activating" )
 
    ::oController:getConvertirAlbaranVentasTemporalController():getModel():createTemporalTable()
 
@@ -370,7 +376,7 @@ METHOD okActivate() CLASS ConversorAlbaranVentasView
 
       case ::oFolder:nOption == 3
 
-         ::oDialog:End()
+         ::cancelDialog()
 
    end case
 
@@ -386,7 +392,7 @@ METHOD okActivateFolderOne() CLASS ConversorAlbaranVentasView
 
    aAlbaranes := SQLAlbaranesVentasModel():getArrayAlbaranWhereHash( ::dFechaDesde, ::dFechaHasta, hWhere )
    if empty( aAlbaranes )
-      msgstop("No existen albaranes en el rango de fechas seleccionado")
+      msgstop("No existen albaranes con el filtro seleccionado")
       RETURN( nil )
    end if
 
@@ -396,6 +402,7 @@ METHOD okActivateFolderOne() CLASS ConversorAlbaranVentasView
 
    ::oFolder:aEnable[ 2 ]  := .t.
    ::oFolder:setOption( 2 )
+   ::oFolder:aEnable[ 1 ]  := .f.
 
 RETURN ( nil )
 
@@ -403,17 +410,30 @@ RETURN ( nil )
 
 METHOD okActivateFolderTwo() CLASS ConversorAlbaranVentasView
 
-   if empty(::oController:getConvertirAlbaranVentasTemporalController():getUuids() )
+   if empty( ::oController:getConvertirAlbaranVentasTemporalController():getUuids() )
       msgstop("Debe seleccionar al menos un albaran")
       RETURN( nil )
    end if
 
    ::oController:getConversorDocumentosController():runConvertAlbaran( ::oController:getConvertirAlbaranVentasTemporalController():getUuids() )
+
    ::oController:getConversorDocumentosController():convertDocument()
 
+   ::oController:getConversorDocumentosController():getRowSet():Build( ::oController:getConversorDocumentosController():getModel():getInitialSelect() )
 
    ::oFolder:aEnable[ 3 ]  := .t.
    ::oFolder:setOption( 3 )
+   ::oFolder:aEnable[ 2 ]  := .f.
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD cancelDialog() CLASS ConversorAlbaranVentasView
+
+   ::oDialog:end()
+
+   ::oController:getConvertirAlbaranVentasTemporalController():getModel():dropTemporalTable()
 
 RETURN ( nil )
 
@@ -429,11 +449,7 @@ RETURN ( nil )
 
 METHOD convertAlbaranVentas( aSelected )
 
-   msgalert( hb_valtoexp( aSelected ), "aSelected")
-
-   ::oController:getConversorDocumentosController():runConvertAlbaran( aSelected )
-   msgalert( hb_valtoexp( ::aConvert ), "aConvert")
-
+ ::oController:getConversorDocumentosController():runConvertAlbaran( aSelected )
 
 RETURN ( nil )
 

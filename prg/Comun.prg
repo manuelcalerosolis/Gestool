@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch" 
+#include "Factu.ch"
 #include "Empresa.ch"
 #include "hbxml.ch"
 #include "Xbrowse.ch"
@@ -47,7 +47,7 @@ static oMsgCaja
 static oMsgSesion
 static oMsgProgress
 
-static cCodigoEmpresaEnUso 
+static cCodigoEmpresaEnUso
 static cCodigoDelegacionEnUso
 
 static aEmpresa
@@ -63,7 +63,7 @@ static hVariables       := {=>}
 
 static nError           := 0
 
-static lDemoMode        := .t. 
+static lDemoMode        := .t.
 
 static nHndCaj
 static nHndReport
@@ -192,22 +192,22 @@ FUNCTION CreateMainSQLWindow()
 
    oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " +    rtrim( Auth():Nombre() ), 200,,,, .t. )
 
-   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + rtrim( Application():codigoDelegacion() ), 200,,,, .t., {|| EnviromentController():Activate() } )
+   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegaciï¿½n : " + rtrim( Application():codigoDelegacion() ), 200,,,, .t., {|| EnviromentController():Activate() } )
 
    oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  +      rtrim( Box():Nombre() ), 200,,,, .t., {|| EnviromentController():Activate() } )
-   
-   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " +    rtrim( Application():codigoAlmacen() ), 200,,,, .t., {|| EnviromentController():Activate() } )
 
-   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : " +     alltrim( str( Session():Numero() ) ) , 100,,,, .t., {|| EnviromentController():Activate() } ) 
+   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacï¿½n : " +    rtrim( Application():codigoAlmacen() ), 200,,,, .t., {|| EnviromentController():Activate() } )
+
+   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesiï¿½n : " +     alltrim( str( Session():Numero() ) ) , 100,,,, .t., {|| EnviromentController():Activate() } )
 
    // Abrimos la ventana-------------------------------------------------------
 
    ACTIVATE WINDOW oWnd ;
       MAXIMIZED ;
-      ON PAINT                ( WndPaint( hDC, oWnd ) ); 
+      ON PAINT                ( WndPaint( hDC, oWnd ) );
       ON RESIZE               ( WndResize( oWnd ) );
       ON INIT                 ( EnviromentController():New():isShow() );
-      VALID                   ( EndApp() ) 
+      VALID                   ( EndApp() )
 
    SysRefresh()
 
@@ -220,7 +220,7 @@ FUNCTION BuildMenu()
    local oMenu
 
    MENU oMenu
-   
+
    ENDMENU
 
 RETURN ( oMenu )
@@ -228,10 +228,10 @@ RETURN ( oMenu )
 //---------------------------------------------------------------------------//
 
 PROCEDURE loggedTest()
-   
+
    AlbaranesVentasController():runGenerateFacturaVentas()
 
-RETURN 
+RETURN
 
 //----------------------------------------------------------------------------//
 
@@ -242,7 +242,7 @@ FUNCTION WndResize( oWnd )
 
    if empty( oWnd )
       RETURN ( nil )
-   end if 
+   end if
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -298,10 +298,10 @@ FUNCTION oMsgText( cText )
    DEFAULT cText     := __GSTCOPYRIGHT__ + Space(2) + cNameVersion()
 
    if empty( oWnd() )
-      RETURN nil 
-   end if 
+      RETURN nil
+   end if
 
-   if _isData( oWnd(), "oMsgBar" ) .and. ( oWnd():oMsgBar != nil ) 
+   if _isData( oWnd(), "oMsgBar" ) .and. ( oWnd():oMsgBar != nil )
       oWnd():oMsgBar:SetMsg( cText )
    end if
 
@@ -339,7 +339,7 @@ STATIC FUNCTION EndApp()
 
       oBtnCancel     := ApoloBtnFlat():Redefine( IDCANCEL, {|| oDlg:end()  }, oDlg, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-      oDlg:bKeyDown  := {| nKey | if( nKey == VK_F5, oDlg:end( IDOK ), ) }    
+      oDlg:bKeyDown  := {| nKey | if( nKey == VK_F5, oDlg:end( IDOK ), ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -349,7 +349,7 @@ STATIC FUNCTION EndApp()
 
    if !empty( oBmpVersion )
       oBmpVersion:End()
-   end if 
+   end if
 
    lFinish           := !empty( oDlg ) .and. ( oDlg:nResult == IDOK )
 
@@ -376,14 +376,14 @@ FUNCTION ControlAplicacion()
    local oSerialUSR
    local nSerialUSR
    local oLicencia
-   local nlicencia      
-   local oSayPerpetua   
-   local oSayAlquiler   
-   local cSayAlquiler   
+   local nlicencia
+   local oSayPerpetua
+   local oSayAlquiler
+   local cSayAlquiler
 
-   if lControlAcceso() 
+   if lControlAcceso()
       RETURN .t.
-   end if 
+   end if
 
    nSerialHD      := Abs( nSerialHD() )
    nSerialUSR     := 0
@@ -392,7 +392,7 @@ FUNCTION ControlAplicacion()
    oSayAlquiler   := Array( 8 )
    cSayAlquiler   := Array( 8 )
 
-   DEFINE DIALOG oDlg RESOURCE "GetSerialNo" TITLE "Sistema de protección"
+   DEFINE DIALOG oDlg RESOURCE "GetSerialNo" TITLE "Sistema de protecciï¿½n"
 
    REDEFINE BITMAP oBmpPerpetua ;
       RESOURCE    "gc_certificate_32" ;
@@ -405,7 +405,7 @@ FUNCTION ControlAplicacion()
       TRANSPARENT ;
       ID          510;
       OF          oDlg
-      
+
    REDEFINE BITMAP oBmpDemo ;
       RESOURCE    "gc_lock2_32" ;
       TRANSPARENT ;
@@ -427,7 +427,7 @@ FUNCTION ControlAplicacion()
       ID          110 ;
       OF          oDlg
 
-   REDEFINE SAY   oSayPerpetua[1] ID 111 OF oDlg   
+   REDEFINE SAY   oSayPerpetua[1] ID 111 OF oDlg
 
    REDEFINE GET   oSerialUsr ;
       VAR         nSerialUSR ;
@@ -495,13 +495,13 @@ FUNCTION ControlAplicacion()
 
    REDEFINE SAY oSayDemo ID 310 OF oDlg
 
-   with object ( TWebBtn():Redefine( 400,,,,,  {|| goWeb( __GSTWEB__ ) }, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 255 ), Rgb( 0, 0, 255 ),,,, "Ir a la página web de " + __GSTFACTORY__ ) )
+   with object ( TWebBtn():Redefine( 400,,,,,  {|| goWeb( __GSTWEB__ ) }, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 255 ), Rgb( 0, 0, 255 ),,,, "Ir a la pï¿½gina web de " + __GSTFACTORY__ ) )
       :SetTransparent()
       :SetText( __GSTWEB__ )
-   end with 
+   end with
 
    REDEFINE BUTTON ;
-      ID          IDOK ; 
+      ID          IDOK ;
       OF          oDlg ;
       ACTION      ( ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlquiler, cSayAlquiler ) )
 
@@ -511,7 +511,7 @@ FUNCTION ControlAplicacion()
 
    oBmpPerpetua:end()
    oBmpSaas:end()
-   oBmpDemo:end() 
+   oBmpDemo:end()
 
 RETURN .t.
 
@@ -519,7 +519,7 @@ RETURN .t.
 
 FUNCTION ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlquiler, cSayAlquiler )
 
-   local n 
+   local n
    local nSerialCRC
    local aSerialCRC     := {}
    local cFileIni       := FullCurDir() + "2Ktorce.Num"
@@ -529,52 +529,52 @@ FUNCTION ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlq
 
          if lCheckPerpetuoMode( nSerialUSR )
 
-            MsgInfo( "Programa registrado con éxito" )
+            MsgInfo( "Programa registrado con ï¿½xito" )
 
             oDlg:End( IDOK )
 
          else
-            
-            MsgStop( "Número invalido" )
+
+            MsgStop( "Nï¿½mero invalido" )
 
             oSerialUsr:SetFocus()
 
-         end if 
+         end if
 
       case nLicencia == 2
 
          if empty( cSayAlquiler[1] )
-            MsgStop( "El campo N.I.F./ C.I.F. no puede estar vacío" )
+            MsgStop( "El campo N.I.F./ C.I.F. no puede estar vacï¿½o" )
             oSayAlquiler[1]:SetFocus()
             RETURN .f.
          end if
 
          if empty( cSayAlquiler[2] )
-            MsgStop( "El campo nombre no puede estar vacío" )
+            MsgStop( "El campo nombre no puede estar vacï¿½o" )
             oSayAlquiler[2]:SetFocus()
             RETURN .f.
          end if
 
          if empty( cSayAlquiler[3] )
-            MsgStop( "El campo domicilio no puede estar vacío" )
+            MsgStop( "El campo domicilio no puede estar vacï¿½o" )
             oSayAlquiler[3]:SetFocus()
             RETURN .f.
          end if
 
          if empty( cSayAlquiler[4] )
-            MsgStop( "El campo población no puede estar vacío" )
+            MsgStop( "El campo poblaciï¿½n no puede estar vacï¿½o" )
             oSayAlquiler[4]:SetFocus()
             RETURN .f.
          end if
 
          if empty( cSayAlquiler[5] )
-            MsgStop( "El campo código postal no puede estar vacío" )
+            MsgStop( "El campo cï¿½digo postal no puede estar vacï¿½o" )
             oSayAlquiler[5]:SetFocus()
             RETURN .f.
          end if
 
          if empty( cSayAlquiler[6] )
-            MsgStop( "El campo email no puede estar vacío" )
+            MsgStop( "El campo email no puede estar vacï¿½o" )
             oSayAlquiler[6]:SetFocus()
             RETURN .f.
          end if
@@ -586,13 +586,13 @@ FUNCTION ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlq
          end if
 
          if empty( cSayAlquiler[7] )
-            MsgStop( "El campo teléfono no puede estar vacío" )
+            MsgStop( "El campo telï¿½fono no puede estar vacï¿½o" )
             oSayAlquiler[7]:SetFocus()
             RETURN .f.
          end if
 
          if empty( cSayAlquiler[8] )
-            MsgStop( "El campo provincia no puede estar vacío" )
+            MsgStop( "El campo provincia no puede estar vacï¿½o" )
             oSayAlquiler[8]:SetFocus()
             RETURN .f.
          end if
@@ -604,16 +604,16 @@ FUNCTION ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlq
          lEnviarCorreoCliente( cSayAlquiler, oDlg )
 
          oDlg:End( IDOK )
-   
+
          CursorWE()
 
       case nLicencia == 3
 
-         cTypeVersion( "[VERSIÓN DEMO]" )
+         cTypeVersion( "[VERSIï¿½N DEMO]" )
 
          oDlg:End( IDOK )
 
-   end case      
+   end case
 
 RETURN ( .t. )
 
@@ -628,23 +628,23 @@ FUNCTION ChangeLicenciaMode( nLicencia, oSerialHd, oSerialUsr, oSayPerpetua, oSa
          oSerialUsr:Show()
          aEval( oSayPerpetua, { |o| o:Show() } )
          aEval( oSayAlquiler, { |o| o:Hide() } )
-         oSayDemo:Hide()   
+         oSayDemo:Hide()
 
       case nLicencia == 2
 
          oSerialHd:Hide()
          oSerialUsr:Hide()
          aEval( oSayPerpetua, { |o| o:Hide() } )
-         aEval( oSayAlquiler, { |o| o:Show() } )   
-         oSayDemo:Hide()   
+         aEval( oSayAlquiler, { |o| o:Show() } )
+         oSayDemo:Hide()
 
       case nLicencia == 3
 
          oSerialHd:Hide()
          oSerialUsr:Hide()
          aEval( oSayPerpetua, { |o| o:Hide() } )
-         aEval( oSayAlquiler, { |o| o:Hide() } ) 
-         oSayDemo:Show()   
+         aEval( oSayAlquiler, { |o| o:Hide() } )
+         oSayDemo:Show()
 
    end case
 
@@ -680,7 +680,7 @@ FUNCTION About()
 
    ACTIVATE DIALOG oDlg ;
       ON INIT     (  oTree:SetImageList( oImgLst ),;
-                     oTree:Add( "Manuel Calero Solís",                  0 ),;
+                     oTree:Add( "Manuel Calero Solï¿½s",                  0 ),;
                      oTree:Add( "Antonio Ebrero Burgos",                1 ),;
                      oTree:Add( "Dario Cruz Mauro",                     2 ),;
                      oTree:Add( "C. Ronda de legionarios, 58",          3 ),;
@@ -706,7 +706,7 @@ FUNCTION RunAsistenciaRemota()
       nHnd     := WinExec( FullCurDir() + "Client\Client.Exe" , 1 )
 
       if !( nHnd > 21 .or. nHnd < 0 )
-         MsgStop( "Error en la ejecución de la asistencia remota" )
+         MsgStop( "Error en la ejecuciï¿½n de la asistencia remota" )
       end if
 
    else
@@ -724,7 +724,7 @@ FUNCTION lEnviarCorreoWatchdog( cSay, oDlg )
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-         
+
 FUNCTION lEnviarCorreoCliente( cSay, oDlg )
 
 RETURN ( .t. )
@@ -862,7 +862,7 @@ RETURN ( cCaja )
 FUNCTION setSesionMessageBar( nNumero )
 
    if !empty( nNumero ) .and. oMsgCaja != nil
-      oMsgSesion:SetText( "Sesión : " + alltrim( str( nNumero ) ) )
+      oMsgSesion:SetText( "Sesiï¿½n : " + alltrim( str( nNumero ) ) )
    end if
 
 RETURN ( nNumero )
@@ -872,7 +872,7 @@ RETURN ( nNumero )
 FUNCTION setAlmacenMessageBar( cAlmacen )
 
    if cAlmacen != nil .and. oMsgAlmacen != nil
-      oMsgAlmacen:SetText( "Almacén : " + rtrim( cAlmacen ) )
+      oMsgAlmacen:SetText( "Almacï¿½n : " + rtrim( cAlmacen ) )
    end if
 
 RETURN ( cAlmacen )
@@ -882,7 +882,7 @@ RETURN ( cAlmacen )
 FUNCTION setDelegacionMessageBar( cDelegacion )
 
    if cDelegacion != nil .and. oMsgDelegacion != nil
-      oMsgDelegacion:SetText( "Delegación : " + rtrim( cDelegacion ) )
+      oMsgDelegacion:SetText( "Delegaciï¿½n : " + rtrim( cDelegacion ) )
    end if
 
 RETURN ( cDelegacion )
@@ -964,7 +964,7 @@ FUNCTION CreateMainSQLAcceso()
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 3
    oGrupo:nLittleItems  := 3
-   oGrupo:cPrompt       := 'Artículos'
+   oGrupo:cPrompt       := 'Artï¿½culos'
    oGrupo:cLittleBitmap := "gc_object_cube_16"
    oGrupo:cBigBitmap    := "gc_object_cube_32"
 
@@ -980,8 +980,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Artículos'
-   oItem:cMessage       := 'Artículos'
+   oItem:cPrompt        := 'Artï¿½culos'
+   oItem:cMessage       := 'Artï¿½culos'
    oItem:bAction        := {|| ArticulosController():New():ActivateNavigatorView() }
    oItem:cId            := "articulos"
    oItem:cBmp           := "gc_object_cube_16"
@@ -990,8 +990,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Categorias de artículo'
-   oItem:cMessage       := 'Categorias de artículo'
+   oItem:cPrompt        := 'Categorias de artï¿½culo'
+   oItem:cMessage       := 'Categorias de artï¿½culo'
    oItem:bAction        := {|| ArticulosCategoriasController():New():ActivateNavigatorView() }
    oItem:cId            := "categorias"
    oItem:cBmp           := "gc_photographic_filters_16"
@@ -1043,8 +1043,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Unidades de medición'
-   oItem:cMessage       := 'Unidades de medición'
+   oItem:cPrompt        := 'Unidades de mediciï¿½n'
+   oItem:cMessage       := 'Unidades de mediciï¿½n'
    oItem:bAction        := {|| UnidadesMedicionController():New():ActivateNavigatorView() }
    oItem:cId            := "unidades_medicion"
    oItem:cBmp           := "gc_tape_measure2_16"
@@ -1054,8 +1054,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Grupos de unidades de medición'
-   oItem:cMessage       := 'Grupos de unidades de medición'
+   oItem:cPrompt        := 'Grupos de unidades de mediciï¿½n'
+   oItem:cMessage       := 'Grupos de unidades de mediciï¿½n'
    oItem:bAction        := {|| UnidadesMedicionGruposController():New():ActivateNavigatorView() }
    oItem:cId            := "unidades_medicion_grupos"
    oItem:cBmp           := "tab_pane_tape_measure2_16"
@@ -1065,8 +1065,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Tipos de artículo'
-   oItem:cMessage       := 'Tipos de artículo'
+   oItem:cPrompt        := 'Tipos de artï¿½culo'
+   oItem:cMessage       := 'Tipos de artï¿½culo'
    oItem:bAction        := {|| ArticulosTipoController():New():ActivateNavigatorView() }
    oItem:cId            := "tipo_articulos"
    oItem:cBmp           := "gc_objects_16"
@@ -1076,8 +1076,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Temporadas de artículo'
-   oItem:cMessage       := 'Temporadas de artículo'
+   oItem:cPrompt        := 'Temporadas de artï¿½culo'
+   oItem:cMessage       := 'Temporadas de artï¿½culo'
    oItem:bAction        := {|| ArticulosTemporadasController():New():ActivateNavigatorView() }
    oItem:cId            := "articulos_temporada"
    oItem:cBmp           := "gc_cloud_sun_16"
@@ -1182,7 +1182,7 @@ FUNCTION CreateMainSQLAcceso()
 
    // Otros--------------------------------------------------------------------
 
-   oGrupo               := TGrupoAcceso() 
+   oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 10
    oGrupo:cPrompt       := 'Global'
    oGrupo:cLittleBitmap := "gc_folder2_16"
@@ -1610,7 +1610,7 @@ FUNCTION CreateMainSQLAcceso()
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nLittleItems  := 1
-   oGrupo:cPrompt       := 'Útiles'
+   oGrupo:cPrompt       := 'ï¿½tiles'
    oGrupo:cLittleBitmap := "gc_window_pencil_16"
    oGrupo:cBigBitmap    := "gc_window_pencil_32"
 
@@ -1626,8 +1626,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemTPV:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Cajón portamonedas'
-   oItem:cMessage       := 'Cajón portamonedas'
+   oItem:cPrompt        := 'Cajï¿½n portamonedas'
+   oItem:cMessage       := 'Cajï¿½n portamonedas'
    oItem:bAction        := {|| CajonesPortamonedasController():New():ActivateNavigatorView() }
    oItem:cId            := "cajon_portamonedas"
    oItem:cBmp           := "gc_modem_screw_16"
@@ -1682,7 +1682,7 @@ FUNCTION CreateMainSQLAcceso()
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 2
-   oGrupo:cPrompt       := 'Útiles'
+   oGrupo:cPrompt       := 'ï¿½tiles'
    oGrupo:cLittleBitmap := "gc_notebook2_16"
    oGrupo:cBigBitmap    := "gc_notebook2_32"
 
@@ -1698,8 +1698,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Listín telefónico'
-   oItem:cMessage       := 'Acceso al listín telefónico'
+   oItem:cPrompt        := 'Listï¿½n telefï¿½nico'
+   oItem:cMessage       := 'Acceso al listï¿½n telefï¿½nico'
    oItem:bAction        := {|| ListinController():New():ActivateNavigatorView() }
    oItem:cId            := "listin_telefonico"
    oItem:cBmp           := "gc_book_telephone_16"
@@ -1894,7 +1894,7 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cBmpVersion() 
+FUNCTION cBmpVersion()
 
    if isNil( cBmpVersion )
 
@@ -1919,11 +1919,11 @@ FUNCTION cBmpVersion()
 
    end if
 
-RETURN ( cBmpVersion ) 
+RETURN ( cBmpVersion )
 
 //---------------------------------------------------------------------------//
 /*
-Guardamos el nombre de la versión
+Guardamos el nombre de la versiï¿½n
 */
 
 FUNCTION cNameVersion()
@@ -1959,13 +1959,13 @@ FUNCTION cTypeVersion( cType )
 
    if !empty( cType )
       cTypeVersion   := cType
-   end if 
+   end if
 
 RETURN ( cTypeVersion )
 
 //---------------------------------------------------------------------------//
 /*
-Damos valor a la estatica para la versión Oscommerce
+Damos valor a la estatica para la versiï¿½n Oscommerce
 */
 
 FUNCTION IsOsCommerce()
@@ -1984,7 +1984,7 @@ RETURN lOsCommerce
 
 //---------------------------------------------------------------------------//
 /*
-Damos valor a la estatica para la versión Profesional
+Damos valor a la estatica para la versiï¿½n Profesional
 */
 
 FUNCTION IsProfesional()
@@ -2004,14 +2004,14 @@ RETURN lProfesional
 
 //---------------------------------------------------------------------------//
 /*
-Damos valor a la estatica para la versión Standard
+Damos valor a la estatica para la versiï¿½n Standard
 */
 
 FUNCTION IsStandard()
 
    if IsNil( lStandard )
 
-      if File( FullCurDir() + "scmmrc" ) .or.; 
+      if File( FullCurDir() + "scmmrc" ) .or.;
          File( FullCurDir() + "prfsnl" ) .or.;
          File( FullCurDir() + "stndrd" )
 
@@ -2033,7 +2033,7 @@ FUNCTION appCheckDirectory()
 
    for each hDirectory in getScafolding()
       checkDirectory( hDirectory )
-   next 
+   next
 
 RETURN ( nil )
 
@@ -2043,15 +2043,15 @@ STATIC FUNCTION checkDirectory( hDirectory )
 
    if empty( hget( hDirectory, "Directory" ) )
       RETURN ( nil )
-   end if 
+   end if
 
-   if !lIsDir( hget( hDirectory, "Directory" ) )      
+   if !lIsDir( hget( hDirectory, "Directory" ) )
       makedir( cNamePath( hget( hDirectory, "Directory" ) ) )
-   end if 
+   end if
 
    if hhaskey( hDirectory, "Subdirectory" )
       checkDirectory( hget( hDirectory, "Subdirectory" ) )
-   end if 
+   end if
 
 RETURN ( nil )
 
@@ -2066,7 +2066,7 @@ FUNCTION Ejecutascript()
    Local u
    Local pHrb
    Local dFecha
-   local cScript  
+   local cScript
    local aScripts
 
    /*
@@ -2091,7 +2091,7 @@ FUNCTION Ejecutascript()
    end if
 
    /*
-   Anotamos la fecha del último Envío de  script-------------------------------
+   Anotamos la fecha del ï¿½ltimo Envï¿½o de  script-------------------------------
    */
 
    WritePProString( "SCRIPT", "Fecha", Dtoc( GetSysDate() ), cIniAplication() )
@@ -2171,10 +2171,10 @@ FUNCTION lInitCheck( oMessage, oProgress )
 
    appCheckDirectory()
 
-   // Selección de la empresa actual------------------------------------------
+   // Selecciï¿½n de la empresa actual------------------------------------------
 
    if !empty( oMessage )
-      oMessage:SetText( 'Selección de la empresa actual' ) 
+      oMessage:SetText( 'Selecciï¿½n de la empresa actual' )
    end if
 
    if !empty( oProgress )
@@ -2183,10 +2183,10 @@ FUNCTION lInitCheck( oMessage, oProgress )
 
    SQLAjustableModel():getUsuarioEmpresa( Auth():Uuid() )
 
-   // Selección de los datos de la aplicacion----------------------------------
+   // Selecciï¿½n de los datos de la aplicacion----------------------------------
 
    if !empty( oMessage )
-      oMessage:SetText( 'Selección de datos de la aplicación' ) 
+      oMessage:SetText( 'Selecciï¿½n de datos de la aplicaciï¿½n' )
    end if
 
    if !empty( oProgress )
@@ -2249,7 +2249,7 @@ FUNCTION nAjuste( nNumber, cAdjust )
 
    if empty( nNumber )
       RETURN ( 0 )
-   end if 
+   end if
 
    /*
    Posible ajuste doble--------------------------------------------------------
@@ -2270,21 +2270,21 @@ FUNCTION nAjuste( nNumber, cAdjust )
 
         if nResult - nNumber > 0
            nResult      += nAjusteDecrementa
-        else 
-           nResult      += nAjusteIncrementa 
-        end if 
+        else
+           nResult      += nAjusteIncrementa
+        end if
 
         aAdd( aNumber, nResult )
 
-      end if 
+      end if
 
-   next 
+   next
 
    for each n in aNumber
       if ( ( n - nNumber ) >= -0.000001 )
          nResult        := n
-         exit 
-      end if 
+         exit
+      end if
    next
 
 RETURN ( nResult )
@@ -2401,7 +2401,7 @@ FUNCTION cAdsPort( cPort )
 
    if isChar( cPort )
       cAdsPort  := cPort
-   end if 
+   end if
 
 RETURN ( cAdsPort )
 
@@ -2437,7 +2437,7 @@ FUNCTION cAdsFile( cFile )
 
    if ( isChar( cFile ) .and. !empty( cFile ) )
       cAdsFile    := cFile
-   end if 
+   end if
 
 RETURN ( cAdsFile )
 
@@ -2471,13 +2471,13 @@ RETURN ( "PDA" $ appParamsMain() )
 
 FUNCTION SetIndexToADSCDX()
 
-RETURN nil 
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
 FUNCTION SetIndexToCDX()
 
-RETURN nil 
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -2486,7 +2486,7 @@ FUNCTION SetIndexToADS()
    lCdx( .f. )
    lAIS( .t. )
 
-RETURN nil 
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -2549,7 +2549,7 @@ FUNCTION cFullPathEmpresa()
   cCodigoEmpresa        += fullCurDir()
   cCodigoEmpresa        += cPatEmp
   cCodigoEmpresa        += "\"
-  
+
 RETURN ( cCodigoEmpresa )
 
 //---------------------------------------------------------------------------//
@@ -2558,7 +2558,7 @@ FUNCTION cPatDat( lFull )
 
    DEFAULT lFull  := .f.
 
-   if lAIS() 
+   if lAIS()
       RETURN ( if( lFull, cAdsUNC() + cPathDatos() + "\", cPathDatos() ) )
    end if
 
@@ -2983,13 +2983,13 @@ FUNCTION appSettings()
 
    fwNumFormat( 'E', .t. )
 
-RETURN nil 
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
 FUNCTION appLoadAds()
 
-RETURN nil 
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -3207,16 +3207,16 @@ RETURN ( if( dSysDate != nil, dSysDate, Date() ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION aEmp( nField ) 
+FUNCTION aEmp( nField )
 
    if empty( nField )
       RETURN ( aEmpresa )
-   end if 
+   end if
 
    if empty( aEmpresa )
       RETURN ( nil )
-   end if 
-   
+   end if
+
 RETURN ( if( nField > 1 .and. nField < len( aEmpresa ), aEmpresa[ nField ], nil ) )
 
 //---------------------------------------------------------------------------//
@@ -3272,7 +3272,7 @@ FUNCTION appParamsMain( paramsMain )
 
    if !empty( paramsMain )
       appParamsMain     := upper( paramsMain )
-   end if 
+   end if
 
 RETURN ( appParamsMain )
 
@@ -3282,7 +3282,7 @@ FUNCTION appParamsSecond( paramsSecond )
 
    if !empty( paramsSecond )
       appParamsSecond   := upper( paramsSecond )
-   end if 
+   end if
 
 RETURN ( appParamsSecond )
 
@@ -3292,7 +3292,7 @@ FUNCTION appParamsThird( paramsThird )
 
    if !empty( paramsThird )
       appParamsThird   := upper( paramsThird )
-   end if 
+   end if
 
 RETURN ( appParamsThird )
 
@@ -3344,7 +3344,7 @@ FUNCTION cPatDocuments( cSubDirectory )
 
    if !empty( cSubDirectory )
       RETURN ( fullCurDir() + "Documents\" + cSubDirectory + "\" )
-   end if 
+   end if
 
 RETURN ( fullCurDir() + "Documents\" )
 
@@ -3354,7 +3354,7 @@ FUNCTION cPatLabels( cSubDirectory )
 
    if !empty( cSubDirectory )
       RETURN ( fullCurDir() + "Labels\" + cSubDirectory + "\" )
-   end if 
+   end if
 
 RETURN ( fullCurDir() + "Labels\" )
 
@@ -3459,7 +3459,7 @@ FUNCTION cCharToVal( xVal, cType )
          if !empty( xVal )
             cTemp   := Padr( Rtrim( xVal ), 100 )
          end if
-         
+
       case cType == "N"
          cTemp    := Val( cValToChar( xVal ) )
 
@@ -3551,7 +3551,7 @@ FUNCTION LogWrite( cText, cFileName )
       fSeek( nHand, 0 , 2 )
 
       fWrite( nHand, Time() + '-' + Trans( Seconds(), "999999.9999" ) + ">" + cValToChar( cText ) + CRLF )
-      
+
       fClose( nHand )
 
    end if
@@ -3580,9 +3580,9 @@ CLASS ApoloBtnFlat FROM TBtnFlat
 
    DATA  nMargin     INIT 0
 
-   METHOD Paint() 
+   METHOD Paint()
 
-   METHOD setCaption( cCaption )    
+   METHOD setCaption( cCaption )
 
 ENDCLASS
 
@@ -3618,14 +3618,14 @@ METHOD Paint() CLASS ApoloBtnFlat
    if ::lFocused
       WndBox2007( ::hDC, aRect[ 1 ] + 2, aRect[ 2 ] + 2, aRect[ 3 ] - 3, aRect[ 4 ] - 3, nClrText )
    endif
-   
+
    ::DispEnd( aInfo )
 
 RETURN nil
 
 //----------------------------------------------------------------------------//
 
-METHOD setCaption( cCaption ) CLASS ApoloBtnFlat   
+METHOD setCaption( cCaption ) CLASS ApoloBtnFlat
 
    ::cCaption  := cCaption
 
@@ -3659,7 +3659,7 @@ Static FUNCTION lControlAcceso()
 
       RETURN .t.
 
-   end if 
+   end if
 
 RETURN .f.
 
@@ -3667,8 +3667,8 @@ RETURN .f.
 
 FUNCTION lCheckPerpetuoMode( nSerialUSR )
 
-   local n 
-   local cFileIni       
+   local n
+   local cFileIni
    local oSerialHD
    local nSerialHD      := Abs( nSerialHD() )
    local aSerialCRC     := {}
@@ -3678,26 +3678,26 @@ FUNCTION lCheckPerpetuoMode( nSerialUSR )
       RETURN .f.
    end if
 
-   cFileIni             := FullCurDir() + "2Ktorce.Num"  
+   cFileIni             := FullCurDir() + "2Ktorce.Num"
 
    // Leemos las claves--------------------------------------------------------
 
    for n := 1 to 50
 
       nSerialCRC        := Val( GetPvProfString( "Main", "Access code " + Str( n, 2 ), "0", cFileIni ) )
-   
+
       if !empty( nSerialCRC )
-   
+
          aAdd( aSerialCRC, nSerialCRC )
-            
+
          if nSerialCRC == nXor( nSerialHD, SERIALNUMBER )
-               
+
             RETURN .t.
-   
+
          end if
-   
+
       end if
-   
+
    next
 
    // Parametro para registrar la aplicacion-----------------------------------
@@ -3771,7 +3771,7 @@ PROCEDURE xmlIterator( cFileName, cNode, cAttrib, cValue, cData )
 
    oNode := oDoc:CurNode
 
-if ! lFind 
+if ! lFind
 
    DO WHILE oNode != NIL
       cXml := oNode:Path()
@@ -3941,13 +3941,13 @@ RETURN ( Val( cResult ) )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION ApoloMsgNoYes( cText, cTitle, lTactil ) 
+FUNCTION ApoloMsgNoYes( cText, cTitle, lTactil )
 
    local oDlg
    local oBtnOk
    local oBtnCancel
 
-   DEFAULT cText              := "¿Desea eliminar el registro en curso?"
+   DEFAULT cText              := "ï¿½Desea eliminar el registro en curso?"
    DEFAULT cTitle             := "Confirme"
    DEFAULT lTactil            := .f.
 
@@ -3971,13 +3971,13 @@ RETURN ( oDlg:nResult == IDOK )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION ApoloMsgStop( cText, cTitle ) 
+FUNCTION ApoloMsgStop( cText, cTitle )
 
    local oDlg
    local oBtnOk
 
-   DEFAULT cText              := "¿Desea eliminar el registro en curso?"
-   DEFAULT cTitle             := "¡Atención!"
+   DEFAULT cText              := "ï¿½Desea eliminar el registro en curso?"
+   DEFAULT cTitle             := "ï¿½Atenciï¿½n!"
 
    DEFINE DIALOG oDlg RESOURCE "MsgStopTCT" TITLE ( cTitle )
 
@@ -4078,7 +4078,7 @@ FUNCTION hashRecord( dbf )
 
   for n := 1 to ( dbf )->( fcount() )
     hSet( hHash, ( dbf )->( fieldname( n ) ), ( dbf )->( fieldget( n ) ) )
-  next 
+  next
 
 RETURN ( hHash )
 
@@ -4087,7 +4087,7 @@ RETURN ( hHash )
 FUNCTION appendHashRecord( hHash, dbf, aExclude )
 
   ( dbf )->( dbappend() )
-  if !( dbf )->( neterr() )  
+  if !( dbf )->( neterr() )
     writeHashRecord( hHash, dbf, aExclude )
   end if
 
@@ -4105,7 +4105,7 @@ FUNCTION writeHashRecord( hHash, dbf, aExclude )
     if hHasKey( hHash, ( dbf )->( fieldname( n ) ) ) .and. aScan( aExclude, ( dbf )->( fieldname( n ) ) ) == 0
       ( dbf )->( fieldput( n, hGet( hHash, ( dbf )->( fieldname( n ) ) ) ) )
     end if
-  next 
+  next
 
 RETURN ( hHash )
 
@@ -4142,10 +4142,10 @@ FUNCTION getValueHashDictionary( key, hashTable )
    local n
    local value
 
-   n  := hScan( hashTable, {|k,v,i| k == key } ) 
+   n  := hScan( hashTable, {|k,v,i| k == key } )
    if n != 0
       value   := haaGetValueAt( hashTable, n )
-   end if 
+   end if
 
 RETURN ( value )
 
@@ -4158,7 +4158,7 @@ FUNCTION hashDictionary( aItems )
 
    for each aItem in aItems
       if !empty( aItem[6] )
-         hSet( hash, aItem[6], aItem[1] )      
+         hSet( hash, aItem[6], aItem[1] )
       end if
    next
 
@@ -4188,7 +4188,7 @@ FUNCTION hashIndex( aItems )
 
    for each aItem in aItems
       if !empty( aItem[1] )
-         hSet( hash, aItem[1], aItem[2] )      
+         hSet( hash, aItem[1], aItem[2] )
       end if
    next
 
@@ -4202,11 +4202,11 @@ FUNCTION getFieldNameFromDictionary( cName, hashDictionary )
 
   if empty( hashDictionary )
     RETURN ( cFieldName )
-  end if 
+  end if
 
   if hhaskey( hashDictionary, cName )
     cFieldName      := hGet( hashDictionary, cName )
-  end if 
+  end if
 
 RETURN ( cFieldName )
 
@@ -4275,15 +4275,15 @@ RETURN ( hb_dtot( dDate, cTime ) )
 FUNCTION validTime( uTime )
 
    local cTime
-   local nHour    
-   local nMinutes 
-   local nSeconds 
+   local nHour
+   local nMinutes
+   local nSeconds
 
    if isObject( uTime )
       cTime       := uTime:varGet()
-   else 
+   else
       cTime       := uTime
-   end if 
+   end if
 
    nHour          := val( substr( cTime, 1, 2 ) )
    nMinutes       := val( substr( cTime, 3, 2 ) )
@@ -4291,15 +4291,15 @@ FUNCTION validTime( uTime )
 
    if !validHour( nHour )
       RETURN .f.
-   end if 
+   end if
 
    if !validMinutesSeconds( nMinutes )
       RETURN .f.
-   end if 
+   end if
 
    if !validMinutesSeconds( nSeconds )
       RETURN .f.
-   end if 
+   end if
 
 RETURN ( .t. )
 
@@ -4325,20 +4325,20 @@ FUNCTION validHourMinutes( uTime )
 
    if isObject( uTime )
       cTime       := uTime:varGet()
-   else 
+   else
       cTime       := uTime
-   end if 
+   end if
 
    nHour          := val( substr( cTime, 1, 2 ) )
    nMinutes       := val( substr( cTime, 3, 2 ) )
 
    if !validHour( nHour )
       RETURN .f.
-   end if 
+   end if
 
    if !validMinutesSeconds( nMinutes )
       RETURN .f.
-   end if 
+   end if
 
 RETURN ( .t. )
 
@@ -4371,7 +4371,7 @@ FUNCTION CreateAdminSQLWindow()
 
    DEFINE WINDOW oWnd ;
       FROM                    0, 0 TO 26, 82;
-      TITLE                   "Administrador : " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__; 
+      TITLE                   "Administrador : " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__;
       MDI ;
       COLORS                  Rgb( 0, 0, 0 ), Rgb( 231, 234, 238 ) ;
       ICON                    getIconApp() ;
@@ -4392,7 +4392,7 @@ FUNCTION CreateAdminSQLWindow()
 
    ACTIVATE WINDOW oWnd ;
       MAXIMIZED ;
-      ON PAINT                ( WndPaint( hDC, oWnd ) ); 
+      ON PAINT                ( WndPaint( hDC, oWnd ) );
       ON RESIZE               ( WndResize( oWnd ) )
 
    sysrefresh()
@@ -4464,43 +4464,43 @@ static Function getScafolding()
 
    local hScafolding    := {  {  "Directory"    => cPatDat(),;
                                  "Backup"       => .t. },;
-                              {  "Directory"    => cPatUsr(),;   
+                              {  "Directory"    => cPatUsr(),;
                                  "Backup"       => .t. },;
-                              {  "Directory"    => cPatScript(),;   
+                              {  "Directory"    => cPatScript(),;
                                  "Backup"       => .t. },;
-                              {  "Directory"    => cPatConfig(),;   
+                              {  "Directory"    => cPatConfig(),;
                                  "Backup"       => .t. },;
-                              {  "Directory"    => cPatDocuments(),;   
+                              {  "Directory"    => cPatDocuments(),;
                                  "Backup"       => .t.,;
                                  "Subdirectory" => ;
                                  {  "Directory"    => cPatDocuments() + FacturasVentasController():getName() + "\" } },;
-                                 {  "Directory"    => cPatLabels(),;   
+                                 {  "Directory"    => cPatLabels(),;
                                     "Backup"       => .t.,;
                                     "Subdirectory" => ;
                                     {  "Directory"  => cPatLabels() + FacturasVentasController():getName() + "\" } },;
-                              {  "Directory"    => cPatReporting(),;  
+                              {  "Directory"    => cPatReporting(),;
                                  "Backup"       => .t. },;
-                              {  "Directory"    => cPatUserReporting(),;   
+                              {  "Directory"    => cPatUserReporting(),;
                                  "Backup"       => .t. },;
-                              {  "Directory"    => cPatIn(),;   
+                              {  "Directory"    => cPatIn(),;
                                  "Backup"       => .f. },;
-                              {  "Directory"    => cPatOut(),;   
+                              {  "Directory"    => cPatOut(),;
                                  "Backup"       => .f. },;
-                              {  "Directory"    => cPatTmp(),;   
+                              {  "Directory"    => cPatTmp(),;
                                  "Backup"       => .f. },;
-                              {  "Directory"    => cPatSnd(),;   
+                              {  "Directory"    => cPatSnd(),;
                                  "Backup"       => .f. },;
-                              {  "Directory"    => cPatLog(),;   
+                              {  "Directory"    => cPatLog(),;
                                  "Backup"       => .f. },;
-                              {  "Directory"    => cPatBmp(),;   
+                              {  "Directory"    => cPatBmp(),;
                                  "Backup"       => .f. },;
-                              {  "Directory"    => cPatHtml(),;   
+                              {  "Directory"    => cPatHtml(),;
                                  "Backup"       => .f. },;
-                              {  "Directory"    => cPatXml(),;   
+                              {  "Directory"    => cPatXml(),;
                                  "Backup"       => .f. },;
-                              {  "Directory"    => cPatSafe(),;   
+                              {  "Directory"    => cPatSafe(),;
                                  "Backup"       => .f. },;
-                              {  "Directory"    => cPatEmpTmp(),;   
+                              {  "Directory"    => cPatEmpTmp(),;
                                  "Backup"       => .f. } }
 
 RETURN ( hScafolding )
@@ -4590,14 +4590,14 @@ RETURN ( nil )
 
 #include "windows.h"
 #include "shlobj.h"
-#include "hbapi.h" 
+#include "hbapi.h"
 #include "math.h"
 #include "hbvm.h"
 #include "hbstack.h"
 #include "hbapiitm.h"
 #include "hbapigt.h"
 #include "urlmon.h"
-#include "hbapiitm.h" 
+#include "hbapiitm.h"
 
 HB_MAXUINT hb_dateMilliSeconds( void );
 
@@ -4644,7 +4644,7 @@ HB_FUNC( DOWNLOADFILE )
    HRESULT hr;
 
    hr = URLDownloadToFileA( NULL, hb_parc( 1 ), hb_parc( 2 ), 0, NULL );
-  
+
    hb_retnl( hr ) ;
 }
 
@@ -4671,4 +4671,3 @@ HB_FUNC( CHGATEND )
 #pragma ENDDUMP
 
 //---------------------------------------------------------------------------//
-
