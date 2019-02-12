@@ -203,6 +203,10 @@ METHOD cancelEdited() CLASS OperacionesComercialesController
       RETURN ( nil )
    end if
 
+   if empty( ::getController():getController() )
+      RETURN ( nil )
+   end if
+
    uuidDocumentoDestino    := ::getModelBuffer( "uuid" )
 
    SQLConversorDocumentosModel():deleteWhereDestinoUuid( uuidDocumentoDestino )

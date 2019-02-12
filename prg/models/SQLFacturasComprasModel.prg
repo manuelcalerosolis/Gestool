@@ -49,7 +49,7 @@ local cSql
                            SQLArticulosTarifasModel():getTableName(),;
                            ::getColumnsSelect(),;
                            cWhere )
-logwrite( cSql)
+
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//

@@ -207,7 +207,7 @@ RETURN ( nil )
 
 METHOD runConvertAlbaran( aSelected ) CLASS ConversorDocumentosController
 
-   msgalert( hb_valtoexp( aSelected ), "aSelected" )
+   //msgalert( hb_valtoexp( aSelected ), "aSelected" )
    
    ::aConvert           := {}
 
@@ -578,7 +578,6 @@ METHOD okActivateFolderOne() CLASS ConvertirAlbaranVentasView
    ::insertTemporalAlbaranes( hWhere )
 
    ::oController:getConvertirAlbaranVentasTemporalController():getRowSet():refresh()
-
    ::oFolder:aEnable[ 2 ]  := .t.
    ::oFolder:setOption( 2 ) 
 
@@ -588,15 +587,13 @@ RETURN ( nil )
 
 METHOD okActivateFolderTwo() CLASS ConvertirAlbaranVentasView
 
-msgalert( hb_valtoexp( ::oController:getConvertirAlbaranVentasTemporalController():getUuids() ) )
-
    if empty(::oController:getConvertirAlbaranVentasTemporalController():getUuids() )
       msgstop("Debe seleccionar al menos un albaran")
       RETURN( nil )
    end if
    
    ::convertAlbaranVentas( ::oController:getConvertirAlbaranVentasTemporalController():getUuids() )
-
+   ::oController:getConversorDocumentosController():convertDocument()
    ::oFolder:aEnable[ 3 ]  := .t.
    ::oFolder:setOption( 3 ) 
 
@@ -614,16 +611,7 @@ RETURN ( nil )
 
 METHOD convertAlbaranVentas( aSelecteds )
 
-   local Selected 
    ::oController:runConvertAlbaran( aSelecteds )
-   /*for each Selected in aSelecteds
-      msgalert( Selected, "uuidSelected" )
-     
-      if ::oController:getModel():countDocumentoWhereUuidOigen( Selected ) == 0
-      
-
-   next*/
-
 
 RETURN ( nil )
 
@@ -789,7 +777,7 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 METHOD getInitialSelect() CLASS SQLConversorDocumentosModel
 
-RETURN ( SQLFacturasComprasModel():getInitialWhereDocumentos(::oController:setWhereArray( ::oController:aCreatedDocument ) ) )
+RETURN ( ::oController:oController:oDestinoController:getModel():getInitialWhereDocumentos(::oController:setWhereArray( ::oController:aCreatedDocument ) ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
