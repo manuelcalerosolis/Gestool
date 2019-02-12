@@ -51,6 +51,7 @@ Toleexcel.prg           										\
 Toleword.prg            										\
 EmpresasController.prg             							\
 Components.prg         											\
+TBrowseRange.prg 													\
 ApplicationManager.prg              						\
 TSendMailOutlook.prg                               	\
 TSendMailCDO.prg                                   	\
@@ -484,6 +485,7 @@ Toleexcel.obj                                      				\
 Toleword.obj                                       				\
 EmpresasController.obj                                			\
 Components.obj                                    					\
+TBrowseRange.obj 																\
 ApplicationManager.obj                                         \
 TSendMailOutlook.obj                               				\
 TSendMailCDO.obj                                   				\
@@ -937,6 +939,7 @@ $(OBJ)\Toleexcel.obj                                        	+
 $(OBJ)\Toleword.obj                                         	+
 $(OBJ)\EmpresasController.obj                                  +
 $(OBJ)\Components.obj                                      		+
+$(OBJ)\TBrowseRange.obj                                      	+
 $(OBJ)\ApplicationManager.obj                                  +
 $(OBJ)\TSendMailOutlook.obj                                 	+
 $(OBJ)\TSendMailCDO.obj                                     	+

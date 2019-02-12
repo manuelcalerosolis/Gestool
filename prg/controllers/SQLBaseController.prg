@@ -13,6 +13,8 @@ CLASS SQLBaseController
 
    DATA oModel
 
+   DATA oRange
+
    DATA oRowSet
 
    DATA oDialogView

@@ -4,5 +4,8 @@
     "editor.minimap.enabled": false,
     "workbench.colorTheme": "Visual Studio Dark",
     "search.location": "panel",
-    "editor.tabSize": 3
+    "editor.tabSize": 3,
+    "harbour.decorator": true,
+    "harbour.compilerExecutable": "c:\\harbour_bcc7\\bin\\harbour.exe",
+    "harbour.extraIncludePaths": ["c:\\fwh1811\\include\\"]
 }

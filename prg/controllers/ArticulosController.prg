@@ -60,6 +60,8 @@ CLASS ArticulosController FROM SQLNavigatorController
    METHOD getRepository()              INLINE ( if( empty( ::Repository ), ::oRepository := ArticulosRepository():New( self ), ), ::oRepository )
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLArticulosModel():New( self ), ), ::oModel )
+   
+   METHOD getRange()                   INLINE ( if( empty( ::oRange ), ::oRange := ArticulosItemRange():New( self ), ), ::oRange )
 
 END CLASS
 
@@ -98,6 +100,10 @@ METHOD End() CLASS ArticulosController
 
    if !empty( ::oModel )
       ::oModel:End() 
+   end if 
+
+   if !empty( ::oRange )
+      ::oRange:End() 
    end if 
 
    if !empty( ::oBrowseView )

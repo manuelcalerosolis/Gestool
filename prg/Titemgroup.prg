@@ -38,14 +38,22 @@ CLASS TItemGroup
    METHOD ValidMayorIgual( uVal, uMayor )
    METHOD ValidMenorIgual( uVal, uMenor )
 
-   METHOD GetDesde()       INLINE ( if( Empty( ::Desde ), "", alltrim( ::Desde ) ) )
-   METHOD GetHasta()       INLINE ( if( Empty( ::Hasta ), "", alltrim( ::Hasta ) ) )
+   METHOD GetDesde()                   INLINE ( if( Empty( ::Desde ), "", alltrim( ::Desde ) ) )
+   METHOD GetHasta()                   INLINE ( if( Empty( ::Hasta ), "", alltrim( ::Hasta ) ) )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD ValidMayorIgual( uVal, uMayor )
+METHOD New( oController ) CLASS TItemGroup
+
+   ::oController                       := oController
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ValidMayorIgual( uVal, uMayor ) CLASS TItemGroup
 
    if IsBlock( ::bValidMayorIgual )
       Return ( Eval( ::bValidMayorIgual, uVal, uMayor ) )
@@ -55,7 +63,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD ValidMenorIgual( uVal, uMenor )
+METHOD ValidMenorIgual( uVal, uMenor ) CLASS TItemGroup
 
    if IsBlock( ::bValidMenorIgual )
       Return ( Eval( ::bValidMenorIgual, uVal, uMenor ) )
@@ -63,7 +71,6 @@ METHOD ValidMenorIgual( uVal, uMenor )
 
 Return ( .t. )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 CLASS TItemGroupArticulo FROM TItemGroup
@@ -76,11 +83,10 @@ END CLASS
 
 METHOD New( nView ) CLASS TItemGroupArticulo
 
-   ::Nombre       := "Artículo"
-   ::Desde        := Space( 18 )
-   ::Hasta        := Replicate( "Z", 18 )
-   ::cPicDesde    := Replicate( "#", 18 )
-   ::cPicHasta    := Replicate( "#", 18 )
+   ::cDesde       := Space( 20 )
+   ::cHasta       := Replicate( "Z", 20 )
+   ::cPicDesde    := Replicate( "#", 20 )
+   ::cPicHasta    := Replicate( "#", 20 )
    ::TextDesde    := {|| RetFld( ::Desde, D():Articulos( nView ), "Nombre", "Codigo" ) }
    ::TextHasta    := {|| RetFld( ::Hasta, D():Articulos( nView ), "Nombre", "Codigo" ) }
    ::HelpDesde    := {|oGet| BrwArticulo( oGet, , , .f. ) }
@@ -91,7 +97,6 @@ METHOD New( nView ) CLASS TItemGroupArticulo
 
 Return ( Self )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 CLASS TItemGroupFamilia FROM TItemGroup

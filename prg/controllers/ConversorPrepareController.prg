@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch" 
+#include "Factu.ch"
 
 //---------------------------------------------------------------------------//
 
@@ -7,7 +7,7 @@ CLASS ConversorPrepareController FROM SQLBrowseController
 
    DATA aSelected
 
-   DATA aDocumentosDestino 
+   DATA aDocumentosDestino
 
    DATA aCreatedDocument               INIT {}
 
@@ -39,32 +39,32 @@ CLASS ConversorPrepareController FROM SQLBrowseController
 
    METHOD setDocumentosDestino()
 
-   //METHOD getModel()                   INLINE ( ::getConversorDocumentosController():getModel() ) 
+   //METHOD getModel()                   INLINE ( ::getConversorDocumentosController():getModel() )
 
    METHOD getConvertirAlbaranVentasTemporalController();
                                        INLINE ( if( empty( ::oConvertirAlbaranVentasTemporalController ), ::oConvertirAlbaranVentasTemporalController := ConvertirAlbaranVentasTemporalController():New( self ), ), ::oConvertirAlbaranVentasTemporalController )
 
    METHOD setAlbaranesComprasController() ;
-                                       INLINE ( ::oDestinoController := AlbaranesComprasController():New( self ), ::oDestinoController ) 
+                                       INLINE ( ::oDestinoController := AlbaranesComprasController():New( self ), ::oDestinoController )
 
    METHOD setAlbaranesVentasController() ;
-                                       INLINE ( ::oDestinoController := AlbaranesVentasController():New( self ), ::oDestinoController ) 
+                                       INLINE ( ::oDestinoController := AlbaranesVentasController():New( self ), ::oDestinoController )
 
    METHOD setFacturasComprasControllerAsDestino() ;
-                                       INLINE ( ::oDestinoController := FacturasComprasController():New( self ), ::oDestinoController ) 
+                                       INLINE ( ::oDestinoController := FacturasComprasController():New( self ), ::oDestinoController )
 
    METHOD setFacturasVentasControllerAsDestino() ;
-                                       INLINE ( ::oDestinoController := FacturasVentasController():New( self ), ::oDestinoController ) 
+                                       INLINE ( ::oDestinoController := FacturasVentasController():New( self ), ::oDestinoController )
 
 
    METHOD setFacturasVentasSimplificadasController() ;
-                                       INLINE ( ::oDestinoController := FacturasVentasSimplificadasController():New( self ), ::oDestinoController ) 
+                                       INLINE ( ::oDestinoController := FacturasVentasSimplificadasController():New( self ), ::oDestinoController )
 
    METHOD setPedidosComprasController() ;
-                                       INLINE ( ::oDestinoController := PedidosComprasController():New( self ), ::oDestinoController ) 
+                                       INLINE ( ::oDestinoController := PedidosComprasController():New( self ), ::oDestinoController )
 
    METHOD setPedidosVentasController() ;
-                                       INLINE ( ::oDestinoController := PedidosVentasController():New( self ), ::oDestinoController ) 
+                                       INLINE ( ::oDestinoController := PedidosVentasController():New( self ), ::oDestinoController )
 
    METHOD setPresupuestosVentasController() ;
                                        INLINE ( ::oDestinoController := PresupuestosVentasController():New( self ), ::oDestinoController )
@@ -80,13 +80,13 @@ CLASS ConversorPrepareController FROM SQLBrowseController
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ::oController:getFacturasComprasController():getDialogView(), ::oDialogView ) )
 
    METHOD getConversorDocumentosController() ;
-                                       INLINE ( if( empty( ::oConversorDocumentosController ), ::oConversorDocumentosController := ConversorDocumentosController():New( self ), ), ::oConversorDocumentosController ) 
+                                       INLINE ( if( empty( ::oConversorDocumentosController ), ::oConversorDocumentosController := ConversorDocumentosController():New( self ), ), ::oConversorDocumentosController )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oOrigenController, oDestinoController, aSelected ) CLASS ConversorPrepareController 
+METHOD New( oOrigenController, oDestinoController, aSelected ) CLASS ConversorPrepareController
 
    ::oOrigenController              := oOrigenController
 
@@ -108,7 +108,7 @@ METHOD End() CLASS ConversorPrepareController
 
    if !empty( ::oConvertirAlbaranVentasTemporalController )
       ::oConvertirAlbaranVentasTemporalController:End()
-   end if 
+   end if
 
 RETURN ( nil )
 
@@ -116,8 +116,8 @@ RETURN ( nil )
 
 METHOD setDocumentosDestino()
 
-   ::aDocumentosDestino := {  "Albarán de compras"             => {|| ::setAlbaranesComprasController() },;
-                              "Albarán de ventas"              => {|| ::setAlbaranesVentasController() },;
+   ::aDocumentosDestino := {  "Albarï¿½n de compras"             => {|| ::setAlbaranesComprasController() },;
+                              "Albarï¿½n de ventas"              => {|| ::setAlbaranesVentasController() },;
                               "Factura de compras"             => {|| ::setFacturasComprasControllerAsDestino() },;
                               "Factura de ventas"              => {|| ::setFacturasventasController() },;
                               "Factura de ventas simplificada" => {|| ::setFacturasVentasSimplificadasController() },;
@@ -133,15 +133,15 @@ METHOD Run() CLASS ConversorPrepareController
 
    if ::getConvertirView():Activate() != IDOK
       RETURN ( nil )
-   end if 
+   end if
 
    if hhaskey( ::aDocumentosDestino, ::getConvertirView():getDocumentoDestino() )
       ::oDestinoController    := eval( hget( ::aDocumentosDestino, ::getConvertirView():getDocumentoDestino() ) )
-   end if 
+   end if
 
    if !empty( ::oDestinoController )
       ::Convert()
-   end if 
+   end if
 
 RETURN ( nil )
 
@@ -188,7 +188,7 @@ CLASS ConversorDocumentoView FROM SQLBaseView
    DATA cDocumentoDestino
 
    DATA oComboDocumentoDestino
-                                          
+
    METHOD Activate()
       METHOD Activating()
 
@@ -201,7 +201,7 @@ END CLASS
 METHOD Activate() CLASS ConversorDocumentoView
 
    DEFINE DIALOG  ::oDialog;
-      RESOURCE    "CONVERTIR_DOCUMENTO"; 
+      RESOURCE    "CONVERTIR_DOCUMENTO";
       TITLE       "Convertir documento a ..."
 
    REDEFINE BITMAP ::oBitmap ;
@@ -229,7 +229,7 @@ METHOD Activate() CLASS ConversorDocumentoView
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-   
+
    ::oDialog:Activate( , , , .t. )
 
 RETURN ( ::oDialog:nResult )
@@ -255,13 +255,15 @@ CLASS ConversorAlbaranVentasView FROM SQLBaseView
 
    DATA oFechaHasta
    DATA dFechaHasta     INIT date()
-                                          
+
+   DATA oBrwRange
+
    METHOD insertTemporalAlbaranes( aAlbaranes )
 
    METHOD Activate()
    METHOD Activating()
-      METHOD starActivate() 
-      METHOD okActivate() 
+      METHOD starActivate()
+      METHOD okActivate()
          METHOD okActivateFolderOne()
          METHOD okActivateFolderTwo()
 
@@ -302,7 +304,6 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
       DIALOGS     "CONVERTIR_ALBARAN_VENTAS",;
                   "CONVERTIR_ALBARAN_VENTAS_PREVIA",;
                   "CONVERTIR_ALBARAN_VENTAS_PREVIA"
-                  
 
    REDEFINE GET   ::oFechaDesde ;
       VAR         ::dFechaDesde ;
@@ -322,6 +323,12 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
 
    ::oController:getConversorDocumentosController():Activate( 100, ::oFolder:aDialogs[3] )
    
+   ::oBrwRange    := BrowseRange():New( 130, ::oFolder:aDialogs[1] )
+
+   ::oBrwRange:addController( ArticulosController():New() )
+
+   ::oBrwRange:Resource()
+
    // Botones------------------------------------------------------------------
 
    ApoloBtnFlat():Redefine( IDOK, {|| ::okActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
@@ -358,7 +365,7 @@ RETURN ( nil )
 
 METHOD okActivate() CLASS ConversorAlbaranVentasView
 
-   do case 
+   do case
       case ::oFolder:nOption == 1
 
          ::okActivateFolderOne()
@@ -379,7 +386,7 @@ RETURN ( nil )
 
 METHOD okActivateFolderOne() CLASS ConversorAlbaranVentasView
 
-   local aAlbaranes 
+   local aAlbaranes
    local hWhere /*:= { "tercero_codigo" => "003",;
                      "ruta_codigo" => "002" }*/
 
@@ -407,7 +414,7 @@ METHOD okActivateFolderTwo() CLASS ConversorAlbaranVentasView
       msgstop("Debe seleccionar al menos un albaran")
       RETURN( nil )
    end if
-   
+
    ::oController:getConversorDocumentosController():runConvertAlbaran( ::oController:getConvertirAlbaranVentasTemporalController():getUuids() )
    
    ::oController:getConversorDocumentosController():convertDocument()
@@ -454,7 +461,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 CLASS ConversorResumenView FROM SQLBaseView
-                                          
+
    METHOD Activate()
 
 END CLASS
@@ -464,8 +471,8 @@ END CLASS
 METHOD Activate() CLASS ConversorResumenView
 
    DEFINE DIALOG  ::oDialog;
-      RESOURCE    "RESUMEN_CONVERSION"; 
-      TITLE       "Resumen de la conversión ..."
+      RESOURCE    "RESUMEN_CONVERSION";
+      TITLE       "Resumen de la conversiï¿½n ..."
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -474,7 +481,7 @@ METHOD Activate() CLASS ConversorResumenView
       OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
-      PROMPT      "Resumen de la conversión a facturas" ;
+      PROMPT      "Resumen de la conversiï¿½n a facturas" ;
       ID          800 ;
       FONT        oFontBold() ;
       OF          ::oDialog
@@ -484,7 +491,7 @@ METHOD Activate() CLASS ConversorResumenView
    // Botones------------------------------------------------------------------
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
-   
+
    ::oDialog:bStart     := {|| ::paintedActivate() }
 
    ::oDialog:Activate( , , , .t. )
