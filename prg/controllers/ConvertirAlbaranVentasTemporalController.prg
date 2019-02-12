@@ -23,6 +23,8 @@ METHOD New( oController ) CLASS ConvertirAlbaranVentasTemporalController
    
    ::Super:New( oController )
 
+   //::getModel():setTableName( Auth():codigo )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -39,33 +41,7 @@ METHOD End() CLASS ConvertirAlbaranVentasTemporalController
 
 RETURN ( nil )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-/*CLASS ConvertirAlbaranVentasTemporalBrowseView FROM SQLBrowseView
-
-   METHOD addColumns()
-
-END CLASS
-
 //----------------------------------------------------------------------------//
-
-METHOD addColumns() CLASS ConvertirAlbaranVentasTemporalBrowseView
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Id'
-      :cSortOrder          := 'id'
-      :nWidth              := 50
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .f.
-   end with
-
-RETURN ( nil )*/
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -74,7 +50,9 @@ RETURN ( nil )*/
 
 CLASS SQLConvertirAlbaranVentasTemporalModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "tmp_albaran_ventas"
+   DATA cTableName                     INIT ( Auth():Codigo() + "_" + "tmp_albaran_ventas" )
+
+   METHOD setTableName()    INLINE (  ::cTableName )
 
    METHOD getColumns()
 
@@ -86,11 +64,7 @@ CLASS SQLConvertirAlbaranVentasTemporalModel FROM SQLCompanyModel
 
    METHOD deleteTemporal()
 
-   //METHOD getColumnsSelect()
-   
-   //METHOD getInitialSelect()
-
-   METHOD getGeneralSelect( uuidPago )
+   METHOD getGeneralSelect()
 
 END CLASS
 
@@ -164,7 +138,7 @@ METHOD deleteTemporal() CLASS SQLConvertirAlbaranVentasTemporalModel
 
    TEXT INTO cSql
 
-   TRUNCATE TABLE  %1$s
+   TRUNCATE TABLE  %1$s_5
 
    ENDTEXT
 
@@ -174,9 +148,11 @@ RETURN ( getSQLDatabase():Exec ( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getGeneralSelect( uuidPago, cCodigoCliente ) CLASS SQLConvertirAlbaranVentasTemporalModel
+METHOD getGeneralSelect() CLASS SQLConvertirAlbaranVentasTemporalModel
 
    local cSql
+
+   msgalert( ::cTableName, "tabla en consulta")
 
    TEXT INTO cSql
 
@@ -233,6 +209,8 @@ RETURN ( cSql )
 //---------------------------------------------------------------------------//
 
 METHOD createTemporalTable() CLASS SQLConvertirAlbaranVentasTemporalModel
+
+msgalert( ::cTableName, "en creacion de table")
 
 RETURN ( getSQLDatabase():Exec( ::getCreateTableTemporalSentence( Company() ) ) )
 

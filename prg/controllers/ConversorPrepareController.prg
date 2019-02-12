@@ -277,6 +277,8 @@ END CLASS
 
 METHOD Activate() CLASS ConversorAlbaranVentasView
 
+
+
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_LARGE" ;
       TITLE       "Convertir a factura de ventas"

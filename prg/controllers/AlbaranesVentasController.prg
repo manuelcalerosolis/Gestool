@@ -7,6 +7,8 @@ CLASS AlbaranesVentasController FROM OperacionesComercialesController
 
    DATA oConversorPrepareController
 
+   DATA oConvertirAlbaranVentasTemporalController
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -36,6 +38,9 @@ CLASS AlbaranesVentasController FROM OperacionesComercialesController
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesBrowseView():New( self ), ), ::oBrowseView )
 
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := AlbaranesVentasRepository():New( self ), ), ::oRepository )
+
+   METHOD getConvertirAlbaranVentasTemporalController();
+                                       INLINE ( if( empty( ::oConvertirAlbaranVentasTemporalController ), ::oConvertirAlbaranVentasTemporalController := ConvertirAlbaranVentasTemporalController():New( self ), ), ::oConvertirAlbaranVentasTemporalController )
 
 END CLASS
 
@@ -100,6 +105,8 @@ RETURN ( nil )
 METHOD RunGenerateFacturaVentas() CLASS AlbaranesVentasController
 
    local oConversorPrepareController   := ConversorPrepareController():New( self, ::getFacturasVentasController() )
+
+   ::getConvertirAlbaranVentasTemporalController():getModel():createTemporalTable()
 
    oConversorPrepareController:getAlbaranVentasView():Activate()
 
