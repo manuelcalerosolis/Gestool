@@ -5,6 +5,8 @@
 
 CLASS ContadoresController FROM SQLNavigatorController
 
+   DATA cScope                         INIT ''
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -31,9 +33,9 @@ METHOD New( oController) CLASS ContadoresController
 
    ::cName                             := "contadores"
 
-   ::hImage                            := {  "16" => "gc_user_16",;
-                                             "32" => "gc_user_32",;
-                                             "48" => "gc_user2_48" }
+   ::hImage                            := {  "16" => "gc_sort_az_descending_16",;
+                                             "32" => "gc_sort_az_descending_32",;
+                                             "48" => "gc_sort_az_descending_48" }
 
    ::getSelectorView():getMenuTreeView():setEvents( { 'addingDuplicateButton',;
                                                       'addingAppendButton',;
@@ -42,7 +44,7 @@ METHOD New( oController) CLASS ContadoresController
                                                       'addingShowDeleteButton',;
                                                       'addingDeleteButton' }, {|| .f. } )
 
-   ::getModel():setGeneralWhere( "documento = 'albaranes_venta'" )                                                      
+   ::getModel():setGeneralWhere( "documento = '" + ::cScope + "'" )                                                      
 
 RETURN ( self )
 
@@ -58,7 +60,19 @@ METHOD End() CLASS ContadoresController
       ::oRange:End()
    end if 
 
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
+
 RETURN ( ::Super:End() )
+
+//---------------------------------------------------------------------------//
+
+CLASS ContadoresAlbaranesVentasController FROM ContadoresController 
+
+   DATA cScope                         INIT 'albaranes_venta'
+
+END CLASS
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

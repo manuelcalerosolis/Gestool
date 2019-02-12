@@ -21,8 +21,11 @@ CLASS SQLContadoresModel FROM SQLCompanyModel
 
    METHOD incrementCounter( cDocument, cSerial )
 
+
    METHOD getCounterAndIncrement( cDocument, cSerial )
-   
+
+   METHOD isWhereSerie()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -124,3 +127,23 @@ METHOD getCounterAndIncrement( cDocument, cSerial )
 RETURN ( nCounter )
 
 //---------------------------------------------------------------------------//
+
+METHOD isWhereSerie( cSerial, cDocumento )
+
+   local cSQL
+   local nCount 
+
+   cSQL              := "SELECT COUNT(*) FROM " + ::getTableName()   + " "    
+   cSQL              +=    "WHERE serie = " + quoted( cSerial )      + " "
+   
+   if !empty( cDocumento )
+      cSQL           +=    "AND documento = " + quoted( cDocumento )
+   end if 
+
+   nCount            := ::getDatabase():getValue( cSQL )
+
+RETURN ( hb_isnumeric( nCount ) .and. nCount > 0 )
+
+//---------------------------------------------------------------------------//
+
+

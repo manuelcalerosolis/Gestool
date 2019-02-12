@@ -51,8 +51,6 @@ local cSql
       cSql  += "WHERE " + ::cTableName + ".uuid " + cWhere
    end if 
 
-   msgalert( cSql, "getInitialWhereDocumentos" )
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//

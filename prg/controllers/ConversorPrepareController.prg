@@ -323,7 +323,7 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
 
    ::oBrwRange    := BrowseRange():New( 130, ::oFolder:aDialogs[1] )
 
-   ::oBrwRange:addController( ContadoresController():New() )
+   ::oBrwRange:addController( ContadoresAlbaranesVentasController():New() )
 
    ::oBrwRange:addController( TercerosController():New() )
 

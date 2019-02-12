@@ -62,22 +62,24 @@ CLASS SQLRowSet
    METHOD refreshAndFindId( nId )      INLINE ( ::Refresh(), ::findId( nId ) )
    METHOD buildAndFindId( nId )        INLINE ( ::Build(), ::FindId( nId ) )
 
-   METHOD refreshAndFindString( cFind, cColumn )      INLINE ( ::Refresh(), ::FindString( cFind, cColumn ) )
-   METHOD buildAndFindString( cFind, cColumn )        INLINE ( ::Build(), ::FindString( cFind, cColumn ) )
+   METHOD refreshAndFindString( cFind, cColumn ) ;
+                                       INLINE ( ::Refresh(), ::FindString( cFind, cColumn ) )
+   METHOD buildAndFindString( cFind, cColumn ) ;
+                                       INLINE ( ::Build(), ::FindString( cFind, cColumn ) )
 
-   METHOD freeRowSet()                                INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
+   METHOD freeRowSet()                 INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
 
-   METHOD Refresh()                                   INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Refresh(), ) )
-   METHOD RefreshAndGoTop()                           INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:Refresh(), ::oRowSet:GoTop() ), ) )
+   METHOD Refresh()                    INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Refresh(), ) )
+   METHOD RefreshAndGoTop()            INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:Refresh(), ::oRowSet:GoTop() ), ) )
 
    METHOD idFromRecno( aRecno, cColumnKey )
-      
-   METHOD uuidFromRecno( aRecno )                     INLINE ( ::idFromRecno( aRecno, "uuid" ) )
+
+   METHOD uuidFromRecno( aRecno )      INLINE ( ::idFromRecno( aRecno, "uuid" ) )
    METHOD identifiersFromRecno( aRecno )              
 
    METHOD getFindValue()
 
-   METHOD setFilter( bFilter )                         INLINE ( if( !empty( ::oRowSet ), ::oRowSet:setFilter( bFilter ), ) ) 
+   METHOD setFilter( bFilter )         INLINE ( if( !empty( ::oRowSet ), ::oRowSet:setFilter( bFilter ), ) ) 
 
 END CLASS
 

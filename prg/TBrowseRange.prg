@@ -25,15 +25,9 @@ CLASS BrowseRange
 
    METHOD getEditButton()              INLINE ( if( ::oBrwRango:aRow:getRange():lAll, 0, EDIT_GET_BUTTON ) )
 
-   METHOD AddController( oController ) INLINE ( aAdd( ::aControllers, oController ) )
+   METHOD addController( oController ) INLINE ( aAdd( ::aControllers, oController ) )
 
-   METHOD EditValueTextDesde()         INLINE ( Eval( ::aControllers[ ::oBrwRango:nArrayAt ]:HelpDesde ) )
-   METHOD EditValueTextHasta()         INLINE ( Eval( ::aControllers[ ::oBrwRango:nArrayAt ]:HelpHasta ) )
-   METHOD EditTextDesde()              INLINE ( Eval( ::aControllers[ ::oBrwRango:nArrayAt ]:TextDesde ) )
-   METHOD EditTextHasta()              INLINE ( Eval( ::aControllers[ ::oBrwRango:nArrayAt ]:TextHasta ) )
-
-   METHOD ValidValueTextDesde( oGet )  INLINE ( Eval( ::aControllers[ ::oBrwRango:nArrayAt ]:ValidDesde, oGet ) )
-   METHOD ValidValueTextHasta( oGet )  INLINE ( Eval( ::aControllers[ ::oBrwRango:nArrayAt ]:ValidHasta, oGet ) )
+   METHOD validColumnTo( oGet ) 
 
    METHOD ResizeColumns()
 
@@ -43,25 +37,21 @@ END CLASS
 
 METHOD New( idBrowse, oContainer ) CLASS BrowseRange
 
-   ::idBrowse     := idBrowse
+   ::idBrowse                          := idBrowse
    
-   ::oContainer   := oContainer
+   ::oContainer                        := oContainer
    
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS BrowseRange
-
-   aeval( ::aControllers, {| oController | oController:End() } )
    
-RETURN ( nil )
+RETURN ( aeval( ::aControllers, {| oController | oController:End() } ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD Resource() CLASS BrowseRange
-
-   local o
 
    ::oBrwRango                      := IXBrowse():New( ::oContainer )
 
@@ -78,7 +68,7 @@ METHOD Resource() CLASS BrowseRange
    ::oBrwRango:nFreeze              := 1
    ::oBrwRango:nMarqueeStyle        := 3
 
-   ::oBrwRango:nColSel              := 3
+   ::oBrwRango:nColSel              := 2
 
    ::oBrwRango:bLClicked            := {| nRow, nCol| ::Clicked( nRow, nCol ) }
 
@@ -91,15 +81,6 @@ METHOD Resource() CLASS BrowseRange
       :nWidth        := 200
       :Cargo         := 0.20
       aeval( ::aControllers, {| oController | :addResource( hget( oController:hImage, "16" ) ) } )
-   end with
-
-   with object ( ::oColAll := ::oBrwRango:AddCol() )
-      :cHeader       := "Todo"         
-      :bStrData      := {|| "" }
-      :bEditValue    := {|| ::oBrwRango:aRow:getRange():lAll }
-      :nWidth        := 40
-      :Cargo         := 0.10
-      :SetCheck( { "Sel16", "Cnt16" } )
    end with
 
    with object ( ::oColDesde := ::oBrwRango:AddCol() )
@@ -129,7 +110,7 @@ METHOD Resource() CLASS BrowseRange
       :nEditType     := ::getEditButton()
       :bEditValue    := {|| ::oBrwRango:aRow:getRange():uTo }
       :bEditBlock    := {|| ::oBrwRango:aRow:ActivateSelectorView() }
-      :bEditValid    := {| oGet | ::oBrwRango:aRow:getRange():validCode( oGet ) }
+      :bEditValid    := {| oGet | ::validColumnTo( oGet ) }
       :bOnPostEdit   := {| oCol, uNewValue | ::oBrwRango:aRow:getRange():setTo( uNewValue ) }
       :cEditPicture  := "@!"
       :nWidth        := 120
@@ -172,26 +153,22 @@ RETURN .t.
 
 METHOD Clicked( nRow, nCol ) CLASS BrowseRange
 
-   local nSelectedColumn   := ::oBrwRango:MouseColPos( nCol ) 
-
-   do case
-      case nSelectedColumn == 2
-
-         ::oBrwRango:aRow:getRange():toogleAll() 
-
-         ::oColDesde:nEditType( ::getEditButton() )
-
-         ::oColHasta:nEditType( ::getEditButton() ) 
-
-         ::oBrwRango:Refresh()
-
-      case nSelectedColumn == 7
-
-         msgalert( "filtrar" )         
-
-   endcase
+   if ::oBrwRango:MouseColPos( nCol ) == 6
+      msgalert( "filtrar" )         
+   end if
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD validColumnTo( oGet ) CLASS BrowseRange
+
+   if empty( ::oBrwRango:aRow:getRange():uFrom )
+      errorAlert( "Debe seleccionar un valor 'Desde'" )
+      RETURN ( .f. )
+   end if
+
+RETURN ( ::oBrwRango:aRow:getRange():validCode( oGet ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -308,10 +285,24 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 CLASS ContadoresItemRange FROM ItemRange
-
+   
    METHOD showNombre( cCode )          INLINE ( '' )
+      
+   METHOD extractCode( uValue )        INLINE ( if( hb_ishash( uValue ), hget( uValue, "serie" ), uValue ) )
+         
+   METHOD ValidCode( uValue ) 
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD ValidCode( uValue ) CLASS ContadoresItemRange
+
+   if hb_isobject( uValue )
+      RETURN ( ::oController:getModel():isWhereSerie( uValue:varGet(), ::oController:cScope ) )
+   end if 
+
+RETURN ( ::oController:getModel():isWhereSerie( uValue, ::oController:cScope ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
