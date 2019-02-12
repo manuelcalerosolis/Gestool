@@ -163,7 +163,9 @@ RETURN ( nil )
 
 METHOD validColumnTo( oGet ) CLASS BrowseRange
 
-   if empty( ::oBrwRango:aRow:getRange():uFrom )
+   // msgalert( ::oBrwRango:aRow:getRange():getFrom(), "uFrom" )
+
+   if empty( ::oBrwRango:aRow:getRange():getFrom() )
       errorAlert( "Debe seleccionar un valor 'Desde'" )
       RETURN ( .f. )
    end if
