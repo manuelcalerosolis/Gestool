@@ -336,11 +336,10 @@ CLASS SQLBaseModel
    METHOD getColumnWhereId( id, cColumn ) 
 
    METHOD getColumnWhereCodigo( codigo, cColumn ) 
-      
    METHOD getNombreWhereCodigo( codigo ) ;
-                                       INLINE ( ::getColumnWhereCodigo( codigo, 'nombre', '' ) )
+                                       INLINE ( ::getColumnWhereCodigo( codigo, 'nombre' ) )
    METHOD getCodigoWhereCodigo( codigo ) ;
-                                       INLINE ( ::getColumnWhereCodigo( codigo, 'codigo', '' ) )
+                                       INLINE ( ::getColumnWhereCodigo( codigo, 'codigo' ) )
 
    METHOD getColumn( cColumn ) 
    METHOD getColumnWhere( cColumn, cField, cCondition, cValue )
@@ -569,7 +568,7 @@ METHOD addGeneralWhere( cSQLSelect, cGeneralWhere )
       RETURN ( cSQLSelect )
    end if 
    
-   cSQLSelect              += ::getWhereOrAnd( cSQLSelect ) + cGeneralWhere 
+   cSQLSelect        += ::getWhereOrAnd( cSQLSelect ) + cGeneralWhere 
 
 RETURN ( cSQLSelect )
 
@@ -1900,8 +1899,8 @@ METHOD getFieldWhere( cField, hWhere, hOrderBy, uDefault )
    if !empty( hOrderBy )
 
       cSql           +=    "ORDER BY "
-
-      hEval( hOrderBy, {|k,v| cSql += k + " " + v + " " } )
+      hEval( hOrderBy,; 
+         {|k,v| cSql +=    k + " " + v + " " } )
 
    end if 
 
@@ -2084,15 +2083,13 @@ RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumnWhereCodigo( uuid, cColumn, uDefault ) 
+METHOD getColumnWhereCodigo( uuid, cColumn ) 
 
-   local cSQL
-  
-   cSQL  := "SELECT " + cColumn + " FROM " + ::getTableName()  + " " + ;
-               "WHERE codigo = " + quoted( uuid )              + " " + ;
-               "LIMIT 1"
+   local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()  + " " + ;
+                        "WHERE codigo = " + quoted( uuid )              + " " + ;
+                        "LIMIT 1"
 
-RETURN ( ::getDatabase():getValue( cSQL, uDefault ) )
+RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
