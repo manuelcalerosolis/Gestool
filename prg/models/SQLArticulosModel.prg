@@ -38,19 +38,23 @@ END CLASS
 METHOD getColumns() CLASS SQLArticulosModel
    
    hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"          ,;
-                                                      "default"   => {|| 0 } }                                )
+                                                      "default"   => {|| 0 }                                  ,;
+                                                      "text"      => "Identificador del artículo" }            )
 
    hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"          ,;
-                                                      "default"   => {|| win_uuidcreatestring() } }           )
+                                                      "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "codigo",                     {  "create"    => "VARCHAR( 20 )"                          ,;
-                                                      "default"   => {|| space( 20 ) } }                      )
+                                                      "default"   => {|| space( 20 ) }                        ,;
+                                                      "text"      => "Código del artículo" }                   )
 
    hset( ::hColumns, "nombre",                     {  "create"    => "VARCHAR( 200 )"                         ,;
-                                                      "default"   => {|| space( 200 ) } }                     )
+                                                      "default"   => {|| space( 200 ) }                       ,;
+                                                      "text"      => "Nombre del artículo" }                   ) 
 
    hset( ::hColumns, "familia_codigo",             {  "create"    => "VARCHAR( 20 )"                          ,;
-                                                      "default"   => {|| space( 20 ) } }                      )
+                                                      "default"   => {|| space( 20 ) }                        ,;
+                                                      "text"      => "Código de la familia" }                  )
 
    hset( ::hColumns, "tipo_codigo",                {  "create"    => "VARCHAR( 20 )"                          ,;
                                                       "default"   => {|| space( 20 ) } }                      )

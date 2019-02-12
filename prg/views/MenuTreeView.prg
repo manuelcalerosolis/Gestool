@@ -151,8 +151,8 @@ CLASS MenuTreeView
    METHOD getEvents()                        INLINE ( iif( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
 
    METHOD setEvent( cEvent, bEvent )         INLINE ( ::getEvents():set( cEvent, bEvent ) )
+   METHOD setEvents( cEvent, bEvent )        INLINE ( ::getEvents():setEvents( cEvent, bEvent ) )
    METHOD fireEvent( cEvent, uValue )        INLINE ( ::getEvents():fire( cEvent, uValue ) )
-   //METHOD setEvents( aEvents, bEvent )       INLINE ( aeval( aEvents, {|cEvent| ::setEvent( cEvent, bEvent ) } ) )
 
 ENDCLASS
 

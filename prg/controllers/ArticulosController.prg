@@ -61,7 +61,7 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLArticulosModel():New( self ), ), ::oModel )
    
-   METHOD getRange()                   INLINE ( if( empty( ::oRange ), ::oRange := ArticulosItemRange():New( self ), ), ::oRange )
+   METHOD getRange()                   INLINE ( if( empty( ::oRange ), ::oRange := ItemRange():New( self ), ), ::oRange )
 
 END CLASS
 

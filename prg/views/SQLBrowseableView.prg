@@ -58,9 +58,6 @@ CLASS SQLBrowseableView FROM SQLBaseView
 
    METHOD getMenuTreeView()                  INLINE ( if( empty( ::oMenuTreeView ), ::oMenuTreeView := MenuTreeView():New( Self ), ), ::oMenuTreeView )
 
-   /*METHOD setTitle( cTitle )                    INLINE ( ::cTitle := cTitle )
-   METHOD getTitle()                            INLINE ( iif( empty( ::cTitle ), ::defaultTitle(), ::cTitle ) )*/
-
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -79,9 +76,7 @@ METHOD End()
       ::oMenuTreeView:end()
    end if 
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //----------------------------------------------------------------------------//
 

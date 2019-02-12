@@ -569,7 +569,7 @@ METHOD addGeneralWhere( cSQLSelect, cGeneralWhere )
       RETURN ( cSQLSelect )
    end if 
    
-   cSQLSelect        += ::getWhereOrAnd( cSQLSelect ) + cGeneralWhere 
+   cSQLSelect              += ::getWhereOrAnd( cSQLSelect ) + cGeneralWhere 
 
 RETURN ( cSQLSelect )
 

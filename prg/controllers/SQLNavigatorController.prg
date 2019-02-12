@@ -125,13 +125,13 @@ CLASS SQLNavigatorController FROM SQLBrowseController
    METHOD buildCustomLikeFilter( cField, cValue )     INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "LIKE (...)" ),;
                                                                      ::buildLikeFilter( cField, cValue ), ) )
 
-   METHOD getNavigatorView()                          INLINE ( iif( empty( ::oNavigatorView ), ::oNavigatorView := SQLNavigatorView():New( self ), ), ::oNavigatorView )
+   METHOD getNavigatorView()           INLINE ( iif( empty( ::oNavigatorView ), ::oNavigatorView := SQLNavigatorView():New( self ), ), ::oNavigatorView )
 
-   METHOD getSelectorView()                           INLINE ( iif( empty( ::oSelectorView ), ::oSelectorView := SQLSelectorView():New( self ), ), ::oSelectorView )
+   METHOD getSelectorView()            INLINE ( iif( empty( ::oSelectorView ), ::oSelectorView := SQLSelectorView():New( self ), ), ::oSelectorView )
 
-   METHOD getDialogModalView()                        INLINE ( iif( empty( ::oDialogModalView ), ::oDialogModalView := SQLDialogView():New( self ), ), ::oDialogModalView )
+   METHOD getDialogModalView()         INLINE ( iif( empty( ::oDialogModalView ), ::oDialogModalView := SQLDialogView():New( self ), ), ::oDialogModalView )
 
-   METHOD getFilterController()                       INLINE ( iif( empty( ::oFilterController ), ::oFilterController := SQLFiltrosController():New( self ), ), ::oFilterController ) 
+   METHOD getFilterController()        INLINE ( iif( empty( ::oFilterController ), ::oFilterController := SQLFiltrosController():New( self ), ), ::oFilterController ) 
 
    METHOD setShowDeleted()
 
@@ -143,7 +143,7 @@ METHOD New( oController )
 
    ::Super:New( oController )
 
-   ::oWindowsBar                                      := oWndBar()
+   ::oWindowsBar                       := oWndBar()
 
 RETURN ( self )
 

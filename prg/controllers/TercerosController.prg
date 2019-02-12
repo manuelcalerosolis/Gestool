@@ -59,17 +59,19 @@ CLASS TercerosController FROM SQLNavigatorController
 
    METHOD buildRowSetSentence( cType )
 
-   //Construcciones tardias----------------------------------------------------
+   // Construcciones tardias---------------------------------------------------
 
-   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := TercerosView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := TercerosView():New( self ), ), ::oDialogView )
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := TercerosBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := TercerosBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := TercerosValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( iif( empty( ::oValidator ), ::oValidator := TercerosValidator():New( self ), ), ::oValidator )
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLTercerosModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLTercerosModel():New( self ), ), ::oModel )
 
-   METHOD getSelector()                INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := TerceroGetSelector():New( self ), ), ::oGetSelector )
+   METHOD getSelector()                INLINE ( iif( empty( ::oGetSelector ), ::oGetSelector := TerceroGetSelector():New( self ), ), ::oGetSelector )
+
+   METHOD getRange()                   INLINE ( iif( empty( ::oRange ), ::oRange := ItemRange():New( self ), ), ::oRange )
 
 END CLASS
 

@@ -56,7 +56,6 @@ CLASS ConversorPrepareController FROM SQLBrowseController
    METHOD setFacturasVentasControllerAsDestino() ;
                                        INLINE ( ::oDestinoController := FacturasVentasController():New( self ), ::oDestinoController )
 
-
    METHOD setFacturasVentasSimplificadasController() ;
                                        INLINE ( ::oDestinoController := FacturasVentasSimplificadasController():New( self ), ::oDestinoController )
 
@@ -159,8 +158,9 @@ RETURN ( ::getDestinoController():Edit( nId ) )
 
 METHOD convertDocument() CLASS ConversorPrepareController
 
-      ::getConversorDocumentosController():convertDocument()
-      ::getConversorDocumentosController():showResume()
+   ::getConversorDocumentosController():convertDocument()
+
+   ::getConversorDocumentosController():showResume()
 
 RETURN ( nil )
 
@@ -275,8 +275,6 @@ END CLASS
 
 METHOD Activate() CLASS ConversorAlbaranVentasView
 
-   ::oController:getConvertirAlbaranVentasTemporalController():getModel():createTemporalTable()
-
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_LARGE" ;
       TITLE       "Convertir a factura de ventas"
@@ -303,7 +301,6 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
                   "CONVERTIR_ALBARAN_VENTAS_PREVIA",;
                   "CONVERTIR_ALBARAN_VENTAS"
 
-
    REDEFINE GET   ::oFechaDesde ;
       VAR         ::dFechaDesde ;
       ID          110 ;
@@ -320,11 +317,13 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
 
    ::oBrwRange    := BrowseRange():New( 130, ::oFolder:aDialogs[1] )
 
-   ::oBrwRange:addController( ArticulosController():New() )
+   ::oBrwRange:addController( ContadoresController():New() )
+
+   ::oBrwRange:addController( TercerosController():New() )
 
    ::oBrwRange:Resource()
 
-   // ::getController():getConvertirAlbaranVentasTemporalController():Activate( 100, ::oFolder:aDialogs[2] )
+   ::oController:getConvertirAlbaranVentasTemporalController():Activate( 100, ::oFolder:aDialogs[2] )
 
    // Botones------------------------------------------------------------------
 
@@ -344,6 +343,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD Activating() CLASS ConversorAlbaranVentasView
 
+   ::oController:getConvertirAlbaranVentasTemporalController():getModel():createTemporalTable()
 
 RETURN ( nil )
 

@@ -229,7 +229,7 @@ RETURN ( oMenu )
 
 PROCEDURE loggedTest()
    
-   ConversorAlbaranVentasView():Activate()
+   AlbaranesVentasController():runGenerateFacturaVentas()
 
 RETURN 
 

@@ -14,7 +14,9 @@ CLASS ClientesController FROM TercerosController
 
    METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLTercerosModel():New( self ), ), ::oModel )
 
-   METHOD getSelector()                INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := TerceroGetSelector():New( self ), ), ::oGetSelector )
+   METHOD getSelector()                INLINE ( iif( empty( ::oGetSelector ), ::oGetSelector := TerceroGetSelector():New( self ), ), ::oGetSelector )
+
+   METHOD getRange()                   INLINE ( iif( empty( ::oRange ), ::oRange := ItemRange():New( self ), ), ::oRange )
 
 END CLASS
 

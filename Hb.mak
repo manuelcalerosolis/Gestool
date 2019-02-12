@@ -184,6 +184,7 @@ ArticulosUnidadesMedicionController.prg								\
 AlmacenesController.prg 													\
 DelegacionesController.prg 												\
 ArticulosController.prg 													\
+ContadoresController.prg 													\
 ArticulosBrowseView.prg 													\
 ArticulosView.prg 															\
 ArticulosValidator.prg 														\
@@ -631,6 +632,7 @@ ArticulosUnidadesMedicionController.obj 								\
 AlmacenesController.obj       											\
 DelegacionesController.obj       										\
 ArticulosController.obj       											\
+ContadoresController.obj       											\
 ArticulosBrowseView.obj 													\
 ArticulosView.obj 															\
 ArticulosValidator.obj 														\
@@ -1077,6 +1079,7 @@ $(OBJ)\ArticulosUnidadesMedicionController.obj    					+
 $(OBJ)\AlmacenesController.obj    										+
 $(OBJ)\DelegacionesController.obj    									+
 $(OBJ)\ArticulosController.obj    										+
+$(OBJ)\ContadoresController.obj    										+
 $(OBJ)\ArticulosBrowseView.obj    										+
 $(OBJ)\ArticulosView.obj    												+
 $(OBJ)\ArticulosValidator.obj												+

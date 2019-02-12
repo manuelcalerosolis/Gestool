@@ -142,6 +142,7 @@ CLASS SQLBrowseView
    METHOD isNotSenderControllerZoomMode()    INLINE ( empty( ::getController() ) .or. ::getController():isNotZoomMode() )
    
    METHOD getComboBoxOrder()                 INLINE ( iif( !empty( ::getController() ), ::getController():getComboBoxOrder(), ) )
+      
    METHOD getMenuTreeView()                  INLINE ( iif( !empty( ::getController() ), ::getController():getMenuTreeView(), ) )
 
    // Models-------------------------------------------------------------------
