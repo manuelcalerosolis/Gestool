@@ -72,17 +72,9 @@ CLASS ConversorDocumentosController FROM SQLBrowseController
 
    METHOD convertDocument()
 
-   METHOD showResume()
-
    //Contrucciones tarias------------------------------------------------------
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLConversorDocumentosModel():New( self ), ), ::oModel ) 
-
-   METHOD getResumenView()             INLINE ( if( empty( ::oResumenView ), ::oResumenView := ConversorResumenView():New( self ), ), ::oResumenView )
-
-   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ::oController:oOrigenController:getDialogView(), ::oDialogView ) )
-
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesBrowseView():New( self ), ), ::oBrowseView )
 
 END CLASS
 
@@ -101,10 +93,6 @@ METHOD End() CLASS ConversorDocumentosController
    if !empty( ::oModel )
       ::oModel:End()
    end if 
-
-   if !empty( ::oResumenView )
-      ::oResumenView:End()
-   end if
 
 RETURN ( nil )
 
@@ -206,8 +194,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD runConvertAlbaran( aSelected ) CLASS ConversorDocumentosController
-
-   //msgalert( hb_valtoexp( aSelected ), "aSelected" )
    
    ::aConvert           := {}
 
@@ -242,8 +228,6 @@ METHOD convertAlbaran( aSelected ) CLASS ConversorDocumentosController
       if ::isAlbaranNotConverted( hAlbaran ) 
 
          ::uuidDocumentoOrigen   := hget( hAlbaran, "uuid" )
-
-         //msgalert( ::uuidDocumentoOrigen)
          
          if ::isAlbaranEquals( hAlbaran )
 
@@ -371,293 +355,10 @@ METHOD convertDocument() CLASS ConversorDocumentosController
 
    ::aCreatedDocument            := ::oController:oDestinoController:convertDocument( ::aConvert )
 
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD showResume() CLASS ConversorDocumentosController
-
-   if !empty( ::aCreatedDocument )
-      ::getResumenView:Activate()
-   end if
-
-   ::aCreatedDocument := {}
-
-RETURN ( nil )
+RETURN ( ::aCreatedDocument )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS ConversorDocumentoView FROM SQLBaseView
-
-   DATA cDocumentoDestino
-
-   DATA oComboDocumentoDestino
-                                          
-   METHOD Activate()
-      METHOD Activating()
-
-   METHOD getDocumentoDestino()        INLINE ( alltrim( ::cDocumentoDestino ) )
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD Activate() CLASS ConversorDocumentoView
-
-   DEFINE DIALOG  ::oDialog;
-      RESOURCE    "CONVERTIR_DOCUMENTO"; 
-      TITLE       "Convertir documento a ..."
-
-   REDEFINE BITMAP ::oBitmap ;
-      ID          900 ;
-      RESOURCE    "gc_convertir_documento_48" ;
-      TRANSPARENT ;
-      OF          ::oDialog
-
-   REDEFINE SAY   ::oMessage ;
-      PROMPT      "Convertir documento" ;
-      ID          800 ;
-      FONT        oFontBold() ;
-      OF          ::oDialog
-
-   REDEFINE COMBOBOX ::oComboDocumentoDestino ;
-      VAR         ::cDocumentoDestino ;
-      ITEMS       ( hgetkeys( ::oController:aDocumentosDestino ) ) ;
-      ID          100 ;
-      OF          ::oDialog
-
-   // Botones------------------------------------------------------------------
-
-   ApoloBtnFlat():Redefine( IDOK, {|| ::oDialog:end( IDOK ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
-
-   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
-
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-   
-   ::oDialog:Activate( , , , .t. )
-
-RETURN ( ::oDialog:nResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD Activating() CLASS ConversorDocumentoView
-
-   ::cDocumentoDestino  := ""
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS ConvertirAlbaranVentasView FROM SQLBaseView
-
-   DATA oFechaDesde
-   DATA dFechaDesde     INIT boy()
-
-   DATA oFechaHasta
-   DATA dFechaHasta     INIT date()
-                                          
-   METHOD insertTemporalAlbaranes( aAlbaranes )
-
-   METHOD Activate()
-      METHOD starActivate() 
-      METHOD okActivate() 
-         METHOD okActivateFolderOne()
-         METHOD okActivateFolderTwo()
-
-   METHOD showFolderResults()          INLINE ( ::oFolder:aEnable[ 3 ] := .t., ::oFolder:setOption( 3 ) )
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD Activate() CLASS ConvertirAlbaranVentasView
-
-   ::oController:getConvertirAlbaranVentasTemporalController():getModel():createTemporalTable()
-
-   DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "CONTAINER_LARGE" ;
-      TITLE       ::LblTitle() + "convertir a factura de ventas"
-
-   REDEFINE BITMAP ::oBitmap ;
-      ID          900 ;
-      RESOURCE    "gc_warning_48" ;
-      TRANSPARENT ;
-      OF          ::oDialog
-
-   REDEFINE SAY   ::oMessage ;
-      PROMPT      "Convertir a factura de ventas" ;
-      ID          800 ;
-      FONT        oFontBold() ;
-      OF          ::oDialog
-
-   REDEFINE FOLDER ::oFolder ;
-      ID          500 ;
-      OF          ::oDialog ;
-      PROMPT      "Rangos" ,;
-                  "Vista Previa" ,;
-                  "Pestaña 3" ;
-      DIALOGS     "CONVERTIR_ALBARAN_VENTAS",;
-                  "CONVERTIR_ALBARAN_VENTAS_PREVIA",;
-                  "CONVERTIR_ALBARAN_VENTAS"   
-
-   REDEFINE GET   ::oFechaDesde ;
-      VAR         ::dFechaDesde ;
-      ID          110 ;
-      PICTURE     "@D" ;
-      SPINNER ;
-      OF          ::oFolder:aDialogs[1]
-
-   REDEFINE GET   ::oFechaHasta ;
-      VAR         ::dFechaHasta ;
-      ID          120 ;
-      PICTURE     "@D" ;
-      SPINNER ;
-      OF          ::oFolder:aDialogs[1]
-
-   ::oController:getConvertirAlbaranVentasTemporalController():Activate( 100, ::oFolder:aDialogs[2] )
-   
-   // Botones------------------------------------------------------------------
-
-   ApoloBtnFlat():Redefine( IDOK, {|| ::okActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
-
-   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
-
-   ::oDialog:bKeyDown      := {| nKey | if( nKey == VK_F5, ::okActivate(), ) }
-
-   ::oDialog:bStart        := {|| ::starActivate(), ::paintedActivate() }
-
-   ACTIVATE DIALOG ::oDialog CENTER
-
-RETURN ( ::oDialog:nResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD starActivate() CLASS ConvertirAlbaranVentasView
-
-   ::oFolder:aEnable    := { .t., .f., .f. }
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD okActivate() CLASS ConvertirAlbaranVentasView
-
-   do case 
-      case ::oFolder:nOption == 1
-         ::okActivateFolderOne()
-
-
-      case ::oFolder:nOption == 2
-         ::okActivateFolderTwo()
-
-      case ::oFolder:nOption == 3
-         ::oDialog:End()
-   end case
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD okActivateFolderOne() CLASS ConvertirAlbaranVentasView
-
-   local aAlbaranes 
-   local hWhere /*:= { "tercero_codigo" => "003",;
-                     "ruta_codigo" => "002" }*/
-
-   aAlbaranes := SQLAlbaranesVentasModel():getArrayAlbaranWhereHash( ::dFechaDesde, ::dFechaHasta, hWhere )
-   if empty( aAlbaranes )
-      msgstop("No existen albaranes en el rango de fechas seleccionado")
-      RETURN( nil )
-   end if
-
-   //msgalert( hb_valtoexp( aAlbaranes ), "albaraneeees")
-
-   ::insertTemporalAlbaranes( hWhere )
-
-   ::oController:getConvertirAlbaranVentasTemporalController():getRowSet():refresh()
-   ::oFolder:aEnable[ 2 ]  := .t.
-   ::oFolder:setOption( 2 ) 
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD okActivateFolderTwo() CLASS ConvertirAlbaranVentasView
-
-   if empty( ::oController:getConvertirAlbaranVentasTemporalController():getUuids() )
-      msgstop( "Debe seleccionar al menos un albaran" )
-      RETURN( nil )
-   end if
-   
-   ::oController:runConvertAlbaran( ::oController:getConvertirAlbaranVentasTemporalController():getUuids() )
-
-   ::oController:getConversorDocumentosController():convertDocument()
-
-   ::showFolderResults()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertTemporalAlbaranes( hWhere ) CLASS ConvertirAlbaranVentasView
-
-   ::oController:getConvertirAlbaranVentasTemporalController():getModel():insertTemporalAlbaranes( ::dFechaDesde, ::dFechaHasta, hWhere )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS ConversorResumenView FROM SQLBaseView
-                                          
-   METHOD Activate()
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD Activate() CLASS ConversorResumenView
-
-   DEFINE DIALOG  ::oDialog;
-      RESOURCE    "RESUMEN_CONVERSION"; 
-      TITLE       "Resumen de la conversión ..."
-
-   REDEFINE BITMAP ::oBitmap ;
-      ID          900 ;
-      RESOURCE    "gc_tags_48" ;
-      TRANSPARENT ;
-      OF          ::oDialog
-
-   REDEFINE SAY   ::oMessage ;
-      PROMPT      "Resumen de la conversión a facturas" ;
-      ID          800 ;
-      FONT        oFontBold() ;
-      OF          ::oDialog
-
-   ::oController:Activate( 100, ::oDialog )
-
-   // Botones------------------------------------------------------------------
-
-   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
-   
-   ::oDialog:bStart     := {|| ::paintedActivate() }
-
-   ::oDialog:Activate( , , , .t. )
-
-RETURN ( ::oDialog:nResult )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -667,8 +368,6 @@ RETURN ( ::oDialog:nResult )
 CLASS SQLConversorDocumentosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "documentos_conversion"
-
-   //DATA cConstraints             INIT "PRIMARY KEY ( pago_uuid, recibo_uuid )"
 
    METHOD getColumns()
 
@@ -680,7 +379,7 @@ CLASS SQLConversorDocumentosModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
-   METHOD getDestinoController()       INLINE ( ::oController:oController:oDestinoController )
+   METHOD getDestinoController()       INLINE ( ::oController:oDestinoController )
 
 END CLASS
 

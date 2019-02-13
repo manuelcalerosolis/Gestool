@@ -152,8 +152,6 @@ METHOD getGeneralSelect() CLASS SQLConvertirAlbaranVentasTemporalModel
 
    local cSql
 
-   msgalert( ::cTableName, "tabla en consulta")
-
    TEXT INTO cSql
 
    SELECT 
@@ -209,8 +207,6 @@ RETURN ( cSql )
 //---------------------------------------------------------------------------//
 
 METHOD createTemporalTable() CLASS SQLConvertirAlbaranVentasTemporalModel
-
-msgalert( ::cTableName, "en creacion de table")
 
 RETURN ( getSQLDatabase():Exec( ::getCreateTableTemporalSentence( Company() ) ) )
 

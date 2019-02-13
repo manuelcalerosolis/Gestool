@@ -7,6 +7,8 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    DATA oFacturasClientesFacturaeController
 
+   DATA oConversorPrepareGenerico
+
    DATA oIvaDetalleView
 
    DATA oRectificativaDialogView
@@ -127,7 +129,10 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD getRectificativaDialogView() INLINE ( if( empty( ::oRectificativaDialogView ), ::oRectificativaDialogView := OperacionComercialRectificarView():New( self ), ), ::oRectificativaDialogView )
 
-   METHOD getRectifictivaValidator()   INLINE (if( empty( ::oRectificativaValidator ), ::oRectificativaValidator := OperacionComercialRectificarValidator():New( self ), ), ::oRectificativaValidator )
+   METHOD getRectifictivaValidator()   INLINE ( if( empty( ::oRectificativaValidator ), ::oRectificativaValidator := OperacionComercialRectificarValidator():New( self ), ), ::oRectificativaValidator )
+
+   METHOD getConversorPreapreGenericoController() ;
+                                       INLINE  ( if( empty( ::oConversorPrepareGenerico ), ::oConversorPrepareGenerico := ConversorPrepareGenericoController():New( self ), ), ::oConversorPrepareGenerico )
 
    METHOD Editing()
 
@@ -177,6 +182,10 @@ METHOD End() CLASS OperacionesComercialesController
 
    if !empty( ::oFacturasClientesFacturaeController )
       ::oFacturasClientesFacturaeController:End()
+   end if
+
+   if !empty( ::oConversorPrepareGenerico )
+      ::oConversorPrepareGenerico:End()
    end if
 
 RETURN ( ::Super:End() )
@@ -465,7 +474,7 @@ METHOD addExtraButtons() CLASS OperacionesComercialesController
 
    ::super:addExtraButtons()
 
-   ::oNavigatorView:getMenuTreeView():addButton( "Convertir documento", "gc_convertir_documento_16", {|| ::getConversorDocumentosController():Run() } )
+   ::oNavigatorView:getMenuTreeView():addButton( "Convertir documento", "gc_convertir_documento_16", {|| ::getConversorPreapreGenericoController():Run() } )
 
 RETURN ( nil )
 
