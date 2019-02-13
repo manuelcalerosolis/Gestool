@@ -502,7 +502,9 @@ RETURN ( Self )
 METHOD Resource( oContainer ) CLASS GetPeriodo
 
    ::oComboPeriodo:Resource( oContainer )
+
    ::oFechaInicio:Resource( oContainer )
+
    ::oFechaFin:Resource( oContainer )
 
 RETURN ( Self )
