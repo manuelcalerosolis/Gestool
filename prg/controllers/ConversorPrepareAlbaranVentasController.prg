@@ -83,11 +83,7 @@ RETURN ( nil )
 
 CLASS ConversorAlbaranVentasView FROM SQLBaseView
 
-   DATA oFechaInicio
-   DATA dFechaInicio     INIT boy()
-
-   DATA oFechaFin
-   DATA dFechaFin     INIT date()
+   DATA oPeriodo
 
    DATA oBrwRange
 
@@ -134,27 +130,15 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
                   "CONVERTIR_ALBARAN_VENTAS_PREVIA"
 
 
-   ::GetPeriodo():New(  )
-
-   REDEFINE GET   ::oFechaInicio ;
-      VAR         ::dFechaInicio ;
-      ID          110 ;
-      PICTURE     "@D" ;
-      SPINNER ;
-      OF          ::oFolder:aDialogs[1]
-
-   REDEFINE GET   ::oFechaFin ;
-      VAR         ::dFechaFin ;
-      ID          120 ;
-      PICTURE     "@D" ;
-      SPINNER ;
-      OF          ::oFolder:aDialogs[1]
+    ::oPeriodo     := GetPeriodo()
+      ::oPeriodo:New( 110, 120, 130 )
+      ::oPeriodo:Resource( ::oFolder:aDialogs[1] )
 
    ::oController:getConvertirAlbaranVentasTemporalController():Activate( 100, ::oFolder:aDialogs[2] )
 
    ::oController:Activate( 100, ::oFolder:aDialogs[3] )
 
-   ::oBrwRange    := BrowseRange():New( 130, ::oFolder:aDialogs[1] )
+   ::oBrwRange    := BrowseRange():New( 140, ::oFolder:aDialogs[1] )
 
    ::oBrwRange:addController( ContadoresAlbaranesVentasController():New() )
 
@@ -213,7 +197,7 @@ METHOD okActivateFolderOne() CLASS ConversorAlbaranVentasView
    local hWhere /*:= { "tercero_codigo" => "003",;
                      "ruta_codigo" => "002" }*/
 
-   aAlbaranes := SQLAlbaranesVentasModel():getArrayAlbaranWhereHash( ::dFechaInicio, ::dFechaFin, hWhere )
+   aAlbaranes := SQLAlbaranesVentasModel():getArrayAlbaranWhereHash( ::oPeriodo:oFechaInicio:Value(), ::oPeriodo:oFechaFin:Value(), hWhere )
    if empty( aAlbaranes )
       msgstop("No existen albaranes con el filtro seleccionado")
       RETURN( nil )
@@ -254,7 +238,7 @@ RETURN ( nil )
 
 METHOD insertTemporalAlbaranes( hWhere ) CLASS ConversorAlbaranVentasView
 
-   ::oController:getConvertirAlbaranVentasTemporalController():getModel():insertTemporalAlbaranes( ::dFechaInicio, ::dFechaFin, hWhere )
+   ::oController:getConvertirAlbaranVentasTemporalController():getModel():insertTemporalAlbaranes( ::oPeriodo:oFechaInicio:Value(), ::oPeriodo:oFechaFin:value(), hWhere )
 
 RETURN ( nil )
 
