@@ -215,7 +215,7 @@ METHOD StartActivate() CLASS CajasView
                      {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) },;
                          ::oController:getCamposExtraValoresController():getImage( "16" ) )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

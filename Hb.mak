@@ -80,9 +80,10 @@ SQLPermisosOpcionesModel.prg									\
 PermisosController.prg											\
 SQLFiltrosValidator.prg											\
 SQLFiltrosController.prg										\
+FiltrosController.prg											\
 Rfile.prg               										\
 Animat.prg              										\
-TApoloExplorerBar.prg 													\
+TApoloExplorerBar.prg 											\
 Label.prg               										\
 Litem.prg               										\
 Tloitem.prg             										\
@@ -518,6 +519,7 @@ SQLPermisosOpcionesModel.obj												\
 PermisosController.obj														\
 SQLFiltrosValidator.obj 													\
 SQLFiltrosController.obj													\
+FiltrosController.obj														\
 Rfile.obj                                          				\
 Animat.obj                                         				\
 Printer.obj                                        				\
@@ -976,12 +978,13 @@ $(OBJ)\SQLPermisosOpcionesModel.obj										+
 $(OBJ)\PermisosController.obj												+
 $(OBJ)\SQLFiltrosValidator.obj											+
 $(OBJ)\SQLFiltrosController.obj											+
+$(OBJ)\FiltrosController.obj												+
 $(OBJ)\Rfile.obj                 										+
 $(OBJ)\Animat.obj                										+
 $(OBJ)\Printer.obj               										+
 $(OBJ)\Webbar.obj                										+
 $(OBJ)\Webmap.obj                										+
-$(OBJ)\TApoloExplorerBar.obj           										+
+$(OBJ)\TApoloExplorerBar.obj           								+
 $(OBJ)\Timaglst.obj             											+
 $(OBJ)\Label.obj                											+
 $(OBJ)\Litem.obj                											+
