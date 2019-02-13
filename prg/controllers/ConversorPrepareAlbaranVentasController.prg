@@ -130,9 +130,8 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
                   "CONVERTIR_ALBARAN_VENTAS_PREVIA"
 
 
-    ::oPeriodo     := GetPeriodo()
-      ::oPeriodo:New( 110, 120, 130 )
-      ::oPeriodo:Resource( ::oFolder:aDialogs[1] )
+   ::oPeriodo     := GetPeriodo():New( 110, 120, 130 )
+   ::oPeriodo:Resource( ::oFolder:aDialogs[ 1 ] )
 
    ::oController:getConvertirAlbaranVentasTemporalController():Activate( 100, ::oFolder:aDialogs[2] )
 
