@@ -51,9 +51,11 @@ CLASS FiltrosController FROM SQLBaseController
 
    METHOD Activate() 
 
-   METHOD loadColumns( hColumns )
+   METHOD loadStructure( hColumns )
 
-   METHOD getDescriptions()            
+   METHOD getStructureType( cText )
+
+   METHOD getTexts()            
 
    METHOD getFilter() 
 
@@ -81,7 +83,7 @@ METHOD New( oController ) CLASS FiltrosController
                                              "32" => "gc_object_cube_32",;
                                              "48" => "gc_object_cube_48" }
 
-   ::loadColumns( SQLTercerosModel():getColumns() )
+   ::loadStructure( SQLTercerosModel():getColumns() )
 
 RETURN ( Self )
 
@@ -101,7 +103,7 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadColumns( hColumns ) CLASS FiltrosController
+METHOD loadStructure( hColumns ) CLASS FiltrosController
 
    heval( hColumns,;
       {|k,v| if( hhaskey( v, "text" ),; 
@@ -114,6 +116,20 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD getStructureType( cText ) CLASS FiltrosController
+
+   local nPos
+
+   nPos  := ascan( ::aStructure, {|h| hget( h, "text" ) == cText } )
+
+   if nPos != 0
+      RETURN ( hget( ::aStructure[ nPos ], "type" ) )
+   end if
+
+RETURN ( '' )
+
+//---------------------------------------------------------------------------//
+
 METHOD Activate() CLASS FiltrosController
 
    ::getDialogView():Activate()
@@ -122,7 +138,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDescriptions()
+METHOD getTexts()
 
    if !empty( ::aDescriptions )
       RETURN ( ::aDescriptions )
@@ -166,73 +182,45 @@ CLASS FiltrosView FROM SQLBaseView
 
    DATA oColCondicion
 
-   DATA hConditions  INIT  {  "DECIMAL"   => {  "value"        => 0,;
-                                                "edit"         => EDIT_GET_BUTTON,;
-                                                "list"         => nil,;
-                                                "block"        => {| nRow, nCol, oBrw, nKey | msgStop( nRow ) },;
-                                                "conditions"   => { "Igual",;
-                                                                     "Distinto",;
-                                                                     "Mayor",;
-                                                                     "Menor",;
-                                                                     "Mayor igual",;
-                                                                     "Menor igual" } },;
-                              "INT"       => {  "value"        => 0,;
-                                                "edit"         => EDIT_GET_BUTTON,;
-                                                "list"         => nil,;
-                                                "block"        => {| nRow, nCol, oBrw, nKey | msgStop( nRow ) },;
-                                                "conditions"   => { "Igual",;
-                                                                     "Distinto",;
-                                                                     "Mayor",;
-                                                                     "Menor",;
-                                                                     "Mayor igual",;
-                                                                     "Menor igual" } },;                                                                     
-                              "VARCHAR"   => {  "value"        => space( 100 ),;
-                                                "edit"         => EDIT_GET_BUTTON,;
-                                                "list"         => nil,;
-                                                "block"        => {|| nil },;
-                                                "conditions"   => {  "Igual",;
-                                                                     "Distinto",;
-                                                                     "Contenga",;
-                                                                     "Mayor",;
-                                                                     "Menor",;
-                                                                     "Mayor igual",;
-                                                                     "Menor igual" } },;
-                              "DATE"      => {  "value"        => GetSysDate(),;
-                                                "edit"         => EDIT_GET_BUTTON,;
-                                                "list"         => nil,;
-                                                "conditions"   => {  "Igual",;
-                                                                     "Distinto",;
-                                                                     "Mayor",;
-                                                                     "Menor",;
-                                                                     "Mayor igual",;
-                                                                     "Menor igual" } },;
-                              "TINYINT"   => {  "value"        => "Si",;
-                                                "edit"         => EDIT_GET_LISTBOX,;
-                                                "list"         => { "Si", "No" },;
-                                                "conditions"   => {  "Igual",;
-                                                                     "Distinto" } } }
+   DATA oColValor
+
+   DATA oEditMemo    
+
+   DATA hConditions
 
    METHOD Activate()
 
    METHOD StartActivate()
 
+   METHOD loadConditions()   
+
    METHOD getFilter()                  INLINE ( ::oController:getFilter() )
 
    METHOD getStructure()               INLINE ( ::oController:aStructure )
 
-   METHOD descriptionsOnPostEdit( o, uNewValue, nKey )
+   METHOD textOnPostEdit( o, uNewValue, nKey )
 
-   METHOD getHashType( cType )         INLINE ( HGet( ::hConditions, cType ) )
+   METHOD getHashType( cType )         INLINE ( hget( ::hConditions, cType ) )
 
    METHOD getConditionsCaracter()      INLINE ( hget( ::getHashType( "VARCHAR" ), "conditions" ) )
 
-   // METHOD getConditionsCaracterPos( nPos )         INLINE ( ::GetConditionsCaracter()[ nPos ] )
+   METHOD getFilterLineText()          INLINE ( hget( ::oBrwFilter:aRow, "text" ) )
+
+   METHOD setFilterLineText( uValue )  INLINE ( hset( ::oBrwFilter:aRow, "text", uValue ) )
+
+   METHOD getFilterLineType()          INLINE ( ::GetStructureType( ::GetFilterLineBrowse( fldDescription ) ) )
+
+   METHOD changeFilterLine()
+
+   METHOD getStructureType( cText )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS FiltrosView
+
+   ::loadConditions()
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_MEDIUM" ;
@@ -279,9 +267,9 @@ METHOD Activate() CLASS FiltrosView
       :cHeader                   := "Campo"
       :bEditValue                := {|| hget( ::oBrwFilter:aRow, "text" ) }
       :nEditType                 := EDIT_LISTBOX
-      :aEditListTxt              := ::oController:getDescriptions() 
+      :aEditListTxt              := ::oController:getTexts() 
       :nWidth                    := 240
-      :bOnPostEdit               := {|o,x,n| ::descriptionsOnPostEdit( o, x, n ) } 
+      :bOnPostEdit               := {|o,x,n| ::textOnPostEdit( o, x, n ) } 
    end with
    
    with object ( ::oColCondicion := ::oBrwFilter:AddCol() )
@@ -293,28 +281,26 @@ METHOD Activate() CLASS FiltrosView
       :bOnPostEdit               := {|o,x,n| If( n != VK_ESCAPE, ::SetFilterLineBrowse( fldCondition, x ), ) } 
    end with
 
-/*
    with object ( ::oColValor := ::oBrwFilter:AddCol() )
       :cHeader                   := "Valor"
-      :bEditValue                := {|| ::aFilter[ ::oBrwFilter:nArrayAt, fldValue ] }
-      :nEditType                 := EDIT_GET_BUTTON
+      :bEditValue                := {|| hget( ::oBrwFilter:aRow, "value" ) }
+      :nEditType                 := EDIT_GET
       :nWidth                    := 200
       :bOnPostEdit               := {|o,x,n| If( n != VK_ESCAPE, ::SetFilterLineBrowse( fldValue, x ), ) } 
-      :bEditBlock                := {|n,c,o| ::oEditMemo:Show( o ) }
    end with
 
    with object ( ::oBrwFilter:AddCol() )
       :cHeader                   := "Nexo"
-      :bEditValue                := {|| ::aFilter[ ::oBrwFilter:nArrayAt, fldNexo ] }
+      :bEditValue                := {|| hget( ::oBrwFilter:aRow, "nexo" ) }
       :nEditType                 := EDIT_LISTBOX
       :aEditListTxt              := { "", "Y", "O" }
       :nWidth                    := 60
-      :bOnPostEdit               := {|o,x,n| ::NexoOnPostEdit( o, x, n ) } 
+      :bOnPostEdit               := {|o,x,n| ::nexoOnPostEdit( o, x, n ) } 
    end with
-*/
+
    // Botones caja -------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| ::oDialog:end( IDOK ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
@@ -330,11 +316,63 @@ RETURN ( ::oDialog:nResult )
 
 METHOD StartActivate() CLASS FiltrosView
 
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD descriptionsOnPostEdit( o, uNewValue, nKey ) CLASS FiltrosView
+METHOD loadConditions() CLASS FiltrosView
+
+   local hNumerics   := {  "value"  => 0,;
+                           "edit"         => EDIT_GET_BUTTON,;
+                           "list"         => nil,;
+                           "block"        => {| nRow, nCol, oBrw, nKey | msgStop( nRow ) },;
+                           "conditions"   => { "Igual",;
+                                                "Distinto",;
+                                                "Mayor",;
+                                                "Menor",;
+                                                "Mayor igual",;
+                                                "Menor igual" } }
+
+   local hChars      := {  "value"        => space( 100 ),;
+                           "edit"         => EDIT_GET_BUTTON,;
+                           "list"         => nil,;
+                           "block"        => {|| nil },;
+                           "conditions"   => {  "Igual",;
+                                                "Distinto",;
+                                                "Contenga",;
+                                                "Mayor",;
+                                                "Menor",;
+                                                "Mayor igual",;
+                                                "Menor igual" } }     
+
+   local hDate       := {  "value"        => GetSysDate(),;
+                           "edit"         => EDIT_GET_BUTTON,;
+                           "list"         => nil,;
+                           "conditions"   => {  "Igual",;
+                                                "Distinto",;
+                                                "Mayor",;
+                                                "Menor",;
+                                                "Mayor igual",;
+                                                "Menor igual" } }     
+
+   local hLogical    := {  "value"        => "Si",;
+                           "edit"         => EDIT_GET_LISTBOX,;
+                           "list"         => { "Si", "No" },;
+                           "conditions"   => {  "Igual",;
+                                                "Distinto" } }                                                          
+
+   ::hConditions     := {  "DECIMAL"   => hNumerics,;
+                           "INT"       => hNumerics,;
+                           "VARCHAR"   => hChars,;
+                           "DATE"      => hDate,;
+                           "TINYINT"   => hLogical }
+
+RETURN ( ::hConditions )
+
+//---------------------------------------------------------------------------//
+
+METHOD textOnPostEdit( o, uNewValue, nKey ) CLASS FiltrosView
 
    if !( hb_isnumeric( nKey ) .and. ( nKey != VK_ESCAPE ) )
       RETURN ( .t. )
@@ -343,19 +381,56 @@ METHOD descriptionsOnPostEdit( o, uNewValue, nKey ) CLASS FiltrosView
    if !( hb_ischar( uNewValue ) )
       RETURN ( .t. )
    end if 
-/*
-   if ::GetFilterLineBrowse( fldDescription ) != uNewValue
 
-      ::SetFilterLineBrowse( fldDescription, uNewValue )
+   msgalert( ::getFilterLineText( ::oBrwFilter:nArrayAt ), "getFilterLineText" )
 
-      ::SetFilterLineBrowse( fldValue, ::GetValueType( ::GetFilterTypeLineBrowse() ) )
+   if ::getFilterLineText() != uNewValue
 
-      ::ChangeLine()
+      ::setFilterLineText( uNewValue )
+
+      // ::SetFilterLineBrowse( fldValue, ::GetValueType( ::GetFilterTypeLineBrowse() ) )
+
+      ::changeFilterLine()
 
    end if 
-*/
+
+
 RETURN ( .t. )
 
+//---------------------------------------------------------------------------//
+
+METHOD changeFilterLine() CLASS FiltrosView
+
+   local cType                      := ::oController:getStructureType( ::getFilterLineText() )
+
+   msgalert( cType, "changeFilterLine" )
+
+   // if !empty( cType )
+   //    ::oColCondicion:aEditListTxt  := ::GetConditionsType( cType )
+   //    ::oColValor:nEditType         := ::GetEditType( cType )
+   //    ::oColValor:aEditListTxt      := ::GetListType( cType )
+   // end if 
+
+   ::oBrwFilter:Refresh()
+
+RETURN ( .t. )
+
+
+//---------------------------------------------------------------------------//
+
+METHOD getStructureType( cText )  CLASS FiltrosView
+
+   local nPos 
+   local cType := ""
+   
+   nPos        := ascan( ::getStructure(), {|h| alltrim( upper( hget( h, "text" ) ) ) == alltrim( upper( cText ) ) } )
+   if nPos != 0
+      cType    := ::GetStructure()[ nPos, posType ]
+   end if 
+
+RETURN ( cType ) 
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -658,7 +733,7 @@ METHOD ReplaceDialog() CLASS TReplaceDialog
 
    REDEFINE COMBOBOX ::oReplace ;
       VAR      ::cReplace ;
-      ITEMS    ::oFilterCreator:GetDescriptions();
+      ITEMS    ::oFilterCreator:getTexts();
       ID       80 ;
       OF       ::oDlg
 
@@ -799,8 +874,8 @@ CLASS TBrowseFilter
 	METHOD GetStructurePos( nPos )						INLINE ( ::GetStructure()[ nPos ] )
 	METHOD GetStructureType( cDescripcion )
 
-	METHOD GetDescriptions() 								INLINE ( ::oFilterDialog:oFilterCreator:GetDescriptions() ) 
-	METHOD GetDescriptionsPos( nPos ) 					INLINE ( ::GetDescriptions()[ nPos ] )
+	METHOD getTexts() 								INLINE ( ::oFilterDialog:oFilterCreator:getTexts() ) 
+	METHOD getTextsPos( nPos ) 					INLINE ( ::getTexts()[ nPos ] )
 
 	METHOD GetFields() 										INLINE ( if( Empty( ::aFields ), ( ::aFields := GetSubArray( ::aStructure, posField ) ), ), ::aFields )
 	METHOD GetTypes()											INLINE ( if( Empty( ::aTypes ), ( ::aTypes := GetSubArray( ::aStructure, posType ) ), ), ::aTypes )
@@ -825,14 +900,15 @@ CLASS TBrowseFilter
 
    METHOD GetFilterTypeLineBrowse()                INLINE ( ::GetStructureType( ::GetFilterLineBrowse( fldDescription ) ) )
 
-   METHOD AppendLine()                 				INLINE ( aAdd(::aFilter, { ::GetDescriptionsPos( 1 ), ::GetConditionsCaracterPos( 1 ), Space( 100 ), "" } ) )
+   METHOD AppendLine()                 				INLINE ( aAdd(::aFilter, { ::getTextsPos( 1 ), ::GetConditionsCaracterPos( 1 ), Space( 100 ), "" } ) )
    METHOD DeleteLine()
    METHOD InitLine()                               INLINE ( ::aFilter := {}, ::AppendLine(), ::oBrwFilter:SetArray( ::aFilter, , , .f. ) )
    METHOD ChangeLine()
 
 	METHOD Activate()
 	
-	METHOD DescriptionsOnPostEdit( o, x, n )
+	METHOD textOnPostEdit( o, x, n )
+
 	METHOD NexoOnPostEdit( o, x, n )
 
 END CLASS
@@ -950,7 +1026,7 @@ METHOD Activate() CLASS TBrowseFilter
       :cHeader                   := "Campo"
       :bEditValue                := {|| ::aFilter[ ::oBrwFilter:nArrayAt, fldDescription ] }
       :nEditType                 := EDIT_LISTBOX
-      :aEditListTxt              := ::GetDescriptions() 
+      :aEditListTxt              := ::getTexts() 
       :nWidth                    := 240
       :bOnPostEdit               := {|o,x,n| ::DescriptionsOnPostEdit( o, x, n ) } 
    end with
@@ -986,7 +1062,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DescriptionsOnPostEdit( o, uNewValue, nKey ) CLASS TBrowseFilter
+METHOD textOnPostEdit( o, uNewValue, nKey ) CLASS TBrowseFilter
 
    if IsNum( nKey ) .and. ( nKey != VK_ESCAPE )
 

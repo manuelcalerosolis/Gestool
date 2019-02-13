@@ -77,7 +77,7 @@ METHOD getColumns() CLASS SQLTercerosModel
                                                       "text"      => "DNI/CIF"                                    ,;
                                                       "default"   => {|| space( 20 ) } }                          )
 
-   hset( ::hColumns, "tipo",                       {  "create"    => "ENUM( 'Cliente', 'Proveedor', 'Cliente/Proveedor' )"  ,;
+   hset( ::hColumns, "tipo",                       {  "create"    => "ENUM ( 'Cliente', 'Proveedor', 'Cliente/Proveedor' )",;
                                                       "text"      => "Tipo"                                       ,;
                                                       "default"   => {|| 'Cliente' }  }                           )
 
@@ -109,12 +109,15 @@ METHOD getColumns() CLASS SQLTercerosModel
                                                       "default"   => {|| space( 100 ) } }                         )
 
    hset( ::hColumns, "primer_dia_pago",            {  "create"    => "INT UNSIGNED"                               ,;
+                                                      "text"      => "Primer día de pago"                         ,;
                                                       "default"   => {|| 0 } }                                    )
 
    hset( ::hColumns, "segundo_dia_pago",           {  "create"    => "INT UNSIGNED"                               ,;
+                                                      "text"      => "Segundo día de pago"                        ,;
                                                       "default"   => {|| 0 } }                                    )
 
    hset( ::hColumns, "tercer_dia_pago",            {  "create"    => "INT UNSIGNED"                               ,;
+                                                      "text"      => "Tercer día de pago"                         ,;
                                                       "default"   => {|| 0 } }                                    )
 
    hset( ::hColumns, "mes_vacaciones",             {  "create"    => "VARCHAR ( 15 )"                             ,;
