@@ -89,11 +89,11 @@ RETURN ( nil )
 
 METHOD RunGenerateFacturaCompras() CLASS AlbaranesComprasController
 
-   local oConversorPrepareController   := ConversorPrepareController():New( self, ::getFacturasComprasController(), ::getUuids() )
+   local oConversorPrepareAlbaranComprasController   := ConversorPrepareAlbaranComprasController():New( self, ::getFacturasComprasController(), ::getUuids() )
 
-   oConversorPrepareController:runConvert()
+   oConversorPrepareAlbaranComprasController:Run()
 
-   oConversorPrepareController:End()
+   oConversorPrepareAlbaranComprasController:End()
 
 RETURN ( nil )
 

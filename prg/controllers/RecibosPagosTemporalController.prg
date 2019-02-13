@@ -268,7 +268,7 @@ RETURN ( nil )
 
 CLASS SQLRecibosPagosTemporalModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "tmp_recibos_pagos"
+   DATA cTableName               INIT ( Auth():Codigo() + "_" + "tmp_recibos_pagos" )
 
    METHOD getColumns()
 
