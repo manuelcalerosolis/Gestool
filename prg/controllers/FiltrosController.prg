@@ -293,6 +293,7 @@ METHOD Activate() CLASS FiltrosView
       :bOnPostEdit               := {|o,x,n| If( n != VK_ESCAPE, ::SetFilterLineBrowse( fldCondition, x ), ) } 
    end with
 
+/*
    with object ( ::oColValor := ::oBrwFilter:AddCol() )
       :cHeader                   := "Valor"
       :bEditValue                := {|| ::aFilter[ ::oBrwFilter:nArrayAt, fldValue ] }
@@ -302,7 +303,6 @@ METHOD Activate() CLASS FiltrosView
       :bEditBlock                := {|n,c,o| ::oEditMemo:Show( o ) }
    end with
 
-/*
    with object ( ::oBrwFilter:AddCol() )
       :cHeader                   := "Nexo"
       :bEditValue                := {|| ::aFilter[ ::oBrwFilter:nArrayAt, fldNexo ] }
