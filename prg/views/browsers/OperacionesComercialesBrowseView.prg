@@ -12,9 +12,7 @@ CLASS OperacionesComercialesBaseBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                     
 
-   METHOD activeColumn()               VIRTUAL
-
-   METHOD selectedColumn()             VIRTUAL
+   METHOD addExtraColumn()              VIRTUAL
 
 ENDCLASS
 
@@ -24,9 +22,7 @@ METHOD addColumns() CLASS OperacionesComercialesBaseBrowseView
 
    ::getColumnIdAndUuid()
 
-   ::ActiveColumn()
-
-   ::selectedColumn() 
+   ::addExtraColumn() 
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := "numero"
@@ -236,13 +232,13 @@ RETURN ( nil )
 
 CLASS OperacionesComercialesBrowseView FROM OperacionesComercialesBaseBrowseView 
 
-   METHOD activeColumn()
+   METHOD addExtraColumn()
 
 ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD ActiveColumn() CLASS OperacionesComercialesBrowseView 
+METHOD addExtraColumn() CLASS OperacionesComercialesBrowseView 
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := "canceled_at"
@@ -266,29 +262,24 @@ CLASS OperacionesComercialesPreviewBrowseView FROM OperacionesComercialesBaseBro
 
    DATA lDeletedColored                INIT .t.
 
-   METHOD selectedColumn() 
-
 ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD selectedColumn() CLASS OperacionesComercialesPreviewBrowseView
+/*METHOD addExtraColumn() CLASS OperacionesComercialesPreviewBrowseView
 
-   // TODO
-   /*
+
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := "canceled_at"
-      :cHeader             := "Estado"
+      :cHeader             := "Select"
       :nWidth              := 80
       :bEditValue          := {|| iif( empty( ::getRowSet():fieldGet( 'canceled_at' ) ), "Activo", "Cancelado" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
-   */
 
-RETURN ( nil )
+RETURN ( nil )*/
 
 //----------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
