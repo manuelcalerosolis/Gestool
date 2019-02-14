@@ -107,16 +107,9 @@ METHOD generatePreview() CLASS ConversorPrepareAlbaranVentasController
 
    next
 
-   aAlbaranes := SQLAlbaranesVentasModel():getArrayAlbaranWhereHash( ::getConversorView():oPeriodo:oFechaInicio:Value(), ::getConversorView():oPeriodo:oFechaFin:Value(), hWhere )
-   
-   if empty( aAlbaranes )
-      msgstop("No existen albaranes con el filtro seleccionado")
-      RETURN( nil )
-   end if
-
    ::getRowset():build( SQLAlbaranesVentasModel():getSentenceAlbaranWhereHash( ::getConversorView():oPeriodo:oFechaInicio:Value(), ::getConversorView():oPeriodo:oFechaFin:Value(), hWhere ) )
 
-RETURN ( nil )
+RETURN ( ::getRowSet():recCount() > 0 )
 
 //---------------------------------------------------------------------------//
 
@@ -126,11 +119,10 @@ METHOD generateConvert() CLASS ConversorPrepareAlbaranVentasController
 
    ::aCreatedDocument := ::getConversorDocumentosController():convertDocument()
 
-   ::getRowset():freeRowSet()
-
    ::getRowSet():Build( ::getModel():getInitialSelect() )
 
 RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -244,9 +236,15 @@ RETURN ( nil )
 
 METHOD okActivateFolderOne() CLASS ConversorAlbaranVentasView
 
-   ::oController:generatePreview()
+   if ::oController:generatePreview()
 
-   ::setFolderToPreview()
+      ::setFolderToPreview()
+
+   else
+
+      msgstop( "No existen albaranes con el filtro seleccionado" )
+
+   end if
 
 RETURN ( nil )
 
