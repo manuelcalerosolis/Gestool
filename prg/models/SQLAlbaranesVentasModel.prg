@@ -11,14 +11,13 @@ CLASS SQLAlbaranesVentasModel FROM SQLOperacionesComercialesModel
 
    METHOD getSentenceAlbaranWhereHash( dFechadesde, dFechaHasta, hWhere )
 
-   METHOD getArrayAlbaranWhereHash( dFechaDesde, dFechaHasta, hWhere ) ;
-                                       INLINE( ::getDatabase():selectTrimedFetchHash( ::getSentenceAlbaranWhereHash( dFechaDesde, dFechaHasta, hWhere ) ) )
+   METHOD getArrayAlbaranWhereHash( dFechaDesde, dFechaHasta, hWhere ) 
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceAlbaranWhereHash( dFechaDesde, dFechaHasta, hWhere )
+METHOD getSentenceAlbaranWhereHash( dFechaDesde, dFechaHasta, hWhere ) CLASS SQLAlbaranesVentasModel
 
    local cSql  := "SELECT * " 
    cSql        +=    "FROM " + ::getTableName()                       + " "
@@ -31,6 +30,16 @@ METHOD getSentenceAlbaranWhereHash( dFechaDesde, dFechaHasta, hWhere )
    end if
 
 RETURN ( cSql )  
+
+//---------------------------------------------------------------------------//
+
+METHOD getArrayAlbaranWhereHash( dFechaDesde, dFechaHasta, hWhere ) CLASS SQLAlbaranesVentasModel
+
+   local aAlbaranes  := ::getDatabase():selectTrimedFetchHash( ::getSentenceAlbaranWhereHash( dFechaDesde, dFechaHasta, hWhere ) )
+
+   aeval( aAlbaranes, {|h| hset( h, "selected", .t. ) } )
+
+RETURN ( aAlbaranes )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

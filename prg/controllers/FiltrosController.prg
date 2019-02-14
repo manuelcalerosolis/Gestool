@@ -343,7 +343,7 @@ METHOD loadConditions() CLASS FiltrosView
    local hNumerics   := {  "value"        => 0,;
                            "edit"         => EDIT_GET_BUTTON,;
                            "list"         => nil,;
-                           "block"        => {| nRow, nCol, oBrw, nKey | msgStop( nRow ) },;
+                           "block"        => {|| nil },;
                            "conditions"   => { "Igual", "Distinto", "Mayor", "Menor", "Mayor igual", "Menor igual" } }
 
    local hChars      := {  "value"        => space( 100 ),;

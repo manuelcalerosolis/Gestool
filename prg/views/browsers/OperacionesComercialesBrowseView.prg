@@ -4,7 +4,7 @@
 
 //----------------------------------------------------------------------------//
 
-CLASS OperacionesComercialesBrowseView FROM SQLBrowseView 
+CLASS OperacionesComercialesBaseBrowseView FROM SQLBrowseView 
 
    DATA lFastEdit                      INIT .t.
 
@@ -12,22 +12,22 @@ CLASS OperacionesComercialesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                     
 
+   METHOD activeColumn()               VIRTUAL
+
+   METHOD selectedColumn()             VIRTUAL
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS OperacionesComercialesBrowseView
+METHOD addColumns() CLASS OperacionesComercialesBaseBrowseView
 
    ::getColumnIdAndUuid()
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := "canceled_at"
-      :cHeader             := "Estado"
-      :nWidth              := 80
-      :bEditValue          := {|| iif( empty( ::getRowSet():fieldGet( 'canceled_at' ) ), "Activo", "Cancelado" ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
-   
+   ::ActiveColumn()
+
+   ::selectedColumn() 
+
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := "numero"
       :cHeader             := "Número"
@@ -233,7 +233,64 @@ METHOD addColumns() CLASS OperacionesComercialesBrowseView
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+CLASS OperacionesComercialesBrowseView FROM OperacionesComercialesBaseBrowseView 
+
+   METHOD activeColumn()
+
+ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD ActiveColumn() CLASS OperacionesComercialesBrowseView 
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := "canceled_at"
+      :cHeader             := "Estado"
+      :nWidth              := 80
+      :bEditValue          := {|| iif( empty( ::getRowSet():fieldGet( 'canceled_at' ) ), "Activo", "Cancelado" ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+
+CLASS OperacionesComercialesPreviewBrowseView FROM OperacionesComercialesBaseBrowseView 
+
+   DATA lFastEdit                      INIT .f.
+
+   DATA lDeletedColored                INIT .t.
+
+   METHOD selectedColumn() 
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD selectedColumn() CLASS OperacionesComercialesPreviewBrowseView
+
+   // TODO
+   /*
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := "canceled_at"
+      :cHeader             := "Estado"
+      :nWidth              := 80
+      :bEditValue          := {|| iif( empty( ::getRowSet():fieldGet( 'canceled_at' ) ), "Activo", "Cancelado" ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+   */
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+

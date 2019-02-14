@@ -5,6 +5,8 @@
 
 CLASS ConversorPrepareAlbaranVentasController FROM ConversorPrepareController
 
+   DATA aControllers                   INIT {}
+
    DATA oConvertirAlbaranVentasTemporalController
 
    METHOD New() CONSTRUCTOR
@@ -22,6 +24,8 @@ CLASS ConversorPrepareAlbaranVentasController FROM ConversorPrepareController
    METHOD getConvertirAlbaranVentasTemporalController();
                                        INLINE ( if( empty( ::oConvertirAlbaranVentasTemporalController ), ::oConvertirAlbaranVentasTemporalController := ConvertirAlbaranVentasTemporalController():New( self ), ), ::oConvertirAlbaranVentasTemporalController )
 
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesPreviewBrowseView():New( self ), ), ::oBrowseView ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -30,9 +34,13 @@ METHOD New( oOrigenController, oDestinoController ) CLASS ConversorPrepareAlbara
 
    ::Super:New( oOrigenController )
 
-   ::oDestinoController              := oDestinoController
+   ::oDestinoController             := oDestinoController
 
    ::oConversorDocumentosController := ConversorDocumentosController():New( self )
+
+   aadd( ::aControllers, ContadoresAlbaranesVentasController():New() )
+
+   aadd( ::aControllers, TercerosController():New() )
 
 RETURN ( self )
 
@@ -52,13 +60,15 @@ METHOD End() CLASS ConversorPrepareAlbaranVentasController
       ::oConversorView:End()
    end if
 
+   aeval( ::aControllers, {| oController | oController:End() } )
+
 RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
 METHOD convertDocument( aSelected )
 
- ::aCreatedDocument := ::getConversorDocumentosController():convertDocument()
+   ::aCreatedDocument := ::getConversorDocumentosController():convertDocument()
 
 RETURN ( nil )
 
@@ -97,6 +107,8 @@ CLASS ConversorAlbaranVentasView FROM SQLBaseView
 
    METHOD convertAlbaranVentas( aSelected )
 
+   METHOD setFolderToPreview()         INLINE ( ::oFolder:aEnable[ 2 ] := .t., ::oFolder:setOption( 2 ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -129,7 +141,6 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
                   "CONVERTIR_ALBARAN_VENTAS_PREVIA",;
                   "CONVERTIR_ALBARAN_VENTAS_PREVIA"
 
-
    ::oPeriodo     := GetPeriodo():New( 110, 120, 130 )
    ::oPeriodo:Resource( ::oFolder:aDialogs[ 1 ] )
 
@@ -137,11 +148,7 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
 
    ::oController:Activate( 100, ::oFolder:aDialogs[3] )
 
-   ::oBrwRange    := BrowseRange():New( 140, ::oFolder:aDialogs[1] )
-
-   ::oBrwRange:addController( ContadoresAlbaranesVentasController():New() )
-
-   ::oBrwRange:addController( TercerosController():New() )
+   ::oBrwRange    := BrowseRange():New( 140, ::oFolder:aDialogs[1], ::oController:aControllers )
 
    ::oBrwRange:Resource()
 
@@ -151,9 +158,9 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown      := {| nKey | if( nKey == VK_F5, ::okActivate(), ) }
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::okActivate(), ) }
 
-   ::oDialog:bStart        := {|| ::starActivate(), ::paintedActivate() }
+   ::oDialog:bStart     := {|| ::starActivate(), ::paintedActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -192,11 +199,22 @@ RETURN ( nil )
 
 METHOD okActivateFolderOne() CLASS ConversorAlbaranVentasView
 
+   local o
+   local hWhere 
    local aAlbaranes
-   local hWhere /*:= { "tercero_codigo" => "003",;
-                     "ruta_codigo" => "002" }*/
+
+   // ::oController:generatePreview()
+
+   for each o in ::oController:aControllers
+
+      msgalert( o:getRange():getFrom(), "getFrom" )
+
+      msgalert( o:getRange():getTo(), "getTo" )
+
+   next
 
    aAlbaranes := SQLAlbaranesVentasModel():getArrayAlbaranWhereHash( ::oPeriodo:oFechaInicio:Value(), ::oPeriodo:oFechaFin:Value(), hWhere )
+
    if empty( aAlbaranes )
       msgstop("No existen albaranes con el filtro seleccionado")
       RETURN( nil )
@@ -206,9 +224,7 @@ METHOD okActivateFolderOne() CLASS ConversorAlbaranVentasView
 
    ::oController:getConvertirAlbaranVentasTemporalController():getRowSet():refresh()
 
-   ::oFolder:aEnable[ 2 ]  := .t.
-   ::oFolder:setOption( 2 )
-   ::oFolder:aEnable[ 1 ]  := .f.
+   ::setFolderToPreview()
 
 RETURN ( nil )
 

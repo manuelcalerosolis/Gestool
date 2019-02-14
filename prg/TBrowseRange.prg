@@ -8,13 +8,14 @@ CLASS BrowseRange
 
    DATA oContainer
 
-   DATA aControllers                   INIT {}
+   DATA aControllers
 
    DATA oBrwRango
+
    DATA oColNombre
    DATA oColDesde
    DATA oColHasta
-   DATA oColAll
+   DATA oColFilter
 
    METHOD New() CONSTRUCTOR
    METHOD End()
@@ -23,23 +24,23 @@ CLASS BrowseRange
 
    METHOD Clicked( nRow, nCol ) 
 
-   METHOD getEditButton()              INLINE ( if( ::oBrwRango:aRow:getRange():lAll, 0, EDIT_GET_BUTTON ) )
-
-   METHOD addController( oController ) INLINE ( aAdd( ::aControllers, oController ) )
+   METHOD getEditButton()              INLINE ( EDIT_GET_BUTTON )
 
    METHOD validColumnTo( oGet ) 
 
-   METHOD ResizeColumns()
+   METHOD resizeColumns()
 
 END CLASS 
 
 //---------------------------------------------------------------------------//
 
-METHOD New( idBrowse, oContainer ) CLASS BrowseRange
+METHOD New( idBrowse, oContainer, aControllers ) CLASS BrowseRange
 
    ::idBrowse                          := idBrowse
    
    ::oContainer                        := oContainer
+
+   ::aControllers                      := aControllers
    
 RETURN ( Self )
 
@@ -47,7 +48,7 @@ RETURN ( Self )
 
 METHOD End() CLASS BrowseRange
    
-RETURN ( aeval( ::aControllers, {| oController | oController:End() } ) )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -127,7 +128,7 @@ METHOD Resource() CLASS BrowseRange
       :Cargo         := 0.25
    end with
 
-   with object ( ::oColAll := ::oBrwRango:AddCol() )
+   with object ( ::oColFilter := ::oBrwRango:AddCol() )
       :cHeader       := "Fitrar"         
       :bStrData      := {|| "" }
       :bEditValue    := {|| ::oBrwRango:aRow:getRange():lAll }

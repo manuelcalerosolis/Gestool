@@ -121,9 +121,11 @@ METHOD getColumns() CLASS SQLTercerosModel
                                                       "default"   => {|| 0 } }                                    )
 
    hset( ::hColumns, "mes_vacaciones",             {  "create"    => "VARCHAR ( 15 )"                             ,;
+                                                      "text"      => "Mes de vacaciones"                          ,;
                                                       "default"   => {|| space( 15 ) } }                          )
 
    hset( ::hColumns, "regimen_iva",                {  "create"    => "VARCHAR ( 15 )"                             ,;
+                                                      "text"      => "Regimen de IVA"                             ,;
                                                       "default"   => {|| space( 15 ) } }                          )
 
    hset( ::hColumns, "recargo_equivalencia",       {  "create"    => "TINYINT ( 1 )"                              ,;
