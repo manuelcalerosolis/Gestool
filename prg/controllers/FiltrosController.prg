@@ -1,9 +1,5 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
-#include "Font.ch"
-#include "Report.ch"
-#include "MesDbf.ch"
-#include "DbInfo.ch"
 #include "Xbrowse.ch"
 
 #define fldDescription                 1
@@ -109,7 +105,7 @@ METHOD loadStructure( hColumns ) CLASS FiltrosController
       {|k,v| if( hhaskey( v, "text" ),; 
          aadd( ::aStructure,;
             {  "field"  => k,;
-               "type"   => left( hget( v, "create" ), at( " ", hget( v, "create" ) ) ),;
+               "type"   => left( hget( v, "create" ), at( " ", hget( v, "create" ) ) - 1 ),;
                "text"   => hget( v, "text" ) } ), ) } )
 
 RETURN ( nil )
@@ -131,6 +127,8 @@ RETURN ( '' )
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS FiltrosController
+
+   ::getDialogView():loadConditions()
 
    ::getDialogView():Activate()
 
@@ -200,15 +198,37 @@ CLASS FiltrosView FROM SQLBaseView
 
    METHOD textOnPostEdit( o, uNewValue, nKey )
 
-   METHOD getHashType( cType )         INLINE ( hget( ::hConditions, cType ) )
+   METHOD nexoOnPostEdit( o, uNewValue, nKey )
 
-   METHOD getConditionsCaracter()      INLINE ( hget( ::getHashType( "VARCHAR" ), "conditions" ) )
+   METHOD getHashType( cType )         INLINE ( hget( ::hConditions, alltrim( cType ) ) )
+
+   METHOD getConditionsType( cType )   INLINE ( hget( ::getHashType( cType ), "conditions" ) )
+
+   METHOD getConditionsCaracter()      INLINE ( ::getConditionsType( "VARCHAR" ) ) 
+
+   METHOD getEditType( cType )         INLINE ( hget( ::getHashType( cType ), "edit" ) )
+
+   METHOD getListType( cType )         INLINE ( hget( ::getHashType( cType ), "list" ) )
 
    METHOD getFilterLineText()          INLINE ( hget( ::oBrwFilter:aRow, "text" ) )
 
    METHOD setFilterLineText( uValue )  INLINE ( hset( ::oBrwFilter:aRow, "text", uValue ) )
 
-   METHOD getFilterLineType()          INLINE ( ::GetStructureType( ::GetFilterLineBrowse( fldDescription ) ) )
+   METHOD getFilterLineCondition()     INLINE ( hget( ::oBrwFilter:aRow, "condition" ) )
+
+   METHOD setFilterLineCondition( uValue ) ;
+                                       INLINE ( hset( ::oBrwFilter:aRow, "condition", uValue ) )
+
+   METHOD getFilterLineValue()         INLINE ( hget( ::oBrwFilter:aRow, "value" ) )
+
+   METHOD setFilterLineValue( uValue ) ;
+                                       INLINE ( hset( ::oBrwFilter:aRow, "value", uValue ) )
+
+   METHOD getFilterLineNexo()          INLINE ( hget( ::oBrwFilter:aRow, "nexo" ) )
+
+   METHOD setFilterLineNexo( uValue )  INLINE ( hset( ::oBrwFilter:aRow, "nexo", uValue ) )
+
+   METHOD getFilterLineType()          INLINE ( ::getStructureType( ::GetFilterLineBrowse( fldDescription ) ) )
 
    METHOD changeFilterLine()
 
@@ -219,8 +239,6 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS FiltrosView
-
-   ::loadConditions()
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_MEDIUM" ;
@@ -259,7 +277,7 @@ METHOD Activate() CLASS FiltrosView
    ::oBrwFilter:nMarqueeStyle    := 3
    ::oBrwFilter:nRowHeight       := 20
 
-   // ::oBrwFilter:bChange          := {|| ::ChangeLine() }
+   ::oBrwFilter:bChange          := {|| ::changeFilterLine() }
 
    ::oBrwFilter:CreateFromResource( 200 )
 
@@ -278,7 +296,7 @@ METHOD Activate() CLASS FiltrosView
       :nEditType                 := EDIT_LISTBOX
       :aEditListTxt              := ::getConditionsCaracter()
       :nWidth                    := 100
-      :bOnPostEdit               := {|o,x,n| If( n != VK_ESCAPE, ::SetFilterLineBrowse( fldCondition, x ), ) } 
+      :bOnPostEdit               := {|o,x,n| if( n != VK_ESCAPE, ::setFilterLineCondition( x ), ) } 
    end with
 
    with object ( ::oColValor := ::oBrwFilter:AddCol() )
@@ -286,7 +304,7 @@ METHOD Activate() CLASS FiltrosView
       :bEditValue                := {|| hget( ::oBrwFilter:aRow, "value" ) }
       :nEditType                 := EDIT_GET
       :nWidth                    := 200
-      :bOnPostEdit               := {|o,x,n| If( n != VK_ESCAPE, ::SetFilterLineBrowse( fldValue, x ), ) } 
+      :bOnPostEdit               := {|o,x,n| if( n != VK_ESCAPE, ::setFilterLineValue( x ), ) } 
    end with
 
    with object ( ::oBrwFilter:AddCol() )
@@ -316,57 +334,40 @@ RETURN ( ::oDialog:nResult )
 
 METHOD StartActivate() CLASS FiltrosView
 
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD loadConditions() CLASS FiltrosView
 
-   local hNumerics   := {  "value"  => 0,;
+   local hNumerics   := {  "value"        => 0,;
                            "edit"         => EDIT_GET_BUTTON,;
                            "list"         => nil,;
                            "block"        => {| nRow, nCol, oBrw, nKey | msgStop( nRow ) },;
-                           "conditions"   => { "Igual",;
-                                                "Distinto",;
-                                                "Mayor",;
-                                                "Menor",;
-                                                "Mayor igual",;
-                                                "Menor igual" } }
+                           "conditions"   => { "Igual", "Distinto", "Mayor", "Menor", "Mayor igual", "Menor igual" } }
 
    local hChars      := {  "value"        => space( 100 ),;
                            "edit"         => EDIT_GET_BUTTON,;
                            "list"         => nil,;
                            "block"        => {|| nil },;
-                           "conditions"   => {  "Igual",;
-                                                "Distinto",;
-                                                "Contenga",;
-                                                "Mayor",;
-                                                "Menor",;
-                                                "Mayor igual",;
-                                                "Menor igual" } }     
+                           "conditions"   => { "Igual", "Distinto", "Contenga", "Mayor", "Menor", "Mayor igual", "Menor igual" } }     
 
-   local hDate       := {  "value"        => GetSysDate(),;
+   local hDate       := {  "value"        => getSysDate(),;
                            "edit"         => EDIT_GET_BUTTON,;
                            "list"         => nil,;
-                           "conditions"   => {  "Igual",;
-                                                "Distinto",;
-                                                "Mayor",;
-                                                "Menor",;
-                                                "Mayor igual",;
-                                                "Menor igual" } }     
+                           "conditions"   => { "Igual", "Distinto", "Mayor", "Menor", "Mayor igual", "Menor igual" } }     
 
    local hLogical    := {  "value"        => "Si",;
                            "edit"         => EDIT_GET_LISTBOX,;
                            "list"         => { "Si", "No" },;
-                           "conditions"   => {  "Igual",;
-                                                "Distinto" } }                                                          
+                           "conditions"   => { "Igual", "Distinto" } }                                                          
 
-   ::hConditions     := {  "DECIMAL"   => hNumerics,;
-                           "INT"       => hNumerics,;
-                           "VARCHAR"   => hChars,;
-                           "DATE"      => hDate,;
-                           "TINYINT"   => hLogical }
+   ::hConditions     := {  "DECIMAL"      => hNumerics,;
+                           "INT"          => hNumerics,;
+                           "INTEGER"      => hNumerics,;
+                           "VARCHAR"      => hChars,;
+                           "DATE"         => hDate,;
+                           "TINYINT"      => hLogical }
 
 RETURN ( ::hConditions )
 
@@ -382,8 +383,6 @@ METHOD textOnPostEdit( o, uNewValue, nKey ) CLASS FiltrosView
       RETURN ( .t. )
    end if 
 
-   msgalert( ::getFilterLineText( ::oBrwFilter:nArrayAt ), "getFilterLineText" )
-
    if ::getFilterLineText() != uNewValue
 
       ::setFilterLineText( uNewValue )
@@ -394,27 +393,48 @@ METHOD textOnPostEdit( o, uNewValue, nKey ) CLASS FiltrosView
 
    end if 
 
-
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD nexoOnPostEdit( o, uNewValue, nKey ) CLASS FiltrosView
+
+   if !( hb_isnumeric( nKey ) .and. ( nKey != VK_ESCAPE ) )
+      RETURN ( .t. )
+   end if 
+
+   if !( hb_ischar( uNewValue ) )
+      RETURN ( .t. )
+   end if
+
+   ::setFilterLineNexo( uNewValue )
+
+   if ( ::oBrwFilter:nArrayAt ) == len( ::getFilter() ) .and. !empty( uNewValue )
+      ::oController:appendFilter()
+   end if 
+
+RETURN ( ::oBrwFilter:Refresh() )
 
 //---------------------------------------------------------------------------//
 
 METHOD changeFilterLine() CLASS FiltrosView
 
-   local cType                      := ::oController:getStructureType( ::getFilterLineText() )
+   local cType                   := ::oController:getStructureType( ::getFilterLineText() )
 
-   msgalert( cType, "changeFilterLine" )
-
-   // if !empty( cType )
-   //    ::oColCondicion:aEditListTxt  := ::GetConditionsType( cType )
-   //    ::oColValor:nEditType         := ::GetEditType( cType )
-   //    ::oColValor:aEditListTxt      := ::GetListType( cType )
-   // end if 
+   if !empty( cType )
+      RETURN ( .t. )
+   end if 
+      
+   ::oColCondicion:aEditListTxt  := ::getConditionsType( cType )
+   
+   ::oColValor:nEditType         := ::getEditType( cType )
+   
+   ::oColValor:aEditListTxt      := ::getListType( cType )
+    
 
    ::oBrwFilter:Refresh()
 
 RETURN ( .t. )
-
 
 //---------------------------------------------------------------------------//
 
@@ -909,8 +929,6 @@ CLASS TBrowseFilter
 	
 	METHOD textOnPostEdit( o, x, n )
 
-	METHOD NexoOnPostEdit( o, x, n )
-
 END CLASS
 	
 //---------------------------------------------------------------------------//
@@ -1055,7 +1073,7 @@ METHOD Activate() CLASS TBrowseFilter
       :nEditType                 := EDIT_LISTBOX
       :aEditListTxt              := { "", "Y", "O" }
       :nWidth                    := 60
-      :bOnPostEdit               := {|o,x,n| ::NexoOnPostEdit( o, x, n ) } 
+      :bOnPostEdit               := {|o,x,n| ::nexoOnPostEdit( o, x, n ) } 
    end with
 
 RETURN ( Self )
@@ -1086,33 +1104,19 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD NexoOnPostEdit( o, uValue, n ) CLASS TBrowseFilter
+METHOD changeLine() CLASS TBrowseFilter
 
-   if IsNum( n ) .and. ( n != VK_ESCAPE )
+   local cType                   := ::getFilterTypeLineBrowse()
 
-      ::SetFilterLineBrowse( fldNexo, uValue )
-         
-      if ( ::oBrwFilter:nArrayAt ) == len( ::aFilter ) .and. !Empty( uValue )
-         ::AppendLine()
-      end if 
-
-      ::oBrwFilter:Refresh()
-
-   end if
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ChangeLine() CLASS TBrowseFilter
-
-   local cType                      := ::GetFilterTypeLineBrowse()
-
-   if !Empty( cType )
-      ::oColCondicion:aEditListTxt  := ::GetConditionsType( cType )
-      ::oColValor:nEditType         := ::GetEditType( cType )
-      ::oColValor:aEditListTxt      := ::GetListType( cType )
+   if empty( cType )
+      RETURN ( .t. )
    end if 
+
+   ::oColCondicion:aEditListTxt  := ::getConditionsType( cType )
+
+   ::oColValor:nEditType         := ::getEditType( cType )
+
+   ::oColValor:aEditListTxt      := ::getListType( cType )
 
    ::oBrwFilter:Refresh()
 
