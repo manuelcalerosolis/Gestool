@@ -109,6 +109,8 @@ METHOD generatePreview() CLASS ConversorPrepareAlbaranVentasController
 
    ::getRowset():build( SQLAlbaranesVentasModel():getSentenceAlbaranWhereHash( ::getConversorView():oPeriodo:oFechaInicio:Value(), ::getConversorView():oPeriodo:oFechaFin:Value(), hWhere ) )
 
+   ::getBrowseView():selectAll()
+
 RETURN ( ::getRowSet():recCount() > 0 )
 
 //---------------------------------------------------------------------------//
