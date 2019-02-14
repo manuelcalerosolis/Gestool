@@ -256,7 +256,7 @@ METHOD Activate() CLASS AgentesView
 
    ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::closeActivate(), ) }
 
-   ::oDialog:bStart  := {|| ::startActivate(), ::paintedActivate() }
+   ::oDialog:bStart     := {|| ::startActivate(), ::paintedActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -266,7 +266,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD StartActivate() CLASS AgentesView
 
-   local oPanel                  := ::oExplorerBar:AddPanel( "Otros", nil, 1 ) 
+   local oPanel         := ::oExplorerBar:AddPanel( "Otros", nil, 1 ) 
 
    oPanel:AddLink( "Campos extra...", {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }, "gc_form_plus2_16" )
 
@@ -290,10 +290,10 @@ END CLASS
 
 METHOD getValidators() CLASS AgentesValidator
 
-   ::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido",;
-                                                      "unique"             => "El nombre introducido ya existe" },;
-                        "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "nombre" =>    {  "required"  => "El nombre es un dato requerido",;
+                                          "unique"    => "El nombre introducido ya existe" },;
+                        "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
+                                          "unique"    => "EL código introducido ya existe"  } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -304,9 +304,9 @@ RETURN ( ::hValidators )
 
 CLASS SQLAgentesModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "agentes"
+   DATA cTableName                     INIT "agentes"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( codigo, deleted_at )"
 
    METHOD getColumns()
 
@@ -364,23 +364,23 @@ RETURN ( cSql )
 
 METHOD getColumns() CLASS SQLAgentesModel
    
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                          "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+                                          "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR(20) NOT NULL"                    ,;
-                                             "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR(20) NOT NULL"                    ,;
+                                          "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
-                                             "default"   => {|| space( 140 ) } }                      )
+   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 140 )"                          ,;
+                                          "default"   => {|| space( 140 ) } }                      )
 
-   hset( ::hColumns, "dni",               {  "create"    => "VARCHAR( 20 )"                           ,;
-                                             "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "dni",            {  "create"    => "VARCHAR( 20 )"                           ,;
+                                          "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "comision",          {  "create"    => "FLOAT( 5,2 )"                            ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "comision",       {  "create"    => "FLOAT( 5,2 )"                            ,;
+                                          "default"   => {|| 0 } }                                 )
 
    ::getDeletedStampColumn()
 

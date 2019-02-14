@@ -230,8 +230,6 @@ CLASS ItemRange
    METHOD setTo( uTo )                 INLINE ( ::uTo := ::extractCode( uTo ) )
    METHOD showToNombre()               INLINE ( ::showNombre( ::uTo ) )
 
-   METHOD getWhere()               
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -303,27 +301,6 @@ METHOD ValidCode( uValue ) CLASS ContadoresItemRange
 RETURN ( ::oController:getModel():isWhereSerie( uValue, ::oController:cScope ) )
 
 //---------------------------------------------------------------------------//
-
-METHOD getWhere() CLASS ContadoresItemRange
-
-   local aWhere   := {}
-
-   if empty( ::getFrom() )
-      RETURN ( nil )
-   end if 
-
-   if empty( ::getTo() )
-      aadd( aWhere, ::cKey + " = " + quoted( ::getFrom() ) )
-      RETURN ( aWhere )
-   end if 
-
-   aadd( aWhere, "serie >= " + quoted( ::getFrom() ) )
-   
-   aadd( aWhere, "serie <= " + quoted( ::getTo() ) )
-
-RETURN ( aWhere )
-
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
