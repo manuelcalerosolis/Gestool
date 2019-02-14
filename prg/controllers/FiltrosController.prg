@@ -15,21 +15,21 @@
 
 CLASS FiltrosController FROM SQLBaseController
 
-   DATA aDescriptions                        INIT {}
+   DATA aDescriptions                  INIT {}
 
-   DATA aStructure                           INIT  {}
+   DATA aStructure                     INIT  {}
 
-   DATA hNexo                                INIT  {  ""    => "",;
-                                                      "Y"   => " AND ",;
-                                                      "O"   => " OR " }
+   DATA hNexo                          INIT  {  ""    => "",;
+                                                "Y"   => " AND ",;
+                                                "O"   => " OR " }
 
-   DATA hConditions                          INIT  {  "Igual"        => " == ",;
-                                                      "Distinto"     => " != ",;
-                                                      "Mayor"        => " > ",;
-                                                      "Menor"        => " < ",;
-                                                      "Mayor igual"  => " >= ",;
-                                                      "Menor igual"  => " <= ",;
-                                                      "Contenga"     => " LIKE " }
+   DATA hConditions                    INIT  {  "Igual"        => " == ",;
+                                                "Distinto"     => " != ",;
+                                                "Mayor"        => " > ",;
+                                                "Menor"        => " < ",;
+                                                "Mayor igual"  => " >= ",;
+                                                "Menor igual"  => " <= ",;
+                                                "Contenga"     => " LIKE " }
 
    METHOD New() CONSTRUCTOR
 
@@ -61,9 +61,9 @@ METHOD New( oController ) CLASS FiltrosController
 
    ::cName                             := "filtros"
    
-   ::hImage                            := {  "16" => "gc_object_cube_16",;
-                                             "32" => "gc_object_cube_32",;
-                                             "48" => "gc_object_cube_48" }
+   ::hImage                            := {  "16" => "gc_funnel_16",;
+                                             "32" => "gc_funnel_32",;
+                                             "48" => "gc_funnel_48" }
 
    ::loadStructure( SQLTercerosModel():getColumns() )
 
@@ -208,6 +208,8 @@ CLASS FiltrosView FROM SQLBaseView
 
    METHOD getStructureType( cText )
 
+   METHOD saveFilter()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -236,11 +238,11 @@ METHOD Activate() CLASS FiltrosView
       PROMPT      "&Generador" ;
       DIALOGS     "FILTROS_DEFINICION"  
 
-   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::emptyFilter(), ::oBrwFilter:GoTop() }, ::oFolder:aDialogs[1], .f., , .f., "Inicializar filtro" )
+   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::emptyFilter(), ::oBrwFilter:goTop() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Inicializar filtro" )
 
-   TBtnBmp():ReDefine( 502, "del16", , , , , {|| ::deleteLineFilter() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar línea" )
+   TBtnBmp():ReDefine( 502, "del16", , , , , {|| ::deleteLineFilter() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Eliminar línea" )
 
-   TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| msgStop("guardar filtro") }, ::oFolder:aDialogs[1], .f., , .f., "Guardar filtro" )
+   TBtnBmp():ReDefine( 503, "gc_floppy_disk_16", , , , , {|| ::saveFilter() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Guardar filtro" )
 
    ::oBrwFilter                  := IXBrowse():New( ::oFolder:aDialogs[ 1 ] )
 
@@ -334,11 +336,9 @@ RETURN ( ::aFilter )
 
 METHOD emptyFilter() CLASS FiltrosView
 
-   ::aFilter                           := {}
+   ::aFilter         := {}
 
-   ::appendFilter()
-
-RETURN ( nil )
+RETURN ( ::appendFilter() )
 
 //---------------------------------------------------------------------------//
 
@@ -403,6 +403,8 @@ METHOD loadConditions() CLASS FiltrosView
                            "DATE"         => hDate,;
                            "TINYINT"      => hLogical }
 
+                           msgalert( hb_valtoexp( ::hConditions ) )
+
 RETURN ( ::hConditions )
 
 //---------------------------------------------------------------------------//
@@ -443,7 +445,7 @@ METHOD nexoOnPostEdit( o, uNewValue, nKey ) CLASS FiltrosView
 
    ::setFilterLineNexo( uNewValue )
 
-   if ( ::oBrwFilter:nArrayAt ) == len( ::getFilter() ) .and. !empty( uNewValue )
+   if ( ::oBrwFilter:nArrayAt ) == len( ::aFilter ) .and. !empty( uNewValue )
       ::appendFilter()
    end if 
 
@@ -472,7 +474,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStructureType( cText )  CLASS FiltrosView
+METHOD getStructureType( cText ) CLASS FiltrosView
 
    local nPos 
    local cType := ""
@@ -485,10 +487,137 @@ METHOD getStructureType( cText )  CLASS FiltrosView
 RETURN ( cType ) 
 
 //---------------------------------------------------------------------------//
+
+METHOD saveFilter() CLASS FiltrosView
+
+   local aSerialized := fw_valtoexp( ::aFilter )
+
+   logWrite( aSerialized )
+
+   msgalert( valtype( aSerialized ), "despues de serializar" )
+
+   msgalert( hb_valtoexp( &( aSerialized ) ) )
+
+   msgalert( valtype( &( aSerialized ) ), "despues de la macro" )
+
+RETURN ( .t. )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS SaveFiltrosView
+
+   DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "NOMBRE_FILTRO" ;
+      TITLE       "Filtros"
+
+   REDEFINE BITMAP ::oBitmap ;
+      ID          900 ;
+      RESOURCE    ::oController:getimage( "48" ) ;
+      TRANSPARENT ;
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      PROMPT      "Filtros" ;
+      ID          800 ;
+      FONT        oFontBold() ;
+      OF          ::oDialog
+
+   REDEFINE FOLDER ::oFolder ;
+      ID          500 ;
+      OF          ::oDialog ;
+      PROMPT      "&Generador" ;
+      DIALOGS     "FILTROS_DEFINICION"  
+
+   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::emptyFilter(), ::oBrwFilter:goTop() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Inicializar filtro" )
+
+   TBtnBmp():ReDefine( 502, "del16", , , , , {|| ::deleteLineFilter() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Eliminar línea" )
+
+   TBtnBmp():ReDefine( 503, "gc_floppy_disk_16", , , , , {|| ::saveFilter() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Guardar filtro" )
+
+   ::oBrwFilter                  := IXBrowse():New( ::oFolder:aDialogs[ 1 ] )
+
+   ::oBrwFilter:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   ::oBrwFilter:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+   ::oBrwFilter:nDataType        := DATATYPE_ARRAY
+
+   ::oBrwFilter:SetArray( ::aFilter, , , .f. )
+
+   ::oBrwFilter:lHScroll         := .f.
+   ::oBrwFilter:lVScroll         := .f.
+   ::oBrwFilter:lRecordSelector  := .t.
+   ::oBrwFilter:lFastEdit        := .t.
+
+   ::oBrwFilter:nMarqueeStyle    := 3
+   ::oBrwFilter:nRowHeight       := 20
+
+   ::oBrwFilter:bChange          := {|| ::changeFilterLine() }
+
+   ::oBrwFilter:CreateFromResource( 200 )
+
+   with object ( ::oBrwFilter:AddCol() )
+      :cHeader                   := "Campo"
+      :bEditValue                := {|| hget( ::aFilter[ ::oBrwFilter:nArrayAt ], "text" ) }
+      :nEditType                 := EDIT_LISTBOX
+      :aEditListTxt              := ::oController:getTexts() 
+      :nWidth                    := 240
+      :bOnPostEdit               := {|o,x,n| ::textOnPostEdit( o, x, n ) } 
+   end with
+   
+   with object ( ::oColCondicion := ::oBrwFilter:AddCol() )
+      :cHeader                   := "Condicion"
+      :bEditValue                := {|| hget( ::aFilter[ ::oBrwFilter:nArrayAt ], "condition" ) }
+      :nEditType                 := EDIT_LISTBOX
+      :aEditListTxt              := ::getConditionsCaracter()
+      :nWidth                    := 100
+      :bOnPostEdit               := {|o,x,n| if( n != VK_ESCAPE, ::setFilterLineCondition( x ), ) } 
+   end with
+
+   with object ( ::oColValor := ::oBrwFilter:AddCol() )
+      :cHeader                   := "Valor"
+      :bEditValue                := {|| hget( ::aFilter[ ::oBrwFilter:nArrayAt ], "value" ) }
+      :nEditType                 := EDIT_GET
+      :nWidth                    := 200
+      :bOnPostEdit               := {|o,x,n| if( n != VK_ESCAPE, ::setFilterLineValue( x ), ) } 
+   end with
+
+   with object ( ::oBrwFilter:AddCol() )
+      :cHeader                   := "Nexo"
+      :bEditValue                := {|| hget( ::aFilter[ ::oBrwFilter:nArrayAt ], "nexo" ) }
+      :nEditType                 := EDIT_LISTBOX
+      :aEditListTxt              := { "", "Y", "O" }
+      :nWidth                    := 60
+      :bOnPostEdit               := {|o,x,n| ::nexoOnPostEdit( o, x, n ) } 
+   end with
+
+   // Botones caja -------------------------------------------------------
+
+   ApoloBtnFlat():Redefine( IDOK, {|| ::oDialog:end( IDOK ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
+   
+   ::oDialog:bStart     := {|| ::StartActivate() }
+
+   ACTIVATE DIALOG ::oDialog CENTER
+
+RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD StartActivate() CLASS FiltrosView
+
+   ::changeFilterLine()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 
 CLASS TFilterDialog
 
