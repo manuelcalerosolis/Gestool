@@ -192,13 +192,13 @@ FUNCTION CreateMainSQLWindow()
 
    oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " +    rtrim( Auth():Nombre() ), 200,,,, .t. )
 
-   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegaciï¿½n : " + rtrim( Application():codigoDelegacion() ), 200,,,, .t., {|| EnviromentController():Activate() } )
+   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + rtrim( Application():codigoDelegacion() ), 200,,,, .t., {|| EnviromentController():Activate() } )
 
    oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  +      rtrim( Box():Nombre() ), 200,,,, .t., {|| EnviromentController():Activate() } )
 
-   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacï¿½n : " +    rtrim( Application():codigoAlmacen() ), 200,,,, .t., {|| EnviromentController():Activate() } )
+   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " +    rtrim( Application():codigoAlmacen() ), 200,,,, .t., {|| EnviromentController():Activate() } )
 
-   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesiï¿½n : " +     alltrim( str( Session():Numero() ) ) , 100,,,, .t., {|| EnviromentController():Activate() } )
+   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : " +     alltrim( str( Session():Numero() ) ) , 100,,,, .t., {|| EnviromentController():Activate() } )
 
    // Abrimos la ventana-------------------------------------------------------
 
@@ -394,7 +394,7 @@ FUNCTION ControlAplicacion()
    oSayAlquiler   := Array( 8 )
    cSayAlquiler   := Array( 8 )
 
-   DEFINE DIALOG oDlg RESOURCE "GetSerialNo" TITLE "Sistema de protecciï¿½n"
+   DEFINE DIALOG oDlg RESOURCE "GetSerialNo" TITLE "Sistema de protección"
 
    REDEFINE BITMAP oBmpPerpetua ;
       RESOURCE    "gc_certificate_32" ;
@@ -497,7 +497,7 @@ FUNCTION ControlAplicacion()
 
    REDEFINE SAY oSayDemo ID 310 OF oDlg
 
-   with object ( TWebBtn():Redefine( 400,,,,,  {|| goWeb( __GSTWEB__ ) }, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 255 ), Rgb( 0, 0, 255 ),,,, "Ir a la pï¿½gina web de " + __GSTFACTORY__ ) )
+   with object ( TWebBtn():Redefine( 400,,,,,  {|| goWeb( __GSTWEB__ ) }, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 255 ), Rgb( 0, 0, 255 ),,,, "Ir a la página web de " + __GSTFACTORY__ ) )
       :SetTransparent()
       :SetText( __GSTWEB__ )
    end with
@@ -531,13 +531,13 @@ FUNCTION ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlq
 
          if lCheckPerpetuoMode( nSerialUSR )
 
-            MsgInfo( "Programa registrado con ï¿½xito" )
+            MsgInfo( "Programa registrado con éxito" )
 
             oDlg:End( IDOK )
 
          else
 
-            MsgStop( "Nï¿½mero invalido" )
+            MsgStop( "Número invalido" )
 
             oSerialUsr:SetFocus()
 
@@ -546,37 +546,37 @@ FUNCTION ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlq
       case nLicencia == 2
 
          if empty( cSayAlquiler[1] )
-            MsgStop( "El campo N.I.F./ C.I.F. no puede estar vacï¿½o" )
+            MsgStop( "El campo N.I.F./ C.I.F. no puede estar vacío" )
             oSayAlquiler[1]:SetFocus()
             RETURN .f.
          end if
 
          if empty( cSayAlquiler[2] )
-            MsgStop( "El campo nombre no puede estar vacï¿½o" )
+            MsgStop( "El campo nombre no puede estar vacío" )
             oSayAlquiler[2]:SetFocus()
             RETURN .f.
          end if
 
          if empty( cSayAlquiler[3] )
-            MsgStop( "El campo domicilio no puede estar vacï¿½o" )
+            MsgStop( "El campo domicilio no puede estar vacío" )
             oSayAlquiler[3]:SetFocus()
             RETURN .f.
          end if
 
          if empty( cSayAlquiler[4] )
-            MsgStop( "El campo poblaciï¿½n no puede estar vacï¿½o" )
+            MsgStop( "El campo población no puede estar vacío" )
             oSayAlquiler[4]:SetFocus()
             RETURN .f.
          end if
 
          if empty( cSayAlquiler[5] )
-            MsgStop( "El campo cï¿½digo postal no puede estar vacï¿½o" )
+            MsgStop( "El campo código postal no puede estar vacío" )
             oSayAlquiler[5]:SetFocus()
             RETURN .f.
          end if
 
          if empty( cSayAlquiler[6] )
-            MsgStop( "El campo email no puede estar vacï¿½o" )
+            MsgStop( "El campo email no puede estar vacío" )
             oSayAlquiler[6]:SetFocus()
             RETURN .f.
          end if
@@ -588,13 +588,13 @@ FUNCTION ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlq
          end if
 
          if empty( cSayAlquiler[7] )
-            MsgStop( "El campo telï¿½fono no puede estar vacï¿½o" )
+            MsgStop( "El campo teléfono no puede estar vacío" )
             oSayAlquiler[7]:SetFocus()
             RETURN .f.
          end if
 
          if empty( cSayAlquiler[8] )
-            MsgStop( "El campo provincia no puede estar vacï¿½o" )
+            MsgStop( "El campo provincia no puede estar vacío" )
             oSayAlquiler[8]:SetFocus()
             RETURN .f.
          end if
@@ -611,7 +611,7 @@ FUNCTION ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlq
 
       case nLicencia == 3
 
-         cTypeVersion( "[VERSIï¿½N DEMO]" )
+         cTypeVersion( "[VERSIÓN DEMO]" )
 
          oDlg:End( IDOK )
 
@@ -682,7 +682,7 @@ FUNCTION About()
 
    ACTIVATE DIALOG oDlg ;
       ON INIT     (  oTree:SetImageList( oImgLst ),;
-                     oTree:Add( "Manuel Calero Solï¿½s",                  0 ),;
+                     oTree:Add( "Manuel Calero Solís",                  0 ),;
                      oTree:Add( "Antonio Ebrero Burgos",                1 ),;
                      oTree:Add( "Dario Cruz Mauro",                     2 ),;
                      oTree:Add( "C. Ronda de legionarios, 58",          3 ),;
@@ -708,7 +708,7 @@ FUNCTION RunAsistenciaRemota()
       nHnd     := WinExec( FullCurDir() + "Client\Client.Exe" , 1 )
 
       if !( nHnd > 21 .or. nHnd < 0 )
-         MsgStop( "Error en la ejecuciï¿½n de la asistencia remota" )
+         MsgStop( "Error en la ejecución de la asistencia remota" )
       end if
 
    else
@@ -864,7 +864,7 @@ RETURN ( cCaja )
 FUNCTION setSesionMessageBar( nNumero )
 
    if !empty( nNumero ) .and. oMsgCaja != nil
-      oMsgSesion:SetText( "Sesiï¿½n : " + alltrim( str( nNumero ) ) )
+      oMsgSesion:SetText( "Sesión : " + alltrim( str( nNumero ) ) )
    end if
 
 RETURN ( nNumero )
@@ -874,7 +874,7 @@ RETURN ( nNumero )
 FUNCTION setAlmacenMessageBar( cAlmacen )
 
    if cAlmacen != nil .and. oMsgAlmacen != nil
-      oMsgAlmacen:SetText( "Almacï¿½n : " + rtrim( cAlmacen ) )
+      oMsgAlmacen:SetText( "Almacén : " + rtrim( cAlmacen ) )
    end if
 
 RETURN ( cAlmacen )
@@ -884,7 +884,7 @@ RETURN ( cAlmacen )
 FUNCTION setDelegacionMessageBar( cDelegacion )
 
    if cDelegacion != nil .and. oMsgDelegacion != nil
-      oMsgDelegacion:SetText( "Delegaciï¿½n : " + rtrim( cDelegacion ) )
+      oMsgDelegacion:SetText( "Delegación : " + rtrim( cDelegacion ) )
    end if
 
 RETURN ( cDelegacion )
@@ -966,7 +966,7 @@ FUNCTION CreateMainSQLAcceso()
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 3
    oGrupo:nLittleItems  := 3
-   oGrupo:cPrompt       := 'Artï¿½culos'
+   oGrupo:cPrompt       := 'Artículos'
    oGrupo:cLittleBitmap := "gc_object_cube_16"
    oGrupo:cBigBitmap    := "gc_object_cube_32"
 
@@ -982,8 +982,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Artï¿½culos'
-   oItem:cMessage       := 'Artï¿½culos'
+   oItem:cPrompt        := 'Artículos'
+   oItem:cMessage       := 'Artículos'
    oItem:bAction        := {|| ArticulosController():New():ActivateNavigatorView() }
    oItem:cId            := "articulos"
    oItem:cBmp           := "gc_object_cube_16"
@@ -992,8 +992,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Categorias de artï¿½culo'
-   oItem:cMessage       := 'Categorias de artï¿½culo'
+   oItem:cPrompt        := 'Categorias de artículo'
+   oItem:cMessage       := 'Categorias de artículo'
    oItem:bAction        := {|| ArticulosCategoriasController():New():ActivateNavigatorView() }
    oItem:cId            := "categorias"
    oItem:cBmp           := "gc_photographic_filters_16"
@@ -1045,8 +1045,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Unidades de mediciï¿½n'
-   oItem:cMessage       := 'Unidades de mediciï¿½n'
+   oItem:cPrompt        := 'Unidades de medición'
+   oItem:cMessage       := 'Unidades de medición'
    oItem:bAction        := {|| UnidadesMedicionController():New():ActivateNavigatorView() }
    oItem:cId            := "unidades_medicion"
    oItem:cBmp           := "gc_tape_measure2_16"
@@ -1056,8 +1056,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Grupos de unidades de mediciï¿½n'
-   oItem:cMessage       := 'Grupos de unidades de mediciï¿½n'
+   oItem:cPrompt        := 'Grupos de unidades de medición'
+   oItem:cMessage       := 'Grupos de unidades de medición'
    oItem:bAction        := {|| UnidadesMedicionGruposController():New():ActivateNavigatorView() }
    oItem:cId            := "unidades_medicion_grupos"
    oItem:cBmp           := "tab_pane_tape_measure2_16"
@@ -1067,8 +1067,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Tipos de artï¿½culo'
-   oItem:cMessage       := 'Tipos de artï¿½culo'
+   oItem:cPrompt        := 'Tipos de artículo'
+   oItem:cMessage       := 'Tipos de artículo'
    oItem:bAction        := {|| ArticulosTipoController():New():ActivateNavigatorView() }
    oItem:cId            := "tipo_articulos"
    oItem:cBmp           := "gc_objects_16"
@@ -1078,8 +1078,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Temporadas de artï¿½culo'
-   oItem:cMessage       := 'Temporadas de artï¿½culo'
+   oItem:cPrompt        := 'Temporadas de artículo'
+   oItem:cMessage       := 'Temporadas de artículo'
    oItem:bAction        := {|| ArticulosTemporadasController():New():ActivateNavigatorView() }
    oItem:cId            := "articulos_temporada"
    oItem:cBmp           := "gc_cloud_sun_16"
@@ -1612,7 +1612,7 @@ FUNCTION CreateMainSQLAcceso()
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nLittleItems  := 1
-   oGrupo:cPrompt       := 'ï¿½tiles'
+   oGrupo:cPrompt       := 'Útiles'
    oGrupo:cLittleBitmap := "gc_window_pencil_16"
    oGrupo:cBigBitmap    := "gc_window_pencil_32"
 
@@ -1628,8 +1628,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemTPV:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Cajï¿½n portamonedas'
-   oItem:cMessage       := 'Cajï¿½n portamonedas'
+   oItem:cPrompt        := 'Cajón portamonedas'
+   oItem:cMessage       := 'Cajón portamonedas'
    oItem:bAction        := {|| CajonesPortamonedasController():New():ActivateNavigatorView() }
    oItem:cId            := "cajon_portamonedas"
    oItem:cBmp           := "gc_modem_screw_16"
@@ -1684,7 +1684,7 @@ FUNCTION CreateMainSQLAcceso()
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 2
-   oGrupo:cPrompt       := 'ï¿½tiles'
+   oGrupo:cPrompt       := 'Útiles'
    oGrupo:cLittleBitmap := "gc_notebook2_16"
    oGrupo:cBigBitmap    := "gc_notebook2_32"
 
@@ -1700,8 +1700,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Listï¿½n telefï¿½nico'
-   oItem:cMessage       := 'Acceso al listï¿½n telefï¿½nico'
+   oItem:cPrompt        := 'Listín telefónico'
+   oItem:cMessage       := 'Acceso al listín telefónico'
    oItem:bAction        := {|| ListinController():New():ActivateNavigatorView() }
    oItem:cId            := "listin_telefonico"
    oItem:cBmp           := "gc_book_telephone_16"
@@ -1925,7 +1925,7 @@ RETURN ( cBmpVersion )
 
 //---------------------------------------------------------------------------//
 /*
-Guardamos el nombre de la versiï¿½n
+Guardamos el nombre de la versin
 */
 
 FUNCTION cNameVersion()
@@ -1967,7 +1967,7 @@ RETURN ( cTypeVersion )
 
 //---------------------------------------------------------------------------//
 /*
-Damos valor a la estatica para la versiï¿½n Oscommerce
+Damos valor a la estatica para la versin Oscommerce
 */
 
 FUNCTION IsOsCommerce()
@@ -1986,7 +1986,7 @@ RETURN lOsCommerce
 
 //---------------------------------------------------------------------------//
 /*
-Damos valor a la estatica para la versiï¿½n Profesional
+Damos valor a la estatica para la versin Profesional
 */
 
 FUNCTION IsProfesional()
@@ -2006,7 +2006,7 @@ RETURN lProfesional
 
 //---------------------------------------------------------------------------//
 /*
-Damos valor a la estatica para la versiï¿½n Standard
+Damos valor a la estatica para la versin Standard
 */
 
 FUNCTION IsStandard()
@@ -2093,7 +2093,7 @@ FUNCTION Ejecutascript()
    end if
 
    /*
-   Anotamos la fecha del ï¿½ltimo Envï¿½o de  script-------------------------------
+   Anotamos la fecha del ltimo Envo de  script-------------------------------
    */
 
    WritePProString( "SCRIPT", "Fecha", Dtoc( GetSysDate() ), cIniAplication() )
@@ -2173,10 +2173,10 @@ FUNCTION lInitCheck( oMessage, oProgress )
 
    appCheckDirectory()
 
-   // Selecciï¿½n de la empresa actual------------------------------------------
+   // Seleccin de la empresa actual------------------------------------------
 
    if !empty( oMessage )
-      oMessage:SetText( 'Selecciï¿½n de la empresa actual' )
+      oMessage:SetText( 'Selección de la empresa actual' )
    end if
 
    if !empty( oProgress )
@@ -2185,10 +2185,10 @@ FUNCTION lInitCheck( oMessage, oProgress )
 
    SQLAjustableModel():getUsuarioEmpresa( Auth():Uuid() )
 
-   // Selecciï¿½n de los datos de la aplicacion----------------------------------
+   // Seleccin de los datos de la aplicacion----------------------------------
 
    if !empty( oMessage )
-      oMessage:SetText( 'Selecciï¿½n de datos de la aplicaciï¿½n' )
+      oMessage:SetText( 'Selección de datos de la aplicación' )
    end if
 
    if !empty( oProgress )
@@ -3949,7 +3949,7 @@ FUNCTION ApoloMsgNoYes( cText, cTitle, lTactil )
    local oBtnOk
    local oBtnCancel
 
-   DEFAULT cText              := "ï¿½Desea eliminar el registro en curso?"
+   DEFAULT cText              := "¿Desea eliminar el registro en curso?"
    DEFAULT cTitle             := "Confirme"
    DEFAULT lTactil            := .f.
 
@@ -3978,8 +3978,8 @@ FUNCTION ApoloMsgStop( cText, cTitle )
    local oDlg
    local oBtnOk
 
-   DEFAULT cText              := "ï¿½Desea eliminar el registro en curso?"
-   DEFAULT cTitle             := "ï¿½Atenciï¿½n!"
+   DEFAULT cText              := "?Desea eliminar el registro en curso?"
+   DEFAULT cTitle             := "!Atención!"
 
    DEFINE DIALOG oDlg RESOURCE "MsgStopTCT" TITLE ( cTitle )
 

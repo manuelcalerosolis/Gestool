@@ -129,6 +129,7 @@ METHOD getColumns() CLASS SQLTercerosModel
                                                       "default"   => {|| space( 15 ) } }                          )
 
    hset( ::hColumns, "recargo_equivalencia",       {  "create"    => "TINYINT ( 1 )"                              ,;
+                                                      "text"      => "Aplicar recargo de equivalencia"            ,;
                                                       "default"   => {|| .f. } }                                  )
 
    hset( ::hColumns, "porcentaje_irpf",            {  "create"    => "DECIMAL ( 19, 6 )"                          ,;

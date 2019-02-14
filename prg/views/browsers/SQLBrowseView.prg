@@ -98,6 +98,7 @@ CLASS SQLBrowseView
    
    METHOD refreshCurrent()                   INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:refreshCurrent(), ) )
    METHOD selectCurrent()                    INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:selectCurrent(), ) )
+   METHOD selectAll()                        INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:selectAll(), ) )
 
    METHOD createFromCode()                   INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:CreateFromCode(), ) )
    METHOD createFromResource( id )           INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:CreateFromResource( id ), ) )

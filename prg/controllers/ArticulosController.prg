@@ -507,4 +507,3 @@ METHOD test_dialog_append_con_caracteristicas() CLASS TestArticulosController
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
