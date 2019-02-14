@@ -19,7 +19,10 @@ END CLASS
 
 METHOD getSentenceAlbaranWhereHash( dFechaDesde, dFechaHasta, hWhere ) CLASS SQLAlbaranesVentasModel
 
-   local cSql  := "SELECT * " 
+   local cSql
+   cSql          := ::Super:getInitialSelect()
+
+   /*local cSql  := "SELECT * " 
    cSql        +=    "FROM " + ::getTableName()                       + " "
    cSql        +=    "WHERE fecha >= " + DtoS( dFechadesde )          + " "
    cSQL        +=    "AND fecha <= "   + DtoS( dFechaHasta )          + " "
@@ -27,7 +30,7 @@ METHOD getSentenceAlbaranWhereHash( dFechaDesde, dFechaHasta, hWhere ) CLASS SQL
    if hb_ishash( hWhere ) 
       msgalert( "hay hWhere")
       heval( hWhere, {|k,v| cSQL += "AND " + k + " = " + v + " " } )
-   end if
+   end if*/
 
 RETURN ( cSql )  
 
