@@ -71,7 +71,7 @@ CLASS TercerosController FROM SQLNavigatorController
 
    METHOD getSelector()                INLINE ( iif( empty( ::oGetSelector ), ::oGetSelector := TerceroGetSelector():New( self ), ), ::oGetSelector )
 
-   METHOD getRange()                   INLINE ( iif( empty( ::oRange ), ::oRange := ItemRange():New( self ), ), ::oRange )
+   METHOD getRange()                   INLINE ( iif( empty( ::oRange ), ::oRange := ItemRange():New( self,  ), ), ::oRange )
 
 END CLASS
 
