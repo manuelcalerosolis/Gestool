@@ -268,6 +268,32 @@ RETURN ( '' )
 
 //---------------------------------------------------------------------------//
 
+METHOD getWhere() CLASS ItemRange
+
+   local aWhere   := {}
+      
+   if empty( ::getFrom() )
+      RETURN ( aWhere )
+   end if 
+
+   if empty( ::getTo() )
+      aadd( aWhere, ::cKey + " = " + quoted( ::getFrom() ) )
+      RETURN ( aWhere )
+   end if 
+
+   aadd( aWhere, ::cKey + " >= " + quoted( ::getFrom() ) )
+   
+   aadd( aWhere, ::cKey + " <= " + quoted( ::getTo() ) )
+
+RETURN ( aWhere )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
 CLASS TercerosItemRange FROM ItemRange
 
    DATA cKey                           INIT 'tercero_codigo'
@@ -281,12 +307,15 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 CLASS ContadoresItemRange FROM ItemRange
+
+   DATA cKey                           INIT 'serie'
    
    METHOD showNombre( cCode )          INLINE ( '' )
       
    METHOD extractCode( uValue )        INLINE ( if( hb_ishash( uValue ), hget( uValue, "serie" ), uValue ) )
          
    METHOD ValidCode( uValue ) 
+
 
 END CLASS
 

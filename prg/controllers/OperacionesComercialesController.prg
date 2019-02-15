@@ -31,6 +31,8 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD isTerceroFilled()            INLINE ( !empty( ::getModelBuffer( "tercero_codigo" ) ) )
 
+   METHOD getOrigenController()        INLINE ( ::oController:getOrigenController() )
+
    METHOD terceroSettedHelpText()
 
    METHOD terceroSetMetodoPago()
@@ -91,6 +93,12 @@ CLASS OperacionesComercialesController FROM OperacionesController
       METHOD insertHeader( aHeaders )
       METHOD insertHeaderRelation( aHeaders )
 
+   METHOD runGeneratedocument()
+
+   METHOD Editing()
+
+   METHOD cancelEdited()
+
    // Contrucciones tardias----------------------------------------------------
 
    METHOD getName()                    VIRTUAL
@@ -133,10 +141,6 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD getConversorPreapreGenericoController() ;
                                        INLINE  ( if( empty( ::oConversorPrepareGenerico ), ::oConversorPrepareGenerico := ConversorPrepareGenericoController():New( self ), ), ::oConversorPrepareGenerico )
-
-   METHOD Editing()
-
-   METHOD cancelEdited()
 
 END CLASS
 
@@ -474,9 +478,22 @@ METHOD addExtraButtons() CLASS OperacionesComercialesController
 
    ::super:addExtraButtons()
 
-   ::oNavigatorView:getMenuTreeView():addButton( "Convertir documento", "gc_convertir_documento_16", {|| ::getConversorPreapreGenericoController():Run() } )
+   ::oNavigatorView:getMenuTreeView():addButton( "Convertir documento", "gc_convertir_documento_16", {|| ::RunGeneratedocument() } )
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD runGeneratedocument() CLASS OperacionesComercialesController
+
+   local oConversorPrepareGenericoController   := ConversorPrepareGenericoController():New( self )
+
+   oConversorPrepareGenericoController:Run()
+
+   oConversorPrepareGenericoController:End()
+
+RETURN ( nil )
+
 
 //---------------------------------------------------------------------------//
 
@@ -535,6 +552,10 @@ RETURN ( ::uuidDocumentoDestino )
 //---------------------------------------------------------------------------//
 
 METHOD insertHeaderRelation( hHeader ) CLASS OperacionesComercialesController
+
+
+
+   msgalert( ::getOrigenController():getModel():cTableName, "tabla padre" )
 
 RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hHeader, "uuid" ), ::oController:getModel():cTableName, ::uuidDocumentoDestino, ::getModel():cTableName ) )
 
