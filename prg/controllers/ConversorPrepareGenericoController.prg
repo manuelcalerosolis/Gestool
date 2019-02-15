@@ -3,7 +3,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ConversorPrepareGenericoController FROM ConversorPrepareCOntroller
+CLASS ConversorPrepareGenericoController FROM ConversorPrepareController
+   
+   METHOD New()
 
    METHOD Run()
 
@@ -19,10 +21,10 @@ CLASS ConversorPrepareGenericoController FROM ConversorPrepareCOntroller
    METHOD setAlbaranesVentasController() ;
                                        INLINE ( ::oDestinoController := AlbaranesVentasController():New( self ), ::oDestinoController )
 
-   METHOD setFacturasComprasControllerAsDestino() ;
+   METHOD setFacturasComprasController() ;
                                        INLINE ( ::oDestinoController := FacturasComprasController():New( self ), ::oDestinoController )
 
-   METHOD setFacturasVentasControllerAsDestino() ;
+   METHOD setFacturasVentasController() ;
                                        INLINE ( ::oDestinoController := FacturasVentasController():New( self ), ::oDestinoController )
 
    METHOD setFacturasVentasSimplificadasController() ;
@@ -40,6 +42,18 @@ CLASS ConversorPrepareGenericoController FROM ConversorPrepareCOntroller
    METHOD getConversorView()           INLINE ( if( empty( ::oConversorView ), ::oConversorView := ConversorDocumentoView():New( self ), ), ::oConversorView )
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( oOrigenController ) CLASS ConversorPrepareGenericoController
+
+   msgalert( oOrigenController:className(), "className" )
+
+   ::oOrigenController              := oOrigenController
+
+   ::oConversorDocumentosController := ConversorDocumentosController():New( self )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -61,7 +75,7 @@ METHOD setDocumentosDestino() CLASS ConversorPrepareGenericoController
 
    ::aDocumentosDestino := {  "Albarán de compras"             => {|| ::setAlbaranesComprasController() },;
                               "Albarán de ventas"              => {|| ::setAlbaranesVentasController() },;
-                              "Factura de compras"             => {|| ::setFacturasComprasControllerAsDestino() },;
+                              "Factura de compras"             => {|| ::setFacturasComprasController() },;
                               "Factura de ventas"              => {|| ::setFacturasventasController() },;
                               "Factura de ventas simplificada" => {|| ::setFacturasVentasSimplificadasController() },;
                               "Pedido de compras"              => {|| ::setPedidosComprasController() },;
@@ -74,6 +88,8 @@ RETURN ( nil )
 
 METHOD Run() CLASS ConversorPrepareGenericoController
 
+   ::setDocumentosDestino()
+
    if ::getConversorView():Activate() != IDOK
       RETURN ( nil )
    end if
@@ -83,7 +99,13 @@ METHOD Run() CLASS ConversorPrepareGenericoController
    end if
 
    if !empty( ::oDestinoController )
-      ::Convert()
+
+      ::oConversorDocumentosController():runConvertAlbaran( ::oOrigenController:getUuids() )
+
+      msgalert( hb_valtoexp( ::oConversorDocumentosController():aConvert ), "aConvert" )
+
+      ::aCreatedDocument      := ::getConversorDocumentosController():convertDocument() 
+
    end if
 
 RETURN ( nil )

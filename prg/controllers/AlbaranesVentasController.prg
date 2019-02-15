@@ -15,7 +15,7 @@ CLASS AlbaranesVentasController FROM OperacionesComercialesController
 
    METHOD isClient()                   INLINE ( .t. )
 
-   METHOD RunGenerateFacturaVentas()
+   METHOD runGenerateFacturaVentas()
 
    // Impresiones--------------------------------------------------------------
 
@@ -87,13 +87,13 @@ METHOD addExtraButtons() CLASS AlbaranesVentasController
 
    ::super:addExtraButtons()
    
-   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturas", "gc_document_text_user_16", {|| ::RunGenerateFacturaVentas() } )  
+   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturas", "gc_document_text_user_16", {|| ::runGenerateFacturaVentas() } )  
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD RunGenerateFacturaVentas() CLASS AlbaranesVentasController
+METHOD runGenerateFacturaVentas() CLASS AlbaranesVentasController
 
    local oConversorPrepareAlbaranVentasController   := ConversorPrepareAlbaranVentasController():New( self, ::getFacturasVentasController() )
 

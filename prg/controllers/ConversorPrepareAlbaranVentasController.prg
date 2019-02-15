@@ -17,8 +17,6 @@ CLASS ConversorPrepareAlbaranVentasController FROM ConversorPrepareController
 
    METHOD Run()                        
 
-   METHOD convertDocument( aConvert )
-
    METHOD generatePreview()
 
    METHOD generateConvert()
@@ -28,9 +26,6 @@ CLASS ConversorPrepareAlbaranVentasController FROM ConversorPrepareController
    //Construcciones tardias----------------------------------------------------
 
    METHOD getConversorView()           INLINE ( if( empty( ::oConversorView ), ::oConversorView := ConversorAlbaranVentasView():New( self ), ), ::oConversorView ) 
-
-   /*METHOD getConvertirAlbaranVentasTemporalController();
-                                       INLINE ( if( empty( ::oConvertirAlbaranVentasTemporalController ), ::oConvertirAlbaranVentasTemporalController := ConvertirAlbaranVentasTemporalController():New( self ), ), ::oConvertirAlbaranVentasTemporalController )*/
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesPreviewBrowseView():New( self ), ), ::oBrowseView ) 
 
@@ -44,7 +39,7 @@ METHOD New( oOrigenController, oDestinoController ) CLASS ConversorPrepareAlbara
 
    ::Super:New( oOrigenController )
 
-   ::oDestinoController             := oDestinoController
+   ::oDestinoController              := oDestinoController
 
    ::oConversorDocumentosController := ConversorDocumentosController():New( self )
 
@@ -76,38 +71,21 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD convertDocument( aSelected )
-
-   ::aCreatedDocument := ::getConversorDocumentosController():convertDocument()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
 METHOD Run() CLASS ConversorPrepareAlbaranVentasController
 
-   ::getConversorView():Activate()
-
-RETURN ( nil )
+RETURN ( ::getConversorView():Activate() )
 
 //---------------------------------------------------------------------------//
 
 METHOD generatePreview() CLASS ConversorPrepareAlbaranVentasController
 
-   local o
-   local hWhere 
-   local aAlbaranes
+   local aWhere   := {}
 
+   aeval( ::aControllers,;
+      {|oController| aeval( oController:getRange():getWhere(),;
+         {|cCondition| aadd( aWhere, cCondition ) } ) } )
 
-   for each o in ::aControllers
-
-      msgalert( o:getRange():getFrom(), "getFrom" )
-
-      msgalert( o:getRange():getTo(), "getTo" )
-
-   next
-
-   ::getRowset():build( SQLAlbaranesVentasModel():getSentenceAlbaranWhereHash( ::getConversorView():oPeriodo:oFechaInicio:Value(), ::getConversorView():oPeriodo:oFechaFin:Value(), hWhere ) )
+   ::getRowset():build( SQLAlbaranesVentasModel():getSentenceAlbaranWhereHash( ::getConversorView():oPeriodo:oFechaInicio:Value(), ::getConversorView():oPeriodo:oFechaFin:Value(), aWhere ) )
 
    ::getBrowseView():selectAll()
 
