@@ -229,7 +229,10 @@ RETURN ( oMenu )
 
 PROCEDURE loggedTest()
 
-   FiltrosController():New():Activate()
+   with object ( FiltrosController():New() )
+      :Edit()
+      :End()
+   end with
 
    // AlbaranesVentasController():runGenerateFacturaVentas()
 

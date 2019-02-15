@@ -2,50 +2,53 @@
 #include "Factu.ch" 
 #include "Xbrowse.ch"
 
-#define fldDescription                 1
-#define fldCondition                   2
-#define fldValue                       3
-#define fldNexo                        4
-
-#define posDescription                 1
-#define posField                       2
-#define posType                        3
-
 //---------------------------------------------------------------------------//
 
-CLASS FiltrosController FROM SQLBaseController
+CLASS FiltrosController FROM SQLBrowseController
 
-   DATA aDescriptions                        INIT {}
+   DATA oSaveDialogView
 
-   DATA aStructure                           INIT  {}
+   DATA aDescriptions                  INIT  {}
 
-   DATA hNexo                                INIT  {  ""    => "",;
-                                                      "Y"   => " AND ",;
-                                                      "O"   => " OR " }
+   DATA aStructure                     INIT  {}
 
-   DATA hConditions                          INIT  {  "Igual"        => " == ",;
-                                                      "Distinto"     => " != ",;
-                                                      "Mayor"        => " > ",;
-                                                      "Menor"        => " < ",;
-                                                      "Mayor igual"  => " >= ",;
-                                                      "Menor igual"  => " <= ",;
-                                                      "Contenga"     => " LIKE " }
+   DATA hNexo                          INIT  {  ""    => "",;
+                                                "Y"   => " AND ",;
+                                                "O"   => " OR " }
+
+   DATA hConditions                    INIT  {  "Igual"        => " == ",;
+                                                "Distinto"     => " != ",;
+                                                "Mayor"        => " > ",;
+                                                "Menor"        => " < ",;
+                                                "Mayor igual"  => " >= ",;
+                                                "Menor igual"  => " <= ",;
+                                                "Contenga"     => " LIKE " }
+
+   DATA cScope                         INIT  'albaranes_venta'
 
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
-   METHOD Activate() 
+   METHOD Edit() 
+
+   METHOD SaveFilter()
 
    METHOD loadStructure( hColumns )
 
    METHOD getStructureType( cText )
 
-   METHOD getTexts()            
+   METHOD getTexts()        
+
+   METHOD gettingSelectSentence()
 
    //Construcciones tardias----------------------------------------------------
 
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := FiltrosBrowseView():New( self ), ), ::oBrowseView ) 
+
    METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := FiltrosView():New( self ), ), ::oDialogView )
+
+   METHOD getSaveDialogView()          INLINE ( iif( empty( ::oSaveDialogView ), ::oSaveDialogView := SaveFiltrosView():New( self ), ), ::oSaveDialogView )
 
    METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLFiltrosModel():New( self ), ), ::oModel )
    
@@ -61,11 +64,13 @@ METHOD New( oController ) CLASS FiltrosController
 
    ::cName                             := "filtros"
    
-   ::hImage                            := {  "16" => "gc_object_cube_16",;
-                                             "32" => "gc_object_cube_32",;
-                                             "48" => "gc_object_cube_48" }
+   ::hImage                            := {  "16" => "gc_funnel_16",;
+                                             "32" => "gc_funnel_32",;
+                                             "48" => "gc_funnel_48" }
 
    ::loadStructure( SQLTercerosModel():getColumns() )
+
+   ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
 RETURN ( Self )
 
@@ -77,11 +82,27 @@ METHOD End() CLASS FiltrosController
       ::oModel:End() 
    end if 
 
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End() 
+   end if 
+
    if !empty( ::oDialogView )
       ::oDialogView:End()
    end if 
 
+   if !empty( ::oSaveDialogView )
+      ::oSaveDialogView:End()
+   end if 
+
 RETURN ( ::Super:End() )
+
+//---------------------------------------------------------------------------//
+
+METHOD gettingSelectSentence() CLASS FiltrosController
+
+   ::getModel():setGeneralWhere( "tabla = " + quoted( ::cScope ) )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -112,13 +133,23 @@ RETURN ( '' )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS FiltrosController
+METHOD Edit() CLASS FiltrosController
 
    ::getDialogView():loadConditions()
 
    ::getDialogView():emptyFilter()
 
    ::getDialogView():Activate()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD SaveFilter() CLASS FiltrosController
+
+   if ::getSaveDialogView():Activate()
+      msgalert( "yes" )      
+   end if 
 
 RETURN ( nil )
 
@@ -143,6 +174,8 @@ RETURN ( ::aDescriptions )
 CLASS FiltrosView FROM SQLBaseView
 
    DATA oBrwFilter
+
+   DATA oBrwAlmacenados
 
    DATA oColCondicion
 
@@ -202,11 +235,9 @@ CLASS FiltrosView FROM SQLBaseView
 
    METHOD setFilterLineNexo( uValue )  INLINE ( hset( ::oBrwFilter:aRow, "nexo", uValue ) )
 
-   METHOD getFilterLineType()          INLINE ( ::getStructureType( ::GetFilterLineBrowse( fldDescription ) ) )
-
    METHOD changeFilterLine()
 
-   METHOD getStructureType( cText )
+   METHOD saveFilter()                 INLINE ( ::oController:SaveFilter() )
 
 END CLASS
 
@@ -233,14 +264,16 @@ METHOD Activate() CLASS FiltrosView
    REDEFINE FOLDER ::oFolder ;
       ID          500 ;
       OF          ::oDialog ;
-      PROMPT      "&Generador" ;
-      DIALOGS     "FILTROS_DEFINICION"  
+      PROMPT      "&Generador",;
+                  "&Almacenados" ;
+      DIALOGS     "FILTROS_DEFINICION",;
+                  "FILTROS_DEFINICION"  
 
-   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::emptyFilter(), ::oBrwFilter:GoTop() }, ::oFolder:aDialogs[1], .f., , .f., "Inicializar filtro" )
+   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::emptyFilter(), ::oBrwFilter:goTop() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Inicializar filtro" )
 
-   TBtnBmp():ReDefine( 502, "del16", , , , , {|| ::deleteLineFilter() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar línea" )
+   TBtnBmp():ReDefine( 502, "del16", , , , , {|| ::deleteLineFilter() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Eliminar línea" )
 
-   TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| msgStop("guardar filtro") }, ::oFolder:aDialogs[1], .f., , .f., "Guardar filtro" )
+   TBtnBmp():ReDefine( 503, "gc_floppy_disk_16", , , , , {|| ::saveFilter() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Guardar filtro" )
 
    ::oBrwFilter                  := IXBrowse():New( ::oFolder:aDialogs[ 1 ] )
 
@@ -298,6 +331,16 @@ METHOD Activate() CLASS FiltrosView
       :bOnPostEdit               := {|o,x,n| ::nexoOnPostEdit( o, x, n ) } 
    end with
 
+   // Filtros almacenados -----------------------------------------------------
+
+   TBtnBmp():ReDefine( 501, "new16", , , , , {|| msgalert( "Seleccionar filtro" ) }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Seleccionar filtro" )
+
+   TBtnBmp():ReDefine( 502, "del16", , , , , {|| ::oController():Delete( ::getBrowseView():aSelected ), ::oController:Refresh(), ::oController:Refresh() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Eliminar filtro" )
+
+   TBtnBmp():ReDefine( 503, "Refresh16", , , , , {|| ::oController:Refresh() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Refrescar" )
+
+   ::oController:Activate( 200, ::oFolder:aDialogs[2] )
+
    // Botones caja -------------------------------------------------------
 
    ApoloBtnFlat():Redefine( IDOK, {|| ::oDialog:end( IDOK ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
@@ -334,11 +377,9 @@ RETURN ( ::aFilter )
 
 METHOD emptyFilter() CLASS FiltrosView
 
-   ::aFilter                           := {}
+   ::aFilter         := {}
 
-   ::appendFilter()
-
-RETURN ( nil )
+RETURN ( ::appendFilter() )
 
 //---------------------------------------------------------------------------//
 
@@ -443,7 +484,7 @@ METHOD nexoOnPostEdit( o, uNewValue, nKey ) CLASS FiltrosView
 
    ::setFilterLineNexo( uNewValue )
 
-   if ( ::oBrwFilter:nArrayAt ) == len( ::getFilter() ) .and. !empty( uNewValue )
+   if ( ::oBrwFilter:nArrayAt ) == len( ::aFilter ) .and. !empty( uNewValue )
       ::appendFilter()
    end if 
 
@@ -464,7 +505,6 @@ METHOD changeFilterLine() CLASS FiltrosView
    ::oColValor:nEditType         := ::getEditType( cType )
    
    ::oColValor:aEditListTxt      := ::getListType( cType )
-    
 
    ::oBrwFilter:Refresh()
 
@@ -472,17 +512,17 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStructureType( cText )  CLASS FiltrosView
+/*
+   local aSerialized := fw_valtoexp( ::aFilter )
 
-   local nPos 
-   local cType := ""
-   
-   nPos        := ascan( ::getStructure(), {|h| alltrim( upper( hget( h, "text" ) ) ) == alltrim( upper( cText ) ) } )
-   if nPos != 0
-      cType    := ::GetStructure()[ nPos, posType ]
-   end if 
+   logWrite( aSerialized )
 
-RETURN ( cType ) 
+   msgalert( valtype( aSerialized ), "despues de serializar" )
+
+   msgalert( hb_valtoexp( &( aSerialized ) ) )
+
+   msgalert( valtype( &( aSerialized ) ), "despues de la macro" )
+*/
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -490,784 +530,92 @@ RETURN ( cType )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TFilterDialog
+CLASS SaveFiltrosView FROM SQLBaseView
 
-	DATA oDlg // classdata
+   DATA cFilterName                    INIT space( 240 )
 
-	DATA oFld
-   DATA oBmp
-
-   DATA cTitle                         INIT "Generador de filtros"
-   DATA cResource                      INIT "FastFiltros"
-   DATA cIcon                          INIT "gc_funnel_48"
-
-   DATA cFilterName                    INIT ""
-
-	DATA oFilterCreator
-   DATA oFilterDatabase
-
-	DATA oBrwFilter	
-	DATA oBrwAlmacenados
-
-	METHOD New( oFilterCreator )
-	
-	METHOD Dialog()
-   METHOD HeaderDialog()
-   METHOD ReplaceDialog()              VIRTUAL
-   METHOD FilterDialog()
-   METHOD AlmacenadosDialog()   
-   METHOD ActivateDialog( cFilterName )
-
-   METHOD InitDialog( cFilterName )
-   METHOD okDialog()
-   METHOD endDialog()
-
-   METHOD Save()     
-   METHOD Load()          
-   METHOD Delete()
-
-   METHOD SetFilter( aArrayFilter )    INLINE ( ::oBrwFilter:SetFilter( aArrayFilter ) )
-
-   METHOD TitleFilter()                INLINE Rtrim( ::oFilterDatabase:oDbf:cTexFlt )
-
-   METHOD SetExpresion( cExpresion )   INLINE ( ::oFilterCreator:SetExpresion( cExpresion ) )   
-   METHOD Ready()                      INLINE ( ::oFilterCreator:Ready() )
+   METHOD Activate()
+      METHOD validActivate()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oFilterCreator ) CLASS TFilterDialog
+METHOD Activate() CLASS SaveFiltrosView
 
-	::oFilterCreator    := oFilterCreator
+   DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "NOMBRE_FILTRO" ;
+      TITLE       "Guardar filtro"
 
-   ::oFilterDatabase   := oFilterCreator:oFilterDatabase
+   REDEFINE BITMAP ::oBitmap ;
+      ID          900 ;
+      RESOURCE    "gc_floppy_disk_48" ;
+      TRANSPARENT ;
+      OF          ::oDialog
 
-RETURN ( Self )
+   REDEFINE SAY   ::oMessage ;
+      PROMPT      "Introduzca el nombre del filtro" ;
+      ID          800 ;
+      FONT        oFontBold() ;
+      OF          ::oDialog
 
-//---------------------------------------------------------------------------//
+   REDEFINE GET   ::cFilterName ;
+      ID          100 ;
+      OF          ::oDialog
 
-METHOD Dialog( cFilterName ) CLASS TFilterDialog
+   // Botones caja -------------------------------------------------------
 
-   ::cFilterName        := cFilterName
+   ApoloBtnFlat():Redefine( IDOK, {|| ::validActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   ::SetExpresion()
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::HeaderDialog()
-
-   ::FilterDialog()
-
-   ::ReplaceDialog()
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::validActivate(), ) }
    
-   ::AlmacenadosDialog()   
+   ACTIVATE DIALOG ::oDialog CENTER
 
-   ::ActivateDialog()
-
-RETURN ( Self )
+RETURN ( ::oDialog:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD HeaderDialog() CLASS TFilterDialog
+METHOD validActivate() CLASS SaveFiltrosView
 
-   /*
-   Caja de dialogo-------------------------------------------------------------
-   */
-
-   DEFINE DIALOG     ::oDlg ;
-      TITLE          ( ::cTitle ) ;
-      RESOURCE       ( ::cResource ) ;
-
-      REDEFINE FOLDER ::oFld ;
-         ID          100 ;
-         OF          ::oDlg ;
-         PROMPT      "&Generador",;
-                     "&Almacenados";
-         DIALOGS     "FastFiltros_Definicion",;
-                     "FastFiltros_Almacenados"
-
-      REDEFINE BITMAP ::oBmp ;
-         ID          500 ;
-         RESOURCE    ( ::cIcon ) ;
-         TRANSPARENT ;
-         OF          ::oDlg
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD FilterDialog() CLASS TFilterDialog
-
-   local oError
-   local oBlock
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-
-      /*
-      Clase para editar los filtros--------------------------------------------
-      */
-
-      REDEFINE BUTTON ;
-         ID          110 ;
-         OF          ( ::oFld:aDialogs[ 1 ] );
-         ACTION      ( ::Save() )
-
-      ::oBrwFilter      := TBrowseFilter():New( Self )
-
-      ::oBrwFilter:SetStructure( ::oFilterCreator:GetStructure() )
-      ::oBrwFilter:Activate()
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD AlmacenadosDialog() CLASS TFilterDialog
-
-      /*
-      Browse de los filtros almacenados-------------------------------------------
-      */
-
-      REDEFINE BUTTON ;
-         ID          100 ;
-         OF          ( ::oFld:aDialogs[ 2 ] );
-         ACTION      ( ::Load( ::oFilterDatabase:oDbf:cFldFlt ) )
-
-      REDEFINE BUTTON ;
-         ID          110 ;
-         OF          ( ::oFld:aDialogs[ 2 ] );
-         ACTION      ( ::Delete() )
-      
-      ::oBrwAlmacenados := TBrowseAlmacenado():New( Self )
-      
-      ::oBrwAlmacenados:SetDatabase( ::oFilterDatabase:oDbf )
-      ::oBrwAlmacenados:Activate()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ActivateDialog() CLASS TFilterDialog
-
-      /*
-      Botones de los filtros almacenados---------------------------------------
-      */
-
-      REDEFINE BUTTON ;
-         ID          IDOK ;
-         OF          ( ::oDlg );
-         ACTION      ( ::okDialog() )
-
-      REDEFINE BUTTON ;
-         CANCEL ;
-         ID          IDCANCEL ;
-         OF          ( ::oDlg );
-         ACTION      ( ::endDialog() )
-
-      ::oDlg:AddFastKey( VK_F5, {|| ::okDialog() } )
-
-   ::oDlg:Activate( , , , .t., , .t., {|| ::InitDialog() } )
-
-   ::oBmp:End()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD InitDialog() CLASS TFilterDialog
-
-   if !Empty( ::cFilterName )   
-      ::Load( ::cFilterName )
-   end if          
-
-   if !::Ready()
-      ::oFld:aEnable := { .t., .f. }
-   else 
-      ::oBrwAlmacenados:GoTop()
+   if empty( ::cFilterName )
+      ::oController:getSaveDialogView():showMessage( "El nombre del filtro no puede estar vacio." )
+      RETURN ( .f. )
    end if 
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD endDialog() CLASS TFilterDialog
-
-   ::oFilterCreator:QuitExpresion()
    
-   ::oDlg:End()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD okDialog() CLASS TFilterDialog
-
-   if ::oFilterCreator:BuildFilter( ::oBrwFilter:aFilter )
-      ::oDlg:End( IDOK )
-   end if          
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Save() CLASS TFilterDialog
-
-   if ::oFilterCreator:BuildFilter( ::oBrwFilter:aFilter )
-      ::oFilterDatabase:Save( ::cFilterName )
-   end if 
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Delete() CLASS TFilterDialog
-
-   if ::oFilterDatabase:Del()
-      ::oBrwAlmacenados:Refresh()
-   end if
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Load() CLASS TFilterDialog
-
-   local aArrayFilter   := ::oFilterDatabase:ArrayFilter( ::cFilterName ) 
-      
-   if !Empty( aArrayFilter )
-      ::SetFilter( aArrayFilter )
-   end if 
-      
-   ::oDlg:cTitle( ::cTitle + " [" + ::TitleFilter() + "]" )
-
-   ::oFld:SetOption( 1 )
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-
-CLASS TReplaceDialog FROM TFilterDialog
-
-   DATA cTitle                         INIT "Reemplazar campos"
-   DATA cResource                      INIT "FastReplace"
-   DATA cIcon                          INIT "gc_arrow_circle2_48"
-
-   DATA oReplace
-   DATA cReplace
-
-   DATA oExpReplace
-   DATA cExpReplace                    INIT Space( 100 )
-
-   DATA lAllRecno                      INIT .f.
-
-   METHOD getField( cDescription )     INLINE ( ::oFilterCreator:GetField( cDescription ) )
-
-   METHOD setDatabaseToReplace( cDbf ) INLINE ( ::cDbfReplace := cDbf )
-
-   // Dialogos
-
-   METHOD replaceDialog()              
-      METHOD validDialog()
-      METHOD okDialog()
-
-   METHOD dbfReplace()                 INLINE ( ::oFilterCreator:cDbfReplace )
-   METHOD getExpresionFilter( )            INLINE ( ::oFilterCreator:bExpresionFilter )
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD ReplaceDialog() CLASS TReplaceDialog
-
-   REDEFINE COMBOBOX ::oReplace ;
-      VAR      ::cReplace ;
-      ITEMS    ::oFilterCreator:getTexts();
-      ID       80 ;
-      OF       ::oDlg
-
-   REDEFINE GET ::oExpReplace ;
-      VAR      ::cExpReplace ;
-      ID       90 ;
-      OF       ::oDlg
-
-   REDEFINE CHECKBOX ::lAllRecno ;
-      ID       70 ;
-      ON CHANGE( if( ::lAllRecno, ::oFld:Hide(), ::oFld:Show() ) );
-      OF       ::oDlg
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ValidDialog()
-
-   if Empty( ::cReplace )
-      msgStop( "El campo a reemplazar esta vacio")
-      RETURN ( .f. )
-   end if
-
-   if Empty( ::cExpReplace )
-      msgStop( "La expresión a reemplazar esta vacia")
-      RETURN ( .f. )
-   end if
-
-   if Empty( ::dbfReplace() )
-      msgStop( "No hay bases de datos para reemplazar")
-      RETURN ( .f. )
-   end if          
-
-   if !::oFilterCreator:BuildFilter( ::oBrwFilter:aFilter )
-      RETURN ( .f. )
-   end if          
-
-RETURN .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD okDialog() CLASS TReplaceDialog
-
-   local nRpl     := 0
-   local cGetVal
-   local nOrdAnt
-   local nDbfRec
-   local nFldPos
-
-   if !::ValidDialog()
-      msgStop( "Salida por dialogo invalido." )
-      Return .f.
-   end if
-
-   AutoMeterDialog( ::oDlg )
-   
-   SetTotalAutoMeterDialog( ( ::dbfReplace() )->( LastRec() ) )
-
-   nDbfRec        := ( ::dbfReplace() )->( Recno() )
-   nOrdAnt        := ( ::dbfReplace() )->( OrdSetFocus( 0 ) )
-   nFldPos        := ( ::dbfReplace() )->( FieldPos( ::oFilterCreator:GetField( ::cReplace ) ) )
-
-   if nFldPos != 0
-
-      ( ::dbfReplace() )->( dbGoTop() )
-      while !( ::dbfReplace() )->( eof() )
-
-         cGetVal  := ( ::dbfReplace() )->( Eval( Compile( cGetValue( ::cExpReplace, ValType( ( ::dbfReplace() )->( FieldGet( nFldPos ) ) ) ) ) ) )
-
-         if ::lAllRecno .or. ( ::dbfReplace() )->( Eval( ::getExpresionFilter( ) ) )
-            
-            if ( ::dbfReplace() )->( dbRLock() )
-               ( ::dbfReplace() )->( FieldPut( nFldPos, cGetVal ) )
-               ( ::dbfReplace() )->( dbUnLock() )        
-            end if
-            
-            ++nRpl
-
-         end if
-
-         SetAutoMeterDialog( ( ::dbfReplace() )->( Recno() ) )
-
-         ( ::dbfReplace() )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( ::dbfReplace() )->( OrdSetFocus( nOrdAnt ) )
-   ( ::dbfReplace() )->( dbGoTo( nDbfRec ) )
-
-   msgInfo( "Total de registros reemplazados " + Str( nRpl ), "Proceso finalizado." )
-
-   EndAutoMeterDialog( ::oDlg )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS TBrowseFilter
-
-   DATA aFilter                              INIT  {} 
-
-   DATA oFilterDialog
-
-	DATA oDlg
-
-   DATA oEditMemo
-
-	DATA oBrwFilter
-	
-	DATA oColCondicion
-	DATA oColValor
-
-   DATA bExpresionFilter
-
-	DATA aFields 										INIT {}
-	DATA aTypes 										INIT {}
-
-	DATA lSaveFilter 									INIT .t.
-
-	DATA aStructure									INIT { 	{	"Código",	"Codigo", 	"C" },;
-																		{	"Nombre", 	"Nombre", 	"C" },; 	
-																		{	"Importe",	"Importe", 	"N" },;
-                                                      {  "Fecha",    "Fecha",    "D" },;
-                                                      {  "Lógico",   "Logico",   "L" } }
-
-
-	METHOD New( oDlg, oFilterCreator )
-
-	METHOD SetDialog( oDlg ) 								INLINE ( ::oDlg := oDlg )
-
-	METHOD SetStructure( aStructure ) 					INLINE ( ::aStructure := aStructure )
-	METHOD GetStructure()									INLINE ( ::aStructure )
-	METHOD GetStructurePos( nPos )						INLINE ( ::GetStructure()[ nPos ] )
-	METHOD GetStructureType( cDescripcion )
-
-	METHOD getTexts() 								INLINE ( ::oFilterDialog:oFilterCreator:getTexts() ) 
-	METHOD getTextsPos( nPos ) 					INLINE ( ::getTexts()[ nPos ] )
-
-	METHOD GetFields() 										INLINE ( if( Empty( ::aFields ), ( ::aFields := GetSubArray( ::aStructure, posField ) ), ), ::aFields )
-	METHOD GetTypes()											INLINE ( if( Empty( ::aTypes ), ( ::aTypes := GetSubArray( ::aStructure, posType ) ), ), ::aTypes )
-
-	METHOD GetHashType( cType ) 					      INLINE ( HGet( ::hConditions, cType ) )
-   METHOD GetValueType( cType )                    INLINE ( HGet( ::GetHashType( cType ), "Value" ) )
-   METHOD GetEditType( cType )                     INLINE ( HGet( ::GetHashType( cType ), "Edit" ) )
-   METHOD GetListType( cType )                     INLINE ( HGet( ::GetHashType( cType ), "List" ) )
-   METHOD GetConditionsType( cType )               INLINE ( HGet( ::GetHashType( cType ), "Conditions" ) )
-   METHOD GetBlockType( cType )                    INLINE ( HGet( ::GetHashType( cType ), "Block" ) )
-
-	METHOD GetConditionsCaracter() 						INLINE ( hget( ::GetHashType( "C" ), "Conditions" ) )
-	METHOD GetConditionsCaracterPos( nPos ) 			INLINE ( ::GetConditionsCaracter()[ nPos ] )
-
-	METHOD SetFilter( aFilter )
-	METHOD SetFilterLine( nLine, nField )		
-	METHOD SetFilterLineBrowse( nField, uValue )		INLINE ( ::SetFilterLine( ::oBrwFilter:nArrayAt, nField, uValue ) )
-
-	METHOD GetFilter()
-	METHOD GetFilterLine( nLine, nField )
-	METHOD GetFilterLineBrowse( nField )				INLINE ( ::GetFilterLine( ::oBrwFilter:nArrayAt, nField ) )
-
-   METHOD GetFilterTypeLineBrowse()                INLINE ( ::GetStructureType( ::GetFilterLineBrowse( fldDescription ) ) )
-
-   METHOD AppendLine()                 				INLINE ( aAdd(::aFilter, { ::getTextsPos( 1 ), ::GetConditionsCaracterPos( 1 ), Space( 100 ), "" } ) )
-   METHOD DeleteLine()
-   METHOD InitLine()                               INLINE ( ::aFilter := {}, ::AppendLine(), ::oBrwFilter:SetArray( ::aFilter, , , .f. ) )
-   METHOD ChangeLine()
-
-	METHOD Activate()
-	
-	METHOD textOnPostEdit( o, x, n )
-
-END CLASS
-	
-//---------------------------------------------------------------------------//
-
-METHOD New( oFilterDialog ) CLASS TBrowseFilter
-
-   ::oFilterDialog   := oFilterDialog
-   
-   ::oEditMemo       := EditMemo()
-
-	::SetDialog( ::oFilterDialog:oFld:aDialogs[ 1 ] )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD GetStructureType( cDescripcion )  CLASS TBrowseFilter
-
-	local nPos 
-	local cType := ""
-	
-	nPos 			:= aScan( ::GetStructure(), {|a| Alltrim( Upper( a[ posDescription ] ) ) == Alltrim( Upper( cDescripcion ) ) } )
-	if nPos != 0
-		cType 	:= ::GetStructure()[ nPos, posType ]
-	end if 
-
-RETURN ( cType ) 
-
-//---------------------------------------------------------------------------//
-
-METHOD SetFilter( aFilter ) CLASS TBrowseFilter
-
-	if !Empty( aFilter )
-		::aFilter 	:= aFilter
-	end if
-
-   if !Empty( ::oBrwFilter )
-      ::oBrwFilter:SetArray( ::aFilter )
-   end if 
-		 
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SetFilterLine( nLine, nField, uValue )  CLASS TBrowseFilter
-
-	::aFilter[ nLine, nField ] := uValue
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD GetFilter()  CLASS TBrowseFilter
-
-   if empty( ::aFilter )
-      ::AppendLine()
-   end if 
-
-RETURN ( ::aFilter )
-
-//---------------------------------------------------------------------------//
-
-METHOD GetFilterLine( nLine, nField )  CLASS TBrowseFilter
-
-RETURN ( ::GetFilter()[ nLine, nField ] )
-
-//---------------------------------------------------------------------------//
-
-METHOD DeleteLine() CLASS TBrowseFilter
-
-   local nLineasFilter  := len( ::aFilter )
-
-   if ( nLineasFilter > 1 ) .and. ( ::oBrwFilter:nArrayAt <= nLineasFilter )
-      aDel( ::aFilter, ::oBrwFilter:nArrayAt, .t. ) 
-      ::oBrwFilter:Refresh()
-   end if 
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Activate() CLASS TBrowseFilter
-
-   REDEFINE BUTTON ;
-      ID       100 ;
-      OF       ( ::oDlg );
-      ACTION   ( ::InitLine() )
-
-   REDEFINE BUTTON ;
-      ID       120 ;
-      OF       ( ::oDlg );
-      ACTION   ( ::DeleteLine() )
-
-   ::oBrwFilter                  := IXBrowse():New( ::oDlg )
-
-   ::oBrwFilter:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrwFilter:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-   ::oBrwFilter:SetArray( ::GetFilter(), , , .f. )
-
-   ::oBrwFilter:lHScroll         := .f.
-   ::oBrwFilter:lVScroll         := .f.
-   ::oBrwFilter:lRecordSelector  := .t.
-   ::oBrwFilter:lFastEdit        := .t.
-
-   ::oBrwFilter:nMarqueeStyle    := 3
-
-   ::oBrwFilter:bChange          := {|| ::ChangeLine() }
-
-   ::oBrwFilter:CreateFromResource( 200 )
-
-   with object ( ::oBrwFilter:AddCol() )
-      :cHeader                   := "Campo"
-      :bEditValue                := {|| ::aFilter[ ::oBrwFilter:nArrayAt, fldDescription ] }
-      :nEditType                 := EDIT_LISTBOX
-      :aEditListTxt              := ::getTexts() 
-      :nWidth                    := 240
-      :bOnPostEdit               := {|o,x,n| ::DescriptionsOnPostEdit( o, x, n ) } 
-   end with
-
-   with object ( ::oColCondicion := ::oBrwFilter:AddCol() )
-      :cHeader                   := "Condicion"
-      :bEditValue                := {|| Padr( ::aFilter[ ::oBrwFilter:nArrayAt, fldCondition ], 100 ) }
-      :nEditType                 := EDIT_LISTBOX
-      :aEditListTxt              := ::GetConditionsCaracter()
-      :nWidth                    := 100
-      :bOnPostEdit               := {|o,x,n| If( n != VK_ESCAPE, ::SetFilterLineBrowse( fldCondition, x ), ) } 
-   end with
-
-   with object ( ::oColValor := ::oBrwFilter:AddCol() )
-      :cHeader                   := "Valor"
-      :bEditValue                := {|| ::aFilter[ ::oBrwFilter:nArrayAt, fldValue ] }
-      :nEditType                 := EDIT_GET_BUTTON
-      :nWidth                    := 200
-      :bOnPostEdit               := {|o,x,n| If( n != VK_ESCAPE, ::SetFilterLineBrowse( fldValue, x ), ) } 
-      :bEditBlock                := {|n,c,o| ::oEditMemo:Show( o ) }
-   end with
-
-   with object ( ::oBrwFilter:AddCol() )
-      :cHeader                   := "Nexo"
-      :bEditValue                := {|| ::aFilter[ ::oBrwFilter:nArrayAt, fldNexo ] }
-      :nEditType                 := EDIT_LISTBOX
-      :aEditListTxt              := { "", "Y", "O" }
-      :nWidth                    := 60
-      :bOnPostEdit               := {|o,x,n| ::nexoOnPostEdit( o, x, n ) } 
-   end with
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD textOnPostEdit( o, uNewValue, nKey ) CLASS TBrowseFilter
-
-   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE )
-
-      if !IsNil( uNewValue ) .and. ValType( uNewValue ) == "C"
-         
-         if ::GetFilterLineBrowse( fldDescription ) != uNewValue
-
-            ::SetFilterLineBrowse( fldDescription, uNewValue )
-
-            ::SetFilterLineBrowse( fldValue, ::GetValueType( ::GetFilterTypeLineBrowse() ) )
-
-            ::ChangeLine()
-
-         end if 
-
-      end if
-
-   end if 
+   ::oDialog:end( IDOK )
 
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-
-METHOD changeLine() CLASS TBrowseFilter
-
-   local cType                   := ::getFilterTypeLineBrowse()
-
-   if empty( cType )
-      RETURN ( .t. )
-   end if 
-
-   ::oColCondicion:aEditListTxt  := ::getConditionsType( cType )
-
-   ::oColValor:nEditType         := ::getEditType( cType )
-
-   ::oColValor:aEditListTxt      := ::getListType( cType )
-
-   ::oBrwFilter:Refresh()
-
-RETURN ( .t. )
-
-//--------------------------------------------------------------------------//
-//--------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS TBrowseAlmacenado
-
-   DATA  oFilterDialog
-
-   DATA  oDlg
-   DATA  oDbf
-
-   DATA  oBrwAlmacenados
-
-	METHOD New( oDlg, oFilterCreator ) 
-	METHOD Activate() 						
-
-   METHOD SetDialog( oDlg )                     INLINE ( ::oDlg := oDlg )
-   METHOD SetDatabase( oDbf )                   INLINE ( ::oDbf := oDbf )
-
-   METHOD GoTop()                               INLINE ( if( !Empty( ::oBrwAlmacenados ), ( ::oBrwAlmacenados:GoTop() ), ) )
-   METHOD Refresh()                             INLINE ( if( !Empty( ::oBrwAlmacenados ), ( ::oBrwAlmacenados:Refresh() ), ) )
-
-END CLASS
-	
-//---------------------------------------------------------------------------//
-
-METHOD New( oFilterDialog ) CLASS TBrowseAlmacenado
-
-   ::oFilterDialog   := oFilterDialog
-
-   ::SetDialog( ::oFilterDialog:oFld:aDialogs[ 2 ] )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Activate()
-
-   ::oBrwAlmacenados                   := IXBrowse():New( ::oDlg )
-   
-   ::oBrwAlmacenados:bClrSel           := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrwAlmacenados:bClrSelFocus      := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-   
-   ::oBrwAlmacenados:nMarqueeStyle     := 5
-   
-   ::oBrwAlmacenados:lHScroll          := .f.
-   ::oBrwAlmacenados:lVScroll          := .t.
-   ::oBrwAlmacenados:lRecordSelector   := .t.
-   
-   ::oDbf:SetBrowse( ::oBrwAlmacenados )
-
-   ::oBrwAlmacenados:bLDblClick        := {|| ::oFilterDialog:Load() }
-   
-   ::oBrwAlmacenados:CreateFromResource( 200 )
-   
-   with object ( ::oBrwAlmacenados:AddCol() )
-      :cHeader                         := "Filtro"
-      :bEditValue                      := {|| ::oDbf:FieldGetByName( "cTexFlt" ) }
-      :nWidth                          := 600
-   end with
-
-RETURN ( Self )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS EditMemo
+CLASS FiltrosBrowseView FROM SQLBrowseView
 
-   DATA oDlg
-   DATA oMemo 
-   DATA cMemo
-
-   METHOD SetMemo( oSender )  INLINE ( ::cMemo := oSender:VarGet() )
-   METHOD Show()
+   METHOD addColumns()                       
 
 ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD Show( oSender ) CLASS EditMemo
+METHOD addColumns() CLASS FiltrosBrowseView
 
-   ::SetMemo( oSender )
-
-   DEFINE DIALOG ::oDlg RESOURCE "EditMemo"
-
-      REDEFINE GET   ::oMemo ;
-         VAR         ::cMemo ;
-         MEMO ;
-         ID          100 ;
-         OF          ::oDlg 
-
-      REDEFINE BUTTON ;
-         ID          IDOK ;
-         OF          ::oDlg ;
-         ACTION      ( ::oDlg:end( IDOK ) )
-
-      REDEFINE BUTTON ;
-         ID          IDCANCEL ;
-         OF          ::oDlg ;
-         ACTION      ( ::oDlg:end() )
-
-      ::oDlg:AddFastKey( VK_F5, {|| ::oDlg:end( IDOK ) } )
-
-   ACTIVATE DIALOG ::oDlg CENTER
-
-   if ( ::oDlg:nResult == IDOK )
-      oSender:VarPut( ::cMemo ) 
-   end if
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := "nombre"
+      :cHeader             := "Nombre"
+      :nWidth              := 480
+      :bEditValue          := {|| ::getRowSet():fieldGet( "nombre" ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
 
 RETURN ( nil )
 
-//----------------------------------------------------------------------------//
-
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//

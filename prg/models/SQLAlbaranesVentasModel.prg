@@ -25,6 +25,7 @@ METHOD getSentenceAlbaranWhereHash( dFechaDesde, dFechaHasta, aWhere ) CLASS SQL
    cSql        +=    "WHERE fecha >= " + DtoS( dFechadesde )          + " "
    cSQL        +=    "AND fecha <= "   + DtoS( dFechaHasta )          + " "
 
+
    if !empty( aWhere ) 
       aeval( aWhere, { | cCondition | cSql += "AND " + cCondition + " " } )
    end if
