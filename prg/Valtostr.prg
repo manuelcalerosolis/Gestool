@@ -386,7 +386,6 @@ function FW_ValToExp( uVar )
       endif
       cExp  += '}'
    case cType == 'C'
-//      cExp  := '[' + uVar + ']'
       cExp  := StringToLiteral( uVar )
    case cType == 'D'
       cExp  := 'SToD("' + DToS( uVar ) + '")'

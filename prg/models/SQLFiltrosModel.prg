@@ -6,12 +6,15 @@
 
 CLASS SQLFiltrosModel FROM SQLCompanyModel
 
-   DATA cTableToFilter                                
+   DATA cTable                                
 
-   DATA cTableName                                    INIT "filtros"
+   DATA cTableName                     INIT "filtros"
 
-   METHOD setTableToFilter( cTableToFilter )          INLINE ( ::cTableToFilter := cTableToFilter )
-   METHOD getTableToFilter()                          INLINE ( if( empty( ::cTableToFilter ), ::getController():getController():getName(), ::cTableToFilter ) )
+   METHOD setTableToFilter( cTable )   INLINE ( ::cTable := cTable )
+
+   METHOD getTableToFilter()           INLINE ( iif(  empty( ::cTable ),;
+                                                      ::getController():getController():getName(),;
+                                                      ::cTable ) )
 
    METHOD getColumns()
 
@@ -19,11 +22,12 @@ CLASS SQLFiltrosModel FROM SQLCompanyModel
 
    METHOD getFilterField( cField, cNombre, cTabla )   
 
-   METHOD getFilterSentence( cNombre, cTabla )        INLINE ( ::getFilterField( 'filtro', cNombre, cTabla ) )
+   METHOD getFilterSentence( cNombre, cTabla );
+                                       INLINE ( ::getFilterField( 'filtro', cNombre, cTabla ) )
 
-   METHOD getId( cNombre, cTabla )                    INLINE ( ::getFilterField( 'id', cNombre, cTabla ) )
+   METHOD getId( cNombre, cTabla )     INLINE ( ::getFilterField( 'id', cNombre, cTabla ) )
 
-   METHOD setTablaAttribute()                         INLINE ( ::getTableToFilter() )
+   METHOD existName( cName, cTable )   INLINE ( ::countWhere( { "nombre" => cName, "tabla" => cTable } ) > 0 )
 
 END CLASS
 

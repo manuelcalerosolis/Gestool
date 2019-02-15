@@ -2010,9 +2010,9 @@ RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
 
 METHOD getWhereUuid( Uuid )
 
-   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
-   cSQL        +=    "WHERE uuid = " + quoted( uuid )                         + " "    
-   cSQL        +=    "LIMIT 1"
+   local cSQL     := "SELECT * FROM " + ::getTableName()                         + " "    
+   cSQL           +=    "WHERE uuid = " + quoted( uuid )                         + " "    
+   cSQL           +=    "LIMIT 1"
 
 RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
 
@@ -2020,13 +2020,13 @@ RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
 
 METHOD countWhere( hWhere )
 
-   local cSQL  := "SELECT COUNT(*) FROM " + ::getTableName()                  + " " 
+   local cSQL     := "SELECT COUNT(*) FROM " + ::getTableName()                  + " " 
 
    hEval( hWhere,; 
-      {|k,v| cSql    += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v ) + " " } )
+      {|k,v| cSql += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v ) + " " } )
    
    if ::isDeletedAtColumn()
-      cSQL     +=    "AND deleted_at = 0" 
+      cSQL        +=    "AND deleted_at = 0" 
    end if 
    
 RETURN ( ::getDatabase():getValue( cSql, 0 ) )

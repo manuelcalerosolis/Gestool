@@ -12,6 +12,10 @@ CLASS FiltrosController FROM SQLBrowseController
 
    DATA aStructure                     INIT  {}
 
+   DATA aFilter                        INIT  {}
+
+   DATA cName                          INIT space( 240 )
+
    DATA hNexo                          INIT  {  ""    => "",;
                                                 "Y"   => " AND ",;
                                                 "O"   => " OR " }
@@ -32,7 +36,15 @@ CLASS FiltrosController FROM SQLBrowseController
 
    METHOD Edit() 
 
-   METHOD SaveFilter()
+   METHOD saveFilter()
+
+   METHOD emptyFilter()  
+
+   METHOD appendFilter()
+
+   METHOD deleteFilter()
+
+   METHOD deleteLineFilter( nLine )    INLINE ( adel( ::aFilter, nLine, .t. ) )
 
    METHOD loadStructure( hColumns )
 
@@ -41,6 +53,8 @@ CLASS FiltrosController FROM SQLBrowseController
    METHOD getTexts()        
 
    METHOD gettingSelectSentence()
+
+   METHOD existName()                  INLINE ( ::getModel():existName( ::cName, ::cScope ) )
 
    //Construcciones tardias----------------------------------------------------
 
@@ -135,9 +149,9 @@ RETURN ( '' )
 
 METHOD Edit() CLASS FiltrosController
 
-   ::getDialogView():loadConditions()
+   ::emptyFilter()
 
-   ::getDialogView():emptyFilter()
+   ::getDialogView():loadConditions()
 
    ::getDialogView():Activate()
 
@@ -147,15 +161,83 @@ RETURN ( nil )
 
 METHOD SaveFilter() CLASS FiltrosController
 
-   if ::getSaveDialogView():Activate()
-      msgalert( "yes" )      
+   local cFilter 
+
+   ::cName        := space( 240 )
+
+   if !( ::getSaveDialogView():Activate() )
+      RETURN ( nil )
+   end if 
+
+   cFilter        := fw_valtoexp( ::aFilter )
+
+   if empty( cFilter ) 
+      RETURN ( nil )
+   end if 
+
+   if ::getModel():insertBuffer( { "tabla" => ::cScope, "nombre" => ::cName, "filtro" => cFilter } ) != 0
+
+      successAlert( "Filtro guardado correctamente" )
+
+      ::refreshRowSet()
+
+      ::refreshBrowseView()
+
    end if 
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTexts()
+METHOD SetFilter() CLASS FiltrosController
+
+   local nId            := ::getBrowseView():getRowSet():fieldGet( 'id' )
+
+   if empty( nId )
+      RETURN ( nil )
+   end if 
+
+   ::hSelectedBuffer    := ::getModel():loadCurrentBuffer( nId )
+
+   ::aFilter hget( hSelectedBuffer, "filtro" ) 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteFilter() CLASS FiltrosController
+
+   ::getModel():deleteSelection( ::getRowSet():idFromRecno( ::getBrowseView():getBrowseSelected() ) )
+
+   ::refreshRowSet()
+
+   ::refreshBrowseView()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD emptyFilter() CLASS FiltrosController
+
+   ::aFilter         := {}
+
+RETURN ( ::appendFilter() )
+
+//---------------------------------------------------------------------------//
+
+METHOD appendFilter() CLASS FiltrosController
+
+   aadd( ::aFilter,;
+      {  "text"      => hget( ::aStructure[ 1 ], "text" ),;
+         "condition" => "Igual",;
+         "value"     => space( 100 ),;
+         "nexo"      => "" } )
+
+RETURN ( ::aFilter )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTexts() CLASS FiltrosController
 
    if !empty( ::aDescriptions )
       RETURN ( ::aDescriptions )
@@ -163,7 +245,7 @@ METHOD getTexts()
 
    aeval( ::aStructure, {|h| aadd( ::aDescriptions, hget( h, "text" ) ) } )
 
-RETURN ( ::aDescriptions )
+RETURN ( ::aDescriptions ) 
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -185,23 +267,19 @@ CLASS FiltrosView FROM SQLBaseView
 
    DATA hConditions
 
-   DATA aFilter                        INIT {}
-
    METHOD Activate()
 
    METHOD StartActivate()
 
    METHOD loadConditions()   
 
-   METHOD getFilter() 
-
-   METHOD appendFilter()
-
-   METHOD emptyFilter()  
-
-   METHOD deleteLineFilter()
+   METHOD getFilter()                  INLINE ( ::oController:aFilter )
+   
+   METHOD getFilterLine()              INLINE ( ::getFilter()[ ::oBrwFilter:nArrayAt ] )
 
    METHOD getStructure()               INLINE ( ::oController:aStructure )
+
+   METHOD deleteLineFilter()
 
    METHOD textOnPostEdit( o, uNewValue, nKey )
 
@@ -217,23 +295,23 @@ CLASS FiltrosView FROM SQLBaseView
 
    METHOD getListType( cType )         INLINE ( hget( ::getHashType( cType ), "list" ) )
 
-   METHOD getFilterLineText()          INLINE ( hget( ::oBrwFilter:aRow, "text" ) )
+   METHOD getFilterLineText()          INLINE ( hget( ::getFilterLine(), "text" ) )
 
-   METHOD setFilterLineText( uValue )  INLINE ( hset( ::oBrwFilter:aRow, "text", uValue ) )
+   METHOD setFilterLineText( uValue )  INLINE ( hset( ::getFilterLine(), "text", uValue ) )
 
-   METHOD getFilterLineCondition()     INLINE ( hget( ::oBrwFilter:aRow, "condition" ) )
+   METHOD getFilterLineCondition()     INLINE ( hget( ::getFilterLine(), "condition" ) )
 
    METHOD setFilterLineCondition( uValue ) ;
-                                       INLINE ( hset( ::oBrwFilter:aRow, "condition", uValue ) )
+                                       INLINE ( hset( ::getFilterLine(), "condition", uValue ) )
 
-   METHOD getFilterLineValue()         INLINE ( hget( ::oBrwFilter:aRow, "value" ) )
+   METHOD getFilterLineValue()         INLINE ( hget( ::getFilterLine(), "value" ) )
 
    METHOD setFilterLineValue( uValue ) ;
-                                       INLINE ( hset( ::oBrwFilter:aRow, "value", uValue ) )
+                                       INLINE ( hset( ::getFilterLine(), "value", uValue ) )
 
-   METHOD getFilterLineNexo()          INLINE ( hget( ::oBrwFilter:aRow, "nexo" ) )
+   METHOD getFilterLineNexo()          INLINE ( hget( ::getFilterLine(), "nexo" ) )
 
-   METHOD setFilterLineNexo( uValue )  INLINE ( hset( ::oBrwFilter:aRow, "nexo", uValue ) )
+   METHOD setFilterLineNexo( uValue )  INLINE ( hset( ::getFilterLine(), "nexo", uValue ) )
 
    METHOD changeFilterLine()
 
@@ -269,7 +347,7 @@ METHOD Activate() CLASS FiltrosView
       DIALOGS     "FILTROS_DEFINICION",;
                   "FILTROS_DEFINICION"  
 
-   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::emptyFilter(), ::oBrwFilter:goTop() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Inicializar filtro" )
+   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::oController:emptyFilter(), ::oBrwFilter:goTop() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Inicializar filtro" )
 
    TBtnBmp():ReDefine( 502, "del16", , , , , {|| ::deleteLineFilter() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Eliminar línea" )
 
@@ -282,7 +360,7 @@ METHOD Activate() CLASS FiltrosView
 
    ::oBrwFilter:nDataType        := DATATYPE_ARRAY
 
-   ::oBrwFilter:SetArray( ::aFilter, , , .f. )
+   ::oBrwFilter:SetArray( ::oController:aFilter, , , .f. )
 
    ::oBrwFilter:lHScroll         := .f.
    ::oBrwFilter:lVScroll         := .f.
@@ -298,7 +376,7 @@ METHOD Activate() CLASS FiltrosView
 
    with object ( ::oBrwFilter:AddCol() )
       :cHeader                   := "Campo"
-      :bEditValue                := {|| hget( ::aFilter[ ::oBrwFilter:nArrayAt ], "text" ) }
+      :bEditValue                := {|| hget( ::oController:aFilter[ ::oBrwFilter:nArrayAt ], "text" ) }
       :nEditType                 := EDIT_LISTBOX
       :aEditListTxt              := ::oController:getTexts() 
       :nWidth                    := 240
@@ -307,7 +385,7 @@ METHOD Activate() CLASS FiltrosView
    
    with object ( ::oColCondicion := ::oBrwFilter:AddCol() )
       :cHeader                   := "Condicion"
-      :bEditValue                := {|| hget( ::aFilter[ ::oBrwFilter:nArrayAt ], "condition" ) }
+      :bEditValue                := {|| hget( ::oController:aFilter[ ::oBrwFilter:nArrayAt ], "condition" ) }
       :nEditType                 := EDIT_LISTBOX
       :aEditListTxt              := ::getConditionsCaracter()
       :nWidth                    := 100
@@ -316,7 +394,7 @@ METHOD Activate() CLASS FiltrosView
 
    with object ( ::oColValor := ::oBrwFilter:AddCol() )
       :cHeader                   := "Valor"
-      :bEditValue                := {|| hget( ::aFilter[ ::oBrwFilter:nArrayAt ], "value" ) }
+      :bEditValue                := {|| hget( ::oController:aFilter[ ::oBrwFilter:nArrayAt ], "value" ) }
       :nEditType                 := EDIT_GET
       :nWidth                    := 200
       :bOnPostEdit               := {|o,x,n| if( n != VK_ESCAPE, ::setFilterLineValue( x ), ) } 
@@ -324,7 +402,7 @@ METHOD Activate() CLASS FiltrosView
 
    with object ( ::oBrwFilter:AddCol() )
       :cHeader                   := "Nexo"
-      :bEditValue                := {|| hget( ::aFilter[ ::oBrwFilter:nArrayAt ], "nexo" ) }
+      :bEditValue                := {|| hget( ::oController:aFilter[ ::oBrwFilter:nArrayAt ], "nexo" ) }
       :nEditType                 := EDIT_LISTBOX
       :aEditListTxt              := { "", "Y", "O" }
       :nWidth                    := 60
@@ -335,9 +413,9 @@ METHOD Activate() CLASS FiltrosView
 
    TBtnBmp():ReDefine( 501, "new16", , , , , {|| msgalert( "Seleccionar filtro" ) }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Seleccionar filtro" )
 
-   TBtnBmp():ReDefine( 502, "del16", , , , , {|| ::oController():Delete( ::getBrowseView():aSelected ), ::oController:Refresh(), ::oController:Refresh() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Eliminar filtro" )
+   TBtnBmp():ReDefine( 502, "del16", , , , , {|| ::oController:deleteFilter() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Eliminar filtro" )
 
-   TBtnBmp():ReDefine( 503, "Refresh16", , , , , {|| ::oController:Refresh() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Refrescar" )
+   TBtnBmp():ReDefine( 503, "Refresh16", , , , , {|| ::oController:refreshRowSet(), ::oController:refreshBrowseView() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Refrescar" )
 
    ::oController:Activate( 200, ::oFolder:aDialogs[2] )
 
@@ -365,51 +443,23 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getFilter() CLASS FiltrosView
-
-   if empty( ::aFilter )
-      ::appendFilter()
-   end if 
-
-RETURN ( ::aFilter )
-
-//---------------------------------------------------------------------------//
-
-METHOD emptyFilter() CLASS FiltrosView
-
-   ::aFilter         := {}
-
-RETURN ( ::appendFilter() )
-
-//---------------------------------------------------------------------------//
-
 METHOD deleteLineFilter( nLine ) CLASS FiltrosView
 
    local nLenFilter  
 
    DEFAULT nLine     := ::oBrwFilter:nArrayAt
 
-   nLenFilter        := len( ::aFilter )
+   nLenFilter        := len( ::oController:aFilter )
 
    if ( nLenFilter > 1 ) .and. ( nLine <= nLenFilter )
-      adel( ::aFilter, nLine, .t. ) 
+      ::oController:deleteLineFilter( nLine )
    end if 
+
+   ::oBrwFilter:goUp()
 
    ::oBrwFilter:Refresh()
 
 RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD appendFilter() CLASS FiltrosView
-
-   aadd( ::aFilter,;
-      {  "text"      => hget( ::oController:aStructure[ 1 ], "text" ),;
-         "condition" => "Igual",;
-         "value"     => space( 100 ),;
-         "nexo"      => "" } )
-
-RETURN ( ::aFilter )
 
 //---------------------------------------------------------------------------//
 
@@ -484,8 +534,8 @@ METHOD nexoOnPostEdit( o, uNewValue, nKey ) CLASS FiltrosView
 
    ::setFilterLineNexo( uNewValue )
 
-   if ( ::oBrwFilter:nArrayAt ) == len( ::aFilter ) .and. !empty( uNewValue )
-      ::appendFilter()
+   if ( ::oBrwFilter:nArrayAt ) == len( ::oController:aFilter ) .and. !empty( uNewValue )
+      ::oController:appendFilter()
    end if 
 
 RETURN ( ::oBrwFilter:Refresh() )
@@ -511,28 +561,12 @@ METHOD changeFilterLine() CLASS FiltrosView
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-
-/*
-   local aSerialized := fw_valtoexp( ::aFilter )
-
-   logWrite( aSerialized )
-
-   msgalert( valtype( aSerialized ), "despues de serializar" )
-
-   msgalert( hb_valtoexp( &( aSerialized ) ) )
-
-   msgalert( valtype( &( aSerialized ) ), "despues de la macro" )
-*/
-
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 CLASS SaveFiltrosView FROM SQLBaseView
-
-   DATA cFilterName                    INIT space( 240 )
 
    METHOD Activate()
       METHOD validActivate()
@@ -559,7 +593,7 @@ METHOD Activate() CLASS SaveFiltrosView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::cFilterName ;
+   REDEFINE GET   ::oController:cName ;
       ID          100 ;
       OF          ::oDialog
 
@@ -579,11 +613,16 @@ RETURN ( ::oDialog:nResult == IDOK )
 
 METHOD validActivate() CLASS SaveFiltrosView
 
-   if empty( ::cFilterName )
+   if empty( ::oController:cName )
       ::oController:getSaveDialogView():showMessage( "El nombre del filtro no puede estar vacio." )
       RETURN ( .f. )
    end if 
-   
+
+   if ::oController:existName()
+      ::showMessage( "El nombre del filtro ya existe." )
+      RETURN ( .f. )
+   end if 
+  
    ::oDialog:end( IDOK )
 
 RETURN ( .t. )
