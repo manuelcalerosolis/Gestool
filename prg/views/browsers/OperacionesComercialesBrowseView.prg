@@ -258,6 +258,8 @@ RETURN ( nil )
 
 CLASS OperacionesComercialesPreviewBrowseView FROM OperacionesComercialesBaseBrowseView 
 
+   DATA cName                          INIT "OperacionesComercialesPreviewBrowseView"
+
    DATA lFastEdit                      INIT .f.
 
    DATA lDeletedColored                INIT .t.

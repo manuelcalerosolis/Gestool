@@ -11,13 +11,15 @@ CLASS SQLFacturasVentasModel FROM SQLOperacionesComercialesModel
 
    METHOD getInitialWhereDocumentos( cWhere )
 
+   METHOD getInitialLimitCero()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD getInitialWhereDocumentos( cWhere ) CLASS SQLFacturasVentasModel
 
-local cSql
+   local cSql
 
    TEXT INTO cSql
 
@@ -45,15 +47,24 @@ local cSql
                               SQLArticulosTarifasModel():getTableName(),;
                               ::getColumnsSelect() )
 
-   if empty( cWhere )
-      cSql  += "LIMIT 0"
-   else
-      cSql  += "WHERE " + ::cTableName + ".uuid " + cWhere
+   if !empty( cWhere )
+      cSql  +=  "WHERE " + ::cTableName + ".canceled_at = 0 AND " + ::cTableName + ".uuid " + cWhere
    end if 
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
+
+METHOD getInitialLimitCero() CLASS SQLFacturasVentasModel
+
+   local cSql
+
+   cSql  := ::getInitialWhereDocumentos()   
+
+   cSql  += "LIMIT 0"
+
+RETURN ( cSql )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

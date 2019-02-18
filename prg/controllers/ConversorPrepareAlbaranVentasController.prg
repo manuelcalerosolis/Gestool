@@ -25,9 +25,9 @@ CLASS ConversorPrepareAlbaranVentasController FROM ConversorPrepareController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getConversorView()           INLINE ( if( empty( ::oConversorView ), ::oConversorView := ConversorAlbaranVentasView():New( self ), ), ::oConversorView ) 
+   METHOD getConversorView()           INLINE ( iif( empty( ::oConversorView ), ::oConversorView := ConversorAlbaranVentasView():New( self ), ), ::oConversorView ) 
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesPreviewBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesPreviewBrowseView():New( self ), ), ::oBrowseView ) 
 
    METHOD getRowSet()                  INLINE ( iif( empty( ::oRowSet ), ::oRowSet := SQLRowSet():New( self ), ), ::oRowSet )
 
@@ -85,7 +85,7 @@ METHOD generatePreview() CLASS ConversorPrepareAlbaranVentasController
       {|oController| aeval( oController:getRange():getWhere(),;
          {|cCondition| aadd( aWhere, cCondition ) } ) } )*/
 
-   ::getRowset():build( SQLAlbaranesVentasModel():getSentenceAlbaranWhereHash( ::getConversorView():oPeriodo:oFechaInicio:Value(), ::getConversorView():oPeriodo:oFechaFin:Value(), aWhere ) )
+   ::getRowset():build( SQLAlbaranesVentasModel():getSentenceAlbaranWhere( ::getConversorView():oPeriodo:oFechaInicio:Value(), ::getConversorView():oPeriodo:oFechaFin:Value(), aWhere ) )
 
    ::getBrowseView():selectAll()
 

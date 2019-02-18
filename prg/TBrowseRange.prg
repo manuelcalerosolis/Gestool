@@ -131,8 +131,8 @@ METHOD Resource() CLASS BrowseRange
    with object ( ::oColFilter := ::oBrwRango:AddCol() )
       :cHeader       := "Fitrar"         
       :bStrData      := {|| "" }
-      :bEditValue    := {|| ::oBrwRango:aRow:getRange():lAll }
-      :bOnPostEdit   := {|o,x| ::oBrwRango:aRow:getRange():lAll := x }
+      :bEditValue    := {|| .t. }
+      // :bOnPostEdit   := {|o,x| ::oBrwRango:aRow:getRange():lAll := x }
       :nWidth        := 40
       :Cargo         := 0.10
       :SetCheck( { "gc_funnel_add_16", "gc_funnel_broom_16" } )
@@ -213,8 +213,6 @@ END CLASS
 METHOD New( oController ) CLASS ItemRange
 
    ::oController                       := oController
-
-   ::lAll                              := .f.
 
    ::uFrom                             := space( 20 )
 

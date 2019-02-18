@@ -173,7 +173,7 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 METHOD getInitialSelect() CLASS SQLConversorDocumentosModel
 
-RETURN ( ::getDestinoController():getModel():getInitialWhereDocumentos( ::oController:setWhereArray( ::oController:aCreatedDocument ) ) )
+RETURN ( ::getDestinoController():getModel():getInitialLimitCero( ::oController:setWhereArray( ::oController:aCreatedDocument ) ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
