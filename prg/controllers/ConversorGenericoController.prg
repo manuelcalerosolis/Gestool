@@ -39,15 +39,15 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS ConversorDocumentosController 
+METHOD New( oController ) CLASS ConversorGenericoController 
 
-   ::oController  := oController
+   ::oController                       := oController
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS ConversorDocumentosController
+METHOD End() CLASS ConversorGenericoController
 
    if !empty( ::oModel )
       ::oModel:End()
@@ -57,7 +57,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD Edit( nId ) CLASS ConversorDocumentosController
+METHOD Edit( nId ) CLASS ConversorGenericoController
 
    if empty( nId )
       nId   := ::getIdFromRowSet()
@@ -70,12 +70,10 @@ RETURN ( ::getDestinoController():Edit( nId ) )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS SQLConversorDocumentosModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "documentos_conversion"
+   DATA cTableName                     INIT "documentos_conversion"
 
    METHOD getColumns()
 
@@ -107,10 +105,10 @@ METHOD getColumns() CLASS SQLConversorDocumentosModel
    hset( ::hColumns, "documento_origen_uuid",      {  "create"    => "VARCHAR( 40 )"                              ,;
                                                       "default"   => {|| space( 40 ) } }                          )
 
-   hset( ::hColumns, "documento_destino_tabla",     {  "create"    => "VARCHAR( 200 )"                              ,;
+   hset( ::hColumns, "documento_destino_tabla",    {  "create"    => "VARCHAR( 200 )"                              ,;
                                                       "default"   => {|| space( 200 ) } }                          )
 
-   hset( ::hColumns, "documento_destino_uuid",      {  "create"    => "VARCHAR( 40 )"                              ,;
+   hset( ::hColumns, "documento_destino_uuid",     {  "create"    => "VARCHAR( 40 )"                              ,;
                                                       "default"   => {|| space( 40 ) } }                          )
 
 RETURN ( ::hColumns )
@@ -123,19 +121,14 @@ METHOD insertRelationDocument( uuidOrigin, cTableOrigin, uuidDestination, cTable
 
    TEXT INTO cSql
 
-   INSERT  INTO %1$s
-      ( uuid, documento_origen_tabla, documento_origen_uuid, documento_destino_tabla, documento_destino_uuid ) 
-
-   VALUES
-   ( UUID(), %2$s, %3$s,%4$s , %5$s )
+      INSERT  INTO %1$s
+         ( uuid, documento_origen_tabla, documento_origen_uuid, documento_destino_tabla, documento_destino_uuid ) 
+      VALUES
+         ( UUID(), %2$s, %3$s,%4$s , %5$s )
       
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql, ::getTableName(),;
-                                 quoted( cTableOrigin ),;
-                                 quoted( uuidOrigin ),;
-                                 quoted( cTableDestination ),;
-                                 quoted( uuidDestination ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( cTableOrigin ), quoted( uuidOrigin ), quoted( cTableDestination ), quoted( uuidDestination ) )
                                  
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 
@@ -143,18 +136,16 @@ RETURN ( getSQLDatabase():Exec ( cSql ) )
 
 METHOD deleteWhereDestinoUuid( Uuid ) CLASS SQLConversorDocumentosModel
 
-local cSql
+   local cSql
 
    TEXT INTO cSql
 
-   DELETE FROM %1$s
-   WHERE documento_destino_uuid= %2$s
+      DELETE FROM %1$s
+         WHERE documento_destino_uuid= %2$s
 
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql,;
-                           ::getTableName(),;
-                           quoted( Uuid ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( Uuid ) )
    
 RETURN ( getSQLDatabase():Exec( cSql ) )
 
@@ -166,17 +157,13 @@ METHOD countDocumentoWhereUuidOigen( uuidOrigen ) CLASS SQLConversorDocumentosMo
 
    TEXT INTO cSql
 
-   SELECT COUNT(*)
-   
-   FROM %1$s
-
-   WHERE documento_origen_uuid = %2$s
+      SELECT COUNT(*)
+         FROM %1$s
+         WHERE documento_origen_uuid = %2$s
 
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql,;
-                           ::getTableName(),;
-                           quoted( uuidOrigen ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidOrigen ) )
   
 RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 

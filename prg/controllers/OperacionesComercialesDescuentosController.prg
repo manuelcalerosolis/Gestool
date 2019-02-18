@@ -23,11 +23,11 @@ CLASS OperacionesComercialesDescuentosController FROM SQLBrowseController
    
    METHOD getModel()                   VIRTUAL
 
-   METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesDescuentosBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesDescuentosBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesDescuentosView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesDescuentosView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := OperacionesComercialesDescuentosValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := OperacionesComercialesDescuentosValidator():New( self ), ), ::oValidator )
 
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := OperacionesComercialesDescuentosRepository():New( self ), ), ::oRepository )
 
@@ -115,7 +115,6 @@ RETURN ( .t. )
 METHOD insertDiscounts( hDiscounts, uuidDocumentoDestino ) CLASS OperacionesComercialesDescuentosController
 
    local hDiscount
-
    local uuidDestino
 
    for each hDiscount in hDiscounts
@@ -159,13 +158,13 @@ RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hDiscount, 
 
 CLASS OperacionesComercialesDescuentosBrowseView FROM SQLBrowseView
 
-   DATA lFastEdit          INIT .t.
+   DATA lFastEdit                      INIT .t.
 
-   DATA lFooter            INIT .t.
+   DATA lFooter                        INIT .t.
 
-   DATA nFreeze            INIT 1
+   DATA nFreeze                        INIT 1
 
-   DATA nMarqueeStyle      INIT 3
+   DATA nMarqueeStyle                  INIT 3
 
    DATA oColumnNombre
 

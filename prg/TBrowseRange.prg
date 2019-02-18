@@ -183,35 +183,9 @@ CLASS ItemRange
 
    DATA oController
 
-   DATA Expresion
-
-   DATA Valor
-
-   DATA lAll
    DATA uFrom
    DATA uTo
 
-   DATA HelpDesde
-   DATA HelpHasta
-
-   DATA ValidDesde
-   DATA ValidHasta
-   
-   DATA TextDesde
-   DATA TextHasta
-   
-   DATA Imagen
-   DATA bCondition
-   DATA lImprimir
-   
-   DATA cPicDesde
-   DATA cPicHasta
-   
-   DATA cBitmap
-   
-   DATA bValidMayorIgual
-   DATA bValidMenorIgual
-   
    METHOD New( oController )           CONSTRUCTOR
       
    METHOD End()                        VIRTUAL
@@ -229,6 +203,8 @@ CLASS ItemRange
    METHOD getTo()                      INLINE ( if( empty( ::uTo ), "", alltrim( ::uTo ) ) )
    METHOD setTo( uTo )                 INLINE ( ::uTo := ::extractCode( uTo ) )
    METHOD showToNombre()               INLINE ( ::showNombre( ::uTo ) )
+
+   METHOD getWhere()
 
 END CLASS
 

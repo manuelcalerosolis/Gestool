@@ -20,7 +20,7 @@ CLASS FiltrosController FROM SQLBrowseController
                                                 "Y"   => " AND ",;
                                                 "O"   => " OR " }
 
-   DATA hConditions                    INIT  {  "Igual"        => " == ",;
+   DATA hOperators                     INIT  {  "Igual"        => " == ",;
                                                 "Distinto"     => " != ",;
                                                 "Mayor"        => " > ",;
                                                 "Menor"        => " < ",;
@@ -44,17 +44,25 @@ CLASS FiltrosController FROM SQLBrowseController
 
    METHOD deleteFilter()
 
+   METHOD selectFilter()
+
    METHOD deleteLineFilter( nLine )    INLINE ( adel( ::aFilter, nLine, .t. ) )
 
    METHOD loadStructure( hColumns )
 
-   METHOD getStructureType( cText )
+   METHOD getStructureKey( cText )
+
+   METHOD getStructureType( cText )    INLINE ( ::getStructureKey( cText, "text" ) )
+   
+   METHOD getStructureField( cText )   INLINE ( ::getStructureKey( cText, "field" ) )
 
    METHOD getTexts()        
 
    METHOD gettingSelectSentence()
 
    METHOD existName()                  INLINE ( ::getModel():existName( ::cName, ::cScope ) )
+
+   METHOD toSQL()
 
    //Construcciones tardias----------------------------------------------------
 
@@ -114,9 +122,7 @@ RETURN ( ::Super:End() )
 
 METHOD gettingSelectSentence() CLASS FiltrosController
 
-   ::getModel():setGeneralWhere( "tabla = " + quoted( ::cScope ) )
-
-RETURN ( nil )
+RETURN ( ::getModel():setGeneralWhere( "tabla = " + quoted( ::cScope ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -133,14 +139,16 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStructureType( cText ) CLASS FiltrosController
+METHOD getStructureKey( cText, cKey ) CLASS FiltrosController
 
    local nPos
 
-   nPos  := ascan( ::aStructure, {|h| hget( h, "text" ) == cText } )
+   DEFAULT cKey   := "type"
+
+   nPos           := ascan( ::aStructure, {|h| hget( h, "text" ) == cText } )
 
    if nPos != 0
-      RETURN ( hget( ::aStructure[ nPos ], "type" ) )
+      RETURN ( hget( ::aStructure[ nPos ], cKey ) )
    end if
 
 RETURN ( '' )
@@ -189,17 +197,22 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetFilter() CLASS FiltrosController
+METHOD SelectFilter() CLASS FiltrosController
 
-   local nId            := ::getBrowseView():getRowSet():fieldGet( 'id' )
+   local nId
+   local hBuffer
+
+   nId            := ::getBrowseView():getRowSet():fieldGet( 'id' )
 
    if empty( nId )
       RETURN ( nil )
    end if 
 
-   ::hSelectedBuffer    := ::getModel():loadCurrentBuffer( nId )
+   hBuffer        := ::getModel():loadCurrentBuffer( nId )
 
-   ::aFilter hget( hSelectedBuffer, "filtro" ) 
+   if !empty( hBuffer )
+      ::aFilter   := hget( hBuffer, "filtro" ) 
+   end if 
 
 RETURN ( nil )
 
@@ -246,6 +259,28 @@ METHOD getTexts() CLASS FiltrosController
    aeval( ::aStructure, {|h| aadd( ::aDescriptions, hget( h, "text" ) ) } )
 
 RETURN ( ::aDescriptions ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD toSQL() CLASS FiltrosController
+
+   local cSql     
+   local hFilter
+   
+   cSql     := ""
+
+   if empty( ::aFilter )
+      RETURN ( nil )
+   end if 
+
+   for each hFilter in ::aFilter 
+      cSql  += ::getStructureField( hFilter[ 1 ] )
+      cSql  += hget( ::hOperators, hFilter[ 2 ] )
+      cSql  += quoted( hFilter[ 3 ] )
+      cSql  += hget( ::hNexo, hFilter[ 4 ] )
+   next
+
+RETURN ( cSql ) 
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -411,7 +446,7 @@ METHOD Activate() CLASS FiltrosView
 
    // Filtros almacenados -----------------------------------------------------
 
-   TBtnBmp():ReDefine( 501, "new16", , , , , {|| msgalert( "Seleccionar filtro" ) }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Seleccionar filtro" )
+   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::oController:selectFilter(), ::oBrwFilter:goTop(), ::oBrwFilter:Refresh() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Seleccionar filtro" )
 
    TBtnBmp():ReDefine( 502, "del16", , , , , {|| ::oController:deleteFilter() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Eliminar filtro" )
 

@@ -15,9 +15,7 @@ CLASS ConversorDocumentosController FROM SQLBrowseController
 
    METHOD insertRelationDocument()     INLINE ( ::getModel():insertRelationDocument( ::uuidDocumentoOrigen, ::getOrigenController():getModel():cTableName, ::uuidDocumentoDestino, ::getDestinoController():getModel():cTableName ) )
 
-   METHOD addConvert()
-
-   //Contrucciones tarias------------------------------------------------------
+   // Contrucciones tarias------------------------------------------------------
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLConversorDocumentosModel():New( self ), ), ::oModel ) 
 
