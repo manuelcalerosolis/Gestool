@@ -472,9 +472,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD StartActivate() CLASS FiltrosView
 
-   ::changeFilterLine()
-
-RETURN ( nil )
+RETURN ( ::changeFilterLine() )
 
 //---------------------------------------------------------------------------//
 

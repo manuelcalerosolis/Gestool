@@ -50,6 +50,8 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    METHOD updateEmpresa()
 
+   METHOD updateAll()
+
    METHOD seedEmpresa()
 
    METHOD BackUp()
@@ -82,7 +84,7 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
                                        INLINE ( iif( empty( ::oCuentasBancariasController ), ::oCuentasBancariasController := CuentasBancariasGestoolController():New( self ), ), ::oCuentasBancariasController )
 
    METHOD getDelegacionesController();
-                                    INLINE ( if( empty( ::oDelegacionesController ), ::oDelegacionesController := DelegacionesController():New( self ), ), ::oDelegacionesController )
+                                       INLINE ( if( empty( ::oDelegacionesController ), ::oDelegacionesController := DelegacionesController():New( self ), ), ::oDelegacionesController )
 
 END CLASS
 
@@ -249,6 +251,22 @@ METHOD updateEmpresa()
             {|nSelect| ::getRowSet():goToRecNo( nSelect ),;
                msgRun( "Actualizando empresa : " + alltrim( cvaltostr( ::getRowSet():fieldGet( 'nombre' ) ) ),;
                   "Espere por favor...", {|| SQLCompanyMigrations():Run( cvaltostr( ::getRowSet():fieldGet( 'codigo' ) ) ) } ) } )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateAll()
+
+   local aCodigoEmpresa := ::getModel():getColumn( 'codigo' ) 
+
+   if empty( aCodigoEmpresa )
+      RETURN ( nil )
+   end if 
+
+   msgRun(  "Actualizando empresas",;
+            "Espere por favor...",;
+            {|| aeval( aCodigoEmpresa, {|cCodigo| SQLCompanyMigrations():Run( cCodigo ) } ) } )
 
 RETURN ( nil )
 

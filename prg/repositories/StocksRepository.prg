@@ -103,6 +103,20 @@ CLASS StocksRepository FROM SQLBaseRepository
    METHOD sqlAlbaranesVentasLineasCombinaciones() ;
                                        INLINE ( ::sqlAlbaranesVentasLineasLote( "albaranes_ventas_lineas.combinaciones_uuid = combinaciones_uuid" ) )
 
+   METHOD sqlFacturasVentasLineas()
+
+   METHOD sqlFacturasVentasLineasAlmacen( cParam1, cParam2, cParam3 ) ;
+                                       INLINE ( ::sqlFacturasVentasLineas( "facturas_ventas.almacen_codigo = almacen_codigo", cParam1, cParam2, cParam3 ) ) 
+
+   METHOD sqlFacturasVentasLineasUbicacion( cParam1, cParam2 ) ;
+                                       INLINE ( ::sqlFacturasVentasLineasAlmacen( "facturas_ventas_lineas.ubicacion_codigo = ubicacion_codigo", cParam1, cParam2 ) ) 
+
+   METHOD sqlFacturasVentasLineasLote( cParam1 ) ;
+                                       INLINE ( ::sqlFacturasVentasLineasUbicacion( "facturas_ventas_lineas.lote = lote", cParam1 ) ) 
+
+   METHOD sqlFacturasVentasLineasCombinaciones() ;
+                                       INLINE ( ::sqlFacturasVentasLineasLote( "facturas_ventas_lineas.combinaciones_uuid = combinaciones_uuid" ) )
+
    METHOD sqlConsolidacionesAlmacenesLineas(...)
 
    METHOD sqlConsolidacionesAlmacenesLineasAlmacen( cParam1, cParam2, cParam3 ) ;
@@ -281,6 +295,50 @@ METHOD sqlAlbaranesVentasLineas(...) CLASS StocksRepository
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
+
+METHOD sqlFacturasVentasLineas(...) CLASS StocksRepository
+
+   local cSql  
+
+   TEXT INTO cSql
+      SELECT
+         facturas_ventas_lineas.uuid AS uuid,
+         'facturas_ventas_lineas' AS tabla,
+         ( IFNULL( facturas_ventas_lineas.unidad_medicion_factor, 1 ) * facturas_ventas_lineas.articulo_unidades ) AS total_unidades,
+         facturas_ventas_lineas.articulo_codigo AS articulo_codigo,
+         facturas_compras.almacen_codigo AS almacen_codigo,
+         facturas_ventas_lineas.ubicacion_codigo AS ubicacion_codigo,
+         facturas_ventas_lineas.lote AS lote,
+         facturas_ventas_lineas.combinaciones_uuid AS combinaciones_uuid,
+         facturas_compras.fecha_valor_stock AS fecha_valor_stock
+      
+      FROM %2$s AS facturas_ventas_lineas 
+
+         INNER JOIN %1$s AS facturas_compras
+            ON facturas_compras.uuid = facturas_ventas_lineas.parent_uuid      
+
+      WHERE facturas_ventas_lineas.articulo_codigo = articulo_codigo AND 
+            facturas_ventas_lineas.deleted_at = 0 AND
+            ( 
+            SELECT 
+               COUNT( * ) 
+               FROM %3$s 
+               WHERE documentos_conversion.documento_destino_uuid = facturas_ventas_lineas.uuid AND      
+                     documentos_conversion.documento_destino_tabla = 'facturas_ventas_lineas' AND 
+                     documentos_conversion.documento_origen_tabla = 'albaranes_ventas_lineas'
+            ) = 0
+   ENDTEXT
+
+   cSql     := hb_strformat( cSql, SQLFacturasVentasModel():getTableName(), SQLFacturasVentasLineasModel():getTableName(), SQLConversorDocumentosModel():getTableName() )
+
+   cSql     := alltrim( cSql )
+
+   aeval( hb_aparams(), {|cParam| if( !empty( cParam ), cSql += " AND " + cParam, ) } )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD sqlConsolidacionesAlmacenesLineas(...) CLASS StocksRepository
 
@@ -524,19 +582,21 @@ METHOD createFunctionStockWhereCodigo() CLASS StocksRepository
             %7$s 
                UNION
             %8$s
+               UNION
+            %9$s
          ) 
          AS movimientos_union
 
          LEFT JOIN 
             (
-               %9$s
+               %10$s
             ) 
             AS consolidaciones_almacenes
 
-            %10$s
+            %11$s
 
          WHERE
-            %11$s
+            %12$s
       )
       AS stocks;    
 
@@ -555,6 +615,7 @@ METHOD createFunctionStockWhereCodigo() CLASS StocksRepository
                            ::sqlMovimientosOrigenAlmacenesLineas(),;
                            ::sqlMovimientosDestinoAlmacenesLineas(),;
                            ::sqlAlbaranesVentasLineas(),;
+                           ::sqlFacturasVentasLineas(),;
                            ::sqlJoinConsolidacionesAlmacenesLineas(),;
                            ::sqlOnMovimientosUnion(),;
                            ::sqlWhereMovimientosUnion() )
@@ -607,19 +668,21 @@ METHOD createFunctionStockWhereCodigoAlmacen() CLASS StocksRepository
             %7$s 
                UNION
             %8$s
+               UNION
+            %9$s
          ) 
          AS movimientos_union
 
          LEFT JOIN 
             (
-               %9$s
+               %10$s
             ) 
             AS consolidaciones_almacenes
 
-            %10$s
+            %11$s
 
          WHERE
-            %11$s
+            %12$s
       )
       AS stocks;  
 
@@ -638,6 +701,7 @@ METHOD createFunctionStockWhereCodigoAlmacen() CLASS StocksRepository
                            ::sqlMovimientosOrigenAlmacenesLineasAlmacen (),;
                            ::sqlMovimientosDestinoAlmacenesLineasAlmacen(),;
                            ::sqlAlbaranesVentasLineasAlmacen(),;
+                           ::sqlFacturasVentasLineasAlmacen(),;
                            ::sqlJoinConsolidacionesAlmacenesLineasAlmacen(),;
                            ::sqlOnMovimientosUnion(),;
                            ::sqlWhereMovimientosUnion() )
@@ -690,19 +754,21 @@ METHOD createFunctionStockWhereCodigoAlmacenUbicacion() CLASS StocksRepository
             %7$s 
                UNION
             %8$s
+               UNION
+            %9$s
          ) 
          AS movimientos_union
 
          LEFT JOIN 
             (
-               %9$s
+               %10$s
             ) 
             AS consolidaciones_almacenes
 
-            %10$s
+            %11$s
 
          WHERE
-            %11$s
+            %12$s
       )
       AS stocks;  
 
@@ -721,6 +787,7 @@ METHOD createFunctionStockWhereCodigoAlmacenUbicacion() CLASS StocksRepository
                            ::sqlMovimientosOrigenAlmacenesLineasUbicacion(),;
                            ::sqlMovimientosDestinoAlmacenesLineasUbicacion(),;
                            ::sqlAlbaranesVentasLineasUbicacion(),;
+                           ::sqlFacturasVentasLineasUbicacion(),;
                            ::sqlJoinConsolidacionesAlmacenesLineasUbicacion(),;
                            ::sqlOnMovimientosUnion(),;
                            ::sqlWhereMovimientosUnion() )
@@ -773,19 +840,21 @@ METHOD createFunctionStockWhereCodigoAlmacenLote() CLASS StocksRepository
             %7$s 
                UNION
             %8$s
+               UNION
+            %9$s
          ) 
          AS movimientos_union
 
          LEFT JOIN 
             (
-               %9$s
+               %10$s
             ) 
             AS consolidaciones_almacenes
 
-            %10$s
+            %11$s
 
          WHERE
-            %11$s
+            %12$s
       )
       AS stocks;  
 
@@ -804,6 +873,7 @@ METHOD createFunctionStockWhereCodigoAlmacenLote() CLASS StocksRepository
                            ::sqlMovimientosOrigenAlmacenesLineasLote(),;
                            ::sqlMovimientosDestinoAlmacenesLineasLote(),;
                            ::sqlAlbaranesVentasLineasLote(),;
+                           ::sqlFacturasVentasLineasLote(),;
                            ::sqlJoinConsolidacionesAlmacenesLineasLote(),;
                            ::sqlOnMovimientosUnion(),;
                            ::sqlWhereMovimientosUnion() )
@@ -856,19 +926,21 @@ METHOD createFunctionStockWhereCodigoAlmacenCombinaciones() CLASS StocksReposito
             %7$s 
                UNION
             %8$s
+               UNION
+            %9$s
          ) 
          AS movimientos_union
 
          LEFT JOIN 
             (
-               %9$s
+               %10$s
             ) 
             AS consolidaciones_almacenes
 
-            %10$s
+            %11$s
 
          WHERE
-            %11$s
+            %12$s
       )
       AS stocks;  
 
@@ -887,6 +959,7 @@ METHOD createFunctionStockWhereCodigoAlmacenCombinaciones() CLASS StocksReposito
                            ::sqlMovimientosOrigenAlmacenesLineasCombinaciones(),;
                            ::sqlMovimientosDestinoAlmacenesLineasCombinaciones(),;
                            ::sqlAlbaranesVentasLineasCombinaciones(),;
+                           ::sqlFacturasVentasLineasCombinaciones(),;
                            ::sqlJoinConsolidacionesAlmacenesLineasCombinaciones(),;
                            ::sqlOnMovimientosUnion(),;
                            ::sqlWhereMovimientosUnion() )
@@ -944,19 +1017,21 @@ METHOD createProcedureInfoWhereCodigo() CLASS StocksRepository
             %7$s 
                UNION
             %8$s
+               UNION
+            %9$s
          ) 
          AS movimientos_union
 
          LEFT JOIN 
             (
-               %9$s
+               %10$s
             ) 
             AS consolidaciones_almacenes
 
-            %10$s
+            %11$s
 
          WHERE
-            %11$s
+            %12$s
       )
       AS info;    
 
@@ -973,6 +1048,7 @@ METHOD createProcedureInfoWhereCodigo() CLASS StocksRepository
                            ::sqlMovimientosOrigenAlmacenesLineas(),;
                            ::sqlMovimientosDestinoAlmacenesLineas(),;
                            ::sqlAlbaranesVentasLineas(),;
+                           ::sqlFacturasVentasLineas(),;
                            ::sqlJoinConsolidacionesAlmacenesLineas(),;
                            ::sqlOnMovimientosUnion(),;
                            ::sqlWhereMovimientosUnion() )

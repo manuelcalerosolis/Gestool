@@ -819,7 +819,7 @@ RETURN
 
 //---------------------------------------------------------------------------//
 
-static FUNCTION WndPaint( hDC, oWnd )
+STATIC FUNCTION WndPaint( hDC, oWnd )
 
    local oBlock
 
@@ -4398,17 +4398,18 @@ FUNCTION CreateAdminSQLWindow()
    ACTIVATE WINDOW oWnd ;
       MAXIMIZED ;
       ON PAINT                ( WndPaint( hDC, oWnd ) );
+      ON INIT                 ( EmpresasController():UpdateAll() );
       ON RESIZE               ( WndResize( oWnd ) )
 
    sysrefresh()
 
-RETURN nil
+RETURN ( nil )
 
 //-----------------------------------------------------------------------------//
 
 FUNCTION inicializateHashVariables()
 
-   hVariables := {=>}
+   hVariables  := {=>}
 
 RETURN ( .t. )
 
