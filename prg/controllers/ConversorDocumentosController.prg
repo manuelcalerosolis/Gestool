@@ -15,10 +15,6 @@ CLASS ConversorDocumentosController FROM ConversorGenericoController
 
    METHOD convertDocumentDiscounts()
 
-   // Contrucciones tarias------------------------------------------------------
-
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLConversorDocumentosModel():New( self ), ), ::oModel ) 
-
 END CLASS
 
 //---------------------------------------------------------------------------//
