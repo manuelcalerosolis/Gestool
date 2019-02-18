@@ -90,6 +90,7 @@ CLASS SQLBrowseController FROM SQLApplicationController
    METHOD appendLineal() 
 
    METHOD setView( oView )             INLINE ( ::oView := oView )
+
    METHOD getView()                    INLINE ( if( empty( ::oView ), ::oDialogView, ::oView ) )
 
    METHOD setShowDeleted()

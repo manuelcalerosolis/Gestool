@@ -44,7 +44,7 @@ CLASS FiltrosController FROM SQLBrowseController
 
    METHOD deleteFilter()
 
-   METHOD selectFilter()
+   METHOD isFilterSelected()
 
    METHOD deleteLineFilter( nLine )    INLINE ( adel( ::aFilter, nLine, .t. ) )
 
@@ -52,7 +52,7 @@ CLASS FiltrosController FROM SQLBrowseController
 
    METHOD getStructureKey( cText )
 
-   METHOD getStructureType( cText )    INLINE ( ::getStructureKey( cText, "text" ) )
+   METHOD getStructureType( cText )    INLINE ( ::getStructureKey( cText, "type" ) )
    
    METHOD getStructureField( cText )   INLINE ( ::getStructureKey( cText, "field" ) )
 
@@ -93,6 +93,8 @@ METHOD New( oController ) CLASS FiltrosController
    ::loadStructure( SQLTercerosModel():getColumns() )
 
    ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
+
+   ::getBrowseView():setEvent( 'doubleClicking', {|| .f. } ) 
 
 RETURN ( Self )
 
@@ -159,8 +161,6 @@ METHOD Edit() CLASS FiltrosController
 
    ::emptyFilter()
 
-   ::getDialogView():loadConditions()
-
    ::getDialogView():Activate()
 
 RETURN ( nil )
@@ -197,7 +197,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD SelectFilter() CLASS FiltrosController
+METHOD isFilterSelected() CLASS FiltrosController
 
    local nId
    local hBuffer
@@ -205,16 +205,16 @@ METHOD SelectFilter() CLASS FiltrosController
    nId            := ::getBrowseView():getRowSet():fieldGet( 'id' )
 
    if empty( nId )
-      RETURN ( nil )
+      RETURN ( .f. )
    end if 
 
    hBuffer        := ::getModel():loadCurrentBuffer( nId )
 
    if !empty( hBuffer )
-      ::aFilter   := hget( hBuffer, "filtro" ) 
+      ::aFilter   := ( &( hget( hBuffer, "filtro" ) ) )
    end if 
 
-RETURN ( nil )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -232,7 +232,7 @@ RETURN ( nil )
 
 METHOD emptyFilter() CLASS FiltrosController
 
-   ::aFilter         := {}
+   ::aFilter      := {}
 
 RETURN ( ::appendFilter() )
 
@@ -274,10 +274,10 @@ METHOD toSQL() CLASS FiltrosController
    end if 
 
    for each hFilter in ::aFilter 
-      cSql  += ::getStructureField( hFilter[ 1 ] )
-      cSql  += hget( ::hOperators, hFilter[ 2 ] )
-      cSql  += quoted( hFilter[ 3 ] )
-      cSql  += hget( ::hNexo, hFilter[ 4 ] )
+      cSql  += ::getStructureField( hget( hFilter, "text" ) )
+      cSql  += hget( ::hOperators, hget( hFilter, "condition" ) )
+      cSql  += quoted( hget( hFilter, "value" ) )
+      cSql  += hget( ::hNexo, hget( hFilter, "nexo" ) )
    next
 
 RETURN ( cSql ) 
@@ -292,8 +292,6 @@ CLASS FiltrosView FROM SQLBaseView
 
    DATA oBrwFilter
 
-   DATA oBrwAlmacenados
-
    DATA oColCondicion
 
    DATA oColValor
@@ -306,7 +304,7 @@ CLASS FiltrosView FROM SQLBaseView
 
    METHOD StartActivate()
 
-   METHOD loadConditions()   
+   METHOD getConditions()   
 
    METHOD getFilter()                  INLINE ( ::oController:aFilter )
    
@@ -320,15 +318,15 @@ CLASS FiltrosView FROM SQLBaseView
 
    METHOD nexoOnPostEdit( o, uNewValue, nKey )
 
-   METHOD getHashType( cType )         INLINE ( hget( ::hConditions, alltrim( cType ) ) )
+   METHOD getHashType( cType )         INLINE ( hget( ::getConditions(), alltrim( cType ) ) )
 
    METHOD getConditionsType( cType )   INLINE ( hget( ::getHashType( cType ), "conditions" ) )
-
-   METHOD getConditionsCaracter()      INLINE ( ::getConditionsType( "VARCHAR" ) ) 
-
+   
    METHOD getEditType( cType )         INLINE ( hget( ::getHashType( cType ), "edit" ) )
 
    METHOD getListType( cType )         INLINE ( hget( ::getHashType( cType ), "list" ) )
+
+   METHOD getConditionsCaracter()      INLINE ( ::getConditionsType( "VARCHAR" ) ) 
 
    METHOD getFilterLineText()          INLINE ( hget( ::getFilterLine(), "text" ) )
 
@@ -351,6 +349,8 @@ CLASS FiltrosView FROM SQLBaseView
    METHOD changeFilterLine()
 
    METHOD saveFilter()                 INLINE ( ::oController:SaveFilter() )
+
+   METHOD selectFilter()
 
 END CLASS
 
@@ -382,7 +382,7 @@ METHOD Activate() CLASS FiltrosView
       DIALOGS     "FILTROS_DEFINICION",;
                   "FILTROS_DEFINICION"  
 
-   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::oController:emptyFilter(), ::oBrwFilter:goTop() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Inicializar filtro" )
+   TBtnBmp():ReDefine( 501, "gc_broom_16", , , , , {|| ::oController:emptyFilter(), ::oBrwFilter:goTop() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Inicializar filtro" )
 
    TBtnBmp():ReDefine( 502, "del16", , , , , {|| ::deleteLineFilter() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Eliminar línea" )
 
@@ -446,7 +446,7 @@ METHOD Activate() CLASS FiltrosView
 
    // Filtros almacenados -----------------------------------------------------
 
-   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::oController:selectFilter(), ::oBrwFilter:goTop(), ::oBrwFilter:Refresh() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Seleccionar filtro" )
+   TBtnBmp():ReDefine( 501, "gc_mouse_pointer_16", , , , , {|| ::SelectFilter() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Seleccionar filtro" )
 
    TBtnBmp():ReDefine( 502, "del16", , , , , {|| ::oController:deleteFilter() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Eliminar filtro" )
 
@@ -458,7 +458,7 @@ METHOD Activate() CLASS FiltrosView
 
    ApoloBtnFlat():Redefine( IDOK, {|| ::oDialog:end( IDOK ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oController:toSQL(), ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
    
@@ -498,36 +498,45 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadConditions() CLASS FiltrosView
+METHOD getConditions() CLASS FiltrosView
 
-   local hNumerics   := {  "value"        => 0,;
+   local hDate
+   local hChars
+   local hLogical
+   local hNumerics   
+
+   if empty( ::hConditions )
+
+      hNumerics      := {  "value"        => 0,;
                            "edit"         => EDIT_GET_BUTTON,;
                            "list"         => nil,;
                            "block"        => {|| nil },;
                            "conditions"   => { "Igual", "Distinto", "Mayor", "Menor", "Mayor igual", "Menor igual" } }
 
-   local hChars      := {  "value"        => space( 100 ),;
+      hChars         := {  "value"        => space( 100 ),;
                            "edit"         => EDIT_GET_BUTTON,;
                            "list"         => nil,;
                            "block"        => {|| nil },;
                            "conditions"   => { "Igual", "Distinto", "Contenga", "Mayor", "Menor", "Mayor igual", "Menor igual" } }     
 
-   local hDate       := {  "value"        => getSysDate(),;
+      hDate          := {  "value"        => getSysDate(),;
                            "edit"         => EDIT_GET_BUTTON,;
                            "list"         => nil,;
                            "conditions"   => { "Igual", "Distinto", "Mayor", "Menor", "Mayor igual", "Menor igual" } }     
 
-   local hLogical    := {  "value"        => "Si",;
+      hLogical       := {  "value"        => "Si",;
                            "edit"         => EDIT_GET_LISTBOX,;
                            "list"         => { "Si", "No" },;
                            "conditions"   => { "Igual", "Distinto" } }                                                          
 
-   ::hConditions     := {  "DECIMAL"      => hNumerics,;
+      ::hConditions  := {  "DECIMAL"      => hNumerics,;
                            "INT"          => hNumerics,;
                            "INTEGER"      => hNumerics,;
                            "VARCHAR"      => hChars,;
                            "DATE"         => hDate,;
                            "TINYINT"      => hLogical }
+
+   end if 
 
 RETURN ( ::hConditions )
 
@@ -584,7 +593,7 @@ METHOD changeFilterLine() CLASS FiltrosView
    if empty( cType )
       RETURN ( .t. )
    end if 
-      
+
    ::oColCondicion:aEditListTxt  := ::getConditionsType( cType )
    
    ::oColValor:nEditType         := ::getEditType( cType )
@@ -592,6 +601,26 @@ METHOD changeFilterLine() CLASS FiltrosView
    ::oColValor:aEditListTxt      := ::getListType( cType )
 
    ::oBrwFilter:Refresh()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectFilter() CLASS FiltrosView
+
+   if ::oController:isFilterSelected()
+
+      ::oBrwFilter:setArray( ::oController:aFilter, , , .f. )
+
+      ::oBrwFilter:goTop()
+
+      ::oBrwFilter:Refresh() 
+
+      ::oFolder:setOption( 1 )         
+      
+      successAlert( "El filtro se cargo correctamente" )   
+
+   end if 
 
 RETURN ( .t. )
 
