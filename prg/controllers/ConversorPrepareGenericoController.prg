@@ -47,8 +47,6 @@ END CLASS
 
 METHOD New( oOrigenController ) CLASS ConversorPrepareGenericoController
 
-   //msgalert( oOrigenController:className(), "className" )
-
    ::oOrigenController              := oOrigenController
 
    ::oConversorDocumentosController := ConversorDocumentosController():New( self )
@@ -65,6 +63,10 @@ METHOD End() CLASS ConversorPrepareGenericoController
 
    if !empty(::oConversorView )
       ::oConversorView:End()
+   end if
+
+   if !empty( ::oConversorDocumentosController )
+      ::oConversorDocumentosController:End()
    end if
 
 RETURN ( ::Super:End() )
@@ -101,10 +103,6 @@ METHOD Run() CLASS ConversorPrepareGenericoController
    if !empty( ::oDestinoController )
 
       ::oConversorDocumentosController():convert()
-
-      //msgalert( hb_valtoexp( ::oConversorDocumentosController():aConvert ), "aConvert" )
-
-      //::aCreatedDocument      := ::getConversorDocumentosController():convertDocument() 
 
    end if
 

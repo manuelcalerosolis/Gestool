@@ -7,11 +7,13 @@ CLASS ConversorPrepareAlbaranComprasController FROM ConversorPrepareController
 
    DATA aCreatedDocument               INIT {}
 
+   DATA oConversorAlbaranesController
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
-   METHOD Run( aSelected )             
+   METHOD Run()             
 
    METHOD convertDocument( aConvert )
 
@@ -33,7 +35,7 @@ METHOD New( oOrigenController , oDestinoController, aSelected ) CLASS ConversorP
 
    ::aSelected                      := aSelected
 
-   ::oConversorDocumentosController := ConversorDocumentosController():New( self )
+   ::oConversorAlbaranesController := ConversorAlbaranesController():New( self )
 
 RETURN ( self )
 
@@ -41,8 +43,8 @@ RETURN ( self )
 
 METHOD End() CLASS ConversorPrepareAlbaranComprasController
 
-   if !empty( ::oConversorDocumentosController )
-      ::oConversorDocumentosController:End()
+   if !empty( ::oConversorAlbaranesController )
+      ::oConversorAlbaranesController:End()
    end if
 
    if !empty( ::oConversorView )
@@ -55,7 +57,7 @@ RETURN ( ::Super:End() )
 
 METHOD Run() CLASS ConversorPrepareAlbaranComprasController
 
-   ::getConversorDocumentosController():runConvertAlbaran( ::aSelected )
+   ::oConversorAlbaranesController():Convert( ::aSelected )
 
    ::convertDocument()
 
@@ -65,7 +67,7 @@ RETURN ( nil )
 
 METHOD convertDocument() CLASS ConversorPrepareAlbaranComprasController
 
-   ::aCreatedDocument := ::getConversorDocumentosController():convertDocument()
+   ::aCreatedDocument := ::oConversorAlbaranesController():convertDocument()
 
    ::showResume()
 
