@@ -382,7 +382,7 @@ METHOD Activate() CLASS FiltrosView
       DIALOGS     "FILTROS_DEFINICION",;
                   "FILTROS_DEFINICION"  
 
-   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::oController:emptyFilter(), ::oBrwFilter:goTop() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Inicializar filtro" )
+   TBtnBmp():ReDefine( 501, "gc_broom_16", , , , , {|| ::oController:emptyFilter(), ::oBrwFilter:goTop() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Inicializar filtro" )
 
    TBtnBmp():ReDefine( 502, "del16", , , , , {|| ::deleteLineFilter() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Eliminar línea" )
 
@@ -446,7 +446,7 @@ METHOD Activate() CLASS FiltrosView
 
    // Filtros almacenados -----------------------------------------------------
 
-   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::SelectFilter() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Seleccionar filtro" )
+   TBtnBmp():ReDefine( 501, "gc_mouse_pointer_16", , , , , {|| ::SelectFilter() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Seleccionar filtro" )
 
    TBtnBmp():ReDefine( 502, "del16", , , , , {|| ::oController:deleteFilter() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Eliminar filtro" )
 

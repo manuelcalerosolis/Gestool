@@ -229,7 +229,7 @@ RETURN ( oMenu )
 
 PROCEDURE loggedTest()
 
-   /*with object ( FiltrosController():New() )
+   with object ( FiltrosController():New() )
       :Edit()
       :End()
    end with
