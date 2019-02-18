@@ -58,7 +58,8 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    METHOD buildRowSetSentence() 
 
-   METHOD buildRowSetSentenceNavigator()              INLINE ( ::buildRowSetSentence( 'navigator' ) )
+   METHOD buildRowSetSentenceNavigator() ; 
+                                       INLINE ( ::buildRowSetSentence( 'navigator' ) )
 
    METHOD activateNavigatorView()
    METHOD endNavigatorView()
@@ -66,7 +67,9 @@ CLASS SQLNavigatorController FROM SQLBrowseController
    METHOD activateDialogView()
 
    METHOD activateSelectorView()
-   METHOD activateSelectorViewNoCenter()              INLINE ( ::ActivateSelectorView( .f. ) )
+
+   METHOD activateSelectorViewNoCenter() ;
+                                       INLINE ( ::ActivateSelectorView( .f. ) )
 
    METHOD closeAllWindows()            INLINE ( if( !empty( oWnd() ), ( SysRefresh(), oWnd():CloseAll(), SysRefresh() ), ) )
 
@@ -110,20 +113,25 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    METHOD buildCustomFilter( cField, cValue, cOperator )
 
-   METHOD buildCustomInFilter( cField, cValue )       INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "IN (...)" ),;
-                                                                     ::buildInFilter( cField, cValue ), ) )
+   METHOD buildCustomInFilter( cField, cValue ) ;      
+                                       INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "IN (...)" ),;
+                                                      ::buildInFilter( cField, cValue ), ) )
    
-   METHOD buildCustomNotInFilter( cField, cValue )    INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "NOT IN (...)" ),;
-                                                                     ::buildNotInFilter( cField, cValue ), ) )
+   METHOD buildCustomNotInFilter( cField, cValue ) ;
+                                       INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "NOT IN (...)" ),;
+                                                      ::buildNotInFilter( cField, cValue ), ) )
    
-   METHOD buildCustomBiggerFilter( cField, cValue )   INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "> (...)" ),;
-                                                                     ::buildBiggerFilter( cField, cValue ), ) )
+   METHOD buildCustomBiggerFilter( cField, cValue ) ;  
+                                       INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "> (...)" ),;
+                                                      ::buildBiggerFilter( cField, cValue ), ) )
    
-   METHOD buildCustomSmallerFilter( cField, cValue )  INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "< (...)" ),;
-                                                                     ::buildSmallerFilter( cField, cValue ), ) )
+   METHOD buildCustomSmallerFilter( cField, cValue ) ; 
+                                       INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "< (...)" ),;
+                                                      ::buildSmallerFilter( cField, cValue ), ) )
    
-   METHOD buildCustomLikeFilter( cField, cValue )     INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "LIKE (...)" ),;
-                                                                     ::buildLikeFilter( cField, cValue ), ) )
+   METHOD buildCustomLikeFilter( cField, cValue ) ;
+                                       INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "LIKE (...)" ),;
+                                                      ::buildLikeFilter( cField, cValue ), ) )
 
    METHOD getNavigatorView()           INLINE ( iif( empty( ::oNavigatorView ), ::oNavigatorView := SQLNavigatorView():New( self ), ), ::oNavigatorView )
 
