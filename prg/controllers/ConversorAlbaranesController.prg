@@ -25,7 +25,12 @@ CLASS ConversorAlbaranesController FROM ConversorGenericoController
 
    METHOD getSelected()                INLINE ( ::oController:aSelected )
 
-   METHOD convert( aSelected ) 
+   METHOD Convert( aSelected ) 
+      METHOD setHeader()
+      METHOD addHeader()
+      METHOD setLines()
+      METHOD addLines()
+      METHOD setDiscounts()
       METHOD convertAlbaran( aSelected )
 
    Method isAlbaranEquals( hAlbaran )
@@ -43,15 +48,23 @@ CLASS ConversorAlbaranesController FROM ConversorGenericoController
 
    METHOD convertDocument()
 
-   //Contrucciones tarias------------------------------------------------------
+   METHOD insertHeader( aHeaders )
+      METHOD generateHeader( hHeader )
+      METHOD insertHeaderRelation( hHeader )
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLConversorDocumentosModel():New( self ), ), ::oModel ) 
+   METHOD insertLines( aLines, uuidDocumentoDestino )
+      METHOD generateLine( hLine, uuidDocumentoDestino )
+      METHOD insertLineRelation( hLine, uuidDestino )
+
+   METHOD generateDiscount( hDiscount, uuidDocumentoDestino )
+      METHOD insertDiscounts( hDiscounts, uuidDocumentoDestino )
+      METHOD insertDiscountRelation( hDiscounts, uuidDestino )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD setHeader() CLASS ConversorDocumentosController
+METHOD setHeader() CLASS ConversorAlbaranesController 
 
    local hNewHeader   := ::getOrigenController:getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
 
@@ -61,7 +74,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD addHeader() CLASS ConversorDocumentosController
+METHOD addHeader() CLASS ConversorAlbaranesController
 
    local hHeader  := ::getOrigenController():getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
 
@@ -75,7 +88,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD setLines() CLASS ConversorDocumentosController
+METHOD setLines() CLASS ConversorAlbaranesController
 
    local aLines   := ::getOrigenController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
 
@@ -89,7 +102,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD addLines() CLASS ConversorDocumentosController
+METHOD addLines() CLASS ConversorAlbaranesController
 
    local aLines   := ::getOrigenController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
 
@@ -103,7 +116,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD setDiscounts() CLASS ConversorDocumentosController
+METHOD setDiscounts() CLASS ConversorAlbaranesController
 
    local aDiscounts  := ::getOrigenController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
 
@@ -117,7 +130,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD convert( aSelected ) CLASS ConversorDocumentosController
+METHOD Convert( aSelected ) CLASS ConversorAlbaranesController
    
    ::aConvert           := {}
 
@@ -129,15 +142,13 @@ METHOD convert( aSelected ) CLASS ConversorDocumentosController
 
    ::aCreatedDocument   := {}
 
-   msgalert( hb_valtoexp( aSelected ), "aSelected en convert" )
-
    ::convertAlbaran( aSelected ) 
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD convertAlbaran( aSelected ) CLASS ConversorDocumentosController
+METHOD convertAlbaran( aSelected ) CLASS ConversorAlbaranesController
 
    Local hAlbaran
    local hAlbaranes 
@@ -183,12 +194,13 @@ METHOD convertAlbaran( aSelected ) CLASS ConversorDocumentosController
       end if
 
    next
+ 
 
 RETURN ( ::aCreatedDocument )
 
 //---------------------------------------------------------------------------//
 
-METHOD addConvert() CLASS ConversorDocumentosController
+METHOD addConvert() CLASS ConversorAlbaranesController
 
    if empty( ::aHeader )
       RETURN ( nil )
@@ -206,7 +218,7 @@ RETURN ( ::aConvert )
 
 //---------------------------------------------------------------------------//
 
-METHOD isAlbaranEquals( hAlbaran ) CLASS ConversorDocumentosController
+METHOD isAlbaranEquals( hAlbaran ) CLASS ConversorAlbaranesController
 
    if ::lDescuento
       RETURN ( .f. )
@@ -248,7 +260,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD setWhereArray( aSelected ) CLASS ConversorDocumentosController
+METHOD setWhereArray( aSelected ) CLASS ConversorAlbaranesController
    
    local cWhere
    
@@ -266,7 +278,7 @@ RETURN ( cWhere )
 
 //---------------------------------------------------------------------------//
 
-METHOD Edit( nId ) CLASS ConversorDocumentosController
+METHOD Edit( nId ) CLASS ConversorAlbaranesController
 
    if empty( nId )
       nId   := ::getIdFromRowSet()
@@ -276,24 +288,22 @@ RETURN ( ::getDestinoController():Edit( nId ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD convertDocument() CLASS ConversorDocumentosController
+METHOD convertDocument() CLASS ConversorAlbaranesController
 
    // ::aCreatedDocument            := ::oController:oDestinoController:convertDocument( ::aConvert )
 
    Local hConvert
    local uuidDocumentoDestino
 
-   msgalert( ::getDestinoController():className() )
-
    for each hConvert in ::aConvert
 
-      uuidDocumentoDestino       := ::getDestinoController():insertHeader( hget( hConvert, "header" ) )
+      uuidDocumentoDestino       := ::insertHeader( hget( hConvert, "header" ) )
 
       if !empty( uuidDocumentoDestino )
 
-         ::getDestinoController():getLinesController():insertLines( hget( hConvert, "lines" ), uuidDocumentoDestino )
+         ::insertLines( hget( hConvert, "lines" ), uuidDocumentoDestino )
 
-         ::getDestinoController():getDiscountController():insertDiscounts( hget( hConvert, "discounts" ), uuidDocumentoDestino )
+         ::insertDiscounts( hget( hConvert, "discounts" ), uuidDocumentoDestino ) 
 
          // ::getDestinoController():getRecibosGeneratorController():GenerateNegative( uuidDocumentoDestino )
 
@@ -305,6 +315,127 @@ METHOD convertDocument() CLASS ConversorDocumentosController
 
 RETURN ( ::aCreatedDocument )
 
+//---------------------------------------------------------------------------//
+
+METHOD insertHeader( aHeaders ) CLASS ConversorAlbaranesController
+
+   local hHeader
+
+   ::uuidDocumentoDestino  := ::generateHeader( hClone( aFirst( aHeaders ) ) )
+
+   msgalert( ::uuidDocumentoDestino, "uuidDocumentoDestino")
+
+   if empty( ::uuidDocumentoDestino )
+      RETURN ( nil )
+   end if 
+
+   aadd( ::aCreatedDocument, ::uuidDocumentoDestino )
+      
+   for each hHeader in aHeaders
+      ::insertHeaderRelation( hHeader )
+   next
+
+RETURN ( ::uuidDocumentoDestino )
+
+//---------------------------------------------------------------------------//
+
+METHOD generateHeader( hHeader ) CLASS ConversorAlbaranesController
+
+   hDels( hHeader, { "uuid", "id", "numero" } )
+
+   if empty( ::getDestinoController():getModel():insertBlankBuffer( hHeader ) )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::getDestinoController():getModelBuffer( "uuid" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertHeaderRelation( hHeader ) CLASS ConversorAlbaranesController
+
+RETURN ( ::insertRelationDocument( hget( hHeader, "uuid" ), ::getOrigenController():getModel():cTableName, ::uuidDocumentoDestino, ::getDestinoController():getModel():cTableName ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD generateLine( hLine, uuidDocumentoDestino ) CLASS ConversorAlbaranesController
+
+   hDels( hLine, { "uuid", "id" } )
+
+   hSet( hLine, "parent_uuid", uuidDocumentoDestino )
+
+   if empty( ::getDestinoController():getLinesController():getModel():insertBlankBuffer( hLine ) )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::getDestinoController():getLinesController():getModelBuffer( "uuid" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertLines( aLines, uuidDocumentoDestino ) CLASS ConversorAlbaranesController
+
+   local hLine
+   local uuidDestino
+
+   for each hLine in aLines
+
+      uuidDestino    := ::generateLine( hClone( hLine ), uuidDocumentoDestino )
+
+      if !empty( uuidDestino )
+         ::insertLineRelation( hLine, uuidDestino )
+      end if 
+
+   next
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertLineRelation( hLine, uuidDestino ) CLASS ConversorAlbaranesController
+
+RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hline, "uuid" ), ::getOrigenController():getLinesController():getModel():cTableName, uuidDestino, ::getDestinoController():getLinesController():getModel():cTableName ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertDiscounts( hDiscounts, uuidDocumentoDestino ) CLASS ConversorAlbaranesController
+
+   local hDiscount
+   local uuidDestino
+
+   for each hDiscount in hDiscounts
+
+      uuidDestino  := ::generateDiscount( hClone( hDiscount ), uuidDocumentoDestino  )
+
+      msgalert( uuidDestino, "uuidDocumentoDestino")
+
+      if !empty( uuidDestino )
+         ::insertDiscountRelation( hDiscount, uuidDestino )
+      end if 
+
+   next
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD generateDiscount( hDiscount, uuidDocumentoDestino ) CLASS ConversorAlbaranesController
+   
+   hDels( hDiscount, { "uuid", "id" } )
+
+   hSet( hDiscount, "parent_uuid", uuidDocumentoDestino )
+
+   if empty( ::getDestinoController():getDiscountController():getModel():insertBlankBuffer( hDiscount ) )
+      RETURN ( nil )
+   end if 
+ 
+RETURN ( ::getDestinoController():getDiscountController():getModelBuffer( "uuid" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertDiscountRelation( hDiscount, uuidDestino ) CLASS ConversorAlbaranesController
+
+RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hDiscount, "uuid" ), ::getOrigenController():getDiscountController():getModel():cTableName, uuidDestino, ::getDestinoController:getDiscountController:getModel():cTableName ) ) 
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

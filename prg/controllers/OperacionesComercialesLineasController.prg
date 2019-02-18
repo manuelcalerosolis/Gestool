@@ -43,10 +43,6 @@ CLASS OperacionesComercialesLineasController FROM OperacionesLineasController
 
    METHOD setBrowseChange( bChange )   INLINE ( ::getBrowseView:setChange( bChange ) )
 
-   METHOD generateLine( hLine, uuidDocumentoDestino )
-      METHOD insertLines( aLines, uuidDocumentoDestino )
-      METHOD insertLineRelation( hLine, uuidDestino )
-
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -233,41 +229,3 @@ METHOD stampArticuloPrecio() CLASS OperacionesComercialesLineasController
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-
-METHOD insertLines( aLines, uuidDocumentoDestino ) CLASS OperacionesComercialesLineasController
-
-   local hLine
-   local uuidDestino
-
-   for each hLine in aLines
-
-      uuidDestino    := ::generateLine( hClone( hLine ), uuidDocumentoDestino )
-
-      if !empty( uuidDestino )
-         ::insertLineRelation( hLine, uuidDestino )
-      end if 
-
-   next
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD generateLine( hLine, uuidDocumentoDestino ) CLASS OperacionesComercialesLineasController
-
-   hDels( hLine, { "uuid", "id" } )
-
-   hSet( hLine, "parent_uuid", uuidDocumentoDestino )
-
-   if empty( ::getModel():insertBlankBuffer( hLine ) )
-      RETURN ( nil )
-   end if 
-
-RETURN ( ::getModelBuffer( "uuid" ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertLineRelation( hLine, uuidDestino ) CLASS OperacionesComercialesLineasController
-
-RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hline, "uuid" ), ::oController:oController:getLinesController():getModel():cTableName, uuidDestino, ::getModel():cTableName ) )
-

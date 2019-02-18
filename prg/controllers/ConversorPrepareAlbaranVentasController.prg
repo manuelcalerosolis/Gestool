@@ -7,7 +7,7 @@ CLASS ConversorPrepareAlbaranVentasController FROM ConversorPrepareController
 
    DATA aControllers                   INIT {}
 
-   //DATA oConvertirAlbaranVentasTemporalController
+   DATA oConversorAlbaranesController
 
    DATA oRowset
 
@@ -41,7 +41,7 @@ METHOD New( oOrigenController, oDestinoController ) CLASS ConversorPrepareAlbara
 
    ::oDestinoController              := oDestinoController
 
-   ::oConversorDocumentosController := ConversorDocumentosController():New( self )
+   ::oConversorAlbaranesController := ConversorAlbaranesController():New( self )
 
    aadd( ::aControllers, ContadoresAlbaranesVentasController():New() )
 
@@ -81,9 +81,9 @@ METHOD generatePreview() CLASS ConversorPrepareAlbaranVentasController
 
    local aWhere   := {}
 
-   aeval( ::aControllers,;
+   /*aeval( ::aControllers,;
       {|oController| aeval( oController:getRange():getWhere(),;
-         {|cCondition| aadd( aWhere, cCondition ) } ) } )
+         {|cCondition| aadd( aWhere, cCondition ) } ) } )*/
 
    ::getRowset():build( SQLAlbaranesVentasModel():getSentenceAlbaranWhereHash( ::getConversorView():oPeriodo:oFechaInicio:Value(), ::getConversorView():oPeriodo:oFechaFin:Value(), aWhere ) )
 
@@ -95,9 +95,9 @@ RETURN ( ::getRowSet():recCount() > 0 )
 
 METHOD generateConvert() CLASS ConversorPrepareAlbaranVentasController
 
-   ::getConversorDocumentosController():runConvertAlbaran( ::getUuids() )
+   ::oConversorAlbaranesController():Convert( ::getUuids() )
 
-   ::aCreatedDocument := ::getConversorDocumentosController():convertDocument()
+   ::aCreatedDocument := ::oConversorAlbaranesController():convertDocument()
 
    ::getRowSet():Build( ::getModel():getInitialSelect() )
 

@@ -15,10 +15,6 @@ CLASS OperacionesComercialesDescuentosController FROM SQLBrowseController
 
    METHOD validateDescuento( uValue )
 
-   METHOD generateDiscount( hDiscount, uuidDocumentoDestino )
-      METHOD insertDiscounts( hDiscounts, uuidDocumentoDestino )
-      METHOD insertDiscountRelation( hDiscounts, uuidDestino )
-
    //Construcciones tardias----------------------------------------------------
    
    METHOD getModel()                   VIRTUAL
@@ -111,44 +107,6 @@ METHOD validateNombre( oGet ) CLASS OperacionesComercialesDescuentosController
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-
-METHOD insertDiscounts( hDiscounts, uuidDocumentoDestino ) CLASS OperacionesComercialesDescuentosController
-
-   local hDiscount
-   local uuidDestino
-
-   for each hDiscount in hDiscounts
-
-      uuidDestino  := ::generateDiscount( hClone( hDiscount ), uuidDocumentoDestino  )
-
-      if !empty( uuidDestino )
-         ::insertDiscountRelation( hDiscount, uuidDestino )
-      end if 
-
-   next
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD generateDiscount( hDiscount, uuidDocumentoDestino ) CLASS OperacionesComercialesDescuentosController
-   
-   hDels( hDiscount, { "uuid", "id" } )
-
-   hSet( hDiscount, "parent_uuid", uuidDocumentoDestino )
-
-   if empty( ::getModel():insertBlankBuffer( hDiscount ) )
-      RETURN ( nil )
-   end if 
- 
-RETURN ( ::getModelBuffer( "uuid" ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertDiscountRelation( hDiscount, uuidDestino ) CLASS OperacionesComercialesDescuentosController
-
-RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hDiscount, "uuid" ), ::oController:oController:getDiscountController():getModel():cTableName, uuidDestino, ::getModel():cTableName ) )   
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

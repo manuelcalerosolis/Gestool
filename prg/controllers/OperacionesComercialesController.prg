@@ -69,8 +69,6 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD importFactura()
 
-   METHOD generateHeader( hHeader )
-
    // Impresiones--------------------------------------------------------------
 
    METHOD getDocumentPrint()           INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_impresion', '' ) )
@@ -88,10 +86,6 @@ CLASS OperacionesComercialesController FROM OperacionesController
    METHOD getSubject()                 VIRTUAL
 
    METHOD addExtraButtons()
-
-   METHOD convertDocument( aConvert )
-      METHOD insertHeader( aHeaders )
-      METHOD insertHeaderRelation( aHeaders )
 
    METHOD runGeneratedocument()
 
@@ -496,67 +490,6 @@ RETURN ( nil )
 
 
 //---------------------------------------------------------------------------//
-
-METHOD generateHeader( hHeader ) CLASS OperacionesComercialesController
-
-   hDels( hHeader, { "uuid", "id", "numero" } )
-
-   if empty( ::getModel():insertBlankBuffer( hHeader ) )
-      RETURN ( nil )
-   end if 
-
-RETURN ( ::getModelBuffer( "uuid" ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD convertDocument( aConvert ) CLASS OperacionesComercialesController
-
-   Local hConvert
-
-   for each hConvert in aConvert
-
-      if !empty( ::insertHeader( hget( hConvert, "header" ) ) )
-
-         ::getLinesController():insertLines( hget( hConvert, "lines" ), ::uuidDocumentoDestino )
-
-         ::getDiscountController():insertDiscounts( hget( hConvert, "discounts" ), ::uuidDocumentoDestino )
-
-         ::getRecibosGeneratorController():GenerateNegative()
-
-      end if 
-
-   next
-
-RETURN ( ::aCreatedDocument )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertHeader( aHeaders ) CLASS OperacionesComercialesController
-
-   local hHeader
-
-   ::uuidDocumentoDestino  := ::generateHeader( hClone( aFirst( aHeaders ) ) )
-
-   if empty( ::uuidDocumentoDestino )
-      RETURN ( nil )
-   end if 
-
-   aadd( ::aCreatedDocument, ::uuidDocumentoDestino )
-      
-   for each hHeader in aHeaders
-      ::insertHeaderRelation( hHeader )
-   next
-
-RETURN ( ::uuidDocumentoDestino )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertHeaderRelation( hHeader ) CLASS OperacionesComercialesController
-
-   msgalert( ::getOrigenController():getModel():cTableName, "tabla padre" )
-
-RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hHeader, "uuid" ), ::oController:getModel():cTableName, ::uuidDocumentoDestino, ::getModel():cTableName ) )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
