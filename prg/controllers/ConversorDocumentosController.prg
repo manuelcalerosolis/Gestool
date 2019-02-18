@@ -3,21 +3,17 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ConversorDocumentosController FROM SQLBrowseController
-
-   METHOD getDestinoController()       INLINE ( ::oController:oDestinoController )
-
-   METHOD getOrigenController()        INLINE ( ::oController:oOrigenController )
-
-   METHOD getSelected()                INLINE ( ::oController:aSelected )
+CLASS ConversorDocumentosController FROM ConversorGenericoController
 
    METHOD Convert()
 
-   METHOD insertRelationDocument()     INLINE ( ::getModel():insertRelationDocument( ::uuidDocumentoOrigen, ::getOrigenController():getModel():cTableName, ::uuidDocumentoDestino, ::getDestinoController():getModel():cTableName ) )
+   METHOD convertDocument()
 
-   // Contrucciones tarias------------------------------------------------------
+   METHOD convertDocumentHeader()
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLConversorDocumentosModel():New( self ), ), ::oModel ) 
+   METHOD convertDocumentLines()
+
+   METHOD convertDocumentDiscounts()
 
 END CLASS
 
@@ -25,13 +21,15 @@ END CLASS
 
 METHOD Convert() CLASS ConversorDocumentosController
 
-msgalert("convert generico")
-
-  /* if empty( ::getOrigenController() )
+   if empty( ::getOrigenController() )
       RETURN ( nil )
    end if
 
-   if ::getOrigenController:className() == ::oDestinoController:className()
+   if empty( ::getDestinoController() )
+      RETURN ( nil )
+   end if
+
+   if ::getOrigenController:className() == ::getDestinoController():className()
       msgstop( "No puede seleccionar el mismo tipo de documento" )
       RETURN ( nil )
    end if
@@ -41,18 +39,112 @@ msgalert("convert generico")
    if empty( ::uuidDocumentoOrigen )
       RETURN( nil )
    end if
-   
-   ::aSelected := ::getSelected()
-   msgalert( hb_valtoexp(::aSelected))
 
-   ::runConvertAlbaran( ::aSelected )
-   msgalert( hb_valtoexp( ::aConvert ) ,"aConvert")
+   if ::getModel():countDocumentoWhereUuidOigen( ::uuidDocumentoOrigen ) > 0
+      msgstop( "El documento seleccionado ya ha sido convertido" )
+      RETURN ( nil )
+   end if
 
-   //::oController:oDestinoController:Edit( ::idDocumentoDestino )*/
+   ::convertDocument()
+
+   ::getDestinoController():Edit( ::getDestinoController():getModel():getIdWhereUuid( ::uuidDocumentoDestino ) )
 
 RETURN ( nil )   
 
 //---------------------------------------------------------------------------//
+
+METHOD convertDocument() CLASS ConversorDocumentosController
+
+   ::uuidDocumentoDestino              := ::convertDocumentHeader()
+
+   ::convertDocumentLines()
+
+   ::convertDocumentDiscounts()
+   
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD convertDocumentHeader() CLASS ConversorDocumentosController
+
+   local hHeader   := ::getOrigenController:getModel():getHashWhere( "uuid", ::uuidDocumentoOrigen )
+
+   hDels( hHeader, { "uuid", "id", "numero" } )
+
+   if empty( ::getDestinoController():getModel():insertBlankBuffer( hHeader ) )
+      RETURN ( nil )
+   end if 
+
+   ::getModel():insertRelationDocument( ::uuidDocumentoOrigen,;
+                                        ::getOrigenController():getModel():cTableName,;
+                                        ::getDestinoController:getModelBuffer( "uuid" ),;
+                                        ::getDestinoController():getModel():cTableName )
+
+RETURN ( ::getDestinoController:getModelBuffer( "uuid" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD convertDocumentLines() CLASS ConversorDocumentosController
+
+   local hLine
+   local uuidLineaOrigen
+   local aLines   := ::getOrigenController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
+
+   if empty( aLines )
+      RETURN ( nil )
+   end if
+
+   for each hLine in aLines
+
+      uuidLineaOrigen                  := hget( hLine, "uuid" )
+
+      hDels( hLine, { "uuid", "id" } )
+
+      hSet( hLine, "parent_uuid", ::uuidDocumentoDestino )
+
+      ::getDestinoController():getLinesController():getModel():insertBlankBuffer( hLine )
+
+      ::getModel():insertRelationDocument( uuidLineaOrigen,;
+                                           ::getOrigenController:getLinesController:getModel():cTableName,;
+                                           ::getDestinoController:getLinesController():getModelBuffer( "uuid" ),;
+                                           ::getDestinoController():getLinesController():getModel():cTableName )  
+
+   next 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD convertDocumentDiscounts() CLASS ConversorDocumentosController
+
+   local hDiscount
+   local uuidDiscountOrigen
+   local aDiscounts   := ::getOrigenController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
+
+   if empty( aDiscounts )
+      RETURN ( nil )
+   end if
+
+   for each hDiscount in aDiscounts
+
+      uuidDiscountOrigen                  := hget( hDiscount, "uuid" )
+
+      hDels( hDiscount, { "uuid", "id" } )
+
+      hSet( hDiscount, "parent_uuid", ::uuidDocumentoDestino )
+
+      ::getDestinoController():getDiscountController():getModel():insertBlankBuffer( hDiscount )
+
+      ::getModel():insertRelationDocument( uuidDiscountOrigen,;
+                                           ::getOrigenController:getDiscountController:getModel():cTableName,;
+                                           ::getDestinoController():getDiscountController():getModelBuffer( "uuid" ),;
+                                           ::getDestinoController():getDiscountController():getModel():cTableName )
+
+   next 
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

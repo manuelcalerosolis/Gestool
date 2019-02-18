@@ -31,6 +31,8 @@ CLASS ConversorGenericoController FROM SQLBrowseController
 
    METHOD Edit( nId )
 
+   METHOD convertDocument() VIRTUAL
+
    //Contrucciones tarias------------------------------------------------------
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLConversorDocumentosModel():New( self ), ), ::oModel ) 
@@ -157,7 +159,7 @@ METHOD countDocumentoWhereUuidOigen( uuidOrigen ) CLASS SQLConversorDocumentosMo
 
    TEXT INTO cSql
 
-      SELECT COUNT(*)
+      SELECT COUNT( uuid )
          FROM %1$s
          WHERE documento_origen_uuid = %2$s
 
