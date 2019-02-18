@@ -384,6 +384,7 @@ SQLOperacionesComercialesModel.prg 										\
 SqlFacturasVentasModel.prg 												\
 SQLFacturasVentasSimplificadasModel.prg 								\
 SQLAlbaranesVentasModel.prg 												\
+SQLAlbaranesVentasConversorModel.prg 									\
 SQLPedidosVentasModel.prg 													\
 SQLPresupuestosVentasModel.prg 											\
 SqlFacturasVentasRectificativasModel.prg 								\
@@ -831,6 +832,7 @@ SQLOperacionesComercialesModel.obj 										\
 SQLFacturasVentasModel.obj 												\
 SQLFacturasVentasSimplificadasModel.obj 								\
 SQLAlbaranesVentasModel.obj 												\
+SQLAlbaranesVentasConversorModel.obj 									\
 SQLPedidosVentasModel.obj 													\
 SQLPresupuestosVentasModel.obj 											\
 SqlFacturasVentasRectificativasModel.obj 								\
@@ -1266,6 +1268,7 @@ $(OBJ)\SQLOperacionesComercialesModel.obj 							+
 $(OBJ)\SqlFacturasVentasModel.obj 					    				+
 $(OBJ)\SQLFacturasVentasSimplificadasModel.obj 						+
 $(OBJ)\SQLAlbaranesVentasModel.obj 					    				+
+$(OBJ)\SQLAlbaranesVentasConversorModel.obj 					    	+
 $(OBJ)\SQLPedidosVentasModel.obj 					    				+
 $(OBJ)\SQLPresupuestosVentasModel.obj 					   			+
 $(OBJ)\SqlFacturasVentasRectificativasModel.obj 					+

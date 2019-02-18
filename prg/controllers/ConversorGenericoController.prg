@@ -85,8 +85,6 @@ CLASS SQLConversorDocumentosModel FROM SQLCompanyModel
 
    METHOD countDocumentoWhereUuidOigen( uuidOrigen )
 
-   METHOD getInitialSelect()
-
    METHOD getDestinoController()       INLINE ( ::oController:oDestinoController )
 
 END CLASS
@@ -170,11 +168,6 @@ METHOD countDocumentoWhereUuidOigen( uuidOrigen ) CLASS SQLConversorDocumentosMo
 RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
-
-METHOD getInitialSelect() CLASS SQLConversorDocumentosModel
-
-RETURN ( ::getDestinoController():getModel():getInitialLimitCero( ::oController:setWhereArray( ::oController:aCreatedDocument ) ) )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

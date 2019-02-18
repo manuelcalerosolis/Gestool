@@ -33,7 +33,7 @@ CLASS ConversorPrepareController FROM SQLBrowseController
 
    METHOD getConversorView()           VIRTUAL
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLConversorDocumentosModel():New( self ), ), ::oModel ) 
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLAlbaranesVentasConversorModel():New( self ), ), ::oModel ) 
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesBrowseView():New( self ), ), ::oBrowseView )
 

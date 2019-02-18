@@ -81,11 +81,11 @@ METHOD generatePreview() CLASS ConversorPrepareAlbaranVentasController
 
    local aWhere   := {}
 
-   /*aeval( ::aControllers,;
+   aeval( ::aControllers,;
       {|oController| aeval( oController:getRange():getWhere(),;
-         {|cCondition| aadd( aWhere, cCondition ) } ) } )*/
+         {|cCondition| aadd( aWhere, cCondition ) } ) } )
 
-   ::getRowset():build( SQLAlbaranesVentasModel():getSentenceAlbaranWhere( ::getConversorView():oPeriodo:oFechaInicio:Value(), ::getConversorView():oPeriodo:oFechaFin:Value(), aWhere ) )
+   ::getRowset():build( ::getModel():getSentenceAlbaranWhere( ::getConversorView():oPeriodo:oFechaInicio:Value(), ::getConversorView():oPeriodo:oFechaFin:Value(), aWhere ) )
 
    ::getBrowseView():selectAll()
 
@@ -215,6 +215,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD okActivateFolderOne() CLASS ConversorAlbaranVentasView
+   
 
    if ::oController:generatePreview()
 
