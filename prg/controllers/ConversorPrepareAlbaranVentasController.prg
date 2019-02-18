@@ -15,7 +15,9 @@ CLASS ConversorPrepareAlbaranVentasController FROM ConversorPrepareController
 
    METHOD End()
 
-   METHOD Run()                        
+   METHOD Run()           
+
+   METHOD getWhere()
 
    METHOD generatePreview()
 
@@ -39,9 +41,9 @@ METHOD New( oOrigenController, oDestinoController ) CLASS ConversorPrepareAlbara
 
    ::Super:New( oOrigenController )
 
-   ::oDestinoController              := oDestinoController
+   ::oDestinoController                := oDestinoController
 
-   ::oConversorAlbaranesController := ConversorAlbaranesController():New( self )
+   ::oConversorAlbaranesController     := ConversorAlbaranesController():New( self )
 
    aadd( ::aControllers, ContadoresAlbaranesVentasController():New() )
 
@@ -79,13 +81,11 @@ RETURN ( ::getConversorView():Activate() )
 
 METHOD generatePreview() CLASS ConversorPrepareAlbaranVentasController
 
-   local aWhere   := {}
+   ::getModel():setLimit( nil )
 
-   aeval( ::aControllers,;
-      {|oController| aeval( oController:getRange():getWhere(),;
-         {|cCondition| aadd( aWhere, cCondition ) } ) } )
+   ::getModel():setGeneralWhere( ::getWhere() )
 
-   ::getRowset():build( ::getModel():getSentenceAlbaranWhere( ::getConversorView():oPeriodo:oFechaInicio:Value(), ::getConversorView():oPeriodo:oFechaFin:Value(), aWhere ) )
+   ::getRowset():build( ::getModel():getSelectSentence() )
 
    ::getBrowseView():selectAll()
 
@@ -93,11 +93,29 @@ RETURN ( ::getRowSet():recCount() > 0 )
 
 //---------------------------------------------------------------------------//
 
+METHOD getWhere() CLASS ConversorPrepareAlbaranVentasController
+
+   local cWhere   := ''
+
+   cWhere         += "canceled_at IS NULL "
+   cWhere         += "AND fecha >= " + dtos( ::getConversorView():oPeriodo:oFechaInicio:Value() )  + " "
+   cWhere         += "AND fecha <= " + dtos( ::getConversorView():oPeriodo:oFechaFin:Value() )  + " "
+
+   aeval( ::aControllers,;
+      {|oController| aeval( oController:getRange():getWhere(),;
+         {|cCondition| cWhere += "AND " + cCondition + " " } ) } )
+
+   msgalert( cWhere, "cWhere" )
+
+RETURN ( cWhere )
+
+//---------------------------------------------------------------------------//
+
 METHOD generateConvert() CLASS ConversorPrepareAlbaranVentasController
 
    ::oConversorAlbaranesController():Convert( ::getUuids() )
 
-   ::aCreatedDocument := ::oConversorAlbaranesController():convertDocument()
+   ::aCreatedDocument   := ::oConversorAlbaranesController():convertDocument()
 
    ::getRowSet():Build( ::getModel():getInitialSelect() )
 

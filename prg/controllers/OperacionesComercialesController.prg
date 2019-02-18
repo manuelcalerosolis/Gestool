@@ -134,7 +134,7 @@ CLASS OperacionesComercialesController FROM OperacionesController
    METHOD getRectifictivaValidator()   INLINE ( if( empty( ::oRectificativaValidator ), ::oRectificativaValidator := OperacionComercialRectificarValidator():New( self ), ), ::oRectificativaValidator )
 
    METHOD getConversorPreapreGenericoController() ;
-                                       INLINE  ( if( empty( ::oConversorPrepareGenerico ), ::oConversorPrepareGenerico := ConversorPrepareGenericoController():New( self ), ), ::oConversorPrepareGenerico )
+                                       INLINE ( if( empty( ::oConversorPrepareGenerico ), ::oConversorPrepareGenerico := ConversorPrepareGenericoController():New( self ), ), ::oConversorPrepareGenerico )
 
 END CLASS
 
@@ -193,8 +193,8 @@ RETURN ( ::Super:End() )
 METHOD Editing( nId ) CLASS OperacionesComercialesController
 
    if !empty( ::getFieldFromRowSet( "canceled_at" ) )
-      errorAlert( "El documento estÃ¡ cancelado." )
-      msgstop( "El documento estÃ¡ cancelado.", "No esta permitida la ediciÃ³n" )
+      errorAlert( "El documento está cancelado." )
+      msgstop( "El documento está cancelado.", "No esta permitida la edición" )
       RETURN ( .f. )
    end if 
 
@@ -435,13 +435,13 @@ METHOD getConfigItems() CLASS OperacionesComercialesController
 
    local aItems   := {}
 
-   aadd( aItems,  {  'texto'  => 'Documento impresiÃ³n',;
+   aadd( aItems,  {  'texto'  => 'Documento impresión',;
                      'clave'  => 'documento_impresion',;
                      'valor'  => ::getDocumentPrint(),;
                      'tipo'   => "B",;
                      'lista'  =>  ::loadDocuments() } )
 
-   aadd( aItems,  {  'texto'  => 'Copias impresiï¿½n',;
+   aadd( aItems,  {  'texto'  => 'Copias impresión',;
                      'clave'  => 'copias_impresion',;
                      'valor'  => ::getCopyPrint(),;
                      'tipo'   => "N" } )
@@ -452,7 +452,7 @@ METHOD getConfigItems() CLASS OperacionesComercialesController
                      'tipo'   => "B",;
                      'lista'  =>  ::loadDocuments() } )
 
-   aadd( aItems,  {  'texto'  => 'Documento previsulizaciï¿½n',;
+   aadd( aItems,  {  'texto'  => 'Documento previsulización',;
                      'clave'  => 'documento_previsulizacion',;
                      'valor'  => ::getDocumentPreview(),;
                      'tipo'   => "B",;
@@ -488,9 +488,6 @@ METHOD runGeneratedocument() CLASS OperacionesComercialesController
 
 RETURN ( nil )
 
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -511,13 +508,13 @@ END CLASS
 
 METHOD getValidators() CLASS OperacionesComercialesValidator
 
-   ::hValidators  := {  "metodo_pago_codigo" => {  "required"        => "El cï¿½digo del mï¿½todo de pago es un dato requerido",;
-                                                   "formaPagoExist"  => "El cï¿½digo del mï¿½todo de pago no existe" } ,;
-                        "almacen_codigo"     => {  "required"        => "El cï¿½digo del almacï¿½n es un dato requerido",;
-                                                   "almacenExist"    => "El cï¿½digo del almacï¿½n no existe" } ,;
-                        "tarifa_codigo"      => {  "required"        => "El cï¿½digo de la tarifa es un dato requerido",;
-                                                   "tarifaExist"     => "El cï¿½digo de la tarifa no existe" },;
-                        "formulario"         => {  "emptyLines"      => "Las lï¿½neas no pueden estar vacias",;
+   ::hValidators  := {  "metodo_pago_codigo" => {  "required"        => "El código del método de pago es un dato requerido",;
+                                                   "formaPagoExist"  => "El código del método de pago no existe" } ,;
+                        "almacen_codigo"     => {  "required"        => "El código del almacén es un dato requerido",;
+                                                   "almacenExist"    => "El código del almacén no existe" } ,;
+                        "tarifa_codigo"      => {  "required"        => "El código de la tarifa es un dato requerido",;
+                                                   "tarifaExist"     => "El código de la tarifa no existe" },;
+                        "formulario"         => {  "emptyLines"      => "Las líneas no pueden estar vacias",;
                                                    "validLine"       => "" } }
 
 RETURN ( ::hValidators )
@@ -603,275 +600,8 @@ CLASS TestOperacionesComercialesController FROM TestOperacionesController
    METHOD refresh_linea_browse_view()  INLINE ( ::oController:getLinesController():getBrowseView():getRowSet():Refresh(),;
                                                 testWaitSeconds() )
    
-/*
-   METHOD test_calculo_con_descuento()
-
-   METHOD test_calculo_con_incremento()
-
-   METHOD test_con_unidades_de_medicion()
-
-   METHOD test_dialogo_sin_lineas()
-
-   METHOD test_dialogo_ventas_por_cajas()
-
-   METHOD test_dialogo_tarifa_mayorista()
-
-   METHOD test_dialogo_cambiando_almacen()
-
-   METHOD test_dialogo_cambiando_ubicacion()
-
-   METHOD test_dialogo_cambiando_agente()
-
-   METHOD test_dialogo_con_recargo_en_documento()
-
-   METHOD test_dialogo_con_descuento_en_documento()
-*/
 END CLASS
 
-//---------------------------------------------------------------------------//
-/*
-METHOD test_calculo_con_descuento() CLASS TestOperacionesComercialesController
-
-   local uuid
-   local hTotal
-
-   uuid        := win_uuidcreatestring()
-
-   SQLFacturasVentasModel():test_create_factura( uuid )
-
-   SQLFacturasVentasLineasModel():test_create_IVA_al_0_con_10_descuento( uuid )
-   SQLFacturasVentasLineasModel():test_create_IVA_al_10_con_15_porciento_descuento( uuid )
-   SQLFacturasVentasLineasModel():test_create_IVA_al_21_con_20_porciento_descuento( uuid )
-
-   SQLFacturasVentasDescuentosModel():test_create_l0_por_ciento( uuid )
-   SQLFacturasVentasDescuentosModel():test_create_20_por_ciento( uuid )
-   SQLFacturasVentasDescuentosModel():test_create_30_por_ciento( uuid )
-
-   hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
-
-   ::Assert():equals( 112.120000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD test_calculo_con_incremento() CLASS TestOperacionesComercialesController
-
-   local uuid
-   local hTotal
-
-   uuid        := win_uuidcreatestring()
-
-   SQLFacturasVentasModel():test_create_factura( uuid )
-
-   SQLFacturasVentasLineasModel():test_create_IVA_al_21_con_incrememto_precio( uuid )
-
-   hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
-
-   ::Assert():equals( 7.720000, hget( hTotal, "total_documento" ), "test creacion de factura con incremento" )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD test_con_unidades_de_medicion() CLASS TestOperacionesComercialesController
-
-   local uuid
-   local hTotal
-
-   uuid        := win_uuidcreatestring()
-
-   SQLFacturasVentasModel():test_create_factura( uuid )
-
-   SQLFacturasVentasLineasModel():test_create_10_porciento_descuento_15_incremento( uuid )
-
-   hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
-
-   ::Assert():equals( 103.500000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD test_dialogo_sin_lineas() CLASS TestOperacionesComercialesController
-
-   ::oController:getDialogView():setEvent( 'painted',;
-      {| view | ;
-         ::set_codigo_tercero( "0", view ),;
-         ::set_codigo_forma_pago( "0", view ),;
-         view:getControl( IDOK ):Click(),;
-         testWaitSeconds(),;
-         view:getControl( IDCANCEL ):Click() } )
-
-   ::Assert():false( ::oController:Insert(), "test creaciï¿½n de factura sin lineas" )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD test_dialogo_ventas_por_cajas() CLASS TestOperacionesComercialesController
-
-   ::oController:getDialogView():setEvent( 'painted',;
-      {| view | ;
-         ::set_codigo_tercero( "0", view ),;
-         ::set_codigo_forma_pago( "0", view ),;
-         ::click_nueva_linea( view ),;
-         ::set_codigo_articulo_en_linea( "1" ),;
-         ::set_codigo_ubicacion_en_linea( "0" ),;
-         ::set_precio_en_linea( 100 ),;
-         view:getControl( IDOK ):Click() } )
-
-   ::Assert():true( ::oController:Insert(), "test creaciï¿½n de factura con ventas por cajas" )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD test_dialogo_tarifa_mayorista() CLASS TestOperacionesComercialesController
-
-   ::oController:getDialogView():setEvent( 'painted',;
-      {| view | ;
-         ::set_codigo_tercero( "1", view ),;
-         ::set_codigo_forma_pago( "0", view ),;
-         ::click_nueva_linea( view ),;
-         ::set_codigo_articulo_en_linea( "1" ),;
-         ::set_codigo_ubicacion_en_linea( "0" ),;
-         ::set_precio_en_linea( 100 ),;
-         view:getControl( IDOK ):Click() } )
-
-   ::Assert():true( ::oController:Insert(), "test creaciï¿½n de factura con ventas por cajas" )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD test_dialogo_cambiando_almacen() CLASS TestOperacionesComercialesController
-
-   local cCodigo
-
-   ::oController:getDialogView():setEvent( 'painted',;
-      {| view | ;
-         ::set_codigo_tercero( "1", view ),;
-         ::set_codigo_forma_pago( "0", view ),;
-         ::click_nueva_linea( view ),;
-         ::set_codigo_articulo_en_linea( "1" ),;
-         ::set_codigo_almacen_en_linea( "1" ),;
-         ::set_codigo_ubicacion_en_linea( "0" ),;
-         ::set_precio_en_linea( 200 ),;
-         view:getControl( IDOK ):Click() } )
-
-   ::Assert():true( ::oController:Insert(), "test creaciï¿½n de factura con cambio de almacï¿½n" )
-
-   cCodigo  := ::oController:getLinesController():getModel():getFieldWhere( "almacen_codigo", { "parent_uuid" => ::oController:getModelBuffer( "uuid" ) } )
-
-   ::Assert():equals( "1", alltrim( cCodigo ), "test comprobacion cambio almacen en linea" )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD test_dialogo_cambiando_ubicacion() CLASS TestOperacionesComercialesController
-
-   local cCodigo
-
-   ::oController:getDialogView():setEvent( 'painted',;
-      {| view | ;
-         ::set_codigo_tercero( "1", view ),;
-         ::set_codigo_forma_pago( "0", view ),;
-         ::click_nueva_linea( view ),;
-         ::set_codigo_articulo_en_linea( "1" ),;
-         ::set_codigo_almacen_en_linea( "1" ),;
-         ::set_codigo_ubicacion_en_linea( "1" ),;
-         ::set_precio_en_linea( 200 ),;
-         view:getControl( IDOK ):Click() } )
-
-   ::Assert():true( ::oController:Insert(), "test creaciï¿½n de factura con cambio de almacï¿½n" )
-
-   cCodigo  := ::oController:getLinesController():getModel():getFieldWhere( "almacen_codigo", { "parent_uuid" => ::oController:getModelBuffer( "uuid" ) } )
-
-   ::Assert():equals( "1", alltrim( cCodigo ), "test comprobacion cambio almacen en linea" )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD test_dialogo_cambiando_agente() CLASS TestOperacionesComercialesController
-
-   local cCodigo
-
-   ::oController:getDialogView():setEvent( 'painted',;
-      {| view | ;
-         ::set_codigo_tercero( "1", view ),;
-         ::set_codigo_forma_pago( "0", view ),;
-         ::set_codigo_agente( "1", view ),;
-         ::click_nueva_linea( view ),;
-         ::set_codigo_articulo_en_linea( "1" ),;
-         ::set_codigo_almacen_en_linea( "1" ),;
-         ::set_codigo_ubicacion_en_linea( "0" ),;
-         ::set_precio_en_linea( 200 ),;
-         view:getControl( IDOK ):Click() } )
-
-   ::Assert():true( ::oController:Insert(), "test creaciï¿½n de factura con cambio de almacï¿½n" )
-
-   cCodigo  := ::oController:getModel():getFieldWhere( "agente_codigo", { "uuid" => ::oController:getModelBuffer( "uuid" ) } )
-
-   ::Assert():equals( "1", alltrim( cCodigo ), "test comprobacion cambio agente" )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD test_dialogo_con_recargo_en_documento() CLASS TestOperacionesComercialesController
-
-   local uuid
-   local hTotal
-
-   uuid        := win_uuidcreatestring()
-
-   SQLFacturasVentasModel():test_create_factura_con_recargo_de_eqivalencia( uuid )
-
-   SQLFacturasVentasLineasModel():test_create_IVA_al_0_con_10_descuento( uuid )
-   SQLFacturasVentasLineasModel():test_create_IVA_al_10_con_15_porciento_descuento( uuid )
-   SQLFacturasVentasLineasModel():test_create_IVA_al_21_con_20_porciento_descuento( uuid )
-
-   SQLFacturasVentasDescuentosModel():test_create_l0_por_ciento( uuid )
-   SQLFacturasVentasDescuentosModel():test_create_20_por_ciento( uuid )
-
-   hTotal      := ::oController:getRepository():getTotalesDocument( uuid )
-
-   ::Assert():equals( 199.950000, hget( hTotal, "total_documento" ), "test creacion factura con descuento" )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD test_dialogo_con_descuento_en_documento() CLASS TestOperacionesComercialesController
-
-   local cCodigo
-
-   ::oController:getDialogView():setEvent( 'painted',;
-      {| view | ;
-         ::set_codigo_tercero( "1", view ),;
-         ::set_codigo_forma_pago( "0", view ),;
-         ::set_codigo_agente( "1", view ),;
-         ::click_nueva_linea( view ),;
-         ::set_codigo_articulo_en_linea( "1" ),;
-         ::set_codigo_almacen_en_linea( "1" ),;
-         ::set_codigo_ubicacion_en_linea( "0" ),;
-         ::set_precio_en_linea( 200 ),;
-         ::click_nuevo_descuento( view ),;
-         ::set_descripcion_descuento( "Descuento" ),;
-         ::set_porcentaje_descuento( 15 ),;
-         view:getControl( IDOK ):Click() } )
-
-   ::Assert():true( ::oController:Insert(), "test creaciï¿½n de factura con cambio de almacï¿½n" )
-
-   cCodigo  := ::oController:getModel():getFieldWhere( "agente_codigo", { "uuid" => ::oController:getModelBuffer( "uuid" ) } )
-
-   ::Assert():equals( "1", alltrim( cCodigo ), "test comprobacion cambio agente" )
-
-RETURN ( nil )
-*/
 //---------------------------------------------------------------------------//
 
 #endif

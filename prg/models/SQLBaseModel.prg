@@ -592,7 +592,7 @@ METHOD addLimit( cSQLSelect, nLimit )
 
    DEFAULT nLimit    := ::nLimit
 
-   if empty( nLimit )
+   if hb_isnil( nLimit )
       RETURN ( cSQLSelect )
    end if 
    

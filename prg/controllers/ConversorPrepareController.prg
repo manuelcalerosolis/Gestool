@@ -33,11 +33,11 @@ CLASS ConversorPrepareController FROM SQLBrowseController
 
    METHOD getConversorView()           VIRTUAL
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLAlbaranesVentasConversorModel():New( self ), ), ::oModel ) 
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLAlbaranesVentasConversorModel():New( self ), ), ::oModel ) 
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ::oDestinoController:getDialogView(), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := ::oDestinoController:getDialogView(), ), ::oDialogView )
 
 END CLASS
 
@@ -48,6 +48,8 @@ METHOD New( oOrigenController ) CLASS ConversorPrepareController
    ::oOrigenController              := oOrigenController
 
    ::oConversorDocumentosController := ConversorDocumentosController():New( self )
+
+   ::getModel():setLimit( 0 )
 
 RETURN ( self )
 

@@ -219,8 +219,6 @@ METHOD validArticuloCodigo( oGet, oCol ) CLASS OperacionesLineasController
 
    local uValue   := oGet:varGet()
 
-   msgalert( hb_valtoexp( uValue ), "validArtucloCodigo" )
-
    if empty( uValue )
       RETURN ( .t. )
    end if 

@@ -239,7 +239,7 @@ METHOD insertTemporalAlbaranes( dFechaDesde, dFEchaHasta, hWhere ) CLASS SQLConv
       
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql, ::getTableName(), SQLAlbaranesVentasModel():getSentenceAlbaranWhere( dFechaDesde, dFechaHasta, hWhere ) )
+   cSql  := hb_strformat(  cSql, ::getTableName(), SQLAlbaranesVentasModel():getInitialSelect( dFechaDesde, dFechaHasta, hWhere ) )
 
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 

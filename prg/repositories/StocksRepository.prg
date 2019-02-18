@@ -306,16 +306,16 @@ METHOD sqlFacturasVentasLineas(...) CLASS StocksRepository
          'facturas_ventas_lineas' AS tabla,
          ( IFNULL( facturas_ventas_lineas.unidad_medicion_factor, 1 ) * facturas_ventas_lineas.articulo_unidades ) AS total_unidades,
          facturas_ventas_lineas.articulo_codigo AS articulo_codigo,
-         facturas_compras.almacen_codigo AS almacen_codigo,
+         facturas_ventas.almacen_codigo AS almacen_codigo,
          facturas_ventas_lineas.ubicacion_codigo AS ubicacion_codigo,
          facturas_ventas_lineas.lote AS lote,
          facturas_ventas_lineas.combinaciones_uuid AS combinaciones_uuid,
-         facturas_compras.fecha_valor_stock AS fecha_valor_stock
+         facturas_ventas.fecha_valor_stock AS fecha_valor_stock
       
       FROM %2$s AS facturas_ventas_lineas 
 
-         INNER JOIN %1$s AS facturas_compras
-            ON facturas_compras.uuid = facturas_ventas_lineas.parent_uuid      
+         INNER JOIN %1$s AS facturas_ventas
+            ON facturas_ventas.uuid = facturas_ventas_lineas.parent_uuid      
 
       WHERE facturas_ventas_lineas.articulo_codigo = articulo_codigo AND 
             facturas_ventas_lineas.deleted_at = 0 AND
@@ -338,7 +338,6 @@ METHOD sqlFacturasVentasLineas(...) CLASS StocksRepository
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD sqlConsolidacionesAlmacenesLineas(...) CLASS StocksRepository
 
