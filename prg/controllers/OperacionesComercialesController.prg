@@ -553,8 +553,6 @@ RETURN ( ::uuidDocumentoDestino )
 
 METHOD insertHeaderRelation( hHeader ) CLASS OperacionesComercialesController
 
-
-
    msgalert( ::getOrigenController():getModel():cTableName, "tabla padre" )
 
 RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hHeader, "uuid" ), ::oController:getModel():cTableName, ::uuidDocumentoDestino, ::getModel():cTableName ) )

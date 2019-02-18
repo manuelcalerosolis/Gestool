@@ -47,7 +47,7 @@ END CLASS
 
 METHOD New( oOrigenController ) CLASS ConversorPrepareGenericoController
 
-   msgalert( oOrigenController:className(), "className" )
+   //msgalert( oOrigenController:className(), "className" )
 
    ::oOrigenController              := oOrigenController
 
@@ -100,11 +100,11 @@ METHOD Run() CLASS ConversorPrepareGenericoController
 
    if !empty( ::oDestinoController )
 
-      ::oConversorDocumentosController():runConvertAlbaran( ::oOrigenController:getUuids() )
+      ::oConversorDocumentosController():convert()
 
-      msgalert( hb_valtoexp( ::oConversorDocumentosController():aConvert ), "aConvert" )
+      //msgalert( hb_valtoexp( ::oConversorDocumentosController():aConvert ), "aConvert" )
 
-      ::aCreatedDocument      := ::getConversorDocumentosController():convertDocument() 
+      //::aCreatedDocument      := ::getConversorDocumentosController():convertDocument() 
 
    end if
 
