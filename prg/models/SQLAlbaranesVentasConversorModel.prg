@@ -11,7 +11,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getSelectSentence( cOrderBy, cOrientation )  CLASS SQLAlbaranesVentasConversorModel
+METHOD getSelectSentence( cOrderBy, cOrientation ) CLASS SQLAlbaranesVentasConversorModel
 
    local cSql
 

@@ -455,7 +455,7 @@ RETURN ( ::hColumns )
 METHOD getClosedColumns()
    
    hset( ::hColumns, "closed_at",   {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
-                                       "default"   => {|| nil } }         )
+                                       "default"   => {|| hb_datetime( nil, nil, nil, nil, nil, nil, nil ) } }         )
 
 RETURN ( ::hColumns )
 
@@ -464,7 +464,7 @@ RETURN ( ::hColumns )
 METHOD getCanceledColumns()
    
    hset( ::hColumns, "canceled_at", {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
-                                       "default"   => {|| nil } }         )
+                                       "default"   => {|| hb_datetime( nil, nil, nil, nil, nil, nil, nil ) } }         )
 
 RETURN ( ::hColumns )
 

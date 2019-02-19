@@ -97,7 +97,7 @@ METHOD getWhere() CLASS ConversorPrepareAlbaranVentasController
 
    local cWhere   := ''
 
-   cWhere         += "canceled_at IS NULL "
+   cWhere         += "canceled_at = 0 "
    cWhere         += "AND fecha >= " + dtos( ::getConversorView():oPeriodo:oFechaInicio:Value() )  + " "
    cWhere         += "AND fecha <= " + dtos( ::getConversorView():oPeriodo:oFechaFin:Value() )  + " "
 
