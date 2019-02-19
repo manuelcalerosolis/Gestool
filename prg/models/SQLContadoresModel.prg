@@ -36,15 +36,19 @@ METHOD getColumns()
                                           "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "usuario_codigo", {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                          "text"      => "Usuario"                                 ,;
                                           "default"   => {|| Auth():Codigo() } }                   )
 
    hset( ::hColumns, "documento",      {  "create"    => "VARCHAR ( 250 )"                         ,;
+                                          "text"      => "Documento"                               ,;
                                           "default"   => {|| space( 250 ) } }                      )
 
    hset( ::hColumns, "serie",          {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                          "text"      => "Serie"                                   ,;
                                           "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "contador",       {  "create"    => "INT UNSIGNED"                            ,;
+                                          "text"      => "Contador"                                ,;
                                           "default"   => {|| 0 } }                                 )
 
    ::getTimeStampColumns()

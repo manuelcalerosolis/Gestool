@@ -28,8 +28,6 @@ CLASS FiltrosController FROM SQLBrowseController
                                                 "Menor igual"  => " <= ",;
                                                 "Contenga"     => " LIKE " }
 
-   DATA cScope                         INIT  'albaranes_venta'
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -38,7 +36,7 @@ CLASS FiltrosController FROM SQLBrowseController
 
    METHOD saveFilter()
 
-   METHOD emptyFilter()  
+   METHOD defaultFilter()  
 
    METHOD appendFilter()
 
@@ -46,9 +44,13 @@ CLASS FiltrosController FROM SQLBrowseController
 
    METHOD isFilterSelected()
 
+   METHOD getFilters()
+
+   METHOD isEmptyFilter()
+
    METHOD deleteLineFilter( nLine )    INLINE ( adel( ::aFilter, nLine, .t. ) )
 
-   METHOD loadStructure( hColumns )
+   METHOD getStructure( hColumns )
 
    METHOD getStructureKey( cText )
 
@@ -60,7 +62,9 @@ CLASS FiltrosController FROM SQLBrowseController
 
    METHOD gettingSelectSentence()
 
-   METHOD existName()                  INLINE ( ::getModel():existName( ::cName, ::cScope ) )
+   METHOD getScope()                   INLINE ( ::oController:getModel():cTableName )
+
+   METHOD existName()                  INLINE ( ::getModel():existName( ::cName, ::getScope() ) )
 
    METHOD toSQL()
 
@@ -89,8 +93,6 @@ METHOD New( oController ) CLASS FiltrosController
    ::hImage                            := {  "16" => "gc_funnel_16",;
                                              "32" => "gc_funnel_32",;
                                              "48" => "gc_funnel_48" }
-
-   ::loadStructure( SQLTercerosModel():getColumns() )
 
    ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
@@ -124,20 +126,44 @@ RETURN ( ::Super:End() )
 
 METHOD gettingSelectSentence() CLASS FiltrosController
 
-RETURN ( ::getModel():setGeneralWhere( "tabla = " + quoted( ::cScope ) ) )
+RETURN ( ::getModel():setGeneralWhere( "tabla = " + quoted( ::getScope() ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadStructure( hColumns ) CLASS FiltrosController
+METHOD getFilters( cTableToFilter ) CLASS FiltrosController                
 
-   heval( hColumns,;
-      {|k,v| if( hhaskey( v, "text" ),; 
-         aadd( ::aStructure,;
-            {  "field"  => k,;
-               "type"   => left( hget( v, "create" ), at( " ", hget( v, "create" ) ) - 1 ),;
-               "text"   => hget( v, "text" ) } ), ) } )
+RETURN ( ::getModel():getFilters( ::getScope() ) )
 
-RETURN ( nil )
+//---------------------------------------------------------------------------//
+
+METHOD isEmptyFilter() CLASS FiltrosController                
+
+   if empty( ::aFilter ) 
+      RETURN ( .t. )
+   end if 
+
+   if ( len( ::aFilter ) == 1 ) .and. ( empty( hget( ::aFilter[ 1 ], "value" ) ) )
+      RETURN ( .t. )
+   end if 
+
+RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD getStructure() CLASS FiltrosController
+
+   if empty( ::aStructure )
+
+      heval( ::oController:getModel():getColumns(),;
+         {|k,v| if( hhaskey( v, "text" ),; 
+            aadd( ::aStructure,;
+               {  "field"  => k,;
+                  "type"   => left( hget( v, "create" ), at( " ", hget( v, "create" ) ) - 1 ),;
+                  "text"   => hget( v, "text" ) } ), ) } )
+
+   end if 
+
+RETURN ( ::aStructure )
 
 //---------------------------------------------------------------------------//
 
@@ -147,10 +173,10 @@ METHOD getStructureKey( cText, cKey ) CLASS FiltrosController
 
    DEFAULT cKey   := "type"
 
-   nPos           := ascan( ::aStructure, {|h| hget( h, "text" ) == cText } )
+   nPos           := ascan( ::getStructure(), {|h| hget( h, "text" ) == cText } )
 
    if nPos != 0
-      RETURN ( hget( ::aStructure[ nPos ], cKey ) )
+      RETURN ( hget( ::getStructure()[ nPos ], cKey ) )
    end if
 
 RETURN ( '' )
@@ -159,7 +185,9 @@ RETURN ( '' )
 
 METHOD Edit() CLASS FiltrosController
 
-   ::emptyFilter()
+   if empty( ::aFilter )
+      ::defaultFilter()
+   end if 
 
    ::getDialogView():Activate()
 
@@ -183,7 +211,7 @@ METHOD SaveFilter() CLASS FiltrosController
       RETURN ( nil )
    end if 
 
-   if ::getModel():insertBuffer( { "tabla" => ::cScope, "nombre" => ::cName, "filtro" => cFilter } ) != 0
+   if ::getModel():insertBuffer( { "tabla" => ::getScope(), "nombre" => ::cName, "filtro" => cFilter } ) != 0
 
       successAlert( "Filtro guardado correctamente" )
 
@@ -230,7 +258,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD emptyFilter() CLASS FiltrosController
+METHOD defaultFilter( lFilter ) CLASS FiltrosController
 
    ::aFilter      := {}
 
@@ -241,7 +269,7 @@ RETURN ( ::appendFilter() )
 METHOD appendFilter() CLASS FiltrosController
 
    aadd( ::aFilter,;
-      {  "text"      => hget( ::aStructure[ 1 ], "text" ),;
+      {  "text"      => hget( ::getStructure()[ 1 ], "text" ),;
          "condition" => "Igual",;
          "value"     => space( 100 ),;
          "nexo"      => "" } )
@@ -256,7 +284,7 @@ METHOD getTexts() CLASS FiltrosController
       RETURN ( ::aDescriptions )
    end if 
 
-   aeval( ::aStructure, {|h| aadd( ::aDescriptions, hget( h, "text" ) ) } )
+   aeval( ::getStructure(), {|h| aadd( ::aDescriptions, hget( h, "text" ) ) } )
 
 RETURN ( ::aDescriptions ) 
 
@@ -310,7 +338,7 @@ CLASS FiltrosView FROM SQLBaseView
    
    METHOD getFilterLine()              INLINE ( ::getFilter()[ ::oBrwFilter:nArrayAt ] )
 
-   METHOD getStructure()               INLINE ( ::oController:aStructure )
+   METHOD getStructure()               INLINE ( ::oController:getStructure() )
 
    METHOD deleteLineFilter()
 
@@ -382,7 +410,7 @@ METHOD Activate() CLASS FiltrosView
       DIALOGS     "FILTROS_DEFINICION",;
                   "FILTROS_DEFINICION"  
 
-   TBtnBmp():ReDefine( 501, "gc_broom_16", , , , , {|| ::oController:emptyFilter(), ::oBrwFilter:goTop() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Inicializar filtro" )
+   TBtnBmp():ReDefine( 501, "gc_broom_16", , , , , {|| ::oController:defaultFilter(), ::oBrwFilter:goTop() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Inicializar filtro" )
 
    TBtnBmp():ReDefine( 502, "del16", , , , , {|| ::deleteLineFilter() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Eliminar línea" )
 
@@ -577,6 +605,7 @@ METHOD nexoOnPostEdit( o, uNewValue, nKey ) CLASS FiltrosView
    ::setFilterLineNexo( uNewValue )
 
    if ( ::oBrwFilter:nArrayAt ) == len( ::oController:aFilter ) .and. !empty( uNewValue )
+      sysrefresh()
       ::oController:appendFilter()
    end if 
 

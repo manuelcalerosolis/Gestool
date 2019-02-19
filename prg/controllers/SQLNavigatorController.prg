@@ -139,7 +139,7 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    METHOD getDialogModalView()         INLINE ( iif( empty( ::oDialogModalView ), ::oDialogModalView := SQLDialogView():New( self ), ), ::oDialogModalView )
 
-   METHOD getFilterController()        INLINE ( iif( empty( ::oFilterController ), ::oFilterController := SQLFiltrosController():New( self ), ), ::oFilterController ) 
+   METHOD getFilterController()        INLINE ( iif( empty( ::oFilterController ), ::oFilterController := FiltrosController():New( self ), ), ::oFilterController ) 
 
    METHOD setShowDeleted()
 

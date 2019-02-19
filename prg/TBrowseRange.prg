@@ -24,8 +24,6 @@ CLASS BrowseRange
 
    METHOD Clicked( nRow, nCol ) 
 
-   METHOD getEditButton()              INLINE ( EDIT_GET_BUTTON )
-
    METHOD validColumnTo( oGet ) 
 
    METHOD resizeColumns()
@@ -86,7 +84,7 @@ METHOD Resource() CLASS BrowseRange
 
    with object ( ::oColDesde := ::oBrwRango:AddCol() )
       :cHeader       := "Desde"
-      :nEditType     := ::getEditButton()
+      :nEditType     := EDIT_GET_BUTTON
       :bEditValue    := {|| ::oBrwRango:aRow:getRange():uFrom }
       :bEditBlock    := {|| ::oBrwRango:aRow:ActivateSelectorView() }
       :bEditValid    := {| oGet | ::oBrwRango:aRow:getRange():validCode( oGet ) }
@@ -108,7 +106,7 @@ METHOD Resource() CLASS BrowseRange
 
    with object ( ::oColHasta := ::oBrwRango:AddCol() )
       :cHeader       := "Hasta"
-      :nEditType     := ::getEditButton()
+      :nEditType     := EDIT_GET_BUTTON
       :bEditValue    := {|| ::oBrwRango:aRow:getRange():uTo }
       :bEditBlock    := {|| ::oBrwRango:aRow:ActivateSelectorView() }
       :bEditValid    := {| oGet | ::validColumnTo( oGet ) }
@@ -130,12 +128,15 @@ METHOD Resource() CLASS BrowseRange
 
    with object ( ::oColFilter := ::oBrwRango:AddCol() )
       :cHeader       := "Fitrar"         
-      :bStrData      := {|| "" }
-      :bEditValue    := {|| .t. }
-      // :bOnPostEdit   := {|o,x| ::oBrwRango:aRow:getRange():lAll := x }
-      :nWidth        := 40
+      :nEditType     := EDIT_BUTTON
+      :bStrData      := {|| if( ::oBrwRango:aRow:getFilterController():isEmptyFilter(), "", "Activo" ) }
+      :bEditValue    := {|| if( ::oBrwRango:aRow:getFilterController():isEmptyFilter(), "", "Activo" ) }
+      :bEditBlock    := {|| ::oBrwRango:aRow:getFilterController():Edit() }
+      :bClrStd       := {|| { CLR_HRED, CLR_WHITE } }
+      :nWidth        := 100
       :Cargo         := 0.10
-      :SetCheck( { "gc_funnel_add_16", "gc_funnel_broom_16" } )
+      :nBtnBmp       := 1
+      :AddResource( "gc_funnel_add_16" )
    end with
 
 RETURN .t.
@@ -148,23 +149,17 @@ METHOD ResizeColumns() CLASS BrowseRange
 
    aeval( ::oBrwRango:aCols, {|o, n, oCol| o:nWidth := ::oBrwRango:nWidth * o:Cargo } )
 
-RETURN .t.
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD Clicked( nRow, nCol ) CLASS BrowseRange
-
-   if ::oBrwRango:MouseColPos( nCol ) == 6
-      msgalert( "filtrar" )         
-   end if
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD validColumnTo( oGet ) CLASS BrowseRange
-
-   // msgalert( ::oBrwRango:aRow:getRange():getFrom(), "uFrom" )
 
    if empty( ::oBrwRango:aRow:getRange():getFrom() )
       errorAlert( "Debe seleccionar un valor 'Desde'" )
