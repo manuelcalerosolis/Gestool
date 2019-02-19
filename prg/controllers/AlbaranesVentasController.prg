@@ -143,6 +143,8 @@ CLASS AlbaranesVentasConversorController FROM AlbaranesVentasController
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesPreviewBrowseView():New( self ), ), ::oBrowseView )
 
+   METHOD getModel()                  INLINE ( if( empty( ::oModel ), ::oModel := SQLAlbaranesVentasConversorModel():New( self ), ), ::oModel )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

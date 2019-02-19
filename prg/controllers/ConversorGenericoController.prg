@@ -35,6 +35,8 @@ CLASS ConversorGenericoController FROM SQLBrowseController
 
    //Contrucciones tarias------------------------------------------------------
 
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := ConversorDocumentosRepository():New( self ), ), ::oRepository ) 
+
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLConversorDocumentosModel():New( self ), ), ::oModel ) 
 
 END CLASS
@@ -168,6 +170,86 @@ METHOD countDocumentoWhereUuidOigen( uuidOrigen ) CLASS SQLConversorDocumentosMo
 RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+ CLASS ConversorDocumentosRepository FROM SQLBaseRepository
+
+   DATA cTableName                     INIT "documentos_conversion"
+
+   METHOD getTableName()               INLINE ( SQLConversorDocumentosModel():getTableName() ) 
+
+   METHOD createFunctionIsConvertedWhereUuidAnDestino()
+      METHOD dropFunctionIsConvertedWhereUuidAnDestino()
+      METHOD selectIsConvertedWhereUuidAnDestino( uuidDocumento, cTablaDestino )
+
+   METHOD getSQLFunctions()            INLINE ( {  ::dropFunctionIsConvertedWhereUuidAnDestino(),;
+                                                   ::createFunctionIsConvertedWhereUuidAnDestino() } )
+
+END CLASS 
+
+//---------------------------------------------------------------------------//
+
+METHOD createFunctionIsConvertedWhereUuidAnDestino() CLASS ConversorDocumentosRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   CREATE DEFINER=`root`@`localhost` 
+   FUNCTION "IsConvertedWhereUuidAndDestino" ( `uuid_documento` CHAR( 40 ), `tabla_destino` VARCHAR( 200 ) )
+   RETURNS SMALLINT(2)
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
+
+   BEGIN
+
+      DECLARE IsConverted SMALLINT(2);
+
+      SELECT
+         COUNT(*) INTO IsConverted
+      FROM 
+         %2$s AS %3$s
+
+      INNER JOIN %4$s AS %5$s
+         ON %2$s.uuid_documento_origen = %5$s.uuid AND %5$s.canceled_at = 0 
+
+      WHERE %3$s.uuid = uuid_documento AND %3$s.documento_destino_tabla = tabla_destino
+
+      
+      RETURN IsConverted;
+
+   END
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql,;
+                          ::getTableName(),;
+                          ::cTableName,;
+                          SQLFacturasVentasModel():getTableName(),;
+                          SQLFacturasVentasModel():cTableName )
+
+logwrite( alltrim( cSql ) )
+RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD dropFunctionIsConvertedWhereUuidAnDestino() CLASS ConversorDocumentosRepository  
+
+RETURN ( "DROP FUNCTION IF EXISTS IsConvertedWhereUuidAndDestino ;" )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectIsConvertedWhereUuidAnDestino( uuidDocumento, cTablaDestino ) CLASS ConversorDocumentosRepository
+
+RETURN ( getSQLDatabase():Query( "SELECT IsConvertedWhereUuidAndDestino( " + quotedUuid( uuidDocumento ) + ", " + quoted( cTablaDestino ) + " )" ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

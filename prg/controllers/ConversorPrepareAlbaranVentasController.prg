@@ -87,6 +87,8 @@ RETURN ( ::getConversorView():Activate() )
 
 METHOD generatePreview() CLASS ConversorPrepareAlbaranVentasController
 
+   msgalert( ::oOrigenController:getModel():className(), "modelo actual")
+
    ::oOrigenController:getModel():setLimit( nil )
 
    ::oOrigenController:getModel():setGeneralWhere( ::getWhereOrigen() )
@@ -105,7 +107,7 @@ METHOD getWhereOrigen() CLASS ConversorPrepareAlbaranVentasController
 
    cWhere         += "canceled_at = 0 "
    cWhere         += "AND fecha >= " + dtos( ::getConversorView():oPeriodo:oFechaInicio:Value() )  + " "
-   cWhere         += "AND fecha <= " + dtos( ::getConversorView():oPeriodo:oFechaFin:Value() )  + " "
+   cWhere         += "AND fecha <= " + dtos( ::getConversorView():oPeriodo:oFechaFin:Value() )     + " "
 
    aeval( ::aControllers,;
       {|oController| aeval( oController:getRange():getWhere(),;
