@@ -5,8 +5,6 @@
 
 CLASS ConversorPrepareAlbaranVentasController FROM ConversorPrepareController
 
-   DATA oRowset
-   
    DATA aControllers                   INIT {}
 
    DATA oConversorAlbaranesController
@@ -17,31 +15,27 @@ CLASS ConversorPrepareAlbaranVentasController FROM ConversorPrepareController
 
    METHOD Run()           
 
-   METHOD getWhere()
+   METHOD getWhereOrigen()
+
+   METHOD getWhereDestino()
 
    METHOD generatePreview()
 
    METHOD generateConvert()
 
-   METHOD getUuids()                   INLINE ( ::getRowSet():uuidFromRecno( ::getBrowseView():oBrowse:aSelected ) )
-
    //Construcciones tardias----------------------------------------------------
 
    METHOD getConversorView()           INLINE ( iif( empty( ::oConversorView ), ::oConversorView := ConversorAlbaranVentasView():New( self ), ), ::oConversorView ) 
-
-   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesPreviewBrowseView():New( self ), ), ::oBrowseView ) 
-
-   METHOD getRowSet()                  INLINE ( iif( empty( ::oRowSet ), ::oRowSet := SQLRowSet():New( self ), ), ::oRowSet )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oOrigenController, oDestinoController ) CLASS ConversorPrepareAlbaranVentasController
+METHOD New() CLASS ConversorPrepareAlbaranVentasController
 
-   ::Super:New( oOrigenController )
+   ::Super:New( AlbaranesVentasConversorController():New( self ) )
 
-   ::oDestinoController                := oDestinoController
+   ::oDestinoController                := FacturasVentasConversorController():New( self )
 
    ::oConversorAlbaranesController     := ConversorAlbaranesController():New( self )
 
@@ -55,8 +49,16 @@ RETURN ( self )
 
 METHOD End() CLASS ConversorPrepareAlbaranVentasController
 
-   if !empty( ::oConversorDocumentosController )
-      ::oConversorDocumentosController:End()
+   if !empty( ::oOrigenController )
+      ::oOrigenController:End()
+   end if
+
+   if !empty( ::oDestinoController )
+      ::oDestinoController:End()
+   end if
+
+   if !empty( ::oConversorAlbaranesController )
+      ::oConversorAlbaranesController:End()
    end if
 
    if !empty( ::oConversorView )
@@ -75,25 +77,29 @@ RETURN ( ::Super:End() )
 
 METHOD Run() CLASS ConversorPrepareAlbaranVentasController
 
+   ::oOrigenController:getModel():setLimit( 0 )
+
+   ::oDestinoController:getModel():setLimit( 0 )
+
 RETURN ( ::getConversorView():Activate() )
 
 //---------------------------------------------------------------------------//
 
 METHOD generatePreview() CLASS ConversorPrepareAlbaranVentasController
 
-   ::getModel():setLimit( nil )
+   ::oOrigenController:getModel():setLimit( nil )
 
-   ::getModel():setGeneralWhere( ::getWhere() )
+   ::oOrigenController:getModel():setGeneralWhere( ::getWhereOrigen() )
 
-   ::getRowset():build( ::getModel():getSelectSentence() )
+   ::oOrigenController:getRowset():build( ::oOrigenController:getModel():getSelectSentence() )
 
-   ::getBrowseView():selectAll()
+   ::oOrigenController:getBrowseView():selectAll()
 
-RETURN ( ::getRowSet():recCount() > 0 )
+RETURN ( ::oOrigenController:getRowset():recCount() > 0 )
 
 //---------------------------------------------------------------------------//
 
-METHOD getWhere() CLASS ConversorPrepareAlbaranVentasController
+METHOD getWhereOrigen() CLASS ConversorPrepareAlbaranVentasController
 
    local cWhere   := ''
 
@@ -105,23 +111,48 @@ METHOD getWhere() CLASS ConversorPrepareAlbaranVentasController
       {|oController| aeval( oController:getRange():getWhere(),;
          {|cCondition| cWhere += "AND " + cCondition + " " } ) } )
 
-   msgalert( cWhere, "cWhere" )
-
 RETURN ( cWhere )
 
 //---------------------------------------------------------------------------//
 
 METHOD generateConvert() CLASS ConversorPrepareAlbaranVentasController
 
-   ::oConversorAlbaranesController():Convert( ::getUuids() )
+   msgalert( hb_valtoexp( ::oOrigenController:getUuids() ), "oOrigenController:getUuids" )
 
-   ::aCreatedDocument   := ::oConversorAlbaranesController():convertDocument()
+   ::aCreatedDocument   := ::oConversorAlbaranesController():Convert( ::oOrigenController:getUuids() )
+   
+   msgalert( hb_valtoexp( ::aCreatedDocument ), "aCreatedDocument" )
 
-   ::getRowSet():Build( ::getModel():getSelectSentence() )
+   ::oDestinoController:getModel():setLimit( nil )
+
+   ::oDestinoController:getModel():setGeneralWhere( ::getWhereDestino( ::aCreatedDocument ) )
+
+   ::oDestinoController:getRowSet():Build( ::oDestinoController:getModel():getSelectSentence() )
+
+   ::oDestinoController:getBrowseView():Refresh()
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD getWhereDestino( aSelected ) CLASS ConversorPrepareAlbaranVentasController
+   
+   local cWhere
+   
+   if empty( aSelected )
+      RETURN ( '' )
+   end if 
+   
+   cWhere         :=  ::oDestinoController:getModel():cTableName + ".uuid IN( "
+
+   aeval( aSelected, {| v | cWhere += quotedUuid( v ) + ", " } )
+
+   cWhere         := chgAtEnd( cWhere, ' )', 2 )
+
+   msgalert( cWhere )
+
+RETURN ( cWhere )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -179,13 +210,13 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
    ::oPeriodo     := GetPeriodo():New( 110, 120, 130 )
    ::oPeriodo:Resource( ::oFolder:aDialogs[ 1 ] )
 
-   ::oController:Activate( 100, ::oFolder:aDialogs[2] )
-
-   ::oController:Activate( 100, ::oFolder:aDialogs[3] )
-
-   ::oBrwRange    := BrowseRange():New( 140, ::oFolder:aDialogs[1], ::oController:aControllers )
+   ::oBrwRange    := BrowseRange():New( 140, ::oFolder:aDialogs[ 1 ], ::oController:aControllers )
 
    ::oBrwRange:Resource()
+
+   ::oController:oOrigenController:Activate( 100, ::oFolder:aDialogs[ 2 ] )
+
+   ::oController:oDestinoController:Activate( 100, ::oFolder:aDialogs[ 3 ] )
 
    // Botones------------------------------------------------------------------
 
@@ -233,7 +264,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD okActivateFolderOne() CLASS ConversorAlbaranVentasView
-   
 
    if ::oController:generatePreview()
 
@@ -241,7 +271,7 @@ METHOD okActivateFolderOne() CLASS ConversorAlbaranVentasView
 
    else
 
-      msgstop( "No existen albaranes con el filtro seleccionado" )
+      ::oController:getConversorView():showMessage( "No existen albaranes con el filtro seleccionado" )
 
    end if
 
@@ -251,9 +281,12 @@ RETURN ( nil )
 
 METHOD okActivateFolderTwo() CLASS ConversorAlbaranVentasView
    
-   if empty( ::oController:getUuids() )
-      msgstop("Debe seleccionar al menos un albaran")
+   if empty( ::oController:oOrigenController:getUuids() )
+
+      ::oController:getConversorView():showMessage( "Debe seleccionar al menos un albarán" )
+
       RETURN( nil )
+
    end if
 
    ::oController:generateConvert()

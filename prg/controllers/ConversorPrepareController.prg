@@ -49,8 +49,6 @@ METHOD New( oOrigenController ) CLASS ConversorPrepareController
 
    ::oConversorDocumentosController    := ConversorDocumentosController():New( self )
 
-   ::getModel():setLimit( 0 )
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//

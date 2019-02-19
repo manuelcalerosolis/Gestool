@@ -146,6 +146,18 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
+CLASS FacturasVentasConversorController FROM FacturasVentasController
+
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesPreviewBrowseView():New( self ), ), ::oBrowseView )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
 CLASS FacturasVentasValidator FROM OperacionesComercialesValidator
 
    METHOD New( oController )

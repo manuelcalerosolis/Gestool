@@ -26,11 +26,15 @@ CLASS ConversorAlbaranesController FROM ConversorGenericoController
    METHOD getSelected()                INLINE ( ::oController:aSelected )
 
    METHOD Convert( aSelected ) 
+      
+      METHOD initConvert()
+
       METHOD setHeader()
       METHOD addHeader()
       METHOD setLines()
       METHOD addLines()
       METHOD setDiscounts()
+      
       METHOD convertAlbaran( aSelected )
 
    Method isAlbaranEquals( hAlbaran )
@@ -132,6 +136,18 @@ RETURN ( nil )
 
 METHOD Convert( aSelected ) CLASS ConversorAlbaranesController
    
+   ::initConvert()
+
+   ::convertAlbaran( aSelected )
+
+   ::convertDocument() 
+
+RETURN ( ::aCreatedDocument )
+
+//---------------------------------------------------------------------------//
+
+METHOD initConvert() CLASS ConversorAlbaranesController
+
    ::aConvert           := {}
 
    ::aHeader            := {}
@@ -141,8 +157,6 @@ METHOD Convert( aSelected ) CLASS ConversorAlbaranesController
    ::aDiscounts         := {}
 
    ::aCreatedDocument   := {}
-
-   ::convertAlbaran( aSelected ) 
 
 RETURN ( nil )
 
@@ -186,15 +200,41 @@ METHOD convertAlbaran( aSelected ) CLASS ConversorAlbaranesController
          ::hProcesedAlbaran      := hAlbaran
 
          if (::getOrigenController():getDiscountController():getModel():countWhere( { "parent_uuid" => hget( hAlbaran, "uuid" ) } ) ) > 0
-            ::lDescuento := .t.
+            ::lDescuento         := .t.
          else 
-            ::lDescuento := .f.
+            ::lDescuento         := .f.
          end if
 
       end if
 
    next
  
+RETURN ( ::aConvert )
+
+//---------------------------------------------------------------------------//
+
+METHOD convertDocument() CLASS ConversorAlbaranesController
+
+   Local hConvert
+   local uuidDocumentoDestino
+
+   for each hConvert in ::aConvert
+
+      uuidDocumentoDestino       := ::insertHeader( hget( hConvert, "header" ) )
+
+      if !empty( uuidDocumentoDestino )
+
+         ::insertLines( hget( hConvert, "lines" ), uuidDocumentoDestino )
+
+         ::insertDiscounts( hget( hConvert, "discounts" ), uuidDocumentoDestino ) 
+
+         // ::getDestinoController():getRecibosGeneratorController():GenerateNegative( uuidDocumentoDestino )
+
+         aadd( ::aCreatedDocument, uuidDocumentoDestino )
+
+      end if 
+
+   next
 
 RETURN ( ::aCreatedDocument )
 
@@ -285,35 +325,6 @@ METHOD Edit( nId ) CLASS ConversorAlbaranesController
    end if
 
 RETURN ( ::getDestinoController():Edit( nId ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD convertDocument() CLASS ConversorAlbaranesController
-
-   // ::aCreatedDocument            := ::oController:oDestinoController:convertDocument( ::aConvert )
-
-   Local hConvert
-   local uuidDocumentoDestino
-
-   for each hConvert in ::aConvert
-
-      uuidDocumentoDestino       := ::insertHeader( hget( hConvert, "header" ) )
-
-      if !empty( uuidDocumentoDestino )
-
-         ::insertLines( hget( hConvert, "lines" ), uuidDocumentoDestino )
-
-         ::insertDiscounts( hget( hConvert, "discounts" ), uuidDocumentoDestino ) 
-
-         // ::getDestinoController():getRecibosGeneratorController():GenerateNegative( uuidDocumentoDestino )
-
-         aadd( ::aCreatedDocument, uuidDocumentoDestino )
-
-      end if 
-
-   next
-
-RETURN ( ::aCreatedDocument )
 
 //---------------------------------------------------------------------------//
 

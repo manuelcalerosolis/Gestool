@@ -35,8 +35,6 @@ CLASS AlbaranesVentasController FROM OperacionesComercialesController
 
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := AlbaranesVentasRepository():New( self ), ), ::oRepository )
 
-   
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -134,6 +132,18 @@ METHOD getValidators() CLASS AlbaranesVentasValidator
                                                          "clienteExist"    => "El código del cliente no existe" } )
 
 RETURN ( ::hValidators )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS AlbaranesVentasConversorController FROM AlbaranesVentasController
+
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := OperacionesComercialesPreviewBrowseView():New( self ), ), ::oBrowseView )
+
+END CLASS
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
