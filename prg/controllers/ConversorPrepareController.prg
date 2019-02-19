@@ -45,9 +45,9 @@ END CLASS
 
 METHOD New( oOrigenController ) CLASS ConversorPrepareController
 
-   ::oOrigenController              := oOrigenController
+   ::oOrigenController                 := oOrigenController
 
-   ::oConversorDocumentosController := ConversorDocumentosController():New( self )
+   ::oConversorDocumentosController    := ConversorDocumentosController():New( self )
 
    ::getModel():setLimit( 0 )
 
@@ -93,8 +93,6 @@ METHOD setWhereArray( aSelected ) CLASS ConversorPrepareController
 
 RETURN ( cWhere )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
