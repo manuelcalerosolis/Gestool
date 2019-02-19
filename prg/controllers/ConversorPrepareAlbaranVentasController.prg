@@ -5,11 +5,11 @@
 
 CLASS ConversorPrepareAlbaranVentasController FROM ConversorPrepareController
 
+   DATA oRowset
+   
    DATA aControllers                   INIT {}
 
    DATA oConversorAlbaranesController
-
-   DATA oRowset
 
    METHOD New() CONSTRUCTOR
 
@@ -117,7 +117,7 @@ METHOD generateConvert() CLASS ConversorPrepareAlbaranVentasController
 
    ::aCreatedDocument   := ::oConversorAlbaranesController():convertDocument()
 
-   ::getRowSet():Build( ::getModel():getInitialSelect() )
+   ::getRowSet():Build( ::getModel():getSelectSentence() )
 
 RETURN ( nil )
 

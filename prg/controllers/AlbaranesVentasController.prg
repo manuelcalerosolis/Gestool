@@ -95,7 +95,9 @@ RETURN ( nil )
 
 METHOD runGenerateFacturaVentas() CLASS AlbaranesVentasController
 
-   local oConversorPrepareAlbaranVentasController   := ConversorPrepareAlbaranVentasController():New( self, ::getFacturasVentasController() )
+   local oConversorPrepareAlbaranVentasController
+
+   oConversorPrepareAlbaranVentasController  := ConversorPrepareAlbaranVentasController():New( self, ::getFacturasVentasController() )
 
    oConversorPrepareAlbaranVentasController:Run()
 
