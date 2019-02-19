@@ -123,22 +123,27 @@ METHOD getColumnsSelect() CLASS SQLOperacionesComercialesModel
       %1$s.created_at AS created_at,
       %1$s.updated_at AS updated_at,
       %1$s.canceled_at AS canceled_at,
-      terceros.nombre AS tercero_nombre,
-      terceros.dni AS cliente_dni,
-      direcciones.direccion AS direccion_direccion,
-      direcciones.poblacion AS direccion_poblacion,
-      direcciones.codigo_provincia AS direccion_codigo_provincia,
-      direcciones.provincia AS direccion_provincia,
-      direcciones.codigo_postal AS direccion_codigo_postal,
-      direcciones.telefono AS direccion_telefono,
-      direcciones.movil AS direccion_movil,
-      direcciones.email AS direccion_email,
-      tarifas.codigo AS tarifa_codigo,
-      tarifas.nombre AS tarifa_nombre,
+      %3$s.nombre AS tercero_nombre,
+      %3$s.dni AS cliente_dni,
+      %4$s.direccion AS direccion_direccion,
+      %4$s.poblacion AS direccion_poblacion,
+      %4$s.codigo_provincia AS direccion_codigo_provincia,
+      %4$s.provincia AS direccion_provincia,
+      %4$s.codigo_postal AS direccion_codigo_postal,
+      %4$s.telefono AS direccion_telefono,
+      %4$s.movil AS direccion_movil,
+      %4$s.email AS direccion_email,
+      %5$s.codigo AS tarifa_codigo,
+      %5$s.nombre AS tarifa_nombre,
       ( %2$s( %1$s.uuid ) ) AS total
    ENDTEXT
 
-   cColumns := hb_strformat( cColumns, ::cTableName, Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ) ) 
+   cColumns := hb_strformat( cColumns,;
+                             ::cTableName ,;
+                             Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ) ,;
+                             SQLTercerosModel():cTableName ,;
+                             SQLDireccionesModel():cTableName ,;
+                             SQLArticulosTarifasModel():cTableName ) 
 
 RETURN ( cColumns )
 
@@ -151,18 +156,18 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesModel
    TEXT INTO cSql
 
    SELECT
-      %6$s
+      %9$s
 
    FROM %2$s AS %1$s
 
-      LEFT JOIN %3$s AS terceros
-         ON %1$s.tercero_codigo = terceros.codigo AND terceros.deleted_at = 0
+      LEFT JOIN %3$s AS %4$s
+         ON %1$s.tercero_codigo = %4$s.codigo AND %4$s.deleted_at = 0
 
-      LEFT JOIN %4$s AS direcciones
-         ON terceros.uuid = direcciones.parent_uuid AND direcciones.codigo = 0
+      LEFT JOIN %5$s AS %6$s
+         ON %4$s.uuid = %6$s.parent_uuid AND %6$s.codigo = 0
 
-      LEFT JOIN %5$s AS tarifas
-         ON %1$s.tarifa_codigo = tarifas.codigo
+      LEFT JOIN %7$s AS %8$s
+         ON %1$s.tarifa_codigo = %8$s.codigo
 
    ENDTEXT
 
@@ -170,8 +175,11 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesModel
                            ::cTableName,;
                            ::getTableName(),;
                            SQLTercerosModel():getTableName(),;
+                           SQLTercerosModel():cTableName ,;
                            SQLDireccionesModel():getTableName(),;
+                           SQLDireccionesModel():cTableName ,;
                            SQLArticulosTarifasModel():getTableName(),;
+                           SQLArticulosTarifasModel():cTableName ,;
                            ::getColumnsSelect() )
 
 RETURN ( cSql )
