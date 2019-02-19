@@ -26,7 +26,8 @@ CLASS FiltrosController FROM SQLBrowseController
                                                 "Menor"        => " < ",;
                                                 "Mayor igual"  => " >= ",;
                                                 "Menor igual"  => " <= ",;
-                                                "Contenga"     => " LIKE " }
+                                                "Contenga"     => " LIKE ",;
+                                                "No contenga"  => " NOT LIKE " }
 
    METHOD New() CONSTRUCTOR
 
@@ -152,6 +153,8 @@ RETURN ( .f. )
 
 METHOD getStructure() CLASS FiltrosController
 
+   msgalert( hb_valtoexp( ::oController:getModel():getColumns() ), "getStr7" )
+
    if empty( ::aStructure )
 
       heval( ::oController:getModel():getColumns(),;
@@ -162,6 +165,8 @@ METHOD getStructure() CLASS FiltrosController
                   "text"   => hget( v, "text" ) } ), ) } )
 
    end if 
+
+   msgalert( hb_valtoexp( ::aStructure ), "aStructure FiltrosController" )
 
 RETURN ( ::aStructure )
 
@@ -267,6 +272,8 @@ RETURN ( ::appendFilter() )
 //---------------------------------------------------------------------------//
 
 METHOD appendFilter() CLASS FiltrosController
+
+   msgalert( hb_valtoexp( ::getStructure() ), "appendFilter" )
 
    aadd( ::aFilter,;
       {  "text"      => hget( ::getStructure()[ 1 ], "text" ),;
@@ -543,7 +550,7 @@ METHOD getConditions() CLASS FiltrosView
                            "edit"         => EDIT_GET_BUTTON,;
                            "list"         => nil,;
                            "block"        => {|| nil },;
-                           "conditions"   => { "Igual", "Distinto", "Contenga", "Mayor", "Menor", "Mayor igual", "Menor igual" } }     
+                           "conditions"   => { "Igual", "Distinto", "Contenga", "No contenga", "Mayor", "Menor", "Mayor igual", "Menor igual" } }     
 
       hDate          := {  "value"        => getSysDate(),;
                            "edit"         => EDIT_GET_BUTTON,;

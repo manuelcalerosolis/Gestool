@@ -212,7 +212,7 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
    ::oPeriodo     := GetPeriodo():New( 110, 120, 130 )
    ::oPeriodo:Resource( ::oFolder:aDialogs[ 1 ] )
 
-   ::oBrwRange    := BrowseRange():New( 140, ::oFolder:aDialogs[ 1 ], ::oController:aControllers )
+   ::oBrwRange    := BrowseRange():New( 140, ::oFolder:aDialogs[ 1 ], ::oController )
 
    ::oBrwRange:Resource()
 
@@ -287,7 +287,7 @@ METHOD okActivateFolderTwo() CLASS ConversorAlbaranVentasView
 
       ::oController:getConversorView():showMessage( "Debe seleccionar al menos un albarán" )
 
-      RETURN( nil )
+      RETURN ( nil )
 
    end if
 

@@ -8,7 +8,7 @@ CLASS BrowseRange
 
    DATA oContainer
 
-   DATA aControllers
+   DATA oController
 
    DATA oBrwRango
 
@@ -18,13 +18,14 @@ CLASS BrowseRange
    DATA oColFilter
 
    METHOD New() CONSTRUCTOR
+
    METHOD End()
 
    METHOD Resource()
 
    METHOD Clicked( nRow, nCol ) 
 
-   METHOD validColumnTo( oGet ) 
+   METHOD postEditHasta( oGet ) 
 
    METHOD resizeColumns()
 
@@ -32,19 +33,23 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( idBrowse, oContainer, aControllers ) CLASS BrowseRange
+METHOD New( idBrowse, oContainer, oController ) CLASS BrowseRange
 
    ::idBrowse                          := idBrowse
    
    ::oContainer                        := oContainer
 
-   ::aControllers                      := aControllers
+   ::oController                        := oController
    
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS BrowseRange
+
+   if !empty( ::oBrwRango )
+      ::oBrwRango:End()
+   end if 
    
 RETURN ( nil )
 
@@ -57,7 +62,7 @@ METHOD Resource() CLASS BrowseRange
    ::oBrwRango:bClrSel              := {|| { CLR_BLACK, rgb( 229, 229, 229 ) } }
    ::oBrwRango:bClrSelFocus         := {|| { CLR_BLACK, rgb( 144, 202, 249 ) } }
 
-   ::oBrwRango:SetArray( ::aControllers, , , .f. )
+   ::oBrwRango:SetArray( ::oController:aControllers, , , .f. )
 
    ::oBrwRango:lHScroll             := .f.
    ::oBrwRango:lVScroll             := .f.
@@ -79,7 +84,7 @@ METHOD Resource() CLASS BrowseRange
       :bBmpData      := {|| ::oBrwRango:nArrayAt }
       :nWidth        := 200
       :Cargo         := 0.20
-      aeval( ::aControllers, {| oController | :addResource( hget( oController:hImage, "16" ) ) } )
+      aeval( ::oController:aControllers, {| oController | :addResource( hget( oController:hImage, "16" ) ) } )
    end with
 
    with object ( ::oColDesde := ::oBrwRango:AddCol() )
@@ -109,8 +114,7 @@ METHOD Resource() CLASS BrowseRange
       :nEditType     := EDIT_GET_BUTTON
       :bEditValue    := {|| ::oBrwRango:aRow:getRange():uTo }
       :bEditBlock    := {|| ::oBrwRango:aRow:ActivateSelectorView() }
-      :bEditValid    := {| oGet | ::validColumnTo( oGet ) }
-      :bOnPostEdit   := {| oCol, uNewValue | ::oBrwRango:aRow:getRange():setTo( uNewValue ) }
+      :bOnPostEdit   := {| oCol, uNewValue | ::postEditHasta( uNewValue ) }
       :cEditPicture  := "@!"
       :nWidth        := 120
       :Cargo         := 0.15
@@ -159,14 +163,18 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD validColumnTo( oGet ) CLASS BrowseRange
+METHOD postEditHasta( uNewValue ) CLASS BrowseRange
 
    if empty( ::oBrwRango:aRow:getRange():getFrom() )
-      errorAlert( "Debe seleccionar un valor 'Desde'" )
-      RETURN ( .f. )
+      ::oController:getConversorView():showMessage( "Debe seleccionar un valor 'Desde'" )
+      RETURN ( nil )
    end if
 
-RETURN ( ::oBrwRango:aRow:getRange():validCode( oGet ) )
+   if ::oBrwRango:aRow:getRange():validCode( uNewValue )
+      ::oBrwRango:aRow:getRange():setTo( uNewValue )
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

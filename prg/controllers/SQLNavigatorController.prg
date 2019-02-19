@@ -326,7 +326,7 @@ RETURN ( heval( ::hFastKey, {|k,v| if( k == nKey, eval( v ), ) } ) )
 
 METHOD appendFilter()                                
 
-RETURN ( ::getFilterController():Append() )    
+RETURN ( ::getFilterController():Edit() )    
     
 //---------------------------------------------------------------------------//
 
