@@ -19,22 +19,15 @@ METHOD getInitialSelect( cOrderBy, cOrientation ) CLASS SQLAlbaranesVentasConver
 
       %1$s
 
-      INNER JOIN %2$s AS %3$s
-         ON %4$s.uuid <> %3$s.documento_origen_uuid
+      WHERE ( %3$s( albaranes_ventas.uuid, "facturas_ventas" ) ) = 0
 
    ENDTEXT
 
    cSql  := hb_strformat(  cSql,;
                            ::Super:getInitialSelect( cOrderBy, cOrientation ),;
                            SQLConversorDocumentosModel():getTableName(),;
-                           SQLConversorDocumentosModel():cTableName,;
-                           SQLAlbaranesVentasModel():cTableName,;
-                            )
-
-   msgalert( cSql, "cSql albaranes ventas conversor" )
-
-   logwrite( cSql )
-
+                           Company():getTableName( ::getPackage( 'IsConvertedWhereUuidAnDestino' ) ) )
+logwrite( cSql )
 RETURN ( cSql )  
 
 //---------------------------------------------------------------------------//

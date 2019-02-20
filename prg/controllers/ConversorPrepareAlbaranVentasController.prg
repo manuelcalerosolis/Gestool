@@ -87,8 +87,6 @@ RETURN ( ::getConversorView():Activate() )
 
 METHOD generatePreview() CLASS ConversorPrepareAlbaranVentasController
 
-   msgalert( ::oOrigenController:getModel():className(), "modelo actual")
-
    ::oOrigenController:getModel():setLimit( nil )
 
    ::oOrigenController:getModel():setGeneralWhere( ::getWhereOrigen() )
@@ -114,19 +112,13 @@ METHOD getWhereOrigen() CLASS ConversorPrepareAlbaranVentasController
          cWhere += oController:getRange():getWhere(),;
          cWhere += oController:getFilterController():getWhere() } )
 
-   msgalert( cWhere, "cWhere" )
-
 RETURN ( cWhere )
 
 //---------------------------------------------------------------------------//
 
 METHOD generateConvert() CLASS ConversorPrepareAlbaranVentasController
 
-   msgalert( hb_valtoexp( ::oOrigenController:getUuids() ), "oOrigenController:getUuids" )
-
    ::aCreatedDocument   := ::oConversorAlbaranesController():Convert( ::oOrigenController:getUuids() )
-   
-   msgalert( hb_valtoexp( ::aCreatedDocument ), "aCreatedDocument" )
 
    ::oDestinoController:getModel():setLimit( nil )
 

@@ -180,6 +180,10 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
    DATA cTableName                     INIT "documentos_conversion"
 
+   DATA cPackage                       INIT "ConversorAlbaranesVentas"
+
+   METHOD getPackage( cContext )       INLINE ( SQLAlbaranesVentasModel():getPackage( cContext ) )
+
    METHOD getTableName()               INLINE ( SQLConversorDocumentosModel():getTableName() ) 
 
    METHOD createFunctionIsConvertedWhereUuidAnDestino()
@@ -200,8 +204,8 @@ METHOD createFunctionIsConvertedWhereUuidAnDestino() CLASS ConversorDocumentosRe
    TEXT INTO cSql
 
    CREATE DEFINER=`root`@`localhost` 
-   FUNCTION "IsConvertedWhereUuidAndDestino" ( `uuid_documento` CHAR( 40 ), `tabla_destino` VARCHAR( 200 ) )
-   RETURNS SMALLINT(2)
+   FUNCTION %5$s ( `uuid_documento` CHAR( 40 ), `tabla_destino` VARCHAR( 200 ) )
+   RETURNS INT(2)
    LANGUAGE SQL
    NOT DETERMINISTIC
    CONTAINS SQL
@@ -210,20 +214,19 @@ METHOD createFunctionIsConvertedWhereUuidAnDestino() CLASS ConversorDocumentosRe
 
    BEGIN
 
-      DECLARE IsConverted SMALLINT(2);
+      DECLARE converted INT(2);
 
       SELECT
-         COUNT(*) INTO IsConverted
+         COUNT(*) INTO converted
       FROM 
-         %2$s AS %3$s
+         %1$s AS %2$s
 
-      INNER JOIN %4$s AS %5$s
-         ON %2$s.uuid_documento_origen = %5$s.uuid AND %5$s.canceled_at = 0 
+      INNER JOIN %3$s AS %4$s
+         ON %1$s.documento_origen_uuid = %4$s.uuid AND %4$s.canceled_at = 0 
 
-      WHERE %3$s.uuid = uuid_documento AND %3$s.documento_destino_tabla = tabla_destino
-
+      WHERE %2$s.uuid = uuid_documento AND %2$s.documento_destino_tabla = tabla_destino;
       
-      RETURN IsConverted;
+      RETURN converted; 
 
    END
 
@@ -233,22 +236,22 @@ METHOD createFunctionIsConvertedWhereUuidAnDestino() CLASS ConversorDocumentosRe
                           ::getTableName(),;
                           ::cTableName,;
                           SQLFacturasVentasModel():getTableName(),;
-                          SQLFacturasVentasModel():cTableName )
+                          SQLFacturasVentasModel():cTableName,;
+                          Company():getTableName( ::getPackage( 'IsConvertedWhereUuidAnDestino' ) ) )
 
-logwrite( alltrim( cSql ) )
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD dropFunctionIsConvertedWhereUuidAnDestino() CLASS ConversorDocumentosRepository  
 
-RETURN ( "DROP FUNCTION IF EXISTS IsConvertedWhereUuidAndDestino ;" )
-
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( ::getPackage( 'IsConvertedWhereUuidAnDestino' ) ) + " ;" )
+ 
 //---------------------------------------------------------------------------//
 
 METHOD selectIsConvertedWhereUuidAnDestino( uuidDocumento, cTablaDestino ) CLASS ConversorDocumentosRepository
 
-RETURN ( getSQLDatabase():Query( "SELECT IsConvertedWhereUuidAndDestino( " + quotedUuid( uuidDocumento ) + ", " + quoted( cTablaDestino ) + " )" ) )
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( ::getPackage( 'IsConvertedWhereUuidAnDestino' ) ) + "( " + quotedUuid( uuidDocumento ) + ", " + quoted( cTablaDestino ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

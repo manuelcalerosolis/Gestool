@@ -560,7 +560,7 @@ METHOD addRepositories() CLASS SQLCompanyMigrations
 
    aadd( ::aRepositories, StocksRepository():New() )
 
-   //aadd( ::aRepositories, ConversorDocumentosRepository():New() )
+   aadd( ::aRepositories, ConversorDocumentosRepository():New() )
 
 RETURN ( nil )
 

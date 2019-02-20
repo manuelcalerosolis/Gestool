@@ -193,8 +193,8 @@ RETURN ( ::Super:End() )
 METHOD Editing( nId ) CLASS OperacionesComercialesController
 
    if !empty( ::getFieldFromRowSet( "canceled_at" ) )
-      errorAlert( "El documento está cancelado." )
-      msgstop( "El documento está cancelado.", "No esta permitida la edición" )
+      errorAlert( "El documento est?cancelado." )
+      msgstop( "El documento est?cancelado.", "No esta permitida la edici?" )
       RETURN ( .f. )
    end if 
 
@@ -322,7 +322,7 @@ METHOD terceroSetRuta() CLASS OperacionesComercialesController
 
    ::getRutasController():getSelector():cText( cCodigoRuta )
 
-   ::getRutasController():getSelector():lValid()
+   ::getRutasController():getSelector():lValid() 
 
 RETURN ( nil )
 
@@ -435,13 +435,13 @@ METHOD getConfigItems() CLASS OperacionesComercialesController
 
    local aItems   := {}
 
-   aadd( aItems,  {  'texto'  => 'Documento impresión',;
+   aadd( aItems,  {  'texto'  => 'Documento impresi?',;
                      'clave'  => 'documento_impresion',;
                      'valor'  => ::getDocumentPrint(),;
                      'tipo'   => "B",;
                      'lista'  =>  ::loadDocuments() } )
 
-   aadd( aItems,  {  'texto'  => 'Copias impresión',;
+   aadd( aItems,  {  'texto'  => 'Copias impresi?',;
                      'clave'  => 'copias_impresion',;
                      'valor'  => ::getCopyPrint(),;
                      'tipo'   => "N" } )
@@ -452,7 +452,7 @@ METHOD getConfigItems() CLASS OperacionesComercialesController
                      'tipo'   => "B",;
                      'lista'  =>  ::loadDocuments() } )
 
-   aadd( aItems,  {  'texto'  => 'Documento previsulización',;
+   aadd( aItems,  {  'texto'  => 'Documento previsulizaci?',;
                      'clave'  => 'documento_previsulizacion',;
                      'valor'  => ::getDocumentPreview(),;
                      'tipo'   => "B",;
@@ -508,13 +508,13 @@ END CLASS
 
 METHOD getValidators() CLASS OperacionesComercialesValidator
 
-   ::hValidators  := {  "metodo_pago_codigo" => {  "required"        => "El código del método de pago es un dato requerido",;
-                                                   "formaPagoExist"  => "El código del método de pago no existe" } ,;
-                        "almacen_codigo"     => {  "required"        => "El código del almacén es un dato requerido",;
-                                                   "almacenExist"    => "El código del almacén no existe" } ,;
-                        "tarifa_codigo"      => {  "required"        => "El código de la tarifa es un dato requerido",;
-                                                   "tarifaExist"     => "El código de la tarifa no existe" },;
-                        "formulario"         => {  "emptyLines"      => "Las líneas no pueden estar vacias",;
+   ::hValidators  := {  "metodo_pago_codigo" => {  "required"        => "El c?igo del m?odo de pago es un dato requerido",;
+                                                   "formaPagoExist"  => "El c?igo del m?odo de pago no existe" } ,;
+                        "almacen_codigo"     => {  "required"        => "El c?igo del almac? es un dato requerido",;
+                                                   "almacenExist"    => "El c?igo del almac? no existe" } ,;
+                        "tarifa_codigo"      => {  "required"        => "El c?igo de la tarifa es un dato requerido",;
+                                                   "tarifaExist"     => "El c?igo de la tarifa no existe" },;
+                        "formulario"         => {  "emptyLines"      => "Las l?eas no pueden estar vacias",;
                                                    "validLine"       => "" } }
 
 RETURN ( ::hValidators )
