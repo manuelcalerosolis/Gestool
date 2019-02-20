@@ -48,9 +48,9 @@ METHOD getInitialWhereDocumentos( cWhere ) CLASS SQLFacturasVentasModel
                               ::getColumnsSelect() )
 
    if !empty( cWhere )
-      cSql  +=  "WHERE " + ::cTableName + ".canceled_at = 0 AND " + ::cTableName + ".uuid " + cWhere
+      cSql  +=  "WHERE "+ ::cTableName + ".uuid " + cWhere
    end if 
-
+logwrite(csql)
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
@@ -61,7 +61,6 @@ METHOD getInitialLimitCero() CLASS SQLFacturasVentasModel
 
    cSql  := ::getInitialWhereDocumentos()   
 
-   cSql  += "LIMIT 0"
 
 RETURN ( cSql )
 

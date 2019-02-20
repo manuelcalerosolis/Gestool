@@ -44,7 +44,7 @@ CLASS ConversorAlbaranesController FROM ConversorGenericoController
    METHOD isAlbaranNotConverted( hAlbaran ) ;
                                        INLINE ( ::getModel():countDocumentoWhereUuidOigen( hget( hAlbaran, "uuid" ) ) == 0 )
 
-   METHOD insertRelationDocument()     INLINE ( ::getModel():insertRelationDocument( ::uuidDocumentoOrigen, ::getOrigenController():getModel():cTableName, ::uuidDocumentoDestino, ::getDestinoController():getModel():cTableName ) )
+   //METHOD insertRelationDocument()     INLINE ( ::getModel():insertRelationDocument( , ::getOrigenController():getModel():cTableName, ::uuidDocumentoDestino, ::getDestinoController():getModel():cTableName ) )
 
    METHOD addConvert()
 
@@ -334,8 +334,6 @@ METHOD insertHeader( aHeaders ) CLASS ConversorAlbaranesController
 
    ::uuidDocumentoDestino  := ::generateHeader( hClone( aFirst( aHeaders ) ) )
 
-   msgalert( ::uuidDocumentoDestino, "uuidDocumentoDestino")
-
    if empty( ::uuidDocumentoDestino )
       RETURN ( nil )
    end if 
@@ -364,7 +362,7 @@ RETURN ( ::getDestinoController():getModelBuffer( "uuid" ) )
 
 METHOD insertHeaderRelation( hHeader ) CLASS ConversorAlbaranesController
 
-RETURN ( ::insertRelationDocument( hget( hHeader, "uuid" ), ::getOrigenController():getModel():cTableName, ::uuidDocumentoDestino, ::getDestinoController():getModel():cTableName ) )
+RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hHeader, "uuid" ), ::getOrigenController():getModel():cTableName, ::uuidDocumentoDestino, ::getDestinoController():getModel():cTableName ) )
 
 //---------------------------------------------------------------------------//
 
@@ -415,8 +413,6 @@ METHOD insertDiscounts( hDiscounts, uuidDocumentoDestino ) CLASS ConversorAlbara
    for each hDiscount in hDiscounts
 
       uuidDestino  := ::generateDiscount( hClone( hDiscount ), uuidDocumentoDestino  )
-
-      msgalert( uuidDestino, "uuidDocumentoDestino")
 
       if !empty( uuidDestino )
          ::insertDiscountRelation( hDiscount, uuidDestino )

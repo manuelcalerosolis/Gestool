@@ -87,8 +87,6 @@ RETURN ( ::getConversorView():Activate() )
 
 METHOD generatePreview() CLASS ConversorPrepareAlbaranVentasController
 
-   msgalert( ::oOrigenController:getModel():className(), "modelo actual")
-
    ::oOrigenController:getModel():setLimit( nil )
 
    ::oOrigenController:getModel():setGeneralWhere( ::getWhereOrigen() )
@@ -114,19 +112,13 @@ METHOD getWhereOrigen() CLASS ConversorPrepareAlbaranVentasController
          cWhere += oController:getRange():getWhere(),;
          cWhere += oController:getFilterController():getWhere() } )
 
-   msgalert( cWhere, "cWhere" )
-
 RETURN ( cWhere )
 
 //---------------------------------------------------------------------------//
 
 METHOD generateConvert() CLASS ConversorPrepareAlbaranVentasController
 
-   msgalert( hb_valtoexp( ::oOrigenController:getUuids() ), "oOrigenController:getUuids" )
-
    ::aCreatedDocument   := ::oConversorAlbaranesController():Convert( ::oOrigenController:getUuids() )
-   
-   msgalert( hb_valtoexp( ::aCreatedDocument ), "aCreatedDocument" )
 
    ::oDestinoController:getModel():setLimit( nil )
 
@@ -135,6 +127,8 @@ METHOD generateConvert() CLASS ConversorPrepareAlbaranVentasController
    ::oDestinoController:getRowSet():Build( ::oDestinoController:getModel():getSelectSentence() )
 
    ::oDestinoController:getBrowseView():Refresh()
+
+   ::aCreatedDocument := {}
 
 RETURN ( nil )
 
@@ -153,8 +147,6 @@ METHOD getWhereDestino( aSelected ) CLASS ConversorPrepareAlbaranVentasControlle
    aeval( aSelected, {| v | cWhere += quotedUuid( v ) + ", " } )
 
    cWhere         := chgAtEnd( cWhere, ' )', 2 )
-
-   msgalert( cWhere )
 
 RETURN ( cWhere )
 
@@ -192,7 +184,7 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_warning_48" ;
+      RESOURCE    "gc_funnel_red_48" ;
       TRANSPARENT ;
       OF          ::oDialog
 
