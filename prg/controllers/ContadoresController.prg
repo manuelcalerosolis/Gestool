@@ -19,6 +19,8 @@ CLASS ContadoresController FROM SQLNavigatorController
 
    METHOD getRange()                   INLINE ( iif( empty( ::oRange ), ::oRange := ContadoresItemRange():New( self ), ), ::oRange )
 
+   METHOD getDialogView                INLINE ( iif( empty( ::oDialogView ), ::oDialogView := ContadoresView():New( self ), ), ::oDialogView )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -37,12 +39,12 @@ METHOD New( oController) CLASS ContadoresController
                                              "32" => "gc_sort_az_descending_32",;
                                              "48" => "gc_sort_az_descending_48" }
 
-   ::getSelectorView():getMenuTreeView():setEvents( { 'addingDuplicateButton',;
+   /*::getSelectorView():getMenuTreeView():setEvents( { 'addingDuplicateButton',;
                                                       'addingAppendButton',;
                                                       'addingEditButton',;
                                                       'addingZoomButton',;
                                                       'addingShowDeleteButton',;
-                                                      'addingDeleteButton' }, {|| .f. } )
+                                                      'addingDeleteButton' }, {|| .f. } )*/
 
    ::getModel():setGeneralWhere( "documento = '" + ::cScope + "'" )                                                      
 
@@ -98,6 +100,14 @@ METHOD addColumns() CLASS ContadoresBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := "contador"
+      :cHeader             := "Contador"
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( "contador" ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -105,6 +115,64 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+CLASS ContadoresView FROM SQLBaseView
+
+   METHOD Activate()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS ContadoresView
+
+   DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "AÑADIR_SERIE" ;
+      TITLE       ::LblTitle() + "serie"
+
+   REDEFINE BITMAP ::oBitmap ;
+      ID          900 ;
+      RESOURCE    ::oController:getImage( "48" ) ;
+      TRANSPARENT ;
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      ID          800 ;
+      FONT        oFontBold() ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "serie" ] ;
+      ID          100 ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "contador" ] ;
+      ID          110 ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
+      OF          ::oDialog
+
+
+   // Botones------------------------------------------------------------------
+
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::okActivate(), ) }
+
+   ::oDialog:bStart     := {|| ::paintedActivate() }
+
+   ACTIVATE DIALOG ::oDialog CENTER
+
+RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
 
 #ifdef __TEST__
 

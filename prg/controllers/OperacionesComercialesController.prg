@@ -23,6 +23,8 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    DATA aCreatedDocument               INIT {}
 
+   DATA oContadoresController
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -135,6 +137,8 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD getConversorPreapreGenericoController() ;
                                        INLINE ( if( empty( ::oConversorPrepareGenerico ), ::oConversorPrepareGenerico := ConversorPrepareGenericoController():New( self ), ), ::oConversorPrepareGenerico )
+
+   METHOD getContadoresController()    INLINE ( if( empty( ::oContadoresController ), ::oContadoresController := ContadoresController():New( self ), ), ::oContadoresController )
 
 END CLASS
 

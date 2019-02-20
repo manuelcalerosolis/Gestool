@@ -33,6 +33,8 @@ CLASS DocumentComponent FROM Events
    METHOD isOriginalChanged()       INLINE ( alltrim( ::getOriginal() ) != alltrim( ::getValue() ) )
    METHOD isNotOriginalChanged()    INLINE ( alltrim( ::getOriginal() ) == alltrim( ::getValue() ) )
 
+   METHOD getController()           INLINE ( ::oController:oController )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -69,9 +71,15 @@ RETURN ( Self )
 
 CLASS SerieDocumentoComponent FROM DocumentComponent
 
+   DATA oGetSelector
+
    METHOD Validate() 
 
    METHOD createControl( id, oDialog )
+
+   //Contrucciones tardías-----------------------------------------------------
+
+   METHOD getSelector()       INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
 END CLASS
 

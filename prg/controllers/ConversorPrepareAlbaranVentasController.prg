@@ -148,8 +148,6 @@ METHOD getWhereDestino( aSelected ) CLASS ConversorPrepareAlbaranVentasControlle
 
    cWhere         := chgAtEnd( cWhere, ' )', 2 )
 
-   msgalert( cWhere )
-
 RETURN ( cWhere )
 
 //---------------------------------------------------------------------------//

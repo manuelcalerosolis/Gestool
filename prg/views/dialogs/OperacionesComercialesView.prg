@@ -84,13 +84,16 @@ METHOD Activate() CLASS OperacionesComercialesView
 
    // Serie-------------------------------------------------------------------
 
-   ::getController():getSerieDocumentoComponent():BindValue( bSETGET( ::getController():getModel():hBuffer[ "serie" ] ) )
-   ::getController():getSerieDocumentoComponent():Activate( 100, ::oFolder:aDialogs[1] )
+   ::getController():getContadoresController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "serie" ] ) )
+   ::getController():getContadoresController():getSelector():Build( { "idGet" => 100, "idText" => 110, "oDialog" => ::oFolder:aDialogs[1] } )
+
+   //::getController():getSerieDocumentoComponent():BindValue( bSETGET( ::getController():getModel():hBuffer[ "serie" ] ) )
+   //::getController():getSerieDocumentoComponent():Activate( 100, ::oFolder:aDialogs[1] )
 
    // Numero-------------------------------------------------------------------
 
-   ::getController():getNumeroDocumentoComponent():BindValue( bSETGET( ::getController():getModel():hBuffer[ "numero" ] ) )
-   ::getController():getNumeroDocumentoComponent():Activate( 110, ::oFolder:aDialogs[1] )
+   //::getController():getNumeroDocumentoComponent():BindValue( bSETGET( ::getController():getModel():hBuffer[ "numero" ] ) )
+   //::getController():getNumeroDocumentoComponent():Activate( 110, ::oFolder:aDialogs[1] )
 
    // Fecha--------------------------------------------------------------------
 
