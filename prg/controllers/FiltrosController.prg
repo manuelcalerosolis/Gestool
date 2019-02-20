@@ -67,7 +67,7 @@ CLASS FiltrosController FROM SQLBrowseController
 
    METHOD existName()                  INLINE ( ::getModel():existName( ::cName, ::getScope() ) )
 
-   METHOD toSQL()
+   METHOD getWhere()
 
    //Construcciones tardias----------------------------------------------------
 
@@ -153,8 +153,6 @@ RETURN ( .f. )
 
 METHOD getStructure() CLASS FiltrosController
 
-   msgalert( hb_valtoexp( ::oController:getModel():getColumns() ), "getStr7" )
-
    if empty( ::aStructure )
 
       heval( ::oController:getModel():getColumns(),;
@@ -165,8 +163,6 @@ METHOD getStructure() CLASS FiltrosController
                   "text"   => hget( v, "text" ) } ), ) } )
 
    end if 
-
-   msgalert( hb_valtoexp( ::aStructure ), "aStructure FiltrosController" )
 
 RETURN ( ::aStructure )
 
@@ -297,7 +293,7 @@ RETURN ( ::aDescriptions )
 
 //---------------------------------------------------------------------------//
 
-METHOD toSQL() CLASS FiltrosController
+METHOD getWhere() CLASS FiltrosController
 
    local cSql     
    local hFilter
@@ -305,8 +301,10 @@ METHOD toSQL() CLASS FiltrosController
    cSql     := ""
 
    if empty( ::aFilter )
-      RETURN ( nil )
+      RETURN ( cSql )
    end if 
+
+   cSql     := " AND ( "
 
    for each hFilter in ::aFilter 
       cSql  += ::getStructureField( hget( hFilter, "text" ) )
@@ -314,6 +312,8 @@ METHOD toSQL() CLASS FiltrosController
       cSql  += quoted( hget( hFilter, "value" ) )
       cSql  += hget( ::hNexo, hget( hFilter, "nexo" ) )
    next
+
+   cSql     += " ) "
 
 RETURN ( cSql ) 
 
@@ -493,7 +493,7 @@ METHOD Activate() CLASS FiltrosView
 
    ApoloBtnFlat():Redefine( IDOK, {|| ::oDialog:end( IDOK ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oController:toSQL(), ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oController:getWhere(), ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
    
