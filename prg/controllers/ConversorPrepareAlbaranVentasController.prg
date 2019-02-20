@@ -189,7 +189,7 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_warning_48" ;
+      RESOURCE    "gc_funnel_red_48" ;
       TRANSPARENT ;
       OF          ::oDialog
 
