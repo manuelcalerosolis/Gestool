@@ -224,7 +224,7 @@ METHOD createFunctionIsConvertedWhereUuidAnDestino() CLASS ConversorDocumentosRe
       INNER JOIN %3$s AS %4$s
          ON %1$s.documento_origen_uuid = %4$s.uuid AND %4$s.canceled_at = 0 
 
-      WHERE %2$s.uuid = uuid_documento AND %2$s.documento_destino_tabla = tabla_destino;
+      WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = tabla_destino;
       
       RETURN converted; 
 

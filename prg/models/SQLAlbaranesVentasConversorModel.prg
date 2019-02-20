@@ -27,7 +27,6 @@ METHOD getInitialSelect( cOrderBy, cOrientation ) CLASS SQLAlbaranesVentasConver
                            ::Super:getInitialSelect( cOrderBy, cOrientation ),;
                            SQLConversorDocumentosModel():getTableName(),;
                            Company():getTableName( ::getPackage( 'IsConvertedWhereUuidAnDestino' ) ) )
-logwrite( cSql )
 RETURN ( cSql )  
 
 //---------------------------------------------------------------------------//
