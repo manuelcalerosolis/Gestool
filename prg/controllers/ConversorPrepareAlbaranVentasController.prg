@@ -128,6 +128,8 @@ METHOD generateConvert() CLASS ConversorPrepareAlbaranVentasController
 
    ::oDestinoController:getBrowseView():Refresh()
 
+   ::aCreatedDocument := {}
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

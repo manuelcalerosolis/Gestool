@@ -44,7 +44,7 @@ CLASS ConversorAlbaranesController FROM ConversorGenericoController
    METHOD isAlbaranNotConverted( hAlbaran ) ;
                                        INLINE ( ::getModel():countDocumentoWhereUuidOigen( hget( hAlbaran, "uuid" ) ) == 0 )
 
-   METHOD insertRelationDocument()     INLINE ( ::getModel():insertRelationDocument( , ::getOrigenController():getModel():cTableName, ::uuidDocumentoDestino, ::getDestinoController():getModel():cTableName ) )
+   //METHOD insertRelationDocument()     INLINE ( ::getModel():insertRelationDocument( , ::getOrigenController():getModel():cTableName, ::uuidDocumentoDestino, ::getDestinoController():getModel():cTableName ) )
 
    METHOD addConvert()
 
