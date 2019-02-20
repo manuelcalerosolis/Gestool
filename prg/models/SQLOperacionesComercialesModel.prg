@@ -49,52 +49,64 @@ METHOD getColumns() CLASS SQLOperacionesComercialesModel
                                                          "text"      => "Identificador"                        ,;
                                                          "default"   => {|| 0 } }                              )
 
-   hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"        ,;
+   hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"       ,;
                                                          "default"   => {|| win_uuidcreatestring() } }         )
 
-   hset( ::hColumns, "delegacion_uuid",               {  "create"    => "VARCHAR( 40 )"                        ,;
+   hset( ::hColumns, "delegacion_uuid",               {  "create"    => "VARCHAR ( 40 )"                       ,;
                                                          "default"   => {|| Delegation():Uuid() } }            )
 
-   hset( ::hColumns, "sesion_uuid",                   {  "create"    => "VARCHAR( 40 )"                        ,;
+   hset( ::hColumns, "sesion_uuid",                   {  "create"    => "VARCHAR ( 40 )"                       ,;
                                                          "default"   => {|| Session():Uuid() } }               )
 
-   hset( ::hColumns, "serie",                         {  "create"    => "VARCHAR( 20 )"                        ,;
+   hset( ::hColumns, "serie",                         {  "create"    => "VARCHAR ( 20 )"                       ,;
+                                                         "text"      => "Serie"                                ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "numero",                        {  "create"    => "INT UNSIGNED"                         ,;
+                                                         "text"      => "Número"                               ,;
                                                          "default"   => {|| 0 } }                              )
 
    hset( ::hColumns, "fecha",                         {  "create"    => "DATE"                                 ,;
+                                                         "text"      => "Fecha"                                ,;
                                                          "default"   => {|| date() } }                         )
 
    hset( ::hColumns, "fecha_valor_stock",             {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"   ,;
+                                                         "text"      => "Fecha valor stock"                    ,;
                                                          "default"   => {|| hb_datetime() } }                  )
 
-   hset( ::hColumns, "tercero_codigo",                {  "create"    => "VARCHAR( 20 )"                        ,;
+   hset( ::hColumns, "tercero_codigo",                {  "create"    => "VARCHAR ( 20 )"                       ,;
+                                                         "text"      => "Código de tercero"                    ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
-   hset( ::hColumns, "recargo_equivalencia",          {  "create"    => "TINYINT( 1 )"                         ,;
+   hset( ::hColumns, "recargo_equivalencia",          {  "create"    => "TINYINT ( 1 )"                        ,;
+                                                         "text"      => "Recargo de equivalencia"              ,;
                                                          "default"   => {|| 0 } }                              )
 
-   hset( ::hColumns, "direccion_principal_uuid",      {  "create"    => "VARCHAR( 40 )"                        ,;
+   hset( ::hColumns, "direccion_principal_uuid",      {  "create"    => "VARCHAR ( 40 )"                       ,;
                                                          "default"   => {|| space( 40 ) } }                    )
 
-   hset( ::hColumns, "metodo_pago_codigo",             {  "create"   => "VARCHAR( 20 )"                        ,;
+   hset( ::hColumns, "metodo_pago_codigo",            {  "create"    => "VARCHAR ( 20 )"                       ,;
+                                                         "text"      => "Recargo de equivalencia"              ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
-   hset( ::hColumns, "almacen_codigo",                {  "create"    => "VARCHAR( 20 )"                        ,;
+   hset( ::hColumns, "almacen_codigo",                {  "create"    => "VARCHAR ( 20 )"                       ,;
+                                                         "text"      => "Código de almacén"                    ,;
                                                          "default"   => {|| Store():getCodigo() } }            )
 
-   hset( ::hColumns, "agente_codigo",                 {  "create"    => "VARCHAR( 20 )"                        ,;
+   hset( ::hColumns, "agente_codigo",                 {  "create"    => "VARCHAR ( 20 )"                       ,;
+                                                         "text"      => "Código de agente"                     ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
-   hset( ::hColumns, "ruta_codigo",                   {  "create"    => "VARCHAR( 20 )"                        ,;
+   hset( ::hColumns, "ruta_codigo",                   {  "create"    => "VARCHAR ( 20 )"                       ,;
+                                                         "text"      => "Código de la ruta"                    ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
-   hset( ::hColumns, "transportista_codigo",          {  "create"    => "VARCHAR( 20 )"                        ,;
+   hset( ::hColumns, "transportista_codigo",          {  "create"    => "VARCHAR ( 20 )"                       ,;
+                                                         "text"      => "Código del transportista"             ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
-   hset( ::hColumns, "tarifa_codigo",                 {  "create"    => "VARCHAR( 20 )"                        ,;
+   hset( ::hColumns, "tarifa_codigo",                 {  "create"    => "VARCHAR ( 20 )"                       ,;
+                                                         "text"      => "Código de la tarifa"                  ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
    ::getTimeStampColumns() 

@@ -247,22 +247,21 @@ RETURN ( '' )
 
 METHOD getWhere() CLASS ItemRange
 
-   local aWhere   := {}
+   local cWhere   := ""
       
    if empty( ::getFrom() )
-      RETURN ( aWhere )
+      RETURN ( cWhere )
    end if 
 
    if empty( ::getTo() )
-      aadd( aWhere, ::cKey + " = " + quoted( ::getFrom() ) )
-      RETURN ( aWhere )
+      cWhere      := " AND " + ::cKey + " = " + quoted( ::getFrom() ) + " "
+      RETURN ( cWhere )
    end if 
 
-   aadd( aWhere, ::cKey + " >= " + quoted( ::getFrom() ) )
-   
-   aadd( aWhere, ::cKey + " <= " + quoted( ::getTo() ) )
+   cWhere         := " AND ( " + ::cKey + " >= " + quoted( ::getFrom() ) + " "
+   cWhere         += " AND " + ::cKey + " <= " + quoted( ::getTo() ) + " ) "
 
-RETURN ( aWhere )
+RETURN ( cWhere )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

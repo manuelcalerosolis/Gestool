@@ -110,8 +110,11 @@ METHOD getWhereOrigen() CLASS ConversorPrepareAlbaranVentasController
    cWhere         += "AND fecha <= " + dtos( ::getConversorView():oPeriodo:oFechaFin:Value() )     + " "
 
    aeval( ::aControllers,;
-      {|oController| aeval( oController:getRange():getWhere(),;
-         {|cCondition| cWhere += "AND " + cCondition + " " } ) } )
+      {|oController| ; 
+         cWhere += oController:getRange():getWhere(),;
+         cWhere += oController:getFilterController():getWhere() } )
+
+   msgalert( cWhere, "cWhere" )
 
 RETURN ( cWhere )
 
