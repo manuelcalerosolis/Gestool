@@ -142,9 +142,9 @@ RETURN ( ::getConfiguracionesController():Edit() )
 
 METHOD loadedBlankBuffer() CLASS MovimientoAlmacenController 
 
-   ::setModelBuffer( "serie", ::getContadoresModel():getLastSerie( ::getName() ) )
+   ::setModelBuffer( "serie", ::getContadoresController():getModel():getLastSerie( ::getName() ) )
 
-   ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) )
+   ::setModelBuffer( "numero", ::getContadoresController():getModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) )
 
 RETURN ( nil )
 
@@ -152,13 +152,13 @@ RETURN ( nil )
 
 METHOD loadedDuplicateBuffer() CLASS MovimientoAlmacenController 
 
-RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
+RETURN ( ::setModelBuffer( "numero", ::getContadoresController():getModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD insertingBuffer() CLASS MovimientoAlmacenController 
 
-RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) ) )
+RETURN ( ::setModelBuffer( "numero", ::getContadoresController():getModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -180,7 +180,7 @@ RETURN ( ::Super:appendLine() )
 
 METHOD changedSerie() CLASS MovimientoAlmacenController 
 
-RETURN ( ::getNumeroDocumentoComponent():setValue( ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
+RETURN ( ::getNumeroDocumentoComponent():setValue( ::getContadoresController():getModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 

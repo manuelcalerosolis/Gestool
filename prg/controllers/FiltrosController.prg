@@ -379,8 +379,6 @@ METHOD getWhere() CLASS FiltrosController
 
    cSql     += " ) "
 
-   msgalert( cSql, "cSql" )
-
 RETURN ( cSql ) 
 
 //---------------------------------------------------------------------------//

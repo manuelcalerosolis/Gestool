@@ -36,6 +36,7 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oArticulosPreciosDescuentosController
 
    DATA oCuentasBancariasController
+
    DATA oCuentasBancariasGestoolController
 
    DATA oDocumentosController
@@ -241,6 +242,8 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oMovimientoAlmacenLineasController
 
    DATA oAlbaranesComprasController
+
+   DATA oContadoresController
 
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
@@ -557,13 +560,15 @@ CLASS SQLApplicationController FROM SQLBaseController
                                     INLINE ( if( empty( ::oCaracteristicasController ), ::oCaracteristicasController := CaracteristicasController():New( self ), ), ::oCaracteristicasController ) 
 
    METHOD getCaracteristicasLineasController();
-                                    INLINE ( if( empty( ::oCaracteristicasLineasController ), ::oCaracteristicasLineasController := CaracteristicasLineasController():New( self ), ), ::oCaracteristicasLineasController )
+                                       INLINE ( if( empty( ::oCaracteristicasLineasController ), ::oCaracteristicasLineasController := CaracteristicasLineasController():New( self ), ), ::oCaracteristicasLineasController )
 
    METHOD getCaracteristicasValoresArticulosController();
-                                    INLINE ( if( empty( ::oCaracteristicasValoresArticulosController ), ::oCaracteristicasValoresArticulosController := CaracteristicasValoresArticulosController():New( self ), ), ::oCaracteristicasValoresArticulosController )
+                                       INLINE ( if( empty( ::oCaracteristicasValoresArticulosController ), ::oCaracteristicasValoresArticulosController := CaracteristicasValoresArticulosController():New( self ), ), ::oCaracteristicasValoresArticulosController )
 
    METHOD getDelegacionesController();
-                                    INLINE ( if( empty( ::oDelegacionesController ), ::oDelegacionesController := DelegacionesController():New( self ), ), ::oDelegacionesController )
+                                       INLINE ( if( empty( ::oDelegacionesController ), ::oDelegacionesController := DelegacionesController():New( self ), ), ::oDelegacionesController )
+
+   METHOD getContadoresController()    INLINE ( if( empty( ::oContadoresController ), ::oContadoresController := ContadoresController():New( self ), ), ::oContadoresController )
 
    METHOD loadDocuments() 
 
@@ -1032,6 +1037,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oCaracteristicasValoresArticulosController )
       ::oCaracteristicasValoresArticulosController:End()
+   end if
+
+   if !empty( ::oContadoresController )
+      ::oContadoresController:End()
    end if
 
 RETURN ( ::Super:End() )

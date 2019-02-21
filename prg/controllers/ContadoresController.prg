@@ -5,11 +5,13 @@
 
 CLASS ContadoresController FROM SQLNavigatorController
 
-   DATA cScope                         INIT ''
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   METHOD getTableName()               INLINE ( ::oController:getModel():cTableName )
+
+   METHOD gettingSelectSentence()
 
    // Construcciones tardias---------------------------------------------------
 
@@ -49,8 +51,8 @@ METHOD New( oController) CLASS ContadoresController
                                                       'addingDeleteButton' }, {|| .f. } )*/
 
    //::getModel():setGeneralWhere( "documento = '" + ::cScope + "'" )      
-   msgalert(::oController:getModel():cTableName, " tabla ")                                                
-   ::getModel():setGeneralWhere( "documento = " + quoted( ::oController:getModel():cTableName + " " ) )                                                      
+
+   ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
 RETURN ( self )
 
@@ -74,9 +76,19 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
+METHOD gettingSelectSentence() CLASS ContadoresController
+
+RETURN ( ::getModel():setGeneralWhere( "documento = " + quoted( ::getTableName() ) ) )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
 CLASS ContadoresAlbaranesVentasController FROM ContadoresController 
 
-   DATA cScope                         INIT 'albaranes_venta'
+   METHOD getTableName()               INLINE ( SQLAlbaranesVentasModel():cTableName )
 
 END CLASS
 
@@ -155,7 +167,6 @@ METHOD Activate() CLASS ContadoresView
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog
 
-
    // Botones------------------------------------------------------------------
 
    ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
@@ -176,7 +187,6 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-
 
 #ifdef __TEST__
 

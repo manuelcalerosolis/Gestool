@@ -95,7 +95,7 @@ METHOD Validate() CLASS SerieDocumentoComponent
 
    ::storeOriginal()
 
-   if ::oController:getContadoresModel():isSerie( ::oController:cName, cSerie )
+   if ::oController:getContadoresController():getModel():isSerie( ::oController:cName, cSerie )
       ::fireEvent( 'changedAndExist' )
       RETURN ( .t. )
    end if
@@ -105,7 +105,7 @@ METHOD Validate() CLASS SerieDocumentoComponent
       RETURN ( .f. )
    end if 
 
-   ::oController:getContadoresModel():insertSerie( ::oController:cName, cSerie ) 
+   ::oController:getContadoresController():getModel():insertSerie( ::oController:cName, cSerie ) 
 
    ::fireEvent( 'inserted' )   
 

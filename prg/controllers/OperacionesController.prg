@@ -72,8 +72,6 @@ CLASS OperacionesController FROM SQLNavigatorController
    
    METHOD getReport()                  VIRTUAL
 
-   METHOD getContadoresModel()         INLINE ( if( empty( ::oContadoresModel ), ::oContadoresModel := SQLContadoresModel():New( self ), ), ::oContadoresModel )
-
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesView():New( self ), ), ::oDialogView )
 
    METHOD getHistoryManager()          INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
@@ -148,9 +146,9 @@ RETURN ( ::getConfiguracionesController():Edit() )
 
 METHOD loadedBlankBuffer() CLASS OperacionesController 
 
-   ::setModelBuffer( "serie", ::getContadoresModel():getLastSerie( ::getName() ) )
+   ::setModelBuffer( "serie", ::getContadoresController():getModel():getLastSerie( ::getName() ) )
 
-   ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) )
+   ::setModelBuffer( "numero", ::getContadoresController():getModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) )
 
 RETURN ( nil )
 
@@ -158,19 +156,19 @@ RETURN ( nil )
 
 METHOD loadedDuplicateBuffer() CLASS OperacionesController 
 
-RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
+RETURN ( ::setModelBuffer( "numero", ::getContadoresController():getModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD insertingBuffer() CLASS OperacionesController 
 
-RETURN ( ::setModelBuffer( "numero", ::getContadoresModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) ) )
+RETURN ( ::setModelBuffer( "numero", ::getContadoresController():getModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD changedSerie() CLASS OperacionesController 
 
-RETURN ( ::getNumeroDocumentoComponent():setValue( ::getContadoresModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
+RETURN ( ::getNumeroDocumentoComponent():setValue( ::getContadoresController():getModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 

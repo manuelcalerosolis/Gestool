@@ -393,7 +393,7 @@ RETURN ( ::oController:oController:getUuid() )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetDocumentoAttribute( uValue )
+METHOD SetDocumentoAttribute( uValue ) CLASS SQLDocumentosModel
 
    local cNombreDocumento
 

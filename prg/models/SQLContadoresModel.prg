@@ -8,7 +8,7 @@ CLASS SQLContadoresModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "contadores"
 
-   DATA cConstraints                   INIT "PRIMARY KEY (id), UNIQUE KEY ( documento, serie )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( id ), UNIQUE KEY ( documento, serie )"
 
    METHOD getColumns()
 
@@ -21,16 +21,17 @@ CLASS SQLContadoresModel FROM SQLCompanyModel
 
    METHOD incrementCounter( cDocument, cSerial )
 
-
    METHOD getCounterAndIncrement( cDocument, cSerial )
 
    METHOD isWhereSerie()
+
+   METHOD setDocumentoAttribute( uValue )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns()
+METHOD getColumns() CLASS SQLContadoresModel
 
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                           "default"   => {|| 0 } }                                 )
@@ -57,7 +58,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertSerie( cDocument, cSerial, nCounter )
+METHOD insertSerie( cDocument, cSerial, nCounter ) CLASS SQLContadoresModel
 
    local hBuffer        := ::loadBlankBuffer()
 
@@ -72,13 +73,13 @@ RETURN ( ::insertIgnoreTransactional( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD isSerie( cDocument, cSerial )
+METHOD isSerie( cDocument, cSerial ) CLASS SQLContadoresModel
 
 RETURN ( !empty( ::getFieldWhere( 'id', { 'documento' => cDocument, 'serie' => cSerial } ) ) ) 
 
 //---------------------------------------------------------------------------//
 
-METHOD assertSerie( cDocument )
+METHOD assertSerie( cDocument ) CLASS SQLContadoresModel
 
    if empty( ::getFieldWhere( 'serie', { 'documento' => cDocument } ) )
       RETURN ( ::insertSerie( cDocument ) )
@@ -88,7 +89,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getLastSerie( cDocument )
+METHOD getLastSerie( cDocument ) CLASS SQLContadoresModel
 
    local cSerie
 
@@ -108,7 +109,7 @@ RETURN ( cSerie )
 
 //---------------------------------------------------------------------------//
 
-METHOD getLastCounter( cDocument, cSerial )
+METHOD getLastCounter( cDocument, cSerial ) CLASS SQLContadoresModel
 
    ::assertSerie( cDocument )
 
@@ -116,13 +117,13 @@ RETURN ( ::getFieldWhere( 'contador', { 'documento' => cDocument, 'serie' => cSe
 
 //---------------------------------------------------------------------------//
    
-METHOD incrementCounter( cDocument, cSerial )
+METHOD incrementCounter( cDocument, cSerial ) CLASS SQLContadoresModel
 
 RETURN ( ::updateFieldsWhere( { 'contador' => 'contador + 1', 'updated_at' => 'NOW()' }, { 'documento' => cDocument, 'serie' => cSerial } ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getCounterAndIncrement( cDocument, cSerial )
+METHOD getCounterAndIncrement( cDocument, cSerial ) CLASS SQLContadoresModel
 
    local nCounter    := ::getLastCounter( cDocument, cSerial )
 
@@ -132,7 +133,7 @@ RETURN ( nCounter )
 
 //---------------------------------------------------------------------------//
 
-METHOD isWhereSerie( cSerial, cDocumento )
+METHOD isWhereSerie( cSerial, cDocumento ) CLASS SQLContadoresModel
 
    local cSQL
    local nCount 
@@ -149,5 +150,16 @@ METHOD isWhereSerie( cSerial, cDocumento )
 RETURN ( hb_isnumeric( nCount ) .and. nCount > 0 )
 
 //---------------------------------------------------------------------------//
+
+METHOD setDocumentoAttribute() CLASS SQLContadoresModel
+
+   if empty( ::oController )
+      RETURN ( '' )
+   end if
+
+RETURN ( ::oController:getTableName() )
+
+//---------------------------------------------------------------------------//
+
 
 

@@ -109,8 +109,6 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD getIvaDetalleView()          INLINE ( if( empty( ::oIvaDetalleView ), ::oIvaDetalleView := IvaDetalleView():New( self ), ), ::oIvaDetalleView )
 
-   METHOD getContadoresModel()         INLINE ( if( empty( ::oContadoresModel ), ::oContadoresModel := SQLContadoresModel():New( self ), ), ::oContadoresModel )
-
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := OperacionesComercialesView():New( self ), ), ::oDialogView )
 
    METHOD getHistoryManager()          INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
@@ -137,8 +135,6 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD getConversorPreapreGenericoController() ;
                                        INLINE ( if( empty( ::oConversorPrepareGenerico ), ::oConversorPrepareGenerico := ConversorPrepareGenericoController():New( self ), ), ::oConversorPrepareGenerico )
-
-   METHOD getContadoresController()    INLINE ( if( empty( ::oContadoresController ), ::oContadoresController := ContadoresController():New( self ), ), ::oContadoresController )
 
 END CLASS
 
@@ -512,13 +508,13 @@ END CLASS
 
 METHOD getValidators() CLASS OperacionesComercialesValidator
 
-   ::hValidators  := {  "metodo_pago_codigo" => {  "required"        => "El c?igo del m?odo de pago es un dato requerido",;
-                                                   "formaPagoExist"  => "El c?igo del m?odo de pago no existe" } ,;
-                        "almacen_codigo"     => {  "required"        => "El c?igo del almac? es un dato requerido",;
-                                                   "almacenExist"    => "El c?igo del almac? no existe" } ,;
-                        "tarifa_codigo"      => {  "required"        => "El c?igo de la tarifa es un dato requerido",;
-                                                   "tarifaExist"     => "El c?igo de la tarifa no existe" },;
-                        "formulario"         => {  "emptyLines"      => "Las l?eas no pueden estar vacias",;
+   ::hValidators  := {  "metodo_pago_codigo" => {  "required"        => "El código del método de pago es un dato requerido",;
+                                                   "formaPagoExist"  => "El código del método de pago no existe" } ,;
+                        "almacen_codigo"     => {  "required"        => "El código del almacén es un dato requerido",;
+                                                   "almacenExist"    => "El código del almacén no existe" } ,;
+                        "tarifa_codigo"      => {  "required"        => "El código de la tarifa es un dato requerido",;
+                                                   "tarifaExist"     => "El código de la tarifa no existe" },;
+                        "formulario"         => {  "emptyLines"      => "Las líneas no pueden estar vacias",;
                                                    "validLine"       => "" } }
 
 RETURN ( ::hValidators )

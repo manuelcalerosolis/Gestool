@@ -334,6 +334,8 @@ METHOD Append()
 
       if ::dialogViewActivate()
 
+         msgalert( "dialogok")
+
          ::fireEvent( 'closedDialog' )  
 
          ::insertOrUpdateBuffer()    
@@ -355,6 +357,8 @@ METHOD Append()
          end if 
 
       else
+      
+         msgalert( "dialogcancel")
          
          ::rollbackTransactionalMode()
 

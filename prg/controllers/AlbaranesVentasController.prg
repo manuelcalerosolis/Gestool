@@ -25,7 +25,7 @@ CLASS AlbaranesVentasController FROM OperacionesComercialesController
 
    // Contrucciones tardias----------------------------------------------------
 
-   METHOD getName()                    INLINE ( "albaranes_venta" )
+   METHOD getName()                    INLINE ( "albaranes_ventas" )
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLAlbaranesVentasModel():New( self ), ), ::oModel )
 
