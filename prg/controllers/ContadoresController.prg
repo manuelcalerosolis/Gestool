@@ -46,7 +46,9 @@ METHOD New( oController) CLASS ContadoresController
                                                       'addingShowDeleteButton',;
                                                       'addingDeleteButton' }, {|| .f. } )*/
 
-   ::getModel():setGeneralWhere( "documento = '" + ::cScope + "'" )                                                      
+   //::getModel():setGeneralWhere( "documento = '" + ::cScope + "'" )      
+   msgalert(::oController:getModel():cTableName, " tabla ")                                                
+   ::getModel():setGeneralWhere( "documento = " + quoted( ::oController:getModel():cTableName + " " ) )                                                      
 
 RETURN ( self )
 
