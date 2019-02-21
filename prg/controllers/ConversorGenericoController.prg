@@ -388,11 +388,11 @@ METHOD Before() CLASS TestConversorDocumentosController
    SQLTercerosModel():test_create_proveedor_con_plazos( 0 )
    SQLTercerosModel():test_create_proveedor_con_plazos( 1 )
 
-   ::aSelected := {}
+   ::aSelected                      := {}
 
-   ::oController:hProcesedAlbaran := {}
+   ::oController:hProcesedAlbaran   := {}
 
-   ::oController:lDescuento := .f.
+   ::oController:lDescuento         := .f.
 
 RETURN ( nil )
 

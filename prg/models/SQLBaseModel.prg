@@ -85,7 +85,9 @@ CLASS SQLBaseModel
 
    // Columns-------------------------------------------------------------------
 
-   METHOD getColumns()                 INLINE ( ::hColumns )
+   METHOD getColumns()                 VIRTUAL
+
+   METHOD getRelationsModels()         VIRTUAL
 
    METHOD getColumnsSelect()           VIRTUAL
 
