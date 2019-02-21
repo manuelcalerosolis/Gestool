@@ -367,6 +367,7 @@ SQLProveedoresModel.prg 		  											\
 TercerosView.prg 																\
 TercerosValidator.prg 														\
 SqlGetSelector.prg 															\
+SQLSeriesGetSelector.prg 													\
 TerceroGetSelector.prg														\
 SqlOperacionesGetSelector.prg												\
 SqlCuentasBancariasGetSelector.prg										\
@@ -815,6 +816,7 @@ SQLProveedoresModel.obj 		  											\
 TercerosView.obj 																\
 TercerosValidator.obj 														\
 SqlGetSelector.obj 															\
+SQLSeriesGetSelector.obj 													\
 TerceroGetSelector.obj 														\
 SqlOperacionesGetSelector.obj 											\
 SqlCuentasBancariasGetSelector.obj 										\
@@ -1251,6 +1253,7 @@ $(OBJ)\SQLProveedoresModel.obj 		  									+
 $(OBJ)\TercerosView.obj 													+
 $(OBJ)\TercerosValidator.obj 												+
 $(OBJ)\SqlGetSelector.obj 													+
+$(OBJ)\SQLSeriesGetSelector.obj 											+
 $(OBJ)\TerceroGetSelector.obj												+
 $(OBJ)\SqlOperacionesGetSelector.obj									+
 $(OBJ)\SqlCuentasBancariasGetSelector.obj								+

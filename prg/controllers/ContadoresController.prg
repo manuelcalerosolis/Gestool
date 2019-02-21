@@ -21,6 +21,8 @@ CLASS ContadoresController FROM SQLNavigatorController
 
    METHOD getDialogView                INLINE ( iif( empty( ::oDialogView ), ::oDialogView := ContadoresView():New( self ), ), ::oDialogView )
 
+   METHOD getSelector()                INLINE ( iif( empty( ::oGetSelector ), ::oGetSelector := SeriesGetSelector():New( self ), ), ::oGetSelector )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

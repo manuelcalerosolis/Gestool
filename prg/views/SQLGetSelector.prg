@@ -212,7 +212,7 @@ METHOD helpAction() CLASS GetSelector
    if hb_isnil( hResult )
       RETURN ( .f. )
    end if 
-
+   
    ::assignResults( hResult )
 
    ::fireEvent( 'helped' ) 
@@ -222,7 +222,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD assignResults( hResult ) CLASS GetSelector
-
+   
    if hhaskey( hResult, ::getKey() )
       ::cText( hGet( hResult, ::getKey() ) )
    end if
