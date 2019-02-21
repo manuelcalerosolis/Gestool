@@ -271,18 +271,18 @@ METHOD getColumns() CLASS SQLArticulosCategoriasModel
                                     "text"      => "Identificador"                           ,;                          
                                     "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
+   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"          ,;                                 
                                     "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR ( 20 )"                          ,;
                                     "text"      => "Código"                                  ,;                          
                                     "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR ( 200 )"                         ,;
                                     "text"      => "Nombre"                                  ,;                          
                                     "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "icono",    {  "create"    => "VARCHAR( 40 )"                           ,;
+   hset( ::hColumns, "icono",    {  "create"    => "VARCHAR ( 40 )"                          ,;
                                     "default"   => {|| space( 40 ) } }                       )
    
    ::getTimeStampColumns()

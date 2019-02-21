@@ -67,9 +67,15 @@ CLASS FiltrosController FROM SQLBrowseController
 
    METHOD gettingSelectSentence()
 
-   METHOD getScope()                   INLINE ( ::oController:getModel():cTableName )
+   METHOD getTableName()               INLINE ( ::oController:getModel():cTableName )
 
-   METHOD existName()                  INLINE ( ::getModel():existName( ::cName, ::getScope() ) )
+   METHOD existName()                  INLINE ( ::getModel():existName( ::cName, ::getTableName() ) )
+
+   METHOD getHashType( cType )         INLINE ( hget( ::getConditions(), alltrim( cType ) ) )
+
+   METHOD getConvertType( cType )      INLINE ( hget( ::getHashType( cType ), "convert" ) )
+
+   METHOD convertType( uValue, cType ) 
 
    METHOD getWhere()
 
@@ -131,13 +137,13 @@ RETURN ( ::Super:End() )
 
 METHOD gettingSelectSentence() CLASS FiltrosController
 
-RETURN ( ::getModel():setGeneralWhere( "tabla = " + quoted( ::getScope() ) ) )
+RETURN ( ::getModel():setGeneralWhere( "tabla = " + quoted( ::getTableName() ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getFilters( cTableToFilter ) CLASS FiltrosController                
 
-RETURN ( ::getModel():getFilters( ::getScope() ) )
+RETURN ( ::getModel():getFilters( ::getTableName() ) )
 
 //---------------------------------------------------------------------------//
 
@@ -201,7 +207,7 @@ METHOD getConditions() CLASS FiltrosController
                            "edit"         => EDIT_GET_BUTTON,;
                            "list"         => nil,;
                            "block"        => {|| nil },;
-                           "convert"      => {| value | hb_ntos( value ) },;
+                           "convert"      => {| value | alltrim( value ) },;
                            "conditions"   => { "Igual", "Distinto", "Mayor", "Menor", "Mayor igual", "Menor igual" } }
 
       hChars         := {  "value"        => space( 100 ),;
@@ -266,7 +272,7 @@ METHOD SaveFilter() CLASS FiltrosController
       RETURN ( nil )
    end if 
 
-   if ::getModel():insertBuffer( { "tabla" => ::getScope(), "nombre" => ::cName, "filtro" => cFilter } ) != 0
+   if ::getModel():insertBuffer( { "tabla" => ::getTableName(), "nombre" => ::cName, "filtro" => cFilter } ) != 0
 
       successAlert( "Filtro guardado correctamente" )
 
@@ -345,6 +351,12 @@ RETURN ( ::aDescriptions )
 
 //---------------------------------------------------------------------------//
 
+METHOD convertType( uValue, cType ) CLASS FiltrosController
+
+RETURN ( eval( ::getConvertType( cType ), uValue ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD getWhere() CLASS FiltrosController
 
    local cSql     
@@ -359,16 +371,15 @@ METHOD getWhere() CLASS FiltrosController
    cSql     := " AND ( "
 
    for each hFilter in ::aFilter 
-      cSql  += ::getStructureField( hget( hFilter, "text" ) )
+      cSql  += ::getTableName() + "." + ::getStructureField( hget( hFilter, "text" ) )
       cSql  += hget( ::hOperators, hget( hFilter, "condition" ) )
-      cSql  += quoted( hget( hFilter, "value" ) )
+      cSql  += ::convertType( hget( hFilter, "value" ), ::getStructureType( hget( hFilter, "text" ) ) )
       cSql  += hget( ::hNexo, hget( hFilter, "nexo" ) )
-
-      msgalert( ::getStructureType( hget( hFilter, "text" ) ), "type" )
-
    next
 
    cSql     += " ) "
+
+   msgalert( cSql, "cSql" )
 
 RETURN ( cSql ) 
 
@@ -415,8 +426,6 @@ CLASS FiltrosView FROM SQLBaseView
    METHOD getListType( cType )         INLINE ( hget( ::getHashType( cType ), "list" ) )
 
    METHOD getConvertType( cType )      INLINE ( hget( ::getHashType( cType ), "convert" ) )
-
-   METHOD convertType( uValue, cType ) 
 
    METHOD getConditionsCaracter()      INLINE ( ::getConditionsType( "VARCHAR" ) ) 
 
@@ -672,11 +681,6 @@ METHOD selectFilter() CLASS FiltrosView
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-
-METHOD convertType( uValue, cType )  CLASS FiltrosView
-
-RETURN ( eval( ::getConvertType( cType ), uValue ) )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
