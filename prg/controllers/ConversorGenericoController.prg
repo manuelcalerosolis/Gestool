@@ -186,18 +186,187 @@ RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
    METHOD getTableName()               INLINE ( SQLConversorDocumentosModel():getTableName() ) 
 
-   METHOD createFunctionisAlbaranesVentasConvertedToFacturasVentasWhereUuid()
-      METHOD dropFunctionisAlbaranesVentasConvertedToFacturasVentasWhereUuid()
-      METHOD selectisAlbaranesVentasConvertedToFacturasVentasWhereUuid( uuidDocumento )
+   //Funciones para documentos de ventas--------------------------------------
 
-   METHOD getSQLFunctions()            INLINE ( {  ::dropFunctionisAlbaranesVentasConvertedToFacturasVentasWhereUuid(),;
-                                                   ::createFunctionisAlbaranesVentasConvertedToFacturasVentasWhereUuid() } )
+   METHOD createIsConvertedToPedidosVentas()
+      METHOD dropIsConvertedToPedidosVentas()
+      METHOD isConvertedToPedidosVentas( uuidDocumento )
+
+   METHOD createIsConvertedToAlbaranesVentas()
+      METHOD dropIsConvertedToAlbaranesVentas()
+      METHOD isConvertedToAlbaranesVentas( uuidDocumento )
+
+   METHOD createIsConvertedToFacturasVentas()
+      METHOD dropIsConvertedToFacturasVentas()
+      METHOD isConvertedToFacturasVentas( uuidDocumento ) 
+
+   METHOD createIsConvertedToVentasRectificativas()
+      METHOD dropIsConvertedToVentasRectificativas()
+      METHOD isConvertedToVentasRectificativas( uuidDocumento )
+
+   METHOD createIsConvertedToVentasSimplificadas()
+      METHOD dropIsConvertedToVentasSimplificadas()
+      METHOD isConvertedToVentasSimplificadas( uuidDocumento )
+
+
+   //Funciones para documentos de compras---------------------------------------
+
+   METHOD createIsConvertedToPedidosCompras()
+      METHOD dropIsConvertedToPedidosCompras()
+      METHOD isConvertedToPedidosCompras( uuidDocumento )
+
+   METHOD createIsConvertedToAlbaranesCompras()
+      METHOD dropIsConvertedToAlbaranesCompras()
+      METHOD isConvertedToAlbaranesCompras( uuidDocumento )
+
+   METHOD createIsConvertedToFacturasCompras()
+      METHOD dropIsConvertedToFacturasCompras()
+      METHOD isConvertedToFacturasCompras( uuidDocumento )
+
+       METHOD createIsConvertedToComprasRectificativas()
+      METHOD dropIsConvertedToComprasRectificativas()
+      METHOD isConvertedToComprasRectificativas( uuidDocumento )
+
+   METHOD getSQLFunctions()            INLINE ( {  ::dropIsConvertedToPedidosVentas(),;
+                                                   ::createIsConvertedToPedidosVentas(),;
+                                                   ::dropIsConvertedToAlbaranesVentas(),;
+                                                   ::createIsConvertedToAlbaranesVentas(),;
+                                                   ::dropIsConvertedToFacturasVentas(),;
+                                                   ::createIsConvertedToFacturasVentas(),;
+                                                   ::dropIsConvertedToVentasRectificativas(),;
+                                                   ::createIsConvertedToVentasRectificativas(),;
+                                                   ::dropIsConvertedToVentasSimplificadas(),;
+                                                   ::createIsConvertedToVentasSimplificadas(),;
+                                                   ::dropIsConvertedToPedidosCompras(),;
+                                                   ::createIsConvertedToPedidosCompras(),;
+                                                   ::dropIsConvertedToAlbaranesCompras(),;
+                                                   ::createIsConvertedToAlbaranesCompras(),;
+                                                   ::dropIsConvertedToFacturasCompras(),;
+                                                   ::createIsConvertedToFacturasCompras(),;
+                                                   ::dropIsConvertedToComprasRectificativas(),;
+                                                   ::createIsConvertedToComprasRectificativas() } )
 
 END CLASS 
 
 //---------------------------------------------------------------------------//
 
-METHOD createFunctionisAlbaranesVentasConvertedToFacturasVentasWhereUuid() CLASS ConversorDocumentosRepository
+METHOD createIsConvertedToPedidosVentas() CLASS ConversorDocumentosRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   CREATE DEFINER=`root`@`localhost` 
+   FUNCTION %5$s ( `uuid_documento` CHAR( 40 ) )
+   RETURNS INT( 1 )
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
+
+   BEGIN
+
+      DECLARE converted INT( 1 );
+
+      SELECT
+         COUNT(*) INTO converted
+      FROM 
+         %1$s AS %2$s
+
+      INNER JOIN %3$s AS %4$s
+         ON %1$s.documento_origen_uuid = %4s.uuid AND %4$s.canceled_at = 0 
+
+      WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = '%4$s';
+      
+      RETURN converted; 
+
+   END
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql,;
+                          ::getTableName(),;
+                          ::cTableName,;
+                          SQLPedidosVentasModel():getTableName(),;
+                          SQLPedidosVentasModel():cTableName,;
+                          Company():getTableName( 'isConvertedToPedidosVentas' ) )
+
+RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD dropIsConvertedToPedidosVentas() CLASS ConversorDocumentosRepository  
+
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToPedidosVentas' ) + " ;" )
+ 
+//---------------------------------------------------------------------------//
+
+METHOD isConvertedToPedidosVentas( uuidDocumento ) CLASS ConversorDocumentosRepository
+
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToPedidosVentas' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD createIsConvertedToAlbaranesVentas() CLASS ConversorDocumentosRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   CREATE DEFINER=`root`@`localhost` 
+   FUNCTION %5$s ( `uuid_documento` CHAR( 40 ) )
+   RETURNS INT( 1 )
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
+
+   BEGIN
+
+      DECLARE converted INT( 1 );
+
+      SELECT
+         COUNT(*) INTO converted
+      FROM 
+         %1$s AS %2$s
+
+      INNER JOIN %3$s AS %4$s
+         ON %1$s.documento_origen_uuid = %4s.uuid AND %4$s.canceled_at = 0 
+
+      WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = '%4$s';
+      
+      RETURN converted; 
+
+   END
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql,;
+                          ::getTableName(),;
+                          ::cTableName,;
+                          SQLAlbaranesVentasModel():getTableName(),;
+                          SQLAlbaranesVentasModel():cTableName,;
+                          Company():getTableName( 'isConvertedToAlbaranesVentas' ) )
+
+RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD dropIsConvertedToAlbaranesVentas() CLASS ConversorDocumentosRepository  
+
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToAlbaranesVentas' ) + " ;" )
+ 
+//---------------------------------------------------------------------------//
+
+METHOD isConvertedToAlbaranesVentas( uuidDocumento ) CLASS ConversorDocumentosRepository
+
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToAlbaranesVentas' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD createIsConvertedToFacturasVentas() CLASS ConversorDocumentosRepository
 
    local cSql
 
@@ -237,24 +406,374 @@ METHOD createFunctionisAlbaranesVentasConvertedToFacturasVentasWhereUuid() CLASS
                           ::cTableName,;
                           SQLFacturasVentasModel():getTableName(),;
                           SQLFacturasVentasModel():cTableName,;
-                          Company():getTableName( 'isAlbaranesVentasConvertedToFacturasVentasWhereUuid' ) )
-
-   logwrite( cSql )
+                          Company():getTableName( 'isConvertedToFacturasVentas' ) )
 
 RETURN ( alltrim( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD dropFunctionisAlbaranesVentasConvertedToFacturasVentasWhereUuid() CLASS ConversorDocumentosRepository  
+METHOD dropIsConvertedToFacturasVentas() CLASS ConversorDocumentosRepository  
 
-RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isAlbaranesVentasConvertedToFacturasVentasWhereUuid' ) + " ;" )
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToFacturasVentas' ) + " ;" )
  
 //---------------------------------------------------------------------------//
 
-METHOD selectisAlbaranesVentasConvertedToFacturasVentasWhereUuid( uuidDocumento ) CLASS ConversorDocumentosRepository
+METHOD isConvertedToFacturasVentas( uuidDocumento ) CLASS ConversorDocumentosRepository
 
-RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isAlbaranesVentasConvertedToFacturasVentasWhereUuid' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToFacturasVentas' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
 
+//---------------------------------------------------------------------------//
+
+METHOD createIsConvertedToVentasRectificativas() CLASS ConversorDocumentosRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   CREATE DEFINER=`root`@`localhost` 
+   FUNCTION %5$s ( `uuid_documento` CHAR( 40 ) )
+   RETURNS INT( 1 )
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
+
+   BEGIN
+
+      DECLARE converted INT( 1 );
+
+      SELECT
+         COUNT(*) INTO converted
+      FROM 
+         %1$s AS %2$s
+
+      INNER JOIN %3$s AS %4$s
+         ON %1$s.documento_origen_uuid = %4s.uuid AND %4$s.canceled_at = 0 
+
+      WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = '%4$s';
+      
+      RETURN converted; 
+
+   END
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql,;
+                          ::getTableName(),;
+                          ::cTableName,;
+                          SQLFacturasVentasRectificativasModel():getTableName(),;
+                          SQLFacturasVentasRectificativasModel():cTableName,;
+                          Company():getTableName( 'isConvertedToVentasRectificativas' ) )
+
+RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD dropIsConvertedToVentasRectificativas() CLASS ConversorDocumentosRepository  
+
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToVentasRectificativas' ) + " ;" )
+ 
+//---------------------------------------------------------------------------//
+
+METHOD isConvertedToVentasRectificativas( uuidDocumento ) CLASS ConversorDocumentosRepository
+
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToVentasRectificativas' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD createIsConvertedToVentasSimplificadas() CLASS ConversorDocumentosRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   CREATE DEFINER=`root`@`localhost` 
+   FUNCTION %5$s ( `uuid_documento` CHAR( 40 ) )
+   RETURNS INT( 1 )
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
+
+   BEGIN
+
+      DECLARE converted INT( 1 );
+
+      SELECT
+         COUNT(*) INTO converted
+      FROM 
+         %1$s AS %2$s
+
+      INNER JOIN %3$s AS %4$s
+         ON %1$s.documento_origen_uuid = %4s.uuid AND %4$s.canceled_at = 0 
+
+      WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = '%4$s';
+      
+      RETURN converted; 
+
+   END
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql,;
+                          ::getTableName(),;
+                          ::cTableName,;
+                          SQLFacturasventasSimplificadasModel():getTableName(),;
+                          SQLFacturasventasSimplificadasModel():cTableName,;
+                          Company():getTableName( 'isConvertedToVentasSimplificadas' ) )
+
+RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD dropIsConvertedToVentasSimplificadas() CLASS ConversorDocumentosRepository  
+
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToVentasSimplificadas' ) + " ;" )
+ 
+//---------------------------------------------------------------------------//
+
+METHOD isConvertedToVentasSimplificadas( uuidDocumento ) CLASS ConversorDocumentosRepository
+
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToVentasSimplificadas' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD createIsConvertedToPedidosCompras() CLASS ConversorDocumentosRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   CREATE DEFINER=`root`@`localhost` 
+   FUNCTION %5$s ( `uuid_documento` CHAR( 40 ) )
+   RETURNS INT( 1 )
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
+
+   BEGIN
+
+      DECLARE converted INT( 1 );
+
+      SELECT
+         COUNT(*) INTO converted
+      FROM 
+         %1$s AS %2$s
+
+      INNER JOIN %3$s AS %4$s
+         ON %1$s.documento_origen_uuid = %4s.uuid AND %4$s.canceled_at = 0 
+
+      WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = '%4$s';
+      
+      RETURN converted; 
+
+   END
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql,;
+                          ::getTableName(),;
+                          ::cTableName,;
+                          SQLPedidosComprasModel():getTableName(),;
+                          SQLPedidosComprasModel():cTableName,;
+                          Company():getTableName( 'isConvertedToPedidosCompras' ) )
+
+RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD dropIsConvertedToPedidosCompras() CLASS ConversorDocumentosRepository  
+
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToPedidosCompras' ) + " ;" )
+ 
+//---------------------------------------------------------------------------//
+
+METHOD isConvertedToPedidosCompras( uuidDocumento ) CLASS ConversorDocumentosRepository
+
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToPedidosCompras' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+
+//---------------------------------------------------------------------------//
+
+
+METHOD createIsConvertedToAlbaranesCompras() CLASS ConversorDocumentosRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   CREATE DEFINER=`root`@`localhost` 
+   FUNCTION %5$s ( `uuid_documento` CHAR( 40 ) )
+   RETURNS INT( 1 )
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
+
+   BEGIN
+
+      DECLARE converted INT( 1 );
+
+      SELECT
+         COUNT(*) INTO converted
+      FROM 
+         %1$s AS %2$s
+
+      INNER JOIN %3$s AS %4$s
+         ON %1$s.documento_origen_uuid = %4s.uuid AND %4$s.canceled_at = 0 
+
+      WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = '%4$s';
+      
+      RETURN converted; 
+
+   END
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql,;
+                          ::getTableName(),;
+                          ::cTableName,;
+                          SQLAlbaranesComprasModel():getTableName(),;
+                          SQLAlbaranesComprasModel():cTableName,;
+                          Company():getTableName( 'isConvertedToAlbaranesCompras' ) )
+
+RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD dropIsConvertedToAlbaranesCompras() CLASS ConversorDocumentosRepository  
+
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToAlbaranesCompras' ) + " ;" )
+ 
+//---------------------------------------------------------------------------//
+
+METHOD isConvertedToAlbaranesCompras( uuidDocumento ) CLASS ConversorDocumentosRepository
+
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToAlbaranesCompras' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+
+//---------------------------------------------------------------------------//
+
+
+METHOD createIsConvertedToFacturasCompras() CLASS ConversorDocumentosRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   CREATE DEFINER=`root`@`localhost` 
+   FUNCTION %5$s ( `uuid_documento` CHAR( 40 ) )
+   RETURNS INT( 1 )
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
+
+   BEGIN
+
+      DECLARE converted INT( 1 );
+
+      SELECT
+         COUNT(*) INTO converted
+      FROM 
+         %1$s AS %2$s
+
+      INNER JOIN %3$s AS %4$s
+         ON %1$s.documento_origen_uuid = %4s.uuid AND %4$s.canceled_at = 0 
+
+      WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = '%4$s';
+      
+      RETURN converted; 
+
+   END
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql,;
+                          ::getTableName(),;
+                          ::cTableName,;
+                          SQLFacturasComprasModel():getTableName(),;
+                          SQLFacturasComprasModel():cTableName,;
+                          Company():getTableName( 'isConvertedToFacturasCompras' ) )
+
+RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD dropIsConvertedToFacturasCompras() CLASS ConversorDocumentosRepository  
+
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToFacturasCompras' ) + " ;" )
+ 
+//---------------------------------------------------------------------------//
+
+METHOD isConvertedToFacturasCompras( uuidDocumento ) CLASS ConversorDocumentosRepository
+
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToFacturasCompras' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+
+//---------------------------------------------------------------------------//
+
+
+METHOD createIsConvertedToComprasRectificativas() CLASS ConversorDocumentosRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   CREATE DEFINER=`root`@`localhost` 
+   FUNCTION %5$s ( `uuid_documento` CHAR( 40 ) )
+   RETURNS INT( 1 )
+   LANGUAGE SQL
+   NOT DETERMINISTIC
+   CONTAINS SQL
+   SQL SECURITY DEFINER
+   COMMENT ''
+
+   BEGIN
+
+      DECLARE converted INT( 1 );
+
+      SELECT
+         COUNT(*) INTO converted
+      FROM 
+         %1$s AS %2$s
+
+      INNER JOIN %3$s AS %4$s
+         ON %1$s.documento_origen_uuid = %4s.uuid AND %4$s.canceled_at = 0 
+
+      WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = '%4$s';
+      
+      RETURN converted; 
+
+   END
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql,;
+                          ::getTableName(),;
+                          ::cTableName,;
+                          SQLFacturasComprasRectificativasModel():getTableName(),;
+                          SQLFacturasComprasRectificativasModel():cTableName,;
+                          Company():getTableName( 'isConvertedToComprasRectificativas' ) )
+
+RETURN ( alltrim( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD dropIsConvertedToComprasRectificativas() CLASS ConversorDocumentosRepository  
+
+RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToComprasRectificativas' ) + " ;" )
+ 
+//---------------------------------------------------------------------------//
+
+METHOD isConvertedToComprasRectificativas( uuidDocumento ) CLASS ConversorDocumentosRepository
+
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToComprasRectificativas' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
