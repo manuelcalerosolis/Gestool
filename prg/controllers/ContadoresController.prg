@@ -21,6 +21,8 @@ CLASS ContadoresController FROM SQLNavigatorController
 
    METHOD getDialogView                INLINE ( iif( empty( ::oDialogView ), ::oDialogView := ContadoresView():New( self ), ), ::oDialogView )
 
+   METHOD getSelector()                INLINE ( iif( empty( ::oGetSelector ), ::oGetSelector := SeriesGetSelector():New( self ), ), ::oGetSelector )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -46,7 +48,9 @@ METHOD New( oController) CLASS ContadoresController
                                                       'addingShowDeleteButton',;
                                                       'addingDeleteButton' }, {|| .f. } )*/
 
-   ::getModel():setGeneralWhere( "documento = '" + ::cScope + "'" )                                                      
+   //::getModel():setGeneralWhere( "documento = '" + ::cScope + "'" )      
+   msgalert(::oController:getModel():cTableName, " tabla ")                                                
+   ::getModel():setGeneralWhere( "documento = " + quoted( ::oController:getModel():cTableName + " " ) )                                                      
 
 RETURN ( self )
 

@@ -50,7 +50,7 @@ METHOD getInitialWhereDocumentos( cWhere ) CLASS SQLFacturasVentasModel
    if !empty( cWhere )
       cSql  +=  "WHERE "+ ::cTableName + ".uuid " + cWhere
    end if 
-logwrite(csql)
+
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
