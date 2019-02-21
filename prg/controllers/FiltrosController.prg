@@ -8,6 +8,8 @@ CLASS FiltrosController FROM SQLBrowseController
 
    DATA oSaveDialogView
 
+   DATA hConditions
+
    DATA aDescriptions                  INIT  {}
 
    DATA aStructure                     INIT  {}
@@ -20,7 +22,7 @@ CLASS FiltrosController FROM SQLBrowseController
                                                 "Y"   => " AND ",;
                                                 "O"   => " OR " }
 
-   DATA hOperators                     INIT  {  "Igual"        => " == ",;
+   DATA hOperators                     INIT  {  "Igual"        => " = ",;
                                                 "Distinto"     => " != ",;
                                                 "Mayor"        => " > ",;
                                                 "Menor"        => " < ",;
@@ -32,6 +34,8 @@ CLASS FiltrosController FROM SQLBrowseController
    METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   METHOD getConditions()
 
    METHOD Edit() 
 
@@ -184,6 +188,56 @@ RETURN ( '' )
 
 //---------------------------------------------------------------------------//
 
+METHOD getConditions() CLASS FiltrosController
+
+   local hDate
+   local hChars
+   local hLogical
+   local hNumerics   
+
+   if empty( ::hConditions )
+
+      hNumerics      := {  "value"        => 0,;
+                           "edit"         => EDIT_GET_BUTTON,;
+                           "list"         => nil,;
+                           "block"        => {|| nil },;
+                           "convert"      => {| value | hb_ntos( value ) },;
+                           "conditions"   => { "Igual", "Distinto", "Mayor", "Menor", "Mayor igual", "Menor igual" } }
+
+      hChars         := {  "value"        => space( 100 ),;
+                           "edit"         => EDIT_GET_BUTTON,;
+                           "list"         => nil,;
+                           "block"        => {|| nil },;
+                           "convert"      => {| value | quoted( value ) },;
+                           "conditions"   => { "Igual", "Distinto", "Contenga", "No contenga", "Mayor", "Menor", "Mayor igual", "Menor igual" } }     
+
+      hDate          := {  "value"        => getSysDate(),;
+                           "edit"         => EDIT_GET_BUTTON,;
+                           "list"         => nil,;
+                           "convert"      => {| value | quoted( hb_dtoc( value, 'yyyy-mm-dd' ) ) },;
+                           "conditions"   => { "Igual", "Distinto", "Mayor", "Menor", "Mayor igual", "Menor igual" } }     
+
+      hLogical       := {  "value"        => "Si",;
+                           "edit"         => EDIT_GET_LISTBOX,;
+                           "list"         => { "Si", "No" },;
+                           "convert"      => {| value | if( value, "1", "0" ) },;
+                           "conditions"   => { "Igual", "Distinto" } }                                                          
+
+      ::hConditions  := {  "DECIMAL"      => hNumerics,;
+                           "INT"          => hNumerics,;
+                           "FLOAT"        => hNumerics,;
+                           "INTEGER"      => hNumerics,;
+                           "VARCHAR"      => hChars,;
+                           "ENUM"         => hChars,;
+                           "DATE"         => hDate,;
+                           "TINYINT"      => hLogical }
+
+   end if 
+
+RETURN ( ::hConditions )
+
+//---------------------------------------------------------------------------//
+
 METHOD Edit() CLASS FiltrosController
 
    if empty( ::aFilter )
@@ -269,8 +323,6 @@ RETURN ( ::appendFilter() )
 
 METHOD appendFilter() CLASS FiltrosController
 
-   msgalert( hb_valtoexp( ::getStructure() ), "appendFilter" )
-
    aadd( ::aFilter,;
       {  "text"      => hget( ::getStructure()[ 1 ], "text" ),;
          "condition" => "Igual",;
@@ -311,6 +363,9 @@ METHOD getWhere() CLASS FiltrosController
       cSql  += hget( ::hOperators, hget( hFilter, "condition" ) )
       cSql  += quoted( hget( hFilter, "value" ) )
       cSql  += hget( ::hNexo, hget( hFilter, "nexo" ) )
+
+      msgalert( ::getStructureType( hget( hFilter, "text" ) ), "type" )
+
    next
 
    cSql     += " ) "
@@ -333,15 +388,13 @@ CLASS FiltrosView FROM SQLBaseView
 
    DATA oEditMemo    
 
-   DATA hConditions
-
    METHOD Activate()
 
    METHOD StartActivate()
 
-   METHOD getConditions()   
-
    METHOD getFilter()                  INLINE ( ::oController:aFilter )
+
+   METHOD getConditions()              INLINE ( ::oController:getConditions() )
    
    METHOD getFilterLine()              INLINE ( ::getFilter()[ ::oBrwFilter:nArrayAt ] )
 
@@ -360,6 +413,10 @@ CLASS FiltrosView FROM SQLBaseView
    METHOD getEditType( cType )         INLINE ( hget( ::getHashType( cType ), "edit" ) )
 
    METHOD getListType( cType )         INLINE ( hget( ::getHashType( cType ), "list" ) )
+
+   METHOD getConvertType( cType )      INLINE ( hget( ::getHashType( cType ), "convert" ) )
+
+   METHOD convertType( uValue, cType ) 
 
    METHOD getConditionsCaracter()      INLINE ( ::getConditionsType( "VARCHAR" ) ) 
 
@@ -531,50 +588,6 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getConditions() CLASS FiltrosView
-
-   local hDate
-   local hChars
-   local hLogical
-   local hNumerics   
-
-   if empty( ::hConditions )
-
-      hNumerics      := {  "value"        => 0,;
-                           "edit"         => EDIT_GET_BUTTON,;
-                           "list"         => nil,;
-                           "block"        => {|| nil },;
-                           "conditions"   => { "Igual", "Distinto", "Mayor", "Menor", "Mayor igual", "Menor igual" } }
-
-      hChars         := {  "value"        => space( 100 ),;
-                           "edit"         => EDIT_GET_BUTTON,;
-                           "list"         => nil,;
-                           "block"        => {|| nil },;
-                           "conditions"   => { "Igual", "Distinto", "Contenga", "No contenga", "Mayor", "Menor", "Mayor igual", "Menor igual" } }     
-
-      hDate          := {  "value"        => getSysDate(),;
-                           "edit"         => EDIT_GET_BUTTON,;
-                           "list"         => nil,;
-                           "conditions"   => { "Igual", "Distinto", "Mayor", "Menor", "Mayor igual", "Menor igual" } }     
-
-      hLogical       := {  "value"        => "Si",;
-                           "edit"         => EDIT_GET_LISTBOX,;
-                           "list"         => { "Si", "No" },;
-                           "conditions"   => { "Igual", "Distinto" } }                                                          
-
-      ::hConditions  := {  "DECIMAL"      => hNumerics,;
-                           "INT"          => hNumerics,;
-                           "INTEGER"      => hNumerics,;
-                           "VARCHAR"      => hChars,;
-                           "DATE"         => hDate,;
-                           "TINYINT"      => hLogical }
-
-   end if 
-
-RETURN ( ::hConditions )
-
-//---------------------------------------------------------------------------//
-
 METHOD textOnPostEdit( o, uNewValue, nKey ) CLASS FiltrosView
 
    if !( hb_isnumeric( nKey ) .and. ( nKey != VK_ESCAPE ) )
@@ -659,6 +672,11 @@ METHOD selectFilter() CLASS FiltrosView
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
+
+METHOD convertType( uValue, cType )  CLASS FiltrosView
+
+RETURN ( eval( ::getConvertType( cType ), uValue ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -712,7 +730,7 @@ RETURN ( ::oDialog:nResult == IDOK )
 METHOD validActivate() CLASS SaveFiltrosView
 
    if empty( ::oController:cName )
-      ::oController:getSaveDialogView():showMessage( "El nombre del filtro no puede estar vacio." )
+      ::showMessage( "El nombre del filtro no puede estar vacio." )
       RETURN ( .f. )
    end if 
 

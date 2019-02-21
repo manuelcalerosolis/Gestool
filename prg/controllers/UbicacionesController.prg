@@ -224,6 +224,7 @@ END CLASS
 METHOD getColumns() CLASS SQLUbicacionesModel
    
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                          "text"      => "Identificador"                           ,;
                                           "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
@@ -233,21 +234,26 @@ METHOD getColumns() CLASS SQLUbicacionesModel
                                           "default"   => {|| ::getControllerParentUuid() } }       )
 
    hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
+                                          "text"      => "Código"                                  ,;
                                           "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
+                                          "text"      => "Nombre"                                  ,;
                                           "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "sistema",        {  "create"    => "TINYINT( 1 )"                            ,;
                                           "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "pasillo",        {  "create"    => "INT"                                     ,;
+                                          "text"      => "Pasillo"                                 ,;
                                           "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "estanteria",     {  "create"    => "INT"                                     ,;
+                                          "text"      => "Estanteria"                              ,;
                                           "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "altura",         {  "create"    => "INT"                                     ,;
+                                          "text"      => "Altura"                                  ,;
                                           "default"   => {|| 0 } }                                 )
 
    ::getDeletedStampColumn()

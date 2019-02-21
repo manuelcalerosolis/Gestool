@@ -31,7 +31,7 @@ METHOD New( oController ) CLASS ArticulosCategoriasController
 
    ::Super:New( oController )
 
-   ::cTitle                         := "Articulos categorias"
+   ::cTitle                         := "Artículos categorias"
 
    ::hImage                         := {  "16" => "gc_photographic_filters_16",;
                                           "32" => "gc_photographic_filters_32",;
@@ -123,6 +123,19 @@ RETURN ( nil )
 
 CLASS ArticulosCategoriasView FROM SQLBaseView
 
+   DATA hTipos    INIT  {  "Círculo azul"          => "bullet_ball_glass_blue_16",;
+                           "Círculo verde"         => "bullet_ball_glass_green_16",;
+                           "Cículo rojo"           => "bullet_ball_glass_red_16",;
+                           "Cículo amarillo"       => "bullet_ball_glass_yellow_16",;
+                           "Cuadrado azul"         => "bullet_square_blue_16",;
+                           "Cuadrado verde"        => "bullet_square_green_16",;
+                           "Cuadrado rojo"         => "bullet_square_red_16",;
+                           "Cuadrado amarillo"     => "bullet_square_yellow_16",;
+                           "Triángulo azul"        => "bullet_triangle_blue_16",;
+                           "Triángulo verde"       => "bullet_triangle_green_16",;
+                           "Triángulo rojo"        => "bullet_triangle_red_16",;
+                           "Triángulo amarillo"    => "bullet_triangle_yellow_16" }
+
    DATA oSayCamposExtra
   
    DATA oTipo
@@ -140,19 +153,6 @@ END CLASS
 METHOD New( oController ) CLASS ArticulosCategoriasView
 
    ::Super:New( oController )
-
-   ::hTipos          := {  "Círculo azul"          => "bullet_ball_glass_blue_16",;
-                           "Círculo verde"         => "bullet_ball_glass_green_16",;
-                           "Cículo rojo"           => "bullet_ball_glass_red_16",;
-                           "Cículo amarillo"       => "bullet_ball_glass_yellow_16",;
-                           "Cuadrado azul"         => "bullet_square_blue_16",;
-                           "Cuadrado verde"        => "bullet_square_green_16",;
-                           "Cuadrado rojo"         => "bullet_square_red_16",;
-                           "Cuadrado amarillo"     => "bullet_square_yellow_16",;
-                           "Triángulo azul"        => "bullet_triangle_blue_16",;
-                           "Triángulo verde"       => "bullet_triangle_green_16",;
-                           "Triángulo rojo"        => "bullet_triangle_red_16",;
-                           "Triángulo amarillo"    => "bullet_triangle_yellow_16" }
 
 RETURN ( self )
 
@@ -244,6 +244,7 @@ METHOD getValidators() CLASS ArticulosCategoriasValidator
                         "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
                                                       "unique"             => "EL código introducido ya existe"  ,;
                                                       "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -267,15 +268,18 @@ END CLASS
 METHOD getColumns() CLASS SQLArticulosCategoriasModel
 
    hset( ::hColumns, "id",       {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                    "text"      => "Identificador"                           ,;                          
                                     "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
                                     "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                            ,;
-                                    "default"   => {|| space( 20 ) } }                        )
+   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                           ,;
+                                    "text"      => "Código"                                  ,;                          
+                                    "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
+                                    "text"      => "Nombre"                                  ,;                          
                                     "default"   => {|| space( 200 ) } }                       )
 
    hset( ::hColumns, "icono",    {  "create"    => "VARCHAR( 40 )"                           ,;

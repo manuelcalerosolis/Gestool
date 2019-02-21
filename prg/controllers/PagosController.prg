@@ -506,27 +506,27 @@ RETURN ( ::getSuperController():getImporte() >= nImporte )
 
 CLASS SQLPagosModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "pagos"
+   DATA cTableName                     INIT "pagos"
 
-   DATA cGroupBy                 INIT "pagos.uuid"
+   DATA cGroupBy                       INIT "pagos.uuid"
    
-   DATA cOrderBy                 INIT "pagos.fecha"
+   DATA cOrderBy                       INIT "pagos.fecha"
 
    METHOD getColumns()
 
    METHOD getInitialSelect()
 
    METHOD getCuentaBancariaTerceroUuidAttribute( uValue ) ; 
-                                          INLINE ( if( empty( uValue ), space( 3 ), SQLCuentasBancariasModel():getCodigoWhereUuidAndNotDeleted( uValue ) ) )
+                                       INLINE ( if( empty( uValue ), space( 3 ), SQLCuentasBancariasModel():getCodigoWhereUuidAndNotDeleted( uValue ) ) )
 
    METHOD setCuentaBancariaTerceroUuidAttribute( uValue ) ;
-                                          INLINE ( if( empty( uValue ), "", SQLCuentasBancariasModel():getUuidWhereCodigoAndParentAndNotDeleted( uValue, SQLtercerosModel():getuuidWhereCodigo( ::getController():getModelBuffer( "tercero_codigo" ) ) ) ) )
+                                       INLINE ( if( empty( uValue ), "", SQLCuentasBancariasModel():getUuidWhereCodigoAndParentAndNotDeleted( uValue, SQLtercerosModel():getuuidWhereCodigo( ::getController():getModelBuffer( "tercero_codigo" ) ) ) ) )
 
    METHOD getCuentaBancariaEmpresaUuidAttribute( uValue ) ; 
-                                          INLINE ( if( empty( uValue ), space( 3 ), SQLCuentasBancariasGestoolModel():getCodigoWhereUuidAndNotDeleted( uValue ) ) )
+                                       INLINE ( if( empty( uValue ), space( 3 ), SQLCuentasBancariasGestoolModel():getCodigoWhereUuidAndNotDeleted( uValue ) ) )
 
    METHOD setCuentaBancariaEmpresaUuidAttribute( uValue ) ;
-                                          INLINE ( if( empty( uValue ), "", SQLCuentasBancariasGestoolModel():getUuidWhereCodigoAndParentAndNotDeleted( uValue, Company():Uuid() ) ) )
+                                       INLINE ( if( empty( uValue ), "", SQLCuentasBancariasGestoolModel():getUuidWhereCodigoAndParentAndNotDeleted( uValue, Company():Uuid() ) ) )
 
 #ifdef __TEST__
 
@@ -543,34 +543,41 @@ END CLASS
 METHOD getColumns() CLASS SQLPagosModel
 
    hset( ::hColumns, "id",                            {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
+                                                         "text"      => "Identificador"                              ,;
                                                          "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"                ,;                                  
+   hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"             ,;                                  
                                                          "default"   => {|| win_uuidcreatestring() } }               )
 
-   hset( ::hColumns, "tercero_codigo",                {  "create"    => "VARCHAR( 20 )"                              ,;
+   hset( ::hColumns, "tercero_codigo",                {  "create"    => "VARCHAR ( 20 )"                             ,;
+                                                         "text"      => "Código de tercero"                          ,;
                                                          "default"   => {|| space( 20 ) } }                          )
 
-   hset( ::hColumns, "medio_pago_codigo",             {  "create"    => "VARCHAR( 20 )"                              ,;
+   hset( ::hColumns, "medio_pago_codigo",             {  "create"    => "VARCHAR ( 20 )"                             ,;
+                                                         "text"      => "Código de medio de pago"                    ,;
                                                          "default"   => {|| space( 20 ) } }                          )
 
-   hset( ::hColumns, "cuenta_bancaria_tercero_uuid",  {  "create"    => "VARCHAR( 20 )"                              ,;
+   hset( ::hColumns, "cuenta_bancaria_tercero_uuid",  {  "create"    => "VARCHAR ( 20 )"                             ,;
                                                          "default"   => {|| space( 40 ) } }                          )
 
-   hset( ::hColumns, "cuenta_bancaria_empresa_uuid",  {  "create"    => "VARCHAR( 20 )"                              ,;
+   hset( ::hColumns, "cuenta_bancaria_empresa_uuid",  {  "create"    => "VARCHAR ( 20 )"                             ,;
                                                          "default"   => {|| space( 40 ) } }                          )
 
    hset( ::hColumns, "fecha",                         {  "create"    => "DATE"                                       ,;
+                                                         "text"      => "Fecha"                                      ,;
                                                          "default"   => {|| hb_date() } }                            )
 
-   hset( ::hColumns, "estado",                        {  "create"     => "ENUM( 'Presentado', 'Rechazado' )"          ,;
-                                                         "default"    => {|| 'Presentado' }  }                        )
+   hset( ::hColumns, "estado",                        {  "create"    => "ENUM ( 'Presentado', 'Rechazado' )"         ,;
+                                                         "text"      => "Estado"                                     ,;
+                                                         "default"   => {|| 'Presentado' }  }                        )
 
-   hset( ::hColumns, "comentario",                    {  "create"    => "VARCHAR( 200 )"                              ,;
-                                                         "default"   => {|| space( 200 ) } }                          )
+   hset( ::hColumns, "comentario",                    {  "create"    => "VARCHAR ( 200 )"                            ,;
+                                                         "text"      => "Comentario"                                 ,;
+                                                         "default"   => {|| space( 200 ) } }                         )
 
-   hset( ::hColumns, "tipo",                          {  "create"     => "ENUM( 'Pago', 'Cobro' )"                    ,;
-                                                         "default"    => {|| 'Cobro' }  }                             )
+   hset( ::hColumns, "tipo",                          {  "create"    => "ENUM ( 'Pago', 'Cobro' )"                   ,;
+                                                         "text"      => "Tipo"                                       ,;
+                                                         "default"   => {|| 'Cobro' }  }                             )
 
 RETURN ( ::hColumns )
 

@@ -548,27 +548,33 @@ END CLASS
 METHOD getColumns() CLASS SQLRecibosModel
 
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
+                                          "text"      => "Identificador"                              ,;
                                           "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"              ,;                                  
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"             ,;                                 
                                           "default"   => {|| win_uuidcreatestring() } }               )
 
-   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 )"                              ,;
+   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR ( 40 )"                             ,;
                                           "default"   => {|| ::getControllerParentUuid() } }          )
 
-   hset( ::hColumns, "tipo",           {  "create"     => "ENUM( 'Cobro', 'Pago' )"                   ,;
-                                          "default"    => {|| 'Cobro' }  }                            )
+   hset( ::hColumns, "tipo",           {  "create"    => "ENUM ( 'Cobro', 'Pago' )"                   ,;
+                                          "text"      => "Tipo"                                       ,;
+                                          "default"   => {|| 'Cobro' }  }                             )
 
    hset( ::hColumns, "expedicion",     {  "create"    => "DATE"                                       ,;
+                                          "text"      => "Expedición"                                 ,;
                                           "default"   => {|| hb_date() } }                            )
 
-   hset( ::hColumns, "vencimiento",    {  "create"   => "DATE"                                        ,;
+   hset( ::hColumns, "vencimiento",    {  "create"    => "DATE"                                       ,;
+                                          "text"      => "Vencimiento"                                ,;
                                           "default"   => {|| hb_date() } }                            )
 
-   hset( ::hColumns, "importe",        {  "create"    => "FLOAT( 16,2 )"                              ,;
-                                          "default"   => {||  0  } }                                  )
+   hset( ::hColumns, "importe",        {  "create"    => "FLOAT ( 16,2 )"                             ,;
+                                          "text"      => "Importe"                                    ,;
+                                          "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "concepto",       {  "create"    => "VARCHAR( 200 )"                             ,;
+   hset( ::hColumns, "concepto",       {  "create"    => "VARCHAR ( 200 )"                            ,;
+                                          "text"      => "Concepto"                                   ,;
                                           "default"   => {|| space( 200 ) } }                         )
 
    ::getTimeStampColumns()

@@ -198,8 +198,8 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
       ID          500 ;
       OF          ::oDialog ;
       PROMPT      "Rangos" ,;
-                  "Vista previa",;
-                  "Convertidos" ;
+                  "Albaranes",;
+                  "Facturas generadas" ;
       DIALOGS     "CONVERTIR_ALBARAN_VENTAS",;
                   "CONVERTIR_ALBARAN_VENTAS_PREVIA",;
                   "CONVERTIR_ALBARAN_VENTAS_PREVIA"

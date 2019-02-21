@@ -305,18 +305,21 @@ END CLASS
 METHOD getColumns() CLASS SQLAlmacenesModel
    
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                          "text"      => "Identificador"                           ,;
                                           "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"          ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
+   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR ( 20 ) NOT NULL"                 ,;
+                                          "text"      => "Código"                                  ,;
                                           "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
+   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR ( 200 ) NOT NULL"                ,;
+                                          "text"      => "Nombre"                                  ,;
                                           "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "sistema",        {  "create"    => "TINYINT( 1 )"                            ,;
+   hset( ::hColumns, "sistema",        {  "create"    => "TINYINT ( 1 )"                           ,;
                                           "default"   => {|| 0 } }                                 )
 
    ::getDeletedStampColumn()

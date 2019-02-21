@@ -80,9 +80,7 @@ METHOD End() CLASS ArticulosFamiliasController
       ::oGetSelector:End()
    end if                 
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -311,10 +309,6 @@ METHOD Activate() CLASS ArticulosFamiliaView
    ::oDialog:bStart  := {|| ::startActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-   ::oBitmap:end()
-
-   ::oBmpImagen:End()
 
 RETURN ( ::oDialog:nResult )
 
@@ -595,44 +589,46 @@ END CLASS
 
 METHOD getColumns() CLASS SQLArticulosFamiliaModel
    
-   hset( ::hColumns, "id",                            {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                                         "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                            {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;
+                                                         "text"      => "Identificador"                              ,;
+                                                         "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
-                                                         "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"             ,;
+                                                         "default"   => {|| win_uuidcreatestring() } }               )
 
-   hset( ::hColumns, "familia_uuid",                  {  "create"    => "VARCHAR( 40 )"                           ,;
-                                                         "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "familia_uuid",                  {  "create"    => "VARCHAR ( 40 )"                             ,;
+                                                         "default"   => {|| space( 40 ) } }                          )
 
-   hset( ::hColumns, "codigo",                        {  "create"    => "VARCHAR( 20 )"                           ,;
-                                                         "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "codigo",                        {  "create"    => "VARCHAR ( 20 )"                             ,;
+                                                         "text"      => "Código"                                     ,;
+                                                         "default"   => {|| space( 20 ) } }                          )
 
-   hset( ::hColumns, "nombre",                        {  "create"    => "VARCHAR( 200 )"                          ,;
-                                                         "default"   => {|| space( 200 ) } }                      )
+   hset( ::hColumns, "nombre",                        {  "create"    => "VARCHAR ( 200 )"                            ,;
+                                                         "text"      => "Nombre"                                     ,;
+                                                         "default"   => {|| space( 200 ) } }                         )
 
-   hset( ::hColumns, "primera_propiedad_uuid",        {  "create"    => "VARCHAR( 40 )"                           ,;
-                                                         "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "incluir_tpv_tactil",            {  "create"    => "TINYINT ( 1 )"                              ,;
+                                                         "text"      => "Incluir en táctil"                          ,;
+                                                         "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "segunda_propiedad_uuid",        {  "create"    => "VARCHAR( 40 )"                           ,;
-                                                         "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "color_rgb",                     {  "create"    => "INT UNSIGNED"                               ,;
+                                                         "text"      => "Color RGB"                                  ,;
+                                                         "default"   => {|| rgb( 255, 255, 255 ) } }                 )
 
-   hset( ::hColumns, "incluir_tpv_tactil",            {  "create"    => "BIT"                                     ,;
-                                                         "default"   => {|| .f. } }                               )
+   hset( ::hColumns, "posicion",                      {  "create"    => "INTEGER ( 5 )"                              ,;
+                                                         "text"      => "Posición"                                   ,;
+                                                         "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "color_rgb",                     {  "create"    => "INT UNSIGNED"                            ,;
-                                                         "default"   => {|| rgb( 255, 255, 255 ) } }              )
+   hset( ::hColumns, "comentario_uuid",               {  "create"    => "VARCHAR ( 40 )"                             ,;
+                                                         "default"   => {|| space( 40 ) } }                          )
 
-   hset( ::hColumns, "posicion",                      {  "create"    => "INTEGER( 5 )"                            ,;
-                                                         "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "articulo_no_acumulable",        {  "create"    => "TINYINT ( 1 )"                              ,;
+                                                         "text"      => "Familia no acumulable"                      ,;
+                                                         "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "comentario_uuid",               {  "create"    => "VARCHAR( 40 )"                           ,;
-                                                         "default"   => {|| space( 40 ) } }                       )
-
-   hset( ::hColumns, "articulo_no_acumulable",        {  "create"    => "BIT"                                     ,;
-                                                         "default"   => {|| .f. } }                               )
-
-   hset( ::hColumns, "mostrar_ventana_comentarios",   {  "create"    => "BIT"                                     ,;
-                                                         "default"   => {|| .f. } }                               )
+   hset( ::hColumns, "mostrar_ventana_comentarios",   {  "create"    => "TINYINT ( 1 )"                              ,;
+                                                         "text"      => "Mostrar comentarios"                        ,;
+                                                         "default"   => {|| 0 } }                                    )
 
    ::getDeletedStampColumn()
 

@@ -37,63 +37,75 @@ END CLASS
 
 METHOD getColumns() CLASS SQLArticulosModel
    
-   hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"          ,;
-                                                      "default"   => {|| 0 }                                  ,;
-                                                      "text"      => "Identificador del artículo" }            )
+   hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                                      "text"      => "Identificador"                           ,;
+                                                      "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"          ,;
+   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR ( 40 ) NT NULL UNIQUE"           ,;
                                                       "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",                     {  "create"    => "VARCHAR( 20 )"                          ,;
-                                                      "default"   => {|| space( 20 ) }                        ,;
-                                                      "text"      => "Código del artículo" }                   )
+   hset( ::hColumns, "codigo",                     {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                                      "text"      => "Código"                                  ,;
+                                                      "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",                     {  "create"    => "VARCHAR( 200 )"                         ,;
-                                                      "default"   => {|| space( 200 ) }                       ,;
-                                                      "text"      => "Nombre del artículo" }                   ) 
+   hset( ::hColumns, "nombre",                     {  "create"    => "VARCHAR ( 200 )"                         ,;
+                                                      "text"      => "Nombre"                                  ,;
+                                                      "default"   => {|| space( 200 ) } }                      ) 
 
-   hset( ::hColumns, "familia_codigo",             {  "create"    => "VARCHAR( 20 )"                          ,;
-                                                      "default"   => {|| space( 20 ) }                        ,;
-                                                      "text"      => "Código de la familia" }                  )
+   hset( ::hColumns, "familia_codigo",             {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                                      "text"      => "Código de la familia"                    ,;
+                                                      "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "tipo_codigo",                {  "create"    => "VARCHAR( 20 )"                          ,;
-                                                      "default"   => {|| space( 20 ) } }                      )
+   hset( ::hColumns, "tipo_codigo",                {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                                      "text"      => "Código del tipo"                         ,;
+                                                      "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "categoria_codigo",           {  "create"    => "VARCHAR( 20 )"                          ,;
-                                                      "default"   => {|| space( 20 ) } }                      )
+   hset( ::hColumns, "categoria_codigo",           {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                                      "text"      => "Código de la categoría"                  ,;
+                                                      "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "fabricante_codigo",          {  "create"    => "VARCHAR( 20 )"                          ,;
-                                                      "default"   => {|| space( 20 ) } }                      )
+   hset( ::hColumns, "fabricante_codigo",          {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                                      "text"      => "Código del fabricante"                   ,;
+                                                      "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "temporada_codigo",           {  "create"    => "VARCHAR( 20 )"                          ,;
-                                                      "default"   => {|| space( 20 ) } }                      )
+   hset( ::hColumns, "temporada_codigo",           {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                                      "text"      => "Código de la temporada"                  ,;
+                                                      "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "tipo_iva_codigo",            {  "create"    => "VARCHAR( 20 )"                          ,;
-                                                      "default"   => {|| space( 20 ) } }                      )
+   hset( ::hColumns, "tipo_iva_codigo",            {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                                      "text"      => "Código del tipo de IVA"                  ,;
+                                                      "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "impuesto_especial_codigo",   {  "create"    => "VARCHAR( 20 )"                          ,;
-                                                      "default"   => {|| space( 20 ) } }                      )
+   hset( ::hColumns, "impuesto_especial_codigo",   {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                                      "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "unidades_medicion_grupos_codigo",;
-                                                   {  "create"    => "VARCHAR( 20 )"                           ,;
+                                                   {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                                      "text"      => "Código del grupo de unidad de medicón"   ,;
                                                       "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "obsoleto",                   {  "create"    => "TINYINT"                                 ,;
+                                                      "text"      => "Obsoleto"                                ,;
                                                       "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "caducidad",                  {  "create"    => "INTEGER"                                 ,;
+                                                      "text"      => "Caducidad"                               ,;
                                                       "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "periodo_caducidad",          {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "periodo_caducidad",          {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                                      "text"      => "Periodo de caducidad"                    ,;
                                                       "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "lote",                       {  "create"    => "TINYINT"                                 ,;
+                                                      "text"      => "Lote"                                    ,;
                                                       "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "lote_actual",                {  "create"    => "VARCHAR( 40 )"                           ,;
+   hset( ::hColumns, "lote_actual",                {  "create"    => "VARCHAR ( 40 )"                          ,;
+                                                      "text"      => "Lote actual"                             ,;
                                                       "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "precio_costo",               {  "create"    => "FLOAT( 16, 6 )"                          ,;
+   hset( ::hColumns, "precio_costo",               {  "create"    => "FLOAT ( 16, 6 )"                         ,;
+                                                      "text"      => "Precio de costo"                         ,;
                                                       "default"   => {|| 0 } }                                 )
 
    ::getTimeStampColumns()

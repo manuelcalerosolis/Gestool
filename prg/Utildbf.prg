@@ -3279,12 +3279,12 @@ FUNCTION toSQLString( value )
 
    do case
       case hb_isnil( value ) ;      RETURN ( 'null' )
-      case hb_isnumeric( value ) ;  RETURN ( alltrim( str( value ) ) )
-      case hb_ischar( value ) ;     RETURN ( quoted( rtrim( value ) ) ) 
+      case hb_isnumeric( value ) ;  RETURN ( hb_ntos( value ) )
+      case hb_ischar( value ) ;     RETURN ( quoted( value ) ) 
       case hb_islogical( value ) ;  RETURN ( if( value, "1", "0" ) )
       case hb_isdate( value ) ;     RETURN ( if( empty( value ), 'null', quoted( hb_dtoc( value, 'yyyy-mm-dd' ) ) ) )
       case hb_isdatetime( value ) ; RETURN ( quoted( hb_tstostr( value ) ) )
-      case hb_ismemo( value ) ;     RETURN ( quoted( rtrim( value ) ) ) 
+      case hb_ismemo( value ) ;     RETURN ( quoted( value ) ) 
    end case 
 
 RETURN ( value )
