@@ -19,14 +19,14 @@ METHOD getInitialSelect( cOrderBy, cOrientation ) CLASS SQLAlbaranesVentasConver
 
       %1$s
 
-      WHERE ( %3$s( albaranes_ventas.uuid, "facturas_ventas" ) ) = 0
+      WHERE ( %2$s( albaranes_ventas.uuid ) ) = 0
 
    ENDTEXT
 
    cSql  := hb_strformat(  cSql,;
                            ::Super:getInitialSelect( cOrderBy, cOrientation ),;
-                           SQLConversorDocumentosModel():getTableName(),;
-                           Company():getTableName( ::getPackage( 'IsConvertedWhereUuidAnDestino' ) ) )
+                           Company():getTableName( 'isAlbaranesVentasConvertedToFacturasVentasWhereUuid' ) )
+
 RETURN ( cSql )  
 
 //---------------------------------------------------------------------------//

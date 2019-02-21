@@ -1571,8 +1571,6 @@ METHOD insertBuffer( hBuffer )
 
    ::getInsertSentence( hBuffer )
 
-   msgalert( ::cSQLInsert, "cSQLInsert" )
-
    ::getDatabase():Query( ::cSQLInsert )
 
    nId               := ::getDatabase():LastInsertId()
