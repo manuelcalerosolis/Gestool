@@ -143,7 +143,7 @@ END CLASS
 METHOD Activate() CLASS ContadoresView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "AÑADIR_SERIE" ;
+      RESOURCE    "NUEVA_SERIE" ;
       TITLE       ::LblTitle() + "serie"
 
    REDEFINE BITMAP ::oBitmap ;

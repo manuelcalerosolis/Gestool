@@ -25,7 +25,7 @@ METHOD getInitialSelect( cOrderBy, cOrientation ) CLASS SQLAlbaranesVentasConver
 
    cSql  := hb_strformat(  cSql,;
                            ::Super:getInitialSelect( cOrderBy, cOrientation ),;
-                           Company():getTableName( 'isAlbaranesVentasConvertedToFacturasVentasWhereUuid' ) )
+                           Company():getTableName( 'isConvertedToFacturasVentas' ) )
 
 RETURN ( cSql )  
 
