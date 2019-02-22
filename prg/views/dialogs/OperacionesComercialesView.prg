@@ -87,6 +87,7 @@ msgalert( ::oController:getName())
    // Serie-------------------------------------------------------------------
 
    ::getController():getContadoresController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "serie" ] ) )
+   ::getController():getContadoresController():getSelector():setWhen( {|| ::getController():isAppendOrDuplicateMode() } )
    ::getController():getContadoresController():getSelector():Build( { "idGet" => 100, "idText" => 110, "oDialog" => ::oFolder:aDialogs[1] } )
 
    //::getController():getSerieDocumentoComponent():BindValue( bSETGET( ::getController():getModel():hBuffer[ "serie" ] ) )
