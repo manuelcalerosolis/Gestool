@@ -162,11 +162,15 @@ RETURN ( ::setModelBuffer( "numero", ::getContadoresController():getModel():getL
 
 METHOD insertingBuffer() CLASS OperacionesController 
 
+msgalert( "insertingBuffer")
+
 RETURN ( ::setModelBuffer( "numero", ::getContadoresController():getModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD changedSerie() CLASS OperacionesController 
+
+msgalert( "changedSerie")
 
 RETURN ( ::getNumeroDocumentoComponent():setValue( ::getContadoresController():getModel():getLastCounter( ::getName(), ::getModelBuffer( "serie" ) ) ) )
 

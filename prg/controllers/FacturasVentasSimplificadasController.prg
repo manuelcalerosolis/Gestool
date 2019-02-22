@@ -27,7 +27,7 @@ CLASS FacturasVentasSimplificadasController FROM OperacionesComercialesControlle
 
    // Contrucciones tardias----------------------------------------------------
 
-   METHOD getName()                    INLINE ( "facturas_venta_simplificadas" )
+   METHOD getName()                    INLINE ( ::getModel():cTableName )
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasVentasSimplificadasModel():New( self ), ), ::oModel )
 

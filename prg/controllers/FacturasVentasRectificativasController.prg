@@ -29,7 +29,7 @@ CLASS FacturasVentasRectificativasController FROM OperacionesComercialesControll
 
    // Contrucciones tardias----------------------------------------------------
 
-   METHOD getName()                    INLINE ( "facturas_venta_rectificativa" )
+   METHOD getName()                    INLINE ( ::getModel():cTableName )
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasVentasRectificativasModel():New( self ), ), ::oModel )
 

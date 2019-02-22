@@ -222,7 +222,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD assignResults( hResult ) CLASS GetSelector
-   
+
    if hhaskey( hResult, ::getKey() )
       ::cText( hGet( hResult, ::getKey() ) )
    end if

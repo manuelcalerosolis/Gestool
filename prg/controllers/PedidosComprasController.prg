@@ -21,7 +21,7 @@ CLASS PedidosComprasController FROM OperacionesComercialesController
 
    // Contrucciones tardias----------------------------------------------------
 
-   METHOD getName()                    INLINE ( "pedidos_compra" )
+   METHOD getName()                    INLINE ( ::getModel():cTableName )
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLPedidosComprasModel():New( self ), ), ::oModel )
 
