@@ -5,21 +5,39 @@ CLASS SeriesGetSelector FROM GetSelector
 
    DATA cKey                           INIT  "serie"
 
-   METHOD getFields()                  INLINE ( ::uFields := ::oController:getModel():getField( "contador", ::getKey(), ::oGet:varGet() ) )
-   
+   DATA oGetNumber 
+
+   METHOD getFields()                  
+
    METHOD assignResults( hResult )
 
+   METHOD setGetNumber( oGetNumber )   INLINE ( ::oGetNumber := oGetNumber )
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getFields()
+
+   ::uFields   := ::oController:getModel():getFieldWhere( "contador", { "serie" => eval( ::bValue ), "documento" => ::getParentController:getName() } )
+
+   msgalert( ::uFields, "::uFields" )
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 
 METHOD assignResults( hResult ) CLASS SeriesGetSelector
 
-   if hhaskey( hResult, ::getKey() )
-      ::cText( hGet( hResult, ::getKey() ) )
-   
-      hset( ::oController:oController:getModel():hBuffer, "numero", ::oController:getModel():getLastCounter( ::oController:oController:getModel():cTableName, hGet( hResult, ::getKey() ) ) )
+   if !hhaskey( hResult, ::getKey() )
+      RETURN ( nil )
+   end if 
 
-   end if
+   ::cText( hGet( hResult, ::getKey() ) )
+
+   if !empty( ::oGetNumber)
+      ::oGetNumber:cText( ::uFields ) 
+   end if 
 
 RETURN ( nil )
 

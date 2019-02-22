@@ -33,6 +33,9 @@ CLASS GetSelector
    METHOD New( oController ) CONSTRUCTOR
    METHOD End()                                 
 
+   METHOD getController()              INLINE ( ::oController )
+   METHOD getParentController()        INLINE ( ::oController:oController )
+
    METHOD setKey( cKey )               INLINE ( ::cKey := cKey )
    METHOD getKey()                     INLINE ( ::cKey )
 
@@ -47,7 +50,7 @@ CLASS GetSelector
    METHOD Disable()                    INLINE ( if( !empty( ::oGet ), ::oGet:Disable(), ) )
    METHOD Enable()                     INLINE ( if( !empty( ::oGet ), ::oGet:Enable(), ) )
 
-   METHOD getView()                    INLINE ( ::oController:oController:getDialogView() )
+   METHOD getView()                    INLINE ( ::getParentController():getDialogView() )
 
    METHOD Build( hBuilder )
 
@@ -329,7 +332,9 @@ METHOD cleanHelpText() CLASS GetSelector
       RETURN ( .f. )
    end if
 
-   ::getHelp():cText( "" ) 
+   if !empty( ::getHelp() )
+      ::getHelp():cText( "" ) 
+   end if 
 
    ::fireEvent( 'cleanedHelpText' ) 
 
@@ -343,7 +348,9 @@ METHOD setHelpText( value ) CLASS GetSelector
       RETURN ( .f. )
    end if
 
-   ::getHelp():cText( value ) 
+   if !empty( ::getHelp() )
+      ::getHelp():cText( value ) 
+   end if 
 
    ::fireEvent( 'settedHelpText' ) 
 
