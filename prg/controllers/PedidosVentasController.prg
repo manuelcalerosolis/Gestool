@@ -23,7 +23,7 @@ CLASS PedidosVentasController FROM OperacionesComercialesController
 
    // Contrucciones tardias----------------------------------------------------
 
-   METHOD getName()                    INLINE ( "pedidos_venta" )
+   METHOD getName()                    INLINE ( ::getModel():cTableName )
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLPedidosVentasModel():New( self ), ), ::oModel )
 

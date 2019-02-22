@@ -48,6 +48,8 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS OperacionesComercialesView
+
+msgalert( ::oController:getName())
    
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "TRANSACION_COMERCIAL" ;
@@ -264,6 +266,8 @@ METHOD startActivate() CLASS OperacionesComercialesView
    ::getController():getRutasController():getSelector():Start()
 
    ::getController():getAgentesController():getSelector():Start()
+
+   ::getController():getContadoresController():getSelector():Start()
 
    ::getController():getArticulosTarifasController():getSelector():Start()
 

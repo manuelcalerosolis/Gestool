@@ -25,6 +25,8 @@ CLASS ContadoresController FROM SQLNavigatorController
 
    METHOD getSelector()                INLINE ( iif( empty( ::oGetSelector ), ::oGetSelector := SeriesGetSelector():New( self ), ), ::oGetSelector )
 
+   METHOD getValidator()               INLINE ( iif( empty( ::oValidator ), ::oValidator  := ContadoresValidator():New( self ), ), ::oValidator )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -159,11 +161,13 @@ METHOD Activate() CLASS ContadoresView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "serie" ] ;
       ID          100 ;
+      VALID       ( ::oController:validate( "serie" ) ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "contador" ] ;
       ID          110 ;
+      VALID       ( ::oController:validate( "contador" ) ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog
 
@@ -188,6 +192,56 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
+CLASS ContadoresValidator FROM SQLBaseValidator
+
+   METHOD getValidators()
+
+   METHOD getUniqueSentence( uValue )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getValidators() CLASS ContadoresValidator
+
+   ::hValidators  := {  "serie"        => {  "required"        => "La serie es un dato requerido",;
+                                             "unique"          => "La serie ya existe" } ,;
+                        "contador"     => {  "required"        => "El contador es un dato requerido",;
+                                             "positive"        => "El contador debe ser un número positivo" }  }
+
+RETURN ( ::hValidators )
+
+//---------------------------------------------------------------------------//
+
+METHOD getUniqueSentence( uValue ) CLASS ContadoresValidator
+
+   local cSQLSentence
+
+   TEXT INTO cSQLSentence
+
+   SELECT
+      COUNT(*)
+
+   FROM %1$s
+
+      WHERE %2$s = %3$s AND documento = %4$s
+
+   ENDTEXT
+
+   cSQLSentence     := hb_strformat(   cSQLSentence,;
+                                       ::oController:getModel():getTableName(),;
+                                       ::cColumnToProced,;
+                                       quoted( uValue ),;
+                                       quoted( ::oController:oController:getModel():cTableName ) )
+
+RETURN ( cSQLSentence )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 #ifdef __TEST__
 
 CLASS TestContadoresController FROM TestCase
