@@ -634,40 +634,49 @@ METHOD getColumns() CLASS SQLDireccionesModel
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"          ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL "                 ,;
+   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR ( 40 ) NOT NULL "                ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR ( 20 ) NOT NULL"                 ,;
                                              "default"   => {|| space( 20 ) } }                       )
    
-   hset( ::hColumns, "direccion",         {  "create"    => "VARCHAR( 150 )"                          ,;
+   hset( ::hColumns, "direccion",         {  "create"    => "VARCHAR ( 150 )"                         ,;
+                                             "text"      => "Dirección"                               ,;
                                              "default"   => {|| space( 150 ) } }                      )
 
-   hset( ::hColumns, "poblacion",         {  "create"    => "VARCHAR( 100 )"                          ,;
+   hset( ::hColumns, "poblacion",         {  "create"    => "VARCHAR ( 100 )"                         ,;
+                                             "text"      => "Población"                               ,;
                                              "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "codigo_provincia",  {  "create"    => "VARCHAR( 8 )"                            ,;
+   hset( ::hColumns, "codigo_provincia",  {  "create"    => "VARCHAR ( 8 )"                           ,;
+                                             "text"      => "Código provincia"                        ,;
                                              "default"   => {|| space( 8 ) } }                        )
 
-   hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 100 )"                          ,;
+   hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR ( 100 )"                         ,;
+                                             "text"      => "Provincia"                               ,;
                                              "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "codigo_postal",     {  "create"    => "VARCHAR( 10 )"                           ,;
+   hset( ::hColumns, "codigo_postal",     {  "create"    => "VARCHAR ( 10 )"                          ,;
+                                             "text"      => "Código postal"                           ,;
                                              "default"   => {|| space( 10 ) } }                       )
 
-   hset( ::hColumns, "codigo_pais",       {  "create"    => "VARCHAR( 3 )"                            ,;
+   hset( ::hColumns, "codigo_pais",       {  "create"    => "VARCHAR ( 3 )"                           ,;
+                                             "text"      => "Código país"                             ,;
                                              "default"   => {|| space( 3 ) } }                        )
 
-   hset( ::hColumns, "telefono",          {  "create"    => "VARCHAR( 15 )"                           ,;
+   hset( ::hColumns, "telefono",          {  "create"    => "VARCHAR ( 15 )"                          ,;
+                                             "text"      => "Teléfono"                                ,;
                                              "default"   => {|| space( 15 ) } }                       )
 
-   hset( ::hColumns, "movil",             {  "create"    => "VARCHAR( 15 )"                           ,;
+   hset( ::hColumns, "movil",             {  "create"    => "VARCHAR ( 15 )"                          ,;
+                                             "text"      => "Teléfono móvil"                          ,;
                                              "default"   => {|| space( 15 ) } }                       )
 
-   hset( ::hColumns, "email",             {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "email",             {  "create"    => "VARCHAR ( 200 )"                         ,;
+                                             "text"      => "Email"                                   ,;
                                              "default"   => {|| space( 200 ) } }                      )
 
    ::getDeletedStampColumn()   

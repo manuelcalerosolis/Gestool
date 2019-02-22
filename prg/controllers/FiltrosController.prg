@@ -56,12 +56,15 @@ CLASS FiltrosController FROM SQLBrowseController
    METHOD deleteLineFilter( nLine )    INLINE ( adel( ::aFilter, nLine, .t. ) )
 
    METHOD getStructure( hColumns )
+      METHOD addToStructure( hColumns )
 
    METHOD getStructureKey( cText )
 
    METHOD getStructureType( cText )    INLINE ( ::getStructureKey( cText, "type" ) )
    
    METHOD getStructureField( cText )   INLINE ( ::getStructureKey( cText, "field" ) )
+
+   METHOD getStructureAlias( cText )   INLINE ( ::getStructureKey( cText, "alias" ) )
 
    METHOD getTexts()        
 
@@ -165,14 +168,29 @@ METHOD getStructure() CLASS FiltrosController
 
    if empty( ::aStructure )
 
-      heval( ::oController:getModel():getColumns(),;
-         {|k,v| if( hhaskey( v, "text" ),; 
-            aadd( ::aStructure,;
-               {  "field"  => k,;
-                  "type"   => left( hget( v, "create" ), at( " ", hget( v, "create" ) ) - 1 ),;
-                  "text"   => hget( v, "text" ) } ), ) } )
+      ::addToStructure( ::oController:getModel():getColumns(), ::oController:getModel():cTableName )
+
+      if !empty( ::oController:getModel():getRelationsModels() )
+
+         aeval( ::oController:getModel():getRelationsModels(), {|oModel| ::addToStructure( oModel:getColumns(), oModel:cTableName ) } )
+
+      end if 
 
    end if 
+
+RETURN ( ::aStructure )
+
+//---------------------------------------------------------------------------//
+
+METHOD addToStructure( hColumns, cTableName ) CLASS FiltrosController
+
+   heval( hColumns,;
+      {|k,v| if( hhaskey( v, "text" ),; 
+         aadd( ::aStructure,;
+            {  "field"  => k,;
+               "alias"  => cTableName,;
+               "type"   => left( hget( v, "create" ), at( " ", hget( v, "create" ) ) - 1 ),;
+               "text"   => hget( v, "text" ) } ), ) } )
 
 RETURN ( ::aStructure )
 
@@ -364,14 +382,14 @@ METHOD getWhere() CLASS FiltrosController
    
    cSql     := ""
 
-   if empty( ::aFilter )
+   if ::isEmptyFilter( ::aFilter )
       RETURN ( cSql )
    end if 
 
    cSql     := " AND ( "
 
    for each hFilter in ::aFilter 
-      cSql  += ::getTableName() + "." + ::getStructureField( hget( hFilter, "text" ) )
+      cSql  += ::getStructureAlias( hget( hFilter, "text" ) ) + "." + ::getStructureField( hget( hFilter, "text" ) )
       cSql  += hget( ::hOperators, hget( hFilter, "condition" ) )
       cSql  += ::convertType( hget( hFilter, "value" ), ::getStructureType( hget( hFilter, "text" ) ) )
       cSql  += hget( ::hNexo, hget( hFilter, "nexo" ) )

@@ -9,6 +9,8 @@ CLASS SQLTercerosModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD getRelationsModels()
+
    METHOD getInitialSelect()
 
    METHOD getByUuid( uuid )
@@ -185,6 +187,16 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
+METHOD getRelationsModels() CLASS SQLTercerosModel
+
+   local aRelations  := {}
+
+   aadd( aRelations, SQLDireccionesModel() )
+
+RETURN ( aRelations )
+
+//---------------------------------------------------------------------------//
+
 METHOD getInitialSelect() CLASS SQLTercerosModel
 
    local cSql
@@ -237,14 +249,15 @@ METHOD getInitialSelect() CLASS SQLTercerosModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(),;
-                          SQLDireccionesModel():getTableName(),;
-                          SQLMetodoPagoModel():getTableName(),;
-                          SQLAgentesModel():getTableName(),;
-                          SQLRutasModel():getTableName(),;
-                          SQLTercerosGruposModel():getTableName(),;
-                          SQLCuentasRemesaModel():getTableName(),;
-                          SQLArticulosTarifasModel():getTableName() )
+   cSql  := hb_strformat(  cSql,;
+                           ::getTableName(),;
+                           SQLDireccionesModel():getTableName(),;
+                           SQLMetodoPagoModel():getTableName(),;
+                           SQLAgentesModel():getTableName(),;
+                           SQLRutasModel():getTableName(),;
+                           SQLTercerosGruposModel():getTableName(),;
+                           SQLCuentasRemesaModel():getTableName(),;
+                           SQLArticulosTarifasModel():getTableName() )
 
 RETURN ( cSql )
 
@@ -304,12 +317,12 @@ METHOD getSentencePaymentDays( cCodigoTercero ) CLASS SQLTercerosModel
 
    TEXT INTO cSql
 
-   SELECT
-      primer_dia_pago, segundo_dia_pago, tercer_dia_pago, mes_vacaciones
+      SELECT
+         primer_dia_pago, segundo_dia_pago, tercer_dia_pago, mes_vacaciones
 
-   FROM %1$s
+      FROM %1$s
 
-   WHERE codigo = %2$s
+      WHERE codigo = %2$s
 
    ENDTEXT
 

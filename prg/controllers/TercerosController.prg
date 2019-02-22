@@ -41,15 +41,20 @@ CLASS TercerosController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD validColumnFormasdePagoBrowse( uValue, nKey )        INLINE ( ::validColumnBrowse( uValue, nKey, ::getFormasPagoController():oModel, "forma_pago_uuid" ) )
+   METHOD validColumnFormasdePagoBrowse( uValue, nKey ) ;       
+                                       INLINE ( ::validColumnBrowse( uValue, nKey, ::getFormasPagoController():oModel, "forma_pago_uuid" ) )
 
-   METHOD validColumnRutasBrowse( uValue, nKey )               INLINE ( ::validColumnBrowse( uValue, nKey, ::getRutasController():oModel, "ruta_uuid" ) )
+   METHOD validColumnRutasBrowse( uValue, nKey ) ;       
+                                       INLINE ( ::validColumnBrowse( uValue, nKey, ::getRutasController():oModel, "ruta_uuid" ) )
 
-   METHOD validColumnGruposBrowse( uValue, nKey )              INLINE ( ::validColumnBrowse( uValue, nKey, ::getTercerosGruposController():oModel, "cliente_grupo_uuid" ) )
+   METHOD validColumnGruposBrowse( uValue, nKey ) ;       
+                                       INLINE ( ::validColumnBrowse( uValue, nKey, ::getTercerosGruposController():oModel, "cliente_grupo_uuid" ) )
 
-   METHOD validColumnCuentasRemesasBrowse( uValue, nKey )      INLINE ( ::validColumnBrowse( uValue, nKey, ::getCuentasRemesasController():oModel, "cuenta_remesa_uuid" ) )
+   METHOD validColumnCuentasRemesasBrowse( uValue, nKey ) ;      
+                                       INLINE ( ::validColumnBrowse( uValue, nKey, ::getCuentasRemesasController():oModel, "cuenta_remesa_uuid" ) )
 
-   METHOD validColumnAgentesBrowse( uValue, nKey )             INLINE ( ::validColumnBrowse( uValue, nKey, ::getAgentesController():oModel, "agente_uuid" ) )
+   METHOD validColumnAgentesBrowse( uValue, nKey ) ;       
+                                       INLINE ( ::validColumnBrowse( uValue, nKey, ::getAgentesController():oModel, "agente_uuid" ) )
 
    METHOD setUuidOldersParents()
 
