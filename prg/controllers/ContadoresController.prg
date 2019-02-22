@@ -186,6 +186,33 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+CLASS ContadoresItemRange FROM ItemRange
+
+   DATA cKey                           INIT 'serie'
+   
+   METHOD showNombre( cCode )          INLINE ( '' )
+      
+   METHOD extractCode( uValue )        INLINE ( if( hb_ishash( uValue ), hget( uValue, "serie" ), uValue ) )
+         
+   METHOD ValidCode( uValue ) 
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD ValidCode( uValue ) CLASS ContadoresItemRange
+
+   if hb_isobject( uValue )
+      RETURN ( ::oController:getModel():isWhereSerie( uValue:varGet(), ::oController:cScope ) )
+   end if 
+
+RETURN ( ::oController:getModel():isWhereSerie( uValue, ::oController:cScope ) )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 #ifdef __TEST__

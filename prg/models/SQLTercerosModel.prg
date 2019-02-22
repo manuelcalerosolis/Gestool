@@ -104,7 +104,7 @@ METHOD getColumns() CLASS SQLTercerosModel
    hset( ::hColumns, "ruta_codigo",                {  "create"    => "VARCHAR ( 20 )"                             ,;
                                                       "default"   => {|| space( 20 ) } }                          )
 
-   hset( ::hColumns, "cliente_grupo_codigo",       {  "create"    => "VARCHAR ( 20 )"                             ,;
+   hset( ::hColumns, "tercero_grupo_codigo",       {  "create"    => "VARCHAR ( 20 )"                             ,;
                                                       "default"   => {|| space( 20 ) } }                          )
 
    hset( ::hColumns, "establecimiento",            {  "create"    => "VARCHAR ( 100 )"                            ,;
@@ -216,7 +216,7 @@ METHOD getInitialSelect() CLASS SQLTercerosModel
       metodos_pago.nombre AS nombre_metodo_pago,
       terceros.agente_codigo AS agente_codigo,
       agentes.nombre AS nombre_agente,
-      terceros.cliente_grupo_codigo AS cliente_grupo_codigo,
+      terceros.tercero_grupo_codigo AS tercero_grupo_codigo,
       clientes_grupos.nombre AS nombre_grupo_cliente,
       terceros.cuenta_remesa_codigo AS cuenta_remesa_codigo,
       cuentas_remesa.nombre AS nombre_remesa,
@@ -241,7 +241,7 @@ METHOD getInitialSelect() CLASS SQLTercerosModel
       LEFT JOIN %5$s AS rutas
          ON terceros.ruta_codigo = rutas.codigo
       LEFT JOIN %6$s AS clientes_grupos
-         ON terceros.cliente_grupo_codigo = clientes_grupos.codigo
+         ON terceros.tercero_grupo_codigo = clientes_grupos.codigo
       LEFT JOIN %7$s AS cuentas_remesa
          ON terceros.cuenta_remesa_codigo = cuentas_remesa.codigo
       LEFT JOIN %8$s AS tarifas
@@ -399,7 +399,7 @@ METHOD getSelectClient() CLASS SQLTercerosModel
       metodos_pago.nombre AS nombre_metodo_pago,
       terceros.agente_codigo AS agente_codigo,
       agentes.nombre AS nombre_agente,
-      terceros.cliente_grupo_codigo AS cliente_grupo_codigo,
+      terceros.tercero_grupo_codigo AS tercero_grupo_codigo,
       clientes_grupos.nombre AS nombre_grupo_cliente,
       terceros.cuenta_remesa_codigo AS cuenta_remesa_codigo,
       cuentas_remesa.nombre AS nombre_remesa,
@@ -424,7 +424,7 @@ METHOD getSelectClient() CLASS SQLTercerosModel
       LEFT JOIN %5$s AS rutas
          ON terceros.ruta_codigo = rutas.codigo
       LEFT JOIN %6$s AS clientes_grupos
-         ON terceros.cliente_grupo_codigo = clientes_grupos.codigo
+         ON terceros.tercero_grupo_codigo = clientes_grupos.codigo
       LEFT JOIN %7$s AS cuentas_remesa
          ON terceros.cuenta_remesa_codigo = cuentas_remesa.codigo
       LEFT JOIN %8$s AS tarifas
@@ -466,7 +466,7 @@ METHOD getSelectProveedor() CLASS SQLTercerosModel
       metodos_pago.nombre AS nombre_metodo_pago,
       terceros.agente_codigo AS agente_codigo,
       agentes.nombre AS nombre_agente,
-      terceros.cliente_grupo_codigo AS cliente_grupo_codigo,
+      terceros.tercero_grupo_codigo AS tercero_grupo_codigo,
       clientes_grupos.nombre AS nombre_grupo_cliente,
       terceros.cuenta_remesa_codigo AS cuenta_remesa_codigo,
       cuentas_remesa.nombre AS nombre_remesa,
@@ -491,7 +491,7 @@ METHOD getSelectProveedor() CLASS SQLTercerosModel
       LEFT JOIN %5$s AS rutas
          ON terceros.ruta_codigo = rutas.codigo
       LEFT JOIN %6$s AS clientes_grupos
-         ON terceros.cliente_grupo_codigo = clientes_grupos.codigo
+         ON terceros.tercero_grupo_codigo = clientes_grupos.codigo
       LEFT JOIN %7$s AS cuentas_remesa
          ON terceros.cuenta_remesa_codigo = cuentas_remesa.codigo
       LEFT JOIN %8$s AS tarifas

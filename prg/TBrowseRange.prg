@@ -186,12 +186,18 @@ CLASS ItemRange
 
    DATA oController
 
+   DATA cKey                           INIT 'codigo'
+
    DATA uFrom
    DATA uTo
+
+   DATA cAlias 
 
    METHOD New( oController )           CONSTRUCTOR
       
    METHOD End()                        VIRTUAL
+
+   METHOD getKey()                     INLINE ( ::cKey )
          
    METHOD ValidCode( uVal )
 
@@ -206,6 +212,11 @@ CLASS ItemRange
    METHOD getTo()                      INLINE ( if( empty( ::uTo ), "", alltrim( ::uTo ) ) )
    METHOD setTo( uTo )                 INLINE ( ::uTo := ::extractCode( uTo ) )
    METHOD showToNombre()               INLINE ( ::showNombre( ::uTo ) )
+
+   METHOD getAlias()                   INLINE ( if( empty( ::cAlias ), ::oController:getModel():getAlias(), ::cAlias ) )
+   METHOD setAlias( cAlias )           INLINE ( ::cAlias := cAlias )
+
+   METHOD getKey()                     INLINE ( ::getAlias() + "." + ::cKey )
 
    METHOD getWhere()
 
@@ -228,7 +239,11 @@ RETURN ( Self )
 METHOD ValidCode( uValue ) CLASS ItemRange
 
    if hb_isobject( uValue )
-      RETURN ( ::oController:getModel():isWhereCodigo( uValue:varGet() ) )
+      uValue   := uValue:varGet()
+   end if 
+
+   if empty( uValue ) 
+      RETURN ( .t. )
    end if 
 
 RETURN ( ::oController:getModel():isWhereCodigo( uValue ) )
@@ -254,12 +269,12 @@ METHOD getWhere() CLASS ItemRange
    end if 
 
    if empty( ::getTo() )
-      cWhere      := " AND " + ::cKey + " = " + quoted( ::getFrom() ) + " "
+      cWhere      := " AND " + ::getKey() + " = " + quoted( ::getFrom() ) + " "
       RETURN ( cWhere )
    end if 
 
-   cWhere         := " AND ( " + ::cKey + " >= " + quoted( ::getFrom() ) + " "
-   cWhere         += " AND " + ::cKey + " <= " + quoted( ::getTo() ) + " ) "
+   cWhere         := " AND ( " + ::getKey() + " >= " + quoted( ::getFrom() ) + " "
+   cWhere         += " AND " + ::getKey() + " <= " + quoted( ::getTo() ) + " ) "
 
 RETURN ( cWhere )
 
@@ -270,43 +285,3 @@ RETURN ( cWhere )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TercerosItemRange FROM ItemRange
-
-   DATA cKey                           INIT 'tercero_codigo'
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS ContadoresItemRange FROM ItemRange
-
-   DATA cKey                           INIT 'serie'
-   
-   METHOD showNombre( cCode )          INLINE ( '' )
-      
-   METHOD extractCode( uValue )        INLINE ( if( hb_ishash( uValue ), hget( uValue, "serie" ), uValue ) )
-         
-   METHOD ValidCode( uValue ) 
-
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD ValidCode( uValue ) CLASS ContadoresItemRange
-
-   if hb_isobject( uValue )
-      RETURN ( ::oController:getModel():isWhereSerie( uValue:varGet(), ::oController:cScope ) )
-   end if 
-
-RETURN ( ::oController:getModel():isWhereSerie( uValue, ::oController:cScope ) )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//

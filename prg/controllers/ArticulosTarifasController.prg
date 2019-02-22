@@ -23,15 +23,17 @@ CLASS ArticulosTarifasController FROM SQLNavigatorController
 
    // Construcciones tardias---------------------------------------------------
 
-   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosTarifasRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( iif( empty( ::oRepository ), ::oRepository := ArticulosTarifasRepository():New( self ), ), ::oRepository )
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosTarifasBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := ArticulosTarifasBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ArticulosTarifasView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := ArticulosTarifasView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := ArticulosTarifasValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( iif( empty( ::oValidator ), ::oValidator := ArticulosTarifasValidator():New( self ), ), ::oValidator )
    
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLArticulosTarifasModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLArticulosTarifasModel():New( self ), ), ::oModel )
+
+   METHOD getRange()                   INLINE ( iif( empty( ::oRange ), ::oRange := ArticulosTarifasItemRange():New( self ), ), ::oRange )
 
 END CLASS
 
@@ -67,25 +69,17 @@ RETURN ( Self )
 
 METHOD End() CLASS ArticulosTarifasController
 
-   if !empty( ::oModel )
-      ::oModel:End()
-   end if   
+   iif( !empty( ::oModel ), ::oModel:End(), )
 
-   if !empty( ::oBrowseView )
-      ::oBrowseView:End()
-   end if   
+   iif( !empty( ::oBrowseView ), ::oBrowseView:End(), )
 
-   if !empty( ::oDialogView )
-      ::oDialogView:End()
-   end if
+   iif( !empty( ::oDialogView ), ::oDialogView:End(), )
 
-   if !empty( ::oValidator )
-      ::oValidator:End()
-   end if
+   iif( !empty( ::oValidator ), ::oValidator:End(), )
 
-   if !empty( ::oRepository )
-      ::oRepository:End()
-   end if
+   iif( !empty( ::oRepository ), ::oRepository:End(), )
+
+   iif( !empty( ::oRange ), ::oRange:End(), )
 
 RETURN ( ::Super:End() )
 
@@ -358,17 +352,13 @@ METHOD Activate() CLASS ArticulosTarifasView
 
    // Botones------------------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs[1] ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| ::closeActivate( ::oFolder:aDialogs[ 1 ] ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oFolder:aDialogs[1] ), ::oDialog:end( IDOK ), ) }
-   else
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-   end if
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::closeActivate( ::oFolder:aDialogs[ 1 ] ), ) }
 
-   ::oDialog:bStart  := {|| ::startActivate(), ::paintedActivate() }
+   ::oDialog:bStart     := {|| ::startActivate(), ::paintedActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -554,33 +544,41 @@ RETURN ( cSql )
 METHOD getColumns() CLASS SQLArticulosTarifasModel
 
    hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                                "text"      => "Identificador"                           ,;
                                                 "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
+   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"          ,;                                 
                                                 "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;                                  
+   hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR ( 40 ) NOT NULL"                 ,;                                 
                                                 "default"   => {|| space( 40 ) } }                       )
    
-   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
+   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR ( 20 ) NOT NULL"                 ,;
+                                                "text"      => "Código"                                  ,;
                                                 "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
+   hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR ( 200 ) NOT NULL"                ,;
+                                                "text"      => "Nombre"                                  ,;
                                                 "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "margen",               {  "create"    => "FLOAT( 8, 4 )"                           ,;
+   hset( ::hColumns, "margen",               {  "create"    => "FLOAT ( 8, 4 )"                          ,;
+                                                "text"      => "Margen"                                  ,;
                                                 "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "activa",               {  "create"    => "TINYINT ( 1 )"                           ,;
+                                                "text"      => "Activa"                                  ,;
                                                 "default"   => {|| 1 } }                                 )
 
    hset( ::hColumns, "valido_desde",         {  "create"    => "DATE"                                    ,;
+                                                "text"      => "Valido desde"                            ,;
                                                 "default"   => {|| ctod( "" ) } }                        )
 
    hset( ::hColumns, "valido_hasta",         {  "create"    => "DATE"                                    ,;
+                                                "text"      => "Valido hasta"                            ,;
                                                 "default"   => {|| ctod( "" ) } }                        )
 
    hset( ::hColumns, "sistema",              {  "create"    => "TINYINT ( 1 )"                           ,;
+                                                "text"      => "Sistema"                                 ,;
                                                 "default"   => {|| 0 } }                                 )
 
    ::getTimeStampColumns()
@@ -683,7 +681,19 @@ RETURN ( ::insertIgnore( hBuffer ) )
 
 CLASS ArticulosTarifasRepository FROM SQLBaseRepository
 
-   METHOD getTableNameSQL()               INLINE ( SQLArticulosTarifasModel():getTableName() ) 
+   METHOD getTableNameSQL()            INLINE ( SQLArticulosTarifasModel():getTableName() ) 
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS ArticulosTarifasItemRange FROM ItemRange
+
+   DATA cKey                           INIT 'metodo_pago_codigo'
 
 END CLASS
 

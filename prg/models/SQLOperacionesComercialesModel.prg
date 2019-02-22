@@ -133,6 +133,7 @@ METHOD getColumnsSelect() CLASS SQLOperacionesComercialesModel
       %1$s.sesion_uuid AS sesion_uuid,
       %1$s.recargo_equivalencia AS recargo_equivalencia,
       %1$s.tercero_codigo AS tercero_codigo,
+      %1$s.agente_codigo AS agente_codigo,
       %1$s.created_at AS created_at,
       %1$s.updated_at AS updated_at,
       %1$s.canceled_at AS canceled_at,
@@ -169,30 +170,43 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesModel
    TEXT INTO cSql
 
    SELECT
-      %9$s
+      %11$s
 
-   FROM %2$s AS %1$s
+   FROM %1$s AS %2$s
+
+      /* Terceros------------------------------------------------------------*/
 
       LEFT JOIN %3$s AS %4$s
          ON %1$s.tercero_codigo = %4$s.codigo AND %4$s.deleted_at = 0
 
+      /* Direcciones---------------------------------------------------------*/
+
       LEFT JOIN %5$s AS %6$s
          ON %4$s.uuid = %6$s.parent_uuid AND %6$s.codigo = 0
+
+      /* Tarifas de articulos------------------------------------------------*/
 
       LEFT JOIN %7$s AS %8$s
          ON %1$s.tarifa_codigo = %8$s.codigo
 
+      /* Grupos de terceros--------------------------------------------------*/
+
+      LEFT JOIN %9$s AS %10$s
+         ON %4$s.tercero_grupo_codigo = %10$s.codigo AND %10$s.deleted_at = 0
+
    ENDTEXT
 
    cSql  := hb_strformat(  cSql,;
-                           ::cTableName,;
                            ::getTableName(),;
+                           ::getAlias(),;
                            SQLTercerosModel():getTableName(),;
-                           SQLTercerosModel():cTableName ,;
+                           SQLTercerosModel():getAlias(),;
                            SQLDireccionesModel():getTableName(),;
-                           SQLDireccionesModel():cTableName ,;
+                           SQLDireccionesModel():getAlias(),;
                            SQLArticulosTarifasModel():getTableName(),;
-                           SQLArticulosTarifasModel():cTableName ,;
+                           SQLArticulosTarifasModel():getAlias(),;
+                           SQLTercerosGruposModel():getTableName(),;
+                           SQLTercerosGruposModel():getAlias(),;
                            ::getColumnsSelect() )
 
 RETURN ( cSql )

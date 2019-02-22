@@ -192,7 +192,7 @@ METHOD redefineComercial() CLASS TercerosView
    ::getController():getAgentesController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "agente_codigo" ] ) )
    ::getController():getAgentesController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[2] } )
 
-   ::getController():getTercerosGruposController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "cliente_grupo_codigo" ] ) )
+   ::getController():getTercerosGruposController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "tercero_grupo_codigo" ] ) )
    ::getController():getTercerosGruposController():getSelector():Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[2] } )
 
    ::getController():getMetodosPagosController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "metodo_pago_codigo" ] ) )

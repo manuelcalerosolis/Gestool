@@ -11,15 +11,17 @@ CLASS RutasController FROM SQLNavigatorController
 
    //Construccion tardia-------------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := RutasBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := RutasBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := RutasView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := RutasView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := RutasValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( iif( empty( ::oValidator ), ::oValidator := RutasValidator():New( self ), ), ::oValidator )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := RutasRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( iif( empty( ::oRepository ), ::oRepository := RutasRepository():New( self ), ), ::oRepository )
 
-   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLRutasModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLRutasModel():New( self ), ), ::oModel )
+
+   METHOD getRange()                   INLINE ( iif( empty( ::oRange ), ::oRange := RutasItemRange():New( self ), ), ::oRange )
 
 END CLASS
 
@@ -45,29 +47,19 @@ RETURN ( Self )
 
 METHOD End() CLASS RutasController
    
-   if !empty( ::oModel )
-      ::oModel:End()
-   end if
+   iif( !empty( ::oModel ), ::oModel:End(), )
 
-   if !empty( ::oBrowseView )
-      ::oBrowseView:End()
-   end if
+   iif( !empty( ::oBrowseView ), ::oBrowseView:End(), )
 
-   if !empty( ::oDialogView )
-      ::oDialogView:End()
-   end if
+   iif( !empty( ::oDialogView ), ::oDialogView:End(), )
 
-   if !empty( ::oValidator )
-      ::oValidator:End()
-   end if
+   iif( !empty( ::oValidator ), ::oValidator:End(), )
 
-   if !empty( ::oRepository )
-      ::oRepository:End()
-   end if
+   iif( !empty( ::oRepository ), ::oRepository:End(), )
+   
+   iif( !empty( ::oRange ), ::oRange:End(), )
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -125,9 +117,6 @@ END CLASS
 
 METHOD Activate() CLASS RutasView
 
-   local oBmpGeneral
-   local oSayCamposExtra
-
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "RUTAS" ;
       TITLE       ::LblTitle() + "ruta"
@@ -166,19 +155,13 @@ METHOD Activate() CLASS RutasView
    ::oSayCamposExtra:lWantClick  := .t.
    ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| ::closeActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
-   end if
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::closeActivate(), ) }
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-  ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 
@@ -202,6 +185,7 @@ METHOD getValidators() CLASS RutasValidator
                                           "unique"    => "La ruta introducida ya existe" },;
                         "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
                                           "unique"    => "EL código introducido ya existe" } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -215,9 +199,9 @@ RETURN ( ::hValidators )
 
 CLASS SQLRutasModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "rutas"
+   DATA cTableName                     INIT "rutas"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( codigo, deleted_at )"
 
    METHOD getColumns()
 
@@ -235,22 +219,50 @@ END CLASS
 
 METHOD getColumns() CLASS SQLRutasModel
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                          "text"      => "Identificador"                           ,;
+                                          "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"          ,;                                 
+                                          "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
-                                             "default"   => {|| space( 20 ) } }                        )
+   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                          "text"      => "Código"                                  ,;
+                                          "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                           ,;
-                                             "default"  => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR ( 200 )"                         ,;
+                                          "text"      => "Nombre"                                  ,;
+                                          "default"   => {|| space( 200 ) } }                      )
 
    ::getDeletedStampColumn()
    
-
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS RutasItemRange FROM ItemRange
+
+   DATA cKey                           INIT 'ruta_codigo'
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS RutasRepository FROM SQLBaseRepository
+
+   METHOD getTableName()               INLINE ( SQLRutasModel():getTableName() ) 
+
+END CLASS
+
+//---------------------------------------------------------------------------//
 
 #ifdef __TEST__
 
@@ -274,16 +286,3 @@ RETURN   (  ::insertBuffer( ;
 
 #endif
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS RutasRepository FROM SQLBaseRepository
-
-   METHOD getTableName()                  INLINE ( SQLRutasModel():getTableName() ) 
-
-END CLASS
-
-//---------------------------------------------------------------------------//
