@@ -95,8 +95,11 @@ METHOD New( oController ) CLASS UsuariosController
 
    ::oAuth                             := AuthManager():New( self )
 
-   ::setEvent( 'openingDialog',  {|| ::getDialogView():openingDialog() } )  
+   ::setEvent( 'openingDialog',  {|| ::getDialogView():openingDialog() } )
+
    ::setEvent( 'closedDialog',   {|| ::getDialogView():closedDialog() } )  
+
+   ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
 
@@ -214,11 +217,11 @@ CLASS SQLUsuariosModel FROM SQLBaseModel
 
    DATA cTableName                        INIT "usuarios"
 
-   DATA cConstraints                      INIT "PRIMARY KEY (codigo, deleted_at), KEY (uuid)"
+   DATA cConstraints                      INIT "PRIMARY KEY ( codigo, deleted_at ), KEY ( id ), KEY ( uuid )"
 
    METHOD getColumns()
 
-   METHOD getInsertUsuariosSentence()
+   METHOD insertIgnoreSuperUser()
 
    METHOD Crypt( cPassword )              INLINE ( hb_crypt( alltrim( cPassword ), __encryption_key__ ) )
    METHOD Decrypt( cPassword )            INLINE ( hb_decrypt( alltrim( cPassword ), __encryption_key__ ) )
@@ -244,10 +247,10 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                                    "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"          ,;
                                                    "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR ( 20 )"                          ,;
                                                    "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
@@ -262,7 +265,7 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "super_user",              {  "create"    => "TINYINT ( 1 )"                           ,;
                                                    "default"   => {|| "0" } }                               )
 
-   hset( ::hColumns, "rol_uuid",                {  "create"    => "VARCHAR( 40 )"                           ,;
+   hset( ::hColumns, "rol_uuid",                {  "create"    => "VARCHAR ( 40 )"                           ,;
                                                    "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "email",                   {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
@@ -289,6 +292,9 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "email_copia_oculta",      {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
                                                    "default"   => {|| space( 100 ) } }                      )
 
+   hset( ::hColumns, "sistema",                 {  "create"    => "TINYINT ( 1 )"                           ,;
+                                                   "default"   => {|| "0" } }                               )
+
    ::getTimeStampColumns() 
 
    ::getDeletedStampColumn()  
@@ -297,31 +303,16 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertUsuariosSentence() CLASS SQLUsuariosModel
+METHOD insertIgnoreSuperUser() CLASS SQLUsuariosModel
 
-   local cSQL  
-   local cUuidRol
+   ::insertIgnoreBlankBuffer( {  "codigo"       => '999',;
+                                 "nombre"       => __admin_name__,;
+                                 "password"     => ::Crypt( __admin_password__ ),;
+                                 "super_user"   => '1',;
+                                 "rol_uuid"     => RolesRepository():getUuidWhereNombre( __admin_name__ ),;
+                                 "sistema"      => '1' } )
 
-   cUuidRol    := RolesRepository():getUuidWhereNombre( __admin_name__ )
-
-   cSQL        := "INSERT IGNORE INTO " + ::getTableName() + " "
-   cSQL        += "( uuid, "
-   cSQL        +=    "codigo, "
-   cSQL        +=    "nombre, "
-   cSQL        +=    "email, "
-   cSQL        +=    "password, "
-   cSQL        +=    "super_user, "
-   cSQL        +=    "rol_uuid ) "
-   cSQL        += "VALUES "
-   cSQL        +=    "( UUID(), "
-   cSQL        +=    "'999', "
-   cSQL        +=    quoted( __admin_name__ ) + ", "
-   cSQL        +=    "'', "
-   cSQL        +=    quoted( ::Crypt( __admin_password__ ) ) + ", "
-   cSQL        +=    "'1', "
-   cSQL        +=    quoted( cUuidRol ) + " )"
-
-RETURN ( cSQL )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -492,8 +483,6 @@ METHOD addColumns() CLASS UsuariosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'email_copia_oculta' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
-
-
 
    ::getColumnsCreatedUpdatedAt()
 
@@ -670,19 +659,17 @@ METHOD Activate() CLASS UsuariosView
    ::oSayCamposExtra:lWantClick  := .t.
    ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }      
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| ::closeActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::saveView(), ) }
-
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::saveView(), ) }
-   end if
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::closeActivate(), ) }
 
    ::oDialog:Activate( , , , .t. )
 
-   ::oBitmap:end()
+   if ::oDialog:nResult == IDOK
+      ::saveView()
+   end if 
 
 RETURN ( ::oDialog:nResult )
 
@@ -690,20 +677,15 @@ RETURN ( ::oDialog:nResult )
 
 METHOD saveView()
 
-   if !( validateDialog( ::oDialog ) )
-      RETURN ( .f. )
-   end if 
-
    if !empty( ::cGetPassword )
       ::getModel():setBuffer( "password", ::getModel():Crypt( ::cGetPassword ) )
    end if 
+
    if !empty( ::cGetEmailPassword )
       ::getModel():setBuffer( "email_password", ::getModel():Crypt( ::cGetEmailPassword ) )
    end if
 
    ::oController:oAuth():Guard( ::getModel():hBuffer )
-
-   ::oDialog:end( IDOK )
 
 RETURN ( ::oDialog:nResult )
 

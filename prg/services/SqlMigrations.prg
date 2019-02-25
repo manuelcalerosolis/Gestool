@@ -99,10 +99,10 @@ METHOD getSchemaColumns( cDatabaseMySQL, cTableName ) CLASS SQLBaseMigrations
       RETURN ( nil )  
    end if  
 
-   cSentence            := "SELECT COLUMN_NAME "                                       + ;
-                              "FROM INFORMATION_SCHEMA.COLUMNS "                       + ;
-                              "WHERE table_schema = " + quoted( cDatabaseMySQL ) + " " + ; 
-                                 "AND table_name = " + quoted( cTableName )
+   cSentence   := "SELECT COLUMN_NAME "                                                   + ;
+                     "FROM INFORMATION_SCHEMA.COLUMNS "                                   + ;
+                     "WHERE table_schema = " + notEscapedQuoted( cDatabaseMySQL ) + " "   + ; 
+                        "AND table_name = " + notEscapedQuoted( cTableName )
                                   
    try
 
@@ -202,9 +202,9 @@ METHOD checkValues() CLASS SQLGestoolMigrations
 
    getSQLDatabase():Query( SQLAjustesGestoolModel():getInsertAjustesSentence() )
 
-   getSQLDatabase():Query( SQLRolesModel():getInsertRolesSentence() )
+   SQLRolesModel():insertIgnoreRoles() 
 
-   getSQLDatabase():Query( SQLUsuariosModel():getInsertUsuariosSentence() ) 
+   SQLUsuariosModel():insertIgnoreSuperUser() 
 
 RETURN ( nil )
 

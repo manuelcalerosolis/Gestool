@@ -3261,7 +3261,7 @@ RETURN ( "''" )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION quotedUuid( uValue )
+FUNCTION notEscapedQuoted( uValue )
 
    if ( hb_isnumeric( uValue ) )
       RETURN ( hb_ntos( uValue ) )

@@ -147,7 +147,7 @@ RETURN ( ::Activate( idGet, idText, oDlg, idSay, idLink ) )
 
 METHOD Activate( idGet, idText, oDlg, idSay, idLink ) CLASS GetSelector
 
-   if isFalse( ::fireEvent( 'activating' ) )
+   if isFalse( ::fireEvent( 'activating', Self ) )
       RETURN ( nil )
    end if
 
@@ -164,7 +164,7 @@ METHOD Activate( idGet, idText, oDlg, idSay, idLink ) CLASS GetSelector
 
    end if 
 
-   ::fireEvent( 'activated' ) 
+   ::fireEvent( 'activated', Self ) 
 
 RETURN ( ::oGet )
 
@@ -174,7 +174,7 @@ METHOD addGetSelector( cLink, oTaskPanel ) CLASS GetSelector
 
    local nTop
 
-   if isFalse( ::fireEvent( 'activating' ) )
+   if isFalse( ::fireEvent( 'activating', Self ) )
       RETURN ( nil )
    end if
 
@@ -196,7 +196,7 @@ METHOD addGetSelector( cLink, oTaskPanel ) CLASS GetSelector
 
    oTaskPanel:updateRegion()
 
-   ::fireEvent( 'activated' ) 
+   ::fireEvent( 'activated', Self ) 
 
 RETURN ( ::oGet )
 
@@ -206,7 +206,7 @@ METHOD helpAction() CLASS GetSelector
 
    local hResult
   
-   if isFalse( ::fireEvent( 'helping' ) )
+   if isFalse( ::fireEvent( 'helping', Self ) )
       RETURN ( .f. )
    end if
 
@@ -218,7 +218,7 @@ METHOD helpAction() CLASS GetSelector
    
    ::assignResults( hResult )
 
-   ::fireEvent( 'helped' ) 
+   ::fireEvent( 'helped', Self ) 
 
 RETURN ( .t. )
 
@@ -236,7 +236,7 @@ RETURN ( nil )
 
 METHOD validAction() CLASS GetSelector
 
-   if isFalse( ::fireEvent( 'validating' ) )
+   if isFalse( ::fireEvent( 'validating', Self ) )
       RETURN ( .f. )
    end if
 
@@ -254,7 +254,7 @@ METHOD validAction() CLASS GetSelector
       
       ::setOriginal( ::varGet() )
       
-      ::fireEvent( 'validated' )
+      ::fireEvent( 'validated', Self )
       
       RETURN ( .t. )
    
@@ -274,7 +274,7 @@ METHOD loadHelpText( lSilenceMode ) CLASS GetSelector
       RETURN ( .t. )
    end if
 
-   if isFalse( ::fireEvent( 'loading' ) )
+   if isFalse( ::fireEvent( 'loading', Self ) )
       RETURN ( .f. )
    end if
 
@@ -282,7 +282,7 @@ METHOD loadHelpText( lSilenceMode ) CLASS GetSelector
 
    if empty( ::oGet:varGet() )
 
-      ::fireEvent( 'loadingEmpty' )
+      ::fireEvent( 'loadingEmpty', Self )
 
       RETURN ( .t. )
 
@@ -292,7 +292,7 @@ METHOD loadHelpText( lSilenceMode ) CLASS GetSelector
 
    if empty( ::uFields )
 
-      ::fireEvent( 'loadedError' )
+      ::fireEvent( 'loadedError', Self )
 
       ::showMessage( lSilenceMode )
 
@@ -304,7 +304,7 @@ METHOD loadHelpText( lSilenceMode ) CLASS GetSelector
 
    ::oGet:Refresh()
 
-   ::fireEvent( 'loaded' ) 
+   ::fireEvent( 'loaded', Self ) 
 
 RETURN ( .t. )
 
@@ -328,7 +328,7 @@ RETURN ( nil )
 
 METHOD cleanHelpText() CLASS GetSelector
 
-   if isFalse( ::fireEvent( 'cleaningHelpText' ) )
+   if isFalse( ::fireEvent( 'cleaningHelpText', Self ) )
       RETURN ( .f. )
    end if
 
@@ -336,7 +336,7 @@ METHOD cleanHelpText() CLASS GetSelector
       ::getHelp():cText( "" ) 
    end if 
 
-   ::fireEvent( 'cleanedHelpText' ) 
+   ::fireEvent( 'cleanedHelpText', Self ) 
 
 RETURN ( nil )
 
@@ -344,7 +344,7 @@ RETURN ( nil )
 
 METHOD setHelpText( value ) CLASS GetSelector            
 
-   if isFalse( ::fireEvent( 'settingHelpText' ) )
+   if isFalse( ::fireEvent( 'settingHelpText', Self ) )
       RETURN ( .f. )
    end if
 
@@ -352,7 +352,7 @@ METHOD setHelpText( value ) CLASS GetSelector
       ::getHelp():cText( value ) 
    end if 
 
-   ::fireEvent( 'settedHelpText' ) 
+   ::fireEvent( 'settedHelpText', Self ) 
 
    ::Refresh()
 

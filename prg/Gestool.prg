@@ -106,10 +106,10 @@ RETURN ( nil )
 STATIC FUNCTION mainAdminSQL()
 
    getSQLDatabase():ConnectWithoutDataBase()
+   
+   SQLGestoolMigrations():messageRun()
 
    if AccessController():New():isLoginSuperAdmin()
-
-      SQLGestoolMigrations():messageRun()
 
       CreateAdminSQLWindow()
 

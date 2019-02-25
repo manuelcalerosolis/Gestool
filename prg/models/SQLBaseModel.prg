@@ -286,6 +286,8 @@ CLASS SQLBaseModel
    METHOD defaultCurrentBuffer()
 
    METHOD insertBlankBuffer( hBuffer ) INLINE ( ::loadBlankBuffer( hBuffer ), ::insertBuffer() ) 
+   METHOD insertIgnoreBlankBuffer( hBuffer ) ;
+                                       INLINE ( ::loadBlankBuffer( hBuffer ), ::insertIgnore() ) 
 
    // Events-------------------------------------------------------------------
 
@@ -1587,12 +1589,11 @@ RETURN ( nId )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertIgnore( hBuffer, lTransactional )
+METHOD insertIgnore( hBuffer )
 
    local nId
    
    DEFAULT hBuffer         := ::hBuffer
-   DEFAULT lTransactional  := .f.
 
    ::fireEvent( 'insertingBuffer' )
 
@@ -1602,11 +1603,7 @@ METHOD insertIgnore( hBuffer, lTransactional )
       RETURN ( nId )
    end if 
 
-   if lTransactional 
-      ::getDatabase():TransactionalQuery( ::cSQLInsert )
-   else
-      ::getDatabase():Query( ::cSQLInsert )
-   end if 
+   ::getDatabase():Query( ::cSQLInsert )
 
    nId                     := ::getDatabase():LastInsertId()
 

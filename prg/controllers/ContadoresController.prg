@@ -45,14 +45,12 @@ METHOD New( oController) CLASS ContadoresController
                                              "32" => "gc_sort_az_descending_32",;
                                              "48" => "gc_sort_az_descending_48" }
 
-   /*::getSelectorView():getMenuTreeView():setEvents( { 'addingDuplicateButton',;
-                                                      'addingAppendButton',;
-                                                      'addingEditButton',;
+   ::getSelectorView():getMenuTreeView():setEvents( { 'addingDuplicateButton',;
                                                       'addingZoomButton',;
                                                       'addingShowDeleteButton',;
-                                                      'addingDeleteButton' }, {|| .f. } )*/
+                                                      'addingDeleteButton' }, {|| .f. } )
 
-   //::getModel():setGeneralWhere( "documento = '" + ::cScope + "'" )      
+   ::getSelectorView():getMenuTreeView():setEvent( 'addingEditButton', {|| .f. } )
 
    ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 

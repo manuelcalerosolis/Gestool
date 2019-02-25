@@ -70,7 +70,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( ::getPackage( 'Tot
 
 METHOD selectTotalSummaryWhereUuid( uuidOperacion ) CLASS ConsolidacionesAlmacenesRepository
 
-RETURN ( getSQLDatabase():getValue( "SELECT " + Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ) + "( " + quotedUuid( uuidOperacion ) + " )", 0 ) )
+RETURN ( getSQLDatabase():getValue( "SELECT " + Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ) + "( " + notEscapedQuoted( uuidOperacion ) + " )", 0 ) )
 
 //---------------------------------------------------------------------------//
 
@@ -94,7 +94,7 @@ METHOD getMailWhereOperacionUuid( uuidOperacion ) CLASS ConsolidacionesAlmacenes
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName(), SQLDireccionesModel():getTableName(), quotedUuid( uuidOperacion ) ) 
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName(), SQLDireccionesModel():getTableName(), notEscapedQuoted( uuidOperacion ) ) 
 
 RETURN ( getSQLDatabase():getValue( cSql, "" ) ) 
 

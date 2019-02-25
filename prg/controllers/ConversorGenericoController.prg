@@ -304,7 +304,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToPedi
 
 METHOD isConvertedToPedidosVentas( uuidDocumento ) CLASS ConversorDocumentosRepository
 
-RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToPedidosVentas' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToPedidosVentas' ) + "( " + notEscapedQuoted( uuidDocumento ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -362,7 +362,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToAlba
 
 METHOD isConvertedToAlbaranesVentas( uuidDocumento ) CLASS ConversorDocumentosRepository
 
-RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToAlbaranesVentas' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToAlbaranesVentas' ) + "( " + notEscapedQuoted( uuidDocumento ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -420,7 +420,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToFact
 
 METHOD isConvertedToFacturasVentas( uuidDocumento ) CLASS ConversorDocumentosRepository
 
-RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToFacturasVentas' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToFacturasVentas' ) + "( " + notEscapedQuoted( uuidDocumento ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -478,7 +478,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToVent
 
 METHOD isConvertedToVentasRectificativas( uuidDocumento ) CLASS ConversorDocumentosRepository
 
-RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToVentasRectificativas' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToVentasRectificativas' ) + "( " + notEscapedQuoted( uuidDocumento ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -536,7 +536,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToVent
 
 METHOD isConvertedToVentasSimplificadas( uuidDocumento ) CLASS ConversorDocumentosRepository
 
-RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToVentasSimplificadas' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToVentasSimplificadas' ) + "( " + notEscapedQuoted( uuidDocumento ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -594,7 +594,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToPedi
 
 METHOD isConvertedToPedidosCompras( uuidDocumento ) CLASS ConversorDocumentosRepository
 
-RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToPedidosCompras' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToPedidosCompras' ) + "( " + notEscapedQuoted( uuidDocumento ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -653,7 +653,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToAlba
 
 METHOD isConvertedToAlbaranesCompras( uuidDocumento ) CLASS ConversorDocumentosRepository
 
-RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToAlbaranesCompras' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToAlbaranesCompras' ) + "( " + notEscapedQuoted( uuidDocumento ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -712,7 +712,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToFact
 
 METHOD isConvertedToFacturasCompras( uuidDocumento ) CLASS ConversorDocumentosRepository
 
-RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToFacturasCompras' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToFacturasCompras' ) + "( " + notEscapedQuoted( uuidDocumento ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -771,7 +771,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( 'isConvertedToComp
 
 METHOD isConvertedToComprasRectificativas( uuidDocumento ) CLASS ConversorDocumentosRepository
 
-RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToComprasRectificativas' ) + "( " + quotedUuid( uuidDocumento ) + " )" ) )
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( 'isConvertedToComprasRectificativas' ) + "( " + notEscapedQuoted( uuidDocumento ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

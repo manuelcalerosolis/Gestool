@@ -83,9 +83,7 @@ METHOD End() CLASS AccessController
       ::oAccessTactilView:End()
    end if 
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
@@ -161,6 +159,7 @@ METHOD loadSuperAdmin() CLASS AccessController
    ::cGetPassword          := space( 100 )
 
    ::aComboUsuarios        := { __admin_name__ }
+   
    ::cComboUsuario         := __admin_name__
 
 RETURN ( nil )

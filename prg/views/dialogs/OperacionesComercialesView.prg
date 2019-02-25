@@ -85,9 +85,10 @@ METHOD Activate() CLASS OperacionesComercialesView
    // Serie-------------------------------------------------------------------
 
    ::getController():getContadoresController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "serie" ] ) )
-   ::getController():getContadoresController():getSelector():setWhen( {|| ::getController():isAppendOrDuplicateMode() } )
-   ::getController():getContadoresController():getSelector():setGetNumber( ::oGetNumero )
    ::getController():getContadoresController():getSelector():Build( { "idGet" => 100, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::getController():getContadoresController():getSelector():setWhen( {|| ::getController():isAppendOrDuplicateMode() } )
+   ::getController():getContadoresController():getSelector():setEvent( 'loaded', {|oSelector| ::oGetNumero:cText( oSelector:uFields ) } )
+
 
    //::getController():getSerieDocumentoComponent():BindValue( bSETGET( ::getController():getModel():hBuffer[ "serie" ] ) )
    //::getController():getSerieDocumentoComponent():Activate( 100, ::oFolder:aDialogs[1] )

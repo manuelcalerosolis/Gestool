@@ -125,7 +125,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( ::getPackage( 'Tot
 
 METHOD selectTotalSummaryWhereUuid( uuidOperacionComercial ) CLASS OperacionesComercialesRepository
 
-RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ) + "( " + quotedUuid( uuidOperacionComercial ) + " )" ) )
+RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ) + "( " + notEscapedQuoted( uuidOperacionComercial ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -174,7 +174,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( ::getPackage( 'Rec
 
 METHOD selectRecargoEquivalenciaWhereUuid( uuidOperacionComercial ) CLASS OperacionesComercialesRepository
 
-RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( ::getPackage( 'RecargoEquivalenciaWhereUuid' ) ) + "( " + quotedUuid( uuidOperacionComercial ) + " )" ) )
+RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( ::getPackage( 'RecargoEquivalenciaWhereUuid' ) ) + "( " + notEscapedQuoted( uuidOperacionComercial ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -193,7 +193,7 @@ METHOD getSentenceDescuento( uuidOperacionComercial ) CLASS OperacionesComercial
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getDiscountsTableName(), if( empty( uuidOperacionComercial ), 'uuid_operacion_comercial', quotedUuid( uuidOperacionComercial ) ) )
+   cSql  := hb_strformat( cSql, ::getDiscountsTableName(), if( empty( uuidOperacionComercial ), 'uuid_operacion_comercial', notEscapedQuoted( uuidOperacionComercial ) ) )
 
 RETURN ( alltrim( cSql ) )
 
@@ -245,7 +245,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( ::getPackage( 'Des
 
 METHOD selectDescuentoWhereUuid( uuidOperacionComercial ) CLASS OperacionesComercialesRepository
 
-RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( ::getPackage( 'DescuentoWhereUuid' ) ) + "( " + quotedUuid( uuidOperacionComercial ) + " )" ) )
+RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( ::getPackage( 'DescuentoWhereUuid' ) ) + "( " + notEscapedQuoted( uuidOperacionComercial ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -294,7 +294,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( ::getPackage( 'Tot
 
 METHOD selectTotalDescuentoWhereUuid( uuidOperacionComercial, importeBruto ) CLASS OperacionesComercialesRepository
 
-RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( ::getPackage( 'TotalDescuentoWhereUuid' ) ) + "( " + quotedUuid( uuidOperacionComercial ) + ", " + toSqlString( importeBruto ) + " )" ) )
+RETURN ( getSQLDatabase():Exec( "SELECT " + Company():getTableName( ::getPackage( 'TotalDescuentoWhereUuid' ) ) + "( " + notEscapedQuoted( uuidOperacionComercial ) + ", " + toSqlString( importeBruto ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -330,7 +330,7 @@ METHOD getSentenceLineas( uuidOperacionComercial ) CLASS OperacionesComercialesR
                            ::getSentenceUnidadesLineas(),;
                            if( empty( uuidOperacionComercial ),;
                               'uuid_operacion_comercial',;
-                              quotedUuid( uuidOperacionComercial ) ) )
+                              notEscapedQuoted( uuidOperacionComercial ) ) )
 
 RETURN ( alltrim( cSql ) )
 
@@ -513,7 +513,7 @@ METHOD getMailWhereOperacionUuid( uuidOperacionComercial ) CLASS OperacionesCome
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLTercerosModel():getTableName(), SQLDireccionesModel():getTableName(), quotedUuid( uuidOperacionComercial ) ) 
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLTercerosModel():getTableName(), SQLDireccionesModel():getTableName(), notEscapedQuoted( uuidOperacionComercial ) ) 
 
 RETURN ( getSQLDatabase():getValue( cSql, "" ) ) 
 
@@ -527,7 +527,7 @@ METHOD getSentenceRecargoEquivalenciaAsSelect( uuidOperacionComercial ) CLASS Op
       ( SELECT( %1$s( %2$s ) ) )
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, Company():getTableName( ::getPackage( 'RecargoEquivalenciaWhereUuid' ) ), if( empty( uuidOperacionComercial ), 'uuid_operacion_comercial', quotedUuid( uuidOperacionComercial ) ) )
+   cSql  := hb_strformat( cSql, Company():getTableName( ::getPackage( 'RecargoEquivalenciaWhereUuid' ) ), if( empty( uuidOperacionComercial ), 'uuid_operacion_comercial', notEscapedQuoted( uuidOperacionComercial ) ) )
 
 RETURN ( alltrim( cSql ) )
 
@@ -541,7 +541,7 @@ METHOD getSentenceDescuentosAsSelect( uuidOperacionComercial ) CLASS Operaciones
       ( SELECT( %1$s( %2$s ) ) )
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, Company():getTableName( ::getPackage( 'DescuentoWhereUuid' ) ), if( empty( uuidOperacionComercial ), 'uuid_operacion_comercial', quotedUuid( uuidOperacionComercial ) ) )
+   cSql  := hb_strformat( cSql, Company():getTableName( ::getPackage( 'DescuentoWhereUuid' ) ), if( empty( uuidOperacionComercial ), 'uuid_operacion_comercial', notEscapedQuoted( uuidOperacionComercial ) ) )
 
 RETURN ( alltrim( cSql ) )
 

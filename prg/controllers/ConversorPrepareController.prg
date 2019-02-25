@@ -85,7 +85,7 @@ METHOD setWhereArray( aSelected ) CLASS ConversorPrepareController
    
    cWhere         := " IN( "
 
-   aeval( aSelected, {| v | cWhere += quotedUuid( v ) + ", " } )
+   aeval( aSelected, {| v | cWhere += notEscapedQuoted( v ) + ", " } )
 
    cWhere         := chgAtEnd( cWhere, ' )', 2 )
 

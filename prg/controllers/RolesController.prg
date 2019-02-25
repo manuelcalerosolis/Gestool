@@ -64,7 +64,10 @@ METHOD New() CLASS RolesController
                                  "48" => "gc_id_cards_48" }
 
    ::setEvent( 'openingDialog',  {|| ::getDialogView():openingDialog() } )  
+
    ::setEvent( 'closedDialog',   {|| ::getDialogView():closedDialog() } )  
+
+   ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
 
@@ -92,9 +95,7 @@ METHOD End()
       ::oRepository:End()
    endif
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
@@ -210,11 +211,11 @@ CLASS SQLRolesModel FROM SQLBaseModel
 
    DATA cTableName               INIT "Roles"
 
-   DATA cConstraints             INIT "PRIMARY KEY (nombre, deleted_at), KEY (uuid)"
+   DATA cConstraints             INIT "PRIMARY KEY (nombre, deleted_at), KEY (id), KEY (uuid)"
 
    METHOD getColumns()
 
-   METHOD getInsertRolesSentence()
+   METHOD insertIgnoreRoles()
 
 END CLASS
 
@@ -225,14 +226,17 @@ METHOD getColumns() CLASS SQLRolesModel
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                           "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"          ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "permiso_uuid",   {  "create"    => "VARCHAR( 40 )"                           ,;
+   hset( ::hColumns, "permiso_uuid",   {  "create"    => "VARCHAR ( 40 )"                          ,;
                                           "default"   => {|| space( 40 ) } }                       )
+
+   hset( ::hColumns, "sistema",        {  "create"    => "TINYINT ( 1 )"                           ,;
+                                          "default"   => {|| "0" } }                               )
 
    ::getTimeStampColumns() 
 
@@ -242,18 +246,18 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertRolesSentence()
+METHOD insertIgnoreRoles() CLASS SQLRolesModel
 
-   local cStatement 
+   ::insertIgnoreBlankBuffer( {  "nombre"    => 'Super administrador',;
+                                 "sistema"   => '1' } )
 
-   cStatement  := "INSERT IGNORE INTO " + ::getTableName() + " "
-   cStatement  +=    "( uuid, nombre ) "
-   cStatement  += "VALUES "
-   cStatement  +=    "( UUID(), 'Super administrador' ), "
-   cStatement  +=    "( UUID(), 'Administrador' ), "
-   cStatement  +=    "( UUID(), 'Usuario' )"
+   ::insertIgnoreBlankBuffer( {  "nombre"    => 'Administrador',;
+                                 "sistema"   => '1' } )
 
-RETURN ( cStatement )
+   ::insertIgnoreBlankBuffer( {  "nombre"    => 'Usuario',;
+                                 "sistema"   => '1' } )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -319,7 +323,8 @@ RETURN ( self )
 
 CLASS RolesView FROM SQLBaseView
 
-   DATA cComboPermiso      
+   DATA cComboPermiso     
+
    DATA aComboPermisos     
 
    METHOD openingDialog() 
@@ -328,8 +333,6 @@ CLASS RolesView FROM SQLBaseView
 
    METHOD Activate()
    
-   METHOD Save( oDlg )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -337,9 +340,10 @@ END CLASS
 METHOD openingDialog() CLASS RolesView
 
    ::cComboPermiso      := ::oController:getPermisosController():getRepository():getNombre( ::getModel():getBuffer( "permiso_uuid" ) )
+   
    ::aComboPermisos     := ::oController:getPermisosController():getRepository():getNombres()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -347,7 +351,7 @@ METHOD closedDialog() CLASS RolesView
 
    ::getModel():setBuffer( "permiso_uuid", ::oController:getPermisosController():getRepository():getUuid( ::cComboPermiso ) )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -385,31 +389,13 @@ METHOD Activate() CLASS RolesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| ::closeActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::save(), ) }
-
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::save(), ) }
-   end if
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::closeActivate(), ) }
 
    ::oDialog:Activate( , , , .t. )
-
-   ::oBitmap:end()
-
-RETURN ( ::oDialog:nResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD Save()
-
-   if !( validateDialog( ::oDialog ) )
-      RETURN ( .f. )
-   end if 
-
-   ::oDialog:end( IDOK )
 
 RETURN ( ::oDialog:nResult )
 

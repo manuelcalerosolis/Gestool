@@ -3,13 +3,6 @@
 
 //---------------------------------------------------------------------------//
 
-static hBmpOpen
-static hBmpClose
-static aTrees     := {}
-static nLevel     := 0
-
-//---------------------------------------------------------------------------//
-
 CLASS PermisosController FROM SQLNavigatorGestoolController
    
    DATA cUuidRoles
@@ -27,17 +20,17 @@ CLASS PermisosController FROM SQLNavigatorGestoolController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := PermisosBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := PermisosBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := PermisosView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := PermisosView():New( self ), ), ::oDialogView )
 
-   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := PermisosRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE( if( empty( ::oRepository ), ::oRepository := PermisosRepository():New( self ), ), ::oRepository )
 
-   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := PermisosValidator():New( self  ), ), ::oValidator ) 
+   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := PermisosValidator():New( self  ), ), ::oValidator ) 
    
-   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLPermisosModel():New( self ), ), ::oModel ) 
+   METHOD getModel()                   INLINE( if( empty( ::oModel ), ::oModel := SQLPermisosModel():New( self ), ), ::oModel ) 
 
-   METHOD getOpcionesModel()     INLINE( if( empty( ::oOpcionesModel ), ::oOpcionesModel := SQLPermisosOpcionesModel():New( self ), ), ::oOpcionesModel ) 
+   METHOD getOpcionesModel()           INLINE( if( empty( ::oOpcionesModel ), ::oOpcionesModel := SQLPermisosOpcionesModel():New( self ), ), ::oOpcionesModel ) 
 
 END CLASS
 
@@ -47,16 +40,14 @@ METHOD New() CLASS PermisosController
 
    ::Super:New()
 
-   ::cTitle                := "Permisos"
+   ::cTitle                            := "Permisos"
 
-   ::cName                 := "permisos"
+   ::cName                             := "permisos"
 
-   ::lTransactional        := .t.
+   ::lTransactional                    := .t.
 
-   ::hImage                := {  "16" => "gc_id_badge_16",;
-                                 "48" => "gc_id_badge_48" }
-
-   //::oOpcionesModel        := SQLPermisosOpcionesModel():New( self )
+   ::hImage                            := {  "16" => "gc_id_badge_16",;
+                                             "48" => "gc_id_badge_48" }
 
    ::setEvent( 'openingDialog',  {|| ::getDialogView():openingDialog() } ) 
     
@@ -92,9 +83,7 @@ METHOD End() CLASS PermisosController
       ::oValidator:End()
    end if
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
@@ -106,14 +95,14 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD saveOption( cUuid, oTree ) CLASS PermisosController
+METHOD saveOption( cUuid, oItem ) CLASS PermisosController
 
    local hBuffer  := {=>}
 
    hset( hBuffer, "uuid",           win_uuidcreatestring() )
    hset( hBuffer, "permiso_uuid",   cUuid )
-   hset( hBuffer, "nombre",         hget( oTree:Cargo, "Id" ) )
-   hset( hBuffer, "nivel",          nPermiso( oTree:Cargo ) )
+   hset( hBuffer, "nombre",         hget( oItem:Cargo, "Id" ) )
+   hset( hBuffer, "nivel",          nPermiso( oItem:Cargo ) )
 
    ::getOpcionesModel():insertOnDuplicate( hBuffer )
 
@@ -220,16 +209,23 @@ RETURN ( self )
 
 METHOD addTreeItems( aAccesos ) CLASS PermisosView 
 
+   local oAcceso
+
    if empty( ::oTree )
       ::oTree  := TreeBegin()
    else
       TreeBegin()
    end if 
 
-   aeval( aAccesos,;
-      {|oAcceso|  ::addTreeItem( oAcceso ),;
-                  iif(  !empty( oAcceso ) .and. len( oAcceso:aAccesos ) > 0,;
-                        ::addTreeItems( oAcceso:aAccesos ), ) } )
+   for each oAcceso in aAccesos
+
+      ::addTreeItem( oAcceso )
+
+      if !empty( oAcceso ) .and. len( oAcceso:aAccesos ) > 0
+         ::addTreeItems( oAcceso:aAccesos )
+      end if 
+
+   next 
 
    TreeEnd()
 
@@ -239,21 +235,19 @@ RETURN ( self )
 
 METHOD addTreeItem( oAcceso ) CLASS PermisosView 
 
-   local cUuid     
-   local oItem  
+   local hPermiso  
 
    if empty( oAcceso )
       RETURN ( self )
    end if 
 
-   cUuid          := ::getModel():hBuffer[ "uuid" ]  
-   oItem          := treeAddItem( oAcceso:cPrompt )
-
    if empty( oAcceso:cId )
-      oItem:Cargo := hPermiso()
+      hPermiso    := hPermiso()
    else
-      oItem:Cargo := hPermiso( oAcceso:cId, ::oController:loadOption( cUuid, oAcceso:cId ) )
+      hPermiso    := hPermiso( oAcceso:cId, ::oController:loadOption( ::getModelBuffer( "uuid" ), oAcceso:cId ) )
    end if 
+
+   _TreeItem( oAcceso:cPrompt, , , , , .f., , hPermiso )
 
 RETURN ( self )
 
@@ -291,9 +285,7 @@ RETURN ( uValue )
 
 METHOD closedDialog() CLASS PermisosView
 
-   ::oController:saveOptions( ::getModel():hBuffer[ "uuid" ], ::oBrowse:oTree )
-
-RETURN ( self )
+RETURN ( ::oController:saveOptions( ::getModel():hBuffer[ "uuid" ], ::oBrowse:oTree ) )
 
 //---------------------------------------------------------------------------//
 
@@ -393,23 +385,17 @@ METHOD Activate() CLASS PermisosView
       ::oBrowse:aCols[ 1 ]:nWidth   := 200
    end if 
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| ::closeActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::saveView(), ) }
-
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::saveView(), ) }
-   end if
+   ::oDialog:bKeyDown      := {| nKey | if( nKey == VK_F5, ::closeActivate(), ) }
 
    ::oDialog:Activate( , , , .t. )
 
    ::oBrowse:End()
 
    ::oTree:End()
-
-   ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 
@@ -555,31 +541,35 @@ FUNCTION hPermiso( cId, nPermiso )
 RETURN ( hPermiso )
 
 //---------------------------------------------------------------------------//
-
+/*
 FUNCTION TreeAddItem( cPrompt, cResName1, cResName2, cBmpOpen, cBmpClose, lOpened )
 
-   local hBmpOpen, hBmpClose
+   local hBmpOpen
+   local hBmpClose
 
-   if ! Empty( cResName1 )
+   if !empty( cResName1 )
       hBmpOpen    := LoadBitmap( GetResources(), cResName1 )
       hBmpClose   := hBmpOpen
    endif
 
-   if ! Empty( cResName2 )
+   if !empty( cResName2 )
       hBmpClose   := LoadBitmap( GetResources(), cResName2 )
    endif
 
-   if ! Empty( cBmpOpen )
+   if !empty( cBmpOpen )
       hBmpOpen    := ReadBitmap( 0, cBmpOpen )
       hBmpClose   := hBmpOpen
    endif
 
-   if ! Empty( cBmpClose )
+   if !empty( cBmpClose )
       hBmpClose   := ReadBitmap( 0, cBmpClose )
    endif
 
-RETURN ( atail( aTrees ):Add( cPrompt, nLevel, hBmpOpen, hBmpClose, lOpened ) )
+   if empty( aTrees )
+      RETURN ( aTrees:Add( cPrompt, nLevel, hBmpOpen, hBmpClose, lOpened ) )
+   end if 
 
+RETURN ( atail( aTrees ):Add( cPrompt, nLevel, hBmpOpen, hBmpClose, lOpened ) )
 //----------------------------------------------------------------------------//
 
 FUNCTION TreeEnd()
@@ -614,5 +604,6 @@ FUNCTION TreeEnd()
 
 RETURN ( nil )
 
+*/
 //----------------------------------------------------------------------------//
 

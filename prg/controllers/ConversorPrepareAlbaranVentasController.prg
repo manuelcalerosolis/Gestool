@@ -201,7 +201,7 @@ METHOD getWhereDestino( aSelected ) CLASS ConversorPrepareAlbaranVentasControlle
    
    cWhere         :=  ::oDestinoController:getModel():cTableName + ".uuid IN( "
 
-   aeval( aSelected, {| v | cWhere += quotedUuid( v ) + ", " } )
+   aeval( aSelected, {| v | cWhere += notEscapedQuoted( v ) + ", " } )
 
    cWhere         := chgAtEnd( cWhere, ' )', 2 )
 
