@@ -9,19 +9,21 @@ CLASS AlmacenesController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD getName()                    INLINE ( "almacenes" )
+
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()              INLINE( if( empty( ::oBrowseView ), ::oBrowseView := AlmacenesBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := AlmacenesBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := AlmacenesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := AlmacenesView():New( self ), ), ::oDialogView )
 
-   METHOD getRepository()              INLINE( if(empty( ::oRepository ), ::oRepository := AlmacenesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()              INLINE ( iif(empty( ::oRepository ), ::oRepository := AlmacenesRepository():New( self ), ), ::oRepository )
 
-   METHOD getValidator()               INLINE( if( empty( ::oValidator ), ::oValidator := AlmacenesValidator():New( self  ), ), ::oValidator ) 
+   METHOD getValidator()               INLINE ( iif( empty( ::oValidator ), ::oValidator := AlmacenesValidator():New( self  ), ), ::oValidator ) 
    
-   METHOD getModel()                   INLINE( if( empty( ::oModel ), ::oModel := SQLAlmacenesModel():New( self ), ), ::oModel ) 
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLAlmacenesModel():New( self ), ), ::oModel ) 
    
-   METHOD getName()                    INLINE ( "almacenes" )
+   METHOD getRange()                   INLINE ( iif( empty( ::oRange ), ::oRange := AlmacenesItemRange():New( self ), ), ::oRange )
 
 END CLASS
 
@@ -58,25 +60,17 @@ RETURN ( Self )
 
 METHOD End() CLASS AlmacenesController
 
-   if !empty( ::oModel )
-      ::oModel:End()
-   end if
+   iif( !empty( ::oModel ), ::oModel:End(), )
 
-   if !empty( ::oBrowseView )
-      ::oBrowseView:End()
-   end if
+   iif( !empty( ::oBrowseView ), ::oBrowseView:End(), )
 
-   if !empty( ::oDialogView )
-      ::oDialogView:End()
-   end if
+   iif( !empty( ::oDialogView ), ::oDialogView:End(), )
 
-   if !empty( ::oValidator)
-      ::oValidator:End()
-   end if
+   iif( !empty( ::oValidator), ::oValidator:End(), )
 
-   if !empty( ::oRepository )
-      ::oRepository:End()
-   end if
+   iif( !empty( ::oRepository ), ::oRepository:End(), )
+
+   iif( !empty( ::oRange ), ::oRange:End(), )
 
 RETURN ( ::Super:End() )
 
@@ -434,6 +428,18 @@ METHOD getNombres() CLASS AlmacenesRepository
    end if 
 
 RETURN ( aResult )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS AlmacenesItemRange FROM ItemRange
+
+   DATA cKey                           INIT 'almacen_codigo'
+
+END CLASS
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

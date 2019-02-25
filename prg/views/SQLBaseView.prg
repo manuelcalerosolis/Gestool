@@ -75,7 +75,8 @@ CLASS SQLBaseView
    METHOD showMessage( cMessage )        
    METHOD restoreMessage()
 
-   METHOD setMessage( cMessage )       INLINE ( iif( empty( ::cMessage ), ::cMessage := cMessage, ) )
+   METHOD setMessage( cMessage )       INLINE ( iif( empty( ::cMessage ), ::cMessage := cMessage, ), ::oMessage:setText( cMessage ) )
+
    METHOD setBitmap( cBitmap )         INLINE ( iif( empty( ::cBitmap ), ::cBitmap := cBitmap, ) )
 
    METHOD verticalHide( oControl )

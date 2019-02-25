@@ -9,19 +9,21 @@ CLASS AgentesController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD getName()                    INLINE ( "agentes" )
+
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := AgentesBrowseView():New( self ), ), ::oBrowseView )
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := AgentesBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := AgentesRepository():New( self ), ), ::oRepository ) 
+   METHOD getRepository()              INLINE ( iif( empty( ::oRepository ), ::oRepository := AgentesRepository():New( self ), ), ::oRepository ) 
 
-   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := AgentesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := AgentesView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := AgentesValidator():New( self  ), ), ::oValidator )
+   METHOD getValidator()               INLINE ( iif( empty( ::oValidator ), ::oValidator := AgentesValidator():New( self ), ), ::oValidator )
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLAgentesModel():New( self  ), ), ::oModel )
+   METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLAgentesModel():New( self ), ), ::oModel )
    
-   METHOD getName()                    INLINE ( "agentes" )
+   METHOD getRange()                   INLINE ( iif( empty( ::oRange ), ::oRange := AgentesItemRange():New( self ), ), ::oRange )
 
 END CLASS
 
@@ -56,25 +58,17 @@ RETURN ( Self )
 
 METHOD End() CLASS AgentesController
 
-   if !empty( ::oModel )
-      ::oModel:End()
-   end if 
+   iif( !empty( ::oModel ), ::oModel:End(), )
    
-   if !empty( ::oBrowseView )
-      ::oBrowseView:End()
-   end if 
+   iif( !empty( ::oBrowseView ), ::oBrowseView:End(), )
    
-   if !empty( ::oRepository )
-      ::oRepository:End()
-   end if 
+   iif( !empty( ::oRepository ), ::oRepository:End(), )
 
-   if !empty( ::oDialogView )
-      ::oDialogView:End()
-   end if 
+   iif( !empty( ::oDialogView ), ::oDialogView:End(), )
 
-   if !empty( ::oValidator )
-      ::oValidator:End()
-   end if 
+   iif( !empty( ::oValidator ), ::oValidator:End(), )
+
+   iif( !empty( ::oRange ), ::oRange:End(), )
 
 RETURN ( ::Super:End() )
 
@@ -168,10 +162,10 @@ RETURN ( nil )
 
 CLASS AgentesView FROM SQLBaseView
   
+   DATA oGetDni
+   DATA oGetPais
    DATA oGetProvincia
    DATA oGetPoblacion
-   DATA oGetPais
-   DATA oGetDni
 
    METHOD Activate()
 
@@ -294,6 +288,7 @@ METHOD getValidators() CLASS AgentesValidator
                                           "unique"    => "El nombre introducido ya existe" },;
                         "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
                                           "unique"    => "EL código introducido ya existe"  } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -365,21 +360,26 @@ RETURN ( cSql )
 METHOD getColumns() CLASS SQLAgentesModel
    
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                          "text"      => "Identificador"                           ,;
                                           "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"          ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR(20) NOT NULL"                    ,;
+   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR ( 20 ) NOT NULL"                 ,;
+                                          "text"      => "Código"                                  ,;
                                           "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 140 )"                          ,;
+   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR ( 140 )"                         ,;
+                                          "text"      => "Nombre"                                  ,;
                                           "default"   => {|| space( 140 ) } }                      )
 
-   hset( ::hColumns, "dni",            {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "dni",            {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                          "text"      => "DNI"                                     ,;
                                           "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "comision",       {  "create"    => "FLOAT( 5,2 )"                            ,;
+   hset( ::hColumns, "comision",       {  "create"    => "FLOAT ( 5, 2 )"                          ,;
+                                          "text"      => "Comisión"                                ,;
                                           "default"   => {|| 0 } }                                 )
 
    ::getDeletedStampColumn()
@@ -492,6 +492,18 @@ METHOD getNombres() CLASS AgentesRepository
    end if 
 
 RETURN ( aResult )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS AgentesItemRange FROM ItemRange
+
+   DATA cKey                           INIT 'agente_codigo'
+
+END CLASS
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

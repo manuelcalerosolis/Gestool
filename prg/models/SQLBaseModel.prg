@@ -81,6 +81,8 @@ CLASS SQLBaseModel
 
    METHOD getTableName()               INLINE ( "gestool." + ::cTableName )
 
+   METHOD getAlias()                   INLINE ( ::cTableName )
+
    METHOD getPackage( cContext )       INLINE ( ::cPackage + cContext )
 
    // Columns-------------------------------------------------------------------

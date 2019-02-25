@@ -49,8 +49,6 @@ END CLASS
 
 METHOD Activate() CLASS OperacionesComercialesView
 
-msgalert( ::oController:getName())
-   
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "TRANSACION_COMERCIAL" ;
       TITLE       ::LblTitle() + lower( ::getController():cTitle )
@@ -86,8 +84,10 @@ msgalert( ::oController:getName())
 
    // Serie-------------------------------------------------------------------
 
-   ::getController():getContadoresController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "serie" ] ) )
-   ::getController():getContadoresController():getSelector():Build( { "idGet" => 100, "idText" => 110, "oDialog" => ::oFolder:aDialogs[1] } )
+  ::getController():getContadoresController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "serie" ] ) )
+   ::getController():getContadoresController():getSelector():setWhen( {|| ::getController():isAppendOrDuplicateMode() } )
+   ::getController():getContadoresController():getSelector():setGetNumber( ::oGetNumero )
+   ::getController():getContadoresController():getSelector():Build( { "idGet" => 100, "oDialog" => ::oFolder:aDialogs[1] } )
 
    //::getController():getSerieDocumentoComponent():BindValue( bSETGET( ::getController():getModel():hBuffer[ "serie" ] ) )
    //::getController():getSerieDocumentoComponent():Activate( 100, ::oFolder:aDialogs[1] )
@@ -96,6 +96,14 @@ msgalert( ::oController:getName())
 
    //::getController():getNumeroDocumentoComponent():BindValue( bSETGET( ::getController():getModel():hBuffer[ "numero" ] ) )
    //::getController():getNumeroDocumentoComponent():Activate( 110, ::oFolder:aDialogs[1] )
+
+   // Fecha--------------------------------------------------------------------
+
+   REDEFINE GET   ::oGetNumero ;
+      VAR         ::getController():getModel():hBuffer[ "numero" ] ;
+      ID          110 ;
+      WHEN        ( .f. ) ;
+      OF          ::oFolder:aDialogs[1]
 
    // Fecha--------------------------------------------------------------------
 

@@ -217,10 +217,10 @@ METHOD addColumns() CLASS TercerosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'cliente_grupo_codigo'
+      :cSortOrder          := 'tercero_grupo_codigo'
       :cHeader             := 'Código grupo'
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'cliente_grupo_codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'tercero_grupo_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
       

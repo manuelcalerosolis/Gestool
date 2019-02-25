@@ -33,15 +33,72 @@ END CLASS
 
 METHOD New() CLASS ConversorPrepareAlbaranVentasController
 
+   local oRutasController
+   local oAgentesController
+   local oTercerosController
+   local oAlmacenesController
+   local oMetodosPagosController
+   local oArticulosTarifasController
+   local oContadoresAlbaranesVentasController
+
    ::Super:New( AlbaranesVentasConversorController():New( self ) )
 
-   ::oDestinoController                := FacturasVentasConversorController():New( self )
+   ::oDestinoController                   := FacturasVentasConversorController():New( self )
 
-   ::oConversorAlbaranesController     := ConversorAlbaranesController():New( self )
+   ::oConversorAlbaranesController        := ConversorAlbaranesController():New( self )
 
-   aadd( ::aControllers, ContadoresAlbaranesVentasController():New() )
+   // Series-------------------------------------------------------------------
 
-   aadd( ::aControllers, TercerosController():New() )
+   oContadoresAlbaranesVentasController   := ContadoresAlbaranesVentasController():New()
+   oContadoresAlbaranesVentasController:getRange():setAlias( ::oOrigenController:getModel():getAlias() ) 
+
+   aadd( ::aControllers, oContadoresAlbaranesVentasController )
+
+   // Grupos terceros----------------------------------------------------------
+
+   aadd( ::aControllers, TercerosGruposController():New() )
+
+   // Terceros-----------------------------------------------------------------
+
+   oTercerosController                    := TercerosController():New()
+   oTercerosController:getRange():setAlias( ::oOrigenController:getModel():getAlias() ) 
+
+   aadd( ::aControllers, oTercerosController )
+
+   // Metodos de pago----------------------------------------------------------
+
+   oMetodosPagosController                := MetodosPagosController():New()
+   oMetodosPagosController:getRange():setAlias( ::oOrigenController:getModel():getAlias() ) 
+
+   aadd( ::aControllers, oMetodosPagosController )
+
+   // Almacenes-----------------------------------------------------------------
+
+   oAlmacenesController                   := AlmacenesController():New()
+   oAlmacenesController:getRange():setAlias( ::oOrigenController:getModel():getAlias() ) 
+
+   aadd( ::aControllers, oAlmacenesController )
+
+   // Tarifas------------------------------------------------------------------
+
+   oArticulosTarifasController            := ArticulosTarifasController():New()
+   oArticulosTarifasController:getRange():setAlias( ::oOrigenController:getModel():getAlias() ) 
+
+   aadd( ::aControllers, oArticulosTarifasController )
+
+   // Rutas--------------------------------------------------------------------
+
+   oRutasController                       := RutasController():New()
+   oRutasController:getRange():setAlias( ::oOrigenController:getModel():getAlias() ) 
+
+   aadd( ::aControllers, oRutasController )
+
+   // Agentes------------------------------------------------------------------
+
+   oAgentesController                     := AgentesController():New()
+   oAgentesController:getRange():setAlias( ::oOrigenController:getModel():getAlias() ) 
+
+   aadd( ::aControllers, oAgentesController )
 
 RETURN ( self )
 
@@ -189,7 +246,7 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
       OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
-      PROMPT      "Convertir a factura de ventas" ;
+      PROMPT      "Seleccione el rango de fechas y condiciones para la generación de albaranes" ;
       ID          800 ;
       FONT        oFontBold() ;
       OF          ::oDialog
@@ -221,9 +278,12 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::okActivate(), ) }
+   ::oFolder:aDialogs[ 1 ]:bKeyDown := {| nKey | if( nKey == VK_F5, ::okActivate(), ) }
+   ::oFolder:aDialogs[ 2 ]:bKeyDown := {| nKey | if( nKey == VK_F5, ::okActivate(), ) }
+   ::oFolder:aDialogs[ 3 ]:bKeyDown := {| nKey | if( nKey == VK_F5, ::okActivate(), ) }
+   ::oDialog:bKeyDown               := {| nKey | if( nKey == VK_F5, ::okActivate(), ) }
 
-   ::oDialog:bStart     := {|| ::starActivate(), ::paintedActivate() }
+   ::oDialog:bStart                 := {|| ::starActivate(), ::paintedActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -264,6 +324,8 @@ METHOD okActivateFolderOne() CLASS ConversorAlbaranVentasView
 
    if ::oController:generatePreview()
 
+      ::oController:getConversorView():setMessage( "Seleccione los albaranes que deseas convertir a factura" )
+
       ::setFolderToPreview()
 
    else
@@ -289,6 +351,8 @@ METHOD okActivateFolderTwo() CLASS ConversorAlbaranVentasView
    ::oController:generateConvert()
 
    ::setFolderConvertion()
+
+   ::oController:getConversorView():setMessage( "Facturas generadas" )
 
 RETURN ( nil )
 
