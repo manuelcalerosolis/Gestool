@@ -31,7 +31,7 @@ CLASS ConversorGenericoController FROM SQLBrowseController
 
    METHOD Edit( nId )
 
-   METHOD convertDocument() VIRTUAL
+   METHOD convertDocument()            VIRTUAL
 
    //Contrucciones tarias------------------------------------------------------
 
@@ -85,7 +85,7 @@ CLASS SQLConversorDocumentosModel FROM SQLCompanyModel
 
    METHOD deleteWhereDestinoUuid( Uuid )
 
-   METHOD countDocumentoWhereUuidOigen( uuidOrigen )
+   METHOD countDocumentoWhereUuidOigenAndTableDestino( uuidOrigen, TableDestino )
 
    METHOD getDestinoController()       INLINE ( ::oController:oDestinoController )
 
@@ -153,7 +153,7 @@ RETURN ( getSQLDatabase():Exec( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD countDocumentoWhereUuidOigen( uuidOrigen ) CLASS SQLConversorDocumentosModel
+METHOD countDocumentoWhereUuidOigenAndTableDestino( uuidOrigen, TableDestino ) CLASS SQLConversorDocumentosModel
  
    local cSql
 
@@ -161,11 +161,11 @@ METHOD countDocumentoWhereUuidOigen( uuidOrigen ) CLASS SQLConversorDocumentosMo
 
       SELECT COUNT( uuid )
          FROM %1$s
-         WHERE documento_origen_uuid = %2$s
+         WHERE documento_origen_uuid = %2$s AND documento_destino_tabla = %3$s
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidOrigen ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidOrigen ), quoted( TableDestino ) )
   
 RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 

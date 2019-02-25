@@ -126,6 +126,8 @@ CLASS ConversorDocumentoView FROM SQLBaseView
 
    METHOD getDocumentoDestino()        INLINE ( alltrim( ::cDocumentoDestino ) )
 
+   METHOD validDialog()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -156,13 +158,15 @@ METHOD Activate() CLASS ConversorDocumentoView
 
    // Botones------------------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| ::oDialog:end( IDOK ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| ::validDialog() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
 
-   ::oDialog:Activate( , , , .t. )
+   ::oDialog:bStart     := {|| ::paintedActivate() }
+
+   ACTIVATE DIALOG ::oDialog CENTER
 
 RETURN ( ::oDialog:nResult )
 
@@ -175,7 +179,255 @@ METHOD Activating() CLASS ConversorDocumentoView
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD validDialog() CLASS ConversorDocumentoView
+
+   local oDestinoController
+   local UuidOrigen
+
+   if empty( ::getDocumentoDestino )
+      ::showMessage("Debe seleccionar un documento de destino")
+      RETURN( nil )
+   end if
+
+   oDestinoController := eval( hget( ::oController:aDocumentosDestino(), ::getDocumentoDestino ) )
+
+   if ::oController:oOrigenController:className() == oDestinoController:className()
+      ::showMessage( "No puede seleccionar el mismo documento de destino" )
+      RETURN ( nil )
+   end if
+
+   UuidOrigen := ::oController:oOrigenController:getRowSet():fieldGet( "uuid" )
+
+   if SQLConversorDocumentosModel():countDocumentoWhereUuidOigenAndTableDestino( UuidOrigen, oDestinoController:getModel():cTableName ) > 0
+      ::showMessage( "El documento seleccionado ya ha sido convertido" )
+      RETURN ( nil )
+   end if
+
+RETURN( ::oDialog:end( IDOK ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+CLASS TestConversorGenericoController FROM TestCase
+
+   DATA aSelected                      INIT {}
+
+   DATA oController
+
+   DATA aCategories                    INIT { "all", "conversor_documento_generico" }
+
+   DATA oPedidosComprasController
+
+   METHOD getPedidosComprasController();
+                                       INLINE ( if( empty( ::oPedidosComprasController ), ::oPedidosComprasController := PedidosComprasController():New( self ), ), ::oPedidosComprasController )
+
+   METHOD beforeClass() 
+
+   METHOD afterClass()
+
+   METHOD Before() 
+
+   METHOD test_convert_generico_sin_destino()
+
+   /*METHOD test_convert_generico_igual_destino()
+
+   METHOD test_convert_generico_ya_convertido()
+
+   METHOD test_convert_generico()*/
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD beforeClass() CLASS TestConversorGenericoController
+
+   ::oController  := ConversorPrepareGenericoController():New( ::getPedidosComprasController() )  
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD afterClass() CLASS TestConversorGenericoController
+
+   ::oController:End()
+
+   if !empty( ::oPedidosComprasController )
+      ::oPedidosComprasController:End()
+   end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD Before() CLASS TestConversorGenericoController
+
+   SQLTercerosModel():truncateTable()
+
+   SQLDireccionesModel():truncateTable()
+
+   SQLAlmacenesModel():truncateTable()
+      SQLUbicacionesModel():truncateTable()
+
+   SQLMetodoPagoModel():truncateTable()
+
+   SQLArticulosModel():truncateTable()
+   
+   SQLPedidosComprasModel():truncateTable()
+      SQLPedidosComprasLineasModel():truncateTable()
+      SQLPedidosComprasDescuentosModel():truncateTable()
+
+   SQLFacturasComprasModel():truncateTable()
+      SQLFacturasComprasLineasModel():truncateTable()
+      SQLFacturasComprasDescuentosModel():truncateTable()
+
+   SQLConversorDocumentosModel():truncateTable()
+   SQLRecibosModel():truncateTable()
+
+   SQLArticulosTarifasModel():truncateTable()
+
+   SQLAgentesModel():truncateTable()
+
+   SQLTiposIvaModel():truncateTable()
+   SQLUbicacionesModel():truncateTable()
+   SQLArticulosTarifasModel():truncateTable()
+   SQLRutasModel():truncateTable()
+
+   SQLConversorDocumentosModel():truncateTable()
+
+   SQLMetodoPagoModel():test_create_con_plazos_con_hash() 
+   SQLMetodoPagoModel():test_create_con_plazos_con_hash( {  "codigo"          => "1",;
+                                                            "numero_plazos"   => 5  } ) 
+
+   SQLTiposIvaModel():test_create_iva_al_21()
+
+   SQLAlmacenesModel():test_create_almacen_principal()
+
+   SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_principal() )
+
+   SQLRutasModel():test_create_ruta_principal()
+   SQLRutasModel():test_create_ruta_alternativa()
+
+   SQLArticulosModel():test_create_precio_con_descuentos()
+
+   SQLArticulosTarifasModel():test_create_tarifa_base()
+   SQLArticulosTarifasModel():test_create_tarifa_mayorista()
+
+   SQLAgentesModel():test_create_agente_principal()
+
+   SQLTercerosModel():test_create_proveedor_con_plazos( 0 )
+   SQLTercerosModel():test_create_proveedor_con_plazos( 1 )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_convert_generico_sin_destino() CLASS TestConversorGenericoController
+
+   local hLinea
+
+   SQLPedidosComprasModel():create_pedido_compras()
+
+   hLinea               := { "parent_uuid"   => SQLPedidosComprasModel():test_get_uuid_pedido_compras( "A", 3 ) }
+
+   SQLPedidosComprasLineasModel():create_linea_pedido_compras( hLinea )
+
+   msgalert( ::oController:getConversorView:className(), "vista")
+   ::oController:getConversorView():setEvent( 'painted',;
+         {| self | ;
+            testWaitSeconds( 2 ),;
+            self:getControl( IDOK ):Click() } )
+
+   ::getPedidosComprasController():RunGeneratedocument() 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+/*METHOD test_convert_generico_igual_destino() CLASS TestConversorGenericoController
+
+   local hLinea
+
+   SQLPedidosComprasModel():create_pedido_compras()
+
+   hLinea               := { "parent_uuid"   => SQLPedidosComprasModel():test_get_uuid_pedido_compras( "A", 3 ) }
+
+   SQLPedidosComprasLineasModel():create_linea_pedido_compras( hLinea )
+
+   ::oController:getConversorView():setEvent( 'painted',;
+         {| self | ;
+            testWaitSeconds( 1 ),;
+            self:getControl( IDOK ):Click(),;
+            testWaitSeconds( 1 ),;
+            self:getControl( IDCANCEL ):Click() } )
+
+   ::getPedidosComprasController():RunGeneratedocument() 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_convert_generico_ya_convertido() CLASS TestConversorGenericoController
+
+   local hLinea
+
+   local UuidOrigen
+
+   SQLPedidosComprasModel():create_pedido_compras()
+
+   uuidOrigen := SQLPedidosComprasModel():test_get_uuid_pedido_compras( "A", 3 )
+
+   hLinea               := { "parent_uuid"   => uuidOrigen }
+
+   SQLPedidosComprasLineasModel():create_linea_pedido_compras( hLinea )
+
+   SQLConversorDocumentosModel():insertRelationDocument( uuidOrigen, "pedidos_compras", "b940734f-9974-4f1a-bb17-88f615756529", "albaranes_compras")
+
+   ::oController:getConversorView():setEvent( 'painted',;
+         {| self | ;
+            testWaitSeconds( 1 ),;
+            self:getControl( IDOK ):Click(),;
+            testWaitSeconds( 1 ),;
+            self:getControl( IDCANCEL ):Click() } )
+
+   ::getPedidosComprasController():RunGeneratedocument()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_convert_generico() CLASS TestConversorGenericoController
+
+ local hLinea
+
+   SQLPedidosComprasModel():create_pedido_compras()
+
+   hLinea               := { "parent_uuid"   => SQLPedidosComprasModel():test_get_uuid_pedido_compras( "A", 3 ) }
+
+   SQLPedidosComprasLineasModel():create_linea_pedido_compras( hLinea )
+
+   ::oController:getConversorView():setEvent( 'painted',;
+         {| self | ;
+            testWaitSeconds( 1 ),;
+            self:getControl( IDOK ):Click(),;
+            testWaitSeconds( 1 ),;
+            self:getControl( IDCANCEL ):Click() } )
+
+   ::getPedidosComprasController():RunGeneratedocument() 
+
+RETURN ( nil )*/
+
+#endif
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+

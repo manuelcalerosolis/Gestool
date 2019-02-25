@@ -84,7 +84,7 @@ METHOD Activate() CLASS OperacionesComercialesView
 
    // Serie-------------------------------------------------------------------
 
-  ::getController():getContadoresController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "serie" ] ) )
+   ::getController():getContadoresController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "serie" ] ) )
    ::getController():getContadoresController():getSelector():setWhen( {|| ::getController():isAppendOrDuplicateMode() } )
    ::getController():getContadoresController():getSelector():setGetNumber( ::oGetNumero )
    ::getController():getContadoresController():getSelector():Build( { "idGet" => 100, "oDialog" => ::oFolder:aDialogs[1] } )

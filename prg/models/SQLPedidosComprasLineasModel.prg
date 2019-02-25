@@ -10,9 +10,11 @@ CLASS SQLPedidosComprasLineasModel FROM SQLOperacionesComercialesLineasModel
 
    DATA cGroupBy              INIT  "pedidos_compras_lineas.id" 
 
-/*#ifdef __TEST__
+#ifdef __TEST__
 
-   METHOD test_create_IVA_al_0_porciento( uuid )
+   METHOD create_linea_pedido_compras( hDatoLinea )
+
+   /*METHOD test_create_IVA_al_0_porciento( uuid )
    METHOD test_create_IVA_al_0_con_10_descuento( uuid )
 
    METHOD test_create_IVA_al_10_porciento( uuid )
@@ -27,18 +29,40 @@ CLASS SQLPedidosComprasLineasModel FROM SQLOperacionesComercialesLineasModel
 
    METHOD test_create_IVA_al_21_con_incrememto_precio( uuid ) 
 
-   METHOD test_create_10_porciento_descuento_15_incremento( uuid )
+   METHOD test_create_10_porciento_descuento_15_incremento( uuid )*/
 
-#endif*/
+#endif
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-/*#ifdef __TEST__
+#ifdef __TEST__
 
+METHOD create_linea_pedido_compras( hDatosLinea )
 
-METHOD test_create_IVA_al_0_porciento( uuid ) CLASS SQLFacturasComprasLineasModel
+   local hBuffer := ::loadBlankBuffer( {  "iva"                      => 21                         ,;
+                                          "articulo_codigo"          => "0"                        ,;
+                                          "articulo_precio"          => 100                        ,;
+                                          "descuento"                => 2                          ,;
+                                          "recargo_equivalencia"     => 5                          ,;
+                                          "almacen_codigo"           => "0"                        ,;
+                                          "ubicacion_codigo"         => "0"                        ,;
+                                          "agente_codigo"            => "0"                        ,;
+                                          "unidad_medicion_codigo"   => "UDS"                      ,;
+                                          "articulo_nombre"          => "Articulo con descuentos"  } )
+
+   if hb_ishash( hDatosLinea )
+      heval( hDatosLinea, {|k,v| hset( hBuffer, k, v) } )
+   end if
+
+   ::insertBuffer( hBuffer )
+
+RETURN( nil )
+
+//---------------------------------------------------------------------------//
+
+/*METHOD test_create_IVA_al_0_porciento( uuid ) CLASS SQLFacturasComprasLineasModel
 
 
    local hBuffer  := ::loadBlankBuffer()
@@ -205,7 +229,7 @@ METHOD test_create_IVA_al_21_con_incrememto_precio( uuid ) CLASS SQLFacturasComp
    hset( hBuffer, "almacen_codigo", "0" )
 
 RETURN ( ::insertBuffer( hBuffer ) )
-
+*/
 //---------------------------------------------------------------------------//
 
-#endif*/
+#endif

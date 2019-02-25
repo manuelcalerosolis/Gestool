@@ -30,7 +30,6 @@ METHOD Convert() CLASS ConversorDocumentosController
    end if
 
    if ::getOrigenController:className() == ::getDestinoController():className()
-      msgstop( "No puede seleccionar el mismo tipo de documento" )
       RETURN ( nil )
    end if
 
@@ -40,7 +39,7 @@ METHOD Convert() CLASS ConversorDocumentosController
       RETURN( nil )
    end if
 
-   if ::getModel():countDocumentoWhereUuidOigen( ::uuidDocumentoOrigen ) > 0
+   if ::getModel():countDocumentoWhereUuidOigenAndTableDestino( ::uuidDocumentoOrigen, ::getDestinoController():getModel():cTableName ) > 0
       msgstop( "El documento seleccionado ya ha sido convertido" )
       RETURN ( nil )
    end if

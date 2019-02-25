@@ -354,6 +354,8 @@ METHOD setHelpText( value ) CLASS GetSelector
 
    ::fireEvent( 'settedHelpText' ) 
 
+   ::Refresh()
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
