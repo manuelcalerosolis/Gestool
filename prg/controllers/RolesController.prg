@@ -248,7 +248,7 @@ RETURN ( ::hColumns )
 
 METHOD insertIgnoreRoles() CLASS SQLRolesModel
 
-   ::insertIgnoreBlankBuffer( {  "nombre"    => quoted( __admin_name__ ),;
+   ::insertIgnoreBlankBuffer( {  "nombre"    => __admin_name__,;
                                  "sistema"   => '1' } )
 
    ::insertIgnoreBlankBuffer( {  "nombre"    => 'Administrador',;

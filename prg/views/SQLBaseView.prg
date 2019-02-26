@@ -54,7 +54,10 @@ CLASS SQLBaseView
    // Facades------------------------------------------------------------------
 
    METHOD getModel()                   INLINE ( ::getController():oModel )
-   METHOD getModelBuffer()             INLINE ( ::getController():oModel:hBuffer ) 
+
+   METHOD getModelBuffer( cColumn )    INLINE ( ::getController():getModelBuffer( cColumn ) )
+   METHOD setModelBuffer( cColumn, uValue ) ;
+                                       INLINE ( ::getController():setModelBuffer( cColumn, uValue ) )
    
    METHOD setGetModelBuffer( uValue, cName ) ;
                                        INLINE ( iif(  hb_isnil( uValue ),;

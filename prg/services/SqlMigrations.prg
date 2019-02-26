@@ -204,7 +204,7 @@ METHOD checkValues() CLASS SQLGestoolMigrations
 
    SQLRolesModel():insertIgnoreRoles() 
 
-   SQLUsuariosModel():insertIgnoreSuperUser() 
+   SQLUsuariosModel():insertIgnoreSuperAdmin() 
 
 RETURN ( nil )
 
