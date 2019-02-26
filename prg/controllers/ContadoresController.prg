@@ -50,7 +50,7 @@ METHOD New( oController) CLASS ContadoresController
                                                       'addingShowDeleteButton',;
                                                       'addingDeleteButton' }, {|| .f. } )
 
-   ::getSelectorView():getMenuTreeView():setEvent( 'addingEditButton', {|| .f. } )
+   ::getSelectorView():getMenuTreeView():setEvent( 'addingEditButton', {|| Auth():isSuperAdmin() } )
 
    ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 

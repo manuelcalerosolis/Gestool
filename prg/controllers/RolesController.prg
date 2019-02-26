@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-#define  __encryption_key__ "snorlax"
+#define __admin_name__  "Super administrador"
 
 //---------------------------------------------------------------------------//
 
@@ -248,14 +248,14 @@ RETURN ( ::hColumns )
 
 METHOD insertIgnoreRoles() CLASS SQLRolesModel
 
-   ::insertIgnoreBlankBuffer( {  "nombre"    => 'Super administrador',;
+   ::insertIgnoreBlankBuffer( {  "nombre"    => quoted( __admin_name__ ),;
                                  "sistema"   => '1' } )
 
    ::insertIgnoreBlankBuffer( {  "nombre"    => 'Administrador',;
-                                 "sistema"   => '1' } )
+                                 "sistema"   => '0' } )
 
    ::insertIgnoreBlankBuffer( {  "nombre"    => 'Usuario',;
-                                 "sistema"   => '1' } )
+                                 "sistema"   => '0' } )
 
 RETURN ( nil )
 
@@ -313,7 +313,7 @@ METHOD addColumns() CLASS RolesBrowseView
 
    ::getColumnDeletedAt()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

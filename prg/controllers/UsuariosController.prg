@@ -39,12 +39,15 @@ CLASS UsuariosController FROM SQLNavigatorGestoolController
    DATA cUuidDelegacionExclusiva
    DATA cNombreDelegacionExclusiva
 
-   DATA cValidError                          INIT "" 
+   DATA cValidError                    INIT "" 
 
    DATA oAuth  
 
    METHOD New() CONSTRUCTOR
+
    METHOD End()
+   
+   METHOD getName()                    INLINE ( "usuarios" )
 
    METHOD editConfig()
 
@@ -58,11 +61,12 @@ CLASS UsuariosController FROM SQLNavigatorGestoolController
 
    METHOD checkSuperUser()
 
+   //Construcciones tardias----------------------------------------------------
+
    METHOD getRolesController()         INLINE ( iif( empty( ::oRolesController), ::oRolesController := RolesController():New( self ), ), ::oRolesController )
 
-   METHOD getCamposExtraValoresController()  INLINE ( iif( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresGestoolController():New( self ), ), ::oCamposExtraValoresController )
-
-   //Construcciones tardias----------------------------------------------------
+   METHOD getCamposExtraValoresController() ;
+                                       INLINE ( iif( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresGestoolController():New( self ), ), ::oCamposExtraValoresController )
    
    METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := UsuariosView():New( self ), ), ::oDialogView )
    
@@ -73,8 +77,6 @@ CLASS UsuariosController FROM SQLNavigatorGestoolController
    METHOD getRepository()              INLINE ( iif( empty( ::oRepository ), ::oRepository := UsuariosRepository():New( self ), ), ::oRepository )
 
    METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLUsuariosModel():New( self ), ), ::oModel )
-
-   METHOD getName()                    INLINE ( "usuarios" )
 
 END CLASS
 
