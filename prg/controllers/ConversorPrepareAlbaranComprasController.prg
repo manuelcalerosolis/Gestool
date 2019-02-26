@@ -59,8 +59,6 @@ METHOD Run() CLASS ConversorPrepareAlbaranComprasController
 
    ::aCreatedDocument := ::oConversorAlbaranesController():Convert( ::aSelected )
 
-   msgalert( hb_valtoexp(::aCreatedDocument), "documentos creados")
-
    ::showResume()
 
 RETURN ( nil )

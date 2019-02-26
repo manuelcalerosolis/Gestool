@@ -54,7 +54,7 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD countFActuras() CLASS SQLFacturasComprasModel
+METHOD countFacturas() CLASS SQLFacturasComprasModel
 
    local cSql
 
