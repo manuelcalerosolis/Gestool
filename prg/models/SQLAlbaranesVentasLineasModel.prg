@@ -10,6 +10,10 @@ CLASS SQLAlbaranesVentasLineasModel FROM SQLOperacionesComercialesLineasModel
 
    DATA cGroupBy              INIT  "albaranes_ventas_lineas.id" 
 
+   #ifdef __TEST__
+   
+   METHOD create_linea_albaran_ventas( hDatoLinea )
+
 /*#ifdef __TEST__
 
    METHOD test_create_IVA_al_0_porciento( uuid )
@@ -27,13 +31,41 @@ CLASS SQLAlbaranesVentasLineasModel FROM SQLOperacionesComercialesLineasModel
 
    METHOD test_create_IVA_al_21_con_incrememto_precio( uuid ) 
 
-   METHOD test_create_10_porciento_descuento_15_incremento( uuid )
+   METHOD test_create_10_porciento_descuento_15_incremento( uuid )*/
 
-#endif*/
+   #endif
 
 END CLASS
 
 //---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+METHOD create_linea_albaran_ventas( hDatosLinea )
+
+   local hBuffer := ::loadBlankBuffer( {  "iva"                      => 21                         ,;
+                                          "articulo_codigo"          => "0"                        ,;
+                                          "articulo_precio"          => 100                        ,;
+                                          "descuento"                => 2                          ,;
+                                          "recargo_equivalencia"     => 5                          ,;
+                                          "almacen_codigo"           => "0"                        ,;
+                                          "ubicacion_codigo"         => "0"                        ,;
+                                          "agente_codigo"            => "0"                        ,;
+                                          "unidad_medicion_codigo"   => "UDS"                      ,;
+                                          "articulo_nombre"          => "Articulo con descuentos"  } )
+
+   if hb_ishash( hDatosLinea )
+      heval( hDatosLinea, {|k,v| hset( hBuffer, k, v) } )
+   end if
+
+   ::insertBuffer( hBuffer )
+
+RETURN( nil )
+
+//---------------------------------------------------------------------------//
+
+#endif
+
 
 /*#ifdef __TEST__
 

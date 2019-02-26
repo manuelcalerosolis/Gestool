@@ -13,6 +13,8 @@ CLASS SQLFacturasVentasModel FROM SQLOperacionesComercialesModel
 
    METHOD getInitialLimitCero()
 
+   METHOD countFacturas()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -63,6 +65,24 @@ METHOD getInitialLimitCero() CLASS SQLFacturasVentasModel
 
 
 RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD countFacturas() CLASS SQLFacturasVentasModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+      SELECT 
+         COUNT(*)  
+      FROM %1$s
+       
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql, ::getTableName() )
+
+RETURN ( ::getDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

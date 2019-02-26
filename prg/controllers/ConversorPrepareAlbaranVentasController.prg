@@ -362,3 +362,211 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+#ifdef __TEST__
+
+CLASS TestConversorToFacturaVentasController FROM TestCase
+
+   DATA aSelected                      INIT {}
+
+   DATA oController
+
+   DATA aCategories                    INIT { "all", "conversor_to_factura_ventas" }
+
+   DATA oAlbaranesVentasController
+
+   data oFacturasVentasController
+
+   METHOD getAlbaranesVentasController();
+                                       INLINE ( if( empty( ::oAlbaranesVentasController ), ::oAlbaranesVentasController := AlbaranesVentasController():New( self ), ), ::oAlbaranesVentasController )
+   METHOD getFacturasVentasController();
+                                       INLINE ( if( empty( ::oFacturasVentasController ), ::oFacturasVentasController := FacturasVentasController():New( self ), ), ::oFacturasVentasController )
+
+   METHOD beforeClass() 
+
+   METHOD afterClass()
+
+   METHOD Before() 
+
+   METHOD create_albaran()
+
+   //METHOD test_create_sin_filtros()
+
+   METHOD test_create_tecero_desde()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD beforeClass() CLASS TestConversorToFacturaVentasController 
+
+   ::oController  := ConversorPrepareAlbaranVentasController():New( ::getAlbaranesVentasController() , ::getFacturasVentasController() )  
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD afterClass() CLASS TestConversorToFacturaVentasController
+
+   ::oController:End()
+
+   if !empty( ::oAlbaranesVentasController )
+      ::oAlbaranesVentasController:End()
+   end if
+
+   if !empty( ::oFacturasVentasController )
+      ::oFacturasVentasController:End()
+   end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD Before() CLASS TestConversorToFacturaVentasController
+
+   SQLTercerosModel():truncateTable()
+
+   SQLDireccionesModel():truncateTable()
+
+   SQLAlmacenesModel():truncateTable()
+      SQLUbicacionesModel():truncateTable()
+
+   SQLMetodoPagoModel():truncateTable()
+
+   SQLArticulosModel():truncateTable()
+   
+   SQLAlbaranesVentasModel():truncateTable()
+      SQLAlbaranesVentasLineasModel():truncateTable()
+      SQLAlbaranesVentasDescuentosModel():truncateTable()
+
+   SQLFacturasVentasModel():truncateTable()
+      SQLFacturasVentasLineasModel():truncateTable()
+      SQLFacturasVentasDescuentosModel():truncateTable()
+
+   SQLConversorDocumentosModel():truncateTable()
+   SQLRecibosModel():truncateTable()
+
+   SQLArticulosTarifasModel():truncateTable()
+
+   SQLAgentesModel():truncateTable()
+
+   SQLTiposIvaModel():truncateTable()
+   SQLUbicacionesModel():truncateTable()
+   SQLArticulosTarifasModel():truncateTable()
+   SQLRutasModel():truncateTable()
+
+   SQLConversorDocumentosModel():truncateTable()
+
+   SQLMetodoPagoModel():test_create_con_plazos_con_hash() 
+   SQLMetodoPagoModel():test_create_con_plazos_con_hash( {  "codigo"          => "1",;
+                                                            "numero_plazos"   => 5  } ) 
+
+   SQLTiposIvaModel():test_create_iva_al_21()
+
+   SQLAlmacenesModel():test_create_almacen_principal()
+
+   SQLUbicacionesModel():test_create_trhee_with_parent( SQLAlmacenesModel():test_get_uuid_almacen_principal() )
+
+   SQLRutasModel():test_create_ruta_principal()
+   SQLRutasModel():test_create_ruta_alternativa()
+
+   SQLArticulosModel():test_create_precio_con_descuentos()
+
+   SQLArticulosTarifasModel():test_create_tarifa_base()
+   SQLArticulosTarifasModel():test_create_tarifa_mayorista()
+
+   SQLAgentesModel():test_create_agente_principal()
+
+   SQLTercerosModel():test_create_cliente_con_plazos( 0 )
+   SQLTercerosModel():test_create_cliente_con_plazos( 1 )
+
+   ::aSelected                      := {}
+
+   //::oController:hProcesedAlbaran   := {}
+
+   //::oController:lDescuento         := .f.
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD create_albaran( hAlbaran ) CLASS TestConversorToFacturaVentasController
+
+   local hLinea         := {}
+
+   SQLAlbaranesVentasModel():create_albaran_ventas( hAlbaran )
+
+   hLinea               := { "parent_uuid"   => SQLAlbaranesVentasModel():test_get_uuid_albaran_ventas( hget( hAlbaran,"serie" ), hget( hAlbaran, "numero" ) ) }
+
+   SQLAlbaranesVentasLineasModel():create_linea_albaran_ventas( hLinea )
+  
+   aadd( ::aSelected, SQLAlbaranesVentasModel():test_get_uuid_albaran_ventas( hget( hAlbaran, "serie" ), hget( hAlbaran, "numero" ) ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+/*METHOD test_create_sin_filtros() CLASS TestConversorToFacturaVentasController
+  
+
+   ::create_albaran( {  "serie"   => "A",;
+                        "numero"  =>  3 } )
+
+   ::create_albaran( {  "serie"  =>  "A",;
+                        "numero" =>   4  } )
+
+   ::create_albaran( {  "serie"  =>  "A",;
+                        "numero" =>   5  } )
+
+   ::create_albaran( {  "serie"  =>  "A",;
+                        "numero" =>   6  } )
+
+   ::oController:getConversorView():setEvent( 'painted',;
+         {| self | ;
+            testWaitSeconds( 5 ),;
+            self:getControl( IDOK ):Click(),;
+            testWaitSeconds( 5 ),;
+            self:getControl( IDOK ):Click(),;
+            testWaitSeconds( 5 ),;
+            self:getControl( IDOK ):Click() } )
+   
+   ::oController:Run()
+
+   ::Assert():equals( 4, ::oController:oOrigenController:getRowset():recCount(), "Aparecen 4 albaranes despues de filtrar" )
+
+   ::Assert():equals( 1, ::oController:oDestinoController:getRowset():recCount(), "Genera dos facturas con distintos terceros" )
+   //::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con distintos terceros" )
+
+RETURN ( nil )*/
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_tecero_desde() CLASS TestConversorToFacturaVentasController
+
+   ::create_albaran( {  "serie"           => "A",;
+                        "numero"          =>  3 ,;
+                        "tercero_codigo"  => "0" } )
+
+   ::create_albaran( {  "serie"           =>  "A",;
+                        "numero"          =>   4 ,;
+                        "tercero_codigo"  => "0" } )
+
+   ::create_albaran( {  "serie"           =>  "A",;
+                        "numero"          =>   5 ,;
+                        "tercero_codigo"  => "1" } )
+
+   ::create_albaran( {  "serie"           =>  "A",;
+                        "numero"          =>   6 ,;
+                        "tercero_codigo"  => "1" } )
+
+   ::oController:getConversorView():setEvent( 'painted',;
+         {| self | ;
+            testWaitSeconds( 5 )} )
+            //eval( ::oBrwRange:oColDesde:bOnPostEdit, nil, "A" ) } )
+   
+   ::oController:Run()
+
+RETURN ( nil )
+
+/*eval( ::oBrowseRange:oColDesde:bOnPostEdit, nil, "A" )
+   eval( ::oBrowseRange:oColHasta:bOnPostEdit, nil, "B" )*/

@@ -100,7 +100,11 @@ USER FUNCTION hbunit_test()
    
    oSuite:addTest( TestConversorGenericoController():New() )
 
-   oSuite:setCategories( { "conversor_documento_generico" } ) 
+   oSuite:addTest( TestConversorToFacturaComprasController():New() )
+
+   oSuite:addTest( TestConversorToFacturaVentasController():New() )
+
+   oSuite:setCategories( { "conversor_to_factura_ventas" } ) 
 
    oRunner:run( oSuite )
 

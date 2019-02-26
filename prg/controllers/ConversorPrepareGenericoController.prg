@@ -4,6 +4,8 @@
 //---------------------------------------------------------------------------//
 
 CLASS ConversorPrepareGenericoController FROM ConversorPrepareController
+
+   DATA uuidOrigen
    
    METHOD New()
 
@@ -75,8 +77,8 @@ RETURN ( ::Super:End() )
 
 METHOD setDocumentosDestino() CLASS ConversorPrepareGenericoController
 
-   ::aDocumentosDestino := {  "AlbarÃ¡n de compras"             => {|| ::setAlbaranesComprasController() },;
-                              "AlbarÃ¡n de ventas"              => {|| ::setAlbaranesVentasController() },;
+   ::aDocumentosDestino := {  "Albarán de compras"             => {|| ::setAlbaranesComprasController() },;
+                              "Albarán de ventas"              => {|| ::setAlbaranesVentasController() },;
                               "Factura de compras"             => {|| ::setFacturasComprasController() },;
                               "Factura de ventas"              => {|| ::setFacturasventasController() },;
                               "Factura de ventas simplificada" => {|| ::setFacturasVentasSimplificadasController() },;
@@ -88,9 +90,11 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD Run() CLASS ConversorPrepareGenericoController
+METHOD Run( uuidOrigen ) CLASS ConversorPrepareGenericoController
 
    ::setDocumentosDestino()
+
+   ::uuidOrigen := uuidOrigen
 
    if ::getConversorView():Activate() != IDOK
       RETURN ( nil )
@@ -102,7 +106,7 @@ METHOD Run() CLASS ConversorPrepareGenericoController
 
    if !empty( ::oDestinoController )
 
-      ::oConversorDocumentosController():convert()
+      ::oConversorDocumentosController():convert( ::uuidOrigen )
 
    end if
 
@@ -166,7 +170,7 @@ METHOD Activate() CLASS ConversorDocumentoView
 
    ::oDialog:bStart     := {|| ::paintedActivate() }
 
-   ACTIVATE DIALOG ::oDialog CENTER
+   ::oDialog:Activate( , , , .t. )
 
 RETURN ( ::oDialog:nResult )
 
@@ -183,7 +187,6 @@ RETURN ( nil )
 METHOD validDialog() CLASS ConversorDocumentoView
 
    local oDestinoController
-   local UuidOrigen
 
    if empty( ::getDocumentoDestino )
       ::showMessage("Debe seleccionar un documento de destino")
@@ -197,9 +200,7 @@ METHOD validDialog() CLASS ConversorDocumentoView
       RETURN ( nil )
    end if
 
-   UuidOrigen := ::oController:oOrigenController:getRowSet():fieldGet( "uuid" )
-
-   if SQLConversorDocumentosModel():countDocumentoWhereUuidOigenAndTableDestino( UuidOrigen, oDestinoController:getModel():cTableName ) > 0
+   if SQLConversorDocumentosModel():countDocumentoWhereUuidOigenAndTableDestino( ::oController:UuidOrigen, oDestinoController:getModel():cTableName ) > 0
       ::showMessage( "El documento seleccionado ya ha sido convertido" )
       RETURN ( nil )
    end if
@@ -215,8 +216,6 @@ RETURN( ::oDialog:end( IDOK ) )
 #ifdef __TEST__
 
 CLASS TestConversorGenericoController FROM TestCase
-
-   DATA aSelected                      INIT {}
 
    DATA oController
 
@@ -235,11 +234,11 @@ CLASS TestConversorGenericoController FROM TestCase
 
    METHOD test_convert_generico_sin_destino()
 
-   /*METHOD test_convert_generico_igual_destino()
+   METHOD test_convert_generico_igual_destino()
 
    METHOD test_convert_generico_ya_convertido()
 
-   METHOD test_convert_generico()*/
+   METHOD test_convert_generico()
 
 END CLASS
 
@@ -336,20 +335,23 @@ METHOD test_convert_generico_sin_destino() CLASS TestConversorGenericoController
    hLinea               := { "parent_uuid"   => SQLPedidosComprasModel():test_get_uuid_pedido_compras( "A", 3 ) }
 
    SQLPedidosComprasLineasModel():create_linea_pedido_compras( hLinea )
-
-   msgalert( ::oController:getConversorView:className(), "vista")
+   
    ::oController:getConversorView():setEvent( 'painted',;
          {| self | ;
             testWaitSeconds( 2 ),;
-            self:getControl( IDOK ):Click() } )
+            self:getControl( IDOK ):Click(),;
+            testWaitSeconds( 2 ),;
+            self:getControl( IDCANCEL ):Click() } )
 
-   ::getPedidosComprasController():RunGeneratedocument() 
+   ::oController:Run( SQLPedidosComprasModel():test_get_uuid_pedido_compras( "A", 3 ) ) 
+
+   ::Assert():equals( 0, SQLConversorDocumentosModel():countDocumentos(), "No realiza ninguna conversion" )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-/*METHOD test_convert_generico_igual_destino() CLASS TestConversorGenericoController
+METHOD test_convert_generico_igual_destino() CLASS TestConversorGenericoController
 
    local hLinea
 
@@ -361,12 +363,15 @@ RETURN ( nil )
 
    ::oController:getConversorView():setEvent( 'painted',;
          {| self | ;
+            self:getControl( 100 ):VarPut( "Pedido de compras" ) ,;
             testWaitSeconds( 1 ),;
             self:getControl( IDOK ):Click(),;
             testWaitSeconds( 1 ),;
             self:getControl( IDCANCEL ):Click() } )
 
-   ::getPedidosComprasController():RunGeneratedocument() 
+   ::oController():Run( SQLPedidosComprasModel():test_get_uuid_pedido_compras( "A", 3 ) ) 
+
+   ::Assert():equals( 0, SQLConversorDocumentosModel():countDocumentos(), "No realiza ninguna conversion" )
 
 RETURN ( nil )
 
@@ -390,12 +395,15 @@ METHOD test_convert_generico_ya_convertido() CLASS TestConversorGenericoControll
 
    ::oController:getConversorView():setEvent( 'painted',;
          {| self | ;
+            self:getControl( 100 ):VarPut( "Albarán de compras" ) ,;
             testWaitSeconds( 1 ),;
             self:getControl( IDOK ):Click(),;
             testWaitSeconds( 1 ),;
             self:getControl( IDCANCEL ):Click() } )
 
-   ::getPedidosComprasController():RunGeneratedocument()
+   ::oController:Run( SQLPedidosComprasModel():test_get_uuid_pedido_compras( "A", 3 ) )
+
+   ::Assert():equals( 1, SQLConversorDocumentosModel():countDocumentos(), "No realiza ninguna conversion" )
 
 RETURN ( nil )
 
@@ -413,14 +421,15 @@ METHOD test_convert_generico() CLASS TestConversorGenericoController
 
    ::oController:getConversorView():setEvent( 'painted',;
          {| self | ;
+            self:getControl( 100 ):VarPut( "Factura de ventas simplificada" ) ,;
             testWaitSeconds( 1 ),;
-            self:getControl( IDOK ):Click(),;
-            testWaitSeconds( 1 ),;
-            self:getControl( IDCANCEL ):Click() } )
+            self:getControl( IDOK ):Click() } )
 
-   ::getPedidosComprasController():RunGeneratedocument() 
+   ::oController():Run( SQLPedidosComprasModel():test_get_uuid_pedido_compras( "A", 3 ) ) 
 
-RETURN ( nil )*/
+   ::Assert():equals( 2, SQLConversorDocumentosModel():countDocumentos(), "Convierte cabecera y linea" )
+
+RETURN ( nil )
 
 #endif
 

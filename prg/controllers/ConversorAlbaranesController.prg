@@ -140,7 +140,7 @@ METHOD Convert( aSelected ) CLASS ConversorAlbaranesController
 
    ::convertAlbaran( aSelected )
 
-   ::convertDocument() 
+   ::convertDocument()
 
 RETURN ( ::aCreatedDocument )
 
@@ -167,7 +167,7 @@ METHOD convertAlbaran( aSelected ) CLASS ConversorAlbaranesController
    Local hAlbaran
    local hAlbaranes 
 
-   if empty( ::oController )
+   if empty( ::oController ) 
       RETURN ( nil )
    end if
    
@@ -230,7 +230,7 @@ METHOD convertDocument() CLASS ConversorAlbaranesController
 
          // ::getDestinoController():getRecibosGeneratorController():GenerateNegative( uuidDocumentoDestino )
 
-         aadd( ::aCreatedDocument, uuidDocumentoDestino )
+         //aadd( ::aCreatedDocument, uuidDocumentoDestino )
 
       end if 
 

@@ -472,17 +472,17 @@ METHOD addExtraButtons() CLASS OperacionesComercialesController
 
    ::super:addExtraButtons()
 
-   ::oNavigatorView:getMenuTreeView():addButton( "Convertir documento", "gc_convertir_documento_16", {|| ::RunGeneratedocument() } )
+   ::oNavigatorView:getMenuTreeView():addButton( "Convertir documento", "gc_convertir_documento_16", {|| ::RunGeneratedocument( ::getRowSet:fieldget("uuid") ) } )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD runGeneratedocument() CLASS OperacionesComercialesController
+METHOD runGeneratedocument( uuidOrigen ) CLASS OperacionesComercialesController
 
    local oConversorPrepareGenericoController   := ConversorPrepareGenericoController():New( self )
 
-   oConversorPrepareGenericoController:Run()
+   oConversorPrepareGenericoController:Run( uuidOrigen )
 
    oConversorPrepareGenericoController:End()
 
