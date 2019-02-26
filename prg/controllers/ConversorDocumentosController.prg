@@ -5,7 +5,7 @@
 
 CLASS ConversorDocumentosController FROM ConversorGenericoController
 
-   METHOD Convert()
+   METHOD Convert( uuidOrigen )
 
    METHOD convertDocument()
 
@@ -19,7 +19,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Convert() CLASS ConversorDocumentosController
+METHOD Convert( uuidOrigen ) CLASS ConversorDocumentosController
 
    if empty( ::getOrigenController() )
       RETURN ( nil )
@@ -33,7 +33,7 @@ METHOD Convert() CLASS ConversorDocumentosController
       RETURN ( nil )
    end if
 
-   ::uuidDocumentoOrigen     := ::getOrigenController():getRowSet():fieldGet( "uuid" )
+   ::uuidDocumentoOrigen     := uuidOrigen
 
    if empty( ::uuidDocumentoOrigen )
       RETURN( nil )
