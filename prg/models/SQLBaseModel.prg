@@ -1011,7 +1011,6 @@ METHOD getInsertSentence( hBuffer, lIgnore )
 
    ::cSQLInsert      := chgAtEnd( ::cSQLInsert, ' )', 2 )
 
-
    ::fireEvent( 'gotInsertSentence' ) 
 
 RETURN ( ::cSQLInsert )
@@ -1340,9 +1339,18 @@ RETURN ( cColumn )
 
 METHOD setAttribute( key, value )
 
-   local cMethod  := "set" + strtran( key, "_", "" ) + "attribute"
+   local cMethod  
+   local uAttribute
+   
+   cMethod     := "set" + strtran( key, "_", "" ) + "attribute"
 
-   if __objhasmethod( Self, cMethod )
+   if !( __objhasmethod( Self, cMethod ) )
+      RETURN ( value )
+   end if 
+
+   uAttribute  := Self:&( cMethod )( value )
+
+   if !( hb_isnil( uAttribute ) )
       RETURN ( Self:&( cMethod )( value ) )
    end if 
 

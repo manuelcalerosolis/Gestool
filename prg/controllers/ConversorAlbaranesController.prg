@@ -230,11 +230,11 @@ METHOD convertDocument() CLASS ConversorAlbaranesController
 
          // ::getDestinoController():getRecibosGeneratorController():GenerateNegative( uuidDocumentoDestino )
 
-         //aadd( ::aCreatedDocument, uuidDocumentoDestino )
-
       end if 
 
    next
+
+   ::hProcesedAlbaran   := {}
 
 RETURN ( ::aCreatedDocument )
 

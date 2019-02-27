@@ -390,15 +390,23 @@ CLASS TestConversorToFacturaVentasController FROM TestCase
 
    METHOD create_albaran()
 
-   //METHOD test_create_sin_filtros()
+   METHOD test_create_sin_filtros()
 
-   METHOD test_create_filtro_fecha()
+   METHOD test_create_serie_desde()
 
-   //METHOD test_create_serie_desde()
+   METHOD test_create_solo_hasta()
 
-   /*METHOD test_create_solo_hasta()
+   METHOD test_create_desde_hasta()
 
-   METHOD test_create_filtros_varios()*/
+   METHOD test_create_select_one()
+
+   METHOD test_create_no_albaran()
+
+   METHOD test_create_cancel()
+
+   METHOD test_create_no_select()
+
+   METHOD test_create_filtros_varios()
 
 END CLASS
 
@@ -463,6 +471,8 @@ METHOD Before() CLASS TestConversorToFacturaVentasController
 
    SQLConversorDocumentosModel():truncateTable()
 
+   SQLContadoresModel():truncateTable()
+
    SQLMetodoPagoModel():test_create_con_plazos_con_hash() 
    SQLMetodoPagoModel():test_create_con_plazos_con_hash( {  "codigo"          => "1",;
                                                             "numero_plazos"   => 5  } ) 
@@ -486,11 +496,10 @@ METHOD Before() CLASS TestConversorToFacturaVentasController
    SQLTercerosModel():test_create_cliente_con_plazos( 0 )
    SQLTercerosModel():test_create_cliente_con_plazos( 1 )
 
+   SQLContadoresModel():insertSerie( SQLAlbaranesVentasModel():cTableName, "B", 1 )
+   SQLContadoresModel():insertSerie( SQLAlbaranesVentasModel():cTableName, "A", 1 )
+
    ::aSelected                      := {}
-
-   //::oController:hProcesedAlbaran   := {}
-
-   //::oController:lDescuento         := .f.
 
 RETURN ( nil )
 
@@ -511,7 +520,7 @@ METHOD create_albaran( hAlbaran ) CLASS TestConversorToFacturaVentasController
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-/*
+
 METHOD test_create_sin_filtros() CLASS TestConversorToFacturaVentasController
   
 
@@ -554,60 +563,9 @@ METHOD test_create_sin_filtros() CLASS TestConversorToFacturaVentasController
    //::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con distintos terceros" )
 
 RETURN ( nil )
-*/
-//---------------------------------------------------------------------------//
-
-METHOD test_create_filtro_fecha() CLASS TestConversorToFacturaVentasController
-  
-
-   ::create_albaran( {  "serie"   => "A",;
-                        "numero"  =>  3 } )
-
-   ::create_albaran( {  "serie"  =>  "A",;
-                        "numero" =>   4  } )
-
-   ::create_albaran( {  "serie"  =>  "A",;
-                        "numero" =>   5  } )
-
-   ::create_albaran( {  "serie"  =>  "B",;
-                        "numero" =>   6  } )
-
-   ::create_albaran( {  "serie"           => "B",;
-                        "numero"          =>  6 ,;
-                        "tercero_codigo"  => "1" } )
-
-   ::oController:getConversorView():setEvent( 'painted',;
-         <| self | 
-
-         testWaitSeconds( 1 )
-         msgalert( ::oPeriodo:oComboPeriodo:Value() )
-         //::oPeriodo:oComboPeriodo:VarPut("Año en curso")
-
-         self:getControl( IDOK ):Click()
-
-         testWaitSeconds( 1 )
-            
-         self:getControl( IDOK ):Click()
-            
-         testWaitSeconds( 1 )
-         
-         self:getControl( IDOK ):Click()
-
-         RETURN ( nil ) 
-
-         > )
-   
-   ::oController:Run()
-
-   ::Assert():equals( 4, ::oController:oOrigenController:getRowset():recCount(), "Aparecen 4 albaranes despues de filtrar" )
-
-   ::Assert():equals( 1, ::oController:oDestinoController:getRowset():recCount(), "Genera dos facturas con distintos terceros" )
-   //::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con distintos terceros" )
-
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-/*
+
 METHOD test_create_serie_desde() CLASS TestConversorToFacturaVentasController
 
    ::create_albaran( {  "serie"           =>  "A",;
@@ -629,13 +587,11 @@ METHOD test_create_serie_desde() CLASS TestConversorToFacturaVentasController
    ::oController:getConversorView():setEvent( 'painted',;
          <| self | 
 
-            testWaitSeconds( 5 )
+            testWaitSeconds( 1 )
 
             eval( ::oBrwRange:oColDesde:bOnPostEdit, nil, "A" )
 
-            testWaitSeconds( 5 )
-
-            //eval( ::oBrwRange:oColHasta:bOnPostEdit, nil, "B" )
+            testWaitSeconds( 1 )
 
             self:getControl( IDOK ):Click()
 
@@ -653,12 +609,332 @@ METHOD test_create_serie_desde() CLASS TestConversorToFacturaVentasController
    
    ::oController:Run()
 
-   ::Assert():equals( 3, ::oController:oOrigenController:getRowset():recCount(), "Aparecen 4 albaranes despues de filtrar" )
+   ::Assert():equals( 3, ::oController:oOrigenController:getRowset():recCount(), "Aparecen 3 albaranes despues de filtrar" )
 
    ::Assert():equals( 2, ::oController:oDestinoController:getRowset():recCount(), "Genera dos facturas con distintos terceros" )
 
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_solo_hasta() CLASS TestConversorToFacturaVentasController
+
+   ::create_albaran( {  "serie"           =>  "A",;
+                        "numero"          =>   3 ,;
+                        "tercero_codigo"  =>  "0" } )
+
+   ::create_albaran( {  "serie"           =>  "A",;
+                        "numero"          =>   4 ,;
+                        "tercero_codigo"  =>  "0" } )
+
+   ::create_albaran( {  "serie"           =>  "A",;
+                        "numero"          =>   5 ,;
+                        "tercero_codigo"  =>  "1" } )
+
+   ::create_albaran( {  "serie"           =>  "B",;
+                        "numero"          =>   6 ,;
+                        "tercero_codigo"  =>  "1" } )
+
+   ::oController:getConversorView():setEvent( 'painted',;
+         <| self | 
+
+            testWaitSeconds( 1 )
+
+            eval( ::oBrwRange:oColHasta:bOnPostEdit, nil, "B" )
+
+            testWaitSeconds( 1 )
+            
+            self:getControl( IDCANCEL ):Click()
+            
+
+            RETURN ( nil )
+
+            > )
+   
+   ::oController:Run()
+
+   ::Assert():equals( 0, ::oController:oOrigenController:getRowset():recCount(), "No aparece ningun albarán" )
+
+   ::Assert():equals( 0, ::oController:oDestinoController:getRowset():recCount(), "No genera facturas" )
 
 RETURN ( nil )
-*/
-/*eval( ::oBrowseRange:oColDesde:bOnPostEdit, nil, "A" )
-   eval( ::oBrowseRange:oColHasta:bOnPostEdit, nil, "B" )*/
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_desde_hasta() CLASS TestConversorToFacturaVentasController
+
+   ::create_albaran( {  "serie"           =>  "A",;
+                        "numero"          =>   1 ,;
+                        "tercero_codigo"  =>  "0" } )
+
+   ::create_albaran( {  "serie"           =>  "A",;
+                        "numero"          =>   2 ,;
+                        "tercero_codigo"  =>  "0" } )
+
+   ::create_albaran( {  "serie"           =>  "B",;
+                        "numero"          =>   1 ,;
+                        "tercero_codigo"  =>  "0" } )
+
+   ::create_albaran( {  "serie"           =>  "C",;
+                        "numero"          =>   1 ,;
+                        "tercero_codigo"  =>  "0" } )
+
+   ::oController:getConversorView():setEvent( 'painted',;
+         <| self | 
+
+            testWaitSeconds( 1 )
+
+            eval( ::oBrwRange:oColDesde:bOnPostEdit, nil, "A" )
+
+            testWaitSeconds( 1 )
+
+            eval( ::oBrwRange:oColHasta:bOnPostEdit, nil, "B" )
+
+            testWaitSeconds( 1 )
+            
+            self:getControl( IDOK ):Click()
+
+            testWaitSeconds( 1 )
+            
+            self:getControl( IDOK ):Click()
+            
+            testWaitSeconds( 1 )
+         
+            self:getControl( IDOK ):Click()
+            
+            RETURN ( nil )
+
+            > )
+   
+   ::oController:Run()
+
+   ::Assert():equals( 3, ::oController:oOrigenController:getRowset():recCount(), "Aparecen 3 albaranes ( la serie C se queda fuera)" )
+
+   ::Assert():equals( 2, ::oController:oDestinoController:getRowset():recCount(), "Genera 2 facturas" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_select_one() CLASS TestConversorToFacturaVentasController
+
+   ::create_albaran( {  "serie"           =>  "A",;
+                        "numero"          =>   1 ,;
+                        "tercero_codigo"  =>  "0" } )
+
+   ::create_albaran( {  "serie"           =>  "A",;
+                        "numero"          =>   2 ,;
+                        "tercero_codigo"  =>  "0" } )
+
+   ::oController:getConversorView():setEvent( 'painted',;
+         <| self | 
+
+            testWaitSeconds( 1 )
+            
+            self:getControl( IDOK ):Click()
+
+            testWaitSeconds( 1 )
+
+            ::oController:oOrigenController:getBrowseView():selectCurrent() 
+            
+            self:getControl( IDOK ):Click()
+            
+            testWaitSeconds( 1 )
+         
+            self:getControl( IDOK ):Click()
+            
+            RETURN ( nil )
+
+            > )
+   
+   ::oController:Run()
+
+   ::Assert():equals( 2, ::oController:oOrigenController:getRowset():recCount(), "Aparecen 2 albaranes" )
+
+   ::Assert():equals( 1, ::oController:oDestinoController:getRowset():recCount(), "Genera 1 facturas" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_no_albaran() CLASS TestConversorToFacturaVentasController
+
+   ::oController:getConversorView():setEvent( 'painted',;
+         <| self | 
+
+            testWaitSeconds( 1 )
+            
+            self:getControl( IDOK ):Click()
+
+            testWaitSeconds( 1 )
+            
+            self:getControl( IDCANCEL ):Click()
+            
+            RETURN ( nil )
+
+            > )
+   
+   ::oController:Run()
+
+   ::Assert():equals( 0, ::oController:oOrigenController:getRowset():recCount(), "Aparecen 0 albaranes" )
+
+   ::Assert():equals( 0, ::oController:oDestinoController:getRowset():recCount(), "No genera facturas" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_cancel() CLASS TestConversorToFacturaVentasController
+
+   ::create_albaran( {  "serie"           =>  "A",;
+                        "numero"          =>   1 ,;
+                        "tercero_codigo"  =>  "0" } )
+
+   ::create_albaran( {  "serie"           =>  "A",;
+                        "numero"          =>   2 ,;
+                        "tercero_codigo"  =>  "0" } )
+
+   ::oController:getConversorView():setEvent( 'painted',;
+         <| self | 
+
+            testWaitSeconds( 1 )
+            
+            self:getControl( IDOK ):Click()
+
+            testWaitSeconds( 1 )
+            
+            self:getControl( IDCANCEL ):Click()
+            
+            RETURN ( nil )
+
+            > )
+   
+   ::oController:Run()
+
+   ::Assert():equals( 2, ::oController:oOrigenController:getRowset():recCount(), "Aparecen 2 albaranes" )
+
+   ::Assert():equals( 0, ::oController:oDestinoController:getRowset():recCount(), "No genera facturas" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+ METHOD test_create_no_select() CLASS TestConversorToFacturaVentasController
+
+ ::create_albaran( {  "serie"           =>  "A",;
+                        "numero"          =>   1 ,;
+                        "tercero_codigo"  =>  "0" } )
+
+   ::create_albaran( {  "serie"           =>  "A",;
+                        "numero"          =>   2 ,;
+                        "tercero_codigo"  =>  "0" } )
+
+   ::oController:getConversorView():setEvent( 'painted',;
+         <| self | 
+
+            testWaitSeconds( 1 )
+            
+            self:getControl( IDOK ):Click()
+
+            testWaitSeconds( 1 )
+
+            self:getControl( 100, ::oFolder:aDialogs[ 2 ] ):select(0) 
+            
+            self:getControl( IDCANCEL ):Click()
+            
+            RETURN ( nil )
+
+            > )
+   
+   ::oController:Run()
+
+   ::Assert():equals( 2, ::oController:oOrigenController:getRowset():recCount(), "Aparecen 2 albaranes" )
+
+   ::Assert():equals( 0, ::oController:oDestinoController:getRowset():recCount(), "Genera 0 facturas" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_create_filtros_varios() CLASS TestConversorToFacturaVentasController
+
+ ::create_albaran( {  "serie"             =>  "A",;
+                        "numero"          =>   1 ,;
+                        "tercero_codigo"  =>  "0" } )
+
+   ::create_albaran( {  "serie"           =>  "A",;
+                        "numero"          =>   2 ,;
+                        "tercero_codigo"  =>  "1" } )
+
+   ::create_albaran( {  "serie"           =>  "B",;
+                        "numero"          =>   6 ,;
+                        "tercero_codigo"  =>  "1" } )
+
+   ::create_albaran( {  "serie"           =>  "B",;
+                        "numero"          =>   7 ,;
+                        "tercero_codigo"  =>  "1" } )
+
+   ::create_albaran( {  "serie"           =>  "C",;
+                        "numero"          =>   7 ,;
+                        "tercero_codigo"  =>  "0" } )
+
+   ::create_albaran( {  "serie"           =>  "A",;
+                        "numero"          =>   7 ,;
+                        "tercero_codigo"  =>  "2" } )
+
+   ::oController:getConversorView():setEvent( 'painted',;
+         <| self | 
+
+            testWaitSeconds( 1 )
+
+            eval( ::oBrwRange:oColDesde:bOnPostEdit, nil, "A" )
+
+            testWaitSeconds( 1 )
+
+            eval( ::oBrwRange:oColHasta:bOnPostEdit, nil, "B" )
+
+            testWaitSeconds( 1 )
+
+            self:getControl( 140, ::oFolder:aDialogs[ 1 ] ):goDown()
+
+            testWaitSeconds( 1 ) 
+
+            self:getControl( 140, ::oFolder:aDialogs[ 1 ] ):goDown()
+
+            testWaitSeconds( 1 )
+
+            eval( ::oBrwRange:oColDesde:bOnPostEdit, nil, "0" )
+
+            testWaitSeconds( 1 )
+
+            eval( ::oBrwRange:oColHasta:bOnPostEdit, nil, "1" )
+
+            testWaitSeconds( 1 )
+
+            self:getControl( 140, ::oFolder:aDialogs[ 1 ] ):goDown()
+
+            testWaitSeconds( 1 )
+            
+            self:getControl( IDOK ):Click()
+
+            testWaitSeconds( 1 )
+            
+            self:getControl( IDOK ):Click()
+
+            testWaitSeconds( 1 )
+            
+            self:getControl( IDOK ):Click()
+            
+            RETURN ( nil )
+
+            > )
+   
+   ::oController:Run()
+
+   ::Assert():equals( 4, ::oController:oOrigenController:getRowset():recCount(), "Aparecen 4 albaranes" )
+
+   ::Assert():equals( 3, ::oController:oDestinoController:getRowset():recCount(), "Genera 3 facturas" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//

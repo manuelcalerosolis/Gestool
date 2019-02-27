@@ -154,7 +154,7 @@ RETURN ( hb_isnumeric( nCount ) .and. nCount > 0 )
 METHOD setDocumentoAttribute() CLASS SQLContadoresModel
 
    if empty( ::oController )
-      RETURN ( '' )
+      RETURN ( nil )
    end if
 
 RETURN ( ::oController:getTableName() )
