@@ -193,11 +193,11 @@ RETURN ( ::oDialog:nResult )
 CLASS ContadoresItemRange FROM ItemRange
 
    DATA cKey                           INIT 'serie'
+
+   DATA cCode                          INIT 'serie'
    
    METHOD showNombre( cCode )          INLINE ( '' )
       
-   METHOD extractCode( uValue )        INLINE ( if( hb_ishash( uValue ), hget( uValue, ::cKey ), uValue ) )
-         
    METHOD ValidCode( uValue ) 
 
 END CLASS
@@ -206,11 +206,13 @@ END CLASS
 
 METHOD ValidCode( uValue ) CLASS ContadoresItemRange
 
-   if hb_isobject( uValue )
-      RETURN ( ::oController:getModel():isWhereSerie( uValue:varGet(), ::oController:getTableName() ) )
+   uValue   := ::extractValue( uValue )
+
+   if empty( uValue ) 
+      RETURN ( .t. )
    end if 
 
-RETURN ( ::oController:getModel():isWhereSerie( ::extractCode( uValue ), ::oController:getTableName() ) )
+RETURN ( ::oController:getModel():isWhereSerie( uValue, ::oController:getTableName() ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
