@@ -392,7 +392,13 @@ CLASS TestConversorToFacturaVentasController FROM TestCase
 
    //METHOD test_create_sin_filtros()
 
-   METHOD test_create_serie_desde()
+   METHOD test_create_filtro_fecha()
+
+   //METHOD test_create_serie_desde()
+
+   /*METHOD test_create_solo_hasta()
+
+   METHOD test_create_filtros_varios()*/
 
 END CLASS
 
@@ -505,8 +511,8 @@ METHOD create_albaran( hAlbaran ) CLASS TestConversorToFacturaVentasController
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
-/*METHOD test_create_sin_filtros() CLASS TestConversorToFacturaVentasController
+/*
+METHOD test_create_sin_filtros() CLASS TestConversorToFacturaVentasController
   
 
    ::create_albaran( {  "serie"   => "A",;
@@ -547,10 +553,61 @@ RETURN ( nil )
    ::Assert():equals( 1, ::oController:oDestinoController:getRowset():recCount(), "Genera dos facturas con distintos terceros" )
    //::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con distintos terceros" )
 
-RETURN ( nil )*/
-
+RETURN ( nil )
+*/
 //---------------------------------------------------------------------------//
 
+METHOD test_create_filtro_fecha() CLASS TestConversorToFacturaVentasController
+  
+
+   ::create_albaran( {  "serie"   => "A",;
+                        "numero"  =>  3 } )
+
+   ::create_albaran( {  "serie"  =>  "A",;
+                        "numero" =>   4  } )
+
+   ::create_albaran( {  "serie"  =>  "A",;
+                        "numero" =>   5  } )
+
+   ::create_albaran( {  "serie"  =>  "B",;
+                        "numero" =>   6  } )
+
+   ::create_albaran( {  "serie"           => "B",;
+                        "numero"          =>  6 ,;
+                        "tercero_codigo"  => "1" } )
+
+   ::oController:getConversorView():setEvent( 'painted',;
+         <| self | 
+
+         testWaitSeconds( 1 )
+         msgalert( ::oPeriodo:oComboPeriodo:Value() )
+         //::oPeriodo:oComboPeriodo:VarPut("Año en curso")
+
+         self:getControl( IDOK ):Click()
+
+         testWaitSeconds( 1 )
+            
+         self:getControl( IDOK ):Click()
+            
+         testWaitSeconds( 1 )
+         
+         self:getControl( IDOK ):Click()
+
+         RETURN ( nil ) 
+
+         > )
+   
+   ::oController:Run()
+
+   ::Assert():equals( 4, ::oController:oOrigenController:getRowset():recCount(), "Aparecen 4 albaranes despues de filtrar" )
+
+   ::Assert():equals( 1, ::oController:oDestinoController:getRowset():recCount(), "Genera dos facturas con distintos terceros" )
+   //::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con distintos terceros" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+/*
 METHOD test_create_serie_desde() CLASS TestConversorToFacturaVentasController
 
    ::create_albaran( {  "serie"           =>  "A",;
@@ -565,7 +622,7 @@ METHOD test_create_serie_desde() CLASS TestConversorToFacturaVentasController
                         "numero"          =>   5 ,;
                         "tercero_codigo"  =>  "1" } )
 
-   ::create_albaran( {  "serie"           =>  "A",;
+   ::create_albaran( {  "serie"           =>  "B",;
                         "numero"          =>   6 ,;
                         "tercero_codigo"  =>  "1" } )
 
@@ -578,7 +635,7 @@ METHOD test_create_serie_desde() CLASS TestConversorToFacturaVentasController
 
             testWaitSeconds( 5 )
 
-            eval( ::oBrwRange:oColHasta:bOnPostEdit, nil, "B" )
+            //eval( ::oBrwRange:oColHasta:bOnPostEdit, nil, "B" )
 
             self:getControl( IDOK ):Click()
 
@@ -596,12 +653,12 @@ METHOD test_create_serie_desde() CLASS TestConversorToFacturaVentasController
    
    ::oController:Run()
 
-   ::Assert():equals( 4, ::oController:oOrigenController:getRowset():recCount(), "Aparecen 4 albaranes despues de filtrar" )
+   ::Assert():equals( 3, ::oController:oOrigenController:getRowset():recCount(), "Aparecen 4 albaranes despues de filtrar" )
 
    ::Assert():equals( 2, ::oController:oDestinoController:getRowset():recCount(), "Genera dos facturas con distintos terceros" )
 
 
 RETURN ( nil )
-
+*/
 /*eval( ::oBrowseRange:oColDesde:bOnPostEdit, nil, "A" )
    eval( ::oBrowseRange:oColHasta:bOnPostEdit, nil, "B" )*/
