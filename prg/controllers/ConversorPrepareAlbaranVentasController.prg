@@ -388,7 +388,7 @@ CLASS TestConversorToFacturaVentasController FROM TestCase
 
    METHOD Before() 
 
-   METHOD create_albaran()
+   METHOD createAlbaran()
 
    METHOD test_create_sin_filtros()
 
@@ -505,11 +505,11 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD create_albaran( hAlbaran ) CLASS TestConversorToFacturaVentasController
+METHOD createAlbaran( hAlbaran ) CLASS TestConversorToFacturaVentasController
 
    local hLinea         := {}
 
-   SQLAlbaranesVentasModel():create_albaran_ventas( hAlbaran )
+   SQLAlbaranesVentasModel():createAlbaran_ventas( hAlbaran )
 
    hLinea               := { "parent_uuid"   => SQLAlbaranesVentasModel():test_get_uuid_albaran_ventas( hget( hAlbaran,"serie" ), hget( hAlbaran, "numero" ) ) }
 
@@ -522,18 +522,17 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD test_create_sin_filtros() CLASS TestConversorToFacturaVentasController
-  
 
-   ::create_albaran( {  "serie"   => "A",;
+   ::createAlbaran( {  "serie"   => "A",;
                         "numero"  =>  3 } )
 
-   ::create_albaran( {  "serie"  =>  "A",;
+   ::createAlbaran( {  "serie"  =>  "A",;
                         "numero" =>   4  } )
 
-   ::create_albaran( {  "serie"  =>  "A",;
+   ::createAlbaran( {  "serie"  =>  "A",;
                         "numero" =>   5  } )
 
-   ::create_albaran( {  "serie"  =>  "A",;
+   ::createAlbaran( {  "serie"  =>  "A",;
                         "numero" =>   6  } )
 
    ::oController:getConversorView():setEvent( 'painted',;
@@ -559,8 +558,7 @@ METHOD test_create_sin_filtros() CLASS TestConversorToFacturaVentasController
 
    ::Assert():equals( 4, ::oController:oOrigenController:getRowset():recCount(), "Aparecen 4 albaranes despues de filtrar" )
 
-   ::Assert():equals( 1, ::oController:oDestinoController:getRowset():recCount(), "Genera dos facturas con distintos terceros" )
-   //::Assert():equals( 6, SQLRecibosModel():countRecibos(), "Genera 6 recibos a traves de 2 albaranes con distintos terceros" )
+   ::Assert():equals( 1, ::oController:oDestinoController:getRowset():recCount(), "Genera una factura con distintos terceros" )
 
 RETURN ( nil )
 
@@ -568,19 +566,19 @@ RETURN ( nil )
 
 METHOD test_create_serie_desde() CLASS TestConversorToFacturaVentasController
 
-   ::create_albaran( {  "serie"           =>  "A",;
+   ::createAlbaran( {  "serie"           =>  "A",;
                         "numero"          =>   3 ,;
                         "tercero_codigo"  =>  "0" } )
 
-   ::create_albaran( {  "serie"           =>  "A",;
+   ::createAlbaran( {  "serie"           =>  "A",;
                         "numero"          =>   4 ,;
                         "tercero_codigo"  =>  "0" } )
 
-   ::create_albaran( {  "serie"           =>  "A",;
+   ::createAlbaran( {  "serie"           =>  "A",;
                         "numero"          =>   5 ,;
                         "tercero_codigo"  =>  "1" } )
 
-   ::create_albaran( {  "serie"           =>  "B",;
+   ::createAlbaran( {  "serie"           =>  "B",;
                         "numero"          =>   6 ,;
                         "tercero_codigo"  =>  "1" } )
 
@@ -619,19 +617,19 @@ RETURN ( nil )
 
 METHOD test_create_solo_hasta() CLASS TestConversorToFacturaVentasController
 
-   ::create_albaran( {  "serie"           =>  "A",;
+   ::createAlbaran( {  "serie"           =>  "A",;
                         "numero"          =>   3 ,;
                         "tercero_codigo"  =>  "0" } )
 
-   ::create_albaran( {  "serie"           =>  "A",;
+   ::createAlbaran( {  "serie"           =>  "A",;
                         "numero"          =>   4 ,;
                         "tercero_codigo"  =>  "0" } )
 
-   ::create_albaran( {  "serie"           =>  "A",;
+   ::createAlbaran( {  "serie"           =>  "A",;
                         "numero"          =>   5 ,;
                         "tercero_codigo"  =>  "1" } )
 
-   ::create_albaran( {  "serie"           =>  "B",;
+   ::createAlbaran( {  "serie"           =>  "B",;
                         "numero"          =>   6 ,;
                         "tercero_codigo"  =>  "1" } )
 
@@ -663,19 +661,19 @@ RETURN ( nil )
 
 METHOD test_create_desde_hasta() CLASS TestConversorToFacturaVentasController
 
-   ::create_albaran( {  "serie"           =>  "A",;
+   ::createAlbaran( {  "serie"           =>  "A",;
                         "numero"          =>   1 ,;
                         "tercero_codigo"  =>  "0" } )
 
-   ::create_albaran( {  "serie"           =>  "A",;
+   ::createAlbaran( {  "serie"           =>  "A",;
                         "numero"          =>   2 ,;
                         "tercero_codigo"  =>  "0" } )
 
-   ::create_albaran( {  "serie"           =>  "B",;
+   ::createAlbaran( {  "serie"           =>  "B",;
                         "numero"          =>   1 ,;
                         "tercero_codigo"  =>  "0" } )
 
-   ::create_albaran( {  "serie"           =>  "C",;
+   ::createAlbaran( {  "serie"           =>  "C",;
                         "numero"          =>   1 ,;
                         "tercero_codigo"  =>  "0" } )
 
@@ -718,11 +716,11 @@ RETURN ( nil )
 
 METHOD test_create_select_one() CLASS TestConversorToFacturaVentasController
 
-   ::create_albaran( {  "serie"           =>  "A",;
+   ::createAlbaran( {  "serie"           =>  "A",;
                         "numero"          =>   1 ,;
                         "tercero_codigo"  =>  "0" } )
 
-   ::create_albaran( {  "serie"           =>  "A",;
+   ::createAlbaran( {  "serie"           =>  "A",;
                         "numero"          =>   2 ,;
                         "tercero_codigo"  =>  "0" } )
 
@@ -786,11 +784,11 @@ RETURN ( nil )
 
 METHOD test_create_cancel() CLASS TestConversorToFacturaVentasController
 
-   ::create_albaran( {  "serie"           =>  "A",;
+   ::createAlbaran( {  "serie"           =>  "A",;
                         "numero"          =>   1 ,;
                         "tercero_codigo"  =>  "0" } )
 
-   ::create_albaran( {  "serie"           =>  "A",;
+   ::createAlbaran( {  "serie"           =>  "A",;
                         "numero"          =>   2 ,;
                         "tercero_codigo"  =>  "0" } )
 
@@ -821,11 +819,11 @@ RETURN ( nil )
 
  METHOD test_create_no_select() CLASS TestConversorToFacturaVentasController
 
- ::create_albaran( {  "serie"           =>  "A",;
+ ::createAlbaran( {  "serie"           =>  "A",;
                         "numero"          =>   1 ,;
                         "tercero_codigo"  =>  "0" } )
 
-   ::create_albaran( {  "serie"           =>  "A",;
+   ::createAlbaran( {  "serie"           =>  "A",;
                         "numero"          =>   2 ,;
                         "tercero_codigo"  =>  "0" } )
 
@@ -838,8 +836,14 @@ RETURN ( nil )
 
             testWaitSeconds( 1 )
 
-            self:getControl( 100, ::oFolder:aDialogs[ 2 ] ):select(0) 
+            self:getControl( 100, ::oFolder:aDialogs[ 2 ] ):select( 0 ) 
+
+            testWaitSeconds( 1 )
             
+            self:getControl( IDOK ):Click()
+            
+            testWaitSeconds( 1 )
+
             self:getControl( IDCANCEL ):Click()
             
             RETURN ( nil )
@@ -858,27 +862,25 @@ RETURN ( nil )
 
 METHOD test_create_filtros_varios() CLASS TestConversorToFacturaVentasController
 
- ::create_albaran( {  "serie"             =>  "A",;
-                        "numero"          =>   1 ,;
-                        "tercero_codigo"  =>  "0" } )
+   ::createAlbaran( {  "serie" =>  "A", "numero" => 1, "tercero_codigo" => "0" } )
 
-   ::create_albaran( {  "serie"           =>  "A",;
+   ::createAlbaran( {  "serie"           =>  "A",;
                         "numero"          =>   2 ,;
                         "tercero_codigo"  =>  "1" } )
 
-   ::create_albaran( {  "serie"           =>  "B",;
+   ::createAlbaran( {  "serie"           =>  "B",;
                         "numero"          =>   6 ,;
                         "tercero_codigo"  =>  "1" } )
 
-   ::create_albaran( {  "serie"           =>  "B",;
+   ::createAlbaran( {  "serie"           =>  "B",;
                         "numero"          =>   7 ,;
                         "tercero_codigo"  =>  "1" } )
 
-   ::create_albaran( {  "serie"           =>  "C",;
+   ::createAlbaran( {  "serie"           =>  "C",;
                         "numero"          =>   7 ,;
                         "tercero_codigo"  =>  "0" } )
 
-   ::create_albaran( {  "serie"           =>  "A",;
+   ::createAlbaran( {  "serie"           =>  "A",;
                         "numero"          =>   7 ,;
                         "tercero_codigo"  =>  "2" } )
 

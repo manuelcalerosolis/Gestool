@@ -570,6 +570,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getContadoresController()    INLINE ( if( empty( ::oContadoresController ), ::oContadoresController := ContadoresController():New( self ), ), ::oContadoresController )
 
+   METHOD insertIncidence()            INLINE ( ::getIncidenciasController():insertAutoIncidence( ::getUuid() ) )
+
    METHOD loadDocuments() 
 
    METHOD loadTemplatesHTML()

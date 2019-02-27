@@ -230,6 +230,10 @@ CLASS SQLBaseController
 
    METHOD prepareDialogView()          VIRTUAL
 
+   // Incidencias--------------------------------------------------------------
+
+   METHOD insertIncidence()            VIRTUAL
+
    // Directorio para documentos y etiquetas-----------------------------------
 
    METHOD setDirectory( cDirectory )   INLINE ( ::cDirectory := cDirectory )
@@ -337,6 +341,8 @@ METHOD Append()
          ::fireEvent( 'closedDialog' )  
 
          ::insertOrUpdateBuffer()    
+
+         ::insertIncidence()    
          
          ::commitTransactionalMode()
 
@@ -409,7 +415,9 @@ METHOD Insert()
 
          ::fireEvent( 'closedDialog' )    
 
-         ::getModel():updateBuffer()    
+         ::getModel():updateBuffer()
+
+         ::insertIncidence()    
          
          ::commitTransactionalMode()
 
@@ -491,6 +499,8 @@ METHOD Duplicate( nId )
       ::fireEvent( 'closedDialog' )    
 
       ::insertOrUpdateBuffer()
+
+      ::insertIncidence()    
 
       ::commitTransactionalMode()
       

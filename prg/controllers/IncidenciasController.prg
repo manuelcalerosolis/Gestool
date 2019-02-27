@@ -10,8 +10,9 @@ CLASS IncidenciasController FROM SQLNavigatorController
 
    METHOD gettingSelectSentence()
 
-   METHOD loadBlankBuffer()            INLINE ( ::getModel():loadBlankBuffer() )
-   METHOD insertBuffer()               INLINE ( ::getModel():insertBuffer() )
+   METHOD loadBlankBuffer()               INLINE ( ::getModel():loadBlankBuffer() )
+
+   METHOD insertBuffer()                  INLINE ( ::getModel():insertBuffer() )
 
    METHOD loadedCurrentBuffer( uuidEntidad ) 
    METHOD updateBuffer( uuidEntidad )
@@ -21,13 +22,15 @@ CLASS IncidenciasController FROM SQLNavigatorController
 
    METHOD deleteBuffer( aUuidEntidades )
 
+   METHOD insertAutoIncidence( uuid )     INLINE ( ::getModel():insertAutoIncidence( uuid ) )
+
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := IncidenciasBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()                 INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := IncidenciasBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := IncidenciasView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()                 INLINE ( if( empty( ::oDialogView ), ::oDialogView := IncidenciasView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := IncidenciasValidator():New( self  ), ), ::oValidator )
+   METHOD getValidator()                  INLINE ( if( empty( ::oValidator ), ::oValidator := IncidenciasValidator():New( self  ), ), ::oValidator )
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := IncidenciasRepository():New( self ), ), ::oRepository )
    
@@ -70,12 +73,15 @@ METHOD End() CLASS IncidenciasController
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
    end if
+   
    if !empty( ::oDialogView )
       ::oDialogView:End()
    end if
+   
    if !empty( ::oValidator )
       ::oValidator:End()
    end if
+
    if !empty( ::oRepository )
       ::oRepository:End()
    end if
@@ -403,13 +409,17 @@ RETURN ( ::hValidators )
 
 CLASS SQLIncidenciasModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "incidencias"
+   DATA cTableName                     INIT "incidencias"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( parent_uuid, fecha_hora, deleted_at )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( parent_uuid, fecha_hora, deleted_at )"
 
    METHOD getColumns()
 
    METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
+
+   METHOD insertAutoIncidence( uuid )  INLINE ( ::insertBlankBuffer( { "descripcion" => "Creación de documento", "parent_uuid" => uuid } ) )  
+   
+   METHOD updateAutoIncidence( uuid )  INLINE ( ::insertBlankBuffer( { "descripcion" => "Actualizadcion de documento", "parent_uuid" => uuid } ) )  
 
 END CLASS
 
