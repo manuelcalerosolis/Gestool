@@ -85,7 +85,7 @@ METHOD addExtraButtons() CLASS AlbaranesVentasController
 
    ::super:addExtraButtons()
    
-   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturas", "gc_document_text_user_16", {|| ::runGenerateFacturaVentas() } )  
+   ::oNavigatorView:getMenuTreeView():addButton( "Generar facturas", "gc_document_gear_16", {|| ::runGenerateFacturaVentas() } )  
 
 RETURN ( nil )
 
