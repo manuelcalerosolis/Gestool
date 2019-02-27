@@ -107,7 +107,7 @@ METHOD Activate() CLASS ConversorResumenView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_tags_48" ;
+      RESOURCE    "gc_document_gear_48" ;
       TRANSPARENT ;
       OF          ::oDialog
 

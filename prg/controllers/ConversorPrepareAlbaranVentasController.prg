@@ -241,7 +241,7 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_funnel_red_48" ;
+      RESOURCE    "gc_document_gear_48" ;
       TRANSPARENT ;
       OF          ::oDialog
 
@@ -392,7 +392,7 @@ CLASS TestConversorToFacturaVentasController FROM TestCase
 
    //METHOD test_create_sin_filtros()
 
-   METHOD test_create_tecero_desde()
+   METHOD test_create_serie_desde()
 
 END CLASS
 
@@ -522,13 +522,23 @@ RETURN ( nil )
                         "numero" =>   6  } )
 
    ::oController:getConversorView():setEvent( 'painted',;
-         {| self | ;
-            testWaitSeconds( 5 ),;
-            self:getControl( IDOK ):Click(),;
-            testWaitSeconds( 5 ),;
-            self:getControl( IDOK ):Click(),;
-            testWaitSeconds( 5 ),;
-            self:getControl( IDOK ):Click() } )
+         <| self | 
+
+         testWaitSeconds( 1 )
+
+         self:getControl( IDOK ):Click()
+
+         testWaitSeconds( 1 )
+            
+         self:getControl( IDOK ):Click()
+            
+         testWaitSeconds( 1 )
+         
+         self:getControl( IDOK ):Click()
+
+         RETURN ( nil ) 
+
+         > )
    
    ::oController:Run()
 
@@ -541,30 +551,55 @@ RETURN ( nil )*/
 
 //---------------------------------------------------------------------------//
 
-METHOD test_create_tecero_desde() CLASS TestConversorToFacturaVentasController
+METHOD test_create_serie_desde() CLASS TestConversorToFacturaVentasController
 
-   ::create_albaran( {  "serie"           => "A",;
-                        "numero"          =>  3 ,;
-                        "tercero_codigo"  => "0" } )
+   ::create_albaran( {  "serie"           =>  "A",;
+                        "numero"          =>   3 ,;
+                        "tercero_codigo"  =>  "0" } )
 
    ::create_albaran( {  "serie"           =>  "A",;
                         "numero"          =>   4 ,;
-                        "tercero_codigo"  => "0" } )
+                        "tercero_codigo"  =>  "0" } )
 
    ::create_albaran( {  "serie"           =>  "A",;
                         "numero"          =>   5 ,;
-                        "tercero_codigo"  => "1" } )
+                        "tercero_codigo"  =>  "1" } )
 
    ::create_albaran( {  "serie"           =>  "A",;
                         "numero"          =>   6 ,;
-                        "tercero_codigo"  => "1" } )
+                        "tercero_codigo"  =>  "1" } )
 
    ::oController:getConversorView():setEvent( 'painted',;
-         {| self | ;
-            testWaitSeconds( 5 )} )
-            //eval( ::oBrwRange:oColDesde:bOnPostEdit, nil, "A" ) } )
+         <| self | 
+
+            testWaitSeconds( 5 )
+
+            eval( ::oBrwRange:oColDesde:bOnPostEdit, nil, "A" )
+
+            testWaitSeconds( 5 )
+
+            eval( ::oBrwRange:oColHasta:bOnPostEdit, nil, "B" )
+
+            self:getControl( IDOK ):Click()
+
+            testWaitSeconds( 1 )
+            
+            self:getControl( IDOK ):Click()
+            
+            testWaitSeconds( 1 )
+         
+            self:getControl( IDOK ):Click()
+
+            RETURN ( nil )
+
+            > )
    
    ::oController:Run()
+
+   ::Assert():equals( 4, ::oController:oOrigenController:getRowset():recCount(), "Aparecen 4 albaranes despues de filtrar" )
+
+   ::Assert():equals( 2, ::oController:oDestinoController:getRowset():recCount(), "Genera dos facturas con distintos terceros" )
+
 
 RETURN ( nil )
 
