@@ -25,6 +25,8 @@ CLASS BrowseRange
 
    METHOD Clicked( nRow, nCol ) 
 
+   METHOD postEditDesde( oGet ) 
+
    METHOD postEditHasta( oGet ) 
 
    METHOD resizeColumns()
@@ -93,7 +95,7 @@ METHOD Resource() CLASS BrowseRange
       :bEditValue    := {|| ::oBrwRango:aRow:getRange():uFrom }
       :bEditBlock    := {|| ::oBrwRango:aRow:ActivateSelectorView() }
       :bEditValid    := {| oGet | ::oBrwRango:aRow:getRange():validCode( oGet ) }
-      :bOnPostEdit   := {| oCol, uNewValue | ::oBrwRango:aRow:getRange():setFrom( uNewValue ) }
+      :bOnPostEdit   := {| oCol, uNewValue | ::postEditDesde( uNewValue ) }
       :cEditPicture  := "@!"
       :nWidth        := 120
       :Cargo         := 0.10
@@ -163,15 +165,24 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD postEditDesde( uNewValue )
+
+   ::oBrwRango:aRow:getRange():setFrom( uNewValue ) 
+
+   if empty( uNewValue )
+      ::oBrwRango:aRow:getRange():setTo( uNewValue )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD postEditHasta( uNewValue ) CLASS BrowseRange
 
    if empty( ::oBrwRango:aRow:getRange():getFrom() )
       ::oController:getConversorView():showMessage( "Debe seleccionar un valor 'Desde'" )
       RETURN ( nil )
    end if
-
-   //msgalert( uNewValue, "nNewValue" )
-   //msgalert( ::oBrwRango:aRow:getRange():validCode( uNewValue ), "validacion" )
 
    if ::oBrwRango:aRow:getRange():validCode( uNewValue )
       ::oBrwRango:aRow:getRange():setTo( uNewValue )
@@ -191,6 +202,8 @@ CLASS ItemRange
 
    DATA cKey                           INIT 'codigo'
 
+   DATA cCode                          INIT 'codigo'
+
    DATA uFrom
    DATA uTo
 
@@ -204,16 +217,16 @@ CLASS ItemRange
          
    METHOD ValidCode( uVal )
 
-   METHOD extractCode( uValue )        INLINE ( if( hb_ishash( uValue ), hget( uValue, "codigo" ), uValue ) )
+   METHOD extractValue( uValue )        
 
    METHOD showNombre( cCode )          
 
    METHOD getFrom()                    INLINE ( if( empty( ::uFrom ), "", alltrim( ::uFrom ) ) )
-   METHOD setFrom( uFrom )             INLINE ( ::uFrom := ::extractCode( uFrom ) )
+   METHOD setFrom( uFrom )             INLINE ( ::uFrom := ::extractValue( uFrom ) )
    METHOD showFromNombre()             INLINE ( ::showNombre( ::uFrom ) )
       
    METHOD getTo()                      INLINE ( if( empty( ::uTo ), "", alltrim( ::uTo ) ) )
-   METHOD setTo( uTo )                 INLINE ( ::uTo := ::extractCode( uTo ) )
+   METHOD setTo( uTo )                 INLINE ( ::uTo := ::extractValue( uTo ) )
    METHOD showToNombre()               INLINE ( ::showNombre( ::uTo ) )
 
    METHOD getAlias()                   INLINE ( if( empty( ::cAlias ), ::oController:getModel():getAlias(), ::cAlias ) )
@@ -239,11 +252,23 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD extractValue( uValue ) CLASS ItemRange
+   
+   if hb_isobject( uValue )
+      RETURN ( uValue:varGet() )
+   end if 
+
+   if hb_ishash( uValue )
+      RETURN ( hget( uValue, ::cCode ) )
+   end if 
+
+RETURN ( uValue )
+
+//---------------------------------------------------------------------------//
+
 METHOD ValidCode( uValue ) CLASS ItemRange
 
-   if hb_isobject( uValue )
-      uValue   := uValue:varGet()
-   end if 
+   uValue   := ::extractValue( uValue )
 
    if empty( uValue ) 
       RETURN ( .t. )
