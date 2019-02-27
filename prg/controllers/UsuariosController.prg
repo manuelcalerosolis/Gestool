@@ -41,8 +41,6 @@ CLASS UsuariosController FROM SQLNavigatorGestoolController
 
    DATA cValidError                    INIT "" 
 
-   DATA oAuth  
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -60,6 +58,8 @@ CLASS UsuariosController FROM SQLNavigatorGestoolController
    METHOD changeComboEmpresa()
 
    METHOD checkSuperUser()
+
+   METHOD Editing()
 
    //Construcciones tardias----------------------------------------------------
 
@@ -90,14 +90,12 @@ METHOD New( oController ) CLASS UsuariosController
 
    ::lTransactional                    := .t.
 
-   ::lConfig                           := .t.
-
    ::hImage                            := {  "16" => "gc_businesspeople_16",;
                                              "48" => "gc_businesspeople_48" }
 
-   ::oAuth                             := AuthManager():New( self )
+   ::getNavigatorView():getMenuTreeView():setEvents( { 'addingAppendButton', 'addingDuplicateButton', 'addingEditButton', 'addingDeleteButton' }, {|| Auth():isSuperAdminRole() } )
 
-   ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
+   ::setEvents( { 'editing', 'deleting' }, {|| ::Editing() } )
 
 RETURN ( Self )
 
@@ -138,6 +136,21 @@ METHOD End() CLASS UsuariosController
    end if 
 
 RETURN ( ::Super:End() )
+
+//---------------------------------------------------------------------------//
+
+METHOD Editing() CLASS UsuariosController
+
+   if !( Auth():isSuperAdminRole() )
+      RETURN ( .f. )
+   end if 
+
+   if ::isRowSetSystemRegister()
+      msgStop( "Este registro pertenece al sistema, no se puede alterar." )
+      RETURN ( .f. )
+   end if 
+
+RETURN ( .t. )         
 
 //---------------------------------------------------------------------------//
 
@@ -548,6 +561,8 @@ METHOD Activated() CLASS UsuariosView
    if !empty( ::cGetEmailPassword )
       ::setModelBuffer( "email_password", ::getModel():Crypt( ::cGetEmailPassword ) )
    end if
+
+   Auth():guardIfUsed( ::getModel():hBuffer )
 
 RETURN ( nil )
 

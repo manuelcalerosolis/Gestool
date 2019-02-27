@@ -11,29 +11,34 @@ static oAuth
 
 CLASS AuthManager
 
-   DATA id                       INIT 0
-   DATA uuid                     INIT ""
-   DATA nombre                   INIT ""
-   DATA codigo                   INIT ""
-   DATA password                 INIT ""
-   DATA rolUuid                  INIT ""
-   DATA email                    INIT ""
-   DATA emailPassword            INIT ""
-   DATA emailServidor            INIT ""
-   DATA emailPuerto              INIT ""
-   DATA autenticacionSMTP        INIT ""
-   DATA requiereSSL              INIT ""
-   DATA enviarEmailCopia         INIT ""
-   DATA enviarCopiaOculta        INIT ""
+   DATA id                             INIT 0
+   DATA uuid                           INIT ""
+   DATA nombre                         INIT ""
+   DATA codigo                         INIT ""
+   DATA password                       INIT ""
+   DATA rolUuid                        INIT ""
+   DATA email                          INIT ""
+   DATA emailPassword                  INIT ""
+   DATA emailServidor                  INIT ""
+   DATA emailPuerto                    INIT ""
+   DATA autenticacionSMTP              INIT ""
+   DATA requiereSSL                    INIT ""
+   DATA enviarEmailCopia               INIT ""
+   DATA enviarCopiaOculta              INIT ""
 
    METHOD New()
 
-   METHOD Set( hUser )           INLINE ( ::guard( hUser ) )
+   METHOD Set( hUser )                 INLINE ( ::guard( hUser ) )
+
    METHOD Guard( hUser )
+
+   METHOD guardIfUsed( hUser )
 
    METHOD Level( nOption )
 
-   METHOD isSuperAdmin()
+   METHOD isSuperAdminRole()
+
+   METHOD isSuperAdmin()               INLINE ( alltrim( ::nombre ) == __admin_name__ )
 
    METHOD guardWhereUuid( uuid )
    
@@ -121,6 +126,16 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD guardIfUsed( hUser )
+
+   if ::id == hget( hUser, "id" )
+      ::Guard( hUser )
+   end if 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
 METHOD Level( cOption )
 
    local nLevel   
@@ -142,7 +157,7 @@ RETURN ( __permission_full__ )
 
 //---------------------------------------------------------------------------//
 
-METHOD isSuperAdmin()
+METHOD isSuperAdminRole()
 
    if empty( ::rolUuid ) 
       RETURN ( .f. ) 

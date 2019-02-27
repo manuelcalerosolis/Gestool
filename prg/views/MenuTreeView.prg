@@ -487,8 +487,6 @@ METHOD addShowDeleteButton()
       RETURN ( nil )
    end if
    
-   // Solo si es administrador
-
    ::oButtonShowDelete  := ::AddButton( "Mostrar eliminados", "gc_deleted_16", {|| ::getSuperController():setShowDeleted() }, "E", ACC_DELE ) 
 
    ::fireEvent( 'addedShowDeleteButton' )

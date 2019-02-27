@@ -39,7 +39,7 @@ METHOD New( idBrowse, oContainer, oController ) CLASS BrowseRange
    
    ::oContainer                        := oContainer
 
-   ::oController                        := oController
+   ::oController                       := oController
    
 RETURN ( Self )
 
@@ -169,6 +169,9 @@ METHOD postEditHasta( uNewValue ) CLASS BrowseRange
       ::oController:getConversorView():showMessage( "Debe seleccionar un valor 'Desde'" )
       RETURN ( nil )
    end if
+
+   msgalert( uNewValue, "nNewValue" )
+   msgalert( ::oBrwRango:aRow:getRange():validCode( uNewValue ), "validacion" )
 
    if ::oBrwRango:aRow:getRange():validCode( uNewValue )
       ::oBrwRango:aRow:getRange():setTo( uNewValue )

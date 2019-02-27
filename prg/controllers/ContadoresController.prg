@@ -50,7 +50,7 @@ METHOD New( oController) CLASS ContadoresController
                                                       'addingShowDeleteButton',;
                                                       'addingDeleteButton' }, {|| .f. } )
 
-   ::getSelectorView():getMenuTreeView():setEvent( 'addingEditButton', {|| Auth():isSuperAdmin() } )
+   ::getSelectorView():getMenuTreeView():setEvent( 'addingEditButton', {|| Auth():isSuperAdminRole() } )
 
    ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
@@ -161,13 +161,13 @@ METHOD Activate() CLASS ContadoresView
       ID          100 ;
       VALID       ( ::oController:validate( "serie" ) ) ;
       PICTURE     "@!" ;
-      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "contador" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "contador" ) ) ;
-      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
    // Botones------------------------------------------------------------------
@@ -196,7 +196,7 @@ CLASS ContadoresItemRange FROM ItemRange
    
    METHOD showNombre( cCode )          INLINE ( '' )
       
-   METHOD extractCode( uValue )        INLINE ( if( hb_ishash( uValue ), hget( uValue, "serie" ), uValue ) )
+   METHOD extractCode( uValue )        INLINE ( if( hb_ishash( uValue ), hget( uValue, ::cKey ), uValue ) )
          
    METHOD ValidCode( uValue ) 
 
@@ -207,10 +207,10 @@ END CLASS
 METHOD ValidCode( uValue ) CLASS ContadoresItemRange
 
    if hb_isobject( uValue )
-      RETURN ( ::oController:getModel():isWhereSerie( uValue:varGet(), ::oController:cScope ) )
+      RETURN ( ::oController:getModel():isWhereSerie( uValue:varGet(), ::oController:getTableName() ) )
    end if 
 
-RETURN ( ::oController:getModel():isWhereSerie( uValue, ::oController:cScope ) )
+RETURN ( ::oController:getModel():isWhereSerie( ::extractCode( uValue ), ::oController:getTableName() ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
