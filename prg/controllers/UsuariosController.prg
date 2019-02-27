@@ -39,12 +39,15 @@ CLASS UsuariosController FROM SQLNavigatorGestoolController
    DATA cUuidDelegacionExclusiva
    DATA cNombreDelegacionExclusiva
 
-   DATA cValidError                          INIT "" 
+   DATA cValidError                    INIT "" 
 
    DATA oAuth  
 
    METHOD New() CONSTRUCTOR
+
    METHOD End()
+   
+   METHOD getName()                    INLINE ( "usuarios" )
 
    METHOD editConfig()
 
@@ -58,11 +61,12 @@ CLASS UsuariosController FROM SQLNavigatorGestoolController
 
    METHOD checkSuperUser()
 
+   //Construcciones tardias----------------------------------------------------
+
    METHOD getRolesController()         INLINE ( iif( empty( ::oRolesController), ::oRolesController := RolesController():New( self ), ), ::oRolesController )
 
-   METHOD getCamposExtraValoresController()  INLINE ( iif( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresGestoolController():New( self ), ), ::oCamposExtraValoresController )
-
-   //Construcciones tardias----------------------------------------------------
+   METHOD getCamposExtraValoresController() ;
+                                       INLINE ( iif( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresGestoolController():New( self ), ), ::oCamposExtraValoresController )
    
    METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := UsuariosView():New( self ), ), ::oDialogView )
    
@@ -73,8 +77,6 @@ CLASS UsuariosController FROM SQLNavigatorGestoolController
    METHOD getRepository()              INLINE ( iif( empty( ::oRepository ), ::oRepository := UsuariosRepository():New( self ), ), ::oRepository )
 
    METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLUsuariosModel():New( self ), ), ::oModel )
-
-   METHOD getName()                    INLINE ( "usuarios" )
 
 END CLASS
 
@@ -94,10 +96,6 @@ METHOD New( oController ) CLASS UsuariosController
                                              "48" => "gc_businesspeople_48" }
 
    ::oAuth                             := AuthManager():New( self )
-
-   ::setEvent( 'openingDialog',  {|| ::getDialogView():openingDialog() } )
-
-   ::setEvent( 'closedDialog',   {|| ::getDialogView():closedDialog() } )  
 
    ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
@@ -194,6 +192,7 @@ METHOD checkSuperUser() CLASS UsuariosController
    local hUsuario
 
    hUsuario       := ::getModel():getWhere( "super_user", "=", 1 )
+
    if !hb_ishash( hUsuario )
       msgStop( "No se ha definido super usuario" )
       RETURN ( .f. )
@@ -221,7 +220,7 @@ CLASS SQLUsuariosModel FROM SQLBaseModel
 
    METHOD getColumns()
 
-   METHOD insertIgnoreSuperUser()
+   METHOD insertIgnoreSuperAdmin()
 
    METHOD Crypt( cPassword )              INLINE ( hb_crypt( alltrim( cPassword ), __encryption_key__ ) )
    METHOD Decrypt( cPassword )            INLINE ( hb_decrypt( alltrim( cPassword ), __encryption_key__ ) )
@@ -303,13 +302,13 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertIgnoreSuperUser() CLASS SQLUsuariosModel
-
+METHOD insertIgnoreSuperAdmin() CLASS SQLUsuariosModel
+                                 
    ::insertIgnoreBlankBuffer( {  "codigo"       => '999',;
                                  "nombre"       => __admin_name__,;
                                  "password"     => ::Crypt( __admin_password__ ),;
                                  "super_user"   => '1',;
-                                 "rol_uuid"     => RolesRepository():getUuidWhereNombre( __admin_name__ ),;
+                                 "rol_uuid"     => SQLRolesModel():getFieldWhere( "uuid", { "nombre" => __admin_name__ } ),;
                                  "sistema"      => '1' } )
 
 RETURN ( nil )
@@ -511,38 +510,46 @@ CLASS UsuariosView FROM SQLBaseView
    DATA cComboRol   
    DATA aComboRoles           
 
-   DATA lSuperUser           
-
-   METHOD openingDialog()
-
-   METHOD closedDialog()
+   METHOD Activating()
 
    METHOD Activate()
-   
-   METHOD saveView( oDialog )
 
+   METHOD Activated()
+   
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD openingDialog() CLASS UsuariosView
+METHOD Activating() CLASS UsuariosView
 
    ::cGetPassword          := space( 100 )
 
    ::cGetRepeatPassword    := space( 100 )
 
-   ::cComboRol             := ::oController:getRolesController():getRepository():getNombre( ::getModel():hBuffer( "rol_uuid" ) )
-   ::aComboRoles           := ::oController:getRolesController():getRepository():getNombres()
+   ::cGetEmailPassword     := space( 100 )
 
-RETURN ( self )
+   ::cComboRol             := ::oController:getRolesController():getModel():getFieldWhere( "nombre", { "uuid" => ::getModelBuffer( "rol_uuid" ) }, , "" )
+   ::cComboRol             := alltrim( ::cComboRol )
+   
+   ::aComboRoles           := ::oController:getRolesController():getModel():getColumn( "nombre" ) 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD closedDialog() CLASS UsuariosView
+METHOD Activated() CLASS UsuariosView
 
-   ::getModel():setBuffer( "rol_uuid", ::oController:getRolesController():oRepository:getUuid( ::cComboRol ) )
+   ::setModelBuffer( "rol_uuid", ::oController:getRolesController():getModel():getFieldWhere( "uuid", { "nombre" => alltrim( ::cComboRol ) } ) )
 
-RETURN ( self )
+   if !empty( ::cGetPassword )
+      ::setModelBuffer( "password", ::getModel():Crypt( ::cGetPassword ) )
+   end if 
+
+   if !empty( ::cGetEmailPassword )
+      ::setModelBuffer( "email_password", ::getModel():Crypt( ::cGetEmailPassword ) )
+   end if
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -657,7 +664,7 @@ METHOD Activate() CLASS UsuariosView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }      
+   ::oSayCamposExtra:onClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }      
 
    ApoloBtnFlat():Redefine( IDOK, {|| ::closeActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
@@ -666,26 +673,6 @@ METHOD Activate() CLASS UsuariosView
    ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::closeActivate(), ) }
 
    ::oDialog:Activate( , , , .t. )
-
-   if ::oDialog:nResult == IDOK
-      ::saveView()
-   end if 
-
-RETURN ( ::oDialog:nResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD saveView()
-
-   if !empty( ::cGetPassword )
-      ::getModel():setBuffer( "password", ::getModel():Crypt( ::cGetPassword ) )
-   end if 
-
-   if !empty( ::cGetEmailPassword )
-      ::getModel():setBuffer( "email_password", ::getModel():Crypt( ::cGetEmailPassword ) )
-   end if
-
-   ::oController:oAuth():Guard( ::getModel():hBuffer )
 
 RETURN ( ::oDialog:nResult )
 
@@ -728,7 +715,7 @@ METHOD Password( uValue )
 
    uValue         := alltrim( uValue )
 
-   if ::oController:isAppendMode() .or. empty( ::oController:getModel():hBuffer[ "password" ] )
+   if ::oController:isAppendMode()
       RETURN ( ::Super:Password( uValue ) )
    end if 
 

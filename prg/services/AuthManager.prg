@@ -1,6 +1,10 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
+#define __admin_name__  "Super administrador"
+
+//----------------------------------------------------------------------------//
+
 static oAuth
 
 //----------------------------------------------------------------------------//
@@ -26,7 +30,10 @@ CLASS AuthManager
 
    METHOD Set( hUser )           INLINE ( ::guard( hUser ) )
    METHOD Guard( hUser )
+
    METHOD Level( nOption )
+
+   METHOD isSuperAdmin()
 
    METHOD guardWhereUuid( uuid )
    
@@ -132,6 +139,16 @@ METHOD Level( cOption )
    end if 
 
 RETURN ( __permission_full__ ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD isSuperAdmin()
+
+   if empty( ::rolUuid ) 
+      RETURN ( .f. ) 
+   end if 
+
+RETURN ( alltrim( SQLRolesModel():getFieldWhere( "nombre", { "uuid" => ::rolUuid } ) ) == __admin_name__ )
 
 //---------------------------------------------------------------------------//
 

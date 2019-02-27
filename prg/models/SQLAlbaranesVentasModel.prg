@@ -9,14 +9,14 @@ CLASS SQLAlbaranesVentasModel FROM SQLOperacionesComercialesModel
 
    DATA cTableName                     INIT "albaranes_ventas"
 
-   METHOD getSelectSentence( cOrderBy, cOrientation ) 
+   METHOD getSelectSentence( cOrderBy, cOrientation )
 
 #ifdef __TEST__
 
    METHOD create_albaran_ventas( hDatos )
 
    METHOD test_get_uuid_albaran_ventas( cSerie, nNumero )
-   
+
 #endif
 
 END CLASS
@@ -27,9 +27,9 @@ METHOD getSelectSentence( cOrderBy, cOrientation ) CLASS SQLAlbaranesVentasModel
 
    local cSql
 
-   cSql        := ::Super:getSelectSentence( cOrderBy, cOrientation ) 
+   cSql        := ::Super:getSelectSentence( cOrderBy, cOrientation )
 
-RETURN ( cSql )  
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
@@ -46,7 +46,7 @@ METHOD create_albaran_ventas( hDatos ) CLASS SQLAlbaranesVentasModel
                                              "tarifa_codigo"            => "0" ,;
                                              "serie"                    => "A" ,;
                                              "numero"                   =>  3  } )
- 
+
    if hb_ishash( hDatos )
       heval( hDatos, {|k,v| hset( hBuffer, k, v) } )
    end if

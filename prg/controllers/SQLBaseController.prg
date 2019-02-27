@@ -372,6 +372,8 @@ METHOD Append()
 
    ::fireEvent( 'exitAppended' ) 
 
+   ::fireEvent( 'endDialog' )  
+
 RETURN ( lAppend )
 
 //----------------------------------------------------------------------------//
@@ -441,6 +443,8 @@ METHOD Insert()
 
    ::fireEvent( 'exitInserted' ) 
 
+   ::fireEvent( 'endDialog' )  
+
 RETURN ( lInsert )
 
 //----------------------------------------------------------------------------//
@@ -509,6 +513,8 @@ METHOD Duplicate( nId )
    end if
 
    ::fireEvent( 'exitDuplicated' ) 
+
+   ::fireEvent( 'endDialog' )  
 
 RETURN ( lDuplicate )
 
@@ -584,6 +590,8 @@ METHOD Edit( nId )
 
    ::fireEvent( 'exitEdited' ) 
 
+   ::fireEvent( 'endDialog' )  
+
    ::postEdit()
 
 RETURN ( lEdit )
@@ -651,6 +659,8 @@ METHOD Zoom( nId )
    ::fireEvent( 'zoomed' ) 
 
    ::fireEvent( 'exitZoomed' ) 
+
+   ::fireEvent( 'endDialog' )  
 
 RETURN ( .t. )
 

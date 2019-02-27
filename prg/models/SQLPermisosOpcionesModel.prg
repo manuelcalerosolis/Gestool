@@ -29,7 +29,7 @@ METHOD getColumns() CLASS SQLPermisosOpcionesModel
    hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "nivel",          {  "create"    => "TINYINT UNSIGNED"                        ,;
+   hset( ::hColumns, "nivel",          {  "create"    => "INTEGER ( 3 )"                           ,;
                                           "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
@@ -44,23 +44,11 @@ CLASS PermisosOpcionesRepository FROM SQLBaseRepository
 
    METHOD getTableName()      INLINE ( SQLPermisosOpcionesModel():getTableName() ) 
 
-   METHOD getNivel( cPermisoUuid, cNombre )
-
    METHOD getNivelUsuario( cUuidUser, cNombreOpcion )
 
    METHOD getNivelRol( cUuidRol, cOpcion )
 
 END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD getNivel( cPermisoUuid, cNombre ) CLASS PermisosOpcionesRepository
-
-   local cSQL  := "SELECT nivel FROM " + ::getTableName()               + " " + ;
-                     "WHERE permiso_uuid = " + quoted( cPermisoUuid )   + " " + ;
-                        "AND nombre = " + quoted( cNombre )
-
-RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
