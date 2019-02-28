@@ -144,7 +144,7 @@ METHOD New( oController ) CLASS OperacionesComercialesController
 
    ::Super:New( oController )
 
-   ::lTransactional                    := .t.
+   ::lTransactional                    := .f.
 
    ::lInsertable                       := .t.
 

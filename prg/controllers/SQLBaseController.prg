@@ -415,7 +415,7 @@ METHOD Insert()
 
          ::fireEvent( 'closedDialog' )    
 
-         ::getModel():updateBuffer()
+         ::getModel():updateInsertedBuffer()
 
          ::insertIncidence()    
          
@@ -438,6 +438,8 @@ METHOD Insert()
          lInsert     := .f.
 
          ::fireEvent( 'cancelInserted' ) 
+
+         ::getModel():deleteInsertedBuffer()
 
          ::rollbackTransactionalMode()
 

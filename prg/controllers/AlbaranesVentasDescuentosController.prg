@@ -47,6 +47,10 @@ RETURN ( ::Super:End() )
 
 CLASS SQLAlbaranesVentasDescuentosModel FROM SQLOperacionesComercialesDescuentosModel
 
+   DATA cConstraints                   INIT  "PRIMARY KEY ( nombre, deleted_at, parent_uuid ), "   + ;
+                                                "FOREIGN KEY ( parent_uuid ) "                     + ;
+                                                "REFERENCES " + SQLAlbaranesVentasModel():getTable() + " ( uuid ) ON DELETE CASCADE"
+
    DATA cTableName                     INIT "albaranes_ventas_descuentos"
 
    DATA cOrderBy                       INIT "albaranes_ventas_descuentos.id"

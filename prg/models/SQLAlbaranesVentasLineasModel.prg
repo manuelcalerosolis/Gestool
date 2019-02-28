@@ -6,6 +6,14 @@
 
 CLASS SQLAlbaranesVentasLineasModel FROM SQLOperacionesComercialesLineasModel
 
+   DATA cConstraints          INIT  "PRIMARY KEY ( id ), "                       + ; 
+                                       "KEY ( uuid ), "                          + ;
+                                       "KEY ( parent_uuid ), "                   + ;
+                                       "KEY ( deleted_at ), "                    + ;
+                                       "KEY ( articulo_codigo ), "               + ;              
+                                       "FOREIGN KEY ( parent_uuid ) "            + ;
+                                       "REFERENCES " + SQLAlbaranesVentasModel():getTable() + " ( uuid ) ON DELETE CASCADE"
+
    DATA cTableName            INIT  "albaranes_ventas_lineas"
 
    DATA cGroupBy              INIT  "albaranes_ventas_lineas.id" 

@@ -8,12 +8,6 @@ CLASS SQLOperacionesLineasModel FROM SQLCompanyModel
 
    DATA cTableTemporal        
 
-   DATA cConstraints                   INIT  "PRIMARY KEY ( id ), "                       + ; 
-                                                "KEY ( uuid ), "                          + ;
-                                                "KEY ( parent_uuid ), "                   + ;
-                                                "KEY ( deleted_at ), "                    + ;
-                                                "KEY ( articulo_codigo ) "              
-
    METHOD getColumns()                 VIRTUAL
 
    METHOD getColumnsSelect()           VIRTUAL

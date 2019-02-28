@@ -52,8 +52,6 @@ CLASS SQLDatabase
    METHOD Query( cSql )                
    METHOD Querys( aSql )  
 
-   METHOD TransactionalQuery( cSql )   INLINE ( ::Query( cSql ) )            
-
    METHOD Prepare( cSql )              INLINE ( if( !empty( ::oConexion ), ::oConexion:Prepare( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
    METHOD Parse( cSql )                INLINE ( if( !empty( ::oConexion ), ::oConexion:Parse( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
 
@@ -235,6 +233,8 @@ METHOD Exec( cSentence, lParse )
       ::oConexion:Exec( cSentence )
 
    catch e
+
+      logwrite( cSentence )
 
       ::showError( e )
 

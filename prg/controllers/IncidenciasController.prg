@@ -430,11 +430,11 @@ METHOD getColumns() CLASS SQLIncidenciasModel
    hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                                    "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR (40) NOT NULL UNIQUE"            ,;                                  
                                                    "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
-                                                   "default"   => {|| ::getControllerParentUuid() } } )
+   hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR ( 40 ) NOT NULL"                 ,;
+                                                   "default"   => {|| ::getControllerParentUuid() } }       )
 
    hset( ::hColumns, "descripcion",             {  "create"    => "TEXT"                                    ,;
                                                    "default"   => {||"" } }                                 )
@@ -442,14 +442,14 @@ METHOD getColumns() CLASS SQLIncidenciasModel
    hset( ::hColumns, "fecha_hora",              {  "create"    => "TIMESTAMP"                               ,;
                                                    "default"   => {|| hb_datetime() } }                     )
    
-   hset( ::hColumns, "mostrar",                {  "create"    => "TINYINT( 1 )"                             ,;
+   hset( ::hColumns, "mostrar",                 {  "create"    => "TINYINT ( 1 )"                           ,;
                                                    "default"   => {|| .f. } }                               )
 
-   hset( ::hColumns, "resuelta",                {  "create"    => "TINYINT( 1 )"                            ,;
+   hset( ::hColumns, "resuelta",                {  "create"    => "TINYINT ( 1 )"                           ,;
                                                    "default"   => {|| .f. } }                               )
 
    hset( ::hColumns, "fecha_hora_resolucion",   {  "create"    => "TIMESTAMP"                               ,;
-                                                   "default"   => {|| hb_StrToTS( "" ) } }                  )
+                                                   "default"   => {|| hb_strtots( "" ) } }                  )
 
    ::getDeletedStampColumn()
 

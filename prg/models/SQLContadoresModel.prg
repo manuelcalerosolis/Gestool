@@ -93,8 +93,6 @@ METHOD getLastSerie( cDocument ) CLASS SQLContadoresModel
 
    local cSerie
 
-   ::assertSerie( cDocument )
-
    cSerie      := ::getFieldWhere( 'serie',;
                                     {  'documento' => cDocument, 'usuario_codigo' => Auth():Codigo() },;
                                     {  'updated_at' => 'DESC' } )
@@ -111,21 +109,24 @@ RETURN ( cSerie )
 
 METHOD getLastCounter( cDocument, cSerial ) CLASS SQLContadoresModel
 
-   ::assertSerie( cDocument )
-
-RETURN ( ::getFieldWhere( 'contador', { 'documento' => cDocument, 'serie' => cSerial }, { 'updated_at' => 'DESC' }, 1 ) ) 
+RETURN ( ::getFieldWhere(  'contador',;
+                           { 'documento' => cDocument, 'serie' => cSerial },;
+                           { 'updated_at' => 'DESC' }, 1 ) ) 
 
 //---------------------------------------------------------------------------//
    
 METHOD incrementCounter( cDocument, cSerial ) CLASS SQLContadoresModel
 
-RETURN ( ::updateFieldsWhere( { 'contador' => 'contador + 1', 'updated_at' => 'NOW()' }, { 'documento' => cDocument, 'serie' => cSerial } ) )
+RETURN ( ::updateFieldsWhere( { 'contador' => 'contador + 1', 'updated_at' => 'NOW()' },;
+                              { 'documento' => cDocument, 'serie' => cSerial } ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getCounterAndIncrement( cDocument, cSerial ) CLASS SQLContadoresModel
 
    local nCounter    := ::getLastCounter( cDocument, cSerial )
+
+   msgalert( nCounter, "getCounterAndIncrement" )
 
    ::incrementCounter( cDocument, cSerial )
 

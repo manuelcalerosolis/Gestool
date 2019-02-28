@@ -210,48 +210,48 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
    end if 
    
    cSentence            := "INSERT INTO " + ::getTableName() + " ( "                               
-   cSentence            +=       "view_type, "                                               
-   cSentence            +=       "view_name, "     
-   cSentence            +=       "usuario_uuid, "     
+   cSentence            +=    "view_type, "                                               
+   cSentence            +=    "view_name, "     
+   cSentence            +=    "usuario_uuid, "     
 
    if !empty( cBrowseState )                                          
       cBrowseState      := getSQLDatabase():escapeStr( cBrowseState ) 
-      cSentence         +=       "browse_state, "                                            
+      cSentence         +=    "browse_state, "                                            
    end if 
 
    if !empty( cColumnOrder )
-      cSentence         +=       "column_order, "                                          
+      cSentence         +=    "column_order, "                                          
    end if 
    
    if !empty( cOrientation )
-      cSentence         +=       "column_orientation, "                                           
+      cSentence         +=    "column_orientation, "                                           
    end if 
    
    if !empty( idToFind )
-      cSentence         +=       "id_to_find, "                                               
+      cSentence         +=    "id_to_find, "                                               
    end if 
 
    cSentence            := chgAtEnd( cSentence, ' ) ', 2 )
 
    cSentence            += "VALUES ( "                                                    
-   cSentence            +=       quoted( cViewType ) + ", "                          
-   cSentence            +=       quoted( cViewName ) + ", "  
-   cSentence            +=       quoted( Auth():Uuid() ) + ", "
+   cSentence            +=    quoted( cViewType ) + ", "                          
+   cSentence            +=    quoted( cViewName ) + ", "  
+   cSentence            +=    quoted( Auth():Uuid() ) + ", "
 
    if !empty( cBrowseState )                                          
-      cSentence         +=       quoted( cBrowseState ) + ", "                               
+      cSentence         +=    quoted( cBrowseState ) + ", "                               
    end if 
 
    if !empty( cColumnOrder )
-      cSentence         +=       quoted( cColumnOrder ) + ", "                           
+      cSentence         +=    quoted( cColumnOrder ) + ", "                           
    end if 
 
    if !empty( cOrientation )
-      cSentence         +=       quoted( cOrientation ) + ", "                           
+      cSentence         +=    quoted( cOrientation ) + ", "                           
    end if 
 
    if !empty( idToFind )
-      cSentence         +=       alltrim( cvaltostr( idToFind ) ) + ", "
+      cSentence         +=    alltrim( cvaltostr( idToFind ) ) + ", "
    end if
 
    cSentence            := chgAtEnd( cSentence, ' ) ', 2 )
@@ -278,7 +278,7 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
 
    cSentence            := chgAtEnd( cSentence, '', 2 )
 
-   getSQLDatabase():TransactionalQuery( cSentence  )
+   getSQLDatabase():Query( cSentence  )
 
 RETURN ( nil )
 
@@ -292,7 +292,7 @@ METHOD delete( cViewType, cViewName ) CLASS SQLConfiguracionVistasModel
                                  "view_name = " + quoted( cViewName ) + " AND "                 + ;
                                  "usuario_uuid = " + quoted( Auth():Uuid() )
 
-   getSQLDatabase():TransactionalQuery( cSentence  )
+   getSQLDatabase():Query( cSentence  )
 
 RETURN ( nil )
        

@@ -96,7 +96,7 @@ METHOD New( oController ) CLASS OperacionesController
    ::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )
    ::getModel():setEvent( 'loadedDuplicateBuffer', {|| ::loadedDuplicateBuffer() } )
    ::getModel():setEvent( 'updatedBuffer',         {|| ::updatedBuffer() } )
-   ::getModel():setEvent( 'insertingBuffer',       {|| ::insertingBuffer() } )
+   ::getModel():setEvent( 'updatingInsertedBuffer',{|| ::insertingBuffer() } )
 
    ::getSerieDocumentoComponent():setEvents( { 'inserted', 'changedAndExist' }, {|| ::changedSerie() } )
 
@@ -162,7 +162,11 @@ RETURN ( ::setModelBuffer( "numero", ::getContadoresController():getModel():getL
 
 METHOD insertingBuffer() CLASS OperacionesController 
 
-RETURN ( ::setModelBuffer( "numero", ::getContadoresController():getModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) ) ) )
+   local nNumero  
+
+   nNumero  := ::getContadoresController():getModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) )
+
+RETURN ( ::setModelBuffer( "numero", nNumero ) )
 
 //---------------------------------------------------------------------------//
 

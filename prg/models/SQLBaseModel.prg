@@ -81,7 +81,7 @@ CLASS SQLBaseModel
 
    METHOD getTableName()               INLINE ( "gestool." + ::cTableName )
 
-   METHOD getAlias()                   INLINE ( ::cTableName )
+   METHOD getTable()                   INLINE ( ::cTableName )
 
    METHOD getPackage( cContext )       INLINE ( ::cPackage + cContext )
 
@@ -272,6 +272,11 @@ CLASS SQLBaseModel
    METHOD insertOnDuplicate( hBuffer )
       METHOD insertOnDuplicateTransactional( hBuffer ) ;
                                        INLINE ( ::insertOnDuplicate( hBuffer, .t. ) )
+
+   METHOD updateInsertedBuffer( hBuffer )
+
+   METHOD deleteInsertedBuffer( hBuffer )
+
    METHOD deleteSelection( aIds )
    METHOD deleteById( uId )
    METHOD deleteByUuid( uUuid )
@@ -1637,21 +1642,43 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertOnDuplicate( hBuffer, lTransactional )
+METHOD updateInsertedBuffer( hBuffer )
+
+   ::fireEvent( 'updatingInsertedBuffer' )
+
+   ::getUpdateSentence( hBuffer )
+
+   if !empty( ::cSQLUpdate )
+      ::getDatabase():Querys( ::cSQLUpdate )
+   end if
+
+   ::fireEvent( 'updatedInsertedBuffer' )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteInsertedBuffer( hBuffer )
+
+   DEFAULT hBuffer      := ::hBuffer
+
+   if !hb_ishash( hBuffer )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::deleteWhere( { "uuid" => hget( hBuffer, "uuid" ) } ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertOnDuplicate( hBuffer )
 
    local cSentence 
-
-   DEFAULT lTransactional  := .f.
 
    ::fireEvent( 'insertingOnDuplicatingBuffer' )
 
    cSentence               := ::getInsertOnDuplicateSentence( hBuffer )
 
-   if lTransactional 
-      ::getDatabase():TransactionalQuery( cSentence )
-   else
-      ::getDatabase():Query( cSentence )
-   end  if 
+   ::getDatabase():Query( cSentence )
 
    ::fireEvent( 'insertedOnDuplicatedBuffer' )
 
@@ -1799,11 +1826,9 @@ RETURN ( ::getDatabase():Query( cSql ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD updateFieldsWhere( hFields, hWhere, lTransactional )
+METHOD updateFieldsWhere( hFields, hWhere )
 
    local cSql  
-
-   DEFAULT lTransactional  := .f.
 
    cSql                    := "UPDATE " + ::getTableName() + " "
    cSql                    +=    "SET " 
@@ -1816,20 +1841,14 @@ METHOD updateFieldsWhere( hFields, hWhere, lTransactional )
    hEval( hWhere,; 
       {|k,v| cSql += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v ) + " " } )
 
-   if lTransactional
-      RETURN ( ::getDatabase():TransactionalQuery( cSql ) )
-   end if 
-
 RETURN ( ::getDatabase():Query( cSql ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD updateBufferWhereId( id, hBuffer, lTransactional )
+METHOD updateBufferWhereId( id, hBuffer )
 
    local cSql 
    local uValue
-
-   DEFAULT lTransactional  := .f.
 
    if !hb_isnumeric( id ) .or. empty( id )
       RETURN ( nil )
@@ -1848,10 +1867,6 @@ METHOD updateBufferWhereId( id, hBuffer, lTransactional )
    cSql                    := chgAtEnd( cSql, '', 2 ) + " "
 
    cSql                    +=    "WHERE id = " + toSqlString( id )
-
-   if lTransactional 
-      RETURN ( ::getDatabase():TransactionalQuery( cSql ) )
-   end  if 
 
 RETURN ( ::getDatabase():Query( cSql ) )
 
@@ -1913,7 +1928,7 @@ METHOD getFieldWhere( cField, hWhere, hOrderBy, uDefault )
 
    end if 
 
-   cSql              +=    "LIMIT 1"
+   cSql              +=    "LIMIT 1 "
 
 RETURN ( ::getDatabase():getValue( cSql, uDefault ) )
 
@@ -1924,7 +1939,7 @@ METHOD Count()
    local cSql  := "SELECT COUNT(*) FROM " + ::getTableName()    
 
    if ::isDeletedAtColumn()
-      cSQL           +=    ::getWhereOrAnd( cSQL ) + "deleted_at = 0" 
+      cSQL     +=    ::getWhereOrAnd( cSQL ) + "deleted_at = 0" 
    end if 
 
 RETURN ( ::getDatabase():getValue( cSql ) )

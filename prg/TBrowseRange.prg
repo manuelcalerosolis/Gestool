@@ -207,7 +207,7 @@ CLASS ItemRange
    DATA uFrom
    DATA uTo
 
-   DATA cAlias 
+   DATA cTable 
 
    METHOD New( oController )           CONSTRUCTOR
       
@@ -229,10 +229,10 @@ CLASS ItemRange
    METHOD setTo( uTo )                 INLINE ( ::uTo := ::extractValue( uTo ) )
    METHOD showToNombre()               INLINE ( ::showNombre( ::uTo ) )
 
-   METHOD getAlias()                   INLINE ( if( empty( ::cAlias ), ::oController:getModel():getAlias(), ::cAlias ) )
-   METHOD setAlias( cAlias )           INLINE ( ::cAlias := cAlias )
+   METHOD getTable()                   INLINE ( if( empty( ::cTable ), ::oController:getModel():getTable(), ::cTable ) )
+   METHOD setTable( cTable )           INLINE ( ::cTable := cTable )
 
-   METHOD getKey()                     INLINE ( ::getAlias() + "." + ::cKey )
+   METHOD getKey()                     INLINE ( ::getTable() + "." + ::cKey )
 
    METHOD getWhere()
 

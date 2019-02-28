@@ -251,16 +251,15 @@ METHOD getUniqueSentence( uValue ) CLASS ContadoresValidator
       COUNT(*)
 
    FROM %1$s
-
       WHERE %2$s = %3$s AND documento = %4$s
 
    ENDTEXT
 
-   cSQLSentence     := hb_strformat(   cSQLSentence,;
-                                       ::oController:getModel():getTableName(),;
-                                       ::cColumnToProced,;
-                                       quoted( uValue ),;
-                                       quoted( ::oController:oController:getModel():cTableName ) )
+   cSQLSentence   := hb_strformat(  cSQLSentence,;
+                                    ::oController:getModel():getTableName(),;
+                                    ::cColumnToProced,;
+                                    quoted( uValue ),;
+                                    quoted( ::oController:oController:getModel():cTableName ) )
 
 RETURN ( cSQLSentence )
 
@@ -270,6 +269,7 @@ RETURN ( cSQLSentence )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
 #ifdef __TEST__
 
 CLASS TestContadoresController FROM TestCase
