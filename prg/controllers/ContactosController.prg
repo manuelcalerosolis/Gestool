@@ -356,13 +356,13 @@ METHOD getColumns() CLASS SQLContactosModel
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"             ,;                                  
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR ( 40 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR ( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
    hset( ::hColumns, "telefono1",         {  "create"    => "VARCHAR( 15 )"                          ,;
@@ -371,7 +371,7 @@ METHOD getColumns() CLASS SQLContactosModel
    hset( ::hColumns, "telefono2",         {  "create"    => "VARCHAR( 15 )"                          ,;
                                              "default"   => {|| space( 15 ) } }                       )
 
-   hset( ::hColumns, "email",             {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "email",             {  "create"    => "VARCHAR ( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
    ::getDeletedStampColumn()

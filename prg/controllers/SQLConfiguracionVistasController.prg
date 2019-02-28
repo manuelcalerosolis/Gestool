@@ -128,9 +128,9 @@ END CLASS
 METHOD getColumns() CLASS SQLConfiguracionVistasModel
 
    ::hColumns  := {  "id"                 =>  { "create" => "INTEGER AUTO_INCREMENT"      },;
-                     "view_type"          =>  { "create" => "VARCHAR( 40 ) NOT NULL"      },;
+                     "view_type"          =>  { "create" => "VARCHAR ( 40 ) NOT NULL"      },;
                      "view_name"          =>  { "create" => "VARCHAR( 60 ) NOT NULL"      },;
-                     "usuario_uuid"       =>  { "create" => "VARCHAR( 40 ) NOT NULL"      },;                     
+                     "usuario_uuid"       =>  { "create" => "VARCHAR ( 40 ) NOT NULL"      },;                     
                      "browse_state"       =>  { "create" => "TEXT"                        },;
                      "column_order"       =>  { "create" => "VARCHAR( 60 )"               },;
                      "column_orientation" =>  { "create" => "CHARACTER( 1 )"	            },;

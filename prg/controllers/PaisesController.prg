@@ -262,10 +262,10 @@ METHOD getColumns() CLASS SQLPaisesModel
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR ( 20 )"                           ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR ( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
 
    ::getDeletedStampColumn()

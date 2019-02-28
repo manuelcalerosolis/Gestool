@@ -303,16 +303,16 @@ METHOD getColumns() CLASS SQLCaracteristicasValoresArticulosModel
    hset( ::hColumns, "id",                            {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                                          "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"           ,;
                                                          "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "articulo_uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+   hset( ::hColumns, "articulo_uuid",                 {  "create"    => "VARCHAR ( 40 ) NOT NULL"                  ,;
                                                          "default"   => {|| Space( 40 ) } }                       )
 
-   hset( ::hColumns, "caracteristica_uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+   hset( ::hColumns, "caracteristica_uuid",           {  "create"    => "VARCHAR ( 40 ) NOT NULL"                  ,;
                                                          "default"   => {|| Space( 40 ) } }                       )
 
-   hset( ::hColumns, "caracteristica_valor_uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+   hset( ::hColumns, "caracteristica_valor_uuid",     {  "create"    => "VARCHAR ( 40 ) NOT NULL"                  ,;
                                                          "default"   => {|| Space( 40 ) } }                       )
 
 RETURN ( ::hColumns )

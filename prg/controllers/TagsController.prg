@@ -138,7 +138,7 @@ METHOD getColumns() CLASS SQLTagsModel
    hset( ::hColumns, "id",       {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                     "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"           ,;
                                     "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 50 )"                          ,;

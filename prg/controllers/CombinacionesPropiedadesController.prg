@@ -201,13 +201,13 @@ METHOD getColumns() CLASS SQLCombinacionesPropiedadesModel
    hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
                                                 "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"              ,;                                  
+   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"              ,;                                  
                                                 "default"   => {|| win_uuidcreatestring() } }               )
 
-   hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR( 40 )"                              ,;
+   hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR ( 40 )"                              ,;
                                                 "default"   => {|| space( 40 ) } }                          )
 
-   hset( ::hColumns, "propiedad_uuid",       {  "create"    => "VARCHAR( 40 )"                              ,;
+   hset( ::hColumns, "propiedad_uuid",       {  "create"    => "VARCHAR ( 40 )"                              ,;
                                                 "default"   => { || space ( 40 )  } }                       )
 
    ::getDeletedStampColumn() 

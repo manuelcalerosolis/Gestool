@@ -341,19 +341,19 @@ METHOD getColumns() CLASS SQLEntradaSalidaModel
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"             ,;                                  
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "sesion",            {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "sesion",            {  "create"    => "VARCHAR ( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
    hset( ::hColumns, "fecha_hora",        {  "create"    => "TIMESTAMP"                               ,;
                                              "default"   => {|| hb_datetime() } }                      )
 
-   hset( ::hColumns, "caja_codigo",       {  "create"   => "VARCHAR( 20 )"                            ,;
+   hset( ::hColumns, "caja_codigo",       {  "create"   => "VARCHAR ( 20 )"                            ,;
                                              "default"   => {|| space( 20 ) } }                        )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR ( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
    hset( ::hColumns, "tipo",              {  "create"     => "ENUM( 'Entrada', 'Salida' )"             ,;
@@ -362,7 +362,7 @@ METHOD getColumns() CLASS SQLEntradaSalidaModel
    hset( ::hColumns, "importe",           {  "create"     => "FLOAT( 10, 3 )"                          ,;
                                              "default"    => {|| 0  } }                                )
 
-   hset( ::hColumns, "delegacion_uuid",   {  "create"   => "VARCHAR( 40 )"                            ,;
+   hset( ::hColumns, "delegacion_uuid",   {  "create"   => "VARCHAR ( 40 )"                            ,;
                                              "default"   => {|| space( 40 ) } }                        )
 
    ::getTimeStampColumns()

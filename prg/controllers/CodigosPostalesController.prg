@@ -293,7 +293,7 @@ METHOD getColumns() CLASS SQLCodigosPostalesModel
                                              "text"      => "Identificador"                        ,;
                                              "default"   => {|| 0 } }                               )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                        ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR ( 20 )"                        ,;
                                              "default"   => {|| space( 20 ) } }                     )
 
    hset( ::hColumns, "poblacion",         {  "create"    => "VARCHAR( 100 )"                       ,;

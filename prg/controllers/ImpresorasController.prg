@@ -283,25 +283,25 @@ METHOD getColumns() CLASS SQLImpresorasModel
    hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                                 "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"           ,;
                                                 "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+   hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR ( 40 ) NOT NULL"                  ,;
                                                 "default"   => {|| ::getControllerParentUuid() } } )
 
-   hset( ::hColumns, "nombre_impresora",     {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "nombre_impresora",     {  "create"    => "VARCHAR ( 200 )"                          ,;
                                                 "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "tipo_impresora_uuid",  {  "create"    => "VARCHAR( 40 )"                           ,;
+   hset( ::hColumns, "tipo_impresora_uuid",  {  "create"    => "VARCHAR ( 40 )"                           ,;
                                                 "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "codigo_corte",         {  "create"    => "VARCHAR( 50 )"                           ,;
                                                 "default"   => {|| space( 50 ) } }                       )
 
-   hset( ::hColumns, "ruta_comandas",        {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "ruta_comandas",        {  "create"    => "VARCHAR ( 200 )"                          ,;
                                                 "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "ruta_anulacion",       {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "ruta_anulacion",       {  "create"    => "VARCHAR ( 200 )"                          ,;
                                                 "default"   => {|| space( 200 ) } }                      )
 
 RETURN ( ::hColumns )

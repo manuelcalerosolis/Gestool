@@ -102,19 +102,19 @@ METHOD getColumns() CLASS SQLConversorDocumentosModel
    hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
                                                       "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"              ,;                                  
+   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"              ,;                                  
                                                       "default"   => {|| win_uuidcreatestring() } }               )
 
-   hset( ::hColumns, "documento_origen_tabla",     {  "create"    => "VARCHAR( 200 )"                              ,;
+   hset( ::hColumns, "documento_origen_tabla",     {  "create"    => "VARCHAR ( 200 )"                              ,;
                                                       "default"   => {|| space( 200 ) } }                          )
 
-   hset( ::hColumns, "documento_origen_uuid",      {  "create"    => "VARCHAR( 40 )"                              ,;
+   hset( ::hColumns, "documento_origen_uuid",      {  "create"    => "VARCHAR ( 40 )"                              ,;
                                                       "default"   => {|| space( 40 ) } }                          )
 
-   hset( ::hColumns, "documento_destino_tabla",    {  "create"    => "VARCHAR( 200 )"                              ,;
+   hset( ::hColumns, "documento_destino_tabla",    {  "create"    => "VARCHAR ( 200 )"                              ,;
                                                       "default"   => {|| space( 200 ) } }                          )
 
-   hset( ::hColumns, "documento_destino_uuid",     {  "create"    => "VARCHAR( 40 )"                              ,;
+   hset( ::hColumns, "documento_destino_uuid",     {  "create"    => "VARCHAR ( 40 )"                              ,;
                                                       "default"   => {|| space( 40 ) } }                          )
 
 RETURN ( ::hColumns )

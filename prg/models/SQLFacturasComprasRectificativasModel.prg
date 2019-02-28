@@ -19,13 +19,13 @@ METHOD getColumns() CLASS SQLFacturasComprasRectificativasModel
    
    ::super():getColumns()
 
-   hset( ::hColumns, "parent_uuid",                   {  "create"    => "VARCHAR( 40 ) NOT NULL"   ,;
+   hset( ::hColumns, "parent_uuid",                   {  "create"    => "VARCHAR ( 40 ) NOT NULL"   ,;
                                                          "default"   => {||space( 40 ) } }         )
 
-   hset( ::hColumns, "motivo",                        {  "create"    => "VARCHAR( 200 ) NOT NULL"  ,;
+   hset( ::hColumns, "motivo",                        {  "create"    => "VARCHAR ( 200 ) NOT NULL"  ,;
                                                          "default"   => {||space( 200 ) } }        )
 
-   hset( ::hColumns, "causa",                         {  "create"    => "VARCHAR( 200 ) NOT NULL"  ,;
+   hset( ::hColumns, "causa",                         {  "create"    => "VARCHAR ( 200 ) NOT NULL"  ,;
                                                          "default"   => {||space( 200 ) } }        )  
 
 RETURN ( ::hColumns )

@@ -88,7 +88,7 @@ METHOD createFunctionTotalSummaryWhereUuid() CLASS OperacionesComercialesReposit
 
    CREATE DEFINER=`root`@`localhost` 
    FUNCTION %1$s ( `uuid_operacion_comercial` CHAR( 40 ) )
-   RETURNS DECIMAL( 19, 6 )
+   RETURNS DECIMAL ( 19, 6 )
    LANGUAGE SQL
    NOT DETERMINISTIC
    CONTAINS SQL
@@ -97,7 +97,7 @@ METHOD createFunctionTotalSummaryWhereUuid() CLASS OperacionesComercialesReposit
 
    BEGIN
 
-      DECLARE TotalSummary DECIMAL( 19, 6 );
+      DECLARE TotalSummary DECIMAL ( 19, 6 );
 
       SELECT
          SUM( totales.importe_total ) INTO TotalSummary
@@ -256,8 +256,8 @@ METHOD createFunctionTotalDescuentoWhereUuid() CLASS OperacionesComercialesRepos
    TEXT INTO cSql
 
    CREATE DEFINER=`root`@`localhost` 
-   FUNCTION %1$s ( `uuid_operacion_comercial` CHAR( 40 ), `importe_bruto` DECIMAL( 19, 6 ) )
-   RETURNS DECIMAL( 19, 6 )
+   FUNCTION %1$s ( `uuid_operacion_comercial` CHAR( 40 ), `importe_bruto` DECIMAL ( 19, 6 ) )
+   RETURNS DECIMAL ( 19, 6 )
    LANGUAGE SQL
    NOT DETERMINISTIC
    CONTAINS SQL
@@ -266,7 +266,7 @@ METHOD createFunctionTotalDescuentoWhereUuid() CLASS OperacionesComercialesRepos
 
    BEGIN
 
-   DECLARE totalDescuento DECIMAL( 19, 6 );
+   DECLARE totalDescuento DECIMAL ( 19, 6 );
 
    SELECT 
       SUM( ROUND( operaciones_comerciales_descuentos.descuento * importe_bruto / 100, 2 ) ) INTO totalDescuento

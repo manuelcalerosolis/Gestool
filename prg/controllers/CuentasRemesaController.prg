@@ -375,14 +375,14 @@ METHOD getColumns() CLASS SQLCuentasRemesaModel
    hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                                    "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"             ,;                                  
                                                    "default"   => {|| win_uuidcreatestring() } }            )
 
 
-   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR( 20 )"                            ,;
+   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR ( 20 )"                            ,;
                                                    "default"   => {|| space( 20 ) } }                        )
 
-   hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR ( 200 )"                          ,;
                                                    "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "sufijo",                  {  "create"    => "VARCHAR( 3 )"                            ,;
@@ -403,7 +403,7 @@ METHOD getColumns() CLASS SQLCuentasRemesaModel
    hset( ::hColumns, "presentador_iso_pais",    {  "create"    => "VARCHAR( 2 )"                            ,;
                                                    "default"   => {|| space( 2 ) } }                        )
 
-   hset( ::hColumns, "presentador_nombre",      {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "presentador_nombre",      {  "create"    => "VARCHAR ( 200 )"                          ,;
                                                    "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "presentador_nif",         {  "create"    => "VARCHAR( 9 )"                            ,;
@@ -415,7 +415,7 @@ METHOD getColumns() CLASS SQLCuentasRemesaModel
    hset( ::hColumns, "acreedor_iso_pais",       {  "create"    => "VARCHAR( 2 )"                            ,;
                                                    "default"   => {|| space( 2 ) } }                        )
 
-   hset( ::hColumns, "acreedor_nombre",         {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "acreedor_nombre",         {  "create"    => "VARCHAR ( 200 )"                          ,;
                                                    "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "acreedor_nif",            {  "create"    => "VARCHAR( 9 )"                            ,;

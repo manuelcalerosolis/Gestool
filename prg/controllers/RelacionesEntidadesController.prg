@@ -188,11 +188,11 @@ METHOD getColumns() CLASS SQLRelacionesEntidadesModel
                                           "text"      => "Identificador"                              ,;
                                           "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"                ,;
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"                ,;
                                           "text"      => "Uuid"                                       ,;
                                           "default"   => {|| win_uuidcreatestring() } }               )
    
-   hset( ::hColumns, "uuid_origen",    {  "create"    => "VARCHAR(40) NOT NULL"                       ,;
+   hset( ::hColumns, "uuid_origen",    {  "create"    => "VARCHAR ( 40 ) NOT NULL"                       ,;
                                           "text"      => "Uuid"                                       ,;
                                           "default"   => {|| space( 40 ) } }                          )
 
@@ -200,7 +200,7 @@ METHOD getColumns() CLASS SQLRelacionesEntidadesModel
                                           "default"   => {|| space( 100 ) } }                         )
    
 
-   hset( ::hColumns, "uuid_destino",    { "create"    => "VARCHAR(40) NOT NULL"                       ,;
+   hset( ::hColumns, "uuid_destino",    { "create"    => "VARCHAR ( 40 ) NOT NULL"                       ,;
                                           "text"      => "Uuid"                                       ,;
                                           "default"   => {|| space( 40 ) } }                          )
 

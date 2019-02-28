@@ -237,14 +237,14 @@ METHOD getColumns() CLASS SQLCajonesPortamonedasModel
                                              "text"      => "Identificador"                           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"             ,;
                                              "text"      => "Uuid"                                    ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
                                              "default"   => {|| space( 140 ) } }                       )
 
-   hset( ::hColumns, "impresora",         {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "impresora",         {  "create"    => "VARCHAR ( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
    hset( ::hColumns, "codigo_apertura",   {  "create"    => "VARCHAR( 100 )"                          ,;

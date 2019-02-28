@@ -295,10 +295,10 @@ METHOD getColumns() CLASS SQLRecibosPagosTemporalModel
    hset( ::hColumns, "id",                         {  "create"    => "INTEGER UNIQUE"                             ,;                          
                                                       "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "recibo_uuid",                {  "create"    => "VARCHAR( 40 )"                              ,;
+   hset( ::hColumns, "recibo_uuid",                {  "create"    => "VARCHAR ( 40 )"                              ,;
                                                       "default"   => {|| space( 40 ) } }                          )
 
-   hset( ::hColumns, "pago_uuid",                  {  "create"    => "VARCHAR( 40 )"                              ,;
+   hset( ::hColumns, "pago_uuid",                  {  "create"    => "VARCHAR ( 40 )"                              ,;
                                                       "default"   => {|| space( 40 ) } }                          )
 
    hset( ::hColumns, "importe",                    {  "create"    => "FLOAT( 16,2 )"                              ,;

@@ -19,7 +19,7 @@ METHOD getColumns()
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"            ,;
                                           "default"   => {|| 0 } }                           )
 
-   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 20 ) NOT NULL UNIQUE"     ,;
+   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR ( 20 ) NOT NULL UNIQUE"     ,;
                                           "default"   => {|| space( 20 ) } }      )
 
    hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 50 ) NOT NULL UNIQUE"     ,;

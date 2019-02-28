@@ -233,10 +233,10 @@ METHOD getColumns() CLASS SQLAjustableModel
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                           "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR ( 40 ) NOT NULL"                  ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "ajuste_uuid",    {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+   hset( ::hColumns, "ajuste_uuid",    {  "create"    => "VARCHAR ( 40 ) NOT NULL"                  ,;
                                           "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "ajuste_valor",   {  "create"    => "VARCHAR( 100 )"                          ,;
@@ -245,7 +245,7 @@ METHOD getColumns() CLASS SQLAjustableModel
    hset( ::hColumns, "ajustable_tipo", {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "ajustable_uuid", {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+   hset( ::hColumns, "ajustable_uuid", {  "create"    => "VARCHAR ( 40 ) NOT NULL"                  ,;
                                           "default"   => {|| space( 40 ) } }                       )
 
 RETURN ( ::hColumns )

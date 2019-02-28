@@ -759,10 +759,10 @@ METHOD getColumns() CLASS SQLEmpresasModel
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR ( 20 )"                            ,;
                                              "default"   => {|| space( 20 ) } }                        )
    
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 100 )"                          ,;
@@ -777,7 +777,7 @@ METHOD getColumns() CLASS SQLEmpresasModel
    hset( ::hColumns, "registro_mercantil",{  "create"    => "VARCHAR( 150 )"                          ,;
                                              "default"   => {|| space( 150 ) } }                       )
 
-   hset( ::hColumns, "pagina_web",        {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "pagina_web",        {  "create"    => "VARCHAR ( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
    hset( ::hColumns, "inicio_operaciones",{  "create"    => "DATE"                                     ,;

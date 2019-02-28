@@ -38,16 +38,16 @@ METHOD getColumns() CLASS SQLConsolidacionesAlmacenModel
    hset( ::hColumns, "id",                            {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"        ,;
                                                          "default"   => {|| 0 } }                              )
 
-   hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"        ,;
+   hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"        ,;
                                                          "default"   => {|| win_uuidcreatestring() } }         )
 
-   hset( ::hColumns, "delegacion_uuid",               {  "create"    => "VARCHAR( 40 )"                        ,;
+   hset( ::hColumns, "delegacion_uuid",               {  "create"    => "VARCHAR ( 40 )"                        ,;
                                                          "default"   => {|| Delegation():Uuid() } }            )
 
-   hset( ::hColumns, "sesion_uuid",                   {  "create"    => "VARCHAR( 40 )"                        ,;
+   hset( ::hColumns, "sesion_uuid",                   {  "create"    => "VARCHAR ( 40 )"                        ,;
                                                          "default"   => {|| Session():Uuid() } }               )
 
-   hset( ::hColumns, "serie",                         {  "create"    => "VARCHAR( 20 )"                        ,;
+   hset( ::hColumns, "serie",                         {  "create"    => "VARCHAR ( 20 )"                        ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "numero",                        {  "create"    => "INT UNSIGNED"                         ,;
@@ -59,7 +59,7 @@ METHOD getColumns() CLASS SQLConsolidacionesAlmacenModel
    hset( ::hColumns, "fecha_valor_stock",             {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"   ,;
                                                          "default"   => {|| hb_datetime() } }                  )
 
-   hset( ::hColumns, "almacen_codigo",                {  "create"    => "VARCHAR( 20 )"                        ,;
+   hset( ::hColumns, "almacen_codigo",                {  "create"    => "VARCHAR ( 20 )"                        ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
    ::getTimeStampColumns()

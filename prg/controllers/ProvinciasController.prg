@@ -257,7 +257,7 @@ METHOD getColumns() CLASS SQLProvinciasModel
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR ( 20 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 50 ) NOT NULL"                  ,;

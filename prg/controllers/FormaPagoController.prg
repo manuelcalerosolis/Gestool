@@ -517,13 +517,13 @@ METHOD getColumns() CLASS SQLFormaPagoModel
    hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
                                                 "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"              ,;                                  
+   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"              ,;                                  
                                                 "default"   => {|| win_uuidcreatestring() } }               )
 
-   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 20 )"                               ,;
+   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR ( 20 )"                               ,;
                                                 "default"   => {|| space( 20 ) } }                           )
 
-   hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 200 )"                             ,;
+   hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR ( 200 )"                             ,;
                                                 "default"   => {|| space( 200 ) } }                         )
 
    hset( ::hColumns, "tipo_pago",            {  "create"    => "INTEGER( 1 )"                               ,;
@@ -547,31 +547,31 @@ METHOD getColumns() CLASS SQLFormaPagoModel
    hset( ::hColumns, "ultimo_plazo",         {  "create"    => "INTEGER( 5 )"                               ,;
                                                 "default"   => {|| ( 0 ) } }                                )
 
-   hset( ::hColumns, "banco_uuid",           {  "create"    => "VARCHAR( 40 )"                              ,;                                  
+   hset( ::hColumns, "banco_uuid",           {  "create"    => "VARCHAR ( 40 )"                              ,;                                  
                                                 "default"   => {|| space( 40 ) } }                          )
 
-   hset( ::hColumns, "subcuenta_cobro",      {  "create"    => "VARCHAR( 200 )"                             ,;                                  
+   hset( ::hColumns, "subcuenta_cobro",      {  "create"    => "VARCHAR ( 200 )"                             ,;                                  
                                                 "default"   => {|| space( 200 ) } }                         )
 
-   hset( ::hColumns, "subcuenta_gastos",     {  "create"    => "VARCHAR( 200 )"                             ,;                                  
+   hset( ::hColumns, "subcuenta_gastos",     {  "create"    => "VARCHAR ( 200 )"                             ,;                                  
                                                 "default"   => {|| space( 200 ) } }                         )
 
-   hset( ::hColumns, "codigo_pago",          {  "create"    => "VARCHAR( 200 )"                             ,;                                  
+   hset( ::hColumns, "codigo_pago",          {  "create"    => "VARCHAR ( 200 )"                             ,;                                  
                                                 "default"   => {|| space( 200 ) } }                         )
 
-   hset( ::hColumns, "codigo_edi",           {  "create"    => "VARCHAR( 200 )"                             ,;                                  
+   hset( ::hColumns, "codigo_edi",           {  "create"    => "VARCHAR ( 200 )"                             ,;                                  
                                                 "default"   => {|| space( 200 ) } }                         )
 
    hset( ::hColumns, "tactil",               {  "create"    => "TINYINT( 1 )"                               ,;
                                                 "default"   => {|| .f. } }                                  )
 
-   hset( ::hColumns, "icono",                {  "create"    => "VARCHAR( 40 )"                              ,;
+   hset( ::hColumns, "icono",                {  "create"    => "VARCHAR ( 40 )"                              ,;
                                                 "default"   => {|| space( 40 ) } }                          )
 
    hset( ::hColumns, "posicion",             {  "create"    => "INTEGER( 2 )"                               ,;
                                                 "default"   => {|| ( 0 ) } }                                )
 
-   hset( ::hColumns, "forma_pago",           {  "create"    => "VARCHAR( 200 )"                             ,;                                  
+   hset( ::hColumns, "forma_pago",           {  "create"    => "VARCHAR ( 200 )"                             ,;                                  
                                                 "default"   => {|| space( 200 ) } }                         )
 
    hset( ::hColumns, "generar_documento",    {  "create"    => "INTEGER( 1 )"                               ,;

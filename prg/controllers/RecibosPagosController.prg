@@ -70,13 +70,13 @@ METHOD getColumns() CLASS SQLRecibosPagosModel
    hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
                                                       "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"              ,;                                  
+   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"              ,;                                  
                                                       "default"   => {|| win_uuidcreatestring() } }               )
 
-   hset( ::hColumns, "recibo_uuid",                {  "create"    => "VARCHAR( 40 )"                              ,;
+   hset( ::hColumns, "recibo_uuid",                {  "create"    => "VARCHAR ( 40 )"                              ,;
                                                       "default"   => {|| space( 40 ) } }                          )
 
-   hset( ::hColumns, "pago_uuid",                  {  "create"    => "VARCHAR( 40 )"                              ,;
+   hset( ::hColumns, "pago_uuid",                  {  "create"    => "VARCHAR ( 40 )"                              ,;
                                                       "default"   => {|| space( 40 ) } }                          )
 
    hset( ::hColumns, "importe",                    {  "create"    => "FLOAT( 16,2 )"                              ,;
@@ -192,7 +192,7 @@ METHOD createFunctionTotalPaidWhereUuid() CLASS RecibosPagosRepository
 
    CREATE DEFINER=`root`@`localhost` 
    FUNCTION %1$s( `uuid_recibo_cliente` CHAR( 40 ) )
-   RETURNS DECIMAL( 19, 6 )
+   RETURNS DECIMAL ( 19, 6 )
    LANGUAGE SQL
    NOT DETERMINISTIC
    CONTAINS SQL
@@ -240,7 +240,7 @@ METHOD createFunctionTotalPaidWhereFacturaUuid() CLASS RecibosPagosRepository
 
    CREATE DEFINER=`root`@`localhost` 
    FUNCTION %1$s( `uuid_factura_cliente` CHAR( 40 ) )
-   RETURNS DECIMAL(19,6)
+   RETURNS DECIMAL ( 19, 6 )
    LANGUAGE SQL
    NOT DETERMINISTIC
    CONTAINS SQL
@@ -298,7 +298,7 @@ METHOD createFunctionTotalDifferenceWhereUuid()
 
    CREATE DEFINER=`root`@`localhost` 
    FUNCTION %1$s ( `uuid_recibo_cliente` CHAR( 40 ) )
-   RETURNS DECIMAL(19,6)
+   RETURNS DECIMAL ( 19, 6 )
    LANGUAGE SQL
    NOT DETERMINISTIC
    CONTAINS SQL

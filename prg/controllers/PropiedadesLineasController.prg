@@ -266,13 +266,13 @@ METHOD getColumns() CLASS SQLPropiedadesLineasModel
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                           "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"           ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 )"                           ,;
+   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR ( 40 )"                           ,;
                                           "default"   => {|| ::getControllerParentUuid() } } )
 
-   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR ( 200 )"                          ,;
                                           "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "orden",          {  "create"    => "SMALLINT UNSIGNED"                       ,;

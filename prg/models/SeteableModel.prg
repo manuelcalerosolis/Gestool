@@ -20,10 +20,10 @@ METHOD getColumns() CLASS SQLSeteableModel
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                           "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"             ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "setting_uuid",   {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
+   hset( ::hColumns, "setting_uuid",   {  "create"    => "VARCHAR ( 40 ) NOT NULL"                    ,;
                                           "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "setting_value",  {  "create"    => "VARCHAR(10)"                             ,;
@@ -32,7 +32,7 @@ METHOD getColumns() CLASS SQLSeteableModel
    hset( ::hColumns, "seteable_type",  {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "seteable_uuid",  {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
+   hset( ::hColumns, "seteable_uuid",  {  "create"    => "VARCHAR ( 40 ) NOT NULL"                    ,;
                                           "default"   => {|| space( 40 ) } }                       )
 
 RETURN ( ::hColumns )

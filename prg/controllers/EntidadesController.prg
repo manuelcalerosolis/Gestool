@@ -435,34 +435,34 @@ METHOD getColumns() CLASS SQLEntidadesModel
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"             ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"                   ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR ( 20 ) NOT NULL"                   ,;
                                              "default"   => {|| space( 20 ) } }                        )
 
-   hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR ( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR ( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "gnl_fisico",        {  "create"    => "VARCHAR( 200 )"                           ,;
+   hset( ::hColumns, "gnl_fisico",        {  "create"    => "VARCHAR ( 200 )"                           ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "punto_logico_op",   {  "create"    => "VARCHAR( 200 )"                           ,;
+   hset( ::hColumns, "punto_logico_op",   {  "create"    => "VARCHAR ( 200 )"                           ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "web",               {  "create"    => "VARCHAR( 200 )"                           ,;
+   hset( ::hColumns, "web",               {  "create"    => "VARCHAR ( 200 )"                           ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "codigo_ine",        {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "codigo_ine",        {  "create"    => "VARCHAR ( 20 )"                           ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "cno_cnae",          {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "cno_cnae",          {  "create"    => "VARCHAR ( 20 )"                           ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "otros",             {  "create"    => "VARCHAR( 200 )"                           ,;
+   hset( ::hColumns, "otros",             {  "create"    => "VARCHAR ( 200 )"                           ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
    ::getDeletedStampColumn()

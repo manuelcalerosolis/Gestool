@@ -526,13 +526,13 @@ METHOD getColumns() CLASS SQLSesionesModel
    hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                                       "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"           ,;
                                                       "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "numero",                     {  "create"    => "INTEGER UNSIGNED"                        ,;
                                                       "default"   => {|| Box():numeroSesion() } }                                 )
 
-   hset( ::hColumns, "caja_codigo",                {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "caja_codigo",                {  "create"    => "VARCHAR ( 20 )"                           ,;
                                                       "default"   => {|| Box():Codigo() } }                    )
 
    hset( ::hColumns, "fecha_hora_inicio",          {  "create"    => "TIMESTAMP"                               ,;

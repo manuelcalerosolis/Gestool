@@ -342,13 +342,13 @@ METHOD getColumns() CLASS SQLUnidadesMedicionGruposLineasModel
    hset( ::hColumns, "id",                            {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                                          "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
+   hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"           ,;                                  
                                                          "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",                   {  "create"    => "VARCHAR( 40 )"                           ,;
+   hset( ::hColumns, "parent_uuid",                   {  "create"    => "VARCHAR ( 40 )"                           ,;
                                                          "default"   => {|| ::getControllerParentUuid() } }  )
 
-   hset( ::hColumns, "unidad_alternativa_codigo",     {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "unidad_alternativa_codigo",     {  "create"    => "VARCHAR ( 20 )"                           ,;
                                                          "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "cantidad_alternativa",          {  "create"    => "INTEGER"                                 ,;

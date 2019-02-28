@@ -36,7 +36,7 @@ METHOD New()
 																					"text"		=>	"Identificador"									,;
 																					"header"		=> "Id"													,;
 																					"visible"	=>	.f.}													,;
-													"codigo"				=>	{	"create"		=>	"VARCHAR(40) NOT NULL"							,;
+													"codigo"				=>	{	"create"		=>	"VARCHAR ( 40 ) NOT NULL"							,;
 																					"text"		=>	"Código de la linea de propiedad"			,;
 																					"header"		=>	"Código"												,;
 																					"visible"	=>	.t.													,;

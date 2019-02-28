@@ -32,7 +32,7 @@ METHOD createFunctionTotalSummaryWhereUuid() CLASS ConsolidacionesAlmacenesRepos
 
    CREATE DEFINER=`root`@`localhost` 
    FUNCTION %1$s ( `uuid_operacion_comercial` CHAR( 40 ) )
-   RETURNS DECIMAL( 19, 6 )
+   RETURNS DECIMAL ( 19, 6 )
    LANGUAGE SQL
    NOT DETERMINISTIC
    CONTAINS SQL
@@ -41,7 +41,7 @@ METHOD createFunctionTotalSummaryWhereUuid() CLASS ConsolidacionesAlmacenesRepos
 
    BEGIN
 
-      DECLARE TotalSummary DECIMAL( 19, 6 );
+      DECLARE TotalSummary DECIMAL ( 19, 6 );
 
       SELECT
          SUM( ROUND( ( lineas.articulo_unidades * lineas.unidad_medicion_factor ) * ( lineas.articulo_precio + lineas.incremento_precio ), 2 ) ) INTO TotalSummary

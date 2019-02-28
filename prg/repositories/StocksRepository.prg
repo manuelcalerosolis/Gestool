@@ -551,7 +551,7 @@ METHOD createFunctionStockWhereCodigo() CLASS StocksRepository
 
    CREATE DEFINER=`root`@`localhost` 
    FUNCTION %1$s ( `articulo_codigo` CHAR( 20 ) )
-   RETURNS DECIMAL( 19, 6 )
+   RETURNS DECIMAL ( 19, 6 )
    LANGUAGE SQL
    NOT DETERMINISTIC
    CONTAINS SQL
@@ -560,7 +560,7 @@ METHOD createFunctionStockWhereCodigo() CLASS StocksRepository
 
    BEGIN
 
-   DECLARE TotalStock DECIMAL( 19, 6 );
+   DECLARE TotalStock DECIMAL ( 19, 6 );
 
    SELECT 
       SUM( stocks.total_unidades ) INTO TotalStock
@@ -637,7 +637,7 @@ METHOD createFunctionStockWhereCodigoAlmacen() CLASS StocksRepository
 
    CREATE DEFINER=`root`@`localhost` 
    FUNCTION %1$s ( `articulo_codigo` CHAR( 20 ), `almacen_codigo` CHAR( 20 ) )
-   RETURNS DECIMAL( 19, 6 )
+   RETURNS DECIMAL ( 19, 6 )
    LANGUAGE SQL
    NOT DETERMINISTIC
    CONTAINS SQL
@@ -646,7 +646,7 @@ METHOD createFunctionStockWhereCodigoAlmacen() CLASS StocksRepository
 
    BEGIN
 
-   DECLARE TotalStock DECIMAL( 19, 6 );
+   DECLARE TotalStock DECIMAL ( 19, 6 );
 
    SELECT 
       SUM( stocks.total_unidades ) INTO TotalStock
@@ -723,7 +723,7 @@ METHOD createFunctionStockWhereCodigoAlmacenUbicacion() CLASS StocksRepository
 
    CREATE DEFINER=`root`@`localhost` 
    FUNCTION %1$s ( `articulo_codigo` CHAR( 20 ), `almacen_codigo` CHAR( 20 ), `ubicacion_codigo` CHAR( 20 ) )
-   RETURNS DECIMAL( 19, 6 )
+   RETURNS DECIMAL ( 19, 6 )
    LANGUAGE SQL
    NOT DETERMINISTIC
    CONTAINS SQL
@@ -732,7 +732,7 @@ METHOD createFunctionStockWhereCodigoAlmacenUbicacion() CLASS StocksRepository
 
    BEGIN
 
-   DECLARE TotalStock DECIMAL( 19, 6 );
+   DECLARE TotalStock DECIMAL ( 19, 6 );
 
    SELECT 
       SUM( stocks.total_unidades ) INTO TotalStock
@@ -809,7 +809,7 @@ METHOD createFunctionStockWhereCodigoAlmacenLote() CLASS StocksRepository
 
    CREATE DEFINER=`root`@`localhost` 
    FUNCTION %1$s ( `articulo_codigo` CHAR( 20 ), `almacen_codigo` CHAR( 20 ), `ubicacion_codigo` CHAR( 20 ), `lote` CHAR( 20 ) )
-   RETURNS DECIMAL( 19, 6 )
+   RETURNS DECIMAL ( 19, 6 )
    LANGUAGE SQL
    NOT DETERMINISTIC
    CONTAINS SQL
@@ -818,7 +818,7 @@ METHOD createFunctionStockWhereCodigoAlmacenLote() CLASS StocksRepository
 
    BEGIN
 
-   DECLARE TotalStock DECIMAL( 19, 6 );
+   DECLARE TotalStock DECIMAL ( 19, 6 );
 
    SELECT 
       SUM( stocks.total_unidades ) INTO TotalStock
@@ -895,7 +895,7 @@ METHOD createFunctionStockWhereCodigoAlmacenCombinaciones() CLASS StocksReposito
 
    CREATE DEFINER=`root`@`localhost` 
    FUNCTION %1$s ( `articulo_codigo` CHAR( 20 ), `almacen_codigo` CHAR( 20 ), `ubicacion_codigo` CHAR( 20 ), `lote` CHAR( 20 ), `combinaciones_uuid` CHAR( 40 ) )
-   RETURNS DECIMAL( 19, 6 )
+   RETURNS DECIMAL ( 19, 6 )
    LANGUAGE SQL
    NOT DETERMINISTIC
    CONTAINS SQL
@@ -904,7 +904,7 @@ METHOD createFunctionStockWhereCodigoAlmacenCombinaciones() CLASS StocksReposito
 
    BEGIN
 
-   DECLARE TotalStock DECIMAL( 19, 6 );
+   DECLARE TotalStock DECIMAL ( 19, 6 );
 
    SELECT 
       SUM( stocks.total_unidades ) INTO TotalStock

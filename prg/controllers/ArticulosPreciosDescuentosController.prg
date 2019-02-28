@@ -296,10 +296,10 @@ METHOD getColumns() CLASS SQLArticulosPreciosDescuentosModel
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                           "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"           ,;                                  
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR ( 40 ) NOT NULL"                  ,;
                                           "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "fecha_inicio",   {  "create"    => "DATE"                                    ,;
@@ -308,7 +308,7 @@ METHOD getColumns() CLASS SQLArticulosPreciosDescuentosModel
    hset( ::hColumns, "fecha_fin",      {  "create"    => "DATE"                                    ,;
                                           "default"   => {|| ctod( "" ) } }                        )
 
-   hset( ::hColumns, "porcentaje",     {  "create"    => "FLOAT( 7, 4 )"                           ,;
+   hset( ::hColumns, "porcentaje",     {  "create"    => "FLOAT ( 7, 4 )"                           ,;
                                           "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "unidades",       {  "create"    => "FLOAT( 16, 6 )"                          ,;

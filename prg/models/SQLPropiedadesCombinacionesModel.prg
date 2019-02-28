@@ -25,13 +25,13 @@ METHOD getColumns() CLASS SQLPropiedadesCombinacionesModel
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"             ,;                                  
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "producto_uuid",     {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+   hset( ::hColumns, "producto_uuid",     {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"             ,;                                  
                                              "default"   => {||space 40 } }                           )
 
-   hset( ::hColumns, "combinacion_uuid",  {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+   hset( ::hColumns, "combinacion_uuid",  {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"             ,;                                  
                                              "default"   => {||space 40 } }                           )
 
 RETURN ( ::hColumns )

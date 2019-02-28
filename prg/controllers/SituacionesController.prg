@@ -187,7 +187,7 @@ METHOD getColumns() CLASS SQLSituacionesModel
                                        "text"      => "Identificador"                           ,;
                                        "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"             ,;
                                        "text"      => "Uuid"                                    ,;
                                        "default"   => {|| win_uuidcreatestring() } }            )
 

@@ -91,13 +91,13 @@ METHOD getColumns() CLASS SQLArticulosPreciosModel
    hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                                       "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"           ,;
                                                       "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "articulo_uuid",              {  "create"    => "VARCHAR( 40 )"                           ,;
+   hset( ::hColumns, "articulo_uuid",              {  "create"    => "VARCHAR ( 40 )"                           ,;
                                                       "default"   => {|| ::getControllerParentUuid() } } )
 
-   hset( ::hColumns, "tarifa_uuid",                {  "create"    => "VARCHAR( 40 )"                           ,;
+   hset( ::hColumns, "tarifa_uuid",                {  "create"    => "VARCHAR ( 40 )"                           ,;
                                                       "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "manual",                     {  "create"    => "TINYINT ( 1 )"                           ,;
