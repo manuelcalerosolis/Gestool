@@ -493,13 +493,13 @@ METHOD CreateSearchBar( oWnd )
             VAR      ::cGet ;
             OF       ::oRebar ;
             FONT     oFontLittleTitle() ;
-            PIXEL    SIZE 210, 21 ;
+            PIXEL    SIZE 244, 21 ;
 
    ::oGet:bChange    := {| nKey, nFlags, oGet | ::evalGetChange( nKey, nFlags, oGet ) }
    ::oGet:bHelp      := {|| ::oGet:cText( space( 200 ) ), ::evalGetChange() }
    ::oGet:cBmp       := "Lupa"
 
-   @ 124, 220 COMBOBOX ::oComboFilter ;
+   @ 124, 254 COMBOBOX ::oComboFilter ;
             VAR      ::cComboFilter ;
             ITEMS    ::aComboFilter ;
             STYLE    2 ;
@@ -509,7 +509,7 @@ METHOD CreateSearchBar( oWnd )
 
    ::oComboFilter:Disable()
 
-   @ 125, 432 BTNBMP ::oButtonAddFilter ;
+   @ 125, 466 BTNBMP ::oButtonAddFilter ;
             RESOURCE "gc_funnel_add_16" ;
             SIZE     18, 18 ;
             OF       ::oRebar ;
@@ -520,7 +520,7 @@ METHOD CreateSearchBar( oWnd )
    ::oButtonAddFilter:lTransparent 	:= .t.
    ::oButtonAddFilter:lBoxSelect 	:= .f.
 
-   @ 125, 458 BTNBMP ::oButtonCleanFilter ;
+   @ 125, 492 BTNBMP ::oButtonCleanFilter ;
             RESOURCE "gc_funnel_broom_16" ;
             SIZE     18, 18 ;
             OF       ::oRebar ;
@@ -531,7 +531,7 @@ METHOD CreateSearchBar( oWnd )
    ::oButtonCleanFilter:lTransparent   := .t.
    ::oButtonCleanFilter:lBoxSelect 	   := .f.
 
-   @ 125, 484 BTNBMP ::oButtonEditFilter ;
+   @ 125, 518 BTNBMP ::oButtonEditFilter ;
             RESOURCE "gc_funnel_edit_16" ;
             SIZE     18, 18 ;
             OF       ::oRebar ;
@@ -542,7 +542,7 @@ METHOD CreateSearchBar( oWnd )
    ::oButtonEditFilter:lTransparent    := .t.
    ::oButtonEditFilter:lBoxSelect      := .f.
 
-   @ 125, 510 BTNBMP ::oButtonDeleteFilter ;
+   @ 125, 544 BTNBMP ::oButtonDeleteFilter ;
             RESOURCE "gc_funnel_delete_16" ;
             SIZE     18, 18 ;
             OF       ::oRebar ;
@@ -553,7 +553,7 @@ METHOD CreateSearchBar( oWnd )
    ::oButtonDeleteFilter:lTransparent  := .t.
    ::oButtonDeleteFilter:lBoxSelect    := .f.
 
-   @ 124, 536 COMBOBOX ::oYearComboBox ;
+   @ 124, 570 COMBOBOX ::oYearComboBox ;
             VAR      ::cYearComboBox ;
             ITEMS    ::aYearComboBox ;
             STYLE    3 ;

@@ -133,6 +133,8 @@ CLASS SQLNavigatorController FROM SQLBrowseController
                                        INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "LIKE (...)" ),;
                                                       ::buildLikeFilter( cField, cValue ), ) )
 
+   METHOD setShowDeleted()
+
    METHOD getNavigatorView()           INLINE ( iif( empty( ::oNavigatorView ), ::oNavigatorView := SQLNavigatorView():New( self ), ), ::oNavigatorView )
 
    METHOD getSelectorView()            INLINE ( iif( empty( ::oSelectorView ), ::oSelectorView := SQLSelectorView():New( self ), ), ::oSelectorView )
@@ -140,8 +142,6 @@ CLASS SQLNavigatorController FROM SQLBrowseController
    METHOD getDialogModalView()         INLINE ( iif( empty( ::oDialogModalView ), ::oDialogModalView := SQLDialogView():New( self ), ), ::oDialogModalView )
 
    METHOD getFilterController()        INLINE ( iif( empty( ::oFilterController ), ::oFilterController := FiltrosController():New( self ), ), ::oFilterController ) 
-
-   METHOD setShowDeleted()
 
 END CLASS
 

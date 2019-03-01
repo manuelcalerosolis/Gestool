@@ -50,7 +50,7 @@ METHOD New() CLASS ConversorPrepareAlbaranVentasController
    // Series-------------------------------------------------------------------
 
    oContadoresAlbaranesVentasController   := ContadoresAlbaranesVentasController():New()
-   oContadoresAlbaranesVentasController:getRange():setAlias( ::oOrigenController:getModel():getTable() ) 
+   oContadoresAlbaranesVentasController:getRange():setTable( ::oOrigenController:getModel():getTable() ) 
 
    aadd( ::aControllers, oContadoresAlbaranesVentasController )
 
@@ -61,42 +61,42 @@ METHOD New() CLASS ConversorPrepareAlbaranVentasController
    // Terceros-----------------------------------------------------------------
 
    oTercerosController                    := TercerosController():New()
-   oTercerosController:getRange():setAlias( ::oOrigenController:getModel():getTable() ) 
+   oTercerosController:getRange():setTable( ::oOrigenController:getModel():getTable() ) 
 
    aadd( ::aControllers, oTercerosController )
 
    // Metodos de pago----------------------------------------------------------
 
    oMetodosPagosController                := MetodosPagosController():New()
-   oMetodosPagosController:getRange():setAlias( ::oOrigenController:getModel():getTable() ) 
+   oMetodosPagosController:getRange():setTable( ::oOrigenController:getModel():getTable() ) 
 
    aadd( ::aControllers, oMetodosPagosController )
 
    // Almacenes-----------------------------------------------------------------
 
    oAlmacenesController                   := AlmacenesController():New()
-   oAlmacenesController:getRange():setAlias( ::oOrigenController:getModel():getTable() ) 
+   oAlmacenesController:getRange():setTable( ::oOrigenController:getModel():getTable() ) 
 
    aadd( ::aControllers, oAlmacenesController )
 
    // Tarifas------------------------------------------------------------------
 
    oArticulosTarifasController            := ArticulosTarifasController():New()
-   oArticulosTarifasController:getRange():setAlias( ::oOrigenController:getModel():getTable() ) 
+   oArticulosTarifasController:getRange():setTable( ::oOrigenController:getModel():getTable() ) 
 
    aadd( ::aControllers, oArticulosTarifasController )
 
    // Rutas--------------------------------------------------------------------
 
    oRutasController                       := RutasController():New()
-   oRutasController:getRange():setAlias( ::oOrigenController:getModel():getTable() ) 
+   oRutasController:getRange():setTable( ::oOrigenController:getModel():getTable() ) 
 
    aadd( ::aControllers, oRutasController )
 
    // Agentes------------------------------------------------------------------
 
    oAgentesController                     := AgentesController():New()
-   oAgentesController:getRange():setAlias( ::oOrigenController:getModel():getTable() ) 
+   oAgentesController:getRange():setTable( ::oOrigenController:getModel():getTable() ) 
 
    aadd( ::aControllers, oAgentesController )
 

@@ -59,6 +59,8 @@ USER FUNCTION hbunit_test()
    oSuite:addTest( TestEmpresasController():New() )
 
    oSuite:addTest( TestArticulosController():New() )
+   
+   oSuite:addTest( TestConfiguracionVistasController():New() )
 
    oSuite:addTest( TestCaracteristicasController():New() )
 
@@ -104,7 +106,7 @@ USER FUNCTION hbunit_test()
 
    oSuite:addTest( TestConversorToFacturaVentasController():New() )
 
-   oSuite:setCategories( { "conversor_to_factura_ventas" } ) 
+   oSuite:setCategories( { "configuracion_vistas" } ) 
 
    oRunner:run( oSuite )
 
