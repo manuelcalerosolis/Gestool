@@ -12,7 +12,7 @@ CLASS SQLAlbaranesVentasLineasModel FROM SQLOperacionesComercialesLineasModel
                                        "KEY ( deleted_at ), "                    + ;
                                        "KEY ( articulo_codigo ), "               + ;              
                                        "FOREIGN KEY ( parent_uuid ) "            + ;
-                                       "REFERENCES " + SQLAlbaranesVentasModel():getTable() + " ( uuid ) ON DELETE CASCADE"
+                                       "REFERENCES " + SQLAlbaranesVentasModel():cTableName + " ( uuid ) ON DELETE CASCADE"
 
    DATA cTableName            INIT  "albaranes_ventas_lineas"
 

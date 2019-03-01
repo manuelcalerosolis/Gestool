@@ -220,6 +220,12 @@ CLASS SQLBaseController
    METHOD commitTransactionalMode()    INLINE ( iif( ::lTransactional, getSQLDatabase():Commit(), ) )
    METHOD rollbackTransactionalMode()  INLINE ( iif( ::lTransactional, getSQLDatabase():Rollback(), ) )
 
+   //Commit & rollback---------------------------------------------------------
+
+   METHOD commitData()                 INLINE ( ::getModel():commitData() )
+
+   METHOD rollbackData()               INLINE ( ::getModel():rollbackData() )
+
    // Events-------------------------------------------------------------------
 
    METHOD setEvents( aEvents, bEvent )                
@@ -268,6 +274,13 @@ CLASS SQLBaseController
    METHOD getRowSet()                  INLINE ( iif( empty( ::oRowSet ), ::oRowSet := SQLRowSet():New( self ), ), ::oRowSet )
    
    METHOD getEvents()                  INLINE ( iif( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
+
+//Autocommit------------------------------------------------------------------//
+
+   METHOD setAutoCommitToTrue()        INLINE( ::getModel():setAutoCommitToTrue() )
+
+   METHOD setAutoCommitToFalse()       INLINE( ::getModel():setAutoCommitToFalse() )
+
 
 END CLASS
 
@@ -570,7 +583,13 @@ METHOD Edit( nId )
 
    ::setEditMode()
 
-   ::beginTransactionalMode()
+   //::beginTransactionalMode()
+
+   ::commitData()
+
+   ::setAutoCommitToFalse()
+
+   //::commitTransactionalMode()
 
    ::getModel():loadCurrentBuffer( nId )
 
@@ -582,7 +601,11 @@ METHOD Edit( nId )
 
       ::getModel():updateBuffer()
 
-      ::commitTransactionalMode()
+      //::commitTransactionalMode()
+
+      ::commitData()
+
+      ::setAutoCommitToTrue()
 
       ::refreshRowSetAndFindId()
 
@@ -596,7 +619,11 @@ METHOD Edit( nId )
 
       ::fireEvent( 'cancelEdited' ) 
 
-      ::rollbackTransactionalMode()
+      //::rollbackTransactionalMode()
+
+      ::rollbackData()
+
+      ::setAutoCommitToTrue()
 
    end if 
 
@@ -982,3 +1009,4 @@ METHOD reBuildRowSet()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+

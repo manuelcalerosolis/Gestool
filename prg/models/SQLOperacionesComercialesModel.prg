@@ -198,15 +198,15 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesModel
 
    cSql  := hb_strformat(  cSql,;
                            ::getTableName(),;
-                           ::getTable(),;
+                           ::getAlias(),;
                            SQLTercerosModel():getTableName(),;
-                           SQLTercerosModel():getTable(),;
+                           SQLTercerosModel():getAlias(),;
                            SQLDireccionesModel():getTableName(),;
-                           SQLDireccionesModel():getTable(),;
+                           SQLDireccionesModel():getAlias(),;
                            SQLArticulosTarifasModel():getTableName(),;
-                           SQLArticulosTarifasModel():getTable(),;
+                           SQLArticulosTarifasModel():getAlias(),;
                            SQLTercerosGruposModel():getTableName(),;
-                           SQLTercerosGruposModel():getTable(),;
+                           SQLTercerosGruposModel():getAlias(),;
                            ::getColumnsSelect() )
 
 RETURN ( cSql )

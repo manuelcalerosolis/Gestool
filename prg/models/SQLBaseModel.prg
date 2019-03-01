@@ -81,7 +81,7 @@ CLASS SQLBaseModel
 
    METHOD getTableName()               INLINE ( "gestool." + ::cTableName )
 
-   METHOD getTable()                   INLINE ( ::cTableName )
+   METHOD getAlias()                   INLINE ( ::cTableName )
 
    METHOD getPackage( cContext )       INLINE ( ::cPackage + cContext )
 
@@ -272,11 +272,6 @@ CLASS SQLBaseModel
    METHOD insertOnDuplicate( hBuffer )
       METHOD insertOnDuplicateTransactional( hBuffer ) ;
                                        INLINE ( ::insertOnDuplicate( hBuffer, .t. ) )
-
-   METHOD updateInsertedBuffer( hBuffer )
-
-   METHOD deleteInsertedBuffer( hBuffer )
-
    METHOD deleteSelection( aIds )
    METHOD deleteById( uId )
    METHOD deleteByUuid( uUuid )
@@ -381,6 +376,16 @@ CLASS SQLBaseModel
                                        INLINE ( ::uuidOlderParent := uuidParent )
 
    METHOD getUuidOlderParent()         INLINE ( ::uuidOlderParent )
+
+   //Autocommit---------------------------------------------------------------//
+
+   METHOD setAutoCommitToTrue()
+
+   METHOD setAutoCommitToFalse()
+
+   METHOD commitData() 
+   
+   METHOD rollbackData()
 
 END CLASS
 
@@ -1642,43 +1647,21 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD updateInsertedBuffer( hBuffer )
-
-   ::fireEvent( 'updatingInsertedBuffer' )
-
-   ::getUpdateSentence( hBuffer )
-
-   if !empty( ::cSQLUpdate )
-      ::getDatabase():Querys( ::cSQLUpdate )
-   end if
-
-   ::fireEvent( 'updatedInsertedBuffer' )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD deleteInsertedBuffer( hBuffer )
-
-   DEFAULT hBuffer      := ::hBuffer
-
-   if !hb_ishash( hBuffer )
-      RETURN ( nil )
-   end if 
-
-RETURN ( ::deleteWhere( { "uuid" => hget( hBuffer, "uuid" ) } ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertOnDuplicate( hBuffer )
+METHOD insertOnDuplicate( hBuffer, lTransactional )
 
    local cSentence 
+
+   DEFAULT lTransactional  := .f.
 
    ::fireEvent( 'insertingOnDuplicatingBuffer' )
 
    cSentence               := ::getInsertOnDuplicateSentence( hBuffer )
 
-   ::getDatabase():Query( cSentence )
+   if lTransactional 
+      ::getDatabase():TransactionalQuery( cSentence )
+   else
+      ::getDatabase():Query( cSentence )
+   end  if 
 
    ::fireEvent( 'insertedOnDuplicatedBuffer' )
 
@@ -1826,9 +1809,11 @@ RETURN ( ::getDatabase():Query( cSql ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD updateFieldsWhere( hFields, hWhere )
+METHOD updateFieldsWhere( hFields, hWhere, lTransactional )
 
    local cSql  
+
+   DEFAULT lTransactional  := .f.
 
    cSql                    := "UPDATE " + ::getTableName() + " "
    cSql                    +=    "SET " 
@@ -1841,14 +1826,20 @@ METHOD updateFieldsWhere( hFields, hWhere )
    hEval( hWhere,; 
       {|k,v| cSql += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v ) + " " } )
 
+   if lTransactional
+      RETURN ( ::getDatabase():TransactionalQuery( cSql ) )
+   end if 
+
 RETURN ( ::getDatabase():Query( cSql ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD updateBufferWhereId( id, hBuffer )
+METHOD updateBufferWhereId( id, hBuffer, lTransactional )
 
    local cSql 
    local uValue
+
+   DEFAULT lTransactional  := .f.
 
    if !hb_isnumeric( id ) .or. empty( id )
       RETURN ( nil )
@@ -1867,6 +1858,10 @@ METHOD updateBufferWhereId( id, hBuffer )
    cSql                    := chgAtEnd( cSql, '', 2 ) + " "
 
    cSql                    +=    "WHERE id = " + toSqlString( id )
+
+   if lTransactional 
+      RETURN ( ::getDatabase():TransactionalQuery( cSql ) )
+   end  if 
 
 RETURN ( ::getDatabase():Query( cSql ) )
 
@@ -1928,7 +1923,7 @@ METHOD getFieldWhere( cField, hWhere, hOrderBy, uDefault )
 
    end if 
 
-   cSql              +=    "LIMIT 1 "
+   cSql              +=    "LIMIT 1"
 
 RETURN ( ::getDatabase():getValue( cSql, uDefault ) )
 
@@ -1939,7 +1934,7 @@ METHOD Count()
    local cSql  := "SELECT COUNT(*) FROM " + ::getTableName()    
 
    if ::isDeletedAtColumn()
-      cSQL     +=    ::getWhereOrAnd( cSQL ) + "deleted_at = 0" 
+      cSQL           +=    ::getWhereOrAnd( cSQL ) + "deleted_at = 0" 
    end if 
 
 RETURN ( ::getDatabase():getValue( cSql ) )
@@ -2229,3 +2224,65 @@ STATIC FUNCTION toSlash( cFind )
 RETURN ( left( cFind, ( nAt - 1 ) ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD setAutoCommitToTrue()
+
+local cSql
+
+   TEXT INTO cSql
+
+   set @@autocommit = 1;
+
+   ENDTEXT
+
+   msgalert( "autoCommitTrue")
+
+RETURN (::getDatabase():Exec( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD setAutoCommitToFalse()
+
+local cSql
+
+   TEXT INTO cSql
+
+   set @@autocommit = 0;
+
+   ENDTEXT
+
+    msgalert( "autoCommitFalse")
+
+RETURN ( ::getDatabase():Exec( cSql ) ) 
+
+//---------------------------------------------------------------------------//
+
+ METHOD commitData() 
+
+ local cSql
+
+   TEXT INTO cSql
+
+   COMMIT;
+
+   ENDTEXT
+
+    msgalert( "commit")
+
+RETURN ( ::getDatabase():Exec( cSql ) )                 
+
+//---------------------------------------------------------------------------//
+
+ METHOD rollbackData() 
+
+ local cSql
+
+   TEXT INTO cSql
+
+   ROLLBACK;
+
+   ENDTEXT
+
+    msgalert( "rollback")
+
+RETURN ( ::getDatabase():Exec( cSql ) ) 
