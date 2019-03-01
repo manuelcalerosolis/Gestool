@@ -339,6 +339,8 @@ CLASS TestConfiguracionVistasController FROM TestCase
 
    METHOD test_view_super_usuario()
 
+   METHOD test_view_usuario()
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -348,6 +350,16 @@ METHOD test_view_super_usuario() CLASS TestConfiguracionVistasController
    SQLConfiguracionVistasModel():set( "view_type", "view_name", "999", "browse_state", "D", "column_orientation", 1 )
 
    ::Assert():Equals( "D", SQLConfiguracionVistasModel():getColumnOrder( "view_type", "view_name", "999" ), "test get column order" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_view_usuario() CLASS TestConfiguracionVistasController
+
+   SQLConfiguracionVistasModel():set( "view_type", "view_name", "000", "browse_state", "A", "column_orientation", 1 )
+
+   ::Assert():Equals( "A", SQLConfiguracionVistasModel():getColumnOrder( "view_type", "view_name", "000" ), "test get column order" )
 
 RETURN ( nil )
 

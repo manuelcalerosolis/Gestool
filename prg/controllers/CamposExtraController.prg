@@ -5,7 +5,7 @@
 
 CLASS CamposExtraGestoolController FROM CamposExtraController
 
-   METHOD getLevel()                            INLINE ( nil )
+   METHOD getLevel()                   INLINE ( nil )
 
    METHOD getConfiguracionVistasController();    
                                        INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
@@ -83,7 +83,9 @@ RETURN ( Self )
 
 METHOD End() CLASS CamposExtraController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -97,17 +99,13 @@ METHOD End() CLASS CamposExtraController
       ::oValidator:End()
    end if 
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
 METHOD deleteEntitiesWhereEmpty()
-   
-   ::getCamposExtraEntidadesController():oModel:deleteBlankEntityWhereUuid( ::getUuid() )
 
-RETURN ( nil )
+RETURN ( ::getCamposExtraEntidadesController():oModel:deleteBlankEntityWhereUuid( ::getUuid() ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
