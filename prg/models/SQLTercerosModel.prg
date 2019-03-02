@@ -18,11 +18,11 @@ CLASS SQLTercerosModel FROM SQLCompanyModel
    METHOD getSentenceClienteDireccionPrincipal( cBy, cId )
 
    METHOD getClienteDireccionPrincipal( cBy, cId ) ;
-                                       INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentenceClienteDireccionPrincipal( cBy, cId ) ) ) )
+                                       INLINE ( atail( getSQLDatabase():selectTrimedFetchHash( ::getSentenceClienteDireccionPrincipal( cBy, cId ) ) ) )
 
    METHOD getSentencePaymentDays( cId )
 
-   METHOD getPaymentDays( cId )        INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentencePaymentDays( cId ) ) ) )
+   METHOD getPaymentDays( cId )        INLINE ( atail( getSQLDatabase():selectTrimedFetchHash( ::getSentencePaymentDays( cId ) ) ) )
 
    METHOD isWhereCodigoNotDeletedAndClient( cCodigo )
 
@@ -271,7 +271,7 @@ METHOD getByUuid( uuid ) CLASS SQLTercerosModel
 
    cGeneralSelect          += " WHERE clientes.uuid = " + quoted( uuid )
 
-RETURN ( ::getDatabase():selectTrimedFetchHash( cGeneralSelect ) )
+RETURN ( getSQLDatabase():selectTrimedFetchHash( cGeneralSelect ) )
 
 //---------------------------------------------------------------------------//
 
@@ -352,7 +352,7 @@ METHOD isWhereCodigoNotDeletedAndClient( cCodigo ) CLASS SQLTercerosModel
 
    cSql     := hb_strformat( cSql, ::getTableName(), quoted( cCodigo ) )
 
-   nCount   := ::getDatabase():getValue( cSQL )
+   nCount   := getSQLDatabase():getValue( cSQL )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount > 0 )
 
@@ -376,7 +376,7 @@ METHOD isWhereCodigoNotDeletedAndProveedor( cCodigo ) CLASS SQLTercerosModel
 
    cSql     := hb_strformat( cSql, ::getTableName(), quoted( cCodigo ) )
 
-   nCount   := ::getDatabase():getValue( cSQL )
+   nCount   := getSQLDatabase():getValue( cSQL )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount > 0 )
 

@@ -158,7 +158,7 @@ METHOD getValueWhereMac( cTipoAjuste, cMacAddress, uDefault ) CLASS SQLAjustable
    cSentence               += "WHERE ajustable_uuid = " + notEscapedQuoted( cMacAddress ) + " "
    cSentence               +=    "AND ajustable_tipo = " + quoted( cTipoAjuste )
 
-   uValue                  := ::getDatabase():getValue( cSentence )
+   uValue                  := getSQLDatabase():getValue( cSentence )
 
    if hb_ischar( uValue ) 
       RETURN ( uValue ) 
@@ -316,7 +316,7 @@ METHOD getValue( cUuid, cTipo, cAjuste, uDefault ) CLASS SQLAjustableModel
    cSentence         +=    "AND ajustables.ajustable_tipo = " + quoted( cTipo ) + " "
    cSentence         +=    "AND ajustables.ajustable_uuid = " + quoted( cUuid ) 
 
-   uValue            := ::getDatabase():getValue( cSentence )
+   uValue            := getSQLDatabase():getValue( cSentence )
 
    if hb_ischar( uValue ) 
       RETURN ( alltrim( uValue ) )

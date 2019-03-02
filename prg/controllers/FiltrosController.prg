@@ -47,7 +47,9 @@ CLASS FiltrosController FROM SQLBrowseController
 
    METHOD deleteFilter()
 
-   METHOD isFilterSelected()
+   METHOD isSelected()
+
+   METHOD isLoad( cTable, cFilterName )
 
    METHOD getFilters()
 
@@ -82,6 +84,8 @@ CLASS FiltrosController FROM SQLBrowseController
 
    METHOD getWhere()
 
+   METHOD getWhereAnd()                
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := FiltrosBrowseView():New( self ), ), ::oBrowseView ) 
@@ -108,7 +112,7 @@ METHOD New( oController ) CLASS FiltrosController
                                              "32" => "gc_funnel_32",;
                                              "48" => "gc_funnel_48" }
 
-   ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
+   ::getModel():setEvent( 'gettingSelectSentence', {|| ::gettingSelectSentence() } )
 
    ::getBrowseView():setEvent( 'doubleClicking', {|| .f. } ) 
 
@@ -304,10 +308,10 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD isFilterSelected() CLASS FiltrosController
+METHOD isSelected() CLASS FiltrosController
 
    local nId
-   local hBuffer
+   local cFilter
 
    nId            := ::getBrowseView():getRowSet():fieldGet( 'id' )
 
@@ -315,11 +319,27 @@ METHOD isFilterSelected() CLASS FiltrosController
       RETURN ( .f. )
    end if 
 
-   hBuffer        := ::getModel():loadCurrentBuffer( nId )
+   cFilter        := ::getModel():getField( "filtro", "id", nId ) 
 
-   if !empty( hBuffer )
-      ::aFilter   := ( &( hget( hBuffer, "filtro" ) ) )
+   if !empty( cFilter )
+      ::aFilter   := ( &( cFilter ) )
    end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD isLoad( cTable, cFilterName ) CLASS FiltrosController
+
+   local cFilter
+
+   cFilter     := ::getModel():getFieldWhere( "filtro", { "tabla" => cTable, "nombre" => cFilterName } )
+
+   if empty( cFilter )
+      RETURN ( .f. )
+   end if 
+
+   ::aFilter   := ( &( cFilter ) )
 
 RETURN ( .t. )
 
@@ -380,13 +400,11 @@ METHOD getWhere() CLASS FiltrosController
    local cSql     
    local hFilter
    
-   cSql     := ""
-
    if ::isEmptyFilter( ::aFilter )
-      RETURN ( cSql )
+      RETURN ( "" )
    end if 
 
-   cSql     := " AND ( "
+   cSql     := " ( "
 
    for each hFilter in ::aFilter 
       cSql  += ::getStructureAlias( hget( hFilter, "text" ) ) + "." + ::getStructureField( hget( hFilter, "text" ) )
@@ -400,6 +418,17 @@ METHOD getWhere() CLASS FiltrosController
 RETURN ( cSql ) 
 
 //---------------------------------------------------------------------------//
+
+METHOD getWhereAnd()
+
+   local cWhere   := ::getWhere()
+
+   if empty( cWhere )
+      RETURN ( cWhere )
+   end if 
+
+RETURN ( " AND " + cWhere )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -680,7 +709,7 @@ RETURN ( .t. )
 
 METHOD selectFilter() CLASS FiltrosView
 
-   if ::oController:isFilterSelected()
+   if ::oController:isSelected()
 
       ::oBrwFilter:setArray( ::oController:aFilter, , , .f. )
 

@@ -305,7 +305,7 @@ METHOD editFilter()
       RETURN ( nil )  
    end if 
 
-RETURN ( ::oFilterController:EditByText( cFilter ) )    
+RETURN ( ::oFilterController:Edit() )    
     
 //---------------------------------------------------------------------------//
     

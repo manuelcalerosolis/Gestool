@@ -198,15 +198,15 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesModel
 
    cSql  := hb_strformat(  cSql,;
                            ::getTableName(),;
-                           ::getAlias(),;
+                           ::getTable(),;
                            SQLTercerosModel():getTableName(),;
-                           SQLTercerosModel():getAlias(),;
+                           SQLTercerosModel():getTable(),;
                            SQLDireccionesModel():getTableName(),;
-                           SQLDireccionesModel():getAlias(),;
+                           SQLDireccionesModel():getTable(),;
                            SQLArticulosTarifasModel():getTableName(),;
-                           SQLArticulosTarifasModel():getAlias(),;
+                           SQLArticulosTarifasModel():getTable(),;
                            SQLTercerosGruposModel():getTableName(),;
-                           SQLTercerosGruposModel():getAlias(),;
+                           SQLTercerosGruposModel():getTable(),;
                            ::getColumnsSelect() )
 
 RETURN ( cSql )
@@ -230,7 +230,7 @@ METHOD getNumeroWhereUuid( uuid ) CLASS SQLOperacionesComercialesModel
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuid ) )
 
-RETURN ( alltrim( ::getDatabase():getValue( cSql ) ) )
+RETURN ( alltrim( getSQLDatabase():getValue( cSql ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -279,7 +279,7 @@ METHOD maxNumberWhereSerie( cSerie ) CLASS SQLOperacionesComercialesModel
    cSql        := "SELECT MAX( numero ) FROM " + ::getTableName() + " "
    cSql        +=    "WHERE serie = " + quoted( cSerie )
 
-RETURN ( ::getDatabase():getValue( cSql, 0 ) + 1 )
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) + 1 )
 
 //---------------------------------------------------------------------------//
 
@@ -297,7 +297,7 @@ local cSql
    INNER JOIN %2$s AS terceros
       ON terceros.codigo = operacion_comercial.tercero_codigo
    
-   WHERE CONCAT(operacion_comercial.serie, "-", operacion_comercial.numero) = %3$s
+   WHERE CONCAT( operacion_comercial.serie, "-", operacion_comercial.numero ) = %3$s
 
    ENDTEXT
 
@@ -313,18 +313,15 @@ RETURN ( getSQLDatabase():getValue( cSql ) )
 
 METHOD deleteWhereUuid( Uuid ) CLASS SQLOperacionesComercialesModel
 
-local cSql
+   local cSql
 
    TEXT INTO cSql
 
-   DELETE FROM %1$s
-   WHERE uuid= %2$s
+   DELETE FROM %1$s WHERE uuid= %2$s
 
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql,;
-                           ::getTableName(),;
-                           quoted( Uuid ) )
+   cSql  := hb_strformat(  cSql, ::getTableName(), quoted( Uuid ) )
 
 RETURN ( getSQLDatabase():Exec( cSql ) )
 
@@ -333,23 +330,22 @@ RETURN ( getSQLDatabase():Exec( cSql ) )
 METHOD getHashWhereUuidAndOrder( cWhere ) CLASS SQLOperacionesComercialesModel
    
    local cSql
-   local aSelected
 
    TEXT INTO cSql
 
-      SELECT 
-         *  
-      FROM %1$s
+      SELECT *  
+         
+         FROM %1$s
 
-      WHERE uuid %2$s
+         WHERE uuid %2$s
 
-      Order by tercero_codigo, ruta_codigo, metodo_pago_codigo, tarifa_codigo, recargo_equivalencia, serie
+         ORDER BY tercero_codigo, ruta_codigo, metodo_pago_codigo, tarifa_codigo, recargo_equivalencia, serie
        
    ENDTEXT
 
    cSql  := hb_strformat(  cSql, ::getTableName(), cWhere )
 
-RETURN ( ::getDatabase():selectFetchHash( cSQL ) )
+RETURN ( getSQLDatabase():selectFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
 

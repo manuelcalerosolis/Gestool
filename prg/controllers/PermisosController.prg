@@ -478,7 +478,7 @@ METHOD getNombres() CLASS PermisosRepository
 
    local cSQL  := "SELECT nombre FROM " + ::getTableName()
 
-RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSQL ) )
+RETURN ( getSQLDatabase():selectFetchArrayOneColumn( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
@@ -487,7 +487,7 @@ METHOD getUuid( cNombre ) CLASS PermisosRepository
    local cSQL  := "SELECT uuid FROM " + ::getTableName() + " " + ;
                      "WHERE nombre = " + quoted( cNombre )
 
-RETURN ( ::getDatabase():getValue( cSQL ) )
+RETURN ( getSQLDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

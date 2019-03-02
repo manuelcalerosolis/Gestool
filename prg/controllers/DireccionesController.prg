@@ -617,7 +617,7 @@ CLASS SQLDireccionesModel FROM SQLCompanyModel
                                        INLINE ( cSQLSelect )
 
    METHOD getClienteDireccion( cBy, cCodigo, uuidParent ) ;
-                                       INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentenceClienteDireccion( cBy, cCodigo, uuidParent ) ) ) )
+                                       INLINE ( atail( getSQLDatabase():selectTrimedFetchHash( ::getSentenceClienteDireccion( cBy, cCodigo, uuidParent ) ) ) )
 
    METHOD getSentenceClienteDireccion( cBy, cCodigo, uuidParent )
 

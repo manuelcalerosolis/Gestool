@@ -338,7 +338,7 @@ METHOD editFilter()
       RETURN ( nil )  
    end if 
 
-RETURN ( ::getFilterController():EditByText( cFilter ) )    
+RETURN ( ::getFilterController():Edit() )    
     
 //---------------------------------------------------------------------------//
     
@@ -373,8 +373,6 @@ RETURN ( nil )
 
 METHOD changeFilter( cFilterName )         
 
-   local cFilterSentence
-
    DEFAULT cFilterName     := ::oWindowsBar:getComboFilter()
 
    if empty( cFilterName )
@@ -383,12 +381,14 @@ METHOD changeFilter( cFilterName )
    
       ::hideEditAndDeleteButtonFilter()
    
-   else 
+      RETURN ( ::reBuildRowSet() )
 
-      cFilterSentence      := ::getFilterController():getFilterSentence( cFilterName )
+   end if  
 
-      ::getModel():setFilterWhere( cFilterSentence )
-   
+   if ::getFilterController():isLoad( ::getName(), cFilterName )
+
+      ::getModel():setFilterWhere( ::getFilterController():getWhere() )
+
       ::showEditAndDeleteButtonFilter()
 
    end if  

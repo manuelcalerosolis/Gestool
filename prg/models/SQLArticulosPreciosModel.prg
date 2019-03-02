@@ -36,49 +36,49 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
    METHOD getSQLDeletePrecioWhereUuidTarifa( uuidTarifa )
 
    METHOD deletePrecioWhereUuidTarifa( uuidTarifa ) ;
-                                       INLINE ( ::getDatabase():Exec( ::getSQLDeletePrecioWhereUuidTarifa( uuidTarifa ) ) )
+                                       INLINE ( getSQLDatabase():Exec( ::getSQLDeletePrecioWhereUuidTarifa( uuidTarifa ) ) )
 
    METHOD getSQLInsertPrecioWhereTarifa( uuidTarifa )
 
    METHOD insertPrecioWhereTarifa( uuidTarifa ) ;
-                                       INLINE ( ::getDatabase():Exec( ::getSQLInsertPrecioWhereTarifa( uuidTarifa ) ) )
+                                       INLINE ( getSQLDatabase():Exec( ::getSQLInsertPrecioWhereTarifa( uuidTarifa ) ) )
 
    METHOD getSQLUpdatePrecioWhereTarifa( uuidTarifa )
 
    METHOD updatePrecioWhereTarifa( uuidTarifa ) ;
-                                       INLINE ( ::getDatabase():Exec( ::getSQLUpdatePrecioWhereTarifa( uuidTarifa ) ) )
+                                       INLINE ( getSQLDatabase():Exec( ::getSQLUpdatePrecioWhereTarifa( uuidTarifa ) ) )
 
    METHOD updatePrecioWhereArticulo( uuidArticulo ) ;
-                                       INLINE ( ::getDatabase():Exec( ::getSQLUpdatePrecioWhereArticulo( uuidArticulo ) ) )
+                                       INLINE ( getSQLDatabase():Exec( ::getSQLUpdatePrecioWhereArticulo( uuidArticulo ) ) )
 
    METHOD getSQLUpdatePrecioWhereArticulo( uuidArticulo ) 
 
    METHOD insertUpdatePrecioWhereTarifa( uuidTarifa, lCosto ) ;
-                                       INLINE ( ::getDatabase():Exec( ::getSQLInsertPrecioWhereTarifa( uuidTarifa, lCosto ) ),;
-                                                ::getDatabase():Exec( ::getSQLUpdatePrecioWhereTarifa( uuidTarifa ) ) )
+                                       INLINE ( getSQLDatabase():Exec( ::getSQLInsertPrecioWhereTarifa( uuidTarifa, lCosto ) ),;
+                                                getSQLDatabase():Exec( ::getSQLUpdatePrecioWhereTarifa( uuidTarifa ) ) )
 
    METHOD updatePrecioWhereTarifaAndArticulo( idPrecio, nPrecioCosto ) ;
-                                       INLINE ( ::getDatabase():Exec( ::getSQLUpdatePrecioWhereTarifaAndArticulo( idPrecio, nPrecioCosto ) ) )
+                                       INLINE ( getSQLDatabase():Exec( ::getSQLUpdatePrecioWhereTarifaAndArticulo( idPrecio, nPrecioCosto ) ) )
 
    METHOD getSQLUpdatePrecioWhereTarifaAndArticulo( idPrecio, nPrecioCosto )
 
    METHOD getSQLInsertPreciosWhereTarifa( codigoTarifa )
 
    METHOD insertPreciosWhereTarifa( codigoTarifa ) ;
-                                       INLINE ( ::getDatabase():Execs( ::getSQLInsertPreciosWhereTarifa( codigoTarifa ) ) )
+                                       INLINE ( getSQLDatabase():Execs( ::getSQLInsertPreciosWhereTarifa( codigoTarifa ) ) )
 
    METHOD getSQLInsertPreciosWhereArticulo( uuidArticulo )
 
    METHOD insertPreciosWhereArticulo( uuidArticulo ) ;     
-                                       INLINE ( ::getDatabase():Querys( ::getSQLInsertPreciosWhereArticulo( uuidArticulo ) ) )
+                                       INLINE ( getSQLDatabase():Querys( ::getSQLInsertPreciosWhereArticulo( uuidArticulo ) ) )
 
    METHOD getPrecioBaseWhereArticuloUuidAndTarifaCodigo( uuidArticulo, cCodigoTarifa ) ;
-                                       INLINE ( ::getDatabase():getValue( ::getSQLPrecioBaseWhereArticuloUuidAndTarifaCodigo( uuidArticulo, cCodigoTarifa ) ) )
+                                       INLINE ( getSQLDatabase():getValue( ::getSQLPrecioBaseWhereArticuloUuidAndTarifaCodigo( uuidArticulo, cCodigoTarifa ) ) )
 
    METHOD getSQLPrecioBaseWhereArticuloUuidAndTarifaCodigo( uuidArticulo, cCodigoTarifa )
 
    METHOD getPrecioBaseWhereArticuloCodigoAndTarifaCodigo( cCodigoArticulo, cCodigoTarifa ) ;
-                                       INLINE ( ::getDatabase():getValue( ::getSQLPrecioBaseWhereArticuloCodigoAndTarifaCodigo( cCodigoArticulo, cCodigoTarifa ) ) )
+                                       INLINE ( getSQLDatabase():getValue( ::getSQLPrecioBaseWhereArticuloCodigoAndTarifaCodigo( cCodigoArticulo, cCodigoTarifa ) ) )
 
    METHOD getSQLPrecioBaseWhereArticuloCodigoAndTarifaCodigo( cCodigoArticulo, cCodigoTarifa )
 

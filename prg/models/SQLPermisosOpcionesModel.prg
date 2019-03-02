@@ -62,7 +62,7 @@ METHOD getNivelUsuario( cUuidUser, cNombreOpcion ) CLASS PermisosOpcionesReposit
                      "WHERE usuarios.uuid = " + quoted( cUuidUser )                 + " " +  ; 
                         "AND permisos_opciones.nombre = " + quoted( cNombreOpcion )  
 
-RETURN ( ::getDatabase():getValue( cSQL ) )
+RETURN ( getSQLDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
@@ -76,7 +76,7 @@ METHOD getNivelRol( cUuidRol, cOption ) CLASS PermisosOpcionesRepository
                      "WHERE roles.uuid = " + quoted( cUuidRol )               + " " +  ;
                         "AND permisos_opciones.nombre = " + quoted( cOption )
 
-RETURN ( ::getDatabase():getValue( cSQL ) )
+RETURN ( getSQLDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 

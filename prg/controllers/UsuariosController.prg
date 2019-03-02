@@ -341,7 +341,7 @@ METHOD validUserPassword( cNombre, cPassword ) CLASS SQLUsuariosModel
 
    cSQL        +=    "LIMIT 1"
 
-RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+RETURN ( getSQLDatabase():firstTrimedFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
@@ -356,7 +356,7 @@ METHOD validSuperUserPassword( cPassword ) CLASS SQLUsuariosModel
 
    cSQL        +=    "LIMIT 1"
 
-RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+RETURN ( getSQLDatabase():firstTrimedFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
@@ -364,7 +364,7 @@ METHOD fetchDirect() CLASS SQLUsuariosModel
 
    local cSQL  := "SELECT * FROM " + ::getTableName()
 
-RETURN ( ::getDatabase():Query( cSQL ) )
+RETURN ( getSQLDatabase():Query( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
@@ -376,7 +376,7 @@ METHOD getNombreUsuarioWhereNetName( cNetName ) CLASS SQLUsuariosModel
    cSQL        +=    "WHERE ajustables.ajuste_valor = " + quoted( cNetName )                 + " "    
    cSQL        +=       "AND ajustables.ajustable_tipo = 'usuarios'"
 
-RETURN ( ::getDatabase():getValue( cSQL ) )
+RETURN ( getSQLDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 

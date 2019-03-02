@@ -43,6 +43,8 @@ METHOD New( oController ) CLASS AlbaranesVentasController
 
    ::Super:New( oController )
 
+   ::lTransactional                    := .t.
+
    ::cTitle                            := "Albaranes de ventas"
 
    ::cName                             := "albaranes_ventas"

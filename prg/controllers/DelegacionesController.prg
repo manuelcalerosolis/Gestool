@@ -333,7 +333,7 @@ METHOD getNombresWhereParentUuid( parentUuid ) CLASS SQLDelegacionesModel
                      "FROM " + ::getTableName() + " "             + ;
                      "WHERE parent_uuid = " + quoted( parentUuid )
    
-RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSQL ) )
+RETURN ( getSQLDatabase():selectFetchArrayOneColumn( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
@@ -343,7 +343,7 @@ METHOD getWhereNombre( cNombre, parentUuid ) CLASS SQLDelegacionesModel
    cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
    cSQL        +=       "AND parent_uuid = " + quoted( parentUuid )           
 
-RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+RETURN ( getSQLDatabase():firstTrimedFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

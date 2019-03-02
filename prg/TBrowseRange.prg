@@ -235,6 +235,8 @@ CLASS ItemRange
    METHOD getKey()                     INLINE ( ::getTable() + "." + ::cKey )
 
    METHOD getWhere()
+   
+   METHOD getWhereAnd()
 
 END CLASS
 
@@ -297,16 +299,27 @@ METHOD getWhere() CLASS ItemRange
    end if 
 
    if empty( ::getTo() )
-      cWhere      := " AND " + ::getKey() + " = " + quoted( ::getFrom() ) + " "
+      cWhere      := ::getKey() + " = " + quoted( ::getFrom() ) + " "
       RETURN ( cWhere )
    end if 
 
-   cWhere         := " AND ( " + ::getKey() + " >= " + quoted( ::getFrom() ) + " "
+   cWhere         := "( " + ::getKey() + " >= " + quoted( ::getFrom() ) + " "
    cWhere         += " AND " + ::getKey() + " <= " + quoted( ::getTo() ) + " ) "
 
 RETURN ( cWhere )
 
 //---------------------------------------------------------------------------//
+
+METHOD getWhereAnd() CLASS ItemRange
+
+   local cWhere   := ::getWhere()
+
+   if empty( cWhere )
+      RETURN ( cWhere )
+   end if 
+
+RETURN ( " AND " + cWhere )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

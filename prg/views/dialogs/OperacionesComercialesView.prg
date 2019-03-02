@@ -5,6 +5,8 @@
 
 CLASS OperacionesComercialesView FROM OperacionesView
   
+   DATA oPanel
+
    DATA oGetNumero
 
    DATA oBtnDescuentosDeleted
@@ -88,7 +90,6 @@ METHOD Activate() CLASS OperacionesComercialesView
    ::getController():getContadoresController():getSelector():Build( { "idGet" => 100, "oDialog" => ::oFolder:aDialogs[1] } )
    ::getController():getContadoresController():getSelector():setWhen( {|| ::getController():isAppendOrDuplicateMode() } )
    ::getController():getContadoresController():getSelector():setEvent( 'loaded', {|oSelector| ::oGetNumero:cText( oSelector:uFields ) } )
-
 
    //::getController():getSerieDocumentoComponent():BindValue( bSETGET( ::getController():getModel():hBuffer[ "serie" ] ) )
    //::getController():getSerieDocumentoComponent():Activate( 100, ::oFolder:aDialogs[1] )
@@ -268,6 +269,8 @@ METHOD startActivate() CLASS OperacionesComercialesView
 
    ::addLinksToExplorerBar()
 
+   ::addLinksElementToExplorerBar() 
+
    ::getController():getTercerosController():getSelector():Start()
 
    ::getController():getMetodosPagosController():getSelector():Start()
@@ -314,34 +317,27 @@ RETURN ( ::oDialog:end( IDOK ) )
 
 METHOD addLinksToExplorerBar() CLASS OperacionesComercialesView
 
-   local oPanel
+   ::oPanel          := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-   oPanel               := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
-
-   oPanel:AddLink(   "Incidencias...",;
+   ::oPanel:AddLink( "Incidencias...",;
                      {||   ::getController():getIncidenciasController():activateDialogView() },;
                            ::getController():getIncidenciasController():getImage( "16" ) )
 
-   oPanel:AddLink(   "Tipo de direcciones...",;
+   ::oPanel:AddLink( "Tipo de direcciones...",;
                      {||   ::getController():getDireccionTipoDocumentoController():activateDialogView() },;
                            ::getController():getDireccionTipoDocumentoController():getImage( "16" ) )
 
    if ::getController():isNotZoomMode()
 
-   oPanel:AddLink(   "Campos extra...",;
+   ::oPanel:AddLink( "Campos extra...",;
                      {||   ::getController():getCamposExtraValoresController():Edit( ::getController():getUuid() ) },;
                            ::getController():getCamposExtraValoresController():getImage( "16" ) )
    end if
 
-   oPanel:AddLink(   "Detalle IVA...",;
+   ::oPanel:AddLink( "Detalle IVA...",;
                      {||   ::getController():getIvaDetalleView():Show()  },;
                            ::getController():getTipoIvaController():getImage( "16" ) )
 
-   oPanel:AddLink(   "Recibos...",;
-                     {||   ::getController():getRecibosController():activateDialogView() },;
-                           ::getController():getRecibosController():getImage( "16" ) )
-
-   ::addLinksElementToExplorerBar() 
 
 RETURN ( nil )
 

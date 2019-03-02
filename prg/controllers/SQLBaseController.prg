@@ -220,12 +220,6 @@ CLASS SQLBaseController
    METHOD commitTransactionalMode()    INLINE ( iif( ::lTransactional, getSQLDatabase():Commit(), ) )
    METHOD rollbackTransactionalMode()  INLINE ( iif( ::lTransactional, getSQLDatabase():Rollback(), ) )
 
-   //Commit & rollback---------------------------------------------------------
-
-   METHOD commitData()                 INLINE ( ::getModel():commitData() )
-
-   METHOD rollbackData()               INLINE ( ::getModel():rollbackData() )
-
    // Events-------------------------------------------------------------------
 
    METHOD setEvents( aEvents, bEvent )                
@@ -275,12 +269,15 @@ CLASS SQLBaseController
    
    METHOD getEvents()                  INLINE ( iif( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
 
-//Autocommit------------------------------------------------------------------//
+   //Autocommit------------------------------------------------------------------//
 
-   METHOD setAutoCommitToTrue()        INLINE( ::getModel():setAutoCommitToTrue() )
+   METHOD setAutoCommitToTrue()        INLINE ( getSQLDatabase():setAutoCommitToTrue() )
 
-   METHOD setAutoCommitToFalse()       INLINE( ::getModel():setAutoCommitToFalse() )
+   METHOD setAutoCommitToFalse()       INLINE ( getSQLDatabase():setAutoCommitToFalse() )
 
+   METHOD commitData()                 INLINE ( getSQLDatabase():commitData() )
+
+   METHOD rollbackData()               INLINE ( getSQLDatabase():rollbackData() )
 
 END CLASS
 
@@ -416,9 +413,9 @@ METHOD Insert()
 
       ::nId          := 0
 
-      ::beginTransactionalMode()
-
       ::saveRowSetRecno()
+
+      ::beginTransactionalMode()
 
       ::nId          := ::getModel():insertBlankBuffer()
 
@@ -430,15 +427,15 @@ METHOD Insert()
 
          ::getModel():updateInsertedBuffer()
 
-         ::insertIncidence()    
+         // ::insertIncidence()    
          
          ::commitTransactionalMode()
+
+         ::fireEvent( 'inserted' ) 
 
          ::refreshRowSetAndFindId()
 
          ::refreshBrowseView()
-
-         ::fireEvent( 'inserted' ) 
 
          if ::isContinuousAppend()
             loop
@@ -451,8 +448,6 @@ METHOD Insert()
          lInsert     := .f.
 
          ::fireEvent( 'cancelInserted' ) 
-
-         ::getModel():deleteInsertedBuffer()
 
          ::rollbackTransactionalMode()
 
@@ -583,13 +578,7 @@ METHOD Edit( nId )
 
    ::setEditMode()
 
-   //::beginTransactionalMode()
-
-   ::commitData()
-
-   ::setAutoCommitToFalse()
-
-   //::commitTransactionalMode()
+   ::beginTransactionalMode()
 
    ::getModel():loadCurrentBuffer( nId )
 
@@ -601,11 +590,7 @@ METHOD Edit( nId )
 
       ::getModel():updateBuffer()
 
-      //::commitTransactionalMode()
-
-      ::commitData()
-
-      ::setAutoCommitToTrue()
+      ::commitTransactionalMode()
 
       ::refreshRowSetAndFindId()
 
@@ -619,11 +604,7 @@ METHOD Edit( nId )
 
       ::fireEvent( 'cancelEdited' ) 
 
-      //::rollbackTransactionalMode()
-
-      ::rollbackData()
-
-      ::setAutoCommitToTrue()
+      ::rollbackTransactionalMode()
 
    end if 
 

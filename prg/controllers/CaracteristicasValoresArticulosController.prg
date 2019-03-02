@@ -376,7 +376,7 @@ METHOD caracteristicaUuidListFromUuidArticulo( uuidProduct ) CLASS SQLCaracteris
    cSentence      += "FROM caracteristicas_valores_articulos "
    cSentence      += "WHERE articulo_uuid = " + quoted( uuidProduct )
 
-   aResult     := ::getDatabase():selectFetchArray( cSentence )
+   aResult     := getSQLDatabase():selectFetchArray( cSentence )
 
    aeval( aResult, {|a| aadd( aIds, a[1] ) } )
 
@@ -394,7 +394,7 @@ METHOD caracteristicaValuesUuidListFromUuidArticulo( uuidProduct ) CLASS SQLCara
    cSentence      += "FROM caracteristicas_valores_articulos "
    cSentence      += "WHERE articulo_uuid = " + quoted( uuidProduct )
 
-   aResult     := ::getDatabase():selectFetchArray( cSentence )
+   aResult     := getSQLDatabase():selectFetchArray( cSentence )
 
    aeval( aResult, {|a| aadd( aIds, a[1] ) } )
 
@@ -410,7 +410,7 @@ METHOD productCaracteristicaValuesUuidHashFromUuidArticulo( uuidProduct ) CLASS 
    cSentence      += "FROM caracteristicas_valores_articulos "
    cSentence      += "WHERE articulo_uuid = " + quoted( uuidProduct )
 
-RETURN ( ::getDatabase():selectFetchHash( cSentence ) )
+RETURN ( getSQLDatabase():selectFetchHash( cSentence ) )
 
 //---------------------------------------------------------------------------//
 

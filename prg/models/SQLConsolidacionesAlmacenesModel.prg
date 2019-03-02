@@ -112,7 +112,7 @@ METHOD getNumeroWhereUuid( uuid ) CLASS SQLConsolidacionesAlmacenesModel
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuid ) )
 
-RETURN ( alltrim( ::getDatabase():getValue( cSql ) ) )
+RETURN ( alltrim( getSQLDatabase():getValue( cSql ) ) )
 
 //---------------------------------------------------------------------------//
 

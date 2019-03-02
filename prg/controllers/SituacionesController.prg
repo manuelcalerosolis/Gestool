@@ -221,7 +221,7 @@ END CLASS
 /*METHOD getNombres() CLASS SituacionesRepository
 
    local cSentence               := "SELECT nombre FROM " + ::getTableName()
-   local aNombres                := ::getDatabase():selectFetchArrayOneColumn( cSentence )
+   local aNombres                := getSQLDatabase():selectFetchArrayOneColumn( cSentence )
 
 RETURN ( aNombres )*/
 

@@ -494,7 +494,7 @@ METHOD getLastOpenWhereCajaNombre( cCajaNombre ) CLASS SQLSesionesModel
                      "WHERE sesiones.estado = 'Abierta' "                           + ;
                         "AND cajas.nombre = " + quoted( cCajaNombre )    
 
-   aSelect        := ::getDatabase():selectTrimedFetchHash( cSelect )
+   aSelect        := getSQLDatabase():selectTrimedFetchHash( cSelect )
    if hb_isarray( aSelect )
       RETURN ( atail( aSelect ) )
    end if 
@@ -512,7 +512,7 @@ METHOD getAllTransactionWhereSessionUuid( uuidSession ) CLASS SQLSesionesModel
                      "WHERE sesiones.estado = 'Abierta' "                           + ;
                         "AND cajas.nombre = " + quoted( cCajaNombre )    
 
-   aSelect        := ::getDatabase():selectTrimedFetchHash( cSelect )
+   aSelect        := getSQLDatabase():selectTrimedFetchHash( cSelect )
    if hb_isarray( aSelect )
       RETURN ( atail( aSelect ) )
    end if 

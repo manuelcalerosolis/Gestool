@@ -387,7 +387,7 @@ END CLASS
 METHOD getNombres() CLASS GrupoPropiedadesRepository
 
    local cSentence               := "SELECT nombre FROM " + ::getTableName()
-   local aNombres                := ::getDatabase():selectFetchArrayOneColumn( cSentence )
+   local aNombres                := getSQLDatabase():selectFetchArrayOneColumn( cSentence )
 
 RETURN ( aNombres )
 

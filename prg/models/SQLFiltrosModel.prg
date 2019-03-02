@@ -63,7 +63,7 @@ METHOD getFilters( cTabla )
    cSentence         := "SELECT nombre FROM " + ::getTableName() + " " + ;
                            "WHERE tabla = " + quoted( cTabla ) 
 
-RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSentence ) )   
+RETURN ( getSQLDatabase():selectFetchArrayOneColumn( cSentence ) )   
 
 //---------------------------------------------------------------------------//
 
@@ -82,7 +82,7 @@ METHOD getFilterField( cField, cNombre, cTabla )
                               "AND nombre = " + quoted( cNombre )          + space( 1 ) + ;
                            "LIMIT 1"
 
-RETURN ( ::getDatabase():getValue( cSentence ) )
+RETURN ( getSQLDatabase():getValue( cSentence ) )
 
 //---------------------------------------------------------------------------//
 

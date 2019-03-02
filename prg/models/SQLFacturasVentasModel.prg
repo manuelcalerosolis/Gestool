@@ -82,7 +82,7 @@ METHOD countFacturas() CLASS SQLFacturasVentasModel
 
    cSql  := hb_strformat(  cSql, ::getTableName() )
 
-RETURN ( ::getDatabase():getValue( cSql, 0 ) )
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

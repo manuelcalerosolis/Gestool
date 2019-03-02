@@ -672,7 +672,7 @@ METHOD countRecibos() CLASS SQLRecibosModel
 
    cSql  := hb_strformat(  cSql, ::getTableName() )
 
-RETURN ( ::getDatabase():getValue( cSql, 0 ) )
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 
@@ -776,17 +776,17 @@ CLASS RecibosRepository FROM SQLBaseRepository
    METHOD getSentenceImporteWhereDocumentUuid( uuidDocument ) 
 
    METHOD getImporteWhereDocumentUuid( uuidDocument ) ;
-                                       INLINE ( ::getDatabase():getValue( ::getSentenceImporteWhereDocumentUuid( uuidDocument ), 0 ) )
+                                       INLINE ( getSQLDatabase():getValue( ::getSentenceImporteWhereDocumentUuid( uuidDocument ), 0 ) )
 
    METHOD getSentenceLastNoPaidWhereDocumentUuid( uuidDocument )
 
    METHOD getLastNoPaidWhereDocumentUuid( uuidDocument ) ;
-                                       INLINE ( ::getDatabase():getValue( ::getSentenceLastNoPaidWhereDocumentUuid( uuidDocument ) ) )
+                                       INLINE ( getSQLDatabase():getValue( ::getSentenceLastNoPaidWhereDocumentUuid( uuidDocument ) ) )
 
    METHOD getSentenceCountWhereDocumentUuid( uuidDocument )
 
    METHOD getCountWhereDocumentUuid( uuidDocument ) ;
-                                       INLINE ( ::getDatabase():getValue( ::getSentenceCountWhereDocumentUuid( uuidDocument ), 0 ) )
+                                       INLINE ( getSQLDatabase():getValue( ::getSentenceCountWhereDocumentUuid( uuidDocument ), 0 ) )
 
    METHOD dropFunctionTerceroCodigoWhereUuid()
 

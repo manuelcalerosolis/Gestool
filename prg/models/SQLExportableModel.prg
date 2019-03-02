@@ -67,7 +67,7 @@ METHOD selectFetchToHash( cSentence )
 
    ::fireEvent( 'selectingFetchToHash' )   
 
-   ::aFetch          := ::getDatabase():selectFetchHash( cSentence, .f. )
+   ::aFetch          := getSQLDatabase():selectFetchHash( cSentence, .f. )
 
    ::fireEvent( 'selectedFetchToHash' )   
 

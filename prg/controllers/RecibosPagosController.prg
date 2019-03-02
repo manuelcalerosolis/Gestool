@@ -57,7 +57,7 @@ CLASS SQLRecibosPagosModel FROM SQLCompanyModel
 
    METHOD InsertPagoRecibo( uuidPago, uuidRecibo, nImporte )
 
-   METHOD getImporte( uuidPago )    INLINE( ::getDatabase():getValue( ::getImporteSentence( uuidPago ), 0 ) )
+   METHOD getImporte( uuidPago )    INLINE( getSQLDatabase():getValue( ::getImporteSentence( uuidPago ), 0 ) )
 
    METHOD getImporteSentence( uuidPago )
 

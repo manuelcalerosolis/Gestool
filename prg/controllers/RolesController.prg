@@ -446,7 +446,7 @@ METHOD getNombres() CLASS RolesRepository
 
    local cSentence            := "SELECT nombre FROM " + ::getTableName()
 
-RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSentence ) )
+RETURN ( getSQLDatabase():selectFetchArrayOneColumn( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
@@ -455,7 +455,7 @@ METHOD getUuid( cNombre ) CLASS RolesRepository
    local cSentence            := "SELECT uuid FROM " + ::getTableName() + " " + ;
                                     "WHERE nombre = " + quoted( cNombre )
 
-RETURN ( ::getDatabase():getValue( cSentence ) )
+RETURN ( getSQLDatabase():getValue( cSentence ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

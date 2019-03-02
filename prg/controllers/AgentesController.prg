@@ -484,7 +484,7 @@ END CLASS
 
 METHOD getNombres() CLASS AgentesRepository
 
-   local aNombres    := ::getDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() )
+   local aNombres    := getSQLDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() )
    local aResult     := {}
 
    if !empty( aNombres )

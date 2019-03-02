@@ -120,7 +120,7 @@ METHOD getNumeroWhereUuid( uuid ) CLASS SQLMovimientosAlmacenesModel
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuid ) )
 
-RETURN ( alltrim( ::getDatabase():getValue( cSql ) ) )
+RETURN ( alltrim( getSQLDatabase():getValue( cSql ) ) )
 
 //---------------------------------------------------------------------------//
 

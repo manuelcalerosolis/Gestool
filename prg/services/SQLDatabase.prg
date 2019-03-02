@@ -13,9 +13,13 @@ static oSqlCompany
 
 CLASS SQLDatabase
 
-   DATA oConexion
+   DATA aConexions                     INIT {} 
+
+   DATA nCurrentConexion               INIT 1 
 
    DATA oStatement
+
+   DATA nTransCount                    INIT 0
 
    DATA cDatabaseMySQL    
 
@@ -30,14 +34,19 @@ CLASS SQLDatabase
 
    METHOD New()                        CONSTRUCTOR
    
-   METHOD Conexion()                   INLINE ( ::oConexion )
+   METHOD createConexion()
+
+   METHOD addConexion()
+
+   METHOD getConexion()                INLINE ( atail( ::aConexions ) )
+
    METHOD Connect() 
    METHOD ConnectWithoutDataBase()
-   METHOD Disconnect()                 INLINE ( if( !empty( ::oConexion ), ::oConexion:disconnect(), ) )
+   METHOD Disconnect()                 INLINE ( if( !empty( ::getConexion() ), ::getConexion():Disconnect(), ) )
    
-   METHOD RowSet( cSql )               INLINE ( if( !empty( ::oConexion ), ::oConexion:RowSet( cSql ), ) )
+   METHOD RowSet( cSql )               INLINE ( if( !empty( ::getConexion() ), ::getConexion():RowSet( cSql ), ) )
 
-   METHOD Ping()                       INLINE ( if( !empty( ::oConexion ), ::oConexion:Ping(), ) )
+   METHOD Ping()                       INLINE ( if( !empty( ::getConexion() ), ::getConexion():Ping(), ) )
 
    METHOD isParseError()
 
@@ -52,12 +61,10 @@ CLASS SQLDatabase
    METHOD Query( cSql )                
    METHOD Querys( aSql )  
 
-   METHOD Prepare( cSql )              INLINE ( if( !empty( ::oConexion ), ::oConexion:Prepare( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
-   METHOD Parse( cSql )                INLINE ( if( !empty( ::oConexion ), ::oConexion:Parse( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD Prepare( cSql )              INLINE ( if( !empty( ::getConexion() ), ::getConexion():Prepare( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD Parse( cSql )                INLINE ( if( !empty( ::getConexion() ), ::getConexion():Parse( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
 
-   METHOD escapeStr( cEscape )         INLINE ( if( !empty( ::oConexion ), ::oConexion:escapeStr( cEscape ), cEscape ) ) 
-
-   METHOD genStatement( cStatement )
+   METHOD escapeStr( cEscape )         INLINE ( if( !empty( ::getConexion() ), ::getConexion():escapeStr( cEscape ), cEscape ) ) 
 
    METHOD selectFetch( cSql )
 
@@ -82,13 +89,13 @@ CLASS SQLDatabase
 
    METHOD getValue( cSql, nColumn )       
 
-   METHOD lastInsertId()               INLINE ( iif( !empty( ::oConexion ), ::oConexion:lastInsertId(), msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD lastInsertId()               INLINE ( iif( !empty( ::getConexion() ), ::getConexion():lastInsertId(), msgstop( "No ha conexiones disponibles" ) ) )
 
-   METHOD beginTransaction()           INLINE ( iif( !empty( ::oConexion ), ::oConexion:beginTransaction(),  msgstop( "No ha conexiones disponibles" ) ) )
-   METHOD Commit()                     INLINE ( iif( !empty( ::oConexion ), ::oConexion:Commit(), msgstop( "No ha conexiones disponibles" ) ) )
-   METHOD rollBack()                   INLINE ( iif( !empty( ::oConexion ), ::oConexion:rollBack(),  msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD beginTransaction()           
+   METHOD Commit()                     
+   METHOD rollBack()                   
 
-   METHOD errorInfo()                  INLINE ( iif( !empty( ::oConexion ), ::oConexion:errorInfo(), ) )
+   METHOD errorInfo()                  INLINE ( iif( !empty( ::getConexion() ), ::getConexion():errorInfo(), ) )
 
    METHOD Export( cBackUpFileName )
       METHOD exportTable( hFileName, cTable )
@@ -108,6 +115,14 @@ CLASS SQLDatabase
 
    METHOD showError( e )
 
+   METHOD setAutoCommitToTrue()        INLINE ( msgalert( "setAutoCommitToTrue" ), getSQLDatabase():Exec( "SET @@autocommit = 1;" ) )
+
+   METHOD setAutoCommitToFalse()       INLINE ( msgalert( "setAutoCommitToFalse" ), getSQLDatabase():Exec( "SET @@autocommit = 0;" ) )
+
+   METHOD commitData()                 INLINE ( msgalert( "commitData" ), getSQLDatabase():Exec( "COMMIT;" ) )                 
+
+   METHOD rollbackData()               INLINE ( msgalert( "rollbackData" ), getSQLDatabase():Exec( "ROLLBACK;" ) ) 
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -125,15 +140,31 @@ METHOD New( cDatabaseMySQL )
    ::cPasswordMySQL           := GetPvProfString(  "MySQL",    "Password", "",            cIniAplication() )
    ::nPortMySQL               := GetPvProfInt(     "MySQL",    "Port",     3306,          cIniAplication() )
 
-   ::oConexion                := THDO():new( "mysql" )
-
-   ::oConexion:setAttribute( HDO_ATTR_ERRMODE, .t. ) 
-
-   ::oConexion:setAttribute( MYSQL_OPT_RECONNECT, .t. ) 
-
-   ::oConexion:setAttribute( HDO_ATTR_DEF_TINY_AS_BOOL, .t. )     
+   ::addConexion()
    
 RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD createConexion()
+
+   local oConexion            := THDO():new( "mysql" )
+
+   oConexion:setAttribute( HDO_ATTR_ERRMODE, .t. ) 
+
+   oConexion:setAttribute( MYSQL_OPT_RECONNECT, .t. ) 
+
+   oConexion:setAttribute( HDO_ATTR_DEF_TINY_AS_BOOL, .t. )     
+
+RETURN ( oConexion )
+
+//----------------------------------------------------------------------------//
+
+METHOD addConexion()
+
+   aadd( ::aConexions, ::createConexion() )
+
+RETURN ( ::aConexions )
 
 //----------------------------------------------------------------------------//
 
@@ -143,9 +174,9 @@ METHOD Connect()
 
    try
    
-      if !empty( ::oConexion )
+      if !empty( ::getConexion() )
 
-         lConnect    := ::oConexion:Connect( ::cDatabaseMySQL, ::cIpMySQL, ::cUserMySQL, ::cPasswordMySQL, ::nPortMySQL )
+         lConnect    := ::getConexion():Connect( ::cDatabaseMySQL, ::cIpMySQL, ::cUserMySQL, ::cPasswordMySQL, ::nPortMySQL )
 
       end if 
        
@@ -165,9 +196,9 @@ METHOD ConnectWithoutDataBase()
 
    try
    
-      if !empty( ::oConexion )
+      if !empty( ::getConexion() )
          
-         lConnect    := ::oConexion:Connect( nil, ::cIpMySQL, ::cUserMySQL, ::cPasswordMySQL, ::nPortMySQL )
+         lConnect    := ::getConexion():Connect( nil, ::cIpMySQL, ::cUserMySQL, ::cPasswordMySQL, ::nPortMySQL )
 
       end if 
        
@@ -190,16 +221,16 @@ METHOD isParseError( cSentence )
       RETURN ( .t. )  
    end if  
 
-   if empty( ::oConexion )
+   if empty( ::getConexion() )
       msgstop( "No hay conexiones disponibles" )
       RETURN ( .t. )  
    end if  
 
-   ::oConexion:Ping()
+   ::getConexion():Ping()
 
    try
       
-      ::oConexion:Parse( cSentence )
+      ::getConexion():Parse( cSentence )
 
    catch e
       
@@ -230,7 +261,7 @@ METHOD Exec( cSentence, lParse )
 
    try
    
-      ::oConexion:Exec( cSentence )
+      ::getConexion():Exec( cSentence )
 
    catch e
 
@@ -263,12 +294,6 @@ METHOD Querys( cSentence, lParse )
    end if 
 
 RETURN ( ::Query( cSentence, lParse ) ) 
-
-//----------------------------------------------------------------------------//
-
-METHOD genStatement( cSentence )
-
-RETURN ( cSentence )
 
 //----------------------------------------------------------------------------//
 
@@ -326,7 +351,7 @@ METHOD Query( cSentence )
 
    try  
 
-      oStatement        := ::oConexion:Query( cSentence )
+      oStatement        := ::getConexion():Query( cSentence )
 
    catch oError
       
@@ -393,7 +418,7 @@ METHOD selectHashList( cSentence )
 
           oStatementFetch  := oStatement:fetchAll( FETCH_HASH )
 
-          if !empty( oStatementFetch )
+         if !empty( oStatementFetch )
             oHashList      := THashList():new( oStatementFetch ) 
          end if 
          
@@ -409,7 +434,7 @@ METHOD selectHashList( cSentence )
          oStatement:Free()
       end if
 
-      oStatement  := nil
+      oStatement           := nil
 
    end
 
@@ -529,7 +554,7 @@ METHOD getSchemaColumns( oModel )
         oStatement:free()
       end if    
 
-      oStatement  := nil
+      oStatement           := nil
    
    end
 
@@ -544,6 +569,50 @@ RETURN ( aSchemaColumns )
 METHOD getListTables()
 
 RETURN ( ::selectFetchArray( "SHOW TABLES FROM " + ::cDatabaseMySQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD beginTransaction()
+
+   if ::nTransCount == 0
+      ::getConexion():execDirect( "START TRANSACTION" )
+   else
+      ::getConexion():execDirect( "SAVEPOINT " + "trans" + hb_ntos( ::nTransCount ) )
+   endif
+   
+RETURN ( ++::nTransCount, msgalert( ::nTransCount, "nTransCount" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD Commit()
+
+   --::nTransCount
+
+   msgalert( ::nTransCount, "Commit" )
+
+   if ::nTransCount == 0
+      RETURN ( ::getConexion():execDirect( "COMMIT" ) )
+   endif
+
+RETURN ( ::getConexion():execDirect( "RELEASE SAVEPOINT " + "trans" + hb_ntos( ::nTransCount ) ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD rollBack()
+
+   if ::nTransCount == 0
+      RETURN ( nil )
+   end if 
+
+   --::nTransCount
+
+    msgalert( ::nTransCount, "rollBack" )
+    
+   if ::nTransCount == 0
+      RETURN ( ::getConexion():execDirect( "ROLLBACK" ) )
+   endif
+
+RETURN ( ::getConexion():execDirect( "ROLLBACK TO SAVEPOINT " + "trans" + hb_ntos( ::nTransCount ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -604,7 +673,7 @@ METHOD exportTable( hFileName, cTable )
 
    fwrite( hFileName, cString )
 
-   hdo_rowprocess( ::oConexion:getHandle(), hFileName, cTable )  // Hacerlo en lenguaje C
+   hdo_rowprocess( ::getConexion():getHandle(), hFileName, cTable )  // Hacerlo en lenguaje C
    
    cString        :=  hb_osnewline() + "-- Fin de datos de la tabla " + cTable + hb_osnewline() + hb_osnewline()
 

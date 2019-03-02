@@ -472,7 +472,7 @@ RETURN ( alltrim( cSql ) )
 
 METHOD getTotalesDocument( uuidOperacionComercial ) CLASS OperacionesComercialesRepository
 
-   local aTotal   := ::getDatabase():selectFetchHash( ::getSentenceTotalesDocument( uuidOperacionComercial ) ) 
+   local aTotal   := getSQLDatabase():selectFetchHash( ::getSentenceTotalesDocument( uuidOperacionComercial ) ) 
 
 RETURN ( if( hb_isarray( aTotal ), atail( aTotal ), nil ) )
 
@@ -480,7 +480,7 @@ RETURN ( if( hb_isarray( aTotal ), atail( aTotal ), nil ) )
 
 METHOD getTotalDocument( uuidOperacionComercial ) CLASS OperacionesComercialesRepository
 
-   local nTotal   := ::getDatabase():getValue( ::getSentenceTotalDocument( uuidOperacionComercial ) ) 
+   local nTotal   := getSQLDatabase():getValue( ::getSentenceTotalDocument( uuidOperacionComercial ) ) 
 
 RETURN ( if( empty( nTotal ), 0, nTotal ) )
 
@@ -488,7 +488,7 @@ RETURN ( if( empty( nTotal ), 0, nTotal ) )
 
 METHOD getTotalesDocumentGroupByIVA( uuidOperacionComercial ) CLASS OperacionesComercialesRepository
 
-   local aTotal   := ::getDatabase():selectFetchHash( ::getSentenceTotalesDocumentGroupByIVA( uuidOperacionComercial ) ) 
+   local aTotal   := getSQLDatabase():selectFetchHash( ::getSentenceTotalesDocumentGroupByIVA( uuidOperacionComercial ) ) 
 
 RETURN ( if( hb_isarray( aTotal ), aTotal, nil ) )
 

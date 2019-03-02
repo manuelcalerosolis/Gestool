@@ -77,11 +77,9 @@ CLASS SQLBaseModel
 
    // Facades -----------------------------------------------------------------
 
-   METHOD getDatabase()                INLINE ( getSQLDatabase() )
-
    METHOD getTableName()               INLINE ( "gestool." + ::cTableName )
 
-   METHOD getAlias()                   INLINE ( ::cTableName )
+   METHOD getTable()                   INLINE ( ::cTableName )
 
    METHOD getPackage( cContext )       INLINE ( ::cPackage + cContext )
 
@@ -180,10 +178,10 @@ CLASS SQLBaseModel
    METHOD aUuidToDelete()
    
    METHOD getDropTableSentence()       INLINE ( "DROP TABLE " + ::getTableName() )
-   METHOD dropTable()                  INLINE ( ::getDatabase():Query( ::getDropTableSentence() ) )
+   METHOD dropTable()                  INLINE ( getSQLDatabase():Query( ::getDropTableSentence() ) )
 
    METHOD getTruncateTableSentence()   INLINE ( "TRUNCATE TABLE " + ::getTableName() )
-   METHOD truncateTable()              INLINE ( ::getDatabase():Query( ::getTruncateTableSentence() ) )
+   METHOD truncateTable()              INLINE ( getSQLDatabase():Query( ::getTruncateTableSentence() ) )
 
    METHOD setGeneralSelect( cSelect )  INLINE ( ::cGeneralSelect  := cSelect )
 
@@ -245,7 +243,7 @@ CLASS SQLBaseModel
    METHOD getSelectByOrder()
 
    METHOD getWhere( cField, cOperator, uValue );
-                                       INLINE ( atail( ::getDatabase():selectFetchHash( ::getWhereSelect( cField, cOperator, uValue ) ) ) )
+                                       INLINE ( atail( getSQLDatabase():selectFetchHash( ::getWhereSelect( cField, cOperator, uValue ) ) ) )
 
    // Busquedas----------------------------------------------------------------
 
@@ -269,6 +267,9 @@ CLASS SQLBaseModel
                                        INLINE ( ::insertIgnore( hBuffer, .t. ) )
 
    METHOD updateBuffer( hBuffer )
+   
+   METHOD updateInsertedBuffer( hBuffer )
+
    METHOD insertOnDuplicate( hBuffer )
       METHOD insertOnDuplicateTransactional( hBuffer ) ;
                                        INLINE ( ::insertOnDuplicate( hBuffer, .t. ) )
@@ -368,7 +369,7 @@ CLASS SQLBaseModel
    METHOD getSentenceOthersWhereParentUuid( uuidParent ) 
                                              
    METHOD getHashOthersWhereParentUuid( uuidParent ) ;
-                                       INLINE ( ::getDatabase():selectFetchHash( ::getSentenceOthersWhereParentUuid( uuidParent ) ) )
+                                       INLINE ( getSQLDatabase():selectFetchHash( ::getSentenceOthersWhereParentUuid( uuidParent ) ) )
 
    METHOD duplicateOthers( uuidEntidad )
 
@@ -376,16 +377,6 @@ CLASS SQLBaseModel
                                        INLINE ( ::uuidOlderParent := uuidParent )
 
    METHOD getUuidOlderParent()         INLINE ( ::uuidOlderParent )
-
-   //Autocommit---------------------------------------------------------------//
-
-   METHOD setAutoCommitToTrue()
-
-   METHOD setAutoCommitToFalse()
-
-   METHOD commitData() 
-   
-   METHOD rollbackData()
 
 END CLASS
 
@@ -888,7 +879,7 @@ METHOD getBufferById( id )
       RETURN ( nil )
    end if 
 
-   hBuffer        := atail( ::getDatabase():selectPadedFetchHash( ::getWhereIdSelect( id ) ) )
+   hBuffer        := atail( getSQLDatabase():selectPadedFetchHash( ::getWhereIdSelect( id ) ) )
 
    if hb_ishash( hBuffer )
       heval( hBuffer, {|k,v| hset( hBuffer, k, ::getAttribute( k, v ) ) } )
@@ -906,7 +897,7 @@ METHOD getBufferByUuid( uuid )
       RETURN ( nil )
    end if 
 
-   hBuffer        := atail( ::getDatabase():selectPadedFetchHash( ::getWhereUuidSelect( uuid ) ) )
+   hBuffer        := atail( getSQLDatabase():selectPadedFetchHash( ::getWhereUuidSelect( uuid ) ) )
 
    if hb_ishash( hBuffer )
       heval( hBuffer, {|k,v| hset( hBuffer, k, ::getAttribute( k, v ) ) } )
@@ -924,7 +915,7 @@ METHOD getBufferByCodigo( cCodigo )
       RETURN ( nil )
    end if 
 
-   hBuffer        := atail( ::getDatabase():selectPadedFetchHash( ::getWhereCodigoSelect( cCodigo ) ) )
+   hBuffer        := atail( getSQLDatabase():selectPadedFetchHash( ::getWhereCodigoSelect( cCodigo ) ) )
 
    if hb_ishash( hBuffer )
       heval( hBuffer, {|k,v| hset( hBuffer, k, ::getAttribute( k, v ) ) } )
@@ -1162,7 +1153,7 @@ METHOD getDeleteOrUpdateSentenceWhereParentUuid( uuid )
    end if 
 
    if ::isDeletedAtColumn()
-      RETURN( ::SQLUpdateDeletedAtSentenceWhereParentUuid( uuid ) )
+      RETURN ( ::SQLUpdateDeletedAtSentenceWhereParentUuid( uuid ) ) 
    end if
 
 RETURN ( ::SQLDeletedSentenceWhereParentUuid( uuid ) )
@@ -1272,7 +1263,7 @@ METHOD aUuidToDelete( aParentsUuid )
 
    cSentence         := chgAtEnd( cSentence, ' )', 2 )
 
-RETURN ( ::getDatabase():selectFetchArray( cSentence ) )
+RETURN ( getSQLDatabase():selectFetchArray( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
@@ -1285,7 +1276,7 @@ METHOD isDeleted( nId )
                      "WHERE " + ::cColumnKey + " = " + hb_ntos( nId )   + " " + ;
                         "AND deleted_at > 0" 
 
-RETURN ( ::getDatabase():getValue( cSentence ) != nil )
+RETURN ( getSQLDatabase():getValue( cSentence ) != nil )
 
 //---------------------------------------------------------------------------// 
 
@@ -1316,7 +1307,7 @@ RETURN ( uValue )
 
 METHOD findAll( nOffset, nLimit )
 
-RETURN ( ::getDatabase():selectTrimedFetchHash( ::getGeneralSelect() ) )
+RETURN ( getSQLDatabase():selectTrimedFetchHash( ::getGeneralSelect() ) )
 
 //---------------------------------------------------------------------------//
 
@@ -1324,7 +1315,7 @@ METHOD getByUuid( uuid )
 
    local cGeneralSelect    := ::cGeneralSelect + " WHERE uuid = " + quoted( uuid )
 
-RETURN ( ::getDatabase():selectTrimedFetchHash( cGeneralSelect ) )
+RETURN ( getSQLDatabase():selectTrimedFetchHash( cGeneralSelect ) )
 
 //---------------------------------------------------------------------------//
 
@@ -1595,9 +1586,9 @@ METHOD insertBuffer( hBuffer )
 
    ::getInsertSentence( hBuffer )
 
-   ::getDatabase():Query( ::cSQLInsert )
+   getSQLDatabase():Query( ::cSQLInsert )
 
-   nId               := ::getDatabase():LastInsertId()
+   nId               := getSQLDatabase():LastInsertId()
 
    hset( hBuffer, ::cColumnKey, nId )
 
@@ -1621,9 +1612,9 @@ METHOD insertIgnore( hBuffer )
       RETURN ( nId )
    end if 
 
-   ::getDatabase():Query( ::cSQLInsert )
+   getSQLDatabase():Query( ::cSQLInsert )
 
-   nId                     := ::getDatabase():LastInsertId()
+   nId                     := getSQLDatabase():LastInsertId()
 
    ::fireEvent( 'insertedBuffer' )
 
@@ -1638,10 +1629,26 @@ METHOD updateBuffer( hBuffer )
    ::getUpdateSentence( hBuffer )
 
    if !empty( ::cSQLUpdate )
-      ::getDatabase():Querys( ::cSQLUpdate )
+      getSQLDatabase():Querys( ::cSQLUpdate )
    end if
 
    ::fireEvent( 'updatedBuffer' )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateInsertedBuffer( hBuffer )
+
+   ::fireEvent( 'updatingInsertedBuffer' )
+
+   ::getUpdateSentence( hBuffer )
+
+   if !empty( ::cSQLUpdate )
+      getSQLDatabase():Querys( ::cSQLUpdate )
+   end if
+
+   ::fireEvent( 'updatedInsertedBuffer' )
 
 RETURN ( nil )
 
@@ -1658,9 +1665,9 @@ METHOD insertOnDuplicate( hBuffer, lTransactional )
    cSentence               := ::getInsertOnDuplicateSentence( hBuffer )
 
    if lTransactional 
-      ::getDatabase():TransactionalQuery( cSentence )
+      getSQLDatabase():TransactionalQuery( cSentence )
    else
-      ::getDatabase():Query( cSentence )
+      getSQLDatabase():Query( cSentence )
    end  if 
 
    ::fireEvent( 'insertedOnDuplicatedBuffer' )
@@ -1675,7 +1682,7 @@ METHOD deleteSelection( aIds )
 
    ::fireEvent( 'deletingSelection' )
 
-   ::getDatabase():Querys( ::getDeleteOrUpdateSentenceById( aIds ) )
+   getSQLDatabase():Querys( ::getDeleteOrUpdateSentenceById( aIds ) )
 
    ::fireEvent( 'deletedSelection' )
    
@@ -1687,7 +1694,7 @@ METHOD cancelSelection( aIds )
 
    ::fireEvent( 'cancelingSelection' )
 
-   ::getDatabase():Querys( ::getCencelOrUpdateSentenceById( aIds ) )
+   getSQLDatabase():Querys( ::getCencelOrUpdateSentenceById( aIds ) )
 
    ::fireEvent( 'canceledSelection' )
    
@@ -1699,7 +1706,7 @@ METHOD deleteById( nId )
 
    ::fireEvent( 'deletingById' )
 
-   ::getDatabase():Querys( ::getDeleteOrUpdateSentenceById( nId ) )
+   getSQLDatabase():Querys( ::getDeleteOrUpdateSentenceById( nId ) )
 
    ::fireEvent( 'deletedById' )
    
@@ -1711,7 +1718,7 @@ METHOD deleteByUuid( uUuid )
 
    ::fireEvent( 'deletingByUuid' )
 
-   ::getDatabase():Querys( ::getDeleteOrUpdateSentenceByUuid( uUuid ) )
+   getSQLDatabase():Querys( ::getDeleteOrUpdateSentenceByUuid( uUuid ) )
 
    ::fireEvent( 'deletedByUuid' )
    
@@ -1723,7 +1730,7 @@ METHOD deleteWhereParentUuid( uUuid )
 
    ::fireEvent( 'deletingWhereParentUuid' )
 
-   ::getDatabase():Querys( ::getDeleteOrUpdateSentenceWhereParentUuid( uUuid ) )
+   getSQLDatabase():Querys( ::getDeleteOrUpdateSentenceWhereParentUuid( uUuid ) )
 
    ::fireEvent( 'deletedWhereParentUuid' )
    
@@ -1738,7 +1745,7 @@ METHOD deleteWhere( hWhere )
    hEval( hWhere,; 
       {|k,v| cSql    += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v ) + " " } )
 
-RETURN ( ::getDatabase():Query( cSql ) )
+RETURN ( getSQLDatabase():Query( cSql ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1805,7 +1812,7 @@ METHOD updateFieldWhereId( id, cField, uValue )
    cSql           +=    "SET " + cField + " = " + toSqlString( uValue ) + " "
    cSql           +=    "WHERE id = " + toSqlString( id )
 
-RETURN ( ::getDatabase():Query( cSql ) )
+RETURN ( getSQLDatabase():Query( cSql ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1827,10 +1834,10 @@ METHOD updateFieldsWhere( hFields, hWhere, lTransactional )
       {|k,v| cSql += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v ) + " " } )
 
    if lTransactional
-      RETURN ( ::getDatabase():TransactionalQuery( cSql ) )
+      RETURN ( getSQLDatabase():TransactionalQuery( cSql ) )
    end if 
 
-RETURN ( ::getDatabase():Query( cSql ) )
+RETURN ( getSQLDatabase():Query( cSql ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1860,10 +1867,10 @@ METHOD updateBufferWhereId( id, hBuffer, lTransactional )
    cSql                    +=    "WHERE id = " + toSqlString( id )
 
    if lTransactional 
-      RETURN ( ::getDatabase():TransactionalQuery( cSql ) )
+      RETURN ( getSQLDatabase():TransactionalQuery( cSql ) )
    end  if 
 
-RETURN ( ::getDatabase():Query( cSql ) )
+RETURN ( getSQLDatabase():Query( cSql ) )
 
 //---------------------------------------------------------------------------//
 
@@ -1873,7 +1880,7 @@ METHOD updateFieldWhereUuid( uuid, cField, uValue )
    cSql        +=    "SET " + cField + " = " + toSqlString( uValue )    + " "
    cSql        +=    "WHERE uuid = " + toSqlString( uuid )
 
-RETURN ( ::getDatabase():Query( cSql ) )
+RETURN ( getSQLDatabase():Query( cSql ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1892,7 +1899,7 @@ METHOD updateBufferWhereUuid( uuid, hBuffer )
 
    cSql           +=    "WHERE uuid = " + toSqlString( uuid )
 
-RETURN ( ::getDatabase():Query( cSql ) )
+RETURN ( getSQLDatabase():Query( cSql ) )
 
 //---------------------------------------------------------------------------//
 
@@ -1903,7 +1910,7 @@ METHOD getField( cField, cBy, cId )
    cSql        +=    "WHERE " + cBy + " = " + quoted( cId )             + " "
    cSQL        +=    "LIMIT 1"
 
-RETURN ( ::getDatabase():getValue( cSql ) )
+RETURN ( getSQLDatabase():getValue( cSql ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1925,7 +1932,7 @@ METHOD getFieldWhere( cField, hWhere, hOrderBy, uDefault )
 
    cSql              +=    "LIMIT 1"
 
-RETURN ( ::getDatabase():getValue( cSql, uDefault ) )
+RETURN ( getSQLDatabase():getValue( cSql, uDefault ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1937,7 +1944,7 @@ METHOD Count()
       cSQL           +=    ::getWhereOrAnd( cSQL ) + "deleted_at = 0" 
    end if 
 
-RETURN ( ::getDatabase():getValue( cSql ) )
+RETURN ( getSQLDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
 
@@ -1948,7 +1955,7 @@ METHOD getHashWhere( cBy, cId )
    cSql        +=    "WHERE " + cBy + " = " + quoted( cId )             + " "
    cSQL        +=    "LIMIT 1"
 
-RETURN ( atail( ::getDatabase():selectTrimedFetchHash( cSql ) ) )
+RETURN ( atail( getSQLDatabase():selectTrimedFetchHash( cSql ) ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1959,7 +1966,7 @@ METHOD getUuidWhereColumn( uValue, cColumn, uDefault )
    cSQL        +=    "WHERE " + cColumn + " = " + toSqlString( uValue ) + " " 
    cSQL        +=    "LIMIT 1"
 
-   uuid        := ::getDatabase():getValue( cSQL )
+   uuid        := getSQLDatabase():getValue( cSQL )
    if !empty( uuid )
       RETURN ( uuid )
    end if 
@@ -1976,7 +1983,7 @@ METHOD getUuidWhereSerieAndNumero( cSerie, nNumero, uDefault )
    cSQL        +=    "AND numero = " + toSqlString( nNumero )           + " " 
    cSQL        +=    "LIMIT 1"
 
-   uuid        := ::getDatabase():getValue( cSQL )
+   uuid        := getSQLDatabase():getValue( cSQL )
    if !empty( uuid )
       RETURN ( uuid )
    end if 
@@ -1992,7 +1999,7 @@ METHOD getIdWhereColumn( uValue, cColumn, uDefault )
    cSQL        +=    "WHERE " + cColumn + " = " + toSqlString( uValue ) + " " 
    cSQL        +=    "LIMIT 1"
 
-   nId         := ::getDatabase():getValue( cSQL )
+   nId         := getSQLDatabase():getValue( cSQL )
    if !empty( nId )
       RETURN ( nId )
    end if 
@@ -2008,7 +2015,7 @@ METHOD getColumnWhereNombre( uValue, cColumn, uDefault )
    cSQL        +=    "WHERE nombre = " + toSqlString( uValue )                + " " 
    cSQL        +=    "LIMIT 1"
 
-   uuid        := ::getDatabase():getValue( cSQL )
+   uuid        := getSQLDatabase():getValue( cSQL )
    if !empty( uuid )
       RETURN ( uuid )
    end if 
@@ -2023,7 +2030,7 @@ METHOD getWhereNombre( cNombre )
    cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
    cSQL        +=    "LIMIT 1"
 
-RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+RETURN ( getSQLDatabase():firstTrimedFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2033,7 +2040,7 @@ METHOD getWhereUuid( Uuid )
    cSQL           +=    "WHERE uuid = " + quoted( uuid )                         + " "    
    cSQL           +=    "LIMIT 1"
 
-RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+RETURN ( getSQLDatabase():firstTrimedFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2048,7 +2055,7 @@ METHOD countWhere( hWhere )
       cSQL        +=    "AND deleted_at = 0" 
    end if 
    
-RETURN ( ::getDatabase():getValue( cSql, 0 ) )
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2058,7 +2065,7 @@ METHOD getWhereCodigo( cCodigo )
    cSQL        +=    "WHERE codigo = " + quoted( cCodigo )                    + " " 
    cSQL        +=    "LIMIT 1"
 
-RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+RETURN ( getSQLDatabase():firstTrimedFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2076,7 +2083,7 @@ METHOD isWhereCodigo( cCodigo, lDeleted )
       cSQL           +=    ::getWhereOrAnd( cSQL ) + "deleted_at = 0" 
    end if 
 
-   nCount      := ::getDatabase():getValue( cSQL )
+   nCount      := getSQLDatabase():getValue( cSQL )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount > 0 )
 
@@ -2088,7 +2095,7 @@ METHOD getColumnWhereId( id, cColumn )
    cSQL        +=    "WHERE id = " + quoted( id )                             + " " 
    cSQL        +=    "LIMIT 1"
 
-RETURN ( ::getDatabase():getValue( cSQL ) )
+RETURN ( getSQLDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2098,7 +2105,7 @@ METHOD getColumnWhereUuid( uuid, cColumn )
                         "WHERE uuid = " + quoted( uuid )                + " " + ;
                         "LIMIT 1"
 
-RETURN ( ::getDatabase():getValue( cSQL ) )
+RETURN ( getSQLDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2108,7 +2115,7 @@ METHOD getColumnWhereCodigo( uuid, cColumn )
                         "WHERE codigo = " + quoted( uuid )              + " " + ;
                         "LIMIT 1"
 
-RETURN ( ::getDatabase():getValue( cSQL ) )
+RETURN ( getSQLDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2118,7 +2125,7 @@ METHOD getColumn( cColumn )
 
    cSQL           := ::addDeletedAtWhere( cSQL )
 
-RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSQL ) )
+RETURN ( getSQLDatabase():selectFetchArrayOneColumn( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2127,7 +2134,7 @@ METHOD getColumnWhere( cColumn, cField, cCondition, cValue )
    local cSQL     := "SELECT " + cColumn + "  FROM " + ::getTableName() + " " + ;
                         "WHERE " + cField + " " + cCondition + " " + toSQLString( cValue )    
 
-RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSQL ) )
+RETURN ( getSQLDatabase():selectFetchArrayOneColumn( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2136,7 +2143,7 @@ METHOD getColumnsWithBlank( cColumn )
    local aColumns                
    local cSQL     := "SELECT " + cColumn + "  FROM " + ::getTableName()
    
-   aColumns       := ::getDatabase():selectFetchArrayOneColumn( cSQL )
+   aColumns       := getSQLDatabase():selectFetchArrayOneColumn( cSQL )
 
    ains( aColumns, 1, "", .t. )
    
@@ -2225,64 +2232,3 @@ RETURN ( left( cFind, ( nAt - 1 ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD setAutoCommitToTrue()
-
-local cSql
-
-   TEXT INTO cSql
-
-   set @@autocommit = 1;
-
-   ENDTEXT
-
-   msgalert( "autoCommitTrue")
-
-RETURN (::getDatabase():Exec( cSql ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD setAutoCommitToFalse()
-
-local cSql
-
-   TEXT INTO cSql
-
-   set @@autocommit = 0;
-
-   ENDTEXT
-
-    msgalert( "autoCommitFalse")
-
-RETURN ( ::getDatabase():Exec( cSql ) ) 
-
-//---------------------------------------------------------------------------//
-
- METHOD commitData() 
-
- local cSql
-
-   TEXT INTO cSql
-
-   COMMIT;
-
-   ENDTEXT
-
-    msgalert( "commit")
-
-RETURN ( ::getDatabase():Exec( cSql ) )                 
-
-//---------------------------------------------------------------------------//
-
- METHOD rollbackData() 
-
- local cSql
-
-   TEXT INTO cSql
-
-   ROLLBACK;
-
-   ENDTEXT
-
-    msgalert( "rollback")
-
-RETURN ( ::getDatabase():Exec( cSql ) ) 

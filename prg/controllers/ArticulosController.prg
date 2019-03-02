@@ -77,7 +77,7 @@ METHOD New( oController ) CLASS ArticulosController
    
    ::lTransactional                    := .t.
 
-   ::lInsertable                       := .t.
+   ::lInsertable                       := .f.
 
    ::hImage                            := {  "16" => "gc_object_cube_16",;
                                              "32" => "gc_object_cube_32",;

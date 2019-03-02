@@ -166,8 +166,8 @@ METHOD getWhereOrigen() CLASS ConversorPrepareAlbaranVentasController
 
    aeval( ::aControllers,;
       {|oController| ; 
-         cWhere += oController:getRange():getWhere(),;
-         cWhere += oController:getFilterController():getWhere() } )
+         cWhere += oController:getRange():getWhereAnd(),;
+         cWhere += oController:getFilterController():getWhereAnd() } )
 
 RETURN ( cWhere )
 

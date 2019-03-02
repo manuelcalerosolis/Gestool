@@ -46,7 +46,7 @@ CLASS TageableRepository FROM SQLBaseRepository
    METHOD getTagsModel()      INLINE ( SQLTagsModel():getTableName() )
 
    METHOD getHashTageableTags( tageableUuid ) ;
-                              INLINE ( ::getDatabase():selectTrimedFetchHash( ::getSQLTageableTags( tageableUuid ) ) )
+                              INLINE ( getSQLDatabase():selectTrimedFetchHash( ::getSQLTageableTags( tageableUuid ) ) )
 
    METHOD getSQLTageableTags( tageableUuid )
 

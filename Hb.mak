@@ -455,6 +455,7 @@ OperacionesComercialesLineasBrowse.prg									\
 OperacionesComercialesBrowseView.prg 									\
 OperacionesComercialesLineasView.prg									\
 OperacionesComercialesView.prg 											\
+FacturasVentasView.prg 														\
 OperacionesView.prg 															\
 OperacionesComercialesRectificativasView.prg 						\
 ClientesTarifasController.prg 											\
@@ -907,6 +908,7 @@ OperacionesComercialesLineasBrowse.obj 								\
 OperacionesComercialesBrowseView.obj 									\
 OperacionesComercialesLineasView.obj 									\
 OperacionesComercialesView.obj 											\
+FacturasVentasView.obj 														\
 OperacionesView.obj 															\
 OperacionesComercialesRectificativasView.obj 						\
 ClientesTarifasController.obj 											\
@@ -1353,6 +1355,7 @@ $(OBJ)\OperacionesComercialesLineasBrowse.obj 						+
 $(OBJ)\OperacionesComercialesBrowseView.obj 							+
 $(OBJ)\OperacionesComercialesLineasView.obj 							+
 $(OBJ)\OperacionesComercialesView.obj 									+
+$(OBJ)\FacturasVentasView.obj 											+
 $(OBJ)\OperacionesView.obj 												+
 $(OBJ)\OperacionesComercialesRectificativasView.obj 				+
 $(OBJ)\ClientesTarifasController.obj 									+

@@ -591,13 +591,13 @@ RETURN ( cSql )
 
 METHOD getWhereGrupoSistema() CLASS UnidadesMedicionGruposLineasRepository
 
-RETURN ( ::getDatabase():selectFetchArrayOneColumn( ::getSentenceWhereGrupoSistema() ) )
+RETURN ( getSQLDatabase():selectFetchArrayOneColumn( ::getSentenceWhereGrupoSistema() ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getWhereEmpresa() CLASS UnidadesMedicionGruposLineasRepository
 
-RETURN ( ::getDatabase():selectFetchArrayOneColumn( ::getSentenceWhereEmpresa() ) )
+RETURN ( getSQLDatabase():selectFetchArrayOneColumn( ::getSentenceWhereEmpresa() ) )
 
 //---------------------------------------------------------------------------//
 
@@ -607,7 +607,7 @@ METHOD getWhereCodigoArticulo( cCodigoArticulo ) CLASS UnidadesMedicionGruposLin
       RETURN ( {} )
    end if
 
-RETURN ( ::getDatabase():selectFetchArrayOneColumn( ::getSentenceWhereCodigoArticulo( cCodigoArticulo ) ) )
+RETURN ( getSQLDatabase():selectFetchArrayOneColumn( ::getSentenceWhereCodigoArticulo( cCodigoArticulo ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -633,13 +633,13 @@ RETURN ( aResult )
 
 METHOD getWhereSistemaDefault() CLASS UnidadesMedicionGruposLineasRepository
 
-RETURN ( ::getDatabase():getValue( ::getSentenceWhereGrupoSistema() + " AND lineas.sistema = 1", "" ) )
+RETURN ( getSQLDatabase():getValue( ::getSentenceWhereGrupoSistema() + " AND lineas.sistema = 1", "" ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getWhereEmpresaDefault() CLASS UnidadesMedicionGruposLineasRepository
 
-RETURN ( ::getDatabase():getValue( ::getSentenceWhereEmpresa() + " AND lineas.sistema = 1" ) )
+RETURN ( getSQLDatabase():getValue( ::getSentenceWhereEmpresa() + " AND lineas.sistema = 1" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -649,7 +649,7 @@ METHOD getWhereCodigoArticuloDefault( cCodigoArticulo ) CLASS UnidadesMedicionGr
       RETURN ( "" )
    end if
 
-RETURN ( ::getDatabase():getValue( ::getSentenceWhereCodigoArticulo( cCodigoArticulo ) + " AND lineas.sistema = 1" ) )
+RETURN ( getSQLDatabase():getValue( ::getSentenceWhereCodigoArticulo( cCodigoArticulo ) + " AND lineas.sistema = 1" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -725,7 +725,7 @@ METHOD getFactorWhereUnidadArticulo( cCodigoArticulo, cCodigoUnidad ) CLASS Unid
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLUnidadesMedicionGruposModel():getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ), quoted( cCodigoUnidad ) ) 
 
-RETURN ( ::getDatabase():getValue( cSql ) )
+RETURN ( getSQLDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
 
@@ -736,7 +736,7 @@ METHOD getFactorWhereUnidadEmpresa( cCodigoUnidad ) CLASS UnidadesMedicionGrupos
    cSentence   := ::getSentenceWhereEmpresa( "cantidad_base" ) + space( 1 )
    cSentence   +=    "AND lineas.unidad_alternativa_codigo = " + quoted( cCodigoUnidad )
 
-RETURN ( ::getDatabase():getValue( cSentence ) )
+RETURN ( getSQLDatabase():getValue( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
@@ -747,7 +747,7 @@ METHOD getFactorWhereUnidadGrupoSistema( cCodigoUnidad ) CLASS UnidadesMedicionG
    cSentence   := ::getSentenceWhereGrupoSistema( "cantidad_base" ) + space( 1 )
    cSentence   +=    "AND lineas.unidad_alternativa_codigo = " + quoted( cCodigoUnidad )   
 
-RETURN ( ::getDatabase():getValue( cSentence ) )
+RETURN ( getSQLDatabase():getValue( cSentence ) )
 
 //---------------------------------------------------------------------------//
 

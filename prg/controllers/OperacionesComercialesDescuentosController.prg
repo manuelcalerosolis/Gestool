@@ -388,7 +388,7 @@ RETURN ( alltrim( cSql ) )
 
 METHOD selectDescuentosWhereUuid( uuidOperacionComercial, importeBruto ) CLASS SQLOperacionesComercialesDescuentosModel
 
-RETURN ( ::getDatabase():selectTrimedFetchHash( ::getSentenceDescuentosWhereUuid( uuidOperacionComercial, importeBruto ) ) )
+RETURN ( getSQLDatabase():selectTrimedFetchHash( ::getSentenceDescuentosWhereUuid( uuidOperacionComercial, importeBruto ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -408,7 +408,7 @@ METHOD getHashWhereUuid( uuidOrigen ) CLASS SQLOperacionesComercialesDescuentosM
 
    cSql  := hb_strformat(  cSql, ::getTableName(), quoted( uuidOrigen ) )
 
-RETURN ( ::getDatabase():selectTrimedFetchHash( cSql ) ) 
+RETURN ( getSQLDatabase():selectTrimedFetchHash( cSql ) ) 
 
 //---------------------------------------------------------------------------//
 

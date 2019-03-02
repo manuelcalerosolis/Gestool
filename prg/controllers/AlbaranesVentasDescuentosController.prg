@@ -23,10 +23,6 @@ METHOD New( oController ) CLASS AlbaranesVentasDescuentosController
 
    ::cName                             := "albaranes_ventas_descuentos"
 
-   ::hImage                            := {  "16" => "gc_symbol_percent_16",;
-                                             "32" => "gc_symbol_percent_32",;
-                                             "48" => "gc_symbol_percent_48" }
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -47,8 +43,8 @@ RETURN ( ::Super:End() )
 
 CLASS SQLAlbaranesVentasDescuentosModel FROM SQLOperacionesComercialesDescuentosModel
 
-   DATA cConstraints                   INIT  "PRIMARY KEY ( nombre, deleted_at, parent_uuid ), "   + ;
-                                                "FOREIGN KEY ( parent_uuid ) "                     + ;
+   DATA cConstraints                   INIT  "PRIMARY KEY ( id ), "                                   + ;
+                                                "FOREIGN KEY ( parent_uuid ) "                        + ;
                                                 "REFERENCES " + SQLAlbaranesVentasModel():cTableName() + " ( uuid ) ON DELETE CASCADE"
 
    DATA cTableName                     INIT "albaranes_ventas_descuentos"

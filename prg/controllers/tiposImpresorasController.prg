@@ -227,7 +227,7 @@ END CLASS
 METHOD getNombres() CLASS TiposImpresorasRepository 
 
    local cSentence               := "SELECT nombre FROM " + ::getTableName()
-   local aNombresImpresoras      := ::getDatabase():selectFetchArrayOneColumn( cSentence )
+   local aNombresImpresoras      := getSQLDatabase():selectFetchArrayOneColumn( cSentence )
 
    ains( aNombresImpresoras, 1, "", .t. )
 

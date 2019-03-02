@@ -186,7 +186,7 @@ METHOD getHashWhereUuid( uuidOrigen ) CLASS SQLOperacionesComercialesLineasModel
 
    cSql  := hb_strformat(  cSql, ::getTableName(), quoted( uuidOrigen ) )
 
-RETURN ( ::getDatabase():selectTrimedFetchHash( cSql ) ) 
+RETURN ( getSQLDatabase():selectTrimedFetchHash( cSql ) ) 
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

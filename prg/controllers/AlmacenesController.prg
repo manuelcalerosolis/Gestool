@@ -421,7 +421,7 @@ METHOD getNombres() CLASS AlmacenesRepository
    local aNombres
 
    aResult           := {}
-   aNombres          := ::getDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() )
+   aNombres          := getSQLDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() )
 
    if !empty( aNombres )
       aeval( aNombres, {| h | aadd( aResult, alltrim( hGet( h, "nombre" ) ) ) } )

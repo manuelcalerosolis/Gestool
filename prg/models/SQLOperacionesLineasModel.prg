@@ -93,7 +93,7 @@ METHOD deleteWhereUuid( uuid ) CLASS SQLOperacionesLineasModel
    local cSentence   := "DELETE FROM " + ::getTableName() + " " + ;
                            "WHERE parent_uuid = " + quoted( uuid )
 
-RETURN ( ::getDatabase():Exec( cSentence ) )
+RETURN ( getSQLDatabase():Exec( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
@@ -108,7 +108,7 @@ METHOD aUuidToDelete( aParentsUuid ) CLASS SQLOperacionesLineasModel
 
    cSentence            := chgAtEnd( cSentence, ' )', 2 )
 
-RETURN ( ::getDatabase():selectFetchArray( cSentence ) )
+RETURN ( getSQLDatabase():selectFetchArray( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
@@ -158,13 +158,13 @@ METHOD createTemporalTableWhereUuid( originalUuid ) CLASS SQLOperacionesLineasMo
    cSentence         +=    "SELECT * from " + ::getTableName()                + " " 
    cSentence         += "WHERE parent_uuid = " + quoted( originalUuid )       + "; "
 
-RETURN ( ::getDatabase():Exec( cSentence ) )
+RETURN ( getSQLDatabase():Exec( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD alterTemporalTableWhereUuid() CLASS SQLOperacionesLineasModel
 
-RETURN ( ::getDatabase():Exec( "ALTER TABLE " + ::cTableTemporal + " DROP id" ) )
+RETURN ( getSQLDatabase():Exec( "ALTER TABLE " + ::cTableTemporal + " DROP id" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -177,7 +177,7 @@ METHOD replaceUuidInTemporalTable( duplicatedUuid ) CLASS SQLOperacionesLineasMo
    cSentence         +=       "uuid = UUID()"                                 + ", "
    cSentence         +=       "parent_uuid = " + quoted( duplicatedUuid )    
 
-RETURN ( ::getDatabase():Exec( cSentence ) )
+RETURN ( getSQLDatabase():Exec( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
@@ -188,13 +188,13 @@ METHOD insertTemporalTable() CLASS SQLOperacionesLineasModel
    cSentence         := "INSERT INTO " + ::getTableName() +                       + " "
    cSentence         +=    "SELECT * FROM " + ::cTableTemporal
 
-RETURN ( ::getDatabase():Exec( cSentence ) )
+RETURN ( getSQLDatabase():Exec( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD dropTemporalTable() CLASS SQLOperacionesLineasModel
 
-RETURN ( ::getDatabase():Exec( "DROP TABLE " + ::cTableTemporal ) )
+RETURN ( getSQLDatabase():Exec( "DROP TABLE " + ::cTableTemporal ) )
 
 //---------------------------------------------------------------------------//
 

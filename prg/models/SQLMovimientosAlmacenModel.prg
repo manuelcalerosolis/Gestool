@@ -120,7 +120,7 @@ METHOD getNumeroWhereUuid( uuid ) CLASS SQLConsolidacionesAlmacenModel
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuid ) )
 
-RETURN ( alltrim( ::getDatabase():getValue( cSql ) ) )
+RETURN ( alltrim( getSQLDatabase():getValue( cSql ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -165,7 +165,7 @@ METHOD maxNumberWhereSerie( cSerie ) CLASS SQLConsolidacionesAlmacenModel
    cSql        := "SELECT MAX( numero ) FROM " + ::getTableName() + " "
    cSql        +=    "WHERE serie = " + quoted( cSerie )
 
-RETURN ( ::getDatabase():getValue( cSql, 0 ) + 1 )
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) + 1 )
 
 //---------------------------------------------------------------------------//
 

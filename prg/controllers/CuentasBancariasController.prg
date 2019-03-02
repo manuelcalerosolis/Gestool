@@ -776,7 +776,7 @@ END CLASS
 
 METHOD getNombres() CLASS CuentasBancariasRepository
 
-   local aNombres    := ::getDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() )
+   local aNombres    := getSQLDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() )
    local aResult     := {}
 
    if !empty( aNombres )

@@ -816,7 +816,7 @@ END CLASS
 METHOD getNombres() CLASS EmpresasRepository
 
    local cSentence     := "SELECT nombre FROM " + ::getTableName() + " ORDER BY nombre ASC"
-   local aNombres      := ::getDatabase():selectFetchArrayOneColumn( cSentence )
+   local aNombres      := getSQLDatabase():selectFetchArrayOneColumn( cSentence )
 
    ains( aNombres, 1, "", .t. )
 

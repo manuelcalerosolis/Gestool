@@ -187,7 +187,7 @@ RETURN ( cSentence )
 
 METHOD getAjusteUuid( cAjuste ) CLASS SQLAjustesModel
 
-RETURN ( ::getDatabase():getValue( ::getAjusteUuidSentence( cAjuste ) ) )
+RETURN ( getSQLDatabase():getValue( ::getAjusteUuidSentence( cAjuste ) ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

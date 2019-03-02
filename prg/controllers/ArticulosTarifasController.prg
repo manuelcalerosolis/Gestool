@@ -637,7 +637,7 @@ METHOD getNombres() CLASS SQLArticulosTarifasModel
 
    cSql  := hb_strformat( cSql, ::getTableName() )
 
-RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSql ) )
+RETURN ( getSQLDatabase():selectFetchArrayOneColumn( cSql ) )
 
 //---------------------------------------------------------------------------//
 

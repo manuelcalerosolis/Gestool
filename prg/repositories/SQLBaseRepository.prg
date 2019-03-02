@@ -14,8 +14,6 @@ CLASS SQLBaseRepository
 
    METHOD getController()                       INLINE ( ::oController )
 
-   METHOD getDatabase()                         INLINE ( getSQLDatabase() )
-
    METHOD getModel()                            INLINE ( ::getController():getModel() )
 
    METHOD getModelTableName()                   INLINE ( ::getController():getModelTableName() )
@@ -48,7 +46,7 @@ METHOD getAll()
 
    local cSQL     := "SELECT * FROM " + ::getTableName()
 
-RETURN ( ::getDatabase():selectFetchHash( cSQL ) )
+RETURN ( getSQLDatabase():selectFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
 

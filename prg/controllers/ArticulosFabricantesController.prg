@@ -349,7 +349,7 @@ METHOD getNombres() CLASS ArticulosFabricantesRepository
    cSQL                 := "SELECT nombre FROM " + ::getTableName() + " "
    cSQL                 +=    "ORDER BY nombre ASC"
 
-   aNombres             := ::getDatabase():selectFetchArrayOneColumn( cSQL )
+   aNombres             := getSQLDatabase():selectFetchArrayOneColumn( cSQL )
 
    ains( aNombres, 1, "", .t. )
 

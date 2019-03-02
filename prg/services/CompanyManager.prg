@@ -27,8 +27,8 @@ CLASS CompanyManager
 
    METHOD getDefaultDelegacion()
 
-   METHOD getDatabase()                INLINE ( 'gestool' + '_' + ::codigo )
-   METHOD getTableName( cTableName )   INLINE ( ::getDatabase() + '.' + cTableName )
+   METHOD getDatabaseName()            INLINE ( 'gestool' + '_' + ::codigo )
+   METHOD getTableName( cTableName )   INLINE ( ::getDatabaseName() + '.' + cTableName )
 
    METHOD getDefaultTarifa()           INLINE ( SQLAjustableModel():getEmpresaTarifaDefecto( ::uuid ) )
    

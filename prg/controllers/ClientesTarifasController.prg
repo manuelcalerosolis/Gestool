@@ -166,7 +166,7 @@ METHOD getTarifasNombreWhereClienteCodigo( cCodigoCliente ) CLASS SQLClientesTar
                            "ON clientes_tarifas.parent_uuid = clientes.uuid "             +  ;
                      "WHERE clientes.codigo = " + quoted( cCodigoCliente )
 
-   aNombres       := ::getDatabase():selectFetchArrayOneColumn( cSelect )
+   aNombres       := getSQLDatabase():selectFetchArrayOneColumn( cSelect )
 
    if ascan( aNombres, __tarifa_base__ ) == 0
       ains( aNombres, 1, __tarifa_base__, .t. )

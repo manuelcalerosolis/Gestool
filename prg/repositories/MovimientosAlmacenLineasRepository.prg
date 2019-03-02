@@ -214,7 +214,7 @@ METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPropie
 
    cSentence   := ::getSqlSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPropiedad1, cCodigoPropiedad2, cValorPropiedad1, cValorPropiedad2, cLote, dFechaFinLimite )
 
-RETURN ( ::getDatabase():getValue( cSentence ) )
+RETURN ( getSQLDatabase():getValue( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
@@ -224,7 +224,7 @@ METHOD getHashFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPr
    local hResult     := {=>}
    local cSentence   := ::getSqlSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPropiedad1, cCodigoPropiedad2, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   aBuffer           := ::getDatabase():selectFetchHash( cSentence )
+   aBuffer           := getSQLDatabase():selectFetchHash( cSentence )
 
    if hb_isarray( aBuffer ) .and. len( aBuffer ) > 0
       hResult        := { "fecha"      => hb_ttod( hGet( atail( aBuffer ), "fecha_hora" ) ),;
@@ -296,7 +296,7 @@ METHOD getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValor
 
    cSentence         := ::getSqlSentenceTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, lEntrada )
 
-   aBuffer           := ::getDatabase():selectFetchHash( cSentence ) 
+   aBuffer           := getSQLDatabase():selectFetchHash( cSentence ) 
    if !hb_isnil( aBuffer )
       nTotal         := hGet( atail( aBuffer ), "totalUnidadesStock" )
    end if

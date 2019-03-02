@@ -86,7 +86,7 @@ METHOD New( oController) CLASS TercerosController
 
    ::Super:New( oController )
 
-   ::lTransactional                    := .f.
+   ::lTransactional                    := .t.
 
    ::cTitle                            := "Terceros"
 

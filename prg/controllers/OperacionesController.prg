@@ -29,7 +29,7 @@ CLASS OperacionesController FROM SQLNavigatorController
 
    METHOD loadedBuffer()               INLINE ( ::getHistoryManager():Set( ::getModel():hBuffer ) )
 
-   METHOD insertingBuffer()
+   METHOD updateCounter()
 
    METHOD updatedBuffer()              VIRTUAL
 
@@ -88,6 +88,8 @@ END CLASS
 METHOD New( oController ) CLASS OperacionesController
 
    ::Super:New( oController )
+   
+   ::setEvent( 'inserted', {|| ::updateCounter() } )
 
    ::getNavigatorView():getMenuTreeView():setEvent( 'addingDeleteButton', { || .f. } )
    ::getNavigatorView():getMenuTreeView():setEvent( 'addedPdfButton', {|| ::addExtraButtons() } )
@@ -96,7 +98,6 @@ METHOD New( oController ) CLASS OperacionesController
    ::getModel():setEvent( 'loadedBlankBuffer',     {|| ::loadedBlankBuffer() } )
    ::getModel():setEvent( 'loadedDuplicateBuffer', {|| ::loadedDuplicateBuffer() } )
    ::getModel():setEvent( 'updatedBuffer',         {|| ::updatedBuffer() } )
-   ::getModel():setEvent( 'updatingInsertedBuffer',{|| ::insertingBuffer() } )
 
    ::getSerieDocumentoComponent():setEvents( { 'inserted', 'changedAndExist' }, {|| ::changedSerie() } )
 
@@ -160,13 +161,13 @@ RETURN ( ::setModelBuffer( "numero", ::getContadoresController():getModel():getL
 
 //---------------------------------------------------------------------------//
 
-METHOD insertingBuffer() CLASS OperacionesController 
+METHOD updateCounter() CLASS OperacionesController 
 
    local nNumero  
 
    nNumero  := ::getContadoresController():getModel():getCounterAndIncrement( ::getName(), ::getModelBuffer( "serie" ) )
 
-RETURN ( ::setModelBuffer( "numero", nNumero ) )
+RETURN ( ::getModel():updateFieldWhereUuid( ::getModelBuffer( "uuid" ), "numero", nNumero ) )
 
 //---------------------------------------------------------------------------//
 

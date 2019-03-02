@@ -5,9 +5,9 @@
 
 CLASS OperacionComercialRectificarView FROM SQLBaseView
   
-   DATA cNumeroDocumento
-
    DATA cCausa
+
+   DATA cNumeroDocumento
 
    DATA oMotivo
    DATA cMotivo
@@ -71,8 +71,10 @@ RETURN ( ::oDialog:nResult )
 
 METHOD Activating() CLASS OperacionComercialRectificarView
 
-   ::cNumeroDocumento   := space( 20 )
    ::cCausa             := ""
+
+   ::cNumeroDocumento   := space( 20 )
+   
    ::cMotivo            := space( 200 )
 
 RETURN ( nil )

@@ -39,6 +39,9 @@ CLASS FacturasVentasController FROM OperacionesComercialesController
 
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasVentasRepository():New( self ), ), ::oRepository )
 
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := FacturasVentasView():New( self ), ), ::oDialogView )
+
+
 END CLASS
 
 //---------------------------------------------------------------------------//

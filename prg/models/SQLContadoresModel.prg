@@ -146,7 +146,7 @@ METHOD isWhereSerie( cSerial, cDocumento ) CLASS SQLContadoresModel
       cSQL           +=    "AND documento = " + quoted( cDocumento )
    end if 
 
-   nCount            := ::getDatabase():getValue( cSQL )
+   nCount            := getSQLDatabase():getValue( cSQL )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount > 0 )
 
