@@ -12,14 +12,12 @@ static oSqlCompany
 //----------------------------------------------------------------------------//
 
 CLASS SQLDatabase
-
+   
    DATA aConexions                     INIT {} 
 
    DATA nCurrentConexion               INIT 1 
 
    DATA oStatement
-
-   DATA nTransCount                    INIT 0
 
    DATA cDatabaseMySQL    
 
@@ -148,7 +146,7 @@ RETURN ( Self )
 
 METHOD createConexion()
 
-   local oConexion            := THDO():new( "mysql" )
+   local oConexion            := THDO():new( "mysql" ) 
 
    oConexion:setAttribute( HDO_ATTR_ERRMODE, .t. ) 
 
@@ -574,45 +572,41 @@ RETURN ( ::selectFetchArray( "SHOW TABLES FROM " + ::cDatabaseMySQL ) )
 
 METHOD beginTransaction()
 
-   if ::nTransCount == 0
-      ::getConexion():execDirect( "START TRANSACTION" )
-   else
-      ::getConexion():execDirect( "SAVEPOINT " + "trans" + hb_ntos( ::nTransCount ) )
-   endif
-   
-RETURN ( ++::nTransCount, msgalert( ::nTransCount, "nTransCount" ) )
+   // ::addConexion()
+
+   // ::Connect()
+
+   // msgalert( len( ::aConexions ), "beginTransaction" )
+
+RETURN ( ::getConexion():beginTransaction() )
 
 //---------------------------------------------------------------------------//
 
 METHOD Commit()
 
-   --::nTransCount
+   ::getConexion():Commit()
 
-   msgalert( ::nTransCount, "Commit" )
+   // ::Disconnect()
 
-   if ::nTransCount == 0
-      RETURN ( ::getConexion():execDirect( "COMMIT" ) )
-   endif
+   // adel( ::aConexions, len( ::aConexions ), .t. )
 
-RETURN ( ::getConexion():execDirect( "RELEASE SAVEPOINT " + "trans" + hb_ntos( ::nTransCount ) ) )
+   // msgalert( len( ::aConexions ), "Commit" )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD rollBack()
 
-   if ::nTransCount == 0
-      RETURN ( nil )
-   end if 
+   ::getConexion():rollBack()
 
-   --::nTransCount
+   // ::Disconnect()
 
-    msgalert( ::nTransCount, "rollBack" )
-    
-   if ::nTransCount == 0
-      RETURN ( ::getConexion():execDirect( "ROLLBACK" ) )
-   endif
+   // adel( ::aConexions, len( ::aConexions ), .t. )
 
-RETURN ( ::getConexion():execDirect( "ROLLBACK TO SAVEPOINT " + "trans" + hb_ntos( ::nTransCount ) ) )
+   // msgalert( len( ::aConexions ), "rollBack" )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
