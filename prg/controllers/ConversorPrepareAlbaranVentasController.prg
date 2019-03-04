@@ -166,8 +166,10 @@ METHOD getWhereOrigen() CLASS ConversorPrepareAlbaranVentasController
 
    aeval( ::aControllers,;
       {|oController| ; 
-         cWhere += oController:getRange():getWhereAnd(),;
-         cWhere += oController:getFilterController():getWhereAnd() } )
+         cWhere   += oController:getRange():getWhereAnd(),;
+         cWhere   += oController:getFilterController():getWhereAnd() } )
+
+   cWhere         += "AND (" + Company():getTableName( 'isConvertedToFacturasVentas' )+ "( albaranes_ventas.uuid ) ) = 0" + " "
 
 RETURN ( cWhere )
 
@@ -176,6 +178,8 @@ RETURN ( cWhere )
 METHOD generateConvert() CLASS ConversorPrepareAlbaranVentasController
 
    ::aCreatedDocument   := ::oConversorAlbaranesController():Convert( ::oOrigenController:getUuids() )
+
+   if !empty( ::aCreatedDocument )
 
    ::oDestinoController:getModel():setLimit( nil )
 
@@ -186,6 +190,8 @@ METHOD generateConvert() CLASS ConversorPrepareAlbaranVentasController
    ::oDestinoController:getBrowseView():Refresh()
 
    ::aCreatedDocument := {}
+
+   end if
 
 RETURN ( nil )
 
@@ -224,10 +230,15 @@ CLASS ConversorAlbaranVentasView FROM SQLBaseView
       METHOD okActivate()
          METHOD okActivateFolderOne()
          METHOD okActivateFolderTwo()
+      METHOD backActivate()
+         METHOD backActivateToFolderOne()
+
 
    METHOD setFolderToPreview()         INLINE ( ::oFolder:aEnable[ 2 ] := .t., ::oFolder:setOption( 2 ) )
 
    METHOD setFolderConvertion()        INLINE ( ::oFolder:aEnable[ 3 ]  := .t., ::oFolder:setOption( 3 ), ::oFolder:aEnable[ 1 ]  := .f., ::oFolder:aEnable[ 2 ]  := .f. )
+
+   METHOD setFolderToSelection()       INLINE ( ::oFolder:aEnable[ 2 ]  := .f., ::oFolder:setOption( 1 ) )
 
 END CLASS
 
@@ -274,6 +285,8 @@ METHOD Activate() CLASS ConversorAlbaranVentasView
 
    // Botones------------------------------------------------------------------
 
+   ApoloBtnFlat():Redefine( IDBACK, {|| ::backActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+
    ApoloBtnFlat():Redefine( IDOK, {|| ::okActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
@@ -294,6 +307,12 @@ RETURN ( ::oDialog:nResult )
 METHOD starActivate() CLASS ConversorAlbaranVentasView
 
    ::oFolder:aEnable    := { .t., .f., .f. }
+
+   ::oController:getConversorView():getControl( IDBACK ):hide()
+
+   ::oController:getConversorView():getControl( IDBACK ):setText( "< Atrás" )
+
+   ::oController:getConversorView():getControl( IDOK ):setText( "Siguiente >" )
 
 RETURN ( nil )
 
@@ -328,6 +347,12 @@ METHOD okActivateFolderOne() CLASS ConversorAlbaranVentasView
 
       ::setFolderToPreview()
 
+      ::oFolder:aEnable[ 1 ] := .f.
+
+      ::oController:getConversorView():getControl( IDBACK ):show()
+
+      ::oController:getConversorView():getControl( IDOK ):setText( "Convertir[F5]" )
+
    else
 
       ::oController:getConversorView():showMessage( "No existen albaranes con el filtro seleccionado" )
@@ -348,6 +373,12 @@ METHOD okActivateFolderTwo() CLASS ConversorAlbaranVentasView
 
    end if
 
+   ::oController:getConversorView():getControl( IDOK ):hide()
+
+   ::oController:getConversorView():getControl( IDBACK ):hide()
+
+   ::oController:getConversorView():getControl( IDCANCEL ):setText( "Finalizar" )
+
    ::oController:generateConvert()
 
    ::setFolderConvertion()
@@ -356,6 +387,33 @@ METHOD okActivateFolderTwo() CLASS ConversorAlbaranVentasView
 
 RETURN ( nil )
 
+//---------------------------------------------------------------------------//
+
+METHOD backActivate() CLASS ConversorAlbaranVentasView
+
+   if ::oFolder:nOption != 2
+      RETURN ( nil )
+   end if
+
+   ::backActivateToFolderOne()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD backActivateToFolderOne() CLASS ConversorAlbaranVentasView
+
+   ::oFolder:aEnable :={ .t., .f., .f. } 
+
+   ::oController:getConversorView():getControl( IDBACK ):hide()
+
+   ::oController:getConversorView():getControl( IDOK ):setText( "Siguiente >" )
+
+   ::setFolderToSelection()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

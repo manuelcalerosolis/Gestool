@@ -208,7 +208,6 @@ METHOD getInitialSelect() CLASS SQLOperacionesComercialesModel
                            SQLTercerosGruposModel():getTableName(),;
                            SQLTercerosGruposModel():getTable(),;
                            ::getColumnsSelect() )
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//

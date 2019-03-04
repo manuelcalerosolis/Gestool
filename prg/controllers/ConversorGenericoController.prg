@@ -314,8 +314,8 @@ METHOD createIsConvertedToPedidosVentas() CLASS ConversorDocumentosRepository
       FROM 
          %1$s AS %2$s
 
-      INNER JOIN %3$s AS %4$s
-         ON %1$s.documento_origen_uuid = %4s.uuid AND %4$s.canceled_at = 0 
+      INNER JOIN %3$s AS pedidos_ventas
+         ON %1$s.documento_destino_uuid = pedidos_ventas.uuid AND pedidos_ventas.canceled_at = 0 
 
       WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = '%4$s';
       
@@ -372,8 +372,8 @@ METHOD createIsConvertedToAlbaranesVentas() CLASS ConversorDocumentosRepository
       FROM 
          %1$s AS %2$s
 
-      INNER JOIN %3$s AS %4$s
-         ON %1$s.documento_origen_uuid = %4s.uuid AND %4$s.canceled_at = 0 
+      INNER JOIN %3$s AS albaranes_ventas
+         ON %1$s.documento_destino_uuid = albaranes_ventas.uuid AND albaranes_ventas.canceled_at = 0 
 
       WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = '%4$s';
       
@@ -430,8 +430,8 @@ METHOD createIsConvertedToFacturasVentas() CLASS ConversorDocumentosRepository
       FROM 
          %1$s AS %2$s
 
-      INNER JOIN %3$s AS %4$s
-         ON %1$s.documento_origen_uuid = %4s.uuid AND %4$s.canceled_at = 0 
+      INNER JOIN %3$s AS facturas_ventas
+         ON %1$s.documento_destino_uuid = facturas_ventas.uuid AND facturas_ventas.canceled_at = 0 
 
       WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = '%4$s';
       
@@ -488,8 +488,8 @@ METHOD createIsConvertedToVentasRectificativas() CLASS ConversorDocumentosReposi
       FROM 
          %1$s AS %2$s
 
-      INNER JOIN %3$s AS %4$s
-         ON %1$s.documento_origen_uuid = %4s.uuid AND %4$s.canceled_at = 0 
+      INNER JOIN %3$s AS ventas_rectificativas
+         ON %1$s.documento_destino_uuid = ventas_rectificativas.uuid AND ventas_rectificativas.canceled_at = 0 
 
       WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = '%4$s';
       
@@ -546,8 +546,8 @@ METHOD createIsConvertedToVentasSimplificadas() CLASS ConversorDocumentosReposit
       FROM 
          %1$s AS %2$s
 
-      INNER JOIN %3$s AS %4$s
-         ON %1$s.documento_origen_uuid = %4s.uuid AND %4$s.canceled_at = 0 
+      INNER JOIN %3$s AS ventas_simplificadas
+         ON %1$s.documento_destino_uuid = ventas_simplificadas.uuid AND ventas_simplificadas.canceled_at = 0 
 
       WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = '%4$s';
       
@@ -604,8 +604,8 @@ METHOD createIsConvertedToPedidosCompras() CLASS ConversorDocumentosRepository
       FROM 
          %1$s AS %2$s
 
-      INNER JOIN %3$s AS %4$s
-         ON %1$s.documento_origen_uuid = %4s.uuid AND %4$s.canceled_at = 0 
+      INNER JOIN %3$s AS pedidos_compras
+         ON %1$s.documento_destino_uuid = pedidos_compras.uuid AND pedidos_compras.canceled_at = 0 
 
       WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = '%4$s';
       
@@ -663,8 +663,8 @@ METHOD createIsConvertedToAlbaranesCompras() CLASS ConversorDocumentosRepository
       FROM 
          %1$s AS %2$s
 
-      INNER JOIN %3$s AS %4$s
-         ON %1$s.documento_origen_uuid = %4s.uuid AND %4$s.canceled_at = 0 
+      INNER JOIN %3$s AS albaranes_compras
+         ON %1$s.documento_destino_uuid = albaranes_compras.uuid AND albaranes_compras.canceled_at = 0 
 
       WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = '%4$s';
       
@@ -722,8 +722,8 @@ METHOD createIsConvertedToFacturasCompras() CLASS ConversorDocumentosRepository
       FROM 
          %1$s AS %2$s
 
-      INNER JOIN %3$s AS %4$s
-         ON %1$s.documento_origen_uuid = %4s.uuid AND %4$s.canceled_at = 0 
+      INNER JOIN %3$s AS facturas_compras
+         ON %1$s.documento_destino_uuid = facturas_compras.uuid AND facturas_compras.canceled_at = 0 
 
       WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = '%4$s';
       
@@ -781,8 +781,8 @@ METHOD createIsConvertedToComprasRectificativas() CLASS ConversorDocumentosRepos
       FROM 
          %1$s AS %2$s
 
-      INNER JOIN %3$s AS %4$s
-         ON %1$s.documento_origen_uuid = %4s.uuid AND %4$s.canceled_at = 0 
+      INNER JOIN %3$s AS compras_rectificativas
+         ON %1$s.documento_destino_uuid = compras_rectificativas.uuid AND compras_rectificativas.canceled_at = 0 
 
       WHERE %2$s.documento_origen_uuid = uuid_documento AND %2$s.documento_destino_tabla = '%4$s';
       
