@@ -49,11 +49,11 @@ METHOD New( oController ) CLASS ArticulosTarifasController
 
    ::lMultiDelete                      := .f.
 
+   ::lTransactional                    := .t.
+
    ::hImage                            := {  "16" => "gc_money_interest_16",;
                                              "32" => "gc_money_interest_32",;
                                              "48" => "gc_money_interest_48" }
-
-   ::nLevel                            := Auth():Level( ::cName )
 
    ::setEvents( { 'appended', 'duplicated' }, {|| ::endAppendedTarifa() } )
 

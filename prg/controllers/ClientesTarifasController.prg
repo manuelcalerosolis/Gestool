@@ -40,6 +40,8 @@ METHOD New( oController ) CLASS ClientesTarifasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
+   ::lTransactional                 := .t.
+
    /*::oDialogModalView:setEvent( 'addingduplicatebutton', {|| .f. } )
    ::oDialogModalView:setEvent( 'addingeditbutton',      {|| .f. } )
    ::oDialogModalView:setEvent( 'addingzoombutton',      {|| .f. } )

@@ -35,7 +35,7 @@ METHOD New( oController) CLASS ContadoresController
 
    ::Super:New( oController )
 
-   ::lTransactional                    := .f.
+   ::lTransactional                    := .t.
 
    ::cTitle                            := "Series"
 
@@ -161,13 +161,15 @@ METHOD Activate() CLASS ContadoresView
       ID          100 ;
       VALID       ( ::oController:validate( "serie" ) ) ;
       PICTURE     "@!" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "contador" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "contador" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      SPINNER     ;
+      MIN 1       ;
       OF          ::oDialog
 
    // Botones------------------------------------------------------------------

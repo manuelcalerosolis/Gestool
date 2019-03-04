@@ -105,7 +105,10 @@ RETURN ( nil )
 
 STATIC FUNCTION mainAdminSQL()
 
-   getSQLDatabase():ConnectWithoutDataBase()
+   if !( getSQLDatabase():addConexionWithoutDataBase() )
+      msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
+      RETURN ( nil )
+   end if
    
    SQLGestoolMigrations():messageRun()
 
@@ -125,7 +128,7 @@ STATIC FUNCTION MainTest()
 
    local hEmpresa
 
-   if !( getSQLDatabase():Connect() )
+   if !( getSQLDatabase():addConexion() )
       msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
       RETURN ( nil )
    end if
@@ -149,7 +152,7 @@ RETURN ( nil )
 
 STATIC FUNCTION mainApplication()
 
-   if !( getSQLDatabase():Connect() )
+   if !( getSQLDatabase():addConexion() )
       msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
       RETURN ( nil )
    end if

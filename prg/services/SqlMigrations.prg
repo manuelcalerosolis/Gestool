@@ -232,11 +232,11 @@ METHOD Run( cCodigoEmpresa ) CLASS SQLCompanyMigrations
 
    Company():guardWhereCodigo( cCodigoEmpresa )
 
-   ::createDatabase( Company():getDatabase() )
+   ::createDatabase( Company():getDatabaseName() )
 
    ::addModels()
 
-   ::checkModels( Company():getDatabase() )
+   ::checkModels( Company():getDatabaseName() )
 
    ::checkValues()
 

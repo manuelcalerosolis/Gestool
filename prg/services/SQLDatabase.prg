@@ -15,7 +15,7 @@ CLASS SQLDatabase
    
    DATA aConexions                     INIT {} 
 
-   DATA nCurrentConexion               INIT 1 
+   DATA nCurrentConexion               INIT 0 
 
    DATA oStatement
 
@@ -34,13 +34,13 @@ CLASS SQLDatabase
    
    METHOD createConexion()
 
-   METHOD addConexion()
+   METHOD addConexion( lWithoutDataBase )
+   METHOD addConexionWithoutDataBase() INLINE ( ::addConexion( .t. ) )
 
-   METHOD getConexion()                INLINE ( atail( ::aConexions ) )
+   METHOD getConexion()                INLINE ( ::aConexions[ ::nCurrentConexion ] )
 
    METHOD Connect() 
-   METHOD ConnectWithoutDataBase()
-   METHOD Disconnect()                 INLINE ( if( !empty( ::getConexion() ), ::getConexion():Disconnect(), ) )
+   METHOD Disconnect()                 
    
    METHOD RowSet( cSql )               INLINE ( if( !empty( ::getConexion() ), ::getConexion():RowSet( cSql ), ) )
 
@@ -113,14 +113,6 @@ CLASS SQLDatabase
 
    METHOD showError( e )
 
-   METHOD setAutoCommitToTrue()        INLINE ( msgalert( "setAutoCommitToTrue" ), getSQLDatabase():Exec( "SET @@autocommit = 1;" ) )
-
-   METHOD setAutoCommitToFalse()       INLINE ( msgalert( "setAutoCommitToFalse" ), getSQLDatabase():Exec( "SET @@autocommit = 0;" ) )
-
-   METHOD commitData()                 INLINE ( msgalert( "commitData" ), getSQLDatabase():Exec( "COMMIT;" ) )                 
-
-   METHOD rollbackData()               INLINE ( msgalert( "rollbackData" ), getSQLDatabase():Exec( "ROLLBACK;" ) ) 
-
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -138,8 +130,6 @@ METHOD New( cDatabaseMySQL )
    ::cPasswordMySQL           := GetPvProfString(  "MySQL",    "Password", "",            cIniAplication() )
    ::nPortMySQL               := GetPvProfInt(     "MySQL",    "Port",     3306,          cIniAplication() )
 
-   ::addConexion()
-   
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
@@ -158,23 +148,33 @@ RETURN ( oConexion )
 
 //----------------------------------------------------------------------------//
 
-METHOD addConexion()
+METHOD addConexion( lWithoutDataBase )
 
-   aadd( ::aConexions, ::createConexion() )
+   ++::nCurrentConexion
 
-RETURN ( ::aConexions )
+   if ::nCurrentConexion > len( ::aConexions )
+
+      aadd( ::aConexions, ::createConexion() )
+
+      RETURN ( ::Connect( lWithoutDataBase ) )
+
+   end if 
+
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-METHOD Connect()
+METHOD Connect( lWithoutDataBase )
 
-   local lConnect    := .t.
+   local lConnect             := .t.
+
+   DEFAULT lWithoutDataBase   := .f.
 
    try
    
       if !empty( ::getConexion() )
 
-         lConnect    := ::getConexion():Connect( ::cDatabaseMySQL, ::cIpMySQL, ::cUserMySQL, ::cPasswordMySQL, ::nPortMySQL )
+         lConnect    := ::getConexion():Connect( if( lWithoutDataBase, nil, ::cDatabaseMySQL ), ::cIpMySQL, ::cUserMySQL, ::cPasswordMySQL, ::nPortMySQL )
 
       end if 
        
@@ -188,25 +188,9 @@ RETURN ( lConnect )
 
 //----------------------------------------------------------------------------//
 
-METHOD ConnectWithoutDataBase()
-
-   local lConnect    := .t.
-
-   try
+METHOD Disconnect()
    
-      if !empty( ::getConexion() )
-         
-         lConnect    := ::getConexion():Connect( nil, ::cIpMySQL, ::cUserMySQL, ::cPasswordMySQL, ::nPortMySQL )
-
-      end if 
-       
-   catch 
-
-      lConnect       := .f.
-   
-   end
-
-RETURN ( lConnect )    
+RETURN ( aeval( ::aConexions, {|oConexion| oConexion:Disconnect() } ) )
 
 //----------------------------------------------------------------------------//
 
@@ -572,11 +556,7 @@ RETURN ( ::selectFetchArray( "SHOW TABLES FROM " + ::cDatabaseMySQL ) )
 
 METHOD beginTransaction()
 
-   // ::addConexion()
-
-   // ::Connect()
-
-   // msgalert( len( ::aConexions ), "beginTransaction" )
+   ::addConexion()
 
 RETURN ( ::getConexion():beginTransaction() )
 
@@ -586,11 +566,7 @@ METHOD Commit()
 
    ::getConexion():Commit()
 
-   // ::Disconnect()
-
-   // adel( ::aConexions, len( ::aConexions ), .t. )
-
-   // msgalert( len( ::aConexions ), "Commit" )
+   --::nCurrentConexion
 
 RETURN ( nil )
 
@@ -600,11 +576,7 @@ METHOD rollBack()
 
    ::getConexion():rollBack()
 
-   // ::Disconnect()
-
-   // adel( ::aConexions, len( ::aConexions ), .t. )
-
-   // msgalert( len( ::aConexions ), "rollBack" )
+   --::nCurrentConexion
 
 RETURN ( nil )
 

@@ -39,7 +39,7 @@ METHOD New( oController ) CLASS MetodosPagosController
                                     "32" => "gc_credit_cards_32",;
                                     "48" => "gc_credit_cards_48" }
 
-   ::nLevel                   := Auth():Level( ::cName )
+   ::lTransactional           := .t.
 
 RETURN ( Self )
 

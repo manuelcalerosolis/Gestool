@@ -1644,6 +1644,9 @@ METHOD updateInsertedBuffer( hBuffer )
 
    ::getUpdateSentence( hBuffer )
 
+   msgalert( ::cSQLUpdate, "cSQLUpdate" )
+   logwrite( ::cSQLUpdate )
+
    if !empty( ::cSQLUpdate )
       getSQLDatabase():Querys( ::cSQLUpdate )
    end if
@@ -1654,21 +1657,15 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertOnDuplicate( hBuffer, lTransactional )
+METHOD insertOnDuplicate( hBuffer )
 
    local cSentence 
-
-   DEFAULT lTransactional  := .f.
 
    ::fireEvent( 'insertingOnDuplicatingBuffer' )
 
    cSentence               := ::getInsertOnDuplicateSentence( hBuffer )
 
-   if lTransactional 
-      getSQLDatabase():TransactionalQuery( cSentence )
-   else
-      getSQLDatabase():Query( cSentence )
-   end  if 
+   getSQLDatabase():Query( cSentence )
 
    ::fireEvent( 'insertedOnDuplicatedBuffer' )
 

@@ -144,7 +144,7 @@ METHOD New( oController ) CLASS OperacionesComercialesController
 
    ::Super:New( oController )
 
-   ::lTransactional                    := .f.
+   ::lTransactional                    := .t.
 
    ::lInsertable                       := .t.
 
@@ -160,7 +160,7 @@ METHOD New( oController ) CLASS OperacionesComercialesController
 
    ::setEvent( 'editing', {|nId| ::Editing( nId ) } )
 
-   ::setEvent( 'cancelEdited', {|| ::cancelEdited() } )
+   // ::setEvent( 'cancelEdited', {|| ::cancelEdited() } )
 
    ::getTercerosController():getSelector():setEvent( 'settedHelpText', {|| ::terceroSettedHelpText() } )
 
@@ -193,8 +193,8 @@ RETURN ( ::Super:End() )
 METHOD Editing( nId ) CLASS OperacionesComercialesController
 
    if !empty( ::getFieldFromRowSet( "canceled_at" ) )
-      errorAlert( "El documento est?cancelado." )
-      msgstop( "El documento est?cancelado.", "No esta permitida la edici?" )
+      errorAlert( "El documento está cancelado." )
+      msgstop( "El documento está cancelado.", "No esta permitida la edición" )
       RETURN ( .f. )
    end if 
 
