@@ -35,6 +35,9 @@ METHOD getColumns() CLASS SQLContadoresModel
 
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                           "default"   => {|| 0 } }                                 )
+   
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR ( 40 )"                          ,;
+                                          "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "usuario_codigo", {  "create"    => "VARCHAR ( 20 )"                          ,;
                                           "text"      => "Usuario"                                 ,;

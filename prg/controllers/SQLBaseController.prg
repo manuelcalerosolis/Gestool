@@ -352,7 +352,7 @@ METHOD Append()
 
          ::insertOrUpdateBuffer()    
 
-         ::insertIncidence()    
+         // ::insertIncidence()    
          
          ::commitTransactionalMode()
 
@@ -425,10 +425,8 @@ METHOD Insert()
 
          ::fireEvent( 'closedDialog' )    
 
-         ::getModel():updateInsertedBuffer()
+         ::getModel():updateInsertedBuffer( nil, ::nId )
 
-         // ::insertIncidence()    
-         
          ::commitTransactionalMode()
 
          ::fireEvent( 'inserted' ) 

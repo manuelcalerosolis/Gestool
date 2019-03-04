@@ -147,9 +147,11 @@ CLASS SQLBaseModel
 
    METHOD getInsertSentence()
       METHOD writeInsertSentence( key, value )
+
    METHOD getInsertIgnoreSentence( hBuffer ) ;
                                        INLINE ( ::getInsertSentence( hBuffer, .t. ) )
    METHOD getUpdateSentence()
+   METHOD getUpdateInsertedSentence( hBuffer, nId )
    METHOD getInsertOnDuplicateSentence( hBuffer )   
 
    METHOD isDeletedAtColumn()          INLINE ( hhaskey( ::hColumns, "deleted_at" ) )
@@ -262,9 +264,8 @@ CLASS SQLBaseModel
    METHOD setBufferPadr( cColumn, uValue )
    
    METHOD insertBuffer( hBuffer ) 
-   METHOD insertIgnore( hBuffer )  
-      METHOD insertIgnoreTransactional( hBuffer ) ;
-                                       INLINE ( ::insertIgnore( hBuffer, .t. ) )
+   METHOD insertIgnoreBuffer( hBuffer );
+                                       INLINE ( ::insertBuffer( hBuffer, .t. ) )  
 
    METHOD updateBuffer( hBuffer )
    
@@ -287,8 +288,9 @@ CLASS SQLBaseModel
    METHOD defaultCurrentBuffer()
 
    METHOD insertBlankBuffer( hBuffer ) INLINE ( ::loadBlankBuffer( hBuffer ), ::insertBuffer() ) 
+   
    METHOD insertIgnoreBlankBuffer( hBuffer ) ;
-                                       INLINE ( ::loadBlankBuffer( hBuffer ), ::insertIgnore() ) 
+                                       INLINE ( ::loadBlankBuffer( hBuffer ), ::insertIgnoreBuffer() ) 
 
    // Events-------------------------------------------------------------------
 
@@ -385,7 +387,7 @@ END CLASS
 METHOD New( oController )
 
    if empty( ::hColumns ) .and. empty( ::getColumns() )
-      msgstop( "La definición de columnas no puede estar vacia" )
+      msgStop( "La definición de columnas no puede estar vacia" )
       RETURN ( self )
    end if 
 
@@ -1062,6 +1064,38 @@ RETURN ( ::cSQLUpdate )
 
 //---------------------------------------------------------------------------//
 
+METHOD getUpdateInsertedSentence( hBuffer, nId )
+
+   local uValue
+
+   DEFAULT hBuffer      := ::hBuffer
+
+   if !hb_ishash( hBuffer )
+      RETURN ( nil )
+   end if 
+
+   ::fireEvent( 'gettingUpdateInsertedSentence' )   
+
+   hBuffer              := ::setUpdatedTimeStamp( hBuffer )
+
+   ::cSQLUpdate         := "UPDATE " + ::getTableName() + " SET "
+
+   for each uValue in hBuffer
+      if ( uValue:__enumkey() != ::cColumnKey )
+         ::cSQLUpdate  += uValue:__enumKey() + " = " + toSQLString( ::setAttribute( uValue:__enumKey(), uValue ) ) + ", "
+      end if 
+   next
+
+   ::cSQLUpdate         := chgAtEnd( ::cSQLUpdate, '', 2 ) + " "
+
+   ::cSQLUpdate         += "WHERE id = " + hb_ntos( nId )
+
+   ::fireEvent( 'gotUpdateInsertedSentence' )   
+
+RETURN ( ::cSQLUpdate )
+
+//---------------------------------------------------------------------------//
+
 METHOD getInsertOnDuplicateSentence( hBuffer ) 
 
    local uValue
@@ -1576,43 +1610,22 @@ RETURN ( uValue )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertBuffer( hBuffer )
+METHOD insertBuffer( hBuffer, lIgnore )
 
    local nId
 
-   DEFAULT hBuffer   := ::hBuffer
-
-   ::fireEvent( 'insertingBuffer' )
-
-   ::getInsertSentence( hBuffer )
-
-   getSQLDatabase():Query( ::cSQLInsert )
-
-   nId               := getSQLDatabase():LastInsertId()
-
-   hset( hBuffer, ::cColumnKey, nId )
-
-   ::fireEvent( 'insertedBuffer' )
-
-RETURN ( nId )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertIgnore( hBuffer )
-
-   local nId
-   
    DEFAULT hBuffer         := ::hBuffer
+   DEFAULT lIgnore         := .f.
 
    ::fireEvent( 'insertingBuffer' )
 
-   ::getInsertIgnoreSentence( hBuffer )
+   ::getInsertSentence( hBuffer, lIgnore )
 
    if empty( ::cSQLInsert )
       RETURN ( nId )
    end if 
 
-   getSQLDatabase():Query( ::cSQLInsert )
+   getSQLDatabase():Exec( ::cSQLInsert )
 
    nId                     := getSQLDatabase():LastInsertId()
 
@@ -1638,14 +1651,11 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD updateInsertedBuffer( hBuffer )
+METHOD updateInsertedBuffer( hBuffer, nId )
 
    ::fireEvent( 'updatingInsertedBuffer' )
 
-   ::getUpdateSentence( hBuffer )
-
-   msgalert( ::cSQLUpdate, "cSQLUpdate" )
-   logwrite( ::cSQLUpdate )
+   ::getUpdateInsertedSentence( hBuffer, nId )
 
    if !empty( ::cSQLUpdate )
       getSQLDatabase():Querys( ::cSQLUpdate )
