@@ -31,6 +31,8 @@ CLASS SQLBaseController
 
    DATA lMultiDelete                   INIT .t.
 
+   DATA lCanceled                      INIT .f.
+
    DATA nLevel                         INIT __permission_full__ 
 
    DATA nMode                          AS NUMERIC

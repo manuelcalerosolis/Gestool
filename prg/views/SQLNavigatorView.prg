@@ -197,7 +197,7 @@ METHOD keyDown( nKey, nFlags )
       case nKey == VK_RETURN 
          if( !empty( ::oController ), ::oController:EditReturn(), )
       case nKey == VK_DELETE 
-         if( !empty( ::oController ), ::oController:Delete( ::getBrowse():aSelected ), )
+         if( !empty( ::oController ) .and. !( ::oController:lCanceled ), ::oController:Delete( ::getBrowse():aSelected ), )
       case nKey == VK_F5
          ::RefreshRowSet()
    end case
