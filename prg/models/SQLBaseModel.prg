@@ -83,6 +83,8 @@ CLASS SQLBaseModel
 
    METHOD getPackage( cContext )       INLINE ( ::cPackage + cContext )
 
+   METHOD getBufferChanged()           VIRTUAL
+
    // Columns-------------------------------------------------------------------
 
    METHOD getColumns()                 VIRTUAL
@@ -287,7 +289,7 @@ CLASS SQLBaseModel
    METHOD loadCurrentBuffer()
    METHOD defaultCurrentBuffer()
 
-   METHOD insertBlankBuffer( hBuffer ) INLINE ( ::loadBlankBuffer( hBuffer ), ::insertBuffer() ) 
+   METHOD insertBlankBuffer( hBuffer ) INLINE ( ::loadBlankBuffer( hBuffer ), ::insertBuffer( hBuffer ) ) 
    
    METHOD insertIgnoreBlankBuffer( hBuffer ) ;
                                        INLINE ( ::loadBlankBuffer( hBuffer ), ::insertIgnoreBuffer() ) 

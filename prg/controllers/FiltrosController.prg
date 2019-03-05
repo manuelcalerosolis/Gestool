@@ -600,6 +600,8 @@ METHOD Activate() CLASS FiltrosView
 
    ::oController:Activate( 200, ::oFolder:aDialogs[2] )
 
+   ::oController:getBrowseView():setLDblClick( {|| ::SelectFilter() } )
+
    // Botones caja -------------------------------------------------------
 
    ApoloBtnFlat():Redefine( IDOK, {|| ::oDialog:end( IDOK ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )

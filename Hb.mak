@@ -382,6 +382,7 @@ ClientesBrowseView.prg 														\
 ProveedoresBrowseView.prg 													\
 TercerosBrowseView.prg 														\
 SQLOperacionesComercialesModel.prg 										\
+SQLObservableModel.prg 														\
 SqlFacturasVentasModel.prg 												\
 SQLFacturasVentasSimplificadasModel.prg 								\
 SQLAlbaranesVentasModel.prg 												\
@@ -831,6 +832,7 @@ ClientesBrowseView.obj 														\
 ProveedoresBrowseView.obj 													\
 TercerosBrowseView.obj 														\
 SQLOperacionesComercialesModel.obj 										\
+SQLObservableModel.obj 														\
 SQLFacturasVentasModel.obj 												\
 SQLFacturasVentasSimplificadasModel.obj 								\
 SQLAlbaranesVentasModel.obj 												\
@@ -1268,6 +1270,7 @@ $(OBJ)\ClientesBrowseView.obj 											+
 $(OBJ)\ProveedoresBrowseView.obj 										+
 $(OBJ)\TercerosBrowseView.obj 											+
 $(OBJ)\SQLOperacionesComercialesModel.obj 							+
+$(OBJ)\SQLObservableModel.obj 											+
 $(OBJ)\SqlFacturasVentasModel.obj 					    				+
 $(OBJ)\SQLFacturasVentasSimplificadasModel.obj 						+
 $(OBJ)\SQLAlbaranesVentasModel.obj 					    				+

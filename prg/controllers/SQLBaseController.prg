@@ -433,6 +433,8 @@ METHOD Insert()
 
          ::fireEvent( 'inserted' ) 
 
+         ::getModel():getBufferChanged()
+
          ::refreshRowSetAndFindId()
 
          ::refreshBrowseView()

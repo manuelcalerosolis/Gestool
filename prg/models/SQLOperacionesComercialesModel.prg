@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLOperacionesComercialesModel FROM SQLCompanyModel
+CLASS SQLOperacionesComercialesModel FROM SQLObservableModel /*SQLCompanyModel*/
 
    METHOD getColumns()
 
@@ -80,7 +80,7 @@ METHOD getColumns() CLASS SQLOperacionesComercialesModel
 
    hset( ::hColumns, "recargo_equivalencia",          {  "create"    => "TINYINT ( 1 )"                        ,;
                                                          "text"      => "Recargo de equivalencia"              ,;
-                                                         "default"   => {|| 0 } }                              )
+                                                         "default"   => {|| .f. } }                            )
 
    hset( ::hColumns, "direccion_principal_uuid",      {  "create"    => "VARCHAR ( 40 )"                       ,;
                                                          "default"   => {|| space( 40 ) } }                    )
