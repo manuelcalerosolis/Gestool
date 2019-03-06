@@ -45,6 +45,8 @@ CLASS SQLBaseController
 
    DATA aSelected
 
+   DATA bPostAction
+
    METHOD New() CONSTRUCTOR
    METHOD End()
 
@@ -211,7 +213,8 @@ CLASS SQLBaseController
    METHOD dialgOkAndDown()             INLINE ( ::uDialogResult == IDOKANDDOWN )
    METHOD dialgOkAndUp()               INLINE ( ::uDialogResult == IDOKANDUP )
 
-   METHOD postEdit( nId )
+   METHOD setPostAction( bPostAction ) INLINE ( ::bPostAction := bPostAction )
+   METHOD runPostAction()
 
    METHOD isDeleted( nId )             INLINE ( ::getModel():isDeletedAtColumn() .and. ::getModel:isDeleted( nId ) ) 
    METHOD isNotDeleted()               INLINE ( !::isDeleted() )
@@ -392,6 +395,8 @@ METHOD Append()
 
    ::fireEvent( 'endDialog' )  
 
+   ::runPostAction()
+
 RETURN ( lAppend )
 
 //----------------------------------------------------------------------------//
@@ -465,6 +470,8 @@ METHOD Insert()
 
    ::fireEvent( 'endDialog' )  
 
+   ::runPostAction()
+
 RETURN ( lInsert )
 
 //----------------------------------------------------------------------------//
@@ -537,6 +544,8 @@ METHOD Duplicate( nId )
    ::fireEvent( 'exitDuplicated' ) 
 
    ::fireEvent( 'endDialog' )  
+
+   ::runPostAction()
 
 RETURN ( lDuplicate )
 
@@ -614,35 +623,16 @@ METHOD Edit( nId )
 
    ::fireEvent( 'endDialog' )  
 
-   ::postEdit()
+   ::runPostAction()
 
 RETURN ( lEdit )
 
 //----------------------------------------------------------------------------//
 
-METHOD postEdit() 
+METHOD runPostAction() 
 
-   do case
-      case ::dialgOkAndGoTo()
-
-         if ::refreshRowSetAndFindId( ::getDialogView():idGoTo )
-            ::Edit()
-         else 
-            msgStop( "El identificador " + alltrim( str( ::getDialogView():idGoTo ) ) + " no puede ser localizado" )
-         end if 
-
-      case ::dialgOkAndDown()
-
-         ::goDownRowSet()
-      
-         ::Edit()
-
-      case ::dialgOkAndUp()
-
-         ::goUpRowSet()
-      
-         ::Edit()
-         
+   if hb_isblock( ::bPostAction )
+      eval( ::bPostAction, self )
    end case 
 
 RETURN ( self )

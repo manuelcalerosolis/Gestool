@@ -87,7 +87,7 @@ METHOD insertEmpresas() CLASS SQLGestoolSeeders
    hset( hBuffer, "administrador",     field->cAdminis  )
    hset( hBuffer, "pagina_web",        field->web       )
 
-   nId            := SQLEmpresasModel():insertIgnore( hBuffer )
+   nId            := SQLEmpresasModel():insertIgnoreBuffer( hBuffer )
 
    if empty( nId )
       RETURN ( self )
@@ -106,7 +106,7 @@ METHOD insertEmpresas() CLASS SQLGestoolSeeders
    hset( hBuffer, "telefono",       field->cTlf         )
    hset( hBuffer, "email",          field->email        )
                         
-   nId            := SQLDireccionesGestoolModel():insertIgnore( hBuffer )
+   nId            := SQLDireccionesGestoolModel():insertIgnoreBuffer( hBuffer )
 
 RETURN ( self )
 
@@ -123,7 +123,7 @@ METHOD insertUsuarios() CLASS SQLGestoolSeeders
    hset( hBuffer, "nombre",            capitalize( field->cNbrUse ) )
    hset( hBuffer, "password",          SQLUsuariosModel():Crypt( field->cClvUse )  )
 
-   SQLUsuariosModel():insertIgnore( hBuffer )
+   SQLUsuariosModel():insertIgnoreBuffer( hBuffer )
 
 RETURN ( self )
 
@@ -212,7 +212,7 @@ METHOD insertTiposImpresoras() CLASS SQLCompanySeeders
 
    hset( hBuffer, "nombre", field->cTipImp )
 
-RETURN ( SQLTiposImpresorasModel():insertIgnore( hBuffer ) )
+RETURN ( SQLTiposImpresorasModel():insertIgnoreBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
@@ -224,7 +224,7 @@ METHOD insertLenguaje() CLASS SQLCompanySeeders
    hset( hBuffer, "codigo",   field->cCodLen )
    hset( hBuffer, "nombre",   field->cNomLen )
 
-RETURN ( SQLLenguajesModel():insertIgnore( hBuffer ) )
+RETURN ( SQLLenguajesModel():insertIgnoreBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
@@ -440,7 +440,7 @@ METHOD insertListin( dbf ) CLASS SQLCompanySeeders
    hset( hBuffer, "nombre",            ( dbf )->cApellidos  )
    hset( hBuffer, "dni",               ( dbf )->cNif  )
 
-   nId            := SQLListinModel():insertIgnore( hBuffer )
+   nId            := SQLListinModel():insertIgnoreBuffer( hBuffer )
 
    if empty( nId )
       RETURN ( self )
@@ -458,7 +458,7 @@ METHOD insertListin( dbf ) CLASS SQLCompanySeeders
    hset( hBuffer, "codigo_postal",  ( dbf )->cCodpostal   )
    hset( hBuffer, "telefono",       ( dbf )->cTel         )
                         
-   nId            := SQLDireccionesModel():insertIgnore( hBuffer )
+   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
 
 RETURN ( self )
 
@@ -559,7 +559,7 @@ METHOD insertAgentes( dbf ) CLASS SQLCompanySeeders
    hset( hBuffer, "dni",               ( dbf )->cDniNif  )
    hset( hBuffer, "comision",          ( dbf )->nCom1    )
 
-   nId            := SQLAgentesModel():insertIgnore( hBuffer )
+   nId            := SQLAgentesModel():insertIgnoreBuffer( hBuffer )
 
    if empty( nId )
       RETURN ( self )
@@ -577,7 +577,7 @@ METHOD insertAgentes( dbf ) CLASS SQLCompanySeeders
    hset( hBuffer, "movil",          ( dbf )->cMovAge     )
    hset( hBuffer, "email",          ( dbf )->cMailAge    )
                         
-   nId            := SQLDireccionesModel():insertIgnore( hBuffer )
+   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
 
 RETURN ( self )
 
@@ -620,7 +620,7 @@ METHOD insertTransportista( dbf ) CLASS SQLCompanySeeders
    hset( hBuffer, "nombre",            ( dbf )->cNomTrn  )
    hset( hBuffer, "dni",               ( dbf )->cDniTrn  )
 
-   nId            := SQLTransportistasModel():insertIgnore( hBuffer )
+   nId            := SQLTransportistasModel():insertIgnoreBuffer( hBuffer )
 
    if empty( nId )
       RETURN ( self )
@@ -638,7 +638,7 @@ METHOD insertTransportista( dbf ) CLASS SQLCompanySeeders
    hset( hBuffer, "telefono",       ( dbf )->cTlfTrn     )
    hset( hBuffer, "movil",          ( dbf )->cMovTrn     )
                         
-   nId            := SQLDireccionesModel():insertIgnore( hBuffer )
+   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
 
 RETURN ( self )
 
@@ -684,7 +684,7 @@ METHOD insertEmpresas( dbf ) CLASS SQLCompanySeeders
    hset( hBuffer, "administrador",     ( dbf )->cAdminis  )
    hset( hBuffer, "pagina_web",        ( dbf )->web       )
 
-   nId            := SQLEmpresasModel():insertIgnore( hBuffer )
+   nId            := SQLEmpresasModel():insertIgnoreBuffer( hBuffer )
 
    if empty( nId )
       RETURN ( self )
@@ -703,7 +703,7 @@ METHOD insertEmpresas( dbf ) CLASS SQLCompanySeeders
    hset( hBuffer, "telefono",       ( dbf )->cTlf         )
    hset( hBuffer, "email",          ( dbf )->email        )
                         
-   nId            := SQLDireccionesModel():insertIgnore( hBuffer )
+   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
 
 RETURN ( self )
 
@@ -747,7 +747,7 @@ METHOD insertFabricantes( dbf ) CLASS SQLCompanySeeders
    hset( hBuffer, "nombre",            ( dbf )->cNomFab  )
    hset( hBuffer, "pagina_web",        ( dbf )->cUrlFab  )
 
-   nId            := SQLArticulosFabricantesModel():insertIgnore( hBuffer )
+   nId            := SQLArticulosFabricantesModel():insertIgnoreBuffer( hBuffer )
 
 RETURN ( Self )
 

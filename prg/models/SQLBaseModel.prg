@@ -266,7 +266,7 @@ CLASS SQLBaseModel
    METHOD setBufferPadr( cColumn, uValue )
    
    METHOD insertBuffer( hBuffer ) 
-   METHOD insertIgnoreBuffer( hBuffer );
+   METHOD insertIgnoreBuffer( hBuffer ) ;
                                        INLINE ( ::insertBuffer( hBuffer, .t. ) )  
 
    METHOD updateBuffer( hBuffer )

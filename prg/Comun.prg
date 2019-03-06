@@ -3580,6 +3580,8 @@ CLASS ApoloBtnFlat FROM TBtnFlat
 
    DATA  nMargin     INIT 0
 
+   DATA  oPopup
+
    METHOD Paint()
 
    METHOD setCaption( cCaption )
@@ -3621,7 +3623,7 @@ METHOD Paint() CLASS ApoloBtnFlat
 
    ::DispEnd( aInfo )
 
-RETURN nil
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 

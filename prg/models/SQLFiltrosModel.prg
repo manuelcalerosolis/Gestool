@@ -10,6 +10,8 @@ CLASS SQLFiltrosModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "filtros"
 
+   DATA cConstraints                   INIT "PRIMARY KEY ( id ), UNIQUE KEY ( tabla, nombre )"
+
    METHOD setTableToFilter( cTable )   INLINE ( ::cTable := cTable )
 
    METHOD getTableToFilter()           INLINE ( iif(  empty( ::cTable ),;
@@ -35,12 +37,12 @@ END CLASS
 
 METHOD getColumns()
 
-   hset( ::hColumns, "id",       {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT" } )
+   hset( ::hColumns, "id",       {  "create"    => "INTEGER AUTO_INCREMENT" } )
 
-   hset( ::hColumns, "tabla",    {  "create"    => "CHAR( 50 ) NOT NULL"                  ,;
+   hset( ::hColumns, "tabla",    {  "create"    => "CHAR ( 50 ) NOT NULL"                 ,;
                                     "default"   => {|| space( 50 ) } } ) 
 
-   hset( ::hColumns, "nombre",   {  "create"    => "CHAR( 50 ) NOT NULL"                  ,;
+   hset( ::hColumns, "nombre",   {  "create"    => "CHAR ( 50 ) NOT NULL"                 ,;
                                     "default"   => {|| space( 50 ) } }                    ) 
 
    hset( ::hColumns, "filtro",   {  "create"    => "TEXT"                                 ,;

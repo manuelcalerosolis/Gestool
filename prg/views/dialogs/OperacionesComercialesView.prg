@@ -9,6 +9,8 @@ CLASS OperacionesComercialesView FROM OperacionesView
 
    DATA oGetNumero
 
+   DATA oBtnOk
+
    DATA oBtnDescuentosDeleted
 
    DATA oBtnLineasDeleted
@@ -44,6 +46,8 @@ CLASS OperacionesComercialesView FROM OperacionesView
                                                 ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
 
    METHOD defaultTitle()
+
+   METHOD popupActivate()
 
 END CLASS
 
@@ -209,25 +213,25 @@ METHOD Activate() CLASS OperacionesComercialesView
 
    // Lineas ------------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::lineAppend() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::lineAppend() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "AÃ±adir lÃ­nea" )
 
-   TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::getController():getLinesController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
+   TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::getController():getLinesController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar lÃ­neas" )
 
-   TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| ::getController():getLinesController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
+   TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| ::getController():getLinesController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar lÃ­neas" )
    
    ::oBtnLineasDeleted := TBtnBmp():ReDefine( 504, "gc_deleted_16",,,,, {|| ::setLinesShowDeleted()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
    
-   TBtnBmp():ReDefine( 505, "gc_object_cube_16",,,,, {|| ::getController():getLinesController():Edit()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar ficha de artículo" )
+   TBtnBmp():ReDefine( 505, "gc_object_cube_16",,,,, {|| ::getController():getLinesController():Edit()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar ficha de artÃ­culo" )
 
    ::getController():getLinesController():Activate( 500, ::oFolder:aDialogs[1] )
 
    // Descuentos---------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 601, "new16",,,,, {|| ::getController():getDiscountController():AppendLineal() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 601, "new16",,,,, {|| ::getController():getDiscountController():AppendLineal() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "AÃ±adir lÃ­nea" )
 
-   TBtnBmp():ReDefine( 602, "del16",,,,, {|| ::getController():getDiscountController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
+   TBtnBmp():ReDefine( 602, "del16",,,,, {|| ::getController():getDiscountController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar lÃ­neas" )
 
-   TBtnBmp():ReDefine( 603, "refresh16",,,,, {|| ::getController():getDiscountController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
+   TBtnBmp():ReDefine( 603, "refresh16",,,,, {|| ::getController():getDiscountController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar lÃ­neas" )
    
    ::oBtnDescuentosDeleted := TBtnBmp():ReDefine( 604, "gc_deleted_16",,,,, {|| ::setDiscountShowDeleted() }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
 
@@ -235,7 +239,9 @@ METHOD Activate() CLASS OperacionesComercialesView
 
    // Botones generales--------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| ::validActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ::oBtnOk    := ApoloBtnFlat():Redefine( IDOK, {|| ::validActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+
+   ApoloBtnFlat():Redefine( IDOKANDNEW, {|| ::popupActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
@@ -338,7 +344,6 @@ METHOD addLinksToExplorerBar() CLASS OperacionesComercialesView
                      {||   ::getController():getIvaDetalleView():Show()  },;
                            ::getController():getTipoIvaController():getImage( "16" ) )
 
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -376,7 +381,34 @@ METHOD defaultTitle() CLASS OperacionesComercialesView
 RETURN ( cTitle )
 
 //---------------------------------------------------------------------------//
+
+METHOD popupActivate() CLASS OperacionesComercialesView
+
+   local oMenu
+
+   MENU oMenu POPUP
+
+      MENUITEM "Aceptar e imprimir" ;
+         ACTION   (  ::oController:setPostAction( {|| msgalert( "Aceptar e imprimir" ) } ),;
+                     ::validActivate() )        
+      
+      MENUITEM "Aceptar y generar PDF" ;          
+         ACTION   (  ::oController:setPostAction( {|| msgalert( "Aceptar y generar PDF" ) } ),;
+                     ::validActivate() )        
+
+      if ( Auth():canSendMail() )
+         MENUITEM "Aceptar y enviar mail" 
+      end if 
+
+   ENDMENU
+   
+   ACTIVATE POPUP oMenu AT 1, 1 OF ::oBtnOk
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+

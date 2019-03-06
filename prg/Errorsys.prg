@@ -214,20 +214,14 @@ Static Function SendErrorMessage( cMessage, aStack )
       cMessage += aStack[ n ] + Chr( 13 ) + Chr( 10 )
    next
 
-   ShellExecute( 0, "open",   "mailto:watchdog@telefonica.net" + Space( 1 ) +;
+   ShellExecute( 0, "open",   "mailto:mcalero@gestool.es"      + Space( 1 ) +;
                               "?Subject=Error"                 + Space( 1 ) +;
                               "&body=" + cMessage )
-
-/*
-#ifdef __HARBOUR__
-   MAPISendMailDialog( 0, cMessage, cText, '', '', 'Gst+ error system', 'SMTP:watchdog@telefonica.net' )
-#endif
-*/
 
 return nil
 
 
-Function ApoloCallStack()
+FUNCTION ApoloCallStack( cTitle )
 
    Local i        := 1
    Local cMessage := ""
@@ -237,9 +231,9 @@ Function ApoloCallStack()
       i++
    EndDo
 
-   msgStop( cMessage )
+   msgStop( cMessage, cTitle )
 
-Return cMessage
+RETURN cMessage
 
 
 

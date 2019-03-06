@@ -92,7 +92,7 @@ METHOD ApenndLinea()
       hSet( hBuffer, "parent_uuid", ::oController:getUuid() )
       hSet( hBuffer, "tarifa_uuid", hGet( hLine, "uuid" ) )
 
-      ::getModel():insertIgnore( hBuffer )
+      ::getModel():insertIgnoreBuffer( hBuffer )
 
    next
 
