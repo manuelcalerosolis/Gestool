@@ -613,7 +613,7 @@ METHOD insertTarifaBase() CLASS SQLArticulosTarifasModel
    hset( hBuffer, "codigo", "0" )
    hset( hBuffer, "nombre", __tarifa_base__ )
 
-RETURN ( ::insertIgnore( hBuffer ) )
+RETURN ( /*::insertIgnore( hBuffer )*/ nil )
 
 //---------------------------------------------------------------------------//
 

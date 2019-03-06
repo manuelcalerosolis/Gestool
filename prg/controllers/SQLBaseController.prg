@@ -45,6 +45,8 @@ CLASS SQLBaseController
 
    DATA aSelected
 
+   DATA oHistoryController
+
    METHOD New() CONSTRUCTOR
    METHOD End()
 
@@ -216,6 +218,9 @@ CLASS SQLBaseController
    METHOD isDeleted( nId )             INLINE ( ::getModel():isDeletedAtColumn() .and. ::getModel:isDeleted( nId ) ) 
    METHOD isNotDeleted()               INLINE ( !::isDeleted() )
 
+   METHOD insertChanges( aChanges, cOperation ) ;
+                                       INLINE ( ::getHistoryController():insertHistory( aChanges, cOperation ) )
+
    // Transactional system-----------------------------------------------------
 
    METHOD beginTransactionalMode()     INLINE ( iif( ::lTransactional, getSQLDatabase():BeginTransaction(), ) )
@@ -270,6 +275,8 @@ CLASS SQLBaseController
    METHOD getRowSet()                  INLINE ( iif( empty( ::oRowSet ), ::oRowSet := SQLRowSet():New( self ), ), ::oRowSet )
    
    METHOD getEvents()                  INLINE ( iif( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
+
+   METHOD getHistoryController()       INLINE ( iif( empty( ::oHistoryController ), ::oHistoryController := HistoryController():New( self ), ), ::oHistoryController )
 
    //Autocommit------------------------------------------------------------------//
 
@@ -433,7 +440,7 @@ METHOD Insert()
 
          ::fireEvent( 'inserted' ) 
 
-         ::getModel():getBufferChanged()
+         ::insertChanges( ::getModel():getBufferChanged(), "Creación del documento" )
 
          ::refreshRowSetAndFindId()
 

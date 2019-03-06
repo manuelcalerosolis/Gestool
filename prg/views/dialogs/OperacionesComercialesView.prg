@@ -324,7 +324,7 @@ METHOD addLinksToExplorerBar() CLASS OperacionesComercialesView
                            ::getController():getIncidenciasController():getImage( "16" ) )
 
    ::oPanel:AddLink( "Tipo de direcciones...",;
-                     {||   ::getController():getDireccionTipoDocumentoController():activateDialogView() },;
+                     {||   ::getController():getDireccionTipoDocumentoController():Edit() },;
                            ::getController():getDireccionTipoDocumentoController():getImage( "16" ) )
 
    if ::getController():isNotZoomMode()
@@ -337,6 +337,10 @@ METHOD addLinksToExplorerBar() CLASS OperacionesComercialesView
    ::oPanel:AddLink( "Detalle IVA...",;
                      {||   ::getController():getIvaDetalleView():Show()  },;
                            ::getController():getTipoIvaController():getImage( "16" ) )
+
+   ::oPanel:AddLink( "Historial...",;
+                     {||   ::getController():getHistoryController():getDialogView():activate() },;
+                           ::getController():getHistoryController():getImage( "16" ) )
 
 
 RETURN ( nil )
