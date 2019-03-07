@@ -642,7 +642,7 @@ METHOD runPostAction()
       eval( ::bPostAction, self )
    end case
 
-RETURN ( self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
