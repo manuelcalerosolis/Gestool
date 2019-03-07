@@ -321,7 +321,11 @@ RETURN ( heval( ::hFastKey, {|k,v| if( k == nKey, eval( v ), ) } ) )
    
 //----------------------------------------------------------------------------//
 
-METHOD appendFilter()                                
+METHOD appendFilter()                              
+
+   ::getFilterController():setInitialField( ::getBrowseView():SelectedCol():cSortOrder )
+
+   ::getFilterController():setInitialValue( ::getBrowseView():SelectedCol():Value() )
 
    if ::getFilterController():isEditWithOutStored() 
       

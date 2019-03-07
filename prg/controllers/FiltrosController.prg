@@ -10,6 +10,10 @@ CLASS FiltrosController FROM SQLBrowseController
 
    DATA hConditions
 
+   DATA cInitialField
+
+   DATA cInitialValue
+
    DATA aDescriptions                  INIT  {}
 
    DATA aStructure                     INIT  {}
@@ -49,6 +53,9 @@ CLASS FiltrosController FROM SQLBrowseController
 
    METHOD deleteFilter()
 
+   
+
+
    METHOD isSelected()
 
    METHOD isLoad( cTable, cFilterName )
@@ -86,6 +93,14 @@ CLASS FiltrosController FROM SQLBrowseController
 
    METHOD setName( cName )             INLINE ( ::cName := padr( cName, 240 ) )
    METHOD getName( cName )             INLINE ( alltrim( ::cName ) )
+
+   METHOD setInitialField( cField )    INLINE ( ::cInitialField := cField )
+
+   METHOD getInitialText()
+
+   METHOD setInitialValue( cValue )    INLINE ( ::cInitialValue := cValue )
+
+   METHOD getInitialValue()
 
    METHOD getText() 
 
@@ -207,16 +222,17 @@ RETURN ( ::aStructure )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStructureKey( cText, cKey ) CLASS FiltrosController
+METHOD getStructureKey( cText, cKeyTo, cKeyFrom ) CLASS FiltrosController
 
    local nPos
 
-   DEFAULT cKey   := "type"
+   DEFAULT cKeyTo    := "type"
+   DEFAULT cKeyFrom  := "text"
 
-   nPos           := ascan( ::getStructure(), {|h| hget( h, "text" ) == cText } )
+   nPos              := ascan( ::getStructure(), {|h| hget( h, cKeyFrom ) == cText } )
 
    if nPos != 0
-      RETURN ( hget( ::getStructure()[ nPos ], cKey ) )
+      RETURN ( hget( ::getStructure()[ nPos ], cKeyTo ) )
    end if
 
 RETURN ( '' )
@@ -380,12 +396,49 @@ RETURN ( ::appendFilter() )
 
 //---------------------------------------------------------------------------//
 
+METHOD getInitialText() CLASS FiltrosController
+
+   local cInitialText   
+   
+   logwrite( "-----------------------------------------------------------------" )
+   logwrite( valtype( ::getStructure() ) )
+   logwrite( "-----------------------------------------------------------------" )
+   logwrite( hb_valtoexp( ::getStructure() ) )
+   logwrite( "-----------------------------------------------------------------" )
+   logwrite( ::cInitialField )
+
+   if empty( ::cInitialField )
+      RETURN ( hget( ::getStructure()[ 1 ], "text" ) )
+   end if 
+
+   cInitialText         := ::getStructureKey( ::cInitialField, "text", "field" )
+
+   if empty( cInitialText )
+      RETURN ( hget( ::getStructure()[ 1 ], "text" ) )
+   end if 
+
+RETURN ( cInitialText )
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialValue() CLASS FiltrosController
+
+   msgalert( ::cInitialValue, "cInitialValue" )
+
+   if empty( ::cInitialValue )
+      RETURN ( space( 100 ) )
+   end if 
+
+RETURN ( padr( ::cInitialValue, 100 ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD appendFilter() CLASS FiltrosController
 
    aadd( ::aFilter,;
-      {  "text"      => hget( ::getStructure()[ 1 ], "text" ),;
+      {  "text"      => ::getInitialText(),;
          "condition" => "Igual",;
-         "value"     => space( 100 ),;
+         "value"     => ::getInitialValue(),;
          "nexo"      => "" } )
 
 RETURN ( ::aFilter )
