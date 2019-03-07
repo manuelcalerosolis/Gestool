@@ -344,6 +344,10 @@ METHOD addLinksToExplorerBar() CLASS OperacionesComercialesView
                      {||   ::getController():getIvaDetalleView():Show()  },;
                            ::getController():getTipoIvaController():getImage( "16" ) )
 
+   ::oPanel:AddLink( "Historial...",;
+                     {||   ::getController():getHistoryController():getDialogView():activate() },;
+                           ::getController():getHistoryController():getImage( "16" ) )   
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -351,7 +355,7 @@ RETURN ( nil )
 METHOD lineAppend() CLASS OperacionesComercialesView
 
    if !::getController():getLinesController():validLine()
-      RETURN( nil )
+      RETURN ( nil )
    end if
 
 RETURN ( ::getController():getLinesController():AppendLineal() )

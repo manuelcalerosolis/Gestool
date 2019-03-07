@@ -11,17 +11,17 @@ CLASS HistoryController FROM SQLNavigatorController
 
    METHOD insertHistory( aChanges, cOperation )
 
-   METHOD prepareHistory( aChanges, cOperation )
+   METHOD getHistory( aChanges, cOperation )
 
-   METHOD prepareDetails( aChanges )
+   METHOD getDetails( aChanges )
 
    METHOD gettingSelectSentence()
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := HistoryBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()                 INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := HistoryBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := HistoryView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()                 INLINE ( if( empty( ::oDialogView ), ::oDialogView := HistoryView():New( self ), ), ::oDialogView )
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := HistoryRepository():New( self ), ), ::oRepository )
    
@@ -42,8 +42,6 @@ METHOD New( oController ) CLASS HistoryController
    ::hImage                   := {  "16" => "gc_user_message_16",;
                                     "32" => "gc_user_message_32",;
                                     "48" => "gc_user_message_48" }
-
-   //::nLevel                   := Auth():Level( ::cName )
 
    ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
@@ -69,31 +67,26 @@ METHOD End() CLASS HistoryController
       ::oRepository:End()
    end if
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
 METHOD insertHistory( aChanges, cOperation )
 
-   ::getModel():insertHistory( ::prepareHistory( aChanges, cOperation ) )
-
-RETURN ( nil )
+RETURN ( ::getModel():insertHistory( ::getHistory( aChanges, cOperation ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD prepareHistory( aChanges, cOperation ) CLASS HistoryController
+METHOD getHistory( aChanges, cOperation ) CLASS HistoryController
 
-   local hHash := { "documento_uuid" =>, "operacion" => , "detalle" => }
-
+   local hHash    := {=>}
    local cDetails := ""
-
-   AEval( aChanges, { | aChange | cDetails += ::prepareDetails( aChange ) } )
 
    hset( hHash, "documento_uuid", ::oController:getModelBuffer( "uuid" ) )
 
    hset( hHash, "operacion", cOperation )
+
+   aeval( aChanges, {| aChange | cDetails += ::getDetails( aChange ) } )
 
    hset( hHash, "detalle", cDetails )
 
@@ -101,39 +94,30 @@ RETURN ( hHash )
 
 //---------------------------------------------------------------------------//
 
-METHOD prepareDetails( aChanges ) CLASS HistoryController
-
-   local cDetails := ""
+METHOD getDetails( aChanges ) CLASS HistoryController
 
    local hChange
+   local cDetails := ""
 
    for each hChange in aChanges
 
-      if hHasKey( hChange, "text" ) .and. hget( hChange, "text" ) != "" 
+      if hhaskey( hChange, "text" ) .and. !empty( hget( hChange, "text" ) )
 
-         cDetails += Alltrim( hget( hChange, "text" ) ) + " : "+ Alltrim( hb_valtostr( hget( hChange, "old" ) ) )
+         cDetails    += alltrim( hget( hChange, "text" ) ) + " : " + alltrim( hb_valtostr( hget( hChange, "old" ) ) ) + " "
        
-         if hHasKey( hChange, "relation_old" )
-
-            if hget( hChange, "relation_old" ) != nil
-
-               cDetails += " " + Alltrim( hget( hChange, "relation_old" ) )
-
-            end if 
-
+         if hhaskey( hChange, "relation_old" ) .and. !empty( hget( hChange, "relation_old" ) )
+            cDetails += alltrim( hb_valtostr( hget( hChange, "relation_old" ) ) )
          end if
         
-        cDetails += " > " + Alltrim( hb_valtostr( hget( hChange, "new" ) ) )
+         cDetails    += " > " + alltrim( hb_valtostr( hget( hChange, "new" ) ) ) + " "
 
-         if hHasKey( hChange, "relation_new")
-
-            cDetails += " " + Alltrim( hget( hChange, "relation_new" ) )
-
+         if hhaskey( hChange, "relation_new") .and. !empty( hget( hChange, "relation_new" ) )
+            cDetails += alltrim( hb_valtostr( hget( hChange, "relation_new" ) ) )
          end if
 
+         cDetails    += CRLF
+      
       end if
-
-      cDetails += CRLF
 
    next
 
@@ -160,7 +144,12 @@ RETURN ( nil )
 
 CLASS HistoryBrowseView FROM SQLBrowseView
 
-   METHOD addColumns()                       
+   DATA hText                          INIT  {  'insert' => 'Creación',;
+                                                'update' => 'Modificación' }
+
+   METHOD addColumns()         
+
+   METHOD getOperacion( cOperation )   INLINE ( hget( ::hText, cOperation ) )
 
 ENDCLASS
 
@@ -190,13 +179,13 @@ METHOD addColumns() CLASS HistoryBrowseView
       :cSortOrder          := 'operacion'
       :cHeader             := 'Operación'
       :nWidth              := 150
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'operacion' ) }
+      :bEditValue          := {|| ::getOperacion( ::getRowSet():fieldGet( 'operacion' ) ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'fecha_hora'
-      :cHeader             := 'Fecha y Hora'
+      :cHeader             := 'Fecha y hora'
       :cEditPicture        := '@DT'
       :nWidth              := 140
       :cDataType           := 'D'

@@ -221,8 +221,11 @@ CLASS SQLBaseController
    METHOD isDeleted( nId )             INLINE ( ::getModel():isDeletedAtColumn() .and. ::getModel:isDeleted( nId ) )
    METHOD isNotDeleted()               INLINE ( !::isDeleted() )
 
-   METHOD insertChanges( aChanges, cOperation ) ;
-                                       INLINE ( ::getHistoryController():insertHistory( aChanges, cOperation ) )
+   // Historicos---------------------------------------------------------------
+   
+   METHOD insertHistory()              INLINE ( ::createHistory( 'insert' ) )
+   METHOD createHistory( cOperation )  INLINE ( ::getHistoryController():insertHistory( ::getModel():getBufferChanged(), cOperation ) )
+
 
    // Transactional system-----------------------------------------------------
 
@@ -445,7 +448,7 @@ METHOD Insert()
 
          ::fireEvent( 'inserted' )
 
-         ::insertChanges( ::getModel():getBufferChanged(), "Creaci�n del documento" )
+         ::insertHistory()
 
          ::refreshRowSetAndFindId()
 
@@ -989,3 +992,4 @@ METHOD reBuildRowSet()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+

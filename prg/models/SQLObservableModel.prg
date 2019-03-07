@@ -7,15 +7,19 @@
 
 CLASS SQLObservableModel FROM SQLCompanyModel
 
-   DATA hInitialBuffer
+   DATA aChanges
 
    DATA hFinalBuffer
+   DATA hInitialBuffer
 
    METHOD insertBuffer( hBuffer, lIgnore )
 
    METHOD updateInsertedBuffer( hBuffer, nId )
 
    METHOD getBufferChanged()
+      METHOD getBufferLine( cKey, uValue )
+      METHOD getBufferRelation( hBuffer, cKey )
+      METHOD getBufferText( cKey )
 
 END CLASS
 
@@ -43,45 +47,49 @@ RETURN ( nil )
 
 METHOD getBufferChanged()
 
-   local aChanges    := {}
-   local cValue
-   local nCounter := 1
-   local cRelationNew
-   local cRelationOld
+   ::aChanges     := {}
+
+   heval( ::hInitialBuffer,;
+      {|k,v| if( v != hget( ::hFinalBuffer, k ), ::getBufferLine( k, v ), ) } )
+
+RETURN ( ::aChanges )
+
+//---------------------------------------------------------------------------//
+
+METHOD getBufferLine( cKey, uValue )
+
+   aadd( ::aChanges,;
+      { cKey => { "old"          => uValue,;
+                  "new"          => hget( ::hFinalBuffer, cKey ),;
+                  "relation_old" => ::getBufferRelation( ::hInitialBuffer, cKey ),;
+                  "relation_new" => ::getBufferRelation( ::hFinalBuffer, cKey ),;
+                  "text"         => ::getBufferText( cKey ) } } )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getBufferRelation( hBuffer, cKey )
+
+   local uRelation   
+
+   if hhaskey( hget( ::hColumns, cKey ), "relation" )
+      uRelation   := eval( hget( hget( ::hColumns, cKey ), "relation" ), hget( hBuffer, cKey ) )   
+   end if 
+
+RETURN ( uRelation )
+
+//---------------------------------------------------------------------------//
+
+METHOD getBufferText( cKey )
+
    local cText
 
-   for each cValue in ::hInitialBuffer
-  
-      if cValue != hget( ::hFinalBuffer, hGetKeyAt(::hInitialBuffer, nCounter ) )
+   if hhaskey( hget( ::hColumns, cKey ), "text" )
+      cText       := hget( hget( ::hColumns, cKey ), "text" )
+   end if
 
-         cRelationNew := ""
-         cRelationOld := ""
-         cText     := ""
-
-         if hHasKey( hget( ::hColumns, hGetKeyAt( ::hInitialBuffer, nCounter ) ), "relation" )
-            
-            cRelationNew := eval( hget( hget( ::hColumns, hGetKeyAt( ::hInitialBuffer, nCounter ) ), "relation" ), hget( ::hFinalBuffer, hGetKeyAt(::hInitialBuffer, nCounter ) ) )
-
-            cRelationOld := eval( hget( hget( ::hColumns, hGetKeyAt( ::hInitialBuffer, nCounter ) ), "relation" ), hget( ::hInitialBuffer, hGetKeyAt(::hInitialBuffer, nCounter ) ) )
-
-         end if
-
-         if hHasKey( hget( ::hColumns, hGetKeyAt( ::hInitialBuffer, nCounter ) ), "text" )
-            
-            cText := hget( hget( ::hColumns, hGetKeyAt( ::hInitialBuffer, nCounter ) ), "text" )
-
-         end if
-
-         aadd( aChanges, { hGetKeyAt(::hInitialBuffer, nCounter ) =>{ "old" => cValue, "new" => hget( ::hFinalBuffer, hGetKeyAt(::hInitialBuffer, nCounter ) ),"relation_old" => cRelationOld, "relation_new" => cRelationNew, "text" => cText } } )
-
-      end if
-
-      nCounter++
-   
-   next
-   
-
-RETURN ( aChanges )
+RETURN ( cText )
 
 //---------------------------------------------------------------------------//
 

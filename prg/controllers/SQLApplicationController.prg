@@ -1050,7 +1050,7 @@ METHOD End() CLASS SQLApplicationController
    end if
 
    if !empty( ::oHistoryController )
-      ::oHistoryControlleroHistoryController:End()
+      ::oHistoryController:End()
    end if
 
 RETURN ( ::Super:End() )
