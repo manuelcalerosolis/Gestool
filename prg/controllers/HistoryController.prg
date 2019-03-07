@@ -143,7 +143,11 @@ RETURN ( cDetails )
 
 METHOD gettingSelectSentence()
 
-   msgalert("montando sentencia select")
+   local uuid        := ::getController():getModelBuffer( "uuid" )
+
+   if !empty( uuid )
+      ::getModel():setGeneralWhere( "documento_uuid = " + quoted( uuid ) )
+   end if 
 
 RETURN ( nil )
 
@@ -167,9 +171,25 @@ METHOD addColumns() CLASS HistoryBrowseView
    ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'usuario_codigo'
+      :cHeader             := 'Código usuario'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'usuario_codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'usuario_nombre'
+      :cHeader             := 'Nombre usuario'
+      :nWidth              := 150
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'usuario_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'operacion'
       :cHeader             := 'Operación'
-      :nWidth              := 200
+      :nWidth              := 150
       :bEditValue          := {|| ::getRowSet():fieldGet( 'operacion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -183,14 +203,6 @@ METHOD addColumns() CLASS HistoryBrowseView
       :nHeadStrAlign       := AL_LEFT
       :nDataStrAlign       := AL_LEFT
       :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_hora' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'usuario_codigo'
-      :cHeader             := 'Usuario'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'usuario_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -252,7 +264,7 @@ CLASS SQLHistoryModel FROM SQLCompanyModel
 
    METHOD insertHistory( hHistory )
 
-   //METHOD getInitialSelect()
+   METHOD getInitialSelect()
 
 END CLASS
 
@@ -295,7 +307,7 @@ RETURN( nil )
 
 //---------------------------------------------------------------------------//
 
-/*METHOD getInitialSelect() CLASS SQLHistoryModel
+METHOD getInitialSelect() CLASS SQLHistoryModel
 
    local cSql
 
@@ -307,15 +319,20 @@ RETURN( nil )
             historial.operacion AS operacion,
             historial.detalle AS detalle,
             historial.fecha_hora AS fecha_hora,
-            historial.usuario_codigo AS usuario_codigo
+            historial.usuario_codigo AS usuario_codigo,
+            usuarios.nombre AS usuario_nombre
 
       FROM %1$s AS historial 
+
+      INNER JOIN gestool.usuarios AS usuarios
+
+         ON historial.usuario_codigo = usuarios.codigo
 
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName() )
 
-RETURN ( cSql )*/
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
