@@ -245,6 +245,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oContadoresController
 
+   DATA oHistoryController
+
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
    METHOD getCodigosPostalesController();
@@ -569,6 +571,8 @@ CLASS SQLApplicationController FROM SQLBaseController
                                        INLINE ( if( empty( ::oDelegacionesController ), ::oDelegacionesController := DelegacionesController():New( self ), ), ::oDelegacionesController )
 
    METHOD getContadoresController()    INLINE ( if( empty( ::oContadoresController ), ::oContadoresController := ContadoresController():New( self ), ), ::oContadoresController )
+
+   METHOD getHistoryController()       INLINE ( if( empty( ::oHistoryController ), ::oHistoryController := HistoryController():New( self ), ), ::oHistoryController )
 
    METHOD insertIncidence()            INLINE ( ::getIncidenciasController():insertAutoIncidence( ::getUuid() ) )
 
@@ -1043,6 +1047,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oContadoresController )
       ::oContadoresController:End()
+   end if
+
+   if !empty( ::oHistoryController )
+      ::oHistoryControlleroHistoryController:End()
    end if
 
 RETURN ( ::Super:End() )

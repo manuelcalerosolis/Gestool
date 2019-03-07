@@ -1,10 +1,10 @@
 #include "FiveWin.Ch"
-#include "Factu.ch" 
+#include "Factu.ch"
 
 //---------------------------------------------------------------------------//
 
 CLASS OperacionesComercialesView FROM OperacionesView
-  
+
    DATA oPanel
 
    DATA oGetNumero
@@ -39,11 +39,11 @@ CLASS OperacionesComercialesView FROM OperacionesView
 
    METHOD setLinesShowDeleted()        INLINE ( ::getController():getLinesController():setShowDeleted(),;
                                                 ::oBtnLineasDeleted:Toggle(),;
-                                                ::oBtnLineasDeleted:cTooltip := if( ::oBtnLineasDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
+                                                ::oBtnLineasDeleted:cTooltip := if( ::oBtnLineasDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) )
 
    METHOD setDiscountShowDeleted()     INLINE ( ::getController():getDiscountController():setShowDeleted(),;
                                                 ::oBtnDescuentosDeleted:Toggle(),;
-                                                ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
+                                                ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) )
 
    METHOD defaultTitle()
 
@@ -77,7 +77,7 @@ METHOD Activate() CLASS OperacionesComercialesView
       PROMPT      "General" ,;
                   "Comercial" ;
       DIALOGS     "TRANSACION_GENERAL" ,;
-                  "CLIENTE_COMERCIAL" 
+                  "CLIENTE_COMERCIAL"
 
    ::redefineExplorerBar()
 
@@ -218,9 +218,9 @@ METHOD Activate() CLASS OperacionesComercialesView
    TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::getController():getLinesController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
 
    TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| ::getController():getLinesController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
-   
+
    ::oBtnLineasDeleted := TBtnBmp():ReDefine( 504, "gc_deleted_16",,,,, {|| ::setLinesShowDeleted()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
-   
+
    TBtnBmp():ReDefine( 505, "gc_object_cube_16",,,,, {|| ::getController():getLinesController():Edit()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar ficha de artículo" )
 
    ::getController():getLinesController():Activate( 500, ::oFolder:aDialogs[1] )
@@ -232,10 +232,10 @@ METHOD Activate() CLASS OperacionesComercialesView
    TBtnBmp():ReDefine( 602, "del16",,,,, {|| ::getController():getDiscountController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
 
    TBtnBmp():ReDefine( 603, "refresh16",,,,, {|| ::getController():getDiscountController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
-   
+
    ::oBtnDescuentosDeleted := TBtnBmp():ReDefine( 604, "gc_deleted_16",,,,, {|| ::setDiscountShowDeleted() }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
 
-   ::getController():getDiscountController():Activate( 600, ::oFolder:aDialogs[1] )   
+   ::getController():getDiscountController():Activate( 600, ::oFolder:aDialogs[1] )
 
    // Botones generales--------------------------------------------------------
 
@@ -247,17 +247,17 @@ METHOD Activate() CLASS OperacionesComercialesView
 
    ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
 
-   if ::getController():isNotZoomMode() 
-   
-      ::oDialog:bKeyDown   := <| nKey |  
-         do case         
+   if ::getController():isNotZoomMode()
+
+      ::oDialog:bKeyDown   := <| nKey |
+         do case
             case nKey == VK_F5
                ::validActivate()
             case nKey == VK_F2
                ::getController():getLinesController():AppendLineal()
             case nKey == VK_F4
                ::getController():getLinesController():Delete()
-         end 
+         end
          RETURN ( 0 )
          >
 
@@ -267,7 +267,7 @@ METHOD Activate() CLASS OperacionesComercialesView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-RETURN ( ::oDialog:nResult ) 
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
@@ -275,7 +275,7 @@ METHOD startActivate() CLASS OperacionesComercialesView
 
    ::addLinksToExplorerBar()
 
-   ::addLinksElementToExplorerBar() 
+   ::addLinksElementToExplorerBar()
 
    ::getController():getTercerosController():getSelector():Start()
 
@@ -292,7 +292,7 @@ METHOD startActivate() CLASS OperacionesComercialesView
    ::getController():getAlmacenesController():getSelector():Start()
 
    ::getController():getLinesController():getBrowseView():Refresh()
-   
+
    ::getController():getDiscountController():getBrowseView():Refresh()
 
    ::getController():calculateTotals()
@@ -311,7 +311,7 @@ METHOD validActivate() CLASS OperacionesComercialesView
 
    if ::getController():notValidate( "formulario" )
       RETURN ( nil )
-   end if 
+   end if
 
    if !::getController():getLinesController():validLine()
       RETURN ( nil )
@@ -323,14 +323,14 @@ RETURN ( ::oDialog:end( IDOK ) )
 
 METHOD addLinksToExplorerBar() CLASS OperacionesComercialesView
 
-   ::oPanel          := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+   ::oPanel          := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 )
 
    ::oPanel:AddLink( "Incidencias...",;
                      {||   ::getController():getIncidenciasController():activateDialogView() },;
                            ::getController():getIncidenciasController():getImage( "16" ) )
 
    ::oPanel:AddLink( "Tipo de direcciones...",;
-                     {||   ::getController():getDireccionTipoDocumentoController():activateDialogView() },;
+                     {||   ::getController():getDireccionTipoDocumentoController():Edit() },;
                            ::getController():getDireccionTipoDocumentoController():getImage( "16" ) )
 
    if ::getController():isNotZoomMode()
@@ -354,26 +354,26 @@ METHOD lineAppend() CLASS OperacionesComercialesView
       RETURN( nil )
    end if
 
-RETURN ( ::getController():getLinesController():AppendLineal() ) 
+RETURN ( ::getController():getLinesController():AppendLineal() )
 
 //---------------------------------------------------------------------------//
 
 METHOD defaultTitle() CLASS OperacionesComercialesView
 
-   local cTitle  := ::oController:getTitle() + " : " 
+   local cTitle  := ::oController:getTitle() + " : "
 
    if empty( ::oController:oModel )
       RETURN ( cTitle )
-   end if 
+   end if
 
    if empty( ::oController:oModel:hBuffer )
       RETURN ( cTitle )
-   end if 
+   end if
 
    if hhaskey( ::oController:oModel:hBuffer, "serie" )
       cTitle      +=  alltrim( ::oController:oModel:hBuffer[ "serie" ] ) + "/"
    end if
-   
+
    if hhaskey( ::oController:oModel:hBuffer, "numero" )
       cTitle      += alltrim( toSQLString( ::oController:oModel:hBuffer[ "numero" ] ) )
    end if
@@ -390,18 +390,18 @@ METHOD popupActivate() CLASS OperacionesComercialesView
 
       MENUITEM "Aceptar e imprimir" ;
          ACTION   (  ::oController:setPostAction( {|| msgalert( "Aceptar e imprimir" ) } ),;
-                     ::validActivate() )        
-      
-      MENUITEM "Aceptar y generar PDF" ;          
+                     ::validActivate() )
+
+      MENUITEM "Aceptar y generar PDF" ;
          ACTION   (  ::oController:setPostAction( {|| msgalert( "Aceptar y generar PDF" ) } ),;
-                     ::validActivate() )        
+                     ::validActivate() )
 
       if ( Auth():canSendMail() )
-         MENUITEM "Aceptar y enviar mail" 
-      end if 
+         MENUITEM "Aceptar y enviar mail"
+      end if
 
    ENDMENU
-   
+
    ACTIVATE POPUP oMenu AT 1, 1 OF ::oBtnOk
 
 RETURN ( nil )
@@ -411,4 +411,3 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-

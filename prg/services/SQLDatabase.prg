@@ -144,7 +144,7 @@ METHOD createConexion()
 
    oConexion:setAttribute( HDO_ATTR_DEF_TINY_AS_BOOL, .t. )     
 
-RETURN ( oConexion )
+RETURN ( oConexion ) 
 
 //----------------------------------------------------------------------------//
 

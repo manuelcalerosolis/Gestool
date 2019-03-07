@@ -76,6 +76,7 @@ METHOD getColumns() CLASS SQLOperacionesComercialesModel
 
    hset( ::hColumns, "tercero_codigo",                {  "create"    => "VARCHAR ( 20 )"                       ,;
                                                          "text"      => "Código de tercero"                    ,;
+                                                         "relation"  => {| cCodigo | SQLTercerosModel():getField( "nombre", "codigo", cCodigo ) } ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "recargo_equivalencia",          {  "create"    => "TINYINT ( 1 )"                        ,;
@@ -86,27 +87,33 @@ METHOD getColumns() CLASS SQLOperacionesComercialesModel
                                                          "default"   => {|| space( 40 ) } }                    )
 
    hset( ::hColumns, "metodo_pago_codigo",            {  "create"    => "VARCHAR ( 20 )"                       ,;
-                                                         "text"      => "Recargo de equivalencia"              ,;
+                                                         "text"      => "Código del método de pago"              ,;
+                                                         "relation"  => {| cCodigo | SQLMetodoPagoModel():getField( "nombre", "codigo", cCodigo ) } ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "almacen_codigo",                {  "create"    => "VARCHAR ( 20 )"                       ,;
                                                          "text"      => "Código de almacén"                    ,;
+                                                         "relation"  => {| cCodigo | SQLAlmacenesModel():getField( "nombre", "codigo", cCodigo ) } ,;
                                                          "default"   => {|| Store():getCodigo() } }            )
 
    hset( ::hColumns, "agente_codigo",                 {  "create"    => "VARCHAR ( 20 )"                       ,;
                                                          "text"      => "Código de agente"                     ,;
+                                                         "relation"  => {| cCodigo | SQLAgentesModel():getField( "nombre", "codigo", cCodigo ) } ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "ruta_codigo",                   {  "create"    => "VARCHAR ( 20 )"                       ,;
                                                          "text"      => "Código de la ruta"                    ,;
+                                                         "relation"  => {| cCodigo | SQLRutasModel():getField( "nombre", "codigo", cCodigo ) } ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "transportista_codigo",          {  "create"    => "VARCHAR ( 20 )"                       ,;
                                                          "text"      => "Código del transportista"             ,;
+                                                         "relation"  => {| cCodigo | SQLTransportistasModel():getField( "nombre", "codigo", cCodigo ) } ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "tarifa_codigo",                 {  "create"    => "VARCHAR ( 20 )"                       ,;
                                                          "text"      => "Código de la tarifa"                  ,;
+                                                         "relation"  => {| cCodigo | SQLArticulosTarifasModel():getField( "nombre", "codigo", cCodigo ) } ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
    ::getTimeStampColumns() 
