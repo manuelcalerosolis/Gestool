@@ -103,7 +103,6 @@ CLASS SQLNavigatorController FROM SQLBrowseController
    METHOD editFilter()
    METHOD deleteFilter()                                
 
-   METHOD getFilters()                 INLINE ( ::getFilterController():getFilters() ) 
    METHOD changeFilter()                                                                                                       
    METHOD clearFilter() 
 
@@ -324,7 +323,21 @@ RETURN ( heval( ::hFastKey, {|k,v| if( k == nKey, eval( v ), ) } ) )
 
 METHOD appendFilter()                                
 
-RETURN ( ::getFilterController():Edit() )    
+   if ::getFilterController():isEditWithOutStored() 
+      
+      ::oWindowsBar:enableComboFilter( ::getFilterController():getFilters() )
+
+      ::oWindowsBar:setComboFilterItem( ::getFilterController():getText() )
+      
+      ::getModel():setFilterWhere( ::getFilterController():getWhere() )
+
+      ::reBuildRowSet()
+
+      ::showEditAndDeleteButtonFilter()
+
+   end if 
+
+RETURN ( nil )    
     
 //---------------------------------------------------------------------------//
 
@@ -336,8 +349,20 @@ METHOD editFilter()
       RETURN ( nil )  
    end if 
 
-RETURN ( ::getFilterController():Edit() )    
-    
+   if ::getFilterController():isEditWithOutStored() 
+
+      ::oWindowsBar:enableComboFilter( ::getFilterController():getFilters() )
+
+      ::oWindowsBar:setComboFilterItem( ::getFilterController():getText() )
+
+      ::getModel():setFilterWhere( ::getFilterController():getWhere() )
+
+      ::reBuildRowSet()
+
+   end if 
+
+RETURN ( nil )    
+
 //---------------------------------------------------------------------------//
     
 METHOD deleteFilter()                                
@@ -349,7 +374,7 @@ METHOD deleteFilter()
       RETURN ( nil )  
    end if 
 
-   nId            := ::getFilterController():oModel:getId( cFilter )
+   nId            := ::getFilterController():getModel():getId( cFilter )
 
    if empty( nId )
       RETURN ( nil )    
@@ -361,7 +386,9 @@ METHOD deleteFilter()
 
       ::oWindowsBar:evalComboFilterChange()
 
-      ::getFilterController():oModel:deleteById( { nId } )
+      ::getFilterController():getModel():deleteById( { nId } )
+
+      ::oWindowsBar:enableComboFilter( ::getFilterController():getFilters() )
 
    end if 
 
@@ -453,7 +480,7 @@ METHOD EnableWindowsBar()
 
    if ::lFilterBar
 
-      ::oWindowsBar:enableComboFilter( ::getFilters() )
+      ::oWindowsBar:enableComboFilter( ::getFilterController():getFilters() )
 
       ::oWindowsBar:showAddButtonFilter()
 

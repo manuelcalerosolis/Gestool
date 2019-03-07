@@ -30,7 +30,7 @@ CLASS TAcceso
    DATA lCreateFavoritosOfficeBar   INIT .t.
 
    DATA  oGet
-   DATA  cGet                       INIT  Space( 200 )
+   DATA  cGet                       INIT  space( 200 )
    DATA  bGetChange                 
 
    DATA  oComboBox
@@ -123,8 +123,8 @@ CLASS TAcceso
    METHOD CreateBotonesOfficeBar( aAcceso, oCarpeta, oGrupo )
 
    METHOD setComboFilterItem( cItem )     INLINE ( if( !empty( ::oComboFilter ), ( ::oComboFilter:Set( cItem ) ), ) )
-   METHOD setComboFilterItems( aItems )   INLINE ( if( !empty( ::oComboFilter ), ::oComboFilter:SetItems( aItems ), ) )
-   METHOD setComboFilterSelect( nItems )  INLINE ( if( !empty( ::oComboFilter ), ( ::oGet:cText( Space( 200 ) ), ::oGet:oGet:Home(), ::oComboFilter:Select( nItems ) ), ) )
+   METHOD setComboFilterItems( aItems )   INLINE ( if( !empty( ::oComboFilter ), ::oComboFilter:SetItems( aItems, .f. ), ) )
+   METHOD setComboFilterSelect( nItems )  INLINE ( if( !empty( ::oComboFilter ), ( ::oGet:cText( space( 200 ) ), ::oGet:oGet:Home(), ::oComboFilter:Select( nItems ) ), ) )
    METHOD setComboFilterChange( bBlock )  INLINE ( if( !empty( ::oComboFilter ), ( ::oComboFilter:bChange := bBlock ), ) )
    METHOD evalComboFilterChange()         INLINE ( if( !empty( ::oComboFilter ) .and. !empty( ::oComboFilter:bChange ), eval( ::oComboFilter:bChange ), ) )
    METHOD getComboFilter()                INLINE ( if( !empty( ::oComboFilter ), ( ::oComboFilter:VarGet() ), "" ) )
@@ -147,9 +147,9 @@ CLASS TAcceso
    METHOD SetGetKeyChar( bBlock )         INLINE ( if( !empty( ::oGet ), ( ::oGet:bKeyChar      := bBlock ), ) )
    METHOD SetGetKeyUp( bBlock )           INLINE ( if( !empty( ::oGet ), ( ::oGet:bKeyUp        := bBlock ), ) )
 
-   METHOD DisableGet()                    INLINE ( if( !empty( ::oGet ), ( ::oGet:cText( Space( 200 ) ), ::oGet:Hide(), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
+   METHOD DisableGet()                    INLINE ( if( !empty( ::oGet ), ( ::oGet:cText( space( 200 ) ), ::oGet:Hide(), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
    METHOD EnableGet()                     INLINE ( if( !empty( ::oGet ), ( ::oGet:Enable(), ::oGet:Show(), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
-   METHOD CleanGet()                      INLINE ( if( !empty( ::oGet ), ( ::oGet:cText( Space( 200 ) ), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
+   METHOD CleanGet()                      INLINE ( if( !empty( ::oGet ), ( ::oGet:cText( space( 200 ) ), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
    METHOD SetGetFocus()                   INLINE ( if( !empty( ::oGet ), ::oGet:SetFocus(), ) )
    METHOD SetFocusGet()                   INLINE ( if( !empty( ::oGet ), ::oGet:SetFocus(), ) )   
    METHOD HideGet()                       INLINE ( if( !empty( ::oGet ), ::oGet:Hide(), ) )
@@ -923,6 +923,7 @@ METHOD EnableComboFilter( aItems )
    end if 
 
    ::cComboFilter       := __txtFilters__
+
    ::aComboFilter       := { __txtFilters__ }
 
    // Cargamos los filtros-----------------------------------------------------
@@ -931,11 +932,12 @@ METHOD EnableComboFilter( aItems )
       aeval( aItems, {|cItem| aadd( ::aComboFilter, cItem ) } )
    end if 
 
-   ::oComboFilter:SetItems( ::aComboFilter, .t. )
+   ::setComboFilterItems( ::aComboFilter )
    
-   ::oComboFilter:Set( ::cComboFilter )
+   ::setComboFilterItem( ::cComboFilter )
 
    ::oComboFilter:Show()
+
    ::oComboFilter:Enable()
 
 RETURN ( nil )

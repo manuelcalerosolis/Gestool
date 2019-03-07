@@ -76,10 +76,7 @@ CLASS TToast FROM TWindow
    DATA nClrTextBody
    DATA nClrTextFoot
 
-   DATA oFontHdr
-   DATA oFontHdr2
    DATA oFontBody
-   DATA oFontFoot
 
    DATA aHeader          AS ARRAY INIT { 0, 0, 0, 0 }
    DATA aHeader2         AS ARRAY INIT { 0, 0, 0, 0 }
@@ -263,10 +260,7 @@ METHOD New( nTop, nLeft, nWidth, nHeight, oWnd, lDisenio, nClrPane, nClrPane2,;
    ::lShowAgain := .T.
    ::cTitle     := "Title"
 
-   DEFINE FONT ::oFontHdr   NAME cFace      SIZE 0, nFont - 9 BOLD
-   DEFINE FONT ::oFontHdr2  NAME cFace      SIZE 0, nFont - 6
    DEFINE FONT ::oFontBody  NAME "Calibri"  SIZE 0, nFont - 6
-   DEFINE FONT ::oFontFoot  NAME cFace      SIZE 0, nFont - 10 //BOLD
 
    if !::lAlert
       ::oWnd       := oWnd
@@ -400,10 +394,7 @@ METHOD NewToast( nType, cText, cBmp, nWidth, nHeight, oWnd, nClrPane, nClrPane2,
    ::lShowAgain := .T.
    ::cTitle     := "Title"
 
-   DEFINE FONT ::oFontHdr   NAME cFace      SIZE 0, nFont - 6 BOLD
-   DEFINE FONT ::oFontHdr2  NAME cFace      SIZE 0, nFont
    DEFINE FONT ::oFontBody  NAME "Calibri"  SIZE 0, nFont - 6
-   DEFINE FONT ::oFontFoot  NAME cFace      SIZE 0, nFont - 10 //BOLD
 
    if !::lAlert
       ::Register( nOR( CS_VREDRAW, CS_HREDRAW, IF( lShadow, CS_DROPSHADOW, 0 ) ) ) //, 131072
@@ -474,7 +465,7 @@ METHOD ActivaAlert() CLASS TToast
       @ rc[ 1 ] + 2, rc[ 4 ] - 34 FLATBTN oBtnC PROMPT "x" ;
          SIZE 30, 30 ;
          COLOR ::nClrTextHeader, ::nClrPane OF Self ;
-         FONT ::oFontHdr2 ;
+         FONT ::oFontBody ;
          ACTION ( o:BuildTimer( .T. ), o:End() ) ;
          NOBORDER
    endif
@@ -484,7 +475,7 @@ METHOD ActivaAlert() CLASS TToast
          FLATBTN oBtnS PROMPT Hb_Utf8Chr( 57621 ) ;
          SIZE 34, 34 ;
          COLOR ::nClrTextHeader, ::nClrPane OF Self ;
-         FONT ::oFontHdr2 ;
+         FONT ::oFontBody ;
          ACTION ( nRow := rc[ 3 ] - 36, nCol := rc[ 4 ] - 36,;
                   o:MnuPopupFoot( nRow, nCol ) ) ;
          NOBORDER
@@ -498,22 +489,16 @@ Return nil
 
 METHOD Destroy() CLASS TToast
 
-   if !Empty( ::oFontHdr )
-      ::oFontHdr :End()
-   endif
-   if !Empty( ::oFontHdr2 )
-      ::oFontHdr2:End()
-   endif
    if !Empty( ::oFontBody )
       ::oFontBody:End()
    endif
-   if !Empty( ::oFontFoot )
-      ::oFontFoot:End()
-   endif
+
    if !Empty( ::hRgn )
       DeleteObject( ::hRgn )
    endif
+
    ::Super:Destroy()
+
    if ::lHistory
       ::DelToast()
    endif
@@ -567,188 +552,6 @@ METHOD MnuPopupFoot( nRow, nCol ) CLASS TToast
 
 Return oMnu
 
-//----------------------------------------------------------------------------//
-/*
-METHOD GetSize() CLASS TToast
-
-   local rc        := 0
-   local aSize     := { 0, 0 }
-   local hBmp      := 0
-   local hDC       := ::hDC //CreateCompatibleDC( ::hDC )
-   local hOldFont  := 0
-   local n         := 0
-   local nH        := 0
-   local nHBmp     := 0
-   local nHText    := 0
-   local nHeight   := 0
-   local nLen      := 0
-   local nW        := 0
-   local nW2       := 0
-   local nWB       := 0
-   local nWBmp     := 0
-   local nWBodyTxt := 227
-   local nWF       := 0
-   local nWH       := 0
-   local nWidth    := 0
-   local aHeader1  := { 0, 0, 0, 0, 0, 0 }
-   local aHeader2  := { 0, 0, 0, 0, 0, 0 }
-   local aBody     := { 0, 0, 0, 0, 0, 0 }
-   local aLeft     := { 0, 0, 0, 0, 0, 0 }
-   local aRight    := { 0, 0, 0, 0, 0, 0 }
-   local aFooter   := { 0, 0, 0, 0, 0, 0 }
-   local aAlert    := { 0, 0, 0, 0, 0, 0 }
-
-   if ::nFixWidth != nil .and. ::nFixHeight != nil
-	    return { ::nFixWidth, ::nFixHeight }
-	 endif
-	
-	rc          := GetClientRect( ::hWnd )
-   //nWidth      := nWBodyTxt
-   For n := 1 to 4
-      aHeader1[ n ] := rc[ n ]
-      aHeader2[ n ] := rc[ n ]
-      aBody[ n ]    := rc[ n ]
-      aLeft[ n ]    := rc[ n ]
-      aRight[ n ]   := rc[ n ]
-      aFooter[ n ]  := rc[ n ]
-      aAlert[ n ]   := rc[ n ]
-   Next n
-
-   // Header
-
-   nHeight     := 0
-   nH          := 0
-   hBmp        := 0
-   nWBmp       := 0
-	nHBmp       := 0
-   nWidth      := 0
-   if ::lHeader()
-      nHeight  := ::oFontHdr:nHeight * 2
-      nWidth   := GetTextWidth( 0, ::cHeader, ::oFontHdr:hFont ) + 16
-   endif
-   if ! Empty( ::cBmpHeader )
-	   hBmp     := LoadImageEx( ::cBmpHeader )
-   else
-      if ::bBmpHdr != nil
-         hBmp   := Eval( ::bBmpHdr, Self )
-      endif
-   endif
-   if hBmp != 0
-      nWBmp    := BmpWidth ( hBmp )
-      nHBmp    := BmpHeight( hBmp )
-      DeleteObject( hBmp )
-   endif
-   aHeader1[ 3 ] := Max( nHeight, nHBmp )
-   aHeader1[ 2 ] := nWBmp
-   if ::lHeader()
-      nH       := DrawText( hDC, AllTrim( ::cHeader ), aHeader1,;
-            nOr( if( ::lRightAlignBody, DT_RIGHT, DT_LEFT ), DT_WORDBREAK, DT_CALCRECT ) )
-   endif
-   aHeader1[ 5 ] := nH
-   aHeader1[ 6 ] := nWBmp
-
-   // Footer
-
-   nHeight     := 0
-   nH          := 0
-   hBmp        := 0
-   nWBmp       := 0
-	nHBmp       := 0
-   nWidth      := 0
-   if ::lFoot()
-      nHeight  := ::oFontHdr:nHeight * 2
-      nWidth   := GetTextWidth( 0, ::cFoot, ::oFontFoot:hFont ) + 16
-      nH       := DrawText( hDC, AllTrim( ::cFoot ), aFooter,;
-            nOr( if( ::lRightAlignBody, DT_RIGHT, DT_LEFT ), DT_WORDBREAK, DT_CALCRECT ) )
-   endif
-   if ! Empty( ::cBmpFoot )
-	   hBmp     := LoadImageEx( ::cBmpFoot )
-   else
-      if ::bBmpFoot != nil
-         hBmp   := Eval( ::bBmpFoot, Self )
-      endif
-   endif
-   if hBmp != 0
-      nWBmp    := BmpWidth ( hBmp )
-      nHBmp    := BmpHeight( hBmp )
-      DeleteObject( hBmp )
-   endif
-   aFooter[ 2 ] := nWBmp
-   aFooter[ 3 ] := Max( nHeight, nHBmp )  //, nH
-   if ::lFoot()
-      nH       := DrawText( hDC, AllTrim( ::cFoot ), aFooter,;
-            nOr( if( ::lRightAlignBody, DT_RIGHT, DT_LEFT ), DT_WORDBREAK, DT_CALCRECT ) )
-   endif
-   aFooter[ 5 ] := nH
-
-   // Left side image
-
-   nHeight     := 0
-   nH          := 0
-   hBmp        := 0
-   nWBmp       := 0
-   nHBmp       := 0
-   nWidth      := 0
-   if ! Empty( ::cBmpLeft )
-       hBmp     := LoadImageEx( ::cBmpLeft )
-   else
-      if ::bBmpLeft != nil
-         hBmp   := Eval( ::bBmpLeft, Self )
-      endif
-   endif
-   if hBmp != 0
-      nWBmp    := BmpWidth ( hBmp )
-      nHBmp    := BmpHeight( hBmp )
-      DeleteObject( hBmp )
-   endif
-   aLeft[ 1 ]  := aHeader1[ 3 ] + 1
-   aLeft[ 3 ]  := aFooter[ 1 ] - 1
-   aLeft[ 4 ]  := nWBmp
-
-   // Right side
-
-   nHeight     := 0
-   nH          := 0
-   hBmp        := 0
-   nWBmp       := 0
-	nHBmp       := 0
-   nWidth      := 0
-   if ::lFoot()
-      nHeight  := ::oFontBody:nHeight * 2
-      nWidth   := GetTextWidth( 0, ::cBody, ::oFontBody:hFont ) + 16
-      nH       := DrawText( hDC, AllTrim( ::cBody ), aRight,;
-            nOr( if( ::lRightAlignBody, DT_RIGHT, DT_LEFT ), DT_WORDBREAK, DT_CALCRECT ) )
-   endif
-
-
-   aRight[ 1 ]  := aHeader1[ 3 ] + 1
-   aRight[ 3 ]  := aFooter[ 1 ] - 1
-   aRight[ 3 ]  := Max( aRight[ 3 ], aRight[ 1 ] + nHeight - 1 )
-   aRight[ 3 ]  := Max( aLeft[ 3 ], aRight[ 3 ] )
-   aRight[ 2 ]  := aLeft[ 4 ] + 1
-   aLeft[ 3 ]   := aRight[ 3 ]
-   aFooter[ 1 ] := aRight[ 3 ] + 1
-
-   aBody[ 1 ]   := aRight[ 1 ]
-   aBody[ 2 ]   := aLeft[ 2 ]
-   aBody[ 3 ]   := aRight[ 3 ]
-   aBody[ 4 ]   := aRight[ 4 ]
-   aBody[ 5 ]   := nH
-
-   nHeight     := 0
-   nH          := 0
-   hBmp        := 0
-   nWBmp       := 0
-	nHBmp       := 0
-   nWidth      := 0
-   //DeleteDC( hDC )
-   //aSize       := { nWidth, nHeight }
-   For n := 1 to 5
-      FWLOG n, aHeader1[ n ], aHeader2[ n ], aBody[ n ], aLeft[ n ], aRight[ n ], aFooter[ n ], aAlert[ n ]
-   Next n
-
-return aSize
-*/
 //----------------------------------------------------------------------------//
 
 METHOD Default( lShowDlg ) CLASS TToast
@@ -927,7 +730,7 @@ METHOD PaintHdr( hDC, rc ) CLASS TToast
    local nTop
    local nMode
    local oBtnClose
-   local nH        := ::oFontHdr:nHeight * 3
+   local nH        := ::oFontBody:nHeight * 3
 
    ::aHeader = { rc[ 1 ], rc[ 2 ], rc[ 1 ] + if( ::lHeader, nH, 0 ), rc[ 4 ] }  //25
    //::aHeader[ 3 ] += if( ::lLineHeader, 0, 5 )
@@ -937,7 +740,7 @@ METHOD PaintHdr( hDC, rc ) CLASS TToast
          hBmpHdr = LoadImageEx( ::cBmpHeader )
          if hBmpHdr  != 0
             nWBmpHdr := BmpWidth( hBmpHdr )
-            ::aHeader[ 3 ] += Max( BmpHeight( hBmpHdr ), ::oFontHdr:nHeight )
+            ::aHeader[ 3 ] += Max( BmpHeight( hBmpHdr ), ::oFontBody:nHeight )
             nTop     := ( ::aHeader[ 1 ] + ;
                         ( ::aHeader[ 3 ] - ::aHeader[ 1 ] ) / 2 ) - ;
                         BmpHeight( hBmpHdr ) / 2
@@ -947,11 +750,11 @@ METHOD PaintHdr( hDC, rc ) CLASS TToast
          endif
       else
          if !Empty( ::cHeader )
-            ::aHeader[ 3 ] += ::oFontHdr:nHeight
+            ::aHeader[ 3 ] += ::oFontBody:nHeight
          endif
       endif
       //if ::lBody() .or. ::lBtnClose
-      hOldFont = SelectObject( hDC, ::oFontHdr:hFont )
+      hOldFont = SelectObject( hDC, ::oFontBody:hFont )
       if ::nClrTextHeader != nil
          nClrText = SetTextColor( hDC, ::nCLrTextHeader )
       endif
@@ -997,7 +800,7 @@ METHOD PaintHdr2( hDC, rc ) CLASS TToast
                ::aHeader2[ 4 ] - 5, ::nClrSepara1 )
       endif
 
-      hOldFont = SelectObject( hDC, ::oFontHdr2:hFont )
+      hOldFont = SelectObject( hDC, ::oFontBody:hFont )
 
       if ::nClrTextHeader != nil
          nClrText := SetTextColor( hDC, ::nCLrTextHeader )
@@ -1143,20 +946,20 @@ METHOD PaintFoot( hDC, rc ) CLASS TToast
          hBmpFoot = LoadImageEx( ::cBmpFoot )
          if hBmpFoot != 0
             nWFoot   := BmpWidth( hBmpFoot )
-            ::aFoot[ 1 ] -= Max( BmpHeight( hBmpFoot ), ::oFontFoot:nHeight ) + 10
+            ::aFoot[ 1 ] -= Max( BmpHeight( hBmpFoot ), ::oFontBody:nHeight ) + 10
             DrawMasked( hDC, hBmpFoot,;
                      ( ::aFoot[ 1 ] + ( ::aFoot[ 3 ] - ::aFoot[ 1 ] ) / 2 ) - ;
                        BmpHeight( hBmpFoot ) / 2, 5 )
             DeleteObject( hBmpFoot )
          endif
       else
-         ::aFoot[ 1 ] -= ::oFontFoot:nHeight
+         ::aFoot[ 1 ] -= ::oFontBody:nHeight
       endif
    else
       ::aFoot = { rc[ 3 ], rc[ 2 ], rc[ 3 ], rc[ 4 ] }
    endif
    if ::lFoot()
-      hOldFont = SelectObject( hDC, ::oFontFoot:hFont )
+      hOldFont = SelectObject( hDC, ::oFontBody:hFont )
       if ::nClrTextFoot != nil
          nClrText = SetTextColor( hDC, ::nClrTextFoot )
       endif

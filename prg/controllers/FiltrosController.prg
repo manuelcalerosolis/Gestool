@@ -39,6 +39,8 @@ CLASS FiltrosController FROM SQLBrowseController
 
    METHOD Edit() 
 
+   METHOD isEditWithOutStored()
+
    METHOD saveFilter()
 
    METHOD defaultFilter()  
@@ -81,6 +83,11 @@ CLASS FiltrosController FROM SQLBrowseController
    METHOD getConvertType( cType )      INLINE ( hget( ::getHashType( cType ), "convert" ) )
 
    METHOD convertType( uValue, cType ) 
+
+   METHOD setName( cName )             INLINE ( ::cName := padr( cName, 240 ) )
+   METHOD getName( cName )             INLINE ( alltrim( ::cName ) )
+
+   METHOD getText() 
 
    METHOD getWhere()
 
@@ -272,9 +279,17 @@ METHOD Edit() CLASS FiltrosController
       ::defaultFilter()
    end if 
 
-   ::getDialogView():Activate()
+RETURN ( ::getDialogView():Activate() )
 
-RETURN ( nil )
+//---------------------------------------------------------------------------//
+
+METHOD isEditWithOutStored() CLASS FiltrosController
+
+   if empty( ::aFilter )
+      ::defaultFilter()
+   end if 
+
+RETURN ( ::getDialogView():ActivateWithOutStored() == IDOK )
 
 //---------------------------------------------------------------------------//
 
@@ -282,7 +297,7 @@ METHOD SaveFilter() CLASS FiltrosController
 
    local cFilter 
 
-   ::cName        := space( 240 )
+   ::setName( ::getText() )
 
    if !( ::getSaveDialogView():Activate() )
       RETURN ( nil )
@@ -294,7 +309,7 @@ METHOD SaveFilter() CLASS FiltrosController
       RETURN ( nil )
    end if 
 
-   if ::getModel():insertBuffer( { "tabla" => ::getTableName(), "nombre" => ::cName, "filtro" => cFilter } ) != 0
+   if ::getModel():insertOnDuplicate( { "tabla" => ::getTableName(), "nombre" => ::cName, "filtro" => cFilter } ) != 0
 
       successAlert( "Filtro guardado correctamente" )
 
@@ -419,6 +434,23 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
+METHOD getText() CLASS FiltrosController
+
+   local cText     
+   local hFilter
+   
+   if ::isEmptyFilter( ::aFilter )
+      RETURN ( "" )
+   end if 
+
+   cText    := hget( afirst( ::aFilter ), "text" ) + space( 1 )
+   cText    += hget( afirst( ::aFilter ), "condition" ) + space( 1 )
+   cText    += hget( afirst( ::aFilter ), "value" )
+
+RETURN ( cText ) 
+
+//---------------------------------------------------------------------------//
+
 METHOD getWhereAnd()
 
    local cWhere   := ::getWhere()
@@ -442,11 +474,15 @@ CLASS FiltrosView FROM SQLBaseView
 
    DATA oColValor
 
-   DATA oEditMemo    
+   DATA lShowStored                    INIT .t.    
 
    METHOD Activate()
 
+   METHOD ActivateWithOutStored()      INLINE ( ::lShowStored := .f., ::Activate() )
+
    METHOD StartActivate()
+
+   METHOD storedActivate()
 
    METHOD getFilter()                  INLINE ( ::oController:aFilter )
 
@@ -498,6 +534,10 @@ CLASS FiltrosView FROM SQLBaseView
 
    METHOD selectFilter()
 
+   METHOD getViewPrompt()              INLINE ( if( ::lShowStored, { "&Generador", "&Almacenados" }, { "&Generador" } ) )
+   
+   METHOD getViewDialogs()             INLINE ( if( ::lShowStored, { "FILTROS_DEFINICION", "FILTROS_DEFINICION" }, { "FILTROS_DEFINICION" } ) )
+   
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -520,13 +560,7 @@ METHOD Activate() CLASS FiltrosView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE FOLDER ::oFolder ;
-      ID          500 ;
-      OF          ::oDialog ;
-      PROMPT      "&Generador",;
-                  "&Almacenados" ;
-      DIALOGS     "FILTROS_DEFINICION",;
-                  "FILTROS_DEFINICION"  
+   ::oFolder      := TFolder():ReDefine( 500, ::getViewPrompt(), ::getViewDialogs(), ::oDialog, , , , , .f., )
 
    TBtnBmp():ReDefine( 501, "gc_broom_16", , , , , {|| ::oController:defaultFilter(), ::oBrwFilter:goTop() }, ::oFolder:aDialogs[ 1 ], .f., , .f., "Inicializar filtro" )
 
@@ -589,20 +623,12 @@ METHOD Activate() CLASS FiltrosView
       :nWidth                    := 60
       :bOnPostEdit               := {|o,x,n| ::nexoOnPostEdit( o, x, n ) } 
    end with
+   
+   // Caja de filtros almacenados ---------------------------------------------
 
-   // Filtros almacenados -----------------------------------------------------
+   ::storedActivate()
 
-   TBtnBmp():ReDefine( 501, "gc_mouse_pointer_16", , , , , {|| ::SelectFilter() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Seleccionar filtro" )
-
-   TBtnBmp():ReDefine( 502, "del16", , , , , {|| ::oController:deleteFilter() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Eliminar filtro" )
-
-   TBtnBmp():ReDefine( 503, "Refresh16", , , , , {|| ::oController:refreshRowSet(), ::oController:refreshBrowseView() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Refrescar" )
-
-   ::oController:Activate( 200, ::oFolder:aDialogs[2] )
-
-   ::oController:getBrowseView():setLDblClick( {|| ::SelectFilter() } )
-
-   // Botones caja -------------------------------------------------------
+   // Botones caja ------------------------------------------------------------
 
    ApoloBtnFlat():Redefine( IDOK, {|| ::oDialog:end( IDOK ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
@@ -615,6 +641,26 @@ METHOD Activate() CLASS FiltrosView
    ACTIVATE DIALOG ::oDialog CENTER
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD storedActivate() CLASS FiltrosView
+
+   if !( ::lShowStored )
+      RETURN ( nil )
+   end if 
+
+   TBtnBmp():ReDefine( 501, "gc_mouse_pointer_16", , , , , {|| ::SelectFilter() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Seleccionar filtro" )
+
+   TBtnBmp():ReDefine( 502, "del16", , , , , {|| ::oController:deleteFilter() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Eliminar filtro" )
+
+   TBtnBmp():ReDefine( 503, "Refresh16", , , , , {|| ::oController:refreshRowSet(), ::oController:refreshBrowseView() }, ::oFolder:aDialogs[ 2 ], .f., , .f., "Refrescar" )
+
+   ::oController:Activate( 200, ::oFolder:aDialogs[2] )
+
+   ::oController:getBrowseView():setLDblClick( {|| ::SelectFilter() } )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -780,13 +826,12 @@ RETURN ( ::oDialog:nResult == IDOK )
 
 METHOD validActivate() CLASS SaveFiltrosView
 
-   if empty( ::oController:cName )
+   if empty( ::oController:getName() )
       ::showMessage( "El nombre del filtro no puede estar vacio." )
       RETURN ( .f. )
    end if 
 
-   if ::oController:existName()
-      ::showMessage( "El nombre del filtro ya existe." )
+   if ::oController:existName() .and. !( msgYesNo( "El nombre del filtro ya existe", "¿Desea sobreescbirlo?" ) )
       RETURN ( .f. )
    end if 
   

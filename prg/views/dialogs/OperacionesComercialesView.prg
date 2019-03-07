@@ -1,13 +1,15 @@
 #include "FiveWin.Ch"
-#include "Factu.ch" 
+#include "Factu.ch"
 
 //---------------------------------------------------------------------------//
 
 CLASS OperacionesComercialesView FROM OperacionesView
-  
+
    DATA oPanel
 
    DATA oGetNumero
+
+   DATA oBtnOk
 
    DATA oBtnDescuentosDeleted
 
@@ -37,13 +39,15 @@ CLASS OperacionesComercialesView FROM OperacionesView
 
    METHOD setLinesShowDeleted()        INLINE ( ::getController():getLinesController():setShowDeleted(),;
                                                 ::oBtnLineasDeleted:Toggle(),;
-                                                ::oBtnLineasDeleted:cTooltip := if( ::oBtnLineasDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
+                                                ::oBtnLineasDeleted:cTooltip := if( ::oBtnLineasDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) )
 
    METHOD setDiscountShowDeleted()     INLINE ( ::getController():getDiscountController():setShowDeleted(),;
                                                 ::oBtnDescuentosDeleted:Toggle(),;
-                                                ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) ) 
+                                                ::oBtnDescuentosDeleted:cTooltip := if( ::oBtnDescuentosDeleted:lPressed, "Ocultar borrados", "Mostrar borrados" ) )
 
    METHOD defaultTitle()
+
+   METHOD popupActivate()
 
 END CLASS
 
@@ -73,7 +77,7 @@ METHOD Activate() CLASS OperacionesComercialesView
       PROMPT      "General" ,;
                   "Comercial" ;
       DIALOGS     "TRANSACION_GENERAL" ,;
-                  "CLIENTE_COMERCIAL" 
+                  "CLIENTE_COMERCIAL"
 
    ::redefineExplorerBar()
 
@@ -209,49 +213,51 @@ METHOD Activate() CLASS OperacionesComercialesView
 
    // Lineas ------------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::lineAppend() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 501, "new16", , , , , {|| ::lineAppend() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "AÃ±adir lÃ­nea" )
 
-   TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::getController():getLinesController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
+   TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::getController():getLinesController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar lÃ­neas" )
 
-   TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| ::getController():getLinesController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
-   
+   TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| ::getController():getLinesController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar lÃ­neas" )
+
    ::oBtnLineasDeleted := TBtnBmp():ReDefine( 504, "gc_deleted_16",,,,, {|| ::setLinesShowDeleted()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
-   
-   TBtnBmp():ReDefine( 505, "gc_object_cube_16",,,,, {|| ::getController():getLinesController():Edit()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar ficha de artículo" )
+
+   TBtnBmp():ReDefine( 505, "gc_object_cube_16",,,,, {|| ::getController():getLinesController():Edit()  }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar ficha de artÃ­culo" )
 
    ::getController():getLinesController():Activate( 500, ::oFolder:aDialogs[1] )
 
    // Descuentos---------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 601, "new16",,,,, {|| ::getController():getDiscountController():AppendLineal() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 601, "new16",,,,, {|| ::getController():getDiscountController():AppendLineal() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "AÃ±adir lÃ­nea" )
 
-   TBtnBmp():ReDefine( 602, "del16",,,,, {|| ::getController():getDiscountController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar líneas" )
+   TBtnBmp():ReDefine( 602, "del16",,,,, {|| ::getController():getDiscountController():Delete() }, ::oFolder:aDialogs[1], .f., {|| ::getController():isNotZoomMode() }, .f., "Eliminar lÃ­neas" )
 
-   TBtnBmp():ReDefine( 603, "refresh16",,,,, {|| ::getController():getDiscountController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
-   
+   TBtnBmp():ReDefine( 603, "refresh16",,,,, {|| ::getController():getDiscountController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar lÃ­neas" )
+
    ::oBtnDescuentosDeleted := TBtnBmp():ReDefine( 604, "gc_deleted_16",,,,, {|| ::setDiscountShowDeleted() }, ::oFolder:aDialogs[1], .f., , .f., "Mostrar/Ocultar borrados" )
 
-   ::getController():getDiscountController():Activate( 600, ::oFolder:aDialogs[1] )   
+   ::getController():getDiscountController():Activate( 600, ::oFolder:aDialogs[1] )
 
    // Botones generales--------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| ::validActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ::oBtnOk    := ApoloBtnFlat():Redefine( IDOK, {|| ::validActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+
+   ApoloBtnFlat():Redefine( IDOKANDNEW, {|| ::popupActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
 
-   if ::getController():isNotZoomMode() 
-   
-      ::oDialog:bKeyDown   := <| nKey |  
-         do case         
+   if ::getController():isNotZoomMode()
+
+      ::oDialog:bKeyDown   := <| nKey |
+         do case
             case nKey == VK_F5
                ::validActivate()
             case nKey == VK_F2
                ::getController():getLinesController():AppendLineal()
             case nKey == VK_F4
                ::getController():getLinesController():Delete()
-         end 
+         end
          RETURN ( 0 )
          >
 
@@ -261,7 +267,7 @@ METHOD Activate() CLASS OperacionesComercialesView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-RETURN ( ::oDialog:nResult ) 
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
@@ -269,7 +275,7 @@ METHOD startActivate() CLASS OperacionesComercialesView
 
    ::addLinksToExplorerBar()
 
-   ::addLinksElementToExplorerBar() 
+   ::addLinksElementToExplorerBar()
 
    ::getController():getTercerosController():getSelector():Start()
 
@@ -286,7 +292,7 @@ METHOD startActivate() CLASS OperacionesComercialesView
    ::getController():getAlmacenesController():getSelector():Start()
 
    ::getController():getLinesController():getBrowseView():Refresh()
-   
+
    ::getController():getDiscountController():getBrowseView():Refresh()
 
    ::getController():calculateTotals()
@@ -305,7 +311,7 @@ METHOD validActivate() CLASS OperacionesComercialesView
 
    if ::getController():notValidate( "formulario" )
       RETURN ( nil )
-   end if 
+   end if
 
    if !::getController():getLinesController():validLine()
       RETURN ( nil )
@@ -317,7 +323,7 @@ RETURN ( ::oDialog:end( IDOK ) )
 
 METHOD addLinksToExplorerBar() CLASS OperacionesComercialesView
 
-   ::oPanel          := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+   ::oPanel          := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 )
 
    ::oPanel:AddLink( "Incidencias...",;
                      {||   ::getController():getIncidenciasController():activateDialogView() },;
@@ -338,11 +344,6 @@ METHOD addLinksToExplorerBar() CLASS OperacionesComercialesView
                      {||   ::getController():getIvaDetalleView():Show()  },;
                            ::getController():getTipoIvaController():getImage( "16" ) )
 
-   ::oPanel:AddLink( "Historial...",;
-                     {||   ::getController():getHistoryController():getDialogView():activate() },;
-                           ::getController():getHistoryController():getImage( "16" ) )
-
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -353,31 +354,57 @@ METHOD lineAppend() CLASS OperacionesComercialesView
       RETURN( nil )
    end if
 
-RETURN ( ::getController():getLinesController():AppendLineal() ) 
+RETURN ( ::getController():getLinesController():AppendLineal() )
 
 //---------------------------------------------------------------------------//
 
 METHOD defaultTitle() CLASS OperacionesComercialesView
 
-   local cTitle  := ::oController:getTitle() + " : " 
+   local cTitle  := ::oController:getTitle() + " : "
 
    if empty( ::oController:oModel )
       RETURN ( cTitle )
-   end if 
+   end if
 
    if empty( ::oController:oModel:hBuffer )
       RETURN ( cTitle )
-   end if 
+   end if
 
    if hhaskey( ::oController:oModel:hBuffer, "serie" )
       cTitle      +=  alltrim( ::oController:oModel:hBuffer[ "serie" ] ) + "/"
    end if
-   
+
    if hhaskey( ::oController:oModel:hBuffer, "numero" )
       cTitle      += alltrim( toSQLString( ::oController:oModel:hBuffer[ "numero" ] ) )
    end if
 
 RETURN ( cTitle )
+
+//---------------------------------------------------------------------------//
+
+METHOD popupActivate() CLASS OperacionesComercialesView
+
+   local oMenu
+
+   MENU oMenu POPUP
+
+      MENUITEM "Aceptar e imprimir" ;
+         ACTION   (  ::oController:setPostAction( {|| msgalert( "Aceptar e imprimir" ) } ),;
+                     ::validActivate() )
+
+      MENUITEM "Aceptar y generar PDF" ;
+         ACTION   (  ::oController:setPostAction( {|| msgalert( "Aceptar y generar PDF" ) } ),;
+                     ::validActivate() )
+
+      if ( Auth():canSendMail() )
+         MENUITEM "Aceptar y enviar mail"
+      end if
+
+   ENDMENU
+
+   ACTIVATE POPUP oMenu AT 1, 1 OF ::oBtnOk
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch" 
+#include "Factu.ch"
 
 //---------------------------------------------------------------------------//
 
@@ -12,7 +12,7 @@ CLASS ArticulosTarifasController FROM SQLNavigatorController
    METHOD End()
 
    METHOD Deleting()
-   
+
    METHOD deletingSelection()
 
    METHOD endAppendedTarifa()
@@ -30,7 +30,7 @@ CLASS ArticulosTarifasController FROM SQLNavigatorController
    METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := ArticulosTarifasView():New( self ), ), ::oDialogView )
 
    METHOD getValidator()               INLINE ( iif( empty( ::oValidator ), ::oValidator := ArticulosTarifasValidator():New( self ), ), ::oValidator )
-   
+
    METHOD getModel()                   INLINE ( iif( empty( ::oModel ), ::oModel := SQLArticulosTarifasModel():New( self ), ), ::oModel )
 
    METHOD getRange()                   INLINE ( iif( empty( ::oRange ), ::oRange := ArticulosTarifasItemRange():New( self ), ), ::oRange )
@@ -60,7 +60,7 @@ METHOD New( oController ) CLASS ArticulosTarifasController
    ::setEvent( 'edited', {|| ::endEditedTarifa() } )
 
    ::setEvent( 'deleting', {|| ::Deleting() } )
-   
+
    ::setEvent( 'deletingSelection', {|| ::deletingSelection() } )
 
 RETURN ( Self )
@@ -90,7 +90,7 @@ METHOD deleting()
    if ::isRowSetSystemRegister()
       msgStop( "Este registro pertenece al sistema, no se puede alterar." )
       RETURN ( .f. )
-   end if 
+   end if
 
    ::uuidToDelete    := ::getRowSet():fieldGet( 'uuid' )
 
@@ -138,7 +138,7 @@ RETURN ( nil )
 
 METHOD updatedTarifa( uuidTarifaActualizar, lCosto ) CLASS ArticulosTarifasController
 
-   local cTarifaParent  
+   local cTarifaParent
 
    DEFAULT lCosto       := .f.
 
@@ -148,7 +148,7 @@ METHOD updatedTarifa( uuidTarifaActualizar, lCosto ) CLASS ArticulosTarifasContr
 
    if !empty( cTarifaParent ) .and. ( uuidTarifaActualizar != cTarifaParent )
       ::updatedTarifa( cTarifaParent )
-   end if 
+   end if
 
 RETURN ( nil )
 
@@ -160,7 +160,7 @@ RETURN ( nil )
 
 CLASS ArticulosTarifasBrowseView FROM SQLBrowseView
 
-   METHOD addColumns()                       
+   METHOD addColumns()
 
 ENDCLASS
 
@@ -172,7 +172,7 @@ METHOD addColumns() CLASS ArticulosTarifasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
-      :cHeader             := 'Código'
+      :cHeader             := 'Cï¿½digo'
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -230,7 +230,7 @@ METHOD addColumns() CLASS ArticulosTarifasBrowseView
    end with
 
    ::getColumnsCreatedUpdatedAt()
-   
+
    ::getColumnDeletedAt()
 
 RETURN ( self )
@@ -295,8 +295,8 @@ METHOD Activate() CLASS ArticulosTarifasView
       ID          500 ;
       OF          ::oDialog ;
       PROMPT      "&General" ;
-      DIALOGS     "TARIFA_GENERAL"    
-   
+      DIALOGS     "TARIFA_GENERAL"
+
    REDEFINE GET   ::oGetCodigo ;
       VAR         ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
@@ -368,9 +368,9 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startActivate() CLASS ArticulosTarifasView
 
-   local oPanel            
+   local oPanel
 
-   oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+   oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 )
 
    if ::oController:isZoomMode()
       RETURN ( nil )
@@ -396,14 +396,14 @@ RETURN ( nil )
 
 METHOD getItemsComboTarifaPadre() CLASS ArticulosTarifasView
 
-   local cItem 
-   local aItems   
+   local cItem
+   local aItems
 
    if ::oController:isRowSetSystemRegister()
       aItems      := { __tarifa_base__ }
-   else 
+   else
       aItems      := ::oController:getModel():getNombres()
-   end if 
+   end if
 
    ains( aItems, 1, __tarifa_costo__, .t. )
 
@@ -418,7 +418,7 @@ METHOD setItemsComboTarifaPadre() CLASS ArticulosTarifasView
 
    if ::oController:isAppendOrDuplicateMode()
 
-      aItems            := ::getItemsComboTarifaPadre()  
+      aItems            := ::getItemsComboTarifaPadre()
 
       aadd( aItems, cNombreTarifa )
 
@@ -426,7 +426,7 @@ METHOD setItemsComboTarifaPadre() CLASS ArticulosTarifasView
 
       ::oComboTarifaPadre:set( cNombreTarifa )
 
-   end if 
+   end if
 
 RETURN ( .t. )
 
@@ -447,7 +447,7 @@ CLASS ArticulosTarifasValidator FROM SQLBaseValidator
    METHOD getValidators()
 
    METHOD notNameCosto( value )        INLINE ( alltrim( lower( value ) ) != __tarifa_costo__ )
- 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -458,8 +458,8 @@ METHOD getValidators() CLASS ArticulosTarifasValidator
                         "nombre" =>       {  "required"     => "El nombre es un dato requerido",;
                                              "unique"       => "El nombre introducido ya existe",;
                                              "notNameCosto" => "El nombre de la tarifa no puede ser '" + __tarifa_costo__ + "'" },;
-                        "codigo" =>       {  "required"     => "El código es un dato requerido" ,;
-                                             "unique"       => "EL código introducido ya existe" },;
+                        "codigo" =>       {  "required"     => "El cï¿½digo es un dato requerido" ,;
+                                             "unique"       => "EL cï¿½digo introducido ya existe" },;
                         "parent_uuid" =>  {  "required"     => "La tarifa base es un dato requerido" } }
 
 RETURN ( ::hValidators )
@@ -485,20 +485,20 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
    METHOD getParentUuidAttribute( uuid ) ;
                                        INLINE ( if( empty( uuid ), __tarifa_costo__, SQLArticulosTarifasModel():getNombreWhereUuid( uuid ) ) )
 
-   METHOD setParentUuidAttribute( nombre )   
+   METHOD setParentUuidAttribute( nombre )
 
    METHOD getInitialSelect()
 
    METHOD getTarifaWhereTarifaParent( uuidTarifaParent ) ;
                                        INLINE ( ::getField( "uuid", "parent_uuid", uuidTarifaParent ) )
 
-   METHOD getNombres()      
+   METHOD getNombres()
 
 #ifdef __TEST__
 
-   METHOD test_create_tarifa_base() 
+   METHOD test_create_tarifa_base()
 
-   METHOD test_create_tarifa_mayorista()    
+   METHOD test_create_tarifa_mayorista()
 
 #endif
 
@@ -520,15 +520,15 @@ METHOD getInitialSelect() CLASS SQLArticulosTarifasModel
          articulos_tarifas.margen,
          articulos_tarifas.activa,
          articulos_tarifas.valido_desde,
-         articulos_tarifas.valido_hasta, 
+         articulos_tarifas.valido_hasta,
          articulos_tarifas.sistema,
          articulos_tarifas.created_at,
          articulos_tarifas.updated_at,
          articulos_tarifas.deleted_at,
 
-      IFNULL( articulos_tarifas_base.nombre, %2$s ) AS nombre_tarifa_base  
+      IFNULL( articulos_tarifas_base.nombre, %2$s ) AS nombre_tarifa_base
 
-      FROM %1$s AS articulos_tarifas 
+      FROM %1$s AS articulos_tarifas
 
       LEFT JOIN %1$s AS articulos_tarifas_base
          ON articulos_tarifas_base.uuid = articulos_tarifas.parent_uuid
@@ -543,18 +543,18 @@ RETURN ( cSql )
 
 METHOD getColumns() CLASS SQLArticulosTarifasModel
 
-   hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+   hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                                 "text"      => "Identificador"                           ,;
                                                 "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"          ,;                                 
+   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"          ,;
                                                 "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR ( 40 ) NOT NULL"                 ,;                                 
+   hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR ( 40 ) NOT NULL"                 ,;
                                                 "default"   => {|| space( 40 ) } }                       )
-   
+
    hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR ( 20 ) NOT NULL"                 ,;
-                                                "text"      => "Código"                                  ,;
+                                                "text"      => "Cï¿½digo"                                  ,;
                                                 "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR ( 200 ) NOT NULL"                ,;
@@ -589,7 +589,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD setParentUuidAttribute( nombre )   
+METHOD setParentUuidAttribute( nombre )
 
    if hb_isnil( nombre ) .or. ( alltrim( nombre ) == __tarifa_costo__ )
       RETURN ( "" )
@@ -597,9 +597,9 @@ METHOD setParentUuidAttribute( nombre )
 
    if hb_ischar( nombre ) .and. ( alltrim( nombre ) == alltrim( ::hBuffer[ "nombre" ] ) )
       RETURN ( ::hBuffer[ "uuid" ] )
-   end if 
+   end if
 
-RETURN ( SQLArticulosTarifasModel():getUuidWhereNombre( nombre ) )  
+RETURN ( SQLArticulosTarifasModel():getUuidWhereNombre( nombre ) )
 
 //---------------------------------------------------------------------------//
 
@@ -613,7 +613,7 @@ METHOD insertTarifaBase() CLASS SQLArticulosTarifasModel
    hset( hBuffer, "codigo", "0" )
    hset( hBuffer, "nombre", __tarifa_base__ )
 
-RETURN ( /*::insertIgnore( hBuffer )*/ nil )
+RETURN ( ::insertIgnoreBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
@@ -623,12 +623,12 @@ METHOD getNombres() CLASS SQLArticulosTarifasModel
 
    TEXT INTO cSql
 
-   SELECT nombre FROM %1$s 
+   SELECT nombre FROM %1$s
 
    WHERE
-      activa = 1 
+      activa = 1
       AND ( valido_desde IS NULL OR valido_desde >= CURDATE() )
-      AND ( valido_hasta IS NULL OR valido_hasta <= CURDATE() ) 
+      AND ( valido_hasta IS NULL OR valido_hasta <= CURDATE() )
       AND ( deleted_at = 0 )
 
    ORDER BY id
@@ -653,7 +653,7 @@ METHOD test_create_tarifa_base() CLASS SQLArticulosTarifasModel
    hset( hBuffer, "nombre", "Base" )
    hset( hBuffer, "margen", 30 )
 
-RETURN ( ::insertIgnore( hBuffer ) )
+RETURN ( ::insertIgnoreBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
@@ -667,7 +667,7 @@ METHOD test_create_tarifa_mayorista() CLASS SQLArticulosTarifasModel
    hset( hBuffer, "nombre", "Mayorista" )
    hset( hBuffer, "margen", 50 )
 
-RETURN ( ::insertIgnore( hBuffer ) )
+RETURN ( ::insertIgnoreBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
@@ -681,7 +681,7 @@ RETURN ( ::insertIgnore( hBuffer ) )
 
 CLASS ArticulosTarifasRepository FROM SQLBaseRepository
 
-   METHOD getTableNameSQL()            INLINE ( SQLArticulosTarifasModel():getTableName() ) 
+   METHOD getTableNameSQL()            INLINE ( SQLArticulosTarifasModel():getTableName() )
 
 END CLASS
 
@@ -709,7 +709,7 @@ CLASS TestArticulosTarifasController FROM TestCase
 
    METHOD initModels()
 
-   METHOD testDialogoCambioPorcentajeTarifaBase() 
+   METHOD testDialogoCambioPorcentajeTarifaBase()
 
    METHOD testDialogoCreacionNuevaTarifa()
 
@@ -733,7 +733,7 @@ METHOD testDialogoCambioPorcentajeTarifaBase() CLASS TestArticulosTarifasControl
    oController             := ArticulosTarifasController():New()
 
    nId                     := oController:getModel():getField( "id", "nombre", __tarifa_base__ )
-   
+
    ::Assert():notnull( nId, "test identificador de la tarifa base" )
 
    oController:getDialogView():setEvent( 'painted',;
@@ -743,7 +743,7 @@ METHOD testDialogoCambioPorcentajeTarifaBase() CLASS TestArticulosTarifasControl
          testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )
 
-   ::Assert():true( oController:Edit( nId ), "test modificación porcentaje tarifa base" )
+   ::Assert():true( oController:Edit( nId ), "test modificaciï¿½n porcentaje tarifa base" )
 
    oController:End()
 
@@ -759,7 +759,7 @@ METHOD testDialogoCreacionNuevaTarifa() CLASS TestArticulosTarifasController
 
    oController             := ArticulosTarifasController():New()
 
-   oController:getModel():deleteWhere( { "nombre" => "Mayorista" } )   
+   oController:getModel():deleteWhere( { "nombre" => "Mayorista" } )
 
    oController:getDialogView():setEvent( 'painted',;
       {| self | ;
@@ -776,7 +776,7 @@ METHOD testDialogoCreacionNuevaTarifa() CLASS TestArticulosTarifasController
          testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )
 
-   ::Assert():true( oController:Append(), "test creación tarifa mayorista" )
+   ::Assert():true( oController:Append(), "test creaciï¿½n tarifa mayorista" )
 
    oController:End()
 
@@ -785,4 +785,3 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 #endif
-

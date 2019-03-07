@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch" 
+#include "Factu.ch"
 
 //---------------------------------------------------------------------------//
 
@@ -7,9 +7,9 @@ CLASS SQLBaseController
 
    DATA oController
 
-   DATA nId                            
+   DATA nId
 
-   DATA oEvents                                       
+   DATA oEvents
 
    DATA oModel
 
@@ -33,7 +33,7 @@ CLASS SQLBaseController
 
    DATA lCanceled                      INIT .f.
 
-   DATA nLevel                         INIT __permission_full__ 
+   DATA nLevel                         INIT __permission_full__
 
    DATA nMode                          AS NUMERIC
 
@@ -45,6 +45,8 @@ CLASS SQLBaseController
 
    DATA aSelected
 
+   DATA bPostAction
+
    DATA oHistoryController
 
    METHOD New() CONSTRUCTOR
@@ -53,9 +55,9 @@ CLASS SQLBaseController
    METHOD setName( cName )             INLINE ( ::cName := cName )
    METHOD getName()                    INLINE ( ::cName )
 
-   METHOD getController()              INLINE ( ::oController ) 
+   METHOD getController()              INLINE ( ::oController )
    METHOD getSuperController()         INLINE ( iif( !empty( ::getController() ), ::getController():getController(), nil ) )
-   METHOD getControllerParentUuid()    INLINE ( iif( !empty( ::oController ), ::oController:getUuid(), space( 40 ) ) ) 
+   METHOD getControllerParentUuid()    INLINE ( iif( !empty( ::oController ), ::oController:getUuid(), space( 40 ) ) )
 
    // Modelo -----------------------------------------------------------------
 
@@ -66,9 +68,9 @@ CLASS SQLBaseController
    METHOD getModelTableName()          INLINE ( iif( !empty( ::getModel() ), ::getModel():getTableName(), ) )
    METHOD getModelColumns()            INLINE ( iif( !empty( ::getModel() ) .and. !empty( ::getModel():hColumns ), ( ::getModel():hColumns ), ) )
    METHOD getModelExtraColumns()       INLINE ( iif( !empty( ::getModel() ) .and. !empty( ::getModel():hExtraColumns ), ( ::getModel():hExtraColumns ), ) )
-   
+
    METHOD isEmptyModelBuffer()         INLINE ( empty( ::getModel() ) .or. empty( ::getModel():hBuffer ) )
-   
+
    METHOD getModelBuffer( cColumn )    INLINE ( iif( !empty( ::getModel() ), ::getModel():getBuffer( cColumn ), ) )
    METHOD setModelBuffer( cColumn, uValue ) ;
                                        INLINE ( iif( !empty( ::getModel() ), ::getModel():setBuffer( cColumn, uValue ), ) )
@@ -81,13 +83,13 @@ CLASS SQLBaseController
 
    METHOD findInModel()
 
-   METHOD changeModelOrderAndOrientation()            
+   METHOD changeModelOrderAndOrientation()
    METHOD getModelHeaderFromColumnOrder() ;
                                        INLINE ( ::getModel():getHeaderFromColumnOrder() )
 
    METHOD getId()                      INLINE ( iif( !empty( ::getModel() ), ::getModel():getId(), nil ) )
    METHOD getUuid()                    INLINE ( iif( !empty( ::getModel() ), ::getModel():getUuid(), nil ) )
-   
+
    // Rowset-------------------------------------------------------------------
 
    METHOD saveRowSetRecno()            INLINE ( ::getRowSet():saveRecno() )
@@ -108,14 +110,14 @@ CLASS SQLBaseController
    METHOD getFieldFromRowSet( cField ) INLINE ( if( empty( ::getRowset() ), nil, ::getRowSet():fieldGet( cField ) ) )
    METHOD getUuidFromRowSet()          INLINE ( ::getFieldFromRowSet( "uuid" ) )
 
-   METHOD isRowSetSystemRegister()                          
+   METHOD isRowSetSystemRegister()
    METHOD isNotRowSetSystemRegister()  INLINE ( !( ::isRowSetSystemRegister() ) )
 
    METHOD setMultiDelete( lMultiDelete ) ;
-                                       INLINE ( ::lMultiDelete := lMultiDelete )                          
+                                       INLINE ( ::lMultiDelete := lMultiDelete )
    METHOD isMultiDelete()              INLINE ( ::lMultiDelete )
 
-   METHOD findInRowSet( uValue, cColumn )             
+   METHOD findInRowSet( uValue, cColumn )
    METHOD findByIdInRowSet( uValue )   INLINE ( ::getRowSet():find( uValue, "id", .t. ) )
 
    METHOD refreshBrowseView()          VIRTUAL
@@ -123,8 +125,8 @@ CLASS SQLBaseController
    // Dialogo------------------------------------------------------------------
 
    METHOD getDialogView()              INLINE ( ::oDialogView )
-      METHOD dialogViewActivate()  
-      METHOD dialogViewEnd()                   
+      METHOD dialogViewActivate()
+      METHOD dialogViewEnd()
       METHOD dialogViewDestroy()
 
    METHOD isContinuousAppend()         INLINE ( hb_isnumeric( ::uDialogResult ) .and. ::uDialogResult == IDOKANDNEW )
@@ -140,7 +142,7 @@ CLASS SQLBaseController
    METHOD Validate( cColumn, uValue )  INLINE ( ::getValidator():Validate( cColumn, uValue ) )
    METHOD notValidate( cColumn, uValue ) ;
                                        INLINE ( !( ::getValidator():Validate( cColumn, uValue ) ) )
-   
+
    METHOD Assert( cColumn, uValue )    INLINE ( ::getValidator():Assert( cColumn, uValue ) )
 
    // Access -----------------------------------------------------------------
@@ -213,9 +215,10 @@ CLASS SQLBaseController
    METHOD dialgOkAndDown()             INLINE ( ::uDialogResult == IDOKANDDOWN )
    METHOD dialgOkAndUp()               INLINE ( ::uDialogResult == IDOKANDUP )
 
-   METHOD postEdit( nId )
+   METHOD setPostAction( bPostAction ) INLINE ( ::bPostAction := bPostAction )
+   METHOD runPostAction()
 
-   METHOD isDeleted( nId )             INLINE ( ::getModel():isDeletedAtColumn() .and. ::getModel:isDeleted( nId ) ) 
+   METHOD isDeleted( nId )             INLINE ( ::getModel():isDeletedAtColumn() .and. ::getModel:isDeleted( nId ) )
    METHOD isNotDeleted()               INLINE ( !::isDeleted() )
 
    METHOD insertChanges( aChanges, cOperation ) ;
@@ -229,7 +232,7 @@ CLASS SQLBaseController
 
    // Events-------------------------------------------------------------------
 
-   METHOD setEvents( aEvents, bEvent )                
+   METHOD setEvents( aEvents, bEvent )
    METHOD setEvent( cEvent, bEvent )   INLINE ( ::getEvents():set( cEvent, bEvent ) )
    METHOD fireEvent( cEvent, uValue )  INLINE ( ::getEvents():fire( cEvent, uValue ) )
 
@@ -270,10 +273,10 @@ CLASS SQLBaseController
 
    METHOD clearFilter()
 
-   METHOD reBuildRowSet()   
+   METHOD reBuildRowSet()
 
    METHOD getRowSet()                  INLINE ( iif( empty( ::oRowSet ), ::oRowSet := SQLRowSet():New( self ), ), ::oRowSet )
-   
+
    METHOD getEvents()                  INLINE ( iif( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
 
    METHOD getHistoryController()       INLINE ( iif( empty( ::oHistoryController ), ::oHistoryController := HistoryController():New( self ), ), ::oHistoryController )
@@ -304,7 +307,7 @@ METHOD End()
 
    if !empty( ::oEvents )
       ::oEvents:End()
-   end if 
+   end if
 
    if !empty( ::oRowSet )
       ::oRowSet:End()
@@ -318,9 +321,9 @@ METHOD insertOrUpdateBuffer()
 
    if empty( ::nId )
       ::nId          := ::getModel():insertBuffer()
-   else 
+   else
       ::getModel():updateBuffer()
-   end if 
+   end if
 
 RETURN ( ::nId )
 
@@ -328,12 +331,12 @@ RETURN ( ::nId )
 
 METHOD Append()
 
-   local lAppend     := .t.   
+   local lAppend     := .t.
 
    if ::notUserAppend()
       msgStop( "Acceso no permitido." )
       RETURN ( .f. )
-   end if 
+   end if
 
    if isFalse( ::fireEvent( 'appending' ) )
       RETURN ( .f. )
@@ -351,41 +354,41 @@ METHOD Append()
 
       ::getModel():loadBlankBuffer()
 
-      ::fireEvent( 'openingDialog' )   
+      ::fireEvent( 'openingDialog' )
 
-      ::prepareDialogView()  
+      ::prepareDialogView()
 
       if ::dialogViewActivate()
 
-         ::fireEvent( 'closedDialog' )  
+         ::fireEvent( 'closedDialog' )
 
-         ::insertOrUpdateBuffer()    
+         ::insertOrUpdateBuffer()
 
-         // ::insertIncidence()    
-         
+         // ::insertIncidence()
+
          ::commitTransactionalMode()
 
          ::refreshRowSetAndFindId()
-         
+
          if !empty( ::getBrowseView() )
             ::refreshBrowseView()
          end if
 
-         ::fireEvent( 'appended' ) 
+         ::fireEvent( 'appended' )
 
          if ::isContinuousAppend()
             loop
-         else 
+         else
             exit
-         end if 
+         end if
 
       else
-         
+
          ::rollbackTransactionalMode()
 
          lAppend     := .f.
 
-         ::fireEvent( 'cancelAppended' ) 
+         ::fireEvent( 'cancelAppended' )
 
          ::restoreRowSetRecno()
 
@@ -395,9 +398,11 @@ METHOD Append()
 
    end while
 
-   ::fireEvent( 'exitAppended' ) 
+   ::fireEvent( 'exitAppended' )
 
-   ::fireEvent( 'endDialog' )  
+   ::fireEvent( 'endDialog' )
+
+   ::runPostAction()
 
 RETURN ( lAppend )
 
@@ -405,12 +410,12 @@ RETURN ( lAppend )
 
 METHOD Insert()
 
-   local lInsert     := .t.   
+   local lInsert     := .t.
 
    if ::notUserAppend()
       msgStop( "Acceso no permitido." )
       RETURN ( .f. )
-   end if 
+   end if
 
    if isFalse( ::fireEvent( 'inserting' ) )
       RETURN ( .f. )
@@ -428,19 +433,19 @@ METHOD Insert()
 
       ::nId          := ::getModel():insertBlankBuffer()
 
-      ::fireEvent( 'openingDialog' )     
+      ::fireEvent( 'openingDialog' )
 
       if ::dialogViewActivate()
 
-         ::fireEvent( 'closedDialog' )    
+         ::fireEvent( 'closedDialog' )
 
          ::getModel():updateInsertedBuffer( nil, ::nId )
 
          ::commitTransactionalMode()
 
-         ::fireEvent( 'inserted' ) 
+         ::fireEvent( 'inserted' )
 
-         ::insertChanges( ::getModel():getBufferChanged(), "Creación del documento" )
+         ::insertChanges( ::getModel():getBufferChanged(), "Creaciï¿½n del documento" )
 
          ::refreshRowSetAndFindId()
 
@@ -448,15 +453,15 @@ METHOD Insert()
 
          if ::isContinuousAppend()
             loop
-         else 
+         else
             exit
-         end if 
+         end if
 
       else
-         
+
          lInsert     := .f.
 
-         ::fireEvent( 'cancelInserted' ) 
+         ::fireEvent( 'cancelInserted' )
 
          ::rollbackTransactionalMode()
 
@@ -468,9 +473,11 @@ METHOD Insert()
 
    end while
 
-   ::fireEvent( 'exitInserted' ) 
+   ::fireEvent( 'exitInserted' )
 
-   ::fireEvent( 'endDialog' )  
+   ::fireEvent( 'endDialog' )
+
+   ::runPostAction()
 
 RETURN ( lInsert )
 
@@ -478,31 +485,31 @@ RETURN ( lInsert )
 
 METHOD Duplicate( nId )
 
-   local lDuplicate  := .t. 
+   local lDuplicate  := .t.
 
    ::nId             := nId
 
    if empty( ::nId )
       ::nId          := ::getIdFromRowSet()
-   end if 
+   end if
 
    if empty( ::nId )
       RETURN ( .f. )
-   end if 
+   end if
 
    if !empty( ::getRowSet():fieldGet( "deleted_at" ) )
-      RETURN ( .f. ) 
+      RETURN ( .f. )
    end if
 
    if ::notUserDuplicate()
       msgStop( "Acceso no permitido." )
       RETURN ( .f. )
-   end if 
+   end if
 
    if isFalse( ::fireEvent( 'duplicating' ) )
       RETURN ( .f. )
    end if
-   
+
    ::setDuplicateMode()
 
    ::beginTransactionalMode()
@@ -515,35 +522,37 @@ METHOD Duplicate( nId )
 
    if ::DialogViewActivate()
 
-      ::fireEvent( 'closedDialog' )    
+      ::fireEvent( 'closedDialog' )
 
       ::insertOrUpdateBuffer()
 
-      ::insertIncidence()    
+      ::insertIncidence()
 
       ::commitTransactionalMode()
-      
+
       ::refreshRowSetAndFindId()
-      
-      ::fireEvent( 'duplicated' ) 
+
+      ::fireEvent( 'duplicated' )
 
       ::refreshBrowseView()
 
-   else 
-   
+   else
+
       lDuplicate     := .f.
 
       ::restoreRowSetRecno()
-   
-      ::fireEvent( 'cancelDuplicated' ) 
+
+      ::fireEvent( 'cancelDuplicated' )
 
       ::rollbackTransactionalMode()
-   
+
    end if
 
-   ::fireEvent( 'exitDuplicated' ) 
+   ::fireEvent( 'exitDuplicated' )
 
-   ::fireEvent( 'endDialog' )  
+   ::fireEvent( 'endDialog' )
+
+   ::runPostAction()
 
 RETURN ( lDuplicate )
 
@@ -553,25 +562,25 @@ METHOD EditReturn( nId )
 
    if ::isBrowseColumnEdit()
       RETURN ( .f. )
-   end if   
+   end if
 
 RETURN ( ::Edit( nId ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD Edit( nId ) 
+METHOD Edit( nId )
 
-   local lEdit    := .t. 
+   local lEdit    := .t.
 
    if empty( nId )
       nId         := ::getIdFromRowSet()
-   end if 
+   end if
 
    if empty( nId )
       RETURN ( .f. )
-   end if 
+   end if
 
-   if ::isDeleted( nId ) 
+   if ::isDeleted( nId )
       msgStop( "No se puede editar un registro eliminado" )
       RETURN ( .f. )
    end if
@@ -579,7 +588,7 @@ METHOD Edit( nId )
    if ::notUserEdit()
       msgStop( "Acceso no permitido." )
       RETURN ( .f. )
-   end if 
+   end if
 
    if isFalse( ::fireEvent( 'editing', nId ) )
       RETURN ( .f. )
@@ -594,8 +603,8 @@ METHOD Edit( nId )
    ::fireEvent( 'openingDialog' )
 
    if ::DialogViewActivate()
-      
-      ::fireEvent( 'closedDialog' )  
+
+      ::fireEvent( 'closedDialog' )
 
       ::getModel():updateBuffer()
 
@@ -605,52 +614,33 @@ METHOD Edit( nId )
 
       ::refreshBrowseView()
 
-      ::fireEvent( 'edited' ) 
+      ::fireEvent( 'edited' )
 
    else
 
       lEdit       := .f.
 
-      ::fireEvent( 'cancelEdited' ) 
+      ::fireEvent( 'cancelEdited' )
 
       ::rollbackTransactionalMode()
 
-   end if 
+   end if
 
-   ::fireEvent( 'exitEdited' ) 
+   ::fireEvent( 'exitEdited' )
 
-   ::fireEvent( 'endDialog' )  
+   ::fireEvent( 'endDialog' )
 
-   ::postEdit()
+   ::runPostAction()
 
 RETURN ( lEdit )
 
 //----------------------------------------------------------------------------//
 
-METHOD postEdit() 
+METHOD runPostAction()
 
-   do case
-      case ::dialgOkAndGoTo()
-
-         if ::refreshRowSetAndFindId( ::getDialogView():idGoTo )
-            ::Edit()
-         else 
-            msgStop( "El identificador " + alltrim( str( ::getDialogView():idGoTo ) ) + " no puede ser localizado" )
-         end if 
-
-      case ::dialgOkAndDown()
-
-         ::goDownRowSet()
-      
-         ::Edit()
-
-      case ::dialgOkAndUp()
-
-         ::goUpRowSet()
-      
-         ::Edit()
-         
-   end case 
+   if hb_isblock( ::bPostAction )
+      eval( ::bPostAction, self )
+   end case
 
 RETURN ( self )
 
@@ -660,16 +650,16 @@ METHOD Zoom( nId )
 
    if empty( nId )
       nId         := ::getIdFromRowSet()
-   end if 
+   end if
 
    if empty( nId )
       RETURN ( .f. )
-   end if 
+   end if
 
    if ::notUserZoom()
       msgStop( "Acceso no permitido." )
       RETURN ( Self )
-   end if 
+   end if
 
    if isFalse( ::fireEvent( 'zooming' ) )
       RETURN ( .f. )
@@ -681,15 +671,15 @@ METHOD Zoom( nId )
 
    ::fireEvent( 'openingDialog' )
 
-   ::DialogViewActivate()   
+   ::DialogViewActivate()
 
-   ::fireEvent( 'closedDialog' )    
+   ::fireEvent( 'closedDialog' )
 
-   ::fireEvent( 'zoomed' ) 
+   ::fireEvent( 'zoomed' )
 
-   ::fireEvent( 'exitZoomed' ) 
+   ::fireEvent( 'exitZoomed' )
 
-   ::fireEvent( 'endDialog' )  
+   ::fireEvent( 'endDialog' )
 
 RETURN ( .t. )
 
@@ -701,21 +691,21 @@ METHOD DialogViewActivate( oDialogView )
 
    if empty( oDialogView )
       RETURN ( .f. )
-   end if 
+   end if
 
    oDialogView:Activating()
 
    ::uDialogResult         := oDialogView:Activate()
-   
+
    oDialogView:Activated()
 
    if hb_islogical( ::uDialogResult )
       RETURN ( ::uDialogResult )
-   end if 
+   end if
 
    if hb_isnumeric( ::uDialogResult ) .and. ( ::uDialogResult != IDCANCEL )
       RETURN ( .t. )
-   end if 
+   end if
 
 RETURN ( .f. )
 
@@ -727,7 +717,7 @@ METHOD DialogViewEnd( oDialogView )
 
    if !empty( oDialogView )
       oDialogView:EndActivate()
-   end if 
+   end if
 
 RETURN ( .f. )
 
@@ -762,13 +752,13 @@ METHOD Delete( aSelectedRecno )
 
    ::fireEvent( 'openingConfirmDelete' )
 
-   if SQLAjustableGestoolModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. msgNoYes( "¿Desea eliminar " + cNumbers, "Confirme eliminación" )
-      
-      ::fireEvent( 'deletingSelection' ) 
+   if SQLAjustableGestoolModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. msgNoYes( "ï¿½Desea eliminar " + cNumbers, "Confirme eliminaciï¿½n" )
+
+      ::fireEvent( 'deletingSelection' )
 
       ::getModel():deleteSelection( ::getIdFromRecno( aSelectedRecno ), ::getUuidFromRecno( aSelectedRecno ) )
 
-      ::fireEvent( 'deletedSelection' ) 
+      ::fireEvent( 'deletedSelection' )
 
       ::gotoRowSetRecno( ::priorRecnoToDelete( aSelectedRecno ) )
 
@@ -778,13 +768,13 @@ METHOD Delete( aSelectedRecno )
 
       lDelete           := .t.
 
-   else 
+   else
 
-      ::fireEvent( 'cancelDeleted' ) 
-   
-   end if 
+      ::fireEvent( 'cancelDeleted' )
 
-   ::fireEvent( 'exitDeleted' ) 
+   end if
+
+   ::fireEvent( 'exitDeleted' )
 
 RETURN ( lDelete )
 
@@ -811,13 +801,13 @@ METHOD Cancel( aSelectedRecno )
 
    ::fireEvent( 'openingConfirmCancel' )
 
-   if SQLAjustableGestoolModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. msgNoYes( "¿Desea cancelar " + cNumbers, "Confirme eliminación" )
-      
-      ::fireEvent( 'cancelingSelection' ) 
+   if SQLAjustableGestoolModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. msgNoYes( "ï¿½Desea cancelar " + cNumbers, "Confirme eliminaciï¿½n" )
+
+      ::fireEvent( 'cancelingSelection' )
 
       ::getModel():cancelSelection( ::getIdFromRecno( aSelectedRecno ), ::getUuidFromRecno( aSelectedRecno ) )
 
-      ::fireEvent( 'canceledSelection' ) 
+      ::fireEvent( 'canceledSelection' )
 
       ::gotoRowSetRecno( ::priorRecnoToDelete( aSelectedRecno ) )
 
@@ -827,13 +817,13 @@ METHOD Cancel( aSelectedRecno )
 
       lCancel           := .t.
 
-   else 
+   else
 
-      ::fireEvent( 'cancelCanceled' ) 
-   
-   end if 
+      ::fireEvent( 'cancelCanceled' )
 
-   ::fireEvent( 'exitCanceled' ) 
+   end if
+
+   ::fireEvent( 'exitCanceled' )
 
 RETURN ( lCancel )
 
@@ -844,24 +834,24 @@ METHOD allowDeleteOrCancel( aSelectedRecno )
    if ::notUserDelete()
       msgStop( "Acceso no permitido" )
       RETURN ( .f. )
-   end if 
+   end if
 
    if !hb_isarray( aSelectedRecno )
       RETURN ( .f. )
-   end if 
+   end if
 
    if len( aSelectedRecno ) == 0
       RETURN ( .f. )
-   end if 
+   end if
 
    if len( aSelectedRecno ) == 1 .and. atail( aSelectedRecno ) == 0
       RETURN ( .f. )
-   end if 
+   end if
 
    if ( !::isMultiDelete() .and. len( aSelectedRecno ) > 1 )
       msgStop( "Borrado multiple no permitido" )
       RETURN ( .f. )
-   end if 
+   end if
 
 RETURN ( .t. )
 
@@ -881,11 +871,11 @@ RETURN ( atail( aSelectedRecno ) )
 
 METHOD changeModelOrderAndOrientation( cOrderBy, cOrientation )
 
-   local nId           
+   local nId
 
    if empty( ::getRowSet() )
       RETURN ( nil )
-   end if 
+   end if
 
    nId                  := ::getRowSet():fieldGet( ::getModelColumnKey() )
 
@@ -913,7 +903,7 @@ METHOD findInRowSet( uValue, cColumn )
 
    if empty( ::getRowSet() )
       RETURN ( .f. )
-   end if 
+   end if
 
 RETURN ( ::getRowSet():findString( uValue, cColumn ) )
 
@@ -923,7 +913,7 @@ METHOD isRowSetSystemRegister()
 
    if empty( ::getRowSet() )
       RETURN ( .f. )
-   end if 
+   end if
 
 RETURN ( isTrue( ::getRowSet():fieldGet( 'sistema' ) ) )
 
@@ -936,8 +926,8 @@ RETURN ( aeval( aEvents, {|cEvent| ::setEvent( cEvent, bEvent ) } ) )
 //----------------------------------------------------------------------------//
 
 METHOD validColumnBrowse( oCol, uValue, nKey, oModel, cFieldName )
-   
-   local cCodigo        
+
+   local cCodigo
 
    if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
       RETURN ( .t. )
@@ -969,7 +959,7 @@ METHOD buildFilter( cFilter )
    ::getModel():insertFilterWhere( cFilter )
 
    ::reBuildRowSet()
-   
+
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
@@ -979,7 +969,7 @@ METHOD clearFilter()
    ::getModel():clearFilterWhere()
 
    ::reBuildRowSet()
-   
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -989,14 +979,13 @@ METHOD reBuildRowSet()
    local nId
 
    nId               := ::getRowSet():fieldGet( ::getModelColumnKey() )
-   
+
    ::getRowSet():build( ::getModel():getSelectSentence() )
 
    ::getRowSet():findString( nId )
-      
+
    ::getBrowseView():Refresh()
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
