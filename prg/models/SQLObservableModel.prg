@@ -10,11 +10,22 @@ CLASS SQLObservableModel FROM SQLCompanyModel
    DATA aChanges
 
    DATA hFinalBuffer
-   DATA hInitialBuffer
+   DATA hInitialBuffer  
+
+   DATA nInitialAmount INIT 0
+   DATA nFinalAmount
+
+   METHOD storeInitialBuffer()         INLINE ( ::hInitialBuffer := hClone( ::hBuffer ) )
+   METHOD storeFinalBuffer()           INLINE ( ::hFinalBuffer := hClone( ::hBuffer ) )
+
+   METHOD storeInitialAmount()         INLINE ( ::nInitialAmount := ::oController:getRepository():selectTotalSummaryWhereUuid( ::oController:getModelBuffer("uuid") ) )
+
+   METHOD storeFinalAmount()           INLINE ( ::nFinalAmount := ::oController:getRepository():selectTotalSummaryWhereUuid( ::oController:getModelBuffer("uuid") ) )
 
    METHOD insertBuffer( hBuffer, lIgnore )
 
-   METHOD updateInsertedBuffer( hBuffer, nId )
+   METHOD updateInsertedBuffer( hBuffer, nId ) ;
+                                       INLINE ( ::Super():updateInsertedBuffer( hBuffer, nId ), ::storeFinalBuffer(), ::storeFinalAmount() )
 
    METHOD loadCurrentBuffer( id )
 
@@ -33,19 +44,9 @@ METHOD insertBuffer( hBuffer, lIgnore )
 
    local nId         := ::Super():insertBuffer( hBuffer, lIgnore )
 
-   ::hInitialBuffer  := hClone( ::hBuffer )
+   ::storeInitialBuffer()
 
 RETURN ( nId )
-
-//---------------------------------------------------------------------------//
-
-METHOD updateInsertedBuffer( hBuffer, nId )
-
-   ::Super():updateInsertedBuffer( hBuffer, nId )
-
-   ::hFinalBuffer    := hClone( ::hBuffer )
-   
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -65,6 +66,8 @@ METHOD updateBuffer( hBuffer )
 
    ::hFinalBuffer := hClone( ::hBuffer )
 
+   ::storeFinalAmount()
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -75,6 +78,12 @@ METHOD getBufferChanged()
 
    heval( ::hInitialBuffer,;
       {|k,v| if( v != hget( ::hFinalBuffer, k ), ::getBufferLine( k, v ), ) } )
+
+   aadd( ::aChanges, { "importe" => {  "old" => ::nInitialAmount,;
+                                       "new" => ::nFinalAmount,;
+                                       "relation_old" => "",;
+                                       "relation_new" => "",;
+                                       "text" => "importe" } })
 
 RETURN ( ::aChanges )
 

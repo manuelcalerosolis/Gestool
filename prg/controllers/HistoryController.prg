@@ -235,10 +235,8 @@ METHOD Activate() CLASS HistoryView
 
    ::oController:getBrowseView():setChange( {|| ::updateDetalle() } )
 
-   REDEFINE GET   ::oDetalle ;
+   REDEFINE SAY   ::oDetalle ;
       VAR         ::cDetalle ;
-      MEMO ;
-      WHEN        .f. ;
       ID          110 ; 
       OF          ::oDialog
 
@@ -317,6 +315,7 @@ METHOD insertHistory( hHistory ) CLASS SQLHistoryModel
    local hBuffer := ::loadBlankBuffer( hHistory ) 
 
    ::insertBuffer( hBuffer )
+
 
 RETURN( nil )
 
