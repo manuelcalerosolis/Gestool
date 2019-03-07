@@ -56,7 +56,6 @@ CLASS SQLBrowseView
    METHOD setFooter( lFooter )               INLINE ( ::lFooter := lFooter )
    METHOD getFooter()                        INLINE ( ::lFooter )
 
-   METHOD setChange( bChange )               INLINE ( ::bChange := bChange )
 
    // Type and name -----------------------------------------------------------
 
@@ -70,6 +69,7 @@ CLASS SQLBrowseView
 
    METHOD getBrowse()                        INLINE ( ::oBrowse )
 
+   METHOD setChange( bChange )               INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:bChange := bChange, ) )
    METHOD getState()                         INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:saveState(), ) )
    
    METHOD getBrowseSelected()                INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:aSelected, ) )

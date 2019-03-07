@@ -39,11 +39,13 @@ METHOD New( oController ) CLASS HistoryController
 
    ::cName                    := "historico"
 
-   ::hImage                   := {  "16" => "gc_user_message_16",;
-                                    "32" => "gc_user_message_32",;
-                                    "48" => "gc_user_message_48" }
+   ::hImage                   := {  "16" => "gc_bookmark_16",;
+                                    "32" => "gc_bookmark_32",;
+                                    "48" => "gc_bookmark_48" }
 
    ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
+
+   ::getBrowseView():setEvent( 'doubleClicking', {|| .f. } )
 
 RETURN ( Self )
 
@@ -133,6 +135,8 @@ METHOD gettingSelectSentence()
       ::getModel():setGeneralWhere( "documento_uuid = " + quoted( uuid ) )
    end if 
 
+   ::getModel():setOrderBy( "fecha_hora" )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -161,17 +165,9 @@ METHOD addColumns() CLASS HistoryBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'usuario_codigo'
-      :cHeader             := 'Código usuario'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'usuario_codigo' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'usuario_nombre'
-      :cHeader             := 'Nombre usuario'
-      :nWidth              := 150
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'usuario_nombre' ) }
+      :cHeader             := 'Usuario'
+      :nWidth              := 250
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'usuario_codigo' ) + " " + ::getRowSet():fieldGet( 'usuario_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -204,8 +200,14 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 CLASS HistoryView FROM SQLBaseView
+
+   DATA oDetalle
+
+   DATA cDetalle INIT ""
   
    METHOD Activate()
+
+   METHOD startActivate()
 
 END CLASS
 
@@ -225,17 +227,34 @@ METHOD Activate() CLASS HistoryView
 
    ::oController:Activate( 100, ::oDialog )
 
+   ::oController:getBrowseView():setChange( {|| ::startActivate() } )
+
+   REDEFINE GET   ::oDetalle ;
+      VAR         ::cDetalle ;
+      MEMO ;
+      WHEN        .f. ;
+      ID          110 ; 
+      OF          ::oDialog
+
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    if ::oController:isNotZoomMode() 
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
    end if
 
+   ::oDialog:bStart     := {|| ::startActivate(), ::paintedActivate() }
+
    ACTIVATE DIALOG ::oDialog CENTER
 
-   ::oBitmap:end()
-
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD startActivate()
+
+   ::oDetalle:setText( ::oController:getFieldFromRowSet( "detalle" ) )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
