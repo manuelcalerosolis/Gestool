@@ -16,6 +16,10 @@ CLASS SQLObservableModel FROM SQLCompanyModel
 
    METHOD updateInsertedBuffer( hBuffer, nId )
 
+   METHOD loadCurrentBuffer( id )
+
+   METHOD updateBuffer( hBuffer )
+
    METHOD getBufferChanged()
       METHOD getBufferLine( cKey, uValue )
       METHOD getBufferRelation( hBuffer, cKey )
@@ -41,6 +45,26 @@ METHOD updateInsertedBuffer( hBuffer, nId )
 
    ::hFinalBuffer    := hClone( ::hBuffer )
    
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadCurrentBuffer( id )                
+
+   ::Super():loadCurrentBuffer( id )
+   
+   ::hInitialBuffer  := hClone( ::hBuffer )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateBuffer( hBuffer )
+
+   ::Super:updateBuffer()
+
+   ::hFinalBuffer := hClone( ::hBuffer )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

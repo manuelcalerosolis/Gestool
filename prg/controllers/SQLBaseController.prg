@@ -223,6 +223,8 @@ CLASS SQLBaseController
 
    // Historicos---------------------------------------------------------------
    
+   METHOD updateHistory()              INLINE ( ::createHistory( 'update' ) )
+
    METHOD insertHistory()              INLINE ( ::createHistory( 'insert' ) )
    METHOD createHistory( cOperation )  INLINE ( ::getHistoryController():insertHistory( ::getModel():getBufferChanged(), cOperation ) )
 
@@ -618,6 +620,8 @@ METHOD Edit( nId )
       ::refreshBrowseView()
 
       ::fireEvent( 'edited' )
+
+      ::updateHistory()
 
    else
 

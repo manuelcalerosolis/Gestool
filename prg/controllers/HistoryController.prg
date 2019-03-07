@@ -105,7 +105,11 @@ METHOD getDetails( aChanges ) CLASS HistoryController
 
       if hhaskey( hChange, "text" ) .and. !empty( hget( hChange, "text" ) )
 
-         cDetails    += alltrim( hget( hChange, "text" ) ) + " : " + alltrim( hb_valtostr( hget( hChange, "old" ) ) ) + " "
+         cDetails    += alltrim( hget( hChange, "text" ) ) + " : " 
+
+         if !empty( alltrim( hb_valtostr( hget( hChange, "old" ) ) ) )
+            cDetails += alltrim( hb_valtostr( hget( hChange, "old" ) ) ) + " "
+         end if 
        
          if hhaskey( hChange, "relation_old" ) .and. !empty( hget( hChange, "relation_old" ) )
             cDetails += alltrim( hb_valtostr( hget( hChange, "relation_old" ) ) )
@@ -209,6 +213,8 @@ CLASS HistoryView FROM SQLBaseView
 
    METHOD startActivate()
 
+   METHOD updateDetalle()     INLINE ( ::oDetalle:setText( ::oController:getFieldFromRowSet( "detalle" ) ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -217,7 +223,7 @@ METHOD Activate() CLASS HistoryView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "HISTORY_MEDIUM" ;
-      TITLE       ::LblTitle() + "historial"
+      TITLE       ::LblTitle() + "Historial"
 
    REDEFINE BITMAP ::oBitmap ; 
       ID          900 ;
@@ -227,7 +233,7 @@ METHOD Activate() CLASS HistoryView
 
    ::oController:Activate( 100, ::oDialog )
 
-   ::oController:getBrowseView():setChange( {|| ::startActivate() } )
+   ::oController:getBrowseView():setChange( {|| ::updateDetalle() } )
 
    REDEFINE GET   ::oDetalle ;
       VAR         ::cDetalle ;
@@ -252,10 +258,11 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startActivate()
 
-   ::oDetalle:setText( ::oController:getFieldFromRowSet( "detalle" ) )
+   ::updateDetalle()
 
 RETURN ( nil )
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
