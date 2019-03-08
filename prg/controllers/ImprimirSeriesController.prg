@@ -7,6 +7,8 @@ CLASS ImprimirSeriesController FROM SQLPrintController
 
    DATA oReport
 
+   DATA oHistoryController
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -56,6 +58,8 @@ CLASS ImprimirSeriesController FROM SQLPrintController
 
    METHOD destroyReport()
 
+   METHOD getHistoryController()       INLINE ( if( empty( ::oHistoryController ), ::oHistoryController := HistoryController():New( self ), ), ::oHistoryController )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -73,6 +77,10 @@ METHOD End() CLASS ImprimirSeriesController
    if !empty( ::oDialogView )
       ::oDialogView:End()
    end if 
+
+   if !empty( ::oHistoryController )
+      ::oHistoryController:End()
+   end if
 
    ::Super:End()
 
@@ -186,6 +194,8 @@ METHOD showDocument( nDevice, cFileName, nCopies, cPrinter ) CLASS ImprimirSerie
       ::loadReportAndShow()
 
       ::freeRowSet()
+
+      ::getHistoryController:getModel():insertOthersHistory( uuidIdentifier, 'print' )
 
       oWaitMeter:autoInc()
 

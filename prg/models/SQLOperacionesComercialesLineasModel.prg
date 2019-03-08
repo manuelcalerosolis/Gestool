@@ -174,6 +174,8 @@ METHOD getHashWhereUuid( uuidOrigen ) CLASS SQLOperacionesComercialesLineasModel
 
    local cSql
 
+   msgalert( uuidOrigen, "getHAShwhereuuid" )
+
    TEXT INTO cSql
 
       SELECT 
@@ -184,7 +186,7 @@ METHOD getHashWhereUuid( uuidOrigen ) CLASS SQLOperacionesComercialesLineasModel
        
    ENDTEXT
 
-   cSql  := hb_strformat(  cSql, ::getTableName(), quoted( uuidOrigen ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidOrigen ) )
 
 RETURN ( getSQLDatabase():selectTrimedFetchHash( cSql ) ) 
 

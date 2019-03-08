@@ -25,6 +25,8 @@ CLASS SQLOperacionesComercialesModel FROM SQLObservableModel /*SQLCompanyModel*/
 
    METHOD getHashWhereUuidAndOrder( cWhere )
 
+   METHOD isCanceledWhereUuid( uuid )
+
 #ifdef __TEST__
 
    METHOD test_create_factura( uuid )
@@ -352,6 +354,29 @@ METHOD getHashWhereUuidAndOrder( cWhere ) CLASS SQLOperacionesComercialesModel
    cSql  := hb_strformat(  cSql, ::getTableName(), cWhere )
 
 RETURN ( getSQLDatabase():selectFetchHash( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+Method isCanceledWhereUuid( uuid ) CLASS SQLOperacionesComercialesModel
+   
+   local cSql
+
+   TEXT INTO cSql
+
+      SELECT COUNT(*)  
+         
+         FROM %1$s
+
+         WHERE uuid = %2$s
+
+         AND canceled_at <> 0 
+       
+   ENDTEXT
+
+   cSql  := hb_strformat(  cSql, ::getTableName(), quoted( uuid ) )
+
+RETURN ( getSQLDatabase():getValue( cSQL , 0 ) )
+
 
 //---------------------------------------------------------------------------//
 

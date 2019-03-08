@@ -12,15 +12,17 @@ CLASS SQLObservableModel FROM SQLCompanyModel
    DATA hFinalBuffer
    DATA hInitialBuffer  
 
-   DATA nInitialAmount INIT 0
+   DATA nInitialAmount INIT 0.00
    DATA nFinalAmount
+
+   METHOD setLogic( uValue )
 
    METHOD storeInitialBuffer()         INLINE ( ::hInitialBuffer := hClone( ::hBuffer ) )
    METHOD storeFinalBuffer()           INLINE ( ::hFinalBuffer := hClone( ::hBuffer ) )
 
-   METHOD storeInitialAmount()         INLINE ( ::nInitialAmount := ::oController:getRepository():selectTotalSummaryWhereUuid( ::oController:getModelBuffer("uuid") ) )
+   METHOD storeInitialAmount()         INLINE ( ::nInitialAmount := ROUND( ::oController:getRepository():getTotalDocument( ::oController:getModelBuffer("uuid") ), 2 ) )
 
-   METHOD storeFinalAmount()           INLINE ( ::nFinalAmount := ::oController:getRepository():selectTotalSummaryWhereUuid( ::oController:getModelBuffer("uuid") ) )
+   METHOD storeFinalAmount()           INLINE ( ::nFinalAmount := ROUND( ::oController:getRepository():getTotalDocument( ::oController:getModelBuffer("uuid") ), 2 ) )
 
    METHOD insertBuffer( hBuffer, lIgnore )
 
@@ -31,10 +33,13 @@ CLASS SQLObservableModel FROM SQLCompanyModel
 
    METHOD updateBuffer( hBuffer )
 
+   METHOD loadDuplicateBuffer( id, hFields ) 
+
    METHOD getBufferChanged()
       METHOD getBufferLine( cKey, uValue )
       METHOD getBufferRelation( hBuffer, cKey )
       METHOD getBufferText( cKey )
+      METHOD getAmountChanged()
 
 END CLASS
 
@@ -44,7 +49,14 @@ METHOD insertBuffer( hBuffer, lIgnore )
 
    local nId         := ::Super():insertBuffer( hBuffer, lIgnore )
 
-   ::storeInitialBuffer()
+   if ::oController:isAppendMode()
+      ::storeInitialBuffer()
+   end if
+
+   if ::oController:isDuplicateMode()
+      ::storeFinalBuffer()
+      ::storeFinalAmount()
+   end if 
 
 RETURN ( nId )
 
@@ -54,7 +66,9 @@ METHOD loadCurrentBuffer( id )
 
    ::Super():loadCurrentBuffer( id )
    
-   ::hInitialBuffer  := hClone( ::hBuffer )
+   ::storeInitialBuffer()
+
+   ::storeInitialAmount()
 
 RETURN ( nil )
 
@@ -72,18 +86,26 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD loadDuplicateBuffer( id, hFields ) 
+
+   ::Super:loadDuplicateBuffer(id, hFields)
+
+   ::storeInitialBuffer()
+
+   ::storeInitialAmount()
+   
+RETURN ( ::hBuffer )
+
+//---------------------------------------------------------------------------//
+
 METHOD getBufferChanged()
 
    ::aChanges     := {}
 
    heval( ::hInitialBuffer,;
       {|k,v| if( v != hget( ::hFinalBuffer, k ), ::getBufferLine( k, v ), ) } )
-
-   aadd( ::aChanges, { "importe" => {  "old" => ::nInitialAmount,;
-                                       "new" => ::nFinalAmount,;
-                                       "relation_old" => "",;
-                                       "relation_new" => "",;
-                                       "text" => "importe" } })
+ 
+   ::getAmountChanged()
 
 RETURN ( ::aChanges )
 
@@ -91,9 +113,13 @@ RETURN ( ::aChanges )
 
 METHOD getBufferLine( cKey, uValue )
 
+   if cKey == "updated_at"
+      RETURN ( nil )
+   end if
+
    aadd( ::aChanges,;
-      { cKey => { "old"          => uValue,;
-                  "new"          => hget( ::hFinalBuffer, cKey ),;
+      { cKey => { "old"          => ::setLogic( alltrim( hb_valtostr( uValue ) ) ),;
+                  "new"          => ::setLogic( alltrim( hb_valtostr( hget( ::hFinalBuffer, cKey ) ) ) ) ,;
                   "relation_old" => ::getBufferRelation( ::hInitialBuffer, cKey ),;
                   "relation_new" => ::getBufferRelation( ::hFinalBuffer, cKey ),;
                   "text"         => ::getBufferText( cKey ) } } )
@@ -123,6 +149,33 @@ METHOD getBufferText( cKey )
    end if
 
 RETURN ( cText )
+
+//---------------------------------------------------------------------------//
+
+METHOD getAmountChanged()
+
+   if ::nInitialAmount != ::nFinalAmount
+
+      aadd( ::aChanges, { "importe" => {  "old" => ::nInitialAmount,;
+                                          "new" => ::nFinalAmount,;
+                                          "text" => "Importe" } })
+   end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD setLogic( uValue )
+
+   if uValue == ".F."
+      RETURN( "inactivo" )
+   end if
+
+   if uValue == ".T."
+      RETURN ("activo")
+   end if 
+
+RETURN( uValue )
 
 //---------------------------------------------------------------------------//
 

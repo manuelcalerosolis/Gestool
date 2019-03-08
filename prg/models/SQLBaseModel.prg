@@ -289,7 +289,7 @@ CLASS SQLBaseModel
    METHOD loadCurrentBuffer()
    METHOD defaultCurrentBuffer()
 
-   METHOD insertBlankBuffer( hBuffer ) INLINE ( ::loadBlankBuffer( hBuffer ), ::insertBuffer( hBuffer ) ) 
+   METHOD insertBlankBuffer( hBuffer ) INLINE ( ::loadBlankBuffer( hBuffer ), ::insertBuffer() ) 
    
    METHOD insertIgnoreBlankBuffer( hBuffer ) ;
                                        INLINE ( ::loadBlankBuffer( hBuffer ), ::insertIgnoreBuffer() ) 
@@ -1018,6 +1018,7 @@ METHOD getInsertSentence( hBuffer, lIgnore )
 
    ::fireEvent( 'gotInsertSentence' ) 
 
+   logwrite( ::cSQLInsert)
 RETURN ( ::cSQLInsert )
 
 //---------------------------------------------------------------------------//
@@ -1430,6 +1431,7 @@ METHOD loadBlankBuffer( hBuffer )
    end if 
 
    ::fireEvent( 'loadedBuffer' )
+
 
 RETURN ( ::hBuffer )
 
