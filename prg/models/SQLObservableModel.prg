@@ -158,8 +158,6 @@ METHOD getAmountChanged()
 
       aadd( ::aChanges, { "importe" => {  "old" => ::nInitialAmount,;
                                           "new" => ::nFinalAmount,;
-                                          "relation_old" => "",;
-                                          "relation_new" => "",;
                                           "text" => "Importe" } })
    end if
 

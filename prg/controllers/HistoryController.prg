@@ -169,8 +169,11 @@ RETURN ( .t. )
 CLASS HistoryBrowseView FROM SQLBrowseView
 
    DATA hText                          INIT  {  'insert'    => 'Creación',;
-                                                'update'    => 'Modificación' }
-
+                                                'update'    => 'Modificación',;
+                                                'canceled'  => 'Cancelado' ,;
+                                                'print'     => 'Impresión',;
+                                                'convert'   => 'Conversión'}
+ 
    METHOD addColumns()         
 
    METHOD getOperacion( cOperation )   INLINE ( hget( ::hText, cOperation ) )
@@ -295,6 +298,10 @@ CLASS SQLHistoryModel FROM SQLCompanyModel
 
    METHOD insertCanceledHistory()
 
+   METHOD insertOthersHistory( uuid, cOperation )
+
+   METHOD insertConvertHistory( uuid, cDestino )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -347,10 +354,29 @@ METHOD insertCanceledHistory() CLASS SQLHistoryModel
 
       if !::oController:isCanceled( uuid )
          ::insertBuffer( ::loadBlankBuffer( {   "documento_uuid" => uuid ,;
-                                                "operacion" => "Cancelado" } ) )
+                                                "operacion" => "canceled" } ) )
       end if 
 
    next
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertOthersHistory( uuid, cOperation )
+
+      ::insertBuffer( ::loadBlankBuffer( {   "documento_uuid" => uuid ,;
+                                             "operacion" => cOperation } ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertConvertHistory( uuid, cDestino )
+
+::insertBuffer( ::loadBlankBuffer( {   "documento_uuid" => uuid ,;
+                                       "operacion" => 'convert' ,;
+                                       "detalle"   => 'Conversion a ' + cDestino } ) )
 
 RETURN ( nil )
 

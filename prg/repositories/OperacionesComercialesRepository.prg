@@ -125,15 +125,7 @@ RETURN ( "DROP FUNCTION IF EXISTS " + Company():getTableName( ::getPackage( 'Tot
 
 METHOD selectTotalSummaryWhereUuid( uuidOperacionComercial ) CLASS OperacionesComercialesRepository
 
-logwrite( "llamada a totalsummary" )
-
-logwrite( "SELECT " + Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ) + "( " + notEscapedQuoted( uuidOperacionComercial ) + " )" )
-
 RETURN ( getSQLDatabase():Query( "SELECT " + Company():getTableName( ::getPackage( 'TotalSummaryWhereUuid' ) ) + "( " + notEscapedQuoted( uuidOperacionComercial ) + " )" ) )
-
-//---------------------------------------------------------------------------//
-
-
 
 //---------------------------------------------------------------------------//
 

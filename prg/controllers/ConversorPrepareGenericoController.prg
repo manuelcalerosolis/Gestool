@@ -108,6 +108,8 @@ METHOD Run( uuidOrigen ) CLASS ConversorPrepareGenericoController
 
       ::oConversorDocumentosController():convert( ::uuidOrigen )
 
+      ::getHistoryController():getModel():insertConvertHistory( ::uuidOrigen, ::getConversorView():cDocumentoDestino )
+
    end if
 
 RETURN ( nil )
