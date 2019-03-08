@@ -17,6 +17,8 @@ CLASS HistoryController FROM SQLNavigatorController
 
    METHOD gettingSelectSentence()
 
+   METHOD isCanceled( uuid )
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getBrowseView()                 INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := HistoryBrowseView():New( self ), ), ::oBrowseView ) 
@@ -74,8 +76,12 @@ RETURN ( ::Super:End() )
 //---------------------------------------------------------------------------//
 
 METHOD insertHistory( aChanges, cOperation )
+   
+   if !empty( aChanges )
+      ::getModel():insertHistory( ::getHistory( aChanges, cOperation ) )
+   end if
 
-RETURN ( ::getModel():insertHistory( ::getHistory( aChanges, cOperation ) ) )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -144,6 +150,16 @@ METHOD gettingSelectSentence()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD isCanceled( uuid ) 
+
+   if ::oController:getModel():isCanceledWhereUuid( uuid ) = 0
+      RETURN ( .f. )
+   end if
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -152,8 +168,8 @@ RETURN ( nil )
 
 CLASS HistoryBrowseView FROM SQLBrowseView
 
-   DATA hText                          INIT  {  'insert' => 'Creación',;
-                                                'update' => 'Modificación' }
+   DATA hText                          INIT  {  'insert'    => 'Creación',;
+                                                'update'    => 'Modificación' }
 
    METHOD addColumns()         
 
@@ -271,13 +287,13 @@ CLASS SQLHistoryModel FROM SQLCompanyModel
 
    DATA cTableName                  INIT "historial"
 
-   //DATA cConstraints                INIT "PRIMARY KEY ( codigo, deleted_at )"
-
    METHOD getColumns()
 
    METHOD insertHistory( hHistory )
 
    METHOD getInitialSelect()
+
+   METHOD insertCanceledHistory()
 
 END CLASS
 
@@ -318,6 +334,25 @@ METHOD insertHistory( hHistory ) CLASS SQLHistoryModel
 
 
 RETURN( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertCanceledHistory() CLASS SQLHistoryModel
+
+   local uuid
+   local uuids := ::oController:oController:getUuids
+
+
+   for each uuid in uuids
+
+      if !::oController:isCanceled( uuid )
+         ::insertBuffer( ::loadBlankBuffer( {   "documento_uuid" => uuid ,;
+                                                "operacion" => "Cancelado" } ) )
+      end if 
+
+   next
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

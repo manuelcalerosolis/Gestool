@@ -226,6 +226,9 @@ CLASS SQLBaseController
    METHOD updateHistory()              INLINE ( ::createHistory( 'update' ) )
 
    METHOD insertHistory()              INLINE ( ::createHistory( 'insert' ) )
+
+   METHOD canceledHistory()           INLINE ( ::getHistoryController():getModel():insertCanceledHistory() )
+
    METHOD createHistory( cOperation )  INLINE ( ::getHistoryController():insertHistory( ::getModel():getBufferChanged(), cOperation ) )
 
 
@@ -324,7 +327,7 @@ RETURN ( hb_gcall( .t. ) )
 
 METHOD insertOrUpdateBuffer()
 
-   if empty( ::nId )
+   if !empty( ::nId )
       ::nId          := ::getModel():insertBuffer()
    else
       ::getModel():updateBuffer()
@@ -531,13 +534,15 @@ METHOD Duplicate( nId )
 
       ::insertOrUpdateBuffer()
 
-      ::insertIncidence()
+      //::insertIncidence()
 
       ::commitTransactionalMode()
 
       ::refreshRowSetAndFindId()
 
       ::fireEvent( 'duplicated' )
+
+      ::insertHistory()
 
       ::refreshBrowseView()
 
@@ -811,6 +816,8 @@ METHOD Cancel( aSelectedRecno )
    if SQLAjustableGestoolModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. msgNoYes( "�Desea cancelar " + cNumbers, "Confirme eliminaci�n" )
 
       ::fireEvent( 'cancelingSelection' )
+
+      ::canceledHistory()
 
       ::getModel():cancelSelection( ::getIdFromRecno( aSelectedRecno ), ::getUuidFromRecno( aSelectedRecno ) )
 
