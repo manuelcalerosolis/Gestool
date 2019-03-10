@@ -25,10 +25,10 @@ METHOD addColumns() CLASS OperacionesComercialesBaseBrowseView
    ::addExtraColumn() 
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := "numero"
+      :cSortOrder          := "serie_numero"
       :cHeader             := "Número"
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( "numero" ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "serie_numero" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 

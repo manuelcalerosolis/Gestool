@@ -135,7 +135,7 @@ METHOD getColumnsSelect() CLASS SQLOperacionesComercialesModel
    TEXT INTO cColumns
       %1$s.id AS id,
       %1$s.uuid AS uuid,
-      CONCAT( %1$s.serie, '-', %1$s.numero ) AS numero,
+      CONCAT( %1$s.serie, '-', %1$s.numero ) AS serie_numero,
       %1$s.fecha AS fecha,
       %1$s.fecha_valor_stock AS fecha_valor_stock,
       %1$s.delegacion_uuid AS delegacion_uuid,
