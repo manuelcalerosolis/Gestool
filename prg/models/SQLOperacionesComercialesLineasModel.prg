@@ -174,8 +174,6 @@ METHOD getHashWhereUuid( uuidOrigen ) CLASS SQLOperacionesComercialesLineasModel
 
    local cSql
 
-   msgalert( uuidOrigen, "getHAShwhereuuid" )
-
    TEXT INTO cSql
 
       SELECT 

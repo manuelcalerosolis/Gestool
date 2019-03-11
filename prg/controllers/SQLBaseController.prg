@@ -227,7 +227,7 @@ CLASS SQLBaseController
 
    METHOD insertHistory()              INLINE ( ::createHistory( 'insert' ) )
 
-   METHOD canceledHistory()           INLINE ( ::getHistoryController():getModel():insertCanceledHistory() )
+   METHOD canceledHistory()           INLINE ( ::getHistoryController():getModel():insertCanceled() )
 
    METHOD createHistory( cOperation )  INLINE ( ::getHistoryController():insertHistory( ::getModel():getBufferChanged(), cOperation ) )
 

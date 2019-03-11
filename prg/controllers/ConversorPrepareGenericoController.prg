@@ -6,6 +6,8 @@
 CLASS ConversorPrepareGenericoController FROM ConversorPrepareController
 
    DATA uuidOrigen
+
+   DATA uuidDestino
    
    METHOD New()
 
@@ -106,9 +108,7 @@ METHOD Run( uuidOrigen ) CLASS ConversorPrepareGenericoController
 
    if !empty( ::oDestinoController )
 
-      ::oConversorDocumentosController():convert( ::uuidOrigen )
-
-      ::getHistoryController():getModel():insertConvertHistory( ::uuidOrigen, ::getConversorView():cDocumentoDestino )
+      ::uuidDestino := ::oConversorDocumentosController():convert( ::uuidOrigen )
 
    end if
 

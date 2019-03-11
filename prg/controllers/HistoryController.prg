@@ -75,7 +75,7 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertHistory( aChanges, cOperation )
+METHOD insertHistory( aChanges, cOperation ) CLASS HistoryController
    
    if !empty( aChanges )
       ::getModel():insertHistory( ::getHistory( aChanges, cOperation ) )
@@ -137,7 +137,7 @@ RETURN ( cDetails )
 
 //---------------------------------------------------------------------------//
 
-METHOD gettingSelectSentence()
+METHOD gettingSelectSentence() CLASS HistoryController
 
    local uuid        := ::getController():getModelBuffer( "uuid" )
 
@@ -151,7 +151,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD isCanceled( uuid ) 
+METHOD isCanceled( uuid ) CLASS HistoryController
 
    if ::oController:getModel():isCanceledWhereUuid( uuid ) = 0
       RETURN ( .f. )
@@ -296,11 +296,13 @@ CLASS SQLHistoryModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
-   METHOD insertCanceledHistory()
+   METHOD insertCanceled()
 
-   METHOD insertOthersHistory( uuid, cOperation )
+   METHOD insertOthers( uuid, cOperation )
 
-   METHOD insertConvertHistory( uuid, cDestino )
+   METHOD insertConvert( uuid, cDestino )
+
+   METHOD insertConvertDestino( UuidDestino )
 
 END CLASS
 
@@ -344,7 +346,7 @@ RETURN( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertCanceledHistory() CLASS SQLHistoryModel
+METHOD insertCanceled() CLASS SQLHistoryModel
 
    local uuid
    local uuids := ::oController:oController:getUuids
@@ -363,7 +365,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertOthersHistory( uuid, cOperation )
+METHOD insertOthers( uuid, cOperation ) CLASS SQLHistoryModel
 
       ::insertBuffer( ::loadBlankBuffer( {   "documento_uuid" => uuid ,;
                                              "operacion" => cOperation } ) )
@@ -372,11 +374,25 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertConvertHistory( uuid, cDestino )
+METHOD insertConvert( uuid, cDestino ) CLASS SQLHistoryModel
 
 ::insertBuffer( ::loadBlankBuffer( {   "documento_uuid" => uuid ,;
                                        "operacion" => 'convert' ,;
                                        "detalle"   => 'Conversion a ' + cDestino } ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertConvertDestino( UuidDestino ) CLASS SQLHistoryModel
+
+   local hHash := {=>}
+
+   hset( hHash, "documento_uuid", UuidDestino )
+
+   hset( hHash, "operacion", 'insert' )
+
+   ::insertHistory( hHash )
 
 RETURN ( nil )
 

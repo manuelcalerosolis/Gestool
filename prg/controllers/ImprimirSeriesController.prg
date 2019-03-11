@@ -195,7 +195,7 @@ METHOD showDocument( nDevice, cFileName, nCopies, cPrinter ) CLASS ImprimirSerie
 
       ::freeRowSet()
 
-      ::getHistoryController:getModel():insertOthersHistory( uuidIdentifier, 'print' )
+      ::getHistoryController:getModel():insertOthers( uuidIdentifier, 'print' )
 
       oWaitMeter:autoInc()
 

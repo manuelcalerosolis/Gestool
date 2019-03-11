@@ -80,6 +80,10 @@ METHOD convertDocumentHeader() CLASS ConversorDocumentosController
                                         ::getDestinoController:getModelBuffer( "uuid" ),;
                                         ::getDestinoController():getModel():cTableName )
 
+   ::getHistoryController():getModel():insertConvert( ::uuidDocumentoOrigen, ::oController():getConversorView():cDocumentoDestino )
+      
+   ::getHistoryController():getModel():insertConvertDestino( ::getDestinoController:getModelBuffer( "uuid" ) )
+
 RETURN ( ::getDestinoController:getModelBuffer( "uuid" ) )
 
 //---------------------------------------------------------------------------//
