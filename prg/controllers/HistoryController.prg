@@ -145,19 +145,13 @@ METHOD gettingSelectSentence() CLASS HistoryController
       ::getModel():setGeneralWhere( "documento_uuid = " + quoted( uuid ) )
    end if 
 
-   ::getModel():setOrderBy( "fecha_hora" )
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD isCanceled( uuid ) CLASS HistoryController
 
-   if ::oController:getModel():isCanceledWhereUuid( uuid ) = 0
-      RETURN ( .f. )
-   end if
-
-RETURN ( .t. )
+RETURN ( ::oController:getModel():isCanceledWhereUuid( uuid ) != 0 )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -170,7 +164,7 @@ CLASS HistoryBrowseView FROM SQLBrowseView
 
    DATA hText                          INIT  {  'insert'    => 'Creación',;
                                                 'update'    => 'Modificación',;
-                                                'canceled'  => 'Cancelado' ,;
+                                                'canceled'  => 'Cancelación',;
                                                 'print'     => 'Impresión',;
                                                 'convert'   => 'Conversión'}
  
@@ -232,7 +226,7 @@ CLASS HistoryView FROM SQLBaseView
 
    METHOD startActivate()
 
-   METHOD updateDetalle()     INLINE ( ::oDetalle:setText( ::oController:getFieldFromRowSet( "detalle" ) ) )
+   METHOD updateDetalle()              INLINE ( ::oDetalle:setText( ::oController:getFieldFromRowSet( "detalle" ) ) )
 
 END CLASS
 
@@ -242,7 +236,7 @@ METHOD Activate() CLASS HistoryView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "HISTORY_MEDIUM" ;
-      TITLE       ::LblTitle() + "Historial"
+      TITLE       "Historial"
 
    REDEFINE BITMAP ::oBitmap ; 
       ID          900 ;
@@ -260,10 +254,6 @@ METHOD Activate() CLASS HistoryView
       OF          ::oDialog
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
-
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
-   end if
 
    ::oDialog:bStart     := {|| ::startActivate(), ::paintedActivate() }
 
@@ -288,7 +278,7 @@ RETURN ( nil )
 
 CLASS SQLHistoryModel FROM SQLCompanyModel
 
-   DATA cTableName                  INIT "historial"
+   DATA cTableName                     INIT "historial"
 
    METHOD getColumns()
 
@@ -313,23 +303,23 @@ METHOD getColumns() CLASS SQLHistoryModel
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"          ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "documento_uuid",    {  "create"    => "VARCHAR ( 40 ) NOT NULL"                  ,;
+   hset( ::hColumns, "documento_uuid",    {  "create"    => "VARCHAR ( 40 ) NOT NULL"                 ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "operacion",         {  "create"    => "VARCHAR ( 200 ) NOT NULL"                  ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "operacion",         {  "create"    => "VARCHAR ( 200 ) NOT NULL"                ,;
+                                             "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "detalle",           {  "create"    => "TEXT NOT NULL"                  ,;
+   hset( ::hColumns, "detalle",           {  "create"    => "TEXT NOT NULL"                           ,;
                                              "default"   => {|| space( 250 ) } }                       )
 
-   hset( ::hColumns, "fecha_hora",        {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
-                                             "default"   => {|| hb_datetime() } }         ) 
+   hset( ::hColumns, "fecha_hora",        {  "create"    => "TIMESTAMP NULL DEFAULT NULL"             ,;
+                                             "default"   => {|| hb_datetime() } }                     ) 
 
-   hset( ::hColumns, "usuario_codigo",    {  "create"    => "VARCHAR ( 200 ) NOT NULL"   ,;
-                                             "default"   => {|| Auth():codigo }                         }  )
+   hset( ::hColumns, "usuario_codigo",    {  "create"    => "VARCHAR ( 200 ) NOT NULL"                ,;
+                                             "default"   => {|| Auth():codigo } }                     )
 
 RETURN ( ::hColumns )
 
@@ -337,26 +327,19 @@ RETURN ( ::hColumns )
 
 METHOD insertHistory( hHistory ) CLASS SQLHistoryModel
 
-   local hBuffer := ::loadBlankBuffer( hHistory ) 
-
-   ::insertBuffer( hBuffer )
-
-
-RETURN( nil )
+RETURN ( ::insertBuffer( ::loadBlankBuffer( hHistory ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD insertCanceled() CLASS SQLHistoryModel
 
    local uuid
-   local uuids := ::oController:oController:getUuids
-
+   local uuids    := ::oController:oController:getUuids()
 
    for each uuid in uuids
 
-      if !::oController:isCanceled( uuid )
-         ::insertBuffer( ::loadBlankBuffer( {   "documento_uuid" => uuid ,;
-                                                "operacion" => "canceled" } ) )
+      if !( ::oController:isCanceled( uuid ) )
+         ::insertBuffer( ::loadBlankBuffer( { "documento_uuid" => uuid, "operacion" => "canceled" } ) )
       end if 
 
    next
@@ -367,34 +350,23 @@ RETURN ( nil )
 
 METHOD insertOthers( uuid, cOperation ) CLASS SQLHistoryModel
 
-      ::insertBuffer( ::loadBlankBuffer( {   "documento_uuid" => uuid ,;
-                                             "operacion" => cOperation } ) )
-
-RETURN ( nil )
+RETURN ( ::insertBuffer( ::loadBlankBuffer( { "documento_uuid" => uuid, "operacion" => cOperation } ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD insertConvert( uuid, cDestino ) CLASS SQLHistoryModel
 
-::insertBuffer( ::loadBlankBuffer( {   "documento_uuid" => uuid ,;
-                                       "operacion" => 'convert' ,;
-                                       "detalle"   => 'Conversion a ' + cDestino } ) )
+   ::insertBuffer( ::loadBlankBuffer(  {  "documento_uuid" => uuid ,;
+                                          "operacion" => 'convert' ,;
+                                          "detalle"   => 'Conversion a ' + cDestino } ) )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertConvertDestino( UuidDestino ) CLASS SQLHistoryModel
+METHOD insertConvertDestino( uuidDestino ) CLASS SQLHistoryModel
 
-   local hHash := {=>}
-
-   hset( hHash, "documento_uuid", UuidDestino )
-
-   hset( hHash, "operacion", 'insert' )
-
-   ::insertHistory( hHash )
-
-RETURN ( nil )
+RETURN ( ::insertHistory( {  "documento_uuid" => uuidDestino, "operacion" => 'insert' } ) )
 
 //---------------------------------------------------------------------------//
 
@@ -404,19 +376,19 @@ METHOD getInitialSelect() CLASS SQLHistoryModel
 
    TEXT INTO cSql
 
-      SELECT historial.uuid AS uuid,
-            historial.id AS id,
-            historial.documento_uuid AS documento_uuid,
-            historial.operacion AS operacion,
-            historial.detalle AS detalle,
-            historial.fecha_hora AS fecha_hora,
-            historial.usuario_codigo AS usuario_codigo,
-            usuarios.nombre AS usuario_nombre
+      SELECT 
+         historial.uuid AS uuid,
+         historial.id AS id,
+         historial.documento_uuid AS documento_uuid,
+         historial.operacion AS operacion,
+         historial.detalle AS detalle,
+         historial.fecha_hora AS fecha_hora,
+         historial.usuario_codigo AS usuario_codigo,
+         usuarios.nombre AS usuario_nombre
 
       FROM %1$s AS historial 
 
       INNER JOIN gestool.usuarios AS usuarios
-
          ON historial.usuario_codigo = usuarios.codigo
 
    ENDTEXT

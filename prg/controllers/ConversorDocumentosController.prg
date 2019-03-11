@@ -15,6 +15,8 @@ CLASS ConversorDocumentosController FROM ConversorGenericoController
 
    METHOD convertDocumentDiscounts()
 
+   METHOD insertConvertHistory()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -56,10 +58,11 @@ METHOD convertDocument() CLASS ConversorDocumentosController
 
    ::uuidDocumentoDestino              := ::convertDocumentHeader()
 
+   ::insertConvertHistory()
+
    ::convertDocumentLines()
 
    ::convertDocumentDiscounts()
-   
 
 RETURN ( nil )
 
@@ -75,14 +78,10 @@ METHOD convertDocumentHeader() CLASS ConversorDocumentosController
       RETURN ( nil )
    end if 
 
-   ::getModel():insertRelationDocument( ::uuidDocumentoOrigen,;
-                                        ::getOrigenController():getModel():cTableName,;
-                                        ::getDestinoController:getModelBuffer( "uuid" ),;
-                                        ::getDestinoController():getModel():cTableName )
-
-   ::getHistoryController():getModel():insertConvert( ::uuidDocumentoOrigen, ::oController():getConversorView():cDocumentoDestino )
-      
-   ::getHistoryController():getModel():insertConvertDestino( ::getDestinoController:getModelBuffer( "uuid" ) )
+   ::getModel():insertRelationDocument(   ::uuidDocumentoOrigen,;
+                                          ::getOrigenController():getModel():cTableName,;
+                                          ::getDestinoController:getModelBuffer( "uuid" ),;
+                                          ::getDestinoController():getModel():cTableName )
 
 RETURN ( ::getDestinoController:getModelBuffer( "uuid" ) )
 
@@ -91,8 +90,10 @@ RETURN ( ::getDestinoController:getModelBuffer( "uuid" ) )
 METHOD convertDocumentLines() CLASS ConversorDocumentosController
 
    local hLine
-   local uuidLineaOrigen
-   local aLines   := ::getOrigenController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
+   local aLines   
+   local uuidLinea
+
+   aLines         := ::getOrigenController():getLinesController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
 
    if empty( aLines )
       RETURN ( nil )
@@ -100,7 +101,7 @@ METHOD convertDocumentLines() CLASS ConversorDocumentosController
 
    for each hLine in aLines
 
-      uuidLineaOrigen                  := hget( hLine, "uuid" )
+      uuidLinea   := hget( hLine, "uuid" )
 
       hDels( hLine, { "uuid", "id" } )
 
@@ -108,10 +109,10 @@ METHOD convertDocumentLines() CLASS ConversorDocumentosController
 
       ::getDestinoController():getLinesController():getModel():insertBlankBuffer( hLine )
 
-      ::getModel():insertRelationDocument( uuidLineaOrigen,;
-                                           ::getOrigenController:getLinesController:getModel():cTableName,;
-                                           ::getDestinoController:getLinesController():getModelBuffer( "uuid" ),;
-                                           ::getDestinoController():getLinesController():getModel():cTableName )  
+      ::getModel():insertRelationDocument(   uuidLinea,;
+                                             ::getOrigenController:getLinesController:getModel():cTableName,;
+                                             ::getDestinoController:getLinesController():getModelBuffer( "uuid" ),;
+                                             ::getDestinoController():getLinesController():getModel():cTableName )  
 
    next 
 
@@ -122,8 +123,10 @@ RETURN ( nil )
 METHOD convertDocumentDiscounts() CLASS ConversorDocumentosController
 
    local hDiscount
-   local uuidDiscountOrigen
-   local aDiscounts   := ::getOrigenController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
+   local aDiscounts
+   local uuidDiscount
+
+   aDiscounts        := ::getOrigenController():getDiscountController():getModel():getHashWhereUuid( ::uuidDocumentoOrigen )
 
    if empty( aDiscounts )
       RETURN ( nil )
@@ -131,7 +134,7 @@ METHOD convertDocumentDiscounts() CLASS ConversorDocumentosController
 
    for each hDiscount in aDiscounts
 
-      uuidDiscountOrigen                  := hget( hDiscount, "uuid" )
+      uuidDiscount   := hget( hDiscount, "uuid" )
 
       hDels( hDiscount, { "uuid", "id" } )
 
@@ -139,16 +142,25 @@ METHOD convertDocumentDiscounts() CLASS ConversorDocumentosController
 
       ::getDestinoController():getDiscountController():getModel():insertBlankBuffer( hDiscount )
 
-      ::getModel():insertRelationDocument( uuidDiscountOrigen,;
-                                           ::getOrigenController:getDiscountController:getModel():cTableName,;
-                                           ::getDestinoController():getDiscountController():getModelBuffer( "uuid" ),;
-                                           ::getDestinoController():getDiscountController():getModel():cTableName )
+      ::getModel():insertRelationDocument(   uuidDiscount,;
+                                             ::getOrigenController:getDiscountController:getModel():cTableName,;
+                                             ::getDestinoController():getDiscountController():getModelBuffer( "uuid" ),;
+                                             ::getDestinoController():getDiscountController():getModel():cTableName )
 
    next 
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD insertConvertHistory()
+
+   ::getHistoryController():getModel():insertConvert( ::uuidDocumentoOrigen, ::oController():getConversorView():cDocumentoDestino )
+      
+   ::getHistoryController():getModel():insertConvertDestino( ::getDestinoController:getModelBuffer( "uuid" ) )
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
