@@ -148,8 +148,9 @@ RETURN ( nil )
 
 METHOD Send() CLASS MailController
 
-   local cMail
    local uuid
+   local cMail
+   local isSended
 
    if empty( ::getMailSender() )
       RETURN ( nil )
@@ -167,13 +168,15 @@ METHOD Send() CLASS MailController
 
       ::generatePdf( uuid )
 
-      ::getMailSender():Send( ::getMailHash( uuid ) ) 
+      isSended := ::getMailSender():Send( ::getMailHash( uuid ) ) 
 
       sysRefresh()
 
       ::getEvents():fire( 'send' )
-
-      ::fireEvent( 'sender', self )
+      
+      if isSended
+         ::fireEvent( 'sender', self )
+      end if
       
    next
 
