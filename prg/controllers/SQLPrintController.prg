@@ -54,6 +54,12 @@ CLASS SQLPrintController
 
    METHOD getDialogView()              VIRTUAL
 
+   // Events-------------------------------------------------------------------
+
+   METHOD setEvents( aEvents, bEvent )
+   METHOD setEvent( cEvent, bEvent )   INLINE ( ::oEvents:set( cEvent, bEvent ) )
+   METHOD fireEvent( cEvent, uValue )  INLINE ( ::oEvents:fire( cEvent, uValue ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -125,3 +131,9 @@ METHOD deleteDocument( cFileDocument )
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD setEvents( aEvents, bEvent )
+
+RETURN ( aeval( aEvents, {|cEvent| ::setEvent( cEvent, bEvent ) } ) )
+
+//----------------------------------------------------------------------------//

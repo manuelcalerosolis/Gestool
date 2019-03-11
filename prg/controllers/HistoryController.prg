@@ -166,7 +166,9 @@ CLASS HistoryBrowseView FROM SQLBrowseView
                                                 'update'    => 'Modificación',;
                                                 'canceled'  => 'Cancelación',;
                                                 'print'     => 'Impresión',;
-                                                'convert'   => 'Conversión'}
+                                                'convert'   => 'Conversión',;
+                                                'preview'   => 'Previsualización',;
+                                                'pdf'       => 'Generación de PDF' }
  
    METHOD addColumns()         
 
@@ -354,19 +356,34 @@ RETURN ( ::insertBuffer( ::loadBlankBuffer( { "documento_uuid" => uuid, "operaci
 
 //---------------------------------------------------------------------------//
 
-METHOD insertConvert( uuid, cDestino ) CLASS SQLHistoryModel
+METHOD insertConvert( uuidOrigen, cDestino, cSerie, nNumero ) CLASS SQLHistoryModel
 
-   ::insertBuffer( ::loadBlankBuffer(  {  "documento_uuid" => uuid ,;
-                                          "operacion" => 'convert' ,;
-                                          "detalle"   => 'Conversion a ' + cDestino } ) )
+   local cDetails
 
-RETURN ( nil )
+   cDetails := "Conversión a " + cDestino + " : " + alltrim( cSerie ) + "-" + alltrim( hb_valtostr( nNumero ) )
+
+RETURN ( ::insertBuffer( ::loadBlankBuffer(  {  "documento_uuid" => uuidOrigen ,;
+                                                "operacion" => 'convert' ,;
+                                                "detalle"   =>  cDetails } ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertConvertDestino( uuidDestino ) CLASS SQLHistoryModel
+METHOD insertConvertDestino( uuidDestino, uuidOrigen ) CLASS SQLHistoryModel
 
-RETURN ( ::insertHistory( {  "documento_uuid" => uuidDestino, "operacion" => 'insert' } ) )
+   local cTitle
+   local cSerie
+   local cNumero
+   local cDetails 
+
+   cTitle   :=    ::oController:oController:getOrigenController():cTitle 
+
+   cSerie   :=    ::oController:oController:getOrigenController():getModel():getField( "serie", "uuid", uuidOrigen ) 
+
+   cNumero  :=    hb_valtostr( ::oController:oController:getOrigenController():getModel():getField( "numero", "uuid", uuidOrigen ) ) 
+
+   cDetails := "Creación a través de " + alltrim( cTitle ) + " : " + alltrim( cSerie ) + "-" + alltrim( cNumero ) 
+
+RETURN ( ::insertHistory( {  "documento_uuid" => uuidDestino, "operacion" => 'insert', "detalle" => cDetails } ) )
 
 //---------------------------------------------------------------------------//
 
