@@ -99,6 +99,8 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD getActionText( nDevice ) 
 
+   METHOD insertEmailHistory( this )
+
    // Contrucciones tardias----------------------------------------------------
 
    METHOD getName()                    VIRTUAL
@@ -167,6 +169,8 @@ METHOD New( oController ) CLASS OperacionesComercialesController
    // ::setEvent( 'cancelEdited', {|| ::cancelEdited() } )
 
    ::getImprimirSeriesController():setEvent( 'afterPrint', {|this| ::insertPrintHistory( this ) } )
+
+   ::getMailController():setEvent( 'sender', {| this | ::insertEmailHistory( this ) } )
 
    ::getTercerosController():getSelector():setEvent( 'settedHelpText', {|| ::terceroSettedHelpText() } )
 
@@ -500,6 +504,14 @@ METHOD insertPrintHistory( this ) CLASS OperacionesComercialesController
 
    ::getHistoryController:getModel():insertOthers( this:uuidIdentifier, ::getActionText( this:getReport():getDevice() ) )
 
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertEmailHistory( this ) CLASS OperacionesComercialesController
+
+   ::getHistoryController:insertEmail( this:uuidIdentifier, this:getDialogView:cMail )
+   
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
