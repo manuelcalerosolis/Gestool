@@ -742,7 +742,7 @@ METHOD textOnPostEdit( o, uNewValue, nKey ) CLASS FiltrosView
 
       ::setFilterLineText( uNewValue )
 
-      ::changeFilterLine()
+      ::changeFilterLine( .t. )
 
    end if 
 
@@ -774,17 +774,21 @@ RETURN ( ::oBrwFilter:Refresh() )
 
 //---------------------------------------------------------------------------//
 
-METHOD changeFilterLine() CLASS FiltrosView
+METHOD changeFilterLine( lSetFilterValue ) CLASS FiltrosView
 
    local cType                   := ::oController:getStructureType( ::getFilterLineText() )
+
+   DEFAULT lSetFilterValue       := .f.
 
    if empty( cType )
       RETURN ( .t. )
    end if 
 
+   if lSetFilterValue
+      ::setFilterLineValue( ::getValueType( cType ) )
+   end if 
+
    ::oColCondicion:aEditListTxt  := ::getConditionsType( cType )
-   
-   ::setFilterLineValue( ::getValueType( cType ) )
 
    ::oColValue:nEditType         := ::getEditType( cType )
 
