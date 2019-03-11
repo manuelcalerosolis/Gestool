@@ -7,6 +7,8 @@ CLASS MailController
 
    DATA oController
 
+   DATA uuidIdentifier
+
    DATA oDialogView
 
    DATA oValidator
@@ -78,6 +80,12 @@ CLASS MailController
 
    METHOD saveToFile( cFile )          INLINE ( ::getDialogView():getRichEdit():saveToFile( cFile ) )
 
+   // Events-------------------------------------------------------------------
+
+   METHOD setEvents( aEvents, bEvent )
+   METHOD setEvent( cEvent, bEvent )   INLINE ( ::getEvents():set( cEvent, bEvent ) )
+   METHOD fireEvent( cEvent, uValue )  INLINE ( ::getEvents():fire( cEvent, uValue ) )
+
    // Construcciones tardias---------------------------------------------------
 
    METHOD getLogFile()                 INLINE ( if( empty( ::oLogFile ), ::oLogFile := LogFile():New( "Mail" ), ), ::oLogFile )
@@ -140,8 +148,8 @@ RETURN ( nil )
 
 METHOD Send() CLASS MailController
 
+   local uuid
    local cMail
-   local uuidIdentifier
 
    if empty( ::getMailSender() )
       RETURN ( nil )
@@ -153,23 +161,31 @@ METHOD Send() CLASS MailController
 
    ::getEvents():fire( 'sending' )
 
-   for each uuidIdentifier in ::getUuidIdentifiers() 
+   for each uuid in ::getUuidIdentifiers() 
 
-      ::generatePdf( uuidIdentifier )
+      ::uuidIdentifier := uuid
 
-      ::getMailSender():Send( ::getMailHash( uuidIdentifier ) ) 
+      ::generatePdf( uuid )
+
+      if ::getMailSender():Send( ::getMailHash( uuid ) ) 
+
+         ::fireEvent( 'sendsuccess', self )
+
+      else 
+
+         ::fireEvent( 'senderror', self )
+
+      end if 
 
       sysRefresh()
 
-      ::getEvents():fire( 'send' )
-      
    next
+
+   ::getEvents():fire( 'sendexit' )
 
    ::writeMessage( "Ha finalizado el proceso de envio" ) 
 
    ::getLogFile():Close()
-
-   ::getEvents():fire( 'sended' )
 
 RETURN ( nil )
 
@@ -228,7 +244,14 @@ METHOD writeMessage( cText )
 
 RETURN ( nil )
 
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD setEvents( aEvents, bEvent )
+
+RETURN ( aeval( aEvents, {|cEvent| ::setEvent( cEvent, bEvent ) } ) )
+
+//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

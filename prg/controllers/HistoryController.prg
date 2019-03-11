@@ -19,6 +19,10 @@ CLASS HistoryController FROM SQLNavigatorController
 
    METHOD isCanceled( uuid )
 
+   METHOD insertEmail( uuid, cDestino )
+
+   METHOD insertErrorEmail( uuid, cDestino )
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getBrowseView()                 INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := HistoryBrowseView():New( self ), ), ::oBrowseView ) 
@@ -154,6 +158,30 @@ METHOD isCanceled( uuid ) CLASS HistoryController
 RETURN ( ::oController:getModel():isCanceledWhereUuid( uuid ) != 0 )
 
 //---------------------------------------------------------------------------//
+
+METHOD insertEmail( uuid, cDestino ) CLASS HistoryController
+
+   local cDetails
+
+   cDetails := "Enviado a : " + alltrim( cDestino )
+
+   ::getModel():insertHistory( { "documento_uuid" => uuid, "operacion" => "send", "detalle" => cDetails } )
+  
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertErrorEmail( uuid, cDestino ) CLASS HistoryController
+
+   local cDetails
+
+   cDetails := "Intento de envío a: " + alltrim( cDestino )
+
+   ::getModel():insertHistory( { "documento_uuid" => uuid, "operacion" => "nosend", "detalle" => cDetails } )
+  
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -168,7 +196,9 @@ CLASS HistoryBrowseView FROM SQLBrowseView
                                                 'print'     => 'Impresión',;
                                                 'convert'   => 'Conversión',;
                                                 'preview'   => 'Previsualización',;
-                                                'pdf'       => 'Generación de PDF' }
+                                                'pdf'       => 'Generación de PDF',;
+                                                'send'      => 'Enviado' ,;
+                                                'nosend'    => 'Envio fallido' }
  
    METHOD addColumns()         
 
