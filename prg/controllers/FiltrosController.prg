@@ -515,7 +515,7 @@ CLASS FiltrosView FROM SQLBaseView
 
    METHOD storedActivate()
 
-   METHOD getFilter()                  INLINE ( ::oController:aFilter )
+   METHOD getFilter()                  INLINE ( if( empty( ::oController:aFilter ), ::oController:defaultFilter(), ), ::oController:aFilter )
 
    METHOD getConditions()              INLINE ( ::oController:getConditions() )
    
@@ -667,9 +667,10 @@ METHOD Activate() CLASS FiltrosView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oController:initFilter(), ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
+   ::oFolder:aDialogs[ 1 ]:bKeyDown := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
+   ::oDialog:bKeyDown               := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
    
-   ::oDialog:bStart     := {|| ::StartActivate() }
+   ::oDialog:bStart                 := {|| ::StartActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 

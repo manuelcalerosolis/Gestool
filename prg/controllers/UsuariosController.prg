@@ -95,7 +95,7 @@ METHOD New( oController ) CLASS UsuariosController
 
    ::getNavigatorView():getMenuTreeView():setEvents( { 'addingAppendButton', 'addingDuplicateButton', 'addingEditButton', 'addingDeleteButton' }, {|| Auth():isSuperAdminRole() } )
 
-   ::setEvents( { 'editing', 'deleting' }, {|| ::Editing() } )
+   ::setEvents( { 'deleting' }, {|| ::Editing() } )
 
 RETURN ( Self )
 
