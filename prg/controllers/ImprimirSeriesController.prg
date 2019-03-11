@@ -9,6 +9,8 @@ CLASS ImprimirSeriesController FROM SQLPrintController
 
    DATA oHistoryController
 
+   DATA uuidIdentifier
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -45,6 +47,8 @@ CLASS ImprimirSeriesController FROM SQLPrintController
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ImprimirSeriesView():New( self ), ), ::oDialogView )
 
    METHOD dialogViewActivate()         INLINE ( ::getDialogView():Activate() )
+
+   METHOD getReport()                  INLINE ( ::oReport )
 
    METHOD createReport( hGenerate )
 
@@ -169,8 +173,8 @@ RETURN ( nil )
 
 METHOD showDocument( nDevice, cFileName, nCopies, cPrinter ) CLASS ImprimirSeriesController
  
+   local uuid 
    local oWaitMeter
-   local uuidIdentifier
 
    DEFAULT cFileName    := ::getController():getDocumentPrint()
    DEFAULT nCopies      := ::getController():getCopyPrint()
@@ -185,17 +189,19 @@ METHOD showDocument( nDevice, cFileName, nCopies, cPrinter ) CLASS ImprimirSerie
    oWaitMeter:setTotal( len( ::getUuidIdentifiers() ) )
    oWaitMeter:Run()
 
-   for each uuidIdentifier in ::getUuidIdentifiers() 
+   for each uuid in ::getUuidIdentifiers() 
+
+      ::uuidIdentifier  := uuid
 
       oWaitMeter:setMessage( "Imprimiendo documento " + hb_ntos( hb_enumindex() ) + " de " + hb_ntos( oWaitMeter:getTotal() ) )
 
-      ::createReportRowSet( uuidIdentifier )
+      ::createReportRowSet( ::uuidIdentifier )
 
       ::loadReportAndShow()
 
       ::freeRowSet()
 
-      ::getHistoryController:getModel():insertOthers( uuidIdentifier, 'print' )
+      ::oEvents:fire( 'afterPrint', self )
 
       oWaitMeter:autoInc()
 

@@ -155,9 +155,9 @@ RETURN ( nil )
 
 METHOD insertConvertHistory()
 
-   ::getHistoryController():getModel():insertConvert( ::uuidDocumentoOrigen, ::oController():getConversorView():cDocumentoDestino )
+   ::getHistoryController():getModel():insertConvert( ::uuidDocumentoOrigen, ::oController():getConversorView():cDocumentoDestino, ::getDestinoController:getModelBuffer( "serie" ), ::getDestinoController:getModelBuffer( "numero" ) )
       
-   ::getHistoryController():getModel():insertConvertDestino( ::getDestinoController:getModelBuffer( "uuid" ) )
+   ::getHistoryController():getModel():insertConvertDestino( ::getDestinoController:getModelBuffer( "uuid" ), ::uuidDocumentoOrigen )
 
 RETURN ( nil )
 

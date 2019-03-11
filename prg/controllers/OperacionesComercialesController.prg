@@ -71,6 +71,8 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD importFactura()
 
+   METHOD insertPrintHistory( this )
+
    // Impresiones--------------------------------------------------------------
 
    METHOD getDocumentPrint()           INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_impresion', '' ) )
@@ -94,6 +96,8 @@ CLASS OperacionesComercialesController FROM OperacionesController
    METHOD Editing()
 
    METHOD cancelEdited()
+
+   METHOD getActionText( nDevice ) 
 
    // Contrucciones tardias----------------------------------------------------
 
@@ -161,6 +165,8 @@ METHOD New( oController ) CLASS OperacionesComercialesController
    ::setEvent( 'editing', {|nId| ::Editing( nId ) } )
 
    // ::setEvent( 'cancelEdited', {|| ::cancelEdited() } )
+
+   ::getImprimirSeriesController():setEvent( 'afterPrint', {|this| ::insertPrintHistory( this ) } )
 
    ::getTercerosController():getSelector():setEvent( 'settedHelpText', {|| ::terceroSettedHelpText() } )
 
@@ -488,6 +494,36 @@ METHOD runGeneratedocument( uuidOrigen ) CLASS OperacionesComercialesController
 
 RETURN ( nil )
 
+//---------------------------------------------------------------------------//
+
+METHOD insertPrintHistory( this ) CLASS OperacionesComercialesController 
+
+   ::getHistoryController:getModel():insertOthers( this:uuidIdentifier, ::getActionText( this:getReport():getDevice() ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getActionText( nDevice ) CLASS OperacionesComercialesController
+
+   local cAction
+
+   DO CASE
+
+      CASE nDevice == 1
+         cAction := 'print'
+
+      CASE nDevice == 2
+         cAction := 'preview'
+
+      CASE nDevice == 3
+         cAction := 'pdf'
+
+      END CASE
+
+RETURN ( cAction )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
