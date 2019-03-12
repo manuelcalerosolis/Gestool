@@ -165,7 +165,7 @@ METHOD insertEmail( uuid, cDestino ) CLASS HistoryController
 
    cDetails := "Enviado a : " + alltrim( cDestino )
 
-   ::getModel():insertHistory( { "documento_uuid" => uuid, "operacion" => "send", "detalle" => cDetails } )
+   ::getModel():insertHistory( { "documento_uuid" => uuid, "operacion" => "Enviado mail", "detalle" => cDetails } )
   
 RETURN ( nil )
 
@@ -177,7 +177,7 @@ METHOD insertErrorEmail( uuid, cDestino ) CLASS HistoryController
 
    cDetails := "Intento de envío a: " + alltrim( cDestino )
 
-   ::getModel():insertHistory( { "documento_uuid" => uuid, "operacion" => "nosend", "detalle" => cDetails } )
+   ::getModel():insertHistory( { "documento_uuid" => uuid, "operacion" => "Envio mail fallido", "detalle" => cDetails } )
   
 RETURN ( nil )
 
@@ -197,8 +197,8 @@ CLASS HistoryBrowseView FROM SQLBrowseView
                                                 'convert'   => 'Conversión',;
                                                 'preview'   => 'Previsualización',;
                                                 'pdf'       => 'Generación de PDF',;
-                                                'send'      => 'Enviado' ,;
-                                                'nosend'    => 'Envio fallido' }
+                                                'send'      => 'Enviado mail',;
+                                                'nosend'    => 'Envio mail fallido' }
  
    METHOD addColumns()         
 
@@ -214,9 +214,17 @@ METHOD addColumns() CLASS HistoryBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'usuario_codigo'
-      :cHeader             := 'Usuario'
-      :nWidth              := 250
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'usuario_codigo' ) + " " + ::getRowSet():fieldGet( 'usuario_nombre' ) }
+      :cHeader             := 'Código usuario'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'usuario_codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'usuario_nombre'
+      :cHeader             := 'Nombre usuario'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'usuario_nombre' )  }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -224,7 +232,7 @@ METHOD addColumns() CLASS HistoryBrowseView
       :cSortOrder          := 'operacion'
       :cHeader             := 'Operación'
       :nWidth              := 150
-      :bEditValue          := {|| ::getOperacion( ::getRowSet():fieldGet( 'operacion' ) ) }
+      :bEditValue          := {|| ( ::getRowSet():fieldGet( 'operacion' ) ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -371,7 +379,7 @@ METHOD insertCanceled() CLASS SQLHistoryModel
    for each uuid in uuids
 
       if !( ::oController:isCanceled( uuid ) )
-         ::insertBuffer( ::loadBlankBuffer( { "documento_uuid" => uuid, "operacion" => "canceled" } ) )
+         ::insertBuffer( ::loadBlankBuffer( { "documento_uuid" => uuid, "operacion" => "Cancelado" } ) )
       end if 
 
    next
@@ -393,7 +401,7 @@ METHOD insertConvert( uuidOrigen, cDestino, cSerie, nNumero ) CLASS SQLHistoryMo
    cDetails := "Conversión a " + cDestino + " : " + alltrim( cSerie ) + "-" + alltrim( hb_valtostr( nNumero ) )
 
 RETURN ( ::insertBuffer( ::loadBlankBuffer(  {  "documento_uuid" => uuidOrigen ,;
-                                                "operacion" => 'convert' ,;
+                                                "operacion" => 'Conversión' ,;
                                                 "detalle"   =>  cDetails } ) ) )
 
 //---------------------------------------------------------------------------//
@@ -413,7 +421,7 @@ METHOD insertConvertDestino( uuidDestino, uuidOrigen ) CLASS SQLHistoryModel
 
    cDetails := "Creación a través de " + alltrim( cTitle ) + " : " + alltrim( cSerie ) + "-" + alltrim( cNumero ) 
 
-RETURN ( ::insertHistory( {  "documento_uuid" => uuidDestino, "operacion" => 'insert', "detalle" => cDetails } ) )
+RETURN ( ::insertHistory( {  "documento_uuid" => uuidDestino, "operacion" => 'Creación', "detalle" => cDetails } ) )
 
 //---------------------------------------------------------------------------//
 

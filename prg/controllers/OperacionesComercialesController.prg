@@ -535,13 +535,13 @@ METHOD getActionText( nDevice ) CLASS OperacionesComercialesController
    DO CASE
 
       CASE nDevice == 1
-         cAction := 'print'
+         cAction := 'Impresión'
 
       CASE nDevice == 2
-         cAction := 'preview'
+         cAction := 'Previsualización'
 
       CASE nDevice == 3
-         cAction := 'pdf'
+         cAction := 'Generación de PDF'
 
       END CASE
 
