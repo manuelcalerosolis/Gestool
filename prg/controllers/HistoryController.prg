@@ -23,6 +23,8 @@ CLASS HistoryController FROM SQLNavigatorController
 
    METHOD insertErrorEmail( uuid, cDestino )
 
+   METHOD InsertGenerateFactura( hHedaer )
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getBrowseView()                 INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := HistoryBrowseView():New( self ), ), ::oBrowseView ) 
@@ -138,6 +140,19 @@ METHOD getDetails( aChanges ) CLASS HistoryController
    next
 
 RETURN ( cDetails )
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertGenerateFactura( hHedaer, uuidDestino ) CLASS HistoryController
+
+   ::getModel():insertConvert( hget( hHedaer, "uuid" ) ,;
+                               ::oController:getDestinoController:cTitle ,;
+                               ::oController:getDestinoController:getModel():getField( "serie", "uuid", uuidDestino ),;
+                               ::oController:getDestinoController:getModel():getField( "numero", "uuid", uuidDestino ) )
+
+   ::getModel():insertConvertDestino( uuidDestino, hget( hHedaer, "uuid" ) )
+
+RETURN( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -318,9 +333,9 @@ CLASS SQLHistoryModel FROM SQLCompanyModel
 
    METHOD insertOthers( uuid, cOperation )
 
-   METHOD insertConvert( uuid, cDestino )
+   METHOD insertConvert( uuid, cDestino, cSerie, nNumero  )
 
-   METHOD insertConvertDestino( UuidDestino )
+   METHOD insertConvertDestino( UuidDestino, uuidOrigen )
 
 END CLASS
 
