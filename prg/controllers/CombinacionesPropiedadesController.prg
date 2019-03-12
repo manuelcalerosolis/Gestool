@@ -168,7 +168,7 @@ CLASS SQLCombinacionesPropiedadesModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "combinaciones_propiedades"
 
-   DATA cConstraints                   INIT "FOREIGN KEY (parent_uuid) REFERENCES " + SQLCombinacionesModel():getTableName() + " (uuid) ON DELETE CASCADE"
+   DATA cConstraints                   INIT "FOREIGN KEY (parent_uuid) REFERENCES " + SQLCombinacionesModel():cTableName + " (uuid) ON DELETE CASCADE"
 
    METHOD getColumns()
 

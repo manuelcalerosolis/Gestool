@@ -350,6 +350,8 @@ CLASS SQLHistoryModel FROM SQLCompanyModel
 
    METHOD insertConvertDestinoMultiple( aHeaders, uuidDestino )
 
+   METHOD countHistory( cOperation )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -497,6 +499,25 @@ METHOD getInitialSelect() CLASS SQLHistoryModel
    cSql  := hb_strformat( cSql, ::getTableName() )
 
 RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD countHistory( cOperation ) CLASS SQLHistoryModel
+
+ local cSql
+
+   TEXT INTO cSql
+
+   SELECT COUNT(*)
+   
+      FROM %1$s AS historial
+   WHERE historial.operacion = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( cOperation ) )
+
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
