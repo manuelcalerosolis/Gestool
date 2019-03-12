@@ -524,7 +524,7 @@ METHOD Duplicate( nId )
 
    ::saveRowSetRecno()
 
-   ::getModel():loadDuplicateBuffer( ::nId )
+   ::nId             := ::getModel():insertDuplicateBuffer( ::nId )
 
    ::fireEvent( 'openingDialog' )
 
@@ -532,9 +532,7 @@ METHOD Duplicate( nId )
 
       ::fireEvent( 'closedDialog' )
 
-      ::insertOrUpdateBuffer()
-
-      //::insertIncidence()
+      ::getModel():updateInsertedBuffer( nil, ::nId )
 
       ::commitTransactionalMode()
 
