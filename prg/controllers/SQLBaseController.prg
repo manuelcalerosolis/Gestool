@@ -223,9 +223,9 @@ CLASS SQLBaseController
 
    // Historicos---------------------------------------------------------------
    
-   METHOD updateHistory()              INLINE ( ::createHistory( 'Modificación' ) )
+   METHOD updateHistory()              INLINE ( ::createHistory( hget( OPERATION_TEXT, IS_UPDATED ) ) )
 
-   METHOD insertHistory()              INLINE ( ::createHistory( 'Creación' ) )
+   METHOD insertHistory()              INLINE ( ::createHistory( hget( OPERATION_TEXT, IS_INSERTED ) ) )
 
    METHOD canceledHistory()           INLINE ( ::getHistoryController():getModel():insertCanceled() )
 

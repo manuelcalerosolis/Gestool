@@ -97,8 +97,6 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD cancelEdited()
 
-   METHOD getActionText( nDevice ) 
-
    METHOD insertEmailHistory( this )
 
    METHOD insertEmailErrorHistory( this )
@@ -506,7 +504,7 @@ RETURN ( nil )
 
 METHOD insertPrintHistory( this ) CLASS OperacionesComercialesController 
 
-   ::getHistoryController:getModel():insertOthers( this:uuidIdentifier, ::getActionText( this:getReport():getDevice() ) )
+   ::getHistoryController:getModel():insertOthers( this:uuidIdentifier, hget( OPERATION_TEXT, this:getReport():getDevice() ) )
 
 RETURN ( nil )
 
@@ -527,26 +525,6 @@ METHOD insertEmailErrorHistory( this ) CLASS OperacionesComercialesController
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
-METHOD getActionText( nDevice ) CLASS OperacionesComercialesController
-
-   local cAction
-
-   DO CASE
-
-      CASE nDevice == 1
-         cAction := 'Impresión'
-
-      CASE nDevice == 2
-         cAction := 'Previsualización'
-
-      CASE nDevice == 3
-         cAction := 'Generación de PDF'
-
-      END CASE
-
-RETURN ( cAction )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
