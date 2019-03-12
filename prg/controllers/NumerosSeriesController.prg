@@ -32,8 +32,6 @@ METHOD New( oController )
 
    ::cTitle                := "Series"
 
-   // ::oModel                := SQLMovimientosAlmacenLineasNumerosSeriesModel():New( self )
-
    ::oDialogView           := NumerosSeriesView():New( self )
 
    ::oModel:setEvent( 'loadedBlankBuffer', {|| ::loadedBlankBuffer() } ) 

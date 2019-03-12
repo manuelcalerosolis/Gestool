@@ -277,6 +277,8 @@ CLASS SQLBaseModel
 
    METHOD deleteSelection( aIds )
    METHOD deleteById( uId )
+   METHOD hardDeleteById( nId )
+   
    METHOD deleteByUuid( uUuid )
    METHOD deleteWhereParentUuid( uUuid )
    METHOD deleteWhere( hWhere )
@@ -1766,6 +1768,14 @@ METHOD deleteById( nId )
 
    ::fireEvent( 'deletedById' )
    
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD hardDeleteById( nId )
+
+   getSQLDatabase():Query( "DELETE FROM " + ::getTableName() + " WHERE id = " + hb_ntos( nId ) )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

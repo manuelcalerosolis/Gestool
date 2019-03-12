@@ -87,9 +87,9 @@ END CLASS
 
 METHOD New( oController )
 
-   ::oController                                      := oController
+   ::oController                       := oController
 
-   ::oEvents                                          := Events():New()
+   ::oEvents                           := Events():New()
 
 RETURN ( Self )
 

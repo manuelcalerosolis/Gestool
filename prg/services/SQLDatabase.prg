@@ -568,6 +568,8 @@ METHOD Commit()
 
    --::nCurrentConexion
 
+   msgalert( ::nCurrentConexion, "nCurrentConexion" )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -577,6 +579,8 @@ METHOD rollBack()
    ::getConexion():rollBack()
 
    --::nCurrentConexion
+
+   msgalert( ::nCurrentConexion, "nCurrentConexion" )
 
 RETURN ( nil )
 

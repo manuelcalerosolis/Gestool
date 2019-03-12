@@ -381,7 +381,7 @@ METHOD AddRefreshButton()
       RETURN ( nil )
    end if 
 
-   ::AddButton( "Refrescar", "Refresh16", {|| ::oController:RefreshRowSet() }, "R" ) 
+   ::AddButton( "Refrescar", "Refresh16", {|| ::oController:refreshRowSet() }, "R" ) 
 
    ::fireEvent( 'addedRefreshButton' )
 

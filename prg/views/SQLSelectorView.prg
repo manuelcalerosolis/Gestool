@@ -8,7 +8,7 @@ CLASS SQLSelectorView FROM SQLBrowseableView
    DATA oDialog
 
    DATA oGetSearch
-   DATA cGetSearch                              INIT space( 200 )
+   DATA cGetSearch                     INIT space( 200 )
 
    DATA bInitActivate
 
@@ -16,16 +16,16 @@ CLASS SQLSelectorView FROM SQLBrowseableView
 
    DATA aSelectedBuffer
 
-   DATA lMultiSelect                            INIT ( .f. )
+   DATA lMultiSelect                   INIT ( .f. )
 
    METHOD New( oController ) CONSTRUCTOR
    METHOD End()
 
    METHOD Activate( bInitActivate )
-      METHOD ActivateMoved()                    INLINE ( ::Activate( .f. ) )
-      METHOD initActivate()                     INLINE ( iif( hb_isblock( ::bInitActivate ), eval( ::bInitActivate, Self ), ) )
+      METHOD ActivateMoved()           INLINE ( ::Activate( .f. ) )
+      METHOD initActivate()            INLINE ( iif( hb_isblock( ::bInitActivate ), eval( ::bInitActivate, Self ), ) )
 
-   METHOD isActive()                            INLINE ( ::oDialog != nil )
+   METHOD isActive()                   INLINE ( ::oDialog != nil )
 
    METHOD Select()
 
@@ -33,15 +33,18 @@ CLASS SQLSelectorView FROM SQLBrowseableView
 
    METHOD MultiSelect()
 
-   METHOD setMultiSelect( lMultiSelect )        INLINE ( ::lMultiSelect := lMultiSelect )
-   METHOD getMultiSelect()                      INLINE ( ::lMultiSelect )
+   METHOD setMultiSelect( lMultiSelect ) ;
+                                       INLINE ( ::lMultiSelect := lMultiSelect )
+   METHOD getMultiSelect()             INLINE ( ::lMultiSelect )
 
    METHOD Start()
 
-   METHOD getGetSearch()                        INLINE ( ::oGetSearch )
-   METHOD getWindow()                           INLINE ( ::oDialog )
+   METHOD getGetSearch()               INLINE ( ::oGetSearch )
+   METHOD getWindow()                  INLINE ( ::oDialog )
 
-   METHOD getSelectedBuffer()                   INLINE ( if( ::getMultiSelect(), ::aSelectedBuffer, ::hSelectedBuffer ) )
+   METHOD getSelectedBuffer()          INLINE ( if( ::getMultiSelect(), ::aSelectedBuffer, ::hSelectedBuffer ) )
+
+   METHOD refreshBrowseView()          INLINE ( ::getBrowseView():Refresh() )
 
 ENDCLASS
 

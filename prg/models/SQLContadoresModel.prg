@@ -68,11 +68,11 @@ METHOD insertSerie( cDocument, cSerial, nCounter ) CLASS SQLContadoresModel
    DEFAULT cSerial      := 'A'
    DEFAULT nCounter     := 1
 
-   hset( hBuffer, "documento", cDocument )
-   hset( hBuffer, "serie", cSerial )
-   hset( hBuffer, "contador", nCounter )
+   hset( hBuffer, "documento",   cDocument )
+   hset( hBuffer, "serie",       cSerial )
+   hset( hBuffer, "contador",    nCounter )
 
-RETURN ( ::insertIgnoreTransactional( hBuffer ) )   
+RETURN ( ::insertIgnoreBuffer( hBuffer ) )   
 
 //---------------------------------------------------------------------------//
 

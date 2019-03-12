@@ -78,6 +78,8 @@ RETURN ( ::Super:End() )
 
 METHOD gettingSelectSentence() CLASS ContadoresController
 
+   msgalert( "documento = " + quoted( ::getTableName() ) )
+
 RETURN ( ::getModel():setGeneralWhere( "documento = " + quoted( ::getTableName() ) ) )
 
 //---------------------------------------------------------------------------//
@@ -234,10 +236,10 @@ END CLASS
 
 METHOD getValidators() CLASS ContadoresValidator
 
-   ::hValidators  := {  "serie"        => {  "required"        => "La serie es un dato requerido",;
-                                             "unique"          => "La serie ya existe" } ,;
-                        "contador"     => {  "required"        => "El contador es un dato requerido",;
-                                             "positive"        => "El contador debe ser un número positivo" }  }
+   ::hValidators  := {  "serie"     => {  "required"  => "La serie es un dato requerido",;
+                                          "unique"    => "La serie ya existe" } ,;
+                        "contador"  => {  "required"  => "El contador es un dato requerido",;
+                                          "positive"  => "El contador debe ser un número positivo" }  }
 
 RETURN ( ::hValidators )
 
