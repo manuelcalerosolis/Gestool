@@ -45,10 +45,11 @@ CLASS SQLConfiguracionesModel FROM SQLCompanyModel
 
    METHOD getAndIncValue( cDocumento, cClave, uDefault )
 
-   METHOD getAndIncContadorMovimientoAlmacen()     INLINE ( ::getAndIncValue( 'movimientos_almacen', 'contador', 1 ) )
+   METHOD getAndIncContadorMovimientoAlmacen() ;
+                                       INLINE ( ::getAndIncValue( 'movimientos_almacen', 'contador', 1 ) )
 
-   METHOD isSerie( cName, cSerie )                 INLINE ( !empty( ::getValue( cName, 'serie', cSerie ) ) )
-   METHOD setSerie( cName, cSerie )                INLINE ( ::setValue( cName, 'serie', cSerie ) )
+   METHOD isSerie( cName, cSerie )     INLINE ( !empty( ::getValue( cName, 'serie', cSerie ) ) )
+   METHOD setSerie( cName, cSerie )    INLINE ( ::setValue( cName, 'serie', cSerie ) )
    
 END CLASS
 
@@ -165,19 +166,19 @@ METHOD setValue( cDocumento, cClave, uValor )
    local nId     
    local cSentence   
 
-   uValor            := alltrim( cvaltostr( uValor ) )
+   uValor         := alltrim( cvaltostr( uValor ) )
 
-   cSentence         := ::getSQLSentenceId( cDocumento, cClave, uValor )
+   cSentence      := ::getSQLSentenceId( cDocumento, cClave, uValor )
 
-   nId               := getSQLDataBase():getValue( cSentence )
+   nId            := getSQLDataBase():getValue( cSentence )
 
    if empty( nId )
 
-      cSentence      := ::getSQLSentenceInsertValue( cDocumento, cClave, uValor )
+      cSentence   := ::getSQLSentenceInsertValue( cDocumento, cClave, uValor )
 
    else 
 
-      cSentence      := ::getSQLSentenceUpdateValue( nId, uValor )
+      cSentence   := ::getSQLSentenceUpdateValue( nId, uValor )
 
    end if 
 

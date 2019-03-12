@@ -274,8 +274,7 @@ CLASS SQLBaseModel
    METHOD updateInsertedBuffer( hBuffer )
 
    METHOD insertOnDuplicate( hBuffer )
-      METHOD insertOnDuplicateTransactional( hBuffer ) ;
-                                       INLINE ( ::insertOnDuplicate( hBuffer, .t. ) )
+
    METHOD deleteSelection( aIds )
    METHOD deleteById( uId )
    METHOD deleteByUuid( uUuid )

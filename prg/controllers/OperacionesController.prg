@@ -89,7 +89,7 @@ METHOD New( oController ) CLASS OperacionesController
 
    ::Super:New( oController )
    
-   ::setEvent( 'inserted', {|| ::updateCounter() } )
+   ::setEvents( { 'inserted', 'duplicated' }, {|| ::updateCounter() } )
 
    ::getNavigatorView():getMenuTreeView():setEvent( 'addingDeleteButton', { || .f. } )
    ::getNavigatorView():getMenuTreeView():setEvent( 'addedPdfButton', {|| ::addExtraButtons() } )
@@ -180,7 +180,7 @@ RETURN ( ::getNumeroDocumentoComponent():setValue( ::getContadoresController():g
 METHOD appendLine() CLASS OperacionesController
 
    if !( ::getLinesController():validLine() )
-      RETURN( nil )
+      RETURN ( nil )
    end if
 
 RETURN ( ::getLinesController():AppendLineal() ) 

@@ -1,8 +1,6 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-#define __admin_name__  "Super administrador"
-
 //----------------------------------------------------------------------------//
 
 static oAuth
@@ -45,6 +43,8 @@ CLASS AuthManager
    METHOD guardWhereCodigo( cCodigo )
 
    METHOD canSendMail()
+
+   METHOD getDecryptEmailPassword()    INLINE ( hb_decrypt( alltrim( ::emailPassword ), __encryption_key__ ) )
 
 END CLASS
 
@@ -194,18 +194,6 @@ RETURN ( self )
 METHOD canSendMail()
 
    if empty( ::email )
-      RETURN ( .f. )
-   end if 
-
-   if empty( ::emailPassword )
-      RETURN ( .f. )
-   end if 
-
-   if empty( ::emailServidor )
-      RETURN ( .f. )
-   end if 
-
-   if empty( ::emailPuerto )
       RETURN ( .f. )
    end if 
 

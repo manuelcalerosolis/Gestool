@@ -471,13 +471,13 @@ METHOD getConfigItems() CLASS OperacionesComercialesController
 
    local aItems   := {}
 
-   aadd( aItems,  {  'texto'  => 'Documento impresi?',;
+   aadd( aItems,  {  'texto'  => 'Documento impresión',;
                      'clave'  => 'documento_impresion',;
                      'valor'  => ::getDocumentPrint(),;
                      'tipo'   => "B",;
                      'lista'  =>  ::loadDocuments() } )
 
-   aadd( aItems,  {  'texto'  => 'Copias impresi?',;
+   aadd( aItems,  {  'texto'  => 'Copias impresión',;
                      'clave'  => 'copias_impresion',;
                      'valor'  => ::getCopyPrint(),;
                      'tipo'   => "N" } )
@@ -488,7 +488,7 @@ METHOD getConfigItems() CLASS OperacionesComercialesController
                      'tipo'   => "B",;
                      'lista'  =>  ::loadDocuments() } )
 
-   aadd( aItems,  {  'texto'  => 'Documento previsulizaci?',;
+   aadd( aItems,  {  'texto'  => 'Documento previsulización',;
                      'clave'  => 'documento_previsulizacion',;
                      'valor'  => ::getDocumentPreview(),;
                      'tipo'   => "B",;

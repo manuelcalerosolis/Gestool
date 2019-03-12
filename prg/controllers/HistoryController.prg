@@ -319,9 +319,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startActivate()
 
-   ::updateDetalle()
-
-RETURN ( nil )
+RETURN ( ::updateDetalle() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -412,62 +410,46 @@ RETURN ( ::insertBuffer( ::loadBlankBuffer( { "documento_uuid" => uuid, "operaci
 
 METHOD insertConvert( uuidOrigen, cDestino, cSerie, nNumero ) CLASS SQLHistoryModel
 
-   local cDetails
+   local cDetails := "Conversión a " + cDestino + " : " + alltrim( cSerie ) + "-" + alltrim( hb_valtostr( nNumero ) )
 
-   cDetails := "Conversión a " + cDestino + " : " + alltrim( cSerie ) + "-" + alltrim( hb_valtostr( nNumero ) )
-
-RETURN ( ::insertBuffer( ::loadBlankBuffer(  {  "documento_uuid" => uuidOrigen ,;
-                                                "operacion" => hget( OPERATION_TEXT, IS_CONVERTED ) ,;
-                                                "detalle"   =>  cDetails } ) ) )
+RETURN ( ::insertBuffer( ::loadBlankBuffer(  {  "documento_uuid"  => uuidOrigen ,;
+                                                "operacion"       => hget( OPERATION_TEXT, IS_CONVERTED ) ,;
+                                                "detalle"         =>  cDetails } ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD insertConvertDestino( uuidDestino, uuidOrigen ) CLASS SQLHistoryModel
 
-   local cTitle
-   local cSerie
-   local cNumero
    local cDetails 
 
-   cTitle   :=    ::oController:getOrigenController():cTitle 
+   cDetails := "Creación a través de " + alltrim( ::oController:getOrigenController():cTitle ) + " : "
+   cDetails += alltrim( ::oController:getOrigenController():getModel():getField( "serie", "uuid", uuidOrigen ) ) + "-" 
+   cDetails += alltrim( hb_valtostr( ::oController:getOrigenController():getModel():getField( "numero", "uuid", uuidOrigen ) ) ) 
 
-   cSerie   :=    ::oController:getOrigenController():getModel():getField( "serie", "uuid", uuidOrigen ) 
-
-   cNumero  :=    hb_valtostr( ::oController:getOrigenController():getModel():getField( "numero", "uuid", uuidOrigen ) ) 
-
-   cDetails := "Creación a través de " + alltrim( cTitle ) + " : " + alltrim( cSerie ) + "-" + alltrim( cNumero ) 
-
-RETURN ( ::insertHistory( {  "documento_uuid" => uuidDestino, "operacion" => hget( OPERATION_TEXT, IS_INSERTED ), "detalle" => cDetails } ) )
+RETURN ( ::insertHistory(  {  "documento_uuid"  => uuidDestino,;
+                              "operacion"       => hget( OPERATION_TEXT, IS_INSERTED ),;
+                              "detalle"         => cDetails } ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD insertConvertDestinoMultiple( aHeaders, uuidDestino ) CLASS SQLHistoryModel
 
-   local cTitle
-   local cSerie
-   local cNumero
-   local cDetails 
    local aHeader
+   local cDetails 
 
-   cTitle   :=    ::oController:getOrigenController():cTitle 
-
-   cDetails := "Creación a través de " + alltrim( cTitle ) + " : " 
+   cDetails    := "Creación a través de " + alltrim( ::oController:getOrigenController():cTitle ) + " : " 
 
    for each aHeader in aHeaders
-
-   msgalert( hget( aHeader, "uuid" ), "cada header")
-   
-   cSerie   :=    ::oController:getOrigenController():getModel():getField( "serie", "uuid", hget( aHeader, "uuid" ) )
-
-   cNumero  :=    hb_valtostr( ::oController:getOrigenController():getModel():getField( "numero", "uuid", hget( aHeader, "uuid" ) ) ) 
-
-   cDetails +=    alltrim( cSerie ) + "-" + alltrim( cNumero ) + ", "
-
+      cDetails += alltrim( ::oController:getOrigenController():getModel():getField( "serie", "uuid", hget( aHeader, "uuid" ) ) )
+      cDetails += "-"
+      cDetails += alltrim( hb_valtostr( ::oController:getOrigenController():getModel():getField( "numero", "uuid", hget( aHeader, "uuid" ) ) )  ) + ", "
    next 
 
-   cDetails := chgAtEnd( cDetails, '', 2 )
+   cDetails    := chgAtEnd( cDetails, '', 2 )
 
-RETURN ( ::insertHistory( {  "documento_uuid" => uuidDestino, "operacion" => hget( OPERATION_TEXT, IS_INSERTED ), "detalle" => cDetails } ) )
+RETURN ( ::insertHistory(  {  "documento_uuid"  => uuidDestino,;
+                              "operacion"       => hget( OPERATION_TEXT, IS_INSERTED ),;
+                              "detalle"         => cDetails } ) )
 
 //---------------------------------------------------------------------------//
 

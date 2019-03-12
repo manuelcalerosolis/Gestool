@@ -11,6 +11,8 @@ CLASS OperacionesComercialesView FROM OperacionesView
 
    DATA oBtnOk
 
+   DATA oBtnPlus
+
    DATA oBtnDescuentosDeleted
 
    DATA oBtnLineasDeleted
@@ -241,7 +243,7 @@ METHOD Activate() CLASS OperacionesComercialesView
 
    ::oBtnOk    := ApoloBtnFlat():Redefine( IDOK, {|| ::validActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   ApoloBtnFlat():Redefine( IDOKANDNEW, {|| ::popupActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ::oBtnPlus  := ApoloBtnFlat():Redefine( IDOKANDNEW, {|| ::popupActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
@@ -393,20 +395,22 @@ METHOD popupActivate() CLASS OperacionesComercialesView
    MENU oMenu POPUP
 
       MENUITEM "Aceptar e imprimir" ;
-         ACTION   (  ::oController:setPostAction( {|| msgalert( "Aceptar e imprimir" ) } ),;
+         ACTION   (  ::oController:setPostAction( {|| ::getController():getImprimirSeriesController():printDocument() } ),;
                      ::validActivate() )
 
       MENUITEM "Aceptar y generar PDF" ;
-         ACTION   (  ::oController:setPostAction( {|| msgalert( "Aceptar y generar PDF" ) } ),;
+         ACTION   (  ::oController:setPostAction( {|| ::getController():getImprimirSeriesController():pdfDocument() } ),;
                      ::validActivate() )
 
       if ( Auth():canSendMail() )
-         MENUITEM "Aceptar y enviar mail"
+         MENUITEM "Aceptar y enviar mail" ;
+         ACTION   (  ::oController:setPostAction( {|| ::getController():getMailController():dialogViewActivate() } ),;
+                     ::validActivate() )
       end if
 
    ENDMENU
 
-   ACTIVATE POPUP oMenu AT 1, 1 OF ::oBtnOk
+   ACTIVATE POPUP oMenu AT 1, 1 OF ::oBtnPlus
 
 RETURN ( nil )
 

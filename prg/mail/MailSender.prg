@@ -66,7 +66,7 @@ METHOD New( oController ) CLASS MailSender
    ::mailServerHost           := Auth():emailServidor()
    ::mailServerPort           := Auth():emailPuerto()
    ::mailServerUserName       := Auth():email()
-   ::mailServerPassword       := Auth():emailPassword()
+   ::mailServerPassword       := Auth():getDecryptEmailPassword()
    ::mailServerConCopia       := Auth():enviarEmailCopia()
    ::mailServerConCopiaOculta := Auth():enviarCopiaOculta()
    ::mailServerAuthenticate   := Auth():autenticacionSMTP()
