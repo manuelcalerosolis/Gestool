@@ -73,6 +73,10 @@ CLASS OperacionesComercialesController FROM OperacionesController
 
    METHOD insertPrintHistory( this )
 
+   METHOD insertedDuplicateBuffer()
+
+   METHOD insertedDuplicateCurrentBuffer()
+
    // Impresiones--------------------------------------------------------------
 
    METHOD getDocumentPrint()           INLINE ( ::getConfiguracionesController():getModelValue( ::getName(), 'documento_impresion', '' ) )
@@ -168,12 +172,12 @@ METHOD New( oController ) CLASS OperacionesComercialesController
 
    ::setEvent( 'editing', {|nId| ::Editing( nId ) } )
 
-   // ::setEvent( 'cancelEdited', {|| ::cancelEdited() } )
+   ::getModel():setEvent( 'insertedDuplicateBuffer', {|| ::insertedDuplicateBuffer() } )
+   ::getModel():setEvent( 'insertedDuplicateCurrentBuffer', {|| ::insertedDuplicateCurrentBuffer() } )
 
    ::getImprimirSeriesController():setEvent( 'afterPrint', {|this| ::insertPrintHistory( this ) } )
 
    ::getMailController():setEvent( 'sendsuccess', {| this | ::insertEmailHistory( this ) } )
-
    ::getMailController():setEvent( 'senderror', {| this | ::insertEmailErrorHistory( this ) } )
 
    ::getTercerosController():getSelector():setEvent( 'settedHelpText', {|| ::terceroSettedHelpText() } )
@@ -201,6 +205,26 @@ METHOD End() CLASS OperacionesComercialesController
    end if
 
 RETURN ( ::Super:End() )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertedDuplicateBuffer() CLASS OperacionesComercialesController
+
+   ::getLinesController():getModel():duplicateOthers( ::getUuid() )
+
+   ::getDiscountController():getModel():duplicateOthers( ::getUuid() )
+   
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertedDuplicateCurrentBuffer() CLASS OperacionesComercialesController
+
+   ::getLinesController():getModel():setUuidOlderParent( ::getUuid() )
+   
+   ::getDiscountController():getModel():setUuidOlderParent( ::getUuid() )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -240,7 +264,7 @@ METHOD cancelEdited() CLASS OperacionesComercialesController
 
    ::commitTransactionalMode()
 
-RETURN( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

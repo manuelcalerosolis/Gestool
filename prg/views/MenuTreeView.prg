@@ -389,7 +389,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddAppendButton()     
+METHOD addAppendButton()     
 
    if isFalse( ::fireEvent( 'addingAppendButton' ) )
       RETURN ( nil )
@@ -403,7 +403,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddInsertButton()    
+METHOD addInsertButton()    
 
    if isFalse( ::fireEvent( 'addingAppendButton' ) )
       RETURN ( nil )
@@ -417,7 +417,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddDuplicateButton() 
+METHOD addDuplicateButton() 
 
    if ::isCreatorControllerZoomMode() 
       RETURN ( nil )
@@ -427,7 +427,7 @@ METHOD AddDuplicateButton()
       RETURN ( nil )
    end if 
 
-   ::AddButton( "Duplicar", "Dup16", {|| ::getSuperController():Duplicate(), ::oController:Refresh() }, "D", ACC_APPD ) 
+   ::addButton( "Duplicar", "Dup16", {|| ::getSuperController():Duplicate(), ::oController:Refresh() }, "D", ACC_APPD ) 
 
    ::fireEvent( 'addedDuplicateButton' )
 
@@ -435,7 +435,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddEditButton()      
+METHOD addEditButton()      
 
    if isFalse( ::fireEvent( 'addingEditButton' ) )
       RETURN ( nil )

@@ -287,6 +287,11 @@ CLASS SQLBaseModel
    METHOD loadBlankBuffer( hBuffer )
    METHOD loadDuplicateBuffer() 
    METHOD loadCurrentBuffer()
+
+   METHOD insertDuplicateBuffer()
+
+   METHOD cleanBufferReferences()
+
    METHOD defaultCurrentBuffer()
 
    METHOD insertBlankBuffer( hBuffer ) INLINE ( ::loadBlankBuffer( hBuffer ), ::insertBuffer() ) 
@@ -1471,6 +1476,56 @@ METHOD loadDuplicateBuffer( id, hFields )
 
    ::fireEvent( 'loadedDuplicateCurrentBuffer' )
 
+   ::cleanBufferReferences()
+
+   if !empty( hFields )
+      heval( hFields, {|k,v| if( hhaskey( ::hBuffer, k ), hset( ::hBuffer, k, v ), ) } )
+   end if 
+
+   ::fireEvent( 'loadedDuplicateBuffer' )
+
+   ::fireEvent( 'loadedBuffer' )
+   
+RETURN ( ::hBuffer )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertDuplicateBuffer( id, hFields ) 
+
+   local nId
+
+   ::hBuffer            := {=>}
+
+   ::fireEvent( 'isertingBuffer' )
+
+   ::fireEvent( 'isertingDuplicateBuffer' )
+
+   ::hBuffer            := ::getBufferById( id )
+
+   if !( hb_ishash( ::hBuffer ) )
+      RETURN ( nil )
+   end if
+
+   ::fireEvent( 'insertedDuplicateCurrentBuffer' )
+
+   ::cleanBufferReferences()
+
+   if !empty( hFields )
+      heval( hFields, {|k,v| if( hhaskey( ::hBuffer, k ), hset( ::hBuffer, k, v ), ) } )
+   end if 
+
+   nId                  := ::insertBuffer()
+
+   ::fireEvent( 'insertedDuplicateBuffer' )
+
+   ::fireEvent( 'insertedBuffer' )
+   
+RETURN ( nId )
+
+//---------------------------------------------------------------------------//
+
+METHOD cleanBufferReferences()
+
    if hhaskey( ::hBuffer, "id" )
       hset( ::hBuffer, "id", 0 )
    end if 
@@ -1483,14 +1538,6 @@ METHOD loadDuplicateBuffer( id, hFields )
       hset( ::hBuffer, "deleted_at", hb_datetime( nil, nil, nil, nil, nil, nil, nil ) )
    end if 
 
-   if !empty( hFields )
-      heval( hFields, {|k,v| if( hhaskey( ::hBuffer, k ), hset( ::hBuffer, k, v ), ) } )
-   end if 
-
-   ::fireEvent( 'loadedDuplicateBuffer' )
-
-   ::fireEvent( 'loadedBuffer' )
-   
 RETURN ( ::hBuffer )
 
 //---------------------------------------------------------------------------//

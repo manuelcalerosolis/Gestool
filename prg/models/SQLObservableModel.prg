@@ -102,6 +102,14 @@ METHOD getBufferChanged()
 
    ::aChanges     := {}
 
+   if !( hb_ishash( ::hInitialBuffer ) )
+      RETURN ( ::aChanges )
+   end if 
+
+   if !( hb_ishash( ::hFinalBuffer ) )
+      RETURN ( ::aChanges )
+   end if 
+
    heval( ::hInitialBuffer,;
       {|k,v| if( v != hget( ::hFinalBuffer, k ), ::getBufferLine( k, v ), ) } )
  
