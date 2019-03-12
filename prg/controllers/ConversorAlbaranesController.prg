@@ -64,6 +64,12 @@ CLASS ConversorAlbaranesController FROM ConversorGenericoController
       METHOD insertDiscounts( hDiscounts, uuidDocumentoDestino )
       METHOD insertDiscountRelation( hDiscounts, uuidDestino )
 
+   //History-------------------------------------------------------------------
+
+   METHOD InsertOrigenHistory( hHeader )
+   
+   METHOD insertDestinoHistory( aHeaders )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -342,7 +348,10 @@ METHOD insertHeader( aHeaders ) CLASS ConversorAlbaranesController
       
    for each hHeader in aHeaders
       ::insertHeaderRelation( hHeader )
+      ::InsertOrigenHistory( hHeader ) 
    next
+
+   ::insertDestinoHistory( aHeaders )
 
 RETURN ( ::uuidDocumentoDestino )
 
@@ -363,6 +372,18 @@ RETURN ( ::getDestinoController():getModelBuffer( "uuid" ) )
 METHOD insertHeaderRelation( hHeader ) CLASS ConversorAlbaranesController
 
 RETURN ( SQLConversorDocumentosModel():insertRelationDocument( hget( hHeader, "uuid" ), ::getOrigenController():getModel():cTableName, ::uuidDocumentoDestino, ::getDestinoController():getModel():cTableName ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertOrigenHistory( hHeader ) CLASS ConversorAlbaranesController
+
+RETURN ( ::getHistoryController():InsertFacturaOrigen( hHeader, ::uuidDocumentoDestino ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertDestinoHistory( aHeaders )
+
+RETURN ( ::getHistoryController():InsertFacturaDestino( aHeaders, ::uuidDocumentoDestino ) )
 
 //---------------------------------------------------------------------------//
 
