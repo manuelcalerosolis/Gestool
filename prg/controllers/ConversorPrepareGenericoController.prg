@@ -301,6 +301,8 @@ METHOD Before() CLASS TestConversorGenericoController
 
    SQLConversorDocumentosModel():truncateTable()
 
+   SQLHistoryModel():truncateTable()
+
    SQLMetodoPagoModel():test_create_con_plazos_con_hash() 
    SQLMetodoPagoModel():test_create_con_plazos_con_hash( {  "codigo"          => "1",;
                                                             "numero_plazos"   => 5  } ) 
@@ -348,6 +350,8 @@ METHOD test_convert_generico_sin_destino() CLASS TestConversorGenericoController
    ::oController:Run( SQLPedidosComprasModel():test_get_uuid_pedido_compras( "A", 3 ) ) 
 
    ::Assert():equals( 0, SQLConversorDocumentosModel():countDocumentos(), "No realiza ninguna conversion" )
+   //::Assert():equals( 0, SQLHistoryModel():countHistory( "Conversión" ), "No genera registros como conversion en historial" )
+   //::Assert():equals( 0, SQLHistoryModel():countHistory( "Creación" ), "No genera registros como creacion en historial" )
 
 RETURN ( nil )
 
@@ -374,6 +378,8 @@ METHOD test_convert_generico_igual_destino() CLASS TestConversorGenericoControll
    ::oController():Run( SQLPedidosComprasModel():test_get_uuid_pedido_compras( "A", 3 ) ) 
 
    ::Assert():equals( 0, SQLConversorDocumentosModel():countDocumentos(), "No realiza ninguna conversion" )
+   //::Assert():equals( 0, SQLHistoryModel():countHistory( "Conversión" ), "No genera registros como conversion en historial" )
+   //::Assert():equals( 0, SQLHistoryModel():countHistory( "Creación" ), "No genera registros como creacion en historial" )
 
 RETURN ( nil )
 
@@ -406,6 +412,8 @@ METHOD test_convert_generico_ya_convertido() CLASS TestConversorGenericoControll
    ::oController:Run( SQLPedidosComprasModel():test_get_uuid_pedido_compras( "A", 3 ) )
 
    ::Assert():equals( 1, SQLConversorDocumentosModel():countDocumentos(), "No realiza ninguna conversion" )
+   //::Assert():equals( 0, SQLHistoryModel():countHistory( "Conversión" ), "No genera registros como conversion en historial" )
+   //::Assert():equals( 0, SQLHistoryModel():countHistory( "Creación" ), "No genera registros como creacion en historial" )
 
 RETURN ( nil )
 

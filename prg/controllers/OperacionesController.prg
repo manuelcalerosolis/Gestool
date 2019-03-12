@@ -285,8 +285,8 @@ METHOD Before() CLASS TestOperacionesController
    SQLPropiedadesModel():truncateTable()
       SQLPropiedadesLineasModel():truncateTable()
 
-   SQLCombinacionesModel():truncateTable()
-      SQLCombinacionesPropiedadesModel():truncateTable()
+   //SQLCombinacionesModel():truncateTable()
+      //SQLCombinacionesPropiedadesModel():truncateTable()
 
    SQLFacturasVentasModel():truncateTable()
       SQLFacturasVentasLineasModel():truncateTable()
@@ -300,13 +300,8 @@ METHOD Before() CLASS TestOperacionesController
 
    SQLAgentesModel():truncateTable()
 
-   SQLUnidadesMedicionGruposModel():truncateTable()
-   SQLUnidadesMedicionOperacionesModel():truncateTable()
-
-   SQLTercerosModel():test_create_contado()
-   SQLTercerosModel():test_create_tarifa_mayorista()
-   SQLTercerosModel():test_create_con_plazos()
-   SQLTercerosModel():test_create_proveedor()
+   //SQLUnidadesMedicionGruposModel():truncateTable()
+   //SQLUnidadesMedicionOperacionesModel():truncateTable()
 
    SQLAlmacenesModel():test_create_almacen_principal()
    SQLAlmacenesModel():test_create_almacen_auxiliar()
@@ -325,16 +320,21 @@ METHOD Before() CLASS TestOperacionesController
    SQLMetodoPagoModel():test_create_reposicion()
    SQLMetodoPagoModel():test_create_con_plazos()
 
-   SQLUnidadesMedicionGruposModel():test_create()
+   SQLTercerosModel():test_create_contado()
+   SQLTercerosModel():test_create_tarifa_mayorista()
+   SQLTercerosModel():test_create_con_plazos()
+   SQLTercerosModel():test_create_proveedor()
+
+   //SQLUnidadesMedicionGruposModel():test_create()
 
    SQLPropiedadesModel():test_create_tallas()
    SQLPropiedadesModel():test_create_colores()
    SQLPropiedadesModel():test_create_texturas()
 
-   SQLArticulosModel():test_create_con_unidad_de_medicion_cajas_palets()
+   //SQLArticulosModel():test_create_con_unidad_de_medicion_cajas_palets()
    SQLArticulosModel():test_create_con_tarifa_mayorista()
-   SQLArticulosModel():test_create_con_lote()
-   SQLArticulosModel():test_create_con_propiedades()
+   //SQLArticulosModel():test_create_con_lote()
+   //SQLArticulosModel():test_create_con_propiedades()
 
    SQLArticulosTarifasModel():test_create_tarifa_base()
    SQLArticulosTarifasModel():test_create_tarifa_mayorista()

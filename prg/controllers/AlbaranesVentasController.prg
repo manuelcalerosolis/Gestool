@@ -165,11 +165,13 @@ CLASS TestAlbaranesVentasController FROM TestOperacionesComercialesController
 
    METHOD Before()
 
-   METHOD test_dialogo_con_una_linea()
+   /*METHOD test_dialogo_con_una_linea()
 
    METHOD test_dialogo_con_articulo_lote()
 
-   METHOD test_dialogo_con_articulo_propiedades() 
+   METHOD test_dialogo_con_articulo_propiedades() */
+
+   METHOD test_dialogo_cambio_albaran()
 
    METHOD getController()              INLINE ( if( empty( ::oController ), ::oController := AlbaranesVentasController():New(), ), ::oController ) 
 
@@ -197,11 +199,13 @@ METHOD Before() CLASS TestAlbaranesVentasController
    
    SQLAlbaranesVentasDescuentosModel():truncateTable()
 
+   SQLHistoryModel():truncateTable()
+
 RETURN ( ::Super:Before() )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_con_una_linea() CLASS TestAlbaranesVentasController
+/*METHOD test_dialogo_con_una_linea() CLASS TestAlbaranesVentasController
 
    ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
@@ -224,6 +228,8 @@ METHOD test_dialogo_con_una_linea() CLASS TestAlbaranesVentasController
       > )
 
    ::Assert():true( ::getController():Insert(), "test creación de albaran de compra con una linea" )
+
+   ::Assert():equals( 1, SQLHistoryModel():countHistory( "Creación" ), "Genera un registro en historial con operacion Creación" )
    
 RETURN ( nil )
 
@@ -254,6 +260,7 @@ METHOD test_dialogo_con_articulo_lote() CLASS TestAlbaranesVentasController
       > )
 
    ::Assert():true( ::getController():Insert(), "test creación de albaran de compra con artículo con lote" )
+   ::Assert():equals( 1, SQLHistoryModel():countHistory( "Creación" ), "Genera un registro en historial con operacion Creación" )
 
 RETURN ( nil )
 
@@ -284,6 +291,42 @@ METHOD test_dialogo_con_articulo_propiedades() CLASS TestAlbaranesVentasControll
       > )
 
    ::Assert():true( ::getController():Insert(), "test creación de albaran de venta con combinaciones" )
+   ::Assert():equals( 1, SQLHistoryModel():countHistory( "Creación" ), "Genera un registro en historial con operacion Creación" )
+
+RETURN ( nil )*/
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_cambio_albaran() CLASS TestAlbaranesVentasController
+
+   ::getController():getModel():create_albaran_ventas( { "serie"=> "A", "numero" => 10 } )
+
+   ::getController():getDialogView():setEvent( 'painted',;
+      <| view | 
+      
+         ::set_codigo_tercero( "1", view )
+      
+         ::set_codigo_forma_pago( "0", view )
+      
+         ::click_nueva_linea( view )
+
+         ::set_codigo_articulo_en_linea( "3" )
+
+         ::set_combinaciones_en_linea( "3", "S, Azul, Denim" )
+
+         ::set_codigo_ubicacion_en_linea( "0" )
+
+         ::set_precio_en_linea( 300 )
+
+         view:getControl( IDOK ):Click() 
+         
+         RETURN ( nil )
+      > )
+
+   //::getController:Edit( ::getController():getModel()test_get_uuid_albaran_ventas( "A", 10 ) )
+ 
+   //::Assert():true( ::getController():Insert(), "test creación de albaran de venta con combinaciones" )
+   //::Assert():equals( 1, SQLHistoryModel():countHistory( "Creación" ), "Genera un registro en historial con operacion Creación" )
 
 RETURN ( nil )
 

@@ -1000,11 +1000,11 @@ METHOD getInsertSentence( hBuffer, lIgnore )
       RETURN ( nil )
    end if 
 
-   ::fireEvent( 'getingInsertSentence' )   
+   ::fireEvent( 'getingInsertSentence' ) 
    
    hBuffer           := ::setCreatedTimeStamp( hBuffer )
 
-   ::cSQLInsert      := "INSERT " 
+   ::cSQLInsert      := "INSERT "
 
    if lIgnore
       ::cSQLInsert   += "IGNORE "
@@ -1022,7 +1022,6 @@ METHOD getInsertSentence( hBuffer, lIgnore )
 
    ::fireEvent( 'gotInsertSentence' ) 
 
-   logwrite( ::cSQLInsert)
 RETURN ( ::cSQLInsert )
 
 //---------------------------------------------------------------------------//

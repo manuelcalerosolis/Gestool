@@ -307,7 +307,7 @@ CLASS SQLUnidadesMedicionGruposLineasModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "unidades_medicion_grupos_lineas"
 
-   DATA cConstraints                   INIT "FOREIGN KEY (parent_uuid) REFERENCES " + SQLUnidadesMedicionGruposModel():getTableName() + " (uuid) ON DELETE CASCADE"
+   DATA cConstraints                   INIT "FOREIGN KEY (parent_uuid) REFERENCES " + SQLUnidadesMedicionGruposModel():cTableName + " (uuid) ON DELETE CASCADE"
 
    METHOD getColumns()
 
