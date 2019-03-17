@@ -14,7 +14,7 @@ BORLANDLIB           = 	\bcc73\lib
 
 OBJ                  = 	obj1811
 
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Commands;.\Prg\Services;.\Prg\Http;.\Prg\Reports;.\Prg\Test;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Commands;.\Prg\Services;.\Prg\Http;.\Prg\Reports;.\Prg\Test;.\Prg\Odoo;
 SOURCEC 				   =	.\C
 
 PPO 					   = 	ppo1811
@@ -464,6 +464,8 @@ ClientesTarifasController.prg 											\
 Server.prg 																		\
 BaseHttpService.prg 															\
 BaseHttpController.prg														\
+ClientOdooConverter.prg														\
+OdooConverterController.prg												\
 TestBase.prg 																	\
 TestSuite.prg 																	\
 TestResult.prg 																\
@@ -919,6 +921,8 @@ ClientesTarifasController.obj 											\
 Server.obj 																		\
 BaseHttpService.obj 															\
 BaseHttpController.obj														\
+ClientOdooConverter.obj														\
+OdooConverterController.obj												\
 TestBase.obj																	\
 TestSuite.obj																	\
 TestResult.obj 																\
@@ -1368,6 +1372,8 @@ $(OBJ)\ClientesTarifasController.obj 									+
 $(OBJ)\Server.obj 															+
 $(OBJ)\BaseHttpService.obj													+
 $(OBJ)\BaseHttpController.obj												+
+$(OBJ)\ClientOdooConverter.obj											+
+$(OBJ)\OdooConverterController.obj										+
 $(OBJ)\TestBase.obj															+
 $(OBJ)\TestSuite.obj															+
 $(OBJ)\TestResult.obj														+

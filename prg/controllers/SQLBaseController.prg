@@ -437,7 +437,7 @@ METHOD Insert()
 
       ::saveRowSetRecno()
 
-      // ::beginTransactionalMode()
+      ::beginTransactionalMode()
 
       ::nId          := ::getModel():insertBlankBuffer()
 
@@ -449,7 +449,7 @@ METHOD Insert()
 
          ::getModel():updateInsertedBuffer( nil, ::nId )
 
-         // ::commitTransactionalMode()
+         ::commitTransactionalMode()
 
          ::fireEvent( 'inserted' )
 
@@ -471,9 +471,9 @@ METHOD Insert()
 
          ::fireEvent( 'cancelInserted' )
 
-         // ::rollbackTransactionalMode()
+         ::rollbackTransactionalMode()
 
-         ::getModel():hardDeleteById( ::nId )
+         // ::getModel():hardDeleteById( ::nId )
 
          ::restoreRowSetRecno()
 
