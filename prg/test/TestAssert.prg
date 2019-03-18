@@ -30,11 +30,11 @@ CLASS TAssert
    METHOD null( xAct, cMsg )
    METHOD notNull( xAct, cMsg )
 
-PROTECTED:
+   PROTECTED:
    METHOD isEqual( xExp, xAct )
    METHOD assert( xExp, xAct, cMsg, lInvert )
    METHOD fail( cMsg )
-   METHOD toStr (xVal, lUseQuote )
+   METHOD toStr( xVal, lUseQuote )
 
 ENDCLASS
 
