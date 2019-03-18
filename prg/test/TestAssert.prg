@@ -1,7 +1,9 @@
 //-- copyright
 // hbunit is a unit-testing framework for the Harbour language.
 //
-// Copyright (C) 2014 Enderson maia <endersonmaia _at_ gmail _dot_ com>
+// Copyright (C) 2019 Manuel Calero Solis <manuelcalerosolis _at_ gmail _dot_ com>
+//
+// Based on hbunit from Enderson maia <endersonmaia _at_ gmail _dot_ com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -133,6 +135,7 @@ METHOD assert( xExp, xAct, cMsg, lInvert ) CLASS TAssert
    if( lInvert == nil, lInvert := .f., )
 
    BEGIN SEQUENCE
+
       ::oResult:oData:incrementAssertCount()
 
       if ( ( lInvert .and. ::isEqual( xExp, xAct ) ) .or. ( !( lInvert ) .and. ( !( ::isEqual( xExp, xAct ) ) ) ) )
@@ -169,7 +172,6 @@ METHOD isEqual( xExp, xAct ) CLASS TAssert
 RETURN ( lResult )
 
 //---------------------------------------------------------------------------//
-// #TODO - see where to put these util methods
 
 METHOD toStr( xVal, lUseQuote ) CLASS TAssert
 

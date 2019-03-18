@@ -1,7 +1,9 @@
 //-- copyright
 // hbunit is a unit-testing framework for the Harbour language.
 //
-// Copyright (C) 2014 Enderson maia <endersonmaia _at_ gmail _dot_ com>
+// Copyright (C) 2019 Manuel Calero Solis <manuelcalerosolis _at_ gmail _dot_ com>
+//
+// Based on hbunit from Enderson maia <endersonmaia _at_ gmail _dot_ com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,7 +35,7 @@ METHOD testAssertErrors() CLASS TestAssert
 
    local a
    local oError
-/*
+
    BEGIN SEQUENCE
       a := 1/0
       ::fail( "division by zero not caught" )
@@ -45,7 +47,7 @@ METHOD testAssertErrors() CLASS TestAssert
       ::Assert():fail( "unable to catch 'Variable not found'" )
    RECOVER
    END
-*/
+
 
 RETURN ( nil )
 
