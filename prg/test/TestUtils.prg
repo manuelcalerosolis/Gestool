@@ -1,7 +1,9 @@
 //-- copyright
 // hbunit is a unit-testing framework for the Harbour language.
 //
-// Copyright (C) 2014 Enderson maia <endersonmaia _at_ gmail _dot_ com>
+// Copyright (C) 2019 Manuel Calero Solis <manuelcalerosolis _at_ gmail _dot_ com>
+//
+// Based on hbunit from Enderson maia <endersonmaia _at_ gmail _dot_ com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -17,18 +19,11 @@
 
 FUNCTION testWaitSeconds( nSecs )
 
-   // local n
+   if( hb_isnil( nSecs ), nSecs := 1, )
 
-   // for n := 1 to nSecs
-   //    waitSeconds( 1 )
-   //    sysRefresh()
-   // next
-
-   waitSeconds( 0.1 )
+   waitSeconds( nSecs )
    
-   sysRefresh()
-
-RETURN ( nil )
+RETURN ( sysrefresh() )
 
 //---------------------------------------------------------------------------//
 
@@ -108,7 +103,7 @@ USER FUNCTION hbunit_test()
 
    oSuite:addTest( TestConversorToFacturaVentasController():New() )
 
-   oSuite:setCategories( { "albaranes_ventas" } ) 
+   oSuite:setCategories( { "terceros_grupos" } ) 
 
    oRunner:run( oSuite )
 

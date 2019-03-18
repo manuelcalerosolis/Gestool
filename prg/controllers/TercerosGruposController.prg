@@ -253,17 +253,21 @@ CLASS TestTercerosGruposController FROM TestCase
 
    DATA oController
 
+   DATA aCategories                    INIT { "all", "terceros_grupos" }
+
    METHOD beforeClass()
 
    METHOD afterClass()
 
    METHOD Before() 
    
-   METHOD test_create()                
+   METHOD test_insert_with_buffer()                
 
-   METHOD test_dialogo_sin_codigo()     
+   METHOD test_dialogo_insert_without_code() 
 
-   METHOD test_dialogo_creacion()       
+   METHOD test_dialogo_insert_without_name()     
+
+   METHOD test_dialogo_insert_with_all_data()       
 
 END CLASS
 
@@ -285,19 +289,18 @@ RETURN ( ::oController:end() )
 
 METHOD Before() CLASS TestTercerosGruposController
 
-   SQLTercerosGruposModel():truncateTable()
-
-RETURN ( nil )
+RETURN ( SQLTercerosGruposModel():truncateTable() )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_create() CLASS TestTercerosGruposController
+METHOD test_insert_with_buffer() CLASS TestTercerosGruposController
 
    local hBuffer
 
-   hBuffer  := ::oController:getModel();
-                  :loadBlankBuffer( {  "codigo" => "0",;
-                                       "nombre" => "Test de grupos de terceros" } )
+   hBuffer  := ::oController;
+                  :getModel();
+                     :loadBlankBuffer( {  "codigo" => "0",;
+                                          "nombre" => "Test de grupos de terceros" } )
    
    ::Assert():notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion de grupos de terceros" )
 
@@ -305,16 +308,23 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_sin_codigo() CLASS TestTercerosGruposController
+METHOD test_dialogo_insert_without_code() CLASS TestTercerosGruposController
 
    ::oController:getDialogView():setEvent( 'painted',;
-      {| self | ;
-         testWaitSeconds(),;
-         self:getControl( 110 ):cText( "Test de grupos de terceros" ),;
-         testWaitSeconds(),;
-         self:getControl( IDOK ):Click(),;
-         testWaitSeconds(),;
-         self:getControl( IDCANCEL ):Click() } )
+      <| view | 
+
+         view:getControl( 110 ):cText( "Test de grupos de terceros" )
+
+         testWaitSeconds()
+
+         view:getControl( IDOK ):Click()
+
+         testWaitSeconds()
+
+         view:getControl( IDCANCEL ):Click()
+
+         RETURN ( nil )
+      > )
 
    ::Assert():false( ::oController:Append(), "test creación de grupos de terceros sin codigo" )
 
@@ -322,16 +332,47 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_creacion() CLASS TestTercerosGruposController
+METHOD test_dialogo_insert_without_name() CLASS TestTercerosGruposController
 
    ::oController:getDialogView():setEvent( 'painted',;
-      {| self | ;
-         testWaitSeconds(),;
-         self:getControl( 100 ):cText( "0" ),;
-         testWaitSeconds(),;
-         self:getControl( 110 ):cText( "Test de grupos de terceros" ),;
-         testWaitSeconds(),;
-         self:getControl( IDOK ):Click() } )
+      <| view | 
+
+         view:getControl( 100 ):cText( "0" )
+
+         testWaitSeconds()
+
+         view:getControl( IDOK ):Click()
+
+         testWaitSeconds()
+
+         view:getControl( IDCANCEL ):Click()
+
+         RETURN ( nil )
+      > )
+
+   ::Assert():false( ::oController:Append(), "test creación de grupos de terceros sin nombre" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialogo_insert_with_all_data() CLASS TestTercerosGruposController
+
+   ::oController:getDialogView():setEvent( 'painted',;
+      <| view | 
+
+         view:getControl( 100 ):cText( "0" )
+
+         testWaitSeconds()
+
+         view:getControl( 110 ):cText( "Test de grupos de terceros" )
+
+         testWaitSeconds()
+
+         view:getControl( IDOK ):Click()
+
+         RETURN ( nil )
+      > )
 
    ::Assert():true( ::oController:Append(), "test creación de grupos de terceros" )
 
