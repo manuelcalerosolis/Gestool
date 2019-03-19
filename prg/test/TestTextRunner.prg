@@ -1,7 +1,9 @@
 //-- copyright
 // hbunit is a unit-testing framework for the Harbour language.
 //
-// Copyright (C) 2014 Enderson maia <endersonmaia _at_ gmail _dot_ com>
+// Copyright (C) 2019 Manuel Calero Solis <manuelcalerosolis _at_ gmail _dot_ com>
+//
+// Based on hbunit from Enderson maia <endersonmaia _at_ gmail _dot_ com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,7 +17,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TextRunner FROM TTestRunner
+CLASS TextTextRunner FROM TestRunner
 
    DATA cResults
 
@@ -29,7 +31,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD new() CLASS TextRunner
+METHOD new() CLASS TextTextRunner
 
    ::Super:new()
 
@@ -39,7 +41,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD addResults( ... ) CLASS TextRunner
+METHOD addResults( ... ) CLASS TextTextRunner
 
    local i
 
@@ -51,27 +53,23 @@ RETURN ( ::cResults )
 
 //---------------------------------------------------------------------------//
 
-METHOD showResults( oResult ) CLASS TextRunner
+METHOD showResults( oResult ) CLASS TextTextRunner
 
    local i
    local oError
    local oFailure
    local aErrors     
    local aFailures   
-   local nTestCases  
-   local nAsserts    
    local nErrors     
    local nFailures   
 
    aErrors           := oResult:oData:getErrors()
    aFailures         := oResult:oData:getFailures()
-   nTestCases        := oResult:oData:getTestCasesCount()
-   nAsserts          := oResult:oData:getAssertCount()
    nErrors           := len( aErrors )
    nFailures         := len( aFailures )
 
-   ::addResults( "Testcases: " + ltrim( str( nTestCases ) ) )
-   ::addResults( "Asserts:   " + ltrim( str( nAsserts   ) ) )
+   ::addResults( "Testcases: " + ltrim( str( oResult:oData:getTestCasesCount() ) ) )
+   ::addResults( "Asserts:   " + ltrim( str( oResult:oData:getAssertCount()   ) ) )
    ::addResults( "Errors:    " + ltrim( str( nErrors    ) ) )
    ::addResults( "Failures:  " + ltrim( str( nFailures  ) ) )
 

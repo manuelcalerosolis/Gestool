@@ -46,10 +46,8 @@ RETURN ( oDialog:aControls[ nPos ] )
 
 USER FUNCTION hbunit_test()
 
-   local oRunner   := TextRunner():New()
    local oSuite    := TestSuite():New()
-
-   oSuite:addTest( TestAssert():New() )
+   local oRunner   := TextTextRunner():New()
 
    oSuite:addTest( TestEmpresasController():New() )
 

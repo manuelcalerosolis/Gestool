@@ -1,7 +1,9 @@
 //-- copyright
 // hbunit is a unit-testing framework for the Harbour language.
 //
-// Copyright (C) 2014 Enderson maia <endersonmaia _at_ gmail _dot_ com>
+// Copyright (C) 2019 Manuel Calero Solis <manuelcalerosolis _at_ gmail _dot_ com>
+//
+// Based on hbunit from Enderson maia <endersonmaia _at_ gmail _dot_ com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,7 +15,9 @@
 
 #include "hbunit.ch"
 
-CLASS TTestRunner
+//---------------------------------------------------------------------------//
+
+CLASS TestRunner
    
    METHOD new() CONSTRUCTOR
 
@@ -24,12 +28,19 @@ CLASS TTestRunner
 
 ENDCLASS
 
-METHOD New() CLASS TTestRunner
+//---------------------------------------------------------------------------//
+
+METHOD New() CLASS TestRunner
 
 RETURN ( self )
 
-METHOD Run( oTest ) CLASS TTestRunner
+//---------------------------------------------------------------------------//
+
+METHOD Run( oTest ) CLASS TestRunner
 
    ::showResults( oTest:run() )
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+

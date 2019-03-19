@@ -657,7 +657,7 @@ METHOD showError( e )
 
    do case 
       case ( "Duplicate entry " $ e:Description )
-         msgstop( "Clave primaria duplicada, la combinación de datos ya existe", "Error" )
+         msgwait( "Clave primaria duplicada, la combinación de datos ya existe", "Error", 1 )
       otherwise
          msgstop( e:SubSystem + ";" + padl( e:SubCode, 4 ) + ";" + e:Operation + ";" + e:Description, "Error en sentencia" )  
    end case

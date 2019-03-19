@@ -39,8 +39,6 @@ METHOD New( oController ) CLASS TercerosGruposController
                                              "32" => "gc_users3_32",;
                                              "48" => "gc_users3_48" }
 
-   ::nLevel                            := Auth():Level( ::cName )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -261,7 +259,9 @@ CLASS TestTercerosGruposController FROM TestCase
 
    METHOD Before() 
    
-   METHOD test_insert_with_buffer()                
+   METHOD test_insert_with_buffer()          
+
+   METHOD test_insert_with_buffer_same_code()      
 
    METHOD test_dialogo_insert_without_code() 
 
@@ -303,6 +303,28 @@ METHOD test_insert_with_buffer() CLASS TestTercerosGruposController
                                           "nombre" => "Test de grupos de terceros" } )
    
    ::Assert():notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion de grupos de terceros" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_insert_with_buffer_same_code() CLASS TestTercerosGruposController
+
+   local hBuffer
+
+   hBuffer  := ::oController;
+                  :getModel();
+                     :loadBlankBuffer( {  "codigo" => "0",;
+                                          "nombre" => "Test de grupos de terceros" } )
+   
+   ::Assert():notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion de grupos de terceros" )
+
+   hBuffer  := ::oController;
+                  :getModel();
+                     :loadBlankBuffer( {  "codigo" => "0",;
+                                          "nombre" => "Test de grupos" } )
+   
+   ::Assert():Equals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion de grupos de terceros con el mismo código" )
 
 RETURN ( nil )
 
