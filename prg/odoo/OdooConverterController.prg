@@ -10,11 +10,17 @@ CLASS OdooConvertController
    DATA cDirectory                     INIT space( 200 )
 
    DATA oClientOdooConvert
+   DATA oFamilyOdooConvert
 
    DATA oChkClientes
    DATA oMeterClientes
    DATA nMeterClientes                 INIT 0
    DATA lChkClientes                   INIT .t.
+
+   DATA oChkFamilias
+   DATA oMeterFamilias
+   DATA nMeterFamilias                 INIT 0
+   DATA lChkFamilias                   INIT .t.
 
    METHOD New()
    
@@ -33,6 +39,8 @@ METHOD New() CLASS OdooConvertController
    ::oDialogView                       := OdooConverterView():New( self )
 
    ::oClientOdooConvert                := ClientOdooConvert():New( self )
+
+   ::oFamilyOdooConvert                := FamilyOdooConvert():New( self )
 
 RETURN ( self )
 
@@ -56,7 +64,13 @@ RETURN ( .t. )
 
 METHOD Convert() CLASS OdooConvertController
    
-   ::oClientOdooConvert:Run()
+   if ::lChkClientes
+      ::oClientOdooConvert:Run()
+   end if 
+
+   if ::lChkFamilias
+      ::oFamilyOdooConvert:Run()
+   end if 
 
 RETURN ( nil )
 
@@ -99,7 +113,7 @@ METHOD Activate() CLASS OdooConverterView
 
       oDirectory:bHelp  := {|| oDirectory:cText( cGetDir32( "Seleccione destino" ) ) }
 
-      // Checks----------------------------------------------------------------
+      // Clientes--------------------------------------------------------------
 
       REDEFINE CHECKBOX ::oController:oChkClientes ;
          VAR         ::oController:lChkClientes ;
@@ -107,6 +121,15 @@ METHOD Activate() CLASS OdooConverterView
          OF          ::oDialog
 
       ::oController:oMeterClientes  := TApoloMeter():ReDefine( 200, { | u | if( pCount() == 0, ::oController:nMeterClientes, ::oController:nMeterClientes := u ) }, 10, ::oDialog, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+
+      // Familias--------------------------------------------------------------
+
+      REDEFINE CHECKBOX ::oController:oChkFamilias ;
+         VAR         ::oController:lChkFamilias ;
+         ID          101 ;
+         OF          ::oDialog
+
+      ::oController:oMeterFamilias  := TApoloMeter():ReDefine( 201, { | u | if( pCount() == 0, ::oController:nMeterFamilias, ::oController:nMeterFamilias := u ) }, 10, ::oDialog, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       // Botones generales--------------------------------------------------------
 

@@ -1,8 +1,6 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-#define __admin_name__  "Super administrador"
-
 //---------------------------------------------------------------------------//
 
 CLASS RolesController FROM SQLNavigatorGestoolController

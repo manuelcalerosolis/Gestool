@@ -1,9 +1,6 @@
 #include "FiveWin.ch"
 #include "Factu.ch" 
 
-#define  __encryption_key__ "snorlax"
-#define  __admin_password__ "superusuario"
-
 //---------------------------------------------------------------------------//
 
 CLASS SuperUsuarioController FROM SQLBaseController

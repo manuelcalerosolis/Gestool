@@ -169,10 +169,10 @@ RETURN ( nil )
 
 FUNCTION appTest()
 
-   // with object ( OdooConvertController():New() )
-   //    :Run()
-   //    :End()
-   // end with
+   with object ( OdooConvertController():New() )
+      :Run()
+      :End()
+   end with
 
 RETURN ( nil )
 
@@ -225,3 +225,5 @@ FUNCTION destroyIconApp()
    end if
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//

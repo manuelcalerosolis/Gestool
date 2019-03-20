@@ -1,10 +1,6 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-#define  __encryption_key__   "snorlax"
-#define  __admin_name__       "Super administrador"
-#define  __admin_password__   "superusuario"
-
 #define ADP_NAME              1
 
 //---------------------------------------------------------------------------//

@@ -1,10 +1,10 @@
-HB                   = 	\harbour_bcc7\
+HB                   = 	\harbour_bcc7_sql\
 
-HBINCLUDE            = 	\harbour_bcc7\include
+HBINCLUDE            = 	\harbour_bcc7_sql\include
 FWINCLUDE            = 	\fwh1811\include
 GESTOOLINCLUDE       = 	\fw195\gestool\include
 
-HBLIB                = 	\harbour_bcc7\lib
+HBLIB                = 	\harbour_bcc7_sql\lib
 FWLIB                = 	\fwh1811\lib
 
 RESOURCE             = 	.\resource
@@ -21,8 +21,8 @@ PPO 					   = 	ppo1811
 
 EXE 					   = 	bin\$(TARGET).exe
 
-TARGETPRG 				= $(TARGET).prg
-TARGETOBJ 				= $(TARGET).obj
+TARGETPRG 				= 	$(TARGET).prg
+TARGETOBJ 				= 	$(TARGET).obj
 
 .path.prg      		=	.\$(SOURCEPRG)
 .path.c       			=	.\$(SOURCEC)
@@ -465,6 +465,8 @@ Server.prg 																		\
 BaseHttpService.prg 															\
 BaseHttpController.prg														\
 ClientOdooConverter.prg														\
+FamilyOdooConverter.prg														\
+ProductOdooConverter.prg													\
 OdooConverterController.prg												\
 TestBase.prg 																	\
 TestSuite.prg 																	\
@@ -922,6 +924,8 @@ Server.obj 																		\
 BaseHttpService.obj 															\
 BaseHttpController.obj														\
 ClientOdooConverter.obj														\
+FamilyOdooConverter.obj														\
+ProductOdooConverter.obj													\
 OdooConverterController.obj												\
 TestBase.obj																	\
 TestSuite.obj																	\
@@ -1373,6 +1377,8 @@ $(OBJ)\Server.obj 															+
 $(OBJ)\BaseHttpService.obj													+
 $(OBJ)\BaseHttpController.obj												+
 $(OBJ)\ClientOdooConverter.obj											+
+$(OBJ)\FamilyOdooConverter.obj											+
+$(OBJ)\ProductOdooConverter.obj											+
 $(OBJ)\OdooConverterController.obj										+
 $(OBJ)\TestBase.obj															+
 $(OBJ)\TestSuite.obj															+

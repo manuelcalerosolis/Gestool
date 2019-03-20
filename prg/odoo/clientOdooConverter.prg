@@ -107,8 +107,6 @@ METHOD isGetFile()
 
    ::cDatabaseFile  := ::oController:cDirectory + "\Client.dbf"
 
-   msgalert( ::cDatabaseFile, "cDatabaseFile" )
-
    if empty( ::cDatabaseFile )
       RETURN ( .f. )
    end if 
@@ -159,9 +157,9 @@ METHOD createFile()
 
    ++::nPack
 
-   ferase( "res_partner_" + hb_ntos( ::nPack ) + ".csv" )
+   ferase( ::oController:cDirectory + "\res_partner_" + hb_ntos( ::nPack ) + ".csv" )
 
-   ::oTextFile    := TTxtFile():New( "res_partner_" + hb_ntos( ::nPack ) + ".csv" )
+   ::oTextFile    := TTxtFile():New( ::oController:cDirectory + "\res_partner_" + hb_ntos( ::nPack ) + ".csv" )
 
 RETURN ( .t. )
 
