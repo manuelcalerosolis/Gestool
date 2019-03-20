@@ -122,7 +122,7 @@ METHOD Convert()
    local nId         := 0
    local nProcesed   := 0
 
-   ::oController:oMeterClientes:SetTotal( WAREA->( reccount() ) )
+   ::oController:oMeterProductos:SetTotal( WAREA->( reccount() ) )
 
    WAREA->( dbgotop() )
 
@@ -144,7 +144,7 @@ METHOD Convert()
 
       ::isNewFile( ++nProcesed )
 
-      ::oController:oMeterClientes:Set( nProcesed )
+      ::oController:oMeterProductos:Set( nProcesed )
 
    end
 

@@ -13676,30 +13676,20 @@ STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_VISIBLE
 CAPTION "Odoo panel de exportacion"
 FONT 8, "Ms Sans Serif"
 {
-  CONTROL "Clientes", 100, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 47, 75, 10
+  CONTROL "Clientes", 100, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 46, 75, 10
   CONTROL "Familias", 101, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 62, 75, 10
-  CONTROL "Ficheros de trabajo", 102, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 102, 75, 10
-  CONTROL "Ficheros T.P.V.", 103, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 124, 75, 10
-  CONTROL "Riesgo de clientes", 104, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 146, 75, 10
-  CONTROL "Sincroniza información", 105, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 168, 84, 10
   CONTROL "&Todos", 500, "Button", WS_TABSTOP, 44, 220, 50, 14
   CONTROL "&Ninguno", 501, "Button", WS_TABSTOP, 101, 220, 50, 14
-  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 314, 220, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 373, 220, 50, 14
-  CONTROL "Proceso en curso", -1, "Button", BS_GROUPBOX, 44, 190, 379, 22
-  CONTROL "", 110, "Static", SS_CENTER|WS_GROUP, 47, 201, 372, 8
-  CONTROL "", 200, "msctls_progress32", 0x00000000, 138, 51, 378, 6
+  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 409, 220, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 468, 220, 50, 14
+  CONTROL "", 200, "msctls_progress32", 0x00000000, 138, 50, 378, 6
   CONTROL "", 201, "msctls_progress32", 0x00000000, 138, 66, 378, 6
-  CONTROL "", 220, "msctls_progress32", 0x00000000, 138, 103, 378, 6
-  CONTROL "", 230, "msctls_progress32", 0x00000000, 138, 125, 378, 6
-  CONTROL "", 240, "msctls_progress32", 0x00000000, 138, 147, 378, 6
-  CONTROL "", 250, "msctls_progress32", 0x00000000, 138, 169, 378, 6
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Proceso de exportación a odoo", -1, "Static", WS_GROUP, 44, 3, 381, 23
   CONTROL "", 300, "Edit", WS_BORDER|WS_TABSTOP, 138, 29, 378, 12
   CONTROL "Directorio datos\r\n", -1, "Static", WS_GROUP, 44, 33, 55, 8
-  CONTROL "Artículos", 4001, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 78, 75, 10
-  CONTROL "", 4002, "msctls_progress32", 0x00000000, 138, 82, 378, 6
+  CONTROL "Artículos", 102, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 78, 75, 10
+  CONTROL "", 202, "msctls_progress32", 0x00000000, 138, 82, 378, 6
 }
 
 REINDEXADS DIALOG DISCARDABLE 92, 84, 386, 228

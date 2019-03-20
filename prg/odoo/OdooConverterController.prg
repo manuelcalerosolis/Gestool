@@ -11,6 +11,7 @@ CLASS OdooConvertController
 
    DATA oClientOdooConvert
    DATA oFamilyOdooConvert
+   DATA oProductOdooConvert
 
    DATA oChkClientes
    DATA oMeterClientes
@@ -21,6 +22,11 @@ CLASS OdooConvertController
    DATA oMeterFamilias
    DATA nMeterFamilias                 INIT 0
    DATA lChkFamilias                   INIT .t.
+
+   DATA oChkProductos
+   DATA oMeterProductos
+   DATA nMeterProductos                INIT 0
+   DATA lChkProductos                  INIT .t.
 
    METHOD New()
    
@@ -41,6 +47,8 @@ METHOD New() CLASS OdooConvertController
    ::oClientOdooConvert                := ClientOdooConvert():New( self )
 
    ::oFamilyOdooConvert                := FamilyOdooConvert():New( self )
+
+   ::oProductOdooConvert               := ProductOdooConvert():New( self )
 
 RETURN ( self )
 
@@ -70,6 +78,10 @@ METHOD Convert() CLASS OdooConvertController
 
    if ::lChkFamilias
       ::oFamilyOdooConvert:Run()
+   end if 
+
+   if ::lChkProductos
+      ::oProductOdooConvert:Run()
    end if 
 
 RETURN ( nil )
@@ -130,6 +142,15 @@ METHOD Activate() CLASS OdooConverterView
          OF          ::oDialog
 
       ::oController:oMeterFamilias  := TApoloMeter():ReDefine( 201, { | u | if( pCount() == 0, ::oController:nMeterFamilias, ::oController:nMeterFamilias := u ) }, 10, ::oDialog, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+
+      // Productos--------------------------------------------------------------
+
+      REDEFINE CHECKBOX ::oController:oChkProductos ;
+         VAR         ::oController:lChkProductos ;
+         ID          102 ;
+         OF          ::oDialog
+
+      ::oController:oMeterProductos  := TApoloMeter():ReDefine( 202, { | u | if( pCount() == 0, ::oController:nMeterProductos, ::oController:nMeterProductos := u ) }, 10, ::oDialog, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       // Botones generales--------------------------------------------------------
 
