@@ -43,7 +43,7 @@ RETURN ( self )
 
 METHOD isGetFile()
 
-   ::cDatabaseFile  := ::oController:cDirectory + "\Familias.dbf"
+   ::cDatabaseFile  := ::oController:getDirectory() + "\Familias.dbf"
 
    if empty( ::cDatabaseFile )
       RETURN ( .f. )
@@ -93,9 +93,9 @@ RETURN ( .t. )
 
 METHOD createFile()
 
-   ferase( ::oController:cDirectory + "\res_category.csv" )
+   ferase( ::oController:getDirectory() + "\res_category.csv" )
 
-   ::oTextFile    := TTxtFile():New( ::oController:cDirectory + "\res_category.csv" )
+   ::oTextFile    := TTxtFile():New( ::oController:getDirectory() + "\res_category.csv" )
 
 RETURN ( .t. )
 

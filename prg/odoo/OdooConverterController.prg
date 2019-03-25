@@ -8,6 +8,7 @@ CLASS OdooConvertController
    DATA oDialogView
 
    DATA cDirectory                     INIT space( 200 )
+   DATA nRegister                      INIT 0
 
    DATA oClientOdooConvert
    DATA oFamilyOdooConvert
@@ -35,6 +36,8 @@ CLASS OdooConvertController
    METHOD Run()   
 
    METHOD Convert()
+
+   METHOD getDirectory()               INLINE ( alltrim( ::cDirectory ) )
 
 END CLASS
 
@@ -106,6 +109,7 @@ ENDCLASS
 
 METHOD Activate() CLASS OdooConverterView
 
+   local oRegister
    local oDirectory
 
    DEFINE DIALOG     ::oDialog ;
@@ -124,6 +128,12 @@ METHOD Activate() CLASS OdooConverterView
          OF          ::oDialog
 
       oDirectory:bHelp  := {|| oDirectory:cText( cGetDir32( "Seleccione destino" ) ) }
+
+      REDEFINE GET   oRegister ;
+         VAR         ::oController:nRegister ;
+         ID          310 ;
+         SPINNER ;
+         OF          ::oDialog
 
       // Clientes--------------------------------------------------------------
 

@@ -105,13 +105,14 @@ RETURN ( self )
 
 METHOD isGetFile()
 
-   ::cDatabaseFile  := ::oController:cDirectory + "\Client.dbf"
+   ::cDatabaseFile  := ::oController:getDirectory() + "\Client.dbf"
 
    if empty( ::cDatabaseFile )
       RETURN ( .f. )
    end if 
 
    if !( file( ::cDatabaseFile ) )
+      msgStop( "No existe el fichero : " + ::cDatabaseFile )
       RETURN ( .f. )
    end if 
 
@@ -157,9 +158,9 @@ METHOD createFile()
 
    ++::nPack
 
-   ferase( ::oController:cDirectory + "\res_partner_" + hb_ntos( ::nPack ) + ".csv" )
+   ferase( ::oController:getDirectory() + "\res_partner_" + hb_ntos( ::nPack ) + ".csv" )
 
-   ::oTextFile    := TTxtFile():New( ::oController:cDirectory + "\res_partner_" + hb_ntos( ::nPack ) + ".csv" )
+   ::oTextFile    := TTxtFile():New( ::oController:getDirectory() + "\res_partner_" + hb_ntos( ::nPack ) + ".csv" )
 
 RETURN ( .t. )
 
@@ -167,11 +168,11 @@ RETURN ( .t. )
 
 METHOD writeHeader()
 
-   if ::oTextFile:Open()
-      ::oTextFile:Add( "External ID;Name;Company Type;Related Company;Address Type;Street;Street2;City;State;ZIP;Country;Website;Phone;Mobile;Email" )
-   endif
+   // if ::oTextFile:Open()
+   //    ::oTextFile:Add( "External ID;Name;Company Type;Related Company;Address Type;Street;Street2;City;State;ZIP;Country;Website;Phone;Mobile;Email" )
+   // endif
 
-RETURN ( nil )
+RETURN ( ::oTextFile:Open() )
 
 //----------------------------------------------------------------------------//
 
@@ -190,15 +191,12 @@ METHOD Convert()
          "res_partner_" + hb_ntos( ++nId )   + ";" +  ; // id
          alltrim( WAREA->titulo )            + ";" +  ; // name
          "Individual"                        + ";" +  ; // Company Type
-         ""                                  + ";" +  ; // Related Company
          "Invoice address"                   + ";" +  ; // Address Type
          alltrim( WAREA->domicilio )         + ";" +  ; // Street
-         ""                                  + ";" +  ; // Street 2
          alltrim( WAREA->poblacion )         + ";" +  ; // City
          ::getState()                        + ";" +  ; // State;
          alltrim( WAREA->codpostal )         + ";" +  ; // ZIP
          "ES"                                + ";" +  ; // Country
-         ""                                  + ";" +  ; // Website
          alltrim( WAREA->telefono )          + ";" +  ; // Phone
          alltrim( WAREA->movil )             + ";" +  ; // Mobile
          alltrim( WAREA->cmeiint )                    ; // Email
@@ -219,6 +217,10 @@ RETURN ( nil )
 //----------------------------------------------------------------------------//
 
 METHOD isNewFile( nPosition )
+
+   if empty( ::oController:nRegister )
+      RETURN ( nil )
+   end if 
 
    if mod( nPosition, 1000 ) == 0
 

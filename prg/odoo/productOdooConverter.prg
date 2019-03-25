@@ -47,13 +47,14 @@ RETURN ( self )
 
 METHOD isGetFile()
 
-   ::cDatabaseFile  := ::oController:cDirectory + "\Articulo.dbf"
+   ::cDatabaseFile  := ::oController:getDirectory() + "\Articulo.dbf"
 
    if empty( ::cDatabaseFile )
       RETURN ( .f. )
    end if 
 
    if !( file( ::cDatabaseFile ) )
+      msgStop( "No existe el fichero : " + ::cDatabaseFile )
       RETURN ( .f. )
    end if 
 
@@ -63,11 +64,13 @@ RETURN ( .t. )
 
 METHOD Run()
 
-   if !( ::isGetFile() ) 
+   if !( ::isGetFile() )
+      msgalert( "isGetFile") 
       RETURN ( .f. )
    end if 
 
    if !( ::openDatabase() )
+      msgalert( "openDatabase")
       RETURN ( .f. )
    end if 
 
@@ -99,9 +102,9 @@ METHOD createFile()
 
    ++::nPack
 
-   ferase( ::oController:cDirectory + "\product_template_" + hb_ntos( ::nPack ) + ".csv" )
+   ferase( ::oController:getDirectory() + "\product_template_" + hb_ntos( ::nPack ) + ".csv" )
 
-   ::oTextFile    := TTxtFile():New( ::oController:cDirectory + "\product_template_" + hb_ntos( ::nPack ) + ".csv" )
+   ::oTextFile    := TTxtFile():New( ::oController:getDirectory() + "\product_template_" + hb_ntos( ::nPack ) + ".csv" )
 
 RETURN ( .t. )
 
@@ -109,11 +112,11 @@ RETURN ( .t. )
 
 METHOD writeHeader()
 
-   if ::oTextFile:Open()
-      ::oTextFile:Add( "External ID;Name;Product Type;Internal Reference;Barcode;Sales Price;Cost;Weight;Sale Description" )
-   endif
+   // if ::oTextFile:Open()
+   //    ::oTextFile:Add( "External ID;Name;Product Type;Internal Reference;Barcode;Sales Price;Cost;Weight;Sale Description;" )
+   // endif
 
-RETURN ( nil )
+RETURN ( ::oTextFile:Open() )
 
 //----------------------------------------------------------------------------//
 
@@ -131,13 +134,11 @@ METHOD Convert()
       ::oTextFile:Add(                                      ;
          "product_template_" + hb_ntos( ++nId )    + ";" +  ; // id
          alltrim( WAREA->nombre )                  + ";" +  ; // name
-         ""                                        + ";" +  ; // Product Type
-         WAREA->codigo                             + ";" +  ; // Internal Reference
-         WAREA->codebar                            + ";" +  ; // Barcode
-         hb_ntos( WAREA->pventa1 )                 + ";" +  ; // Sales Price
-         hb_ntos( WAREA->pcosto )                  + ";" +  ; // Cost
-         hb_ntos( WAREA->npesokg )                 + ";" +  ; // Weight
-         alltrim( WAREA->descrip )                          ; // Sale Description
+         alltrim( WAREA->codigo )                  + ";" +  ; // Internal Reference
+         alltrim( WAREA->codebar )                 + ";" +  ; // Barcode
+         hb_ntos( round( WAREA->pventa1, 2 ) )     + ";" +  ; // Sales Price
+         hb_ntos( round( WAREA->pcosto, 2 ) )      + ";" +  ; // Cost
+         hb_ntos( round( WAREA->npesokg, 2 )  )    + ";"    ; // Weight
       )
 
       WAREA->( dbskip() )
@@ -156,7 +157,11 @@ RETURN ( nil )
 
 METHOD isNewFile( nPosition )
 
-   if mod( nPosition, 1000 ) == 0
+   if empty( ::oController:nRegister )
+      RETURN ( nil )
+   end if 
+
+   if mod( nPosition, ::oController:nRegister ) == 0
 
       ::closeFile()
       
