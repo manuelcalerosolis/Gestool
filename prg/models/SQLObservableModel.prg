@@ -211,7 +211,11 @@ METHOD storeInitialAmount()
       RETURN ( nil )
    end if 
 
-RETURN ( ::nInitialAmount := round( ::oController:getRepository():getTotalDocument( ::oController:getModelBuffer("uuid") ), 2 ) )
+   if empty( ::oController:getModelBuffer( "uuid" ) )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::nInitialAmount := round( ::oController:getRepository():getTotalDocument( ::oController:getModelBuffer( "uuid" ) ), 2 ) )
 
 //---------------------------------------------------------------------------//
 
@@ -221,6 +225,10 @@ METHOD storeFinalAmount()
       RETURN ( nil )
    end if 
 
-RETURN  ( ::nFinalAmount := round( ::oController:getRepository():getTotalDocument( ::oController:getModelBuffer("uuid") ), 2 ) )
+   if empty( ::oController:getModelBuffer( "uuid" ) )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::nFinalAmount := round( ::oController:getRepository():getTotalDocument( ::oController:getModelBuffer( "uuid" ) ), 2 ) )
 
 //---------------------------------------------------------------------------//

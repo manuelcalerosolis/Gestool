@@ -308,20 +308,32 @@ METHOD test_dialogo_cambio_albaran() CLASS TestAlbaranesVentasController
 
    ::getController():getDialogView():setEvent( 'painted',;
       <| view | 
+
+         msgalert( "1" )
       
          ::set_codigo_tercero( "1", view )
       
+         msgalert( "2" )
+         
          ::set_codigo_forma_pago( "0", view )
       
+         msgalert( "3" )
+
          ::click_nueva_linea( view )
 
-         ::set_codigo_articulo_en_linea( "3" )
+         msgalert( "4" )
+         
+         ::set_codigo_articulo_en_linea( "1" )
 
-         ::set_combinaciones_en_linea( "3", "S, Azul, Denim" )
-
+         msgalert( "5" )
+         
          ::set_codigo_ubicacion_en_linea( "0" )
 
+         msgalert( "6" )
+
          ::set_precio_en_linea( 300 )
+
+         msgalert( "7" )
 
          view:getControl( IDOK ):Click() 
          
