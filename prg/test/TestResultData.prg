@@ -18,6 +18,7 @@
 CLASS TestResultData
 
    CLASSDATA aErrors
+   CLASSDATA aAsserts
    CLASSDATA aFailures
    CLASSDATA nTestCases
    CLASSDATA nAssertCount
@@ -28,6 +29,7 @@ CLASS TestResultData
    METHOD countFailures()
    METHOD addError( oError )
    METHOD addFailure( oFailure )
+   METHOD addAssert( oFailure )
    METHOD incrementAssertCount()
    METHOD addTestCaseCount( nCount )
    METHOD getErrors()
@@ -43,6 +45,7 @@ METHOD new() CLASS TestResultData
 
    iif( ::aErrors == nil, ::aErrors := {}, )
    iif( ::aFailures == nil, ::aFailures := {}, )
+   iif( ::aAsserts == nil, ::aAsserts := {}, )
    iif( ::nTestCases == nil, ::nTestCases := 0, )
    iif( ::nAssertCount == nil, ::nAssertCount := 0, )
 
@@ -71,6 +74,12 @@ RETURN ( aadd( ::aErrors, oError ) )
 METHOD addFailure( oFailure ) CLASS TestResultData
 
 RETURN ( aadd( ::aFailures, oFailure ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD addAssert( cAssert ) CLASS TestResultData
+
+RETURN ( aadd( ::aAsserts, cAssert ) )
 
 //---------------------------------------------------------------------------//
 

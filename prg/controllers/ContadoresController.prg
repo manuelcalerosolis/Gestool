@@ -78,8 +78,6 @@ RETURN ( ::Super:End() )
 
 METHOD gettingSelectSentence() CLASS ContadoresController
 
-   msgalert( "documento = " + quoted( ::getTableName() ) )
-
 RETURN ( ::getModel():setGeneralWhere( "documento = " + quoted( ::getTableName() ) ) )
 
 //---------------------------------------------------------------------------//

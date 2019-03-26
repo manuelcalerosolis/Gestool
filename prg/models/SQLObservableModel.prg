@@ -17,12 +17,13 @@ CLASS SQLObservableModel FROM SQLCompanyModel
 
    METHOD setLogic( uValue )
 
-   METHOD storeInitialBuffer()         INLINE ( ::hInitialBuffer := hClone( ::hBuffer ) )
-   METHOD storeFinalBuffer()           INLINE ( ::hFinalBuffer := hClone( ::hBuffer ) )
+   METHOD storeInitialBuffer()
 
-   METHOD storeInitialAmount()         INLINE ( ::nInitialAmount := ROUND( ::oController:getRepository():getTotalDocument( ::oController:getModelBuffer("uuid") ), 2 ) )
+   METHOD storeFinalBuffer()           
 
-   METHOD storeFinalAmount()           INLINE ( ::nFinalAmount := ROUND( ::oController:getRepository():getTotalDocument( ::oController:getModelBuffer("uuid") ), 2 ) )
+   METHOD storeInitialAmount()         
+
+   METHOD storeFinalAmount()           
 
    METHOD insertBuffer( hBuffer, lIgnore )
 
@@ -49,14 +50,11 @@ METHOD insertBuffer( hBuffer, lIgnore )
 
    local nId         := ::Super():insertBuffer( hBuffer, lIgnore )
 
-   if ::oController:isAppendMode()
-      ::storeInitialBuffer()
-   end if
+   ::storeInitialBuffer()
 
-   if ::oController:isDuplicateMode()
-      ::storeFinalBuffer()
-      ::storeFinalAmount()
-   end if 
+   ::storeFinalBuffer()
+
+   ::storeFinalAmount()
 
 RETURN ( nId )
 
@@ -187,3 +185,42 @@ RETURN( uValue )
 
 //---------------------------------------------------------------------------//
 
+METHOD storeInitialBuffer()
+
+   if !( hb_ishash( ::hBuffer ) )
+      RETURN ( NIL )
+   end if 
+
+RETURN ( ::hInitialBuffer := hClone( ::hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD storeFinalBuffer()
+
+   if !( hb_ishash( ::hBuffer ) )
+      RETURN ( NIL )
+   end if 
+
+RETURN ( ::hFinalBuffer := hClone( ::hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD storeInitialAmount()
+
+   if empty(::oController)
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::nInitialAmount := round( ::oController:getRepository():getTotalDocument( ::oController:getModelBuffer("uuid") ), 2 ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD storeFinalAmount()
+
+   if empty(::oController)
+      RETURN ( nil )
+   end if 
+
+RETURN  ( ::nFinalAmount := round( ::oController:getRepository():getTotalDocument( ::oController:getModelBuffer("uuid") ), 2 ) )
+
+//---------------------------------------------------------------------------//

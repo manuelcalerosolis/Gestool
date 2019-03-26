@@ -50,7 +50,7 @@ METHOD create_albaran_ventas( hDatos ) CLASS SQLAlbaranesVentasModel
    if hb_ishash( hDatos )
       heval( hDatos, {|k,v| hset( hBuffer, k, v) } )
    end if
-   msgalert( hb_valtoexp( hBuffer ), "hbuffer")
+   
    ::insertBuffer( hBuffer )
 
 RETURN( nil )

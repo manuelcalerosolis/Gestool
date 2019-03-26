@@ -54,7 +54,10 @@ CLASS SQLDatabase
    METHOD Execs( aSql ) 
    METHOD ExecsWithOutParse( aSql )    INLINE ( ::Execs( aSql, .f. ) )
 
-   METHOD TransactionalExec( cSql )    INLINE ( ::Exec( cSql ) )            
+   METHOD TransactionalExec( cSql )    INLINE ( ::Exec( cSql ) )     
+
+   METHOD quitForeingKeyChecks()       INLINE ( ::Exec( "SET FOREIGN_KEY_CHECKS = 0" ) )
+   METHOD setForeingKeyChecks()        INLINE ( ::Exec( "SET FOREIGN_KEY_CHECKS = 1" ) )
    
    METHOD Query( cSql )                
    METHOD Querys( aSql )  
@@ -568,8 +571,6 @@ METHOD Commit()
 
    --::nCurrentConexion
 
-   msgalert( ::nCurrentConexion, "nCurrentConexion" )
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -579,8 +580,6 @@ METHOD rollBack()
    ::getConexion():rollBack()
 
    --::nCurrentConexion
-
-   msgalert( ::nCurrentConexion, "nCurrentConexion" )
 
 RETURN ( nil )
 

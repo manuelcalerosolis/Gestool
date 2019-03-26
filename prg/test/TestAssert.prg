@@ -130,8 +130,6 @@ METHOD assert( xExp, xAct, cMsg, lInvert ) CLASS TAssert
 
    local oError
 
-   cMsg := procfile( 2 ) + ":" + ltrim( str( procline( 2 ) ) ) + ":" + procname( 2 ) + " => " + cMsg
-
    if( lInvert == nil, lInvert := .f., )
 
    BEGIN SEQUENCE
@@ -141,10 +139,15 @@ METHOD assert( xExp, xAct, cMsg, lInvert ) CLASS TAssert
       if ( ( lInvert .and. ::isEqual( xExp, xAct ) ) .or. ( !( lInvert ) .and. ( !( ::isEqual( xExp, xAct ) ) ) ) )
 
          oError               := ErrorNew()
-         oError:description   := cMsg
+         oError:description   := procfile( 2 ) + ":" + ltrim( str( procline( 2 ) ) ) + ":" + procname( 2 ) + " => "
+         oError:description   += cMsg
          oError:filename      := Procfile(2)
 
          ::oResult:oData:addFailure( oError )
+
+      else 
+
+         ::oResult:oData:addAssert( cMsg )
 
       endif
 

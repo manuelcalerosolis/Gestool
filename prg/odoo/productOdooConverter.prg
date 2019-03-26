@@ -65,12 +65,10 @@ RETURN ( .t. )
 METHOD Run()
 
    if !( ::isGetFile() )
-      msgalert( "isGetFile") 
       RETURN ( .f. )
    end if 
 
    if !( ::openDatabase() )
-      msgalert( "openDatabase")
       RETURN ( .f. )
    end if 
 

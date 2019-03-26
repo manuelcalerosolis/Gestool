@@ -101,7 +101,7 @@ USER FUNCTION hbunit_test()
 
    oSuite:addTest( TestConversorToFacturaVentasController():New() )
 
-   oSuite:setCategories( { "terceros_grupos" } ) 
+   oSuite:setCategories( { "albaranes_ventas" } ) 
 
    oRunner:run( oSuite )
 

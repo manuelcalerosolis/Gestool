@@ -129,8 +129,6 @@ METHOD getCounterAndIncrement( cDocument, cSerial ) CLASS SQLContadoresModel
 
    local nCounter    := ::getLastCounter( cDocument, cSerial )
 
-   msgalert( nCounter, "getCounterAndIncrement" )
-
    ::incrementCounter( cDocument, cSerial )
 
 RETURN ( nCounter )
