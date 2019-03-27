@@ -30,8 +30,9 @@ CLASS DocumentComponent FROM Events
    METHOD storeOriginal()           INLINE ( ::uOriginal := ::getValue() )
    METHOD setOriginal( uOriginal )  INLINE ( ::uOriginal := uOriginal )
    METHOD getOriginal()             INLINE ( ::uOriginal )
-   METHOD isOriginalChanged()       INLINE ( alltrim( ::getOriginal() ) != alltrim( ::getValue() ) )
-   METHOD isNotOriginalChanged()    INLINE ( alltrim( ::getOriginal() ) == alltrim( ::getValue() ) )
+
+   METHOD isOriginalChanged()       
+   METHOD isNotOriginalChanged()    INLINE ( !( ::isOriginalChanged() ) )
 
    METHOD getController()           INLINE ( ::oController:oController )
 
@@ -62,6 +63,20 @@ METHOD Activate( id, oDialog ) CLASS DocumentComponent
    ::createControl( id, oDialog )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD isOriginalChanged() CLASS DocumentComponent
+
+   if valtype( ::getOriginal() ) != valtype( ::getValue() )
+      RETURN .f.
+   end if 
+
+   if hb_isstring( ::getOriginal() ) .and. hb_isstring( ::getValue() )
+      RETURN ( alltrim( ::getOriginal() ) != alltrim( ::getValue() ) )
+   end if 
+
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

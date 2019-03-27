@@ -496,6 +496,8 @@ RETURN ( nil )
 
 METHOD Before() CLASS TestConversorToFacturaVentasController
 
+   getSQLDataBase():quitForeingKeyChecks()
+
    SQLTercerosModel():truncateTable()
 
    SQLDireccionesModel():truncateTable()
@@ -523,13 +525,16 @@ METHOD Before() CLASS TestConversorToFacturaVentasController
    SQLAgentesModel():truncateTable()
 
    SQLTiposIvaModel():truncateTable()
+
    SQLUbicacionesModel():truncateTable()
-   SQLArticulosTarifasModel():truncateTable()
+
    SQLRutasModel():truncateTable()
 
    SQLConversorDocumentosModel():truncateTable()
 
    SQLContadoresModel():truncateTable()
+
+   getSQLDataBase():setForeingKeyChecks()
 
    SQLMetodoPagoModel():test_create_con_plazos_con_hash() 
    SQLMetodoPagoModel():test_create_con_plazos_con_hash( {  "codigo"          => "1",;
@@ -567,7 +572,7 @@ METHOD createAlbaran( hAlbaran ) CLASS TestConversorToFacturaVentasController
 
    local hLinea         := {}
 
-   SQLAlbaranesVentasModel():createAlbaran_ventas( hAlbaran )
+   SQLAlbaranesVentasModel():create_albaran_ventas( hAlbaran )
 
    hLinea               := { "parent_uuid"   => SQLAlbaranesVentasModel():test_get_uuid_albaran_ventas( hget( hAlbaran,"serie" ), hget( hAlbaran, "numero" ) ) }
 
@@ -581,30 +586,26 @@ RETURN ( nil )
 
 METHOD test_create_sin_filtros() CLASS TestConversorToFacturaVentasController
 
-   ::createAlbaran( {  "serie"   => "A",;
-                        "numero"  =>  3 } )
+   ::createAlbaran( {  "serie" => "A", "numero" => 3 } )
 
-   ::createAlbaran( {  "serie"  =>  "A",;
-                        "numero" =>   4  } )
+   ::createAlbaran( {  "serie" => "A", "numero" => 4 } )
 
-   ::createAlbaran( {  "serie"  =>  "A",;
-                        "numero" =>   5  } )
+   ::createAlbaran( {  "serie" => "A", "numero" => 5 } )
 
-   ::createAlbaran( {  "serie"  =>  "A",;
-                        "numero" =>   6  } )
+   ::createAlbaran( {  "serie" => "A", "numero" => 6 } )
 
    ::oController:getConversorView():setEvent( 'painted',;
          <| self | 
 
-         testWaitSeconds( 1 )
+         testWaitSeconds()
 
          self:getControl( IDOK ):Click()
 
-         testWaitSeconds( 1 )
+         testWaitSeconds()
             
          self:getControl( IDOK ):Click()
             
-         testWaitSeconds( 1 )
+         testWaitSeconds()
          
          self:getControl( IDOK ):Click()
 
@@ -624,38 +625,30 @@ RETURN ( nil )
 
 METHOD test_create_serie_desde() CLASS TestConversorToFacturaVentasController
 
-   ::createAlbaran( {  "serie"           =>  "A",;
-                        "numero"          =>   3 ,;
-                        "tercero_codigo"  =>  "0" } )
+   ::createAlbaran( {  "serie" => "A", "numero" => 3, "tercero_codigo" => "0" } )
 
-   ::createAlbaran( {  "serie"           =>  "A",;
-                        "numero"          =>   4 ,;
-                        "tercero_codigo"  =>  "0" } )
+   ::createAlbaran( {  "serie" => "A", "numero" => 4, "tercero_codigo" => "0" } )
 
-   ::createAlbaran( {  "serie"           =>  "A",;
-                        "numero"          =>   5 ,;
-                        "tercero_codigo"  =>  "1" } )
-
-   ::createAlbaran( {  "serie"           =>  "B",;
-                        "numero"          =>   6 ,;
-                        "tercero_codigo"  =>  "1" } )
+   ::createAlbaran( {  "serie" => "A", "numero" => 5, "tercero_codigo" => "1" } )
+   
+   ::createAlbaran( {  "serie" => "B", "numero" => 6, "tercero_codigo" => "1" } )
 
    ::oController:getConversorView():setEvent( 'painted',;
          <| self | 
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
 
             eval( ::oBrwRange:oColDesde:bOnPostEdit, nil, "A" )
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
 
             self:getControl( IDOK ):Click()
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
             
             self:getControl( IDOK ):Click()
             
-            testWaitSeconds( 1 )
+            testWaitSeconds()
          
             self:getControl( IDOK ):Click()
 
@@ -694,11 +687,11 @@ METHOD test_create_solo_hasta() CLASS TestConversorToFacturaVentasController
    ::oController:getConversorView():setEvent( 'painted',;
          <| self | 
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
 
             eval( ::oBrwRange:oColHasta:bOnPostEdit, nil, "B" )
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
             
             self:getControl( IDCANCEL ):Click()
             
@@ -738,23 +731,23 @@ METHOD test_create_desde_hasta() CLASS TestConversorToFacturaVentasController
    ::oController:getConversorView():setEvent( 'painted',;
          <| self | 
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
 
             eval( ::oBrwRange:oColDesde:bOnPostEdit, nil, "A" )
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
 
             eval( ::oBrwRange:oColHasta:bOnPostEdit, nil, "B" )
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
             
             self:getControl( IDOK ):Click()
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
             
             self:getControl( IDOK ):Click()
             
-            testWaitSeconds( 1 )
+            testWaitSeconds()
          
             self:getControl( IDOK ):Click()
             
@@ -785,17 +778,17 @@ METHOD test_create_select_one() CLASS TestConversorToFacturaVentasController
    ::oController:getConversorView():setEvent( 'painted',;
          <| self | 
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
             
             self:getControl( IDOK ):Click()
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
 
             ::oController:oOrigenController:getBrowseView():selectCurrent() 
             
             self:getControl( IDOK ):Click()
             
-            testWaitSeconds( 1 )
+            testWaitSeconds()
          
             self:getControl( IDOK ):Click()
             
@@ -818,11 +811,11 @@ METHOD test_create_no_albaran() CLASS TestConversorToFacturaVentasController
    ::oController:getConversorView():setEvent( 'painted',;
          <| self | 
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
             
             self:getControl( IDOK ):Click()
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
             
             self:getControl( IDCANCEL ):Click()
             
@@ -853,11 +846,11 @@ METHOD test_create_cancel() CLASS TestConversorToFacturaVentasController
    ::oController:getConversorView():setEvent( 'painted',;
          <| self | 
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
             
             self:getControl( IDOK ):Click()
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
             
             self:getControl( IDCANCEL ):Click()
             
@@ -888,19 +881,19 @@ RETURN ( nil )
    ::oController:getConversorView():setEvent( 'painted',;
          <| self | 
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
             
             self:getControl( IDOK ):Click()
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
 
             self:getControl( 100, ::oFolder:aDialogs[ 2 ] ):select( 0 ) 
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
             
             self:getControl( IDOK ):Click()
             
-            testWaitSeconds( 1 )
+            testWaitSeconds()
 
             self:getControl( IDCANCEL ):Click()
             
@@ -945,43 +938,43 @@ METHOD test_create_filtros_varios() CLASS TestConversorToFacturaVentasController
    ::oController:getConversorView():setEvent( 'painted',;
          <| self | 
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
 
             eval( ::oBrwRange:oColDesde:bOnPostEdit, nil, "A" )
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
 
             eval( ::oBrwRange:oColHasta:bOnPostEdit, nil, "B" )
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
 
             self:getControl( 140, ::oFolder:aDialogs[ 1 ] ):goDown()
 
-            testWaitSeconds( 1 ) 
+            testWaitSeconds() 
 
             self:getControl( 140, ::oFolder:aDialogs[ 1 ] ):goDown()
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
 
             eval( ::oBrwRange:oColDesde:bOnPostEdit, nil, "0" )
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
 
             eval( ::oBrwRange:oColHasta:bOnPostEdit, nil, "1" )
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
 
             self:getControl( 140, ::oFolder:aDialogs[ 1 ] ):goDown()
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
             
             self:getControl( IDOK ):Click()
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
             
             self:getControl( IDOK ):Click()
 
-            testWaitSeconds( 1 )
+            testWaitSeconds()
             
             self:getControl( IDOK ):Click()
             

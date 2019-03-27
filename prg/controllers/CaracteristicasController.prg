@@ -495,7 +495,7 @@ local oController
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
          testWaitSeconds(),;
          self:lineAppend(),;
-         testWaitSeconds( 3 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } ) 
 
    ::Assert():true( oController:Append(), "test ::Assert():true with .t." )
@@ -528,7 +528,7 @@ local oController
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 2" ),;
          oController:getCaracteristicasLineasController():getRowSet():goTop(),;
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "" ),;
-         testWaitSeconds( 3 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } ) 
 
    ::Assert():true( oController:Append(), "test ::Assert():true with .t." )
@@ -561,7 +561,7 @@ local oController
          eval( oController:getCaracteristicasLineasController():getBrowseView():oColumnNombre:bOnPostEdit, , "Caracteristica linea 1" ),;
          testWaitSeconds(),;
          self:lineAppend(),;
-         testWaitSeconds( 3 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } ) 
           
    ::Assert():true( oController:Append(), "test ::Assert():true with .t." )

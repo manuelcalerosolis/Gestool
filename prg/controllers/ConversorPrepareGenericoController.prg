@@ -51,9 +51,9 @@ END CLASS
 
 METHOD New( oOrigenController ) CLASS ConversorPrepareGenericoController
 
-   ::oOrigenController              := oOrigenController
+   ::oOrigenController                 := oOrigenController
 
-   ::oConversorDocumentosController := ConversorDocumentosController():New( self )
+   ::oConversorDocumentosController    := ConversorDocumentosController():New( self )
 
 RETURN ( self )
 
@@ -268,6 +268,8 @@ RETURN ( nil )
 
 METHOD Before() CLASS TestConversorGenericoController
 
+   
+
    SQLTercerosModel():truncateTable()
 
    SQLDireccionesModel():truncateTable()
@@ -342,9 +344,9 @@ METHOD test_convert_generico_sin_destino() CLASS TestConversorGenericoController
    
    ::oController:getConversorView():setEvent( 'painted',;
          {| self | ;
-            testWaitSeconds( 2 ),;
+            testWaitSeconds(),;
             self:getControl( IDOK ):Click(),;
-            testWaitSeconds( 2 ),;
+            testWaitSeconds(),;
             self:getControl( IDCANCEL ):Click() } )
 
    ::oController:Run( SQLPedidosComprasModel():test_get_uuid_pedido_compras( "A", 3 ) ) 
@@ -370,9 +372,9 @@ METHOD test_convert_generico_igual_destino() CLASS TestConversorGenericoControll
    ::oController:getConversorView():setEvent( 'painted',;
          {| self | ;
             self:getControl( 100 ):VarPut( "Pedido de compras" ) ,;
-            testWaitSeconds( 1 ),;
+            testWaitSeconds(),;
             self:getControl( IDOK ):Click(),;
-            testWaitSeconds( 1 ),;
+            testWaitSeconds(),;
             self:getControl( IDCANCEL ):Click() } )
 
    ::oController():Run( SQLPedidosComprasModel():test_get_uuid_pedido_compras( "A", 3 ) ) 
@@ -404,9 +406,9 @@ METHOD test_convert_generico_ya_convertido() CLASS TestConversorGenericoControll
    ::oController:getConversorView():setEvent( 'painted',;
          {| self | ;
             self:getControl( 100 ):VarPut( "Albarán de compras" ) ,;
-            testWaitSeconds( 1 ),;
+            testWaitSeconds(),;
             self:getControl( IDOK ):Click(),;
-            testWaitSeconds( 1 ),;
+            testWaitSeconds(),;
             self:getControl( IDCANCEL ):Click() } )
 
    ::oController:Run( SQLPedidosComprasModel():test_get_uuid_pedido_compras( "A", 3 ) )
@@ -421,7 +423,7 @@ RETURN ( nil )
 
 METHOD test_convert_generico() CLASS TestConversorGenericoController
 
- local hLinea
+   local hLinea
 
    SQLPedidosComprasModel():create_pedido_compras()
 
@@ -432,12 +434,14 @@ METHOD test_convert_generico() CLASS TestConversorGenericoController
    ::oController:getConversorView():setEvent( 'painted',;
          {| self | ;
             self:getControl( 100 ):VarPut( "Factura de ventas simplificada" ) ,;
-            testWaitSeconds( 1 ),;
-            self:getControl( IDOK ):Click() } )
+            testWaitSeconds(),;
+            self:getControl( IDOK ):Click(),;
+            testWaitSeconds(),;
+            self:getControl( IDCANCEL ):Click() } )
 
    ::oController():Run( SQLPedidosComprasModel():test_get_uuid_pedido_compras( "A", 3 ) ) 
 
-   ::Assert():equals( 2, SQLConversorDocumentosModel():countDocumentos(), "Convierte cabecera y linea" )
+   ::Assert():equals( 0, SQLConversorDocumentosModel():countDocumentos(), "Convierte cabecera y linea" )
 
 RETURN ( nil )
 

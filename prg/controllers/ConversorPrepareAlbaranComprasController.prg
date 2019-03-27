@@ -215,6 +215,8 @@ RETURN ( nil )
 
 METHOD Before() CLASS TestConversorToFacturaComprasController
 
+   getSQLDataBase():quitForeingKeyChecks()
+
    SQLTercerosModel():truncateTable()
 
    SQLDireccionesModel():truncateTable()
@@ -242,11 +244,14 @@ METHOD Before() CLASS TestConversorToFacturaComprasController
    SQLAgentesModel():truncateTable()
 
    SQLTiposIvaModel():truncateTable()
+
    SQLUbicacionesModel():truncateTable()
-   SQLArticulosTarifasModel():truncateTable()
+
    SQLRutasModel():truncateTable()
 
    SQLConversorDocumentosModel():truncateTable()
+
+   getSQLDataBase():setForeingKeyChecks()
 
    SQLMetodoPagoModel():test_create_con_plazos_con_hash() 
    SQLMetodoPagoModel():test_create_con_plazos_con_hash( {  "codigo"          => "1",;
@@ -301,7 +306,7 @@ METHOD close_resumen_view() CLASS TestConversorToFacturaComprasController
 
    ::oController:getConversorView():setEvent( 'painted',;
          {| self | ;
-            testWaitSeconds( 1 ),;
+            testWaitSeconds(),;
             self:getControl( IDCANCEL ):Click() } )
 
 RETURN ( nil )

@@ -594,7 +594,7 @@ METHOD testCreatePersonlizado() CLASS TestCaracteristicasValoresArticulosControl
       {| self | ;
          testWaitSeconds(),;
          eval( oController:getDialogView():oColumnPersonalizado:bOnPostEdit, , "Personalizado" ),;
-         testWaitSeconds( 3 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } ) 
           
    ::Assert():true( oController:Edit( uuidArticulo ), "test ::Assert():true with .t." )
@@ -628,7 +628,7 @@ METHOD testCreateCaracteristicaCombo() CLASS TestCaracteristicasValoresArticulos
       {| self | ;
          testWaitSeconds(),;
          eval( oController:getDialogView():oColumnValores:bOnPostEdit, , "linea 1" ),;
-         testWaitSeconds( 3 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } ) 
           
    ::Assert():true( oController:Edit( uuidArticulo ), "test ::Assert():true with .t." )
@@ -662,9 +662,9 @@ METHOD testCreateComboCambio() CLASS TestCaracteristicasValoresArticulosControll
       {| self | ;
          testWaitSeconds(),;
          eval( oController:getDialogView():oColumnValores:bOnPostEdit, , "linea 1" ),;
-         testWaitSeconds( 3 ),;
+         testWaitSeconds(),;
          eval( oController:getDialogView():oColumnPersonalizado:bOnPostEdit, , "Personalizado" ),;
-         testWaitSeconds( 3 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } ) 
           
    ::Assert():true( oController:Edit( uuidArticulo ), "test ::Assert():true with .t." )
@@ -698,9 +698,9 @@ METHOD testCreatePersonalizadoCambio() CLASS TestCaracteristicasValoresArticulos
       {| self | ;
          testWaitSeconds(),;
          eval( oController:getDialogView():oColumnPersonalizado:bOnPostEdit, , "Personalizado" ),;
-         testWaitSeconds( 3 ),;
+         testWaitSeconds(),;
          eval( oController:getDialogView():oColumnValores:bOnPostEdit, , "linea 1" ),;
-         testWaitSeconds( 3 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } ) 
           
    ::Assert():true( oController:Edit( uuidArticulo ), "test ::Assert():true with .t." )

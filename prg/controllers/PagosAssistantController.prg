@@ -478,7 +478,7 @@ METHOD test_create_asistente_sin_medio_pago() CLASS TestPagosAssistantController
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
          testWaitSeconds(),;
          self:getControl( IDOK ):Click(),; 
-         testWaitSeconds( 2 ),;
+         testWaitSeconds(),;
          self:getControl( IDCANCEL ):Click() } ) 
 
    ::Assert():false( ::oController:Append(), "test ::Assert():true with .t." )
@@ -501,7 +501,7 @@ METHOD test_create_asistente_no_importe() CLASS TestPagosAssistantController
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):lValid(),;
          testWaitSeconds(),;
          self:getControl( IDOK ):Click(),; 
-         testWaitSeconds( 2 ),;
+         testWaitSeconds(),;
          self:getControl( IDCANCEL ):Click() } ) 
 
    ::Assert():false( ::oController:Append(), "test ::Assert():true with .t." )
@@ -526,7 +526,7 @@ METHOD test_create_asistente_con_pago_parcial() CLASS TestPagosAssistantControll
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
          testWaitSeconds(),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 2 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )   
 
    ::Assert():true( ::oController:Append(), "test ::Assert():true with .t." )
@@ -551,7 +551,7 @@ METHOD test_create_asistente_pago_completo() CLASS TestPagosAssistantController
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
          testWaitSeconds(),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 2 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )   
 
    ::Assert():true( ::oController:Append(), "test ::Assert():true with .t." )
@@ -578,7 +578,7 @@ METHOD test_create_asistente_cambio_importe() CLASS TestPagosAssistantController
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 90 ),;
          testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 2 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )   
 
    ::Assert():true( ::oController:Append(), "test ::Assert():true with .t." )
@@ -611,7 +611,7 @@ METHOD test_create_asistente_pagos_parciales() CLASS TestPagosAssistantControlle
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
          testWaitSeconds(),;
          self:getControl( 500, self:oFolder:aDialogs[ 1 ] ):Refresh(),;
-         testWaitSeconds( 2 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )   
 
    ::Assert():true( ::oController:Append(), "test ::Assert():true with .t." )
@@ -644,11 +644,11 @@ METHOD test_create_asistente_todos_pagos_cambio_importe() CLASS TestPagosAssista
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):cText( 250 ),;
          testWaitSeconds(),;
          self:getControl( 110, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 3 ),;
+         testWaitSeconds(),;
          self:getControl( 130, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
          testWaitSeconds(),;
          self:getControl( 500, self:oFolder:aDialogs[ 1 ] ):Refresh(),;
-         testWaitSeconds( 2 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )   
 
    ::Assert():true( ::oController:Append(), "test ::Assert():true with .t." )
@@ -677,7 +677,7 @@ METHOD test_create_asistente_un_banco() CLASS TestPagosAssistantController
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
          testWaitSeconds(),;
          self:getControl( 140, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 2 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )   
 
    ::Assert():true( ::oController:Append(), "test ::Assert():true with .t." )
@@ -710,7 +710,7 @@ METHOD test_create_asistente_dos_banco() CLASS TestPagosAssistantController
          self:getControl( 150, self:oFolder:aDialogs[ 1 ] ):cText( "0" ),;
          testWaitSeconds(),;
          self:getControl( 150, self:oFolder:aDialogs[ 1 ] ):lValid(),;
-         testWaitSeconds( 2 ),;
+         testWaitSeconds(),;
          self:getControl( IDOK ):Click() } )   
 
    ::Assert():true( ::oController:Append(), "test ::Assert():true with .t." )

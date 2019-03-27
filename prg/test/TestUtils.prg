@@ -19,7 +19,7 @@
 
 FUNCTION testWaitSeconds( nSecs )
 
-   if( hb_isnil( nSecs ), nSecs := 1, )
+   if( hb_isnil( nSecs ), nSecs := 0.1, )
 
    waitSeconds( nSecs )
    
@@ -101,7 +101,7 @@ USER FUNCTION hbunit_test()
 
    oSuite:addTest( TestConversorToFacturaVentasController():New() )
 
-   oSuite:setCategories( { "albaranes_ventas" } ) 
+   // oSuite:setCategories( { "terceros_grupos" } ) 
 
    oRunner:run( oSuite )
 

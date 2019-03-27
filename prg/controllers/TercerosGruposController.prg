@@ -215,11 +215,11 @@ METHOD getColumns() CLASS SQLTercerosGruposModel
    hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR ( 40 ) NOT NULL UNIQUE"          ,;                                 
                                     "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR ( 20 )"                          ,;
+   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR ( 20 ) NOT NULL UNIQUE"          ,;
                                     "text"      => "Código"                                  ,;
                                     "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR ( 200 )"                         ,;
+   hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR ( 200 ) NOT NULL UNIQUE"         ,;
                                     "text"      => "Nombre"                                  ,;
                                     "default"   => {|| space( 200 ) } }                      )
 
@@ -259,9 +259,15 @@ CLASS TestTercerosGruposController FROM TestCase
 
    METHOD Before() 
    
-   METHOD test_insert_with_buffer()          
+   METHOD test_insert_with_buffer()   
 
-   METHOD test_insert_with_buffer_same_code()      
+   METHOD test_update_with_buffer()          
+
+   METHOD test_delete_with_buffer()          
+
+   METHOD test_insert_with_buffer_same_code() 
+
+   METHOD test_insert_with_buffer_same_name()      
 
    METHOD test_dialogo_insert_without_code() 
 
@@ -325,6 +331,40 @@ METHOD test_insert_with_buffer_same_code() CLASS TestTercerosGruposController
                                           "nombre" => "Test de grupos" } )
    
    ::Assert():Equals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion de grupos de terceros con el mismo código" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_update_with_buffer() CLASS TestTercerosGruposController  
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+       
+METHOD test_delete_with_buffer() CLASS TestTercerosGruposController         
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_insert_with_buffer_same_name() CLASS TestTercerosGruposController
+
+   local hBuffer
+
+   hBuffer  := ::oController;
+                  :getModel();
+                     :loadBlankBuffer( {  "codigo" => "0",;
+                                          "nombre" => "Test de grupos de terceros" } )
+   
+   ::Assert():notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion de grupos de terceros" )
+
+   hBuffer  := ::oController;
+                  :getModel();
+                     :loadBlankBuffer( {  "codigo" => "1",;
+                                          "nombre" => "Test de grupos de terceros" } )
+   
+   ::Assert():Equals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion de grupos de terceros con el mismo nombre" )
 
 RETURN ( nil )
 

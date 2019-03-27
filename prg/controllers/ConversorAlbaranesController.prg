@@ -543,6 +543,8 @@ RETURN ( nil )
 
 METHOD Before() CLASS TestConversorDocumentosController
 
+   getSQLDataBase():quitForeingKeyChecks()
+
    SQLTercerosModel():truncateTable()
 
    SQLDireccionesModel():truncateTable()
@@ -570,11 +572,14 @@ METHOD Before() CLASS TestConversorDocumentosController
    SQLAgentesModel():truncateTable()
 
    SQLTiposIvaModel():truncateTable()
+   
    SQLUbicacionesModel():truncateTable()
-   SQLArticulosTarifasModel():truncateTable()
+
    SQLRutasModel():truncateTable()
 
    SQLConversorDocumentosModel():truncateTable()
+
+   getSQLDataBase():setForeingKeyChecks()
 
    SQLMetodoPagoModel():test_create_con_plazos_con_hash() 
    SQLMetodoPagoModel():test_create_con_plazos_con_hash( {  "codigo"          => "1",;
@@ -598,6 +603,7 @@ METHOD Before() CLASS TestConversorDocumentosController
 
    SQLTercerosModel():test_create_proveedor_con_plazos( 0 )
    SQLTercerosModel():test_create_proveedor_con_plazos( 1 )
+
 
    ::aSelected := {}
 
@@ -629,7 +635,7 @@ METHOD close_resumen_view()
 
    ::oController:getResumenView():setEvent( 'painted',;
          {| self | ;
-            testWaitSeconds( 1 ),;
+            testWaitSeconds(),;
             self:getControl( IDCANCEL ):Click() } )
 
 RETURN ( nil )

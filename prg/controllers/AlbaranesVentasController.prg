@@ -171,8 +171,6 @@ CLASS TestAlbaranesVentasController FROM TestOperacionesComercialesController
 
    METHOD test_dialogo_con_articulo_propiedades() 
 
-   METHOD test_dialogo_cambio_albaran()
-
    METHOD getController()              INLINE ( if( empty( ::oController ), ::oController := AlbaranesVentasController():New(), ), ::oController ) 
 
    METHOD End()                        INLINE ( if( !empty( ::oController ), ::oController:End(), ) ) 
@@ -296,54 +294,6 @@ METHOD test_dialogo_con_articulo_propiedades() CLASS TestAlbaranesVentasControll
       > )
 
    ::Assert():true( ::getController():Insert(), "test creación de albaran de venta con combinaciones" )
-   ::Assert():equals( 1, SQLHistoryModel():countHistory( "Creación" ), "Genera un registro en historial con operacion Creación" )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD test_dialogo_cambio_albaran() CLASS TestAlbaranesVentasController
-
-   ::getController():getModel():create_albaran_ventas( { "serie"=> "A", "numero" => 10 } )
-
-   ::getController():getDialogView():setEvent( 'painted',;
-      <| view | 
-
-         msgalert( "1" )
-      
-         ::set_codigo_tercero( "1", view )
-      
-         msgalert( "2" )
-         
-         ::set_codigo_forma_pago( "0", view )
-      
-         msgalert( "3" )
-
-         ::click_nueva_linea( view )
-
-         msgalert( "4" )
-         
-         ::set_codigo_articulo_en_linea( "1" )
-
-         msgalert( "5" )
-         
-         ::set_codigo_ubicacion_en_linea( "0" )
-
-         msgalert( "6" )
-
-         ::set_precio_en_linea( 300 )
-
-         msgalert( "7" )
-
-         view:getControl( IDOK ):Click() 
-         
-         RETURN ( nil )
-      > )
-
-   ::getController:Edit( ::getController():getModel():test_get_uuid_albaran_ventas( "A", 10 ) )
- 
-   ::Assert():true( ::getController():Insert(), "test creación de albaran de venta con combinaciones" )
-   
    ::Assert():equals( 1, SQLHistoryModel():countHistory( "Creación" ), "Genera un registro en historial con operacion Creación" )
 
 RETURN ( nil )
