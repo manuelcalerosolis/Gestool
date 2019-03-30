@@ -362,11 +362,27 @@ METHOD test_update_with_buffer() CLASS TestTercerosGruposController
 
    // Creacion de nuevo registro
 
+   local nId
+   local hBuffer
+
+   hBuffer  := ::oController;
+                  :getModel();
+                     :loadBlankBuffer( {  "codigo" => "0",;
+                                          "nombre" => "Terceros de Alicante" } )
+   
+   nId      := ::oController:getModel():insertBuffer( hBuffer )
+
+   ::Assert():notEquals( 0, nId, "test creación de grupos de terceros" )
+
    // Obtenermos el id del nuevo registro
+
+   ::oController:getModel():updateFieldsWhere( { "nombre" => "Terceros de Huelva" }, { "id" => nId } )
 
    // Actualizamos el campo "nombre" del nuevo registro
 
    // Comprobamos el cambio del campo en ese registro
+
+   ::Assert():Equals( "Terceros de Huelva", ::oController:getModel():getTrimedFieldWhere( "nombre", { "id" => nId } ), "test modificacion de grupos de terceros" )
 
 RETURN ( nil )
 
@@ -374,13 +390,21 @@ RETURN ( nil )
        
 METHOD test_delete_with_buffer() CLASS TestTercerosGruposController    
 
-   // Creacion de nuevo registro
+   local nId
+   local hBuffer
 
-   // Obtenermos el id del nuevo registro
+   hBuffer  := ::oController;
+                  :getModel();
+                     :loadBlankBuffer( {  "codigo" => "0",;
+                                          "nombre" => "Terceros de Alicante" } )
+   
+   nId      := ::oController:getModel():insertBuffer( hBuffer )
 
-   // Borramos el id del registro creado
+   ::Assert():notEquals( 0, nId, "test creación de grupos de terceros" )
 
-   // Comprobamos que no exista ya ese registo
+   ::oController:getModel():deleteById( nId )
+
+   ::Assert():Equals( 0, ::oController:getModel():countWhere( { "id" => nId } ), "test de eliminación de grupos de terceros" )
 
 RETURN ( nil )
 
