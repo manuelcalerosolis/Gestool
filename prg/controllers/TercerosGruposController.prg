@@ -269,11 +269,11 @@ CLASS TestTercerosGruposController FROM TestCase
 
    METHOD test_insert_with_buffer_same_name()      
 
-   METHOD test_dialogo_insert_without_code() 
+   METHOD test_dialog_insert_without_code() 
 
-   METHOD test_dialogo_insert_without_name()     
+   METHOD test_dialog_insert_without_name()     
 
-   METHOD test_dialogo_insert_with_all_data()       
+   METHOD test_dialog_insert_with_all_data()       
 
 END CLASS
 
@@ -308,7 +308,7 @@ METHOD test_insert_with_buffer() CLASS TestTercerosGruposController
                      :loadBlankBuffer( {  "codigo" => "0",;
                                           "nombre" => "Test de grupos de terceros" } )
    
-   ::Assert():notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion de grupos de terceros" )
+   ::Assert():notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creación de grupos de terceros" )
 
 RETURN ( nil )
 
@@ -323,26 +323,14 @@ METHOD test_insert_with_buffer_same_code() CLASS TestTercerosGruposController
                      :loadBlankBuffer( {  "codigo" => "0",;
                                           "nombre" => "Test de grupos de terceros" } )
    
-   ::Assert():notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion de grupos de terceros" )
+   ::Assert():notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creación de grupos de terceros" )
 
    hBuffer  := ::oController;
                   :getModel();
                      :loadBlankBuffer( {  "codigo" => "0",;
                                           "nombre" => "Test de grupos" } )
    
-   ::Assert():Equals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion de grupos de terceros con el mismo código" )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD test_update_with_buffer() CLASS TestTercerosGruposController  
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-       
-METHOD test_delete_with_buffer() CLASS TestTercerosGruposController         
+   ::Assert():Equals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creación de grupos de terceros con el mismo código" )
 
 RETURN ( nil )
 
@@ -357,20 +345,48 @@ METHOD test_insert_with_buffer_same_name() CLASS TestTercerosGruposController
                      :loadBlankBuffer( {  "codigo" => "0",;
                                           "nombre" => "Test de grupos de terceros" } )
    
-   ::Assert():notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion de grupos de terceros" )
+   ::Assert():notEquals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creación de grupos de terceros" )
 
    hBuffer  := ::oController;
                   :getModel();
                      :loadBlankBuffer( {  "codigo" => "1",;
                                           "nombre" => "Test de grupos de terceros" } )
    
-   ::Assert():Equals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creacion de grupos de terceros con el mismo nombre" )
+   ::Assert():Equals( 0, ::oController:getModel():insertBuffer( hBuffer ), "test creación de grupos de terceros con el mismo nombre" )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_insert_without_code() CLASS TestTercerosGruposController
+METHOD test_update_with_buffer() CLASS TestTercerosGruposController  
+
+   // Creacion de nuevo registro
+
+   // Obtenermos el id del nuevo registro
+
+   // Actualizamos el campo "nombre" del nuevo registro
+
+   // Comprobamos el cambio del campo en ese registro
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+       
+METHOD test_delete_with_buffer() CLASS TestTercerosGruposController    
+
+   // Creacion de nuevo registro
+
+   // Obtenermos el id del nuevo registro
+
+   // Borramos el id del registro creado
+
+   // Comprobamos que no exista ya ese registo
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD test_dialog_insert_without_code() CLASS TestTercerosGruposController
 
    ::oController:getDialogView():setEvent( 'painted',;
       <| view | 
@@ -394,7 +410,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_insert_without_name() CLASS TestTercerosGruposController
+METHOD test_dialog_insert_without_name() CLASS TestTercerosGruposController
 
    ::oController:getDialogView():setEvent( 'painted',;
       <| view | 
@@ -418,7 +434,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD test_dialogo_insert_with_all_data() CLASS TestTercerosGruposController
+METHOD test_dialog_insert_with_all_data() CLASS TestTercerosGruposController
 
    ::oController:getDialogView():setEvent( 'painted',;
       <| view | 

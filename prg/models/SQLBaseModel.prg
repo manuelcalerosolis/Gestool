@@ -128,6 +128,8 @@ CLASS SQLBaseModel
 
    METHOD getField( cField, cBy, cId )
    METHOD getFieldWhere( cField, hWhere )
+   METHOD getTrimedFieldWhere( cField, hWhere ) ;
+                                       INLINE ( alltrim( ::getFieldWhere( cField, hWhere ) ) )
 
    METHOD getHashWhere( cBy, cId )
 
@@ -309,7 +311,7 @@ CLASS SQLBaseModel
 
    // Updates------------------------------------------------------------------
 
-   METHOD updateFieldsWhere( hFields, hWhere, lTransactional )
+   METHOD updateFieldsWhere( hFields, hWhere )
    METHOD updateFieldsWhereTransactional( hFields, hWhere ) ;
                                        INLINE ( ::updateFieldsWhere( hFields, hWhere, .t. ) )   
 
@@ -371,7 +373,6 @@ CLASS SQLBaseModel
    METHOD getControllerParentUuid()
 
    METHOD Count()
-   
    METHOD countWhere( hWhere )   
 
    // Duplicates----------------------------------------------------------------
@@ -1581,7 +1582,6 @@ METHOD getSerializeColumnsSelect()
       RETURN ( cColumns )
    end if 
 
-
    aColumns             := hb_atokens( ::getColumnsSelect(), chr( 10 ) )
 
    if !hb_isarray( aColumns )
@@ -1882,37 +1882,29 @@ RETURN ( getSQLDatabase():Query( cSql ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD updateFieldsWhere( hFields, hWhere, lTransactional )
+METHOD updateFieldsWhere( hFields, hWhere )
 
    local cSql  
-
-   DEFAULT lTransactional  := .f.
 
    cSql                    := "UPDATE " + ::getTableName() + " "
    cSql                    +=    "SET " 
 
    hEval( hFields,; 
-      {|k,v| cSql += k + " = " + v + ", " } )
+      {|k,v| cSql += k + " = " + toSQLString( v ) + ", " } )
    
    cSql                    := chgAtEnd( cSql, '', 2 ) + " "
 
    hEval( hWhere,; 
       {|k,v| cSql += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v ) + " " } )
 
-   if lTransactional
-      RETURN ( getSQLDatabase():TransactionalQuery( cSql ) )
-   end if 
-
 RETURN ( getSQLDatabase():Query( cSql ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD updateBufferWhereId( id, hBuffer, lTransactional )
+METHOD updateBufferWhereId( id, hBuffer )
 
    local cSql 
    local uValue
-
-   DEFAULT lTransactional  := .f.
 
    if !hb_isnumeric( id ) .or. empty( id )
       RETURN ( nil )
@@ -1931,10 +1923,6 @@ METHOD updateBufferWhereId( id, hBuffer, lTransactional )
    cSql                    := chgAtEnd( cSql, '', 2 ) + " "
 
    cSql                    +=    "WHERE id = " + toSqlString( id )
-
-   if lTransactional 
-      RETURN ( getSQLDatabase():TransactionalQuery( cSql ) )
-   end  if 
 
 RETURN ( getSQLDatabase():Query( cSql ) )
 
@@ -2007,7 +1995,7 @@ METHOD Count()
    local cSql  := "SELECT COUNT(*) FROM " + ::getTableName()    
 
    if ::isDeletedAtColumn()
-      cSQL           +=    ::getWhereOrAnd( cSQL ) + "deleted_at = 0" 
+      cSQL     +=    ::getWhereOrAnd( cSQL ) + "deleted_at = 0" 
    end if 
 
 RETURN ( getSQLDatabase():getValue( cSql ) )
